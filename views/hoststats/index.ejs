@@ -1,0 +1,88 @@
+<div class="container statsContainer">
+  <% if(error) { %>
+  <div class="alert alert-danger">Server connection error</div>
+  <% } else { %>
+
+  <link rel="stylesheet" type="text/css" href="/styles/epoch.min.css">
+  <h2>Host</h2>
+  <h3><%= host.hostname %> 
+    <small>(agent <%= host.agent_version %>)</small> 
+    | <%= host.os_name %> 
+    | Agent <%
+    var lastUpdate = new Date(host.last_update).getTime() / 1000 ;
+    var now = Date.now() / 1000 ;
+    if( (now - lastUpdate) > 120 ) { %>
+    <span style="color:rgb(254, 12, 0);"><b>is not reporting.</b></span>
+    <% } else { %>
+    <span style="color:#5cb85c;"><b>is alive.</b></span>
+    <% } %>
+    <small>(last update on <%= moment(host.last_update).calendar() %>)</small>
+  </h3>
+  <div>
+    <h4>load average : 
+      <span class="loadAverage" id="lavg1"></span>,
+      <span class="loadAverage" id="lavg5"></span>,
+      <span class="loadAverage" id="lavg15"></span>
+    </h4>
+  </div>
+  </br>
+  <div id="gaugescontainer">
+    <div class="row">
+      <div class="col-sm-4"> <div id="memoryconsumption"></div> </div>
+      <div class="col-sm-4"> <div id="cpuconsumption"></div> </div>
+      <div class="col-sm-4"> <div id="cacheconsumption"></div> </div>
+    </div>
+    <div id="disksconsumptioncontainer" class="row">
+    </div>
+  </div>
+  <h3 class="page-header">Disk usage</h3> 
+  <div class="row">
+    <div id="diskusage" class="col-sm-12"> </div>
+  </div>
+  <h3 class="page-header">Host processes</h3> 
+  <div id="psaux-container">
+    <div id="psaux-search">
+      <form action="#" method="get">
+        <div class="input-group">
+          <!-- USE TWITTER TYPEAHEAD JSON WITH API TO SEARCH -->
+          <input class="form-control" id="ps-search" name="q" placeholder="Search among processes status" required>
+          <span class="input-group-btn">
+            <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
+          </span>
+        </div>
+      </form>
+    </div>
+    <div id="psaux-div">
+      <table id="psaux-table" class="table table-responsive table-list-search">
+        <thead>
+          <tr>
+            <th>username</th>
+            <th>PID</th>
+            <!-- the &nbsp; here is for avoiding wrapping -->
+            <th data-sort="%cpu">%&nbsp;CPU</th>
+            <th data-sort="%mem">%&nbsp;Mem</th>
+            <th>VSZ</th>
+            <th>RSS</th>
+            <th>TTY</th>
+            <th>State</th>
+            <th>Started</th>
+            <th>Time</th>
+            <th>Command</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>   
+    </div>
+  </div>
+
+  <script>
+    theeye = window.theeye || {};
+    theeye.cachedStats = <%-JSON.stringify(cachedStats)%>;
+  </script>
+  <% block('scripts', '<script src="/js/justgage/raphael.2.1.0.min.js"></script>') %>
+  <% block('scripts', '<script src="/js/justgage/justgage.1.0.1.js"></script>') %>
+  <% block('scripts', '<script src="/js/dependencies/lodash.min.js"></script>') %>
+  <% block('scripts', '<script src="/js/application/hoststats.js"></script>') %>
+  <% } %>
+</div>

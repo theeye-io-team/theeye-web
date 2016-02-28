@@ -1,0 +1,12 @@
+<li class="media list-group-item">
+  <div class="media-left ">
+    <span class="glyphicon glyphicon-cog" style="font-size:30px" aria-hidden="true"></span>
+  </div>
+
+  <div class="media-body">
+    <h3 class="media-heading"><a href="#" data-hook="scriptTitle<%= model.id %>" data-script-id="<%= model.id %>"><%=model.name%></a></h3>
+    <!--<p class="text-muted list-group-item-text"> <%= model.description %> </p>-->
+    <a class="editScript" href="#" data-script-id="<%= model.id %>" style="color:green"><span class="glyphicon glyphicon-pencil"></span></a>
+    <a class="deleteScript" href="#" data-script-id="<%= model.id %>" style="color:red"><span class="glyphicon glyphicon-trash"></span></a>
+  </div>
+</li>

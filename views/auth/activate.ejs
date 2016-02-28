@@ -1,0 +1,49 @@
+<%- include ../partials/header.ejs %>
+<body>
+<div class="container">
+
+<div class="col-sm-6 col-sm-offset-3">
+
+	<h1><span class="fa fa-sign-in"></span> Activate account</h1>
+
+	<!-- show any messages that come back with authentication -->
+	<% if ( typeof(errors)!="undefined" && errors.length > 0) { %>
+		<div class="alert alert-danger"><%= __(errors[0])  %></div>
+	<% } %>
+
+	<!-- LOGIN FORM -->
+     <form role="form" action="/auth/local/activate?token=<%=encodeURIComponent(token)%>" method="post">
+		<div class="form-group">
+			<label>Email</label>
+			<input type="text" class="form-control" name="email" placeholder="<%= user.email %>" DISABLED>
+		</div>
+
+		<div class="form-group">
+			<label>Username</label>
+                 <input type="text" class="form-control" name="username" placeholder="Username">
+		</div>
+		
+		<div class="form-group">
+			<label>Password</label>
+			<input type="password" class="form-control" name="password" placeholder="Password">
+		</div>
+
+		<input type="hidden" name="invitation_token" value="<%= user.invitation_token %>">
+		
+		<button type="submit" class="btn btn-warning btn-lg">Activate</button>
+	</form>
+	<hr>
+	
+	<h1><span class="fa fa-sign-in"></span> Or Login with </h1>
+	<a href="/auth/google" class="btn btn-lg btn-danger"><span class="fa fa-google-plus"></span>Google</a>
+</div>
+
+</div>
+</body>
+</html>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#customers').multiselect();
+    });
+</script>

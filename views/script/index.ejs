@@ -1,0 +1,86 @@
+<% block("styles"  , '<link href="/styles/dropzone.css" rel="stylesheet" type="text/css">') %>
+<% block('styles'  , '<link href="/styles/highlight/default.css" rel="stylesheet" type="text/css">') %>
+<% block("scripts" , '<script src="/js/application/dropzone.min.js"></script>') %>
+<% block("scripts" , "<script> window.scripts = " + JSON.stringify(scripts) + ";</script>") %>
+<% block("scripts" , '<script src="/js/ace-editor/ace.js"></script>') %>
+<% block("scripts" , '<script src="/js/dependencies/lodash.min.js"></script>') %>
+<% block("scripts" , '<script src="/js/application/scripts.js"></script>') %>
+<% block('scripts' , '<script src="/js/highlight.pack.js"></script>') %>
+<% block('scripts' , '<script>hljs.initHighlightingOnLoad();</script>') %>
+<% block('scripts' , '<script src="/js/application/searchbox.js"></script>')%>
+
+<!-- Main  -->
+<div class="container admin-container">
+
+  <div class="js-searchable-box">
+    <form>
+      <input type="text" placeholder="Find a Script">
+      <button class="clean"><i class="glyphicon glyphicon-remove"></i></button>
+      <button class="search"><i class="glyphicon glyphicon-search"></i></button>
+    </form>
+  </div>
+
+  <div class="scripts-admin">
+    <h3>Scripts Admin</h3>
+    <div>
+      <div class="table-header admin">
+        <span class="title panel-item name">Scripts &nbsp; &nbsp; |</span>
+
+        <button class="createScript btn btn-default simple-btn new-btn tooltiped" data-placement="right" title="Create new script" aria-label="Left Align">
+          <span class="glyphicon glyphicon-plus"></span>
+          New Script
+        </button>
+      </div>
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <% scripts.forEach( function(script, key) { %>
+          <%
+          var tags = [
+            "script",
+            script.description,
+            script.filename,
+            script.extension,
+            "script="+ script.id,
+          ].join(',');
+          %>
+          <div class="panel panel-default js-searchable-item" data-tags="<%= tags %>">
+            <div class="panel-heading" role="tab" id="heading<%= resource.id %>">
+              <h4 class="panel-title">
+                <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= script.id %>" aria-expanded="false" aria-controls="collapse<%= script.id %>">
+                  <div class="panel-title-content">
+                    <span class="panel-item name" id="<%= resource.id %>"><%= script.filename %></span>
+                    <div class="panel-item icons">
+
+                      <button class="editScript btn btn-default simple-btn tooltiped" title="Edit script" aria-label="Center Align" data-script-id="<%= script.id %>" data-toggle="modal" data-target="#edit-script">
+                        <span class="glyphicon glyphicon-edit"></span>
+                      </button>
+
+                      <button class="deleteScript btn btn-default simple-btn tooltiped" title="Delete script" aria-label="Center Align" data-script-id="<%= script.id %>">
+                        <span class="glyphicon glyphicon-trash"></span>
+                      </button>
+
+                    </div>
+                  </div>
+                </a>
+              </h4>
+            </div>
+            <div id="collapse<%= script.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= script.id %>">
+              <div class="panel-body">
+                <div>
+                  <h4>Description</h4>
+                  <p> <%= script.description %> </p>
+                  <h4>Mime Type</h4>
+                  <p> <%= script.mimetype %> </p>
+                </div>
+              </div>
+            </div>
+          </div> <!-- end item -->
+        <% }); %>
+      </div> <!-- end panel -->
+    </div> <!-- Tableresults -->
+  </div>
+</div> <!-- main -->
+
+
+<!-- Modal to display script template -->
+
+<%- include ./partials/modal.ejs %>

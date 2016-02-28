@@ -1,0 +1,108 @@
+<!-- 
+
+Modal for creating a task 
+
+-->
+<div class="modal fade" id="create-task" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Scripts runs via tasks. Lets create a task</h4>
+      </div>
+      <div class="modal-body">
+        <form id="createTaskForm" action="/task" class="form-horizontal">
+          <div class="form-group">
+            <label for="name" class="col-sm-2 control-label">Give me a name</label>
+            <div class="col-sm-10">
+              <input data-hook="name" type="text" name="name" class="form-control" id="name" placeholder="Task name">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description" class="col-sm-2 control-label">More about me</label>
+            <div class="col-sm-10">
+              <textarea data-hook="description" type="text" name="description" class="form-control" id="description" placeholder="Task description"></textarea>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="script_id" class="col-sm-2 control-label">What should I run?</label>
+            <div class="col-sm-6">
+              <select data-hook="script_id" id="script_id" name="script_id" class="form-control">
+                <option value="0" disabled selected><strong></strong></option>
+                <% scripts.forEach(function(s) { %>
+                <option value="<%=s.id%>"><strong><%=s.filename%></strong></option>
+                <% }); %>
+              </select>
+            </div>
+            <div class="col-sm-4">
+              <a class="btn btn-primary createScript" >Create a new script</a>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="script_arguments" class="col-sm-2 control-label">Script Arguments<br/><small>You can write a comma separated list of arguments.</small></label>
+            <div class="col-sm-10">
+              <div id="script-arguments-input">
+                <input class="form-control" type="text" name="script_arguments" data-hook="script_arguments" placeholder="[ OPTIONAL ] eg: --exclude-dir='node_modules'">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="target" class="col-sm-2 control-label">Where should I run?</label>
+            <div class="col-sm-10">
+              <label class="radio-inline">
+                <input type="radio" name="target" data-hook="target" id="target" value="single-resource" checked=""> Single Host 
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="target" data-hook="target" id="target" value="multi-hosts"> Multiple Hosts
+              </label>
+            </div>
+          </div>
+          <div class="hidden-container" id="resource-selection" style="display:block;">
+            <div class="form-group">
+              <label for="hostname" class="col-sm-2 control-label">Host</label>
+              <div class="col-sm-10">
+                <select data-hook="hosts_id" id="hosts_id" name="hosts_id" class="form-control">
+                  <option value="0" disabled selected><strong></strong></option>
+                  <% hosts.forEach(function(h) { %>
+                  <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="resource_id" class="col-sm-2 control-label">Link to a Resource<br/><small>jump directly to the task from a resource.</small></label>
+              <div class="col-sm-10">
+                <select data-hook="resource_id" id="resource_id" name="resource_id" class="form-control">
+                  <option value="0" selected><strong>[ OPTIONAL ] Select a Resource</strong></option>
+                  <% resources.forEach(function(r) { %>
+                  <option value="<%=r.id%>"><strong><%=r.description%> (<%= r.type %>)</strong></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="hidden-container" id="hosts-selection">
+            <div class="form-group">
+              <label for="hostname" class="col-sm-2 control-label">Hosts</label>
+              <div class="col-sm-10">
+                <select multiple data-hook="hosts_id" id="hosts_id" name="hosts_id" class="form-control">
+                  <% hosts.forEach(function(h) { %>
+                  <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
+                  <% }); %>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button id="taskAction" type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div><!--.modal-foooter-->
+    </div><!--.modal-content-->
+  </div><!--.modal-dialog-->
+</div><!--.modal-->  

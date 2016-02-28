@@ -1,0 +1,18 @@
+<%- include ../partials/header.ejs %>
+<body>
+<div class="container">
+<div class="col-sm-6 col-sm-offset-3">
+
+	<h1><span class="fa fa-user"></span> Add Local Account</h1>
+
+	<!-- show any messages that come back with authentication -->
+	<% if ( typeof(errors)!="undefined" && errors.length > 0) { %>
+		<div class="alert alert-danger"><%= __(errors[0])  %></div>
+	<% } %>
+	
+	<p><a href="/profile">Go back to profile</a></p>
+
+</div>
+</div>
+</body>
+</html>

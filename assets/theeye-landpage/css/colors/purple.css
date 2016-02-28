@@ -1,0 +1,134 @@
+/*
+|----------------------------------------------------------------------------
+| VARIABLES
+|----------------------------------------------------------------------------
+*/
+/*
+|----------------------------------------------------------------------------
+| MIXINS
+|----------------------------------------------------------------------------
+*/
+/*
+|----------------------------------------------------------------------------
+| COLOR REPLACEMENT
+|----------------------------------------------------------------------------
+*/
+/* MISCELLANEOUS STYLE */
+hr.separator {
+  border-top: 2px solid #8e44ad;
+}
+::selection {
+  background: #8e44ad;
+}
+::-webkit-selection {
+  background: #8e44ad;
+}
+::-moz-selection {
+  background: #8e44ad;
+}
+.owl-theme .owl-controls .owl-buttons div {
+  background: #8e44ad;
+}
+.owl-theme .owl-controls .owl-page span {
+  background: #8e44ad;
+}
+.owl-theme .owl-controls .owl-page.active span {
+  background: #8e44ad;
+}
+.owl-theme .owl-controls.clickable .owl-page:hover span {
+  background: #8e44ad;
+}
+/* BUTTONS */
+.btn-main {
+  background: #612e76;
+}
+.btn-main:hover {
+  background: #522764;
+}
+.btn-learn {
+  background: #fff;
+  color: #522764;
+  border: 2px solid #fff;
+}
+.btn-learn:hover {
+  color: #fff;
+  background: #522764;
+}
+.btn-download {
+  background: #522764;
+  border: 2px solid #fff;
+  color: #fff;
+}
+.btn-download:hover {
+  background: #fff;
+  color: #522764;
+}
+/* PRELOADER */
+.spinner-wrapper {
+  background: #8e44ad;
+}
+/* MAIN NAVIGATION BAR */
+.sticky-navbar .main-navigation li a:hover {
+  color: #8e44ad;
+}
+.sticky-navbar .main-navigation li.current a {
+  color: #8e44ad;
+}
+/* WAY WE WORK */
+.way-we-work .features .each-item:hover .fa {
+  background: #8e44ad;
+  border: 1px solid #8e44ad;
+}
+.way-we-work .features .each-item:hover h4 {
+  color: #8e44ad;
+}
+/* APP INTRO */
+.app-intro {
+  background: #8e44ad;
+}
+/* EASY FEATURES AVAILABLE */
+.easy-features-available .each-easy-step h5.text-colored {
+  color: #8e44ad;
+}
+/* TESTIMONIALS */
+.testimonials .quote-sym {
+  color: #8e44ad;
+}
+.testimonials figure figcaption .name {
+  color: #8e44ad;
+}
+.testimonials figure figcaption cite {
+  color: #612e76;
+}
+/* PRICING TABLE */
+.pricing-table .table-single.table-active .meta-title {
+  background: #8e44ad;
+  color: #fff;
+}
+/* OUR OTHER APPS */
+.our-other-apps .app-description .line-btn {
+  border: 2px solid #8e44ad;
+  color: #8e44ad;
+}
+/* CONTACT US SECTION */
+.contact-us .expendable-contact-btn .fa {
+  border: 2px solid #8e44ad;
+}
+.contact-us .expendable-contact-btn .fa:hover {
+  background: #8e44ad;
+}
+.contact-us .about-us .each-item .ef {
+  border: 1px solid #8e44ad;
+  color: #8e44ad;
+}
+.contact-us .about-us .each-item address p a:hover {
+  color: #8e44ad;
+}
+.contact-us .contact-form .form-control {
+  border: 1px solid #8e44ad;
+}
+/* FOOTER SECTION */
+.footer .social-icons ul li a:hover,
+.footer .copyright ul li a:hover {
+  color: #8e44ad;
+}

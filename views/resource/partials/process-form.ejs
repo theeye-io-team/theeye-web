@@ -1,0 +1,40 @@
+<form id="processResourceForm" action="/resource" class="form-horizontal">
+  <input data-hook="monitor_type" type="hidden" name="monitor_type" value="process"></input>
+  <input data-hook="resource_id" type="hidden" name="resource_id" value=""></input>
+  <div class="form-group"> <div class="col-sm-9"><h4>Monitor</h4></div> </div>
+  <div class="form-group">
+    <label for="description" class="col-sm-3 control-label">Give me a name</label>
+    <div class="col-sm-9">
+      <input data-hook="description" type="text" name="description" class="form-control" placeholder="eg: Nginx Service Check"></input>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="hosts_id" class="col-sm-3 control-label">Where should I run?</label>
+    <div class="col-sm-9 resource-host">
+      <select multiple data-hook="hosts_id" name="hosts_id" class="form-control">
+        <% hosts.forEach(function(h) { %>
+        <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
+        <% }); %>
+      </select>
+      <input name="host_id" value="" class="hiddenHostInput">
+    </div>
+  </div>
+  <div class="form-group"><div class="col-sm-9"><h4>Options</h4></div></div>
+  <div class="form-group">
+    <label for="looptime" class="col-sm-3 control-label">Check Interval (mins)</label>
+    <div class="col-sm-9">
+      <select data-hook="looptime" name="looptime" class="form-control">
+        <option value="0" disabled selected><strong>select check interval</strong></option>
+        <% looptimes.forEach(function(t) { %>
+        <option value="<%= t.id %>"><strong><%= t.value %></strong></option>
+        <% }); %>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="pattern" class="col-sm-3 control-label">What should I search for? <br/><small>RegExp are allowed</small></label>
+    <div class="col-sm-9">
+      <input data-hook="pattern" type="text" name="pattern" class="form-control" placeholder="eg: apache2 -k start">
+    </div>
+  </div>
+</form>

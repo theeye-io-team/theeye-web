@@ -1,0 +1,139 @@
+<!-- Modal for uploading script -->
+<div class="modal fade" id="scriptUpload" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Create Script</h4>
+      </div>
+      <div class="modal-body dropzone">
+        <div style="margin-bottom:10px;">
+          <div id="scriptTemplateDescription" class="alert alert-warning">
+            <h4>You can monitor your resources by using a script.</h4>
+            <div>It requieres that your script ends by returning <b>"normal" or "failure"</b> as value.
+              You can retrieve even more information by sending json formatted string. <br/>sample code :
+              <pre>#!/bin/bash
+      echo '{"state":"normal","data":"the data"}'</pre>
+              Sample templates: </div>
+            <br/>
+            <div>
+              <a href="#" data-toggle="modal" data-target="#bashScriptTemplate"><span class="glyphicon glyphicon-save">Bash</span></a>
+              <a href="#" data-toggle="modal" data-target="#nodeScriptTemplate"><span class="glyphicon glyphicon-save">Node</span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div><!--.modal-foooter-->
+    </div><!--.modal-content-->
+  </div><!--.modal-dialog-->
+</div><!--.modal-->
+
+<!-- Modal for uploading script -->
+<div class="modal fade" id="scriptView" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Viewing script</h4>
+      </div>
+      <div class="modal-body">
+        <div id="editor" style="height:400px"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div><!--.modal-foooter-->
+    </div><!--.modal-content-->
+  </div><!--.modal-dialog-->
+</div><!--.modal-->
+
+
+<!-- Modal to display script template -->
+<div class="modal fade" id="bashScriptTemplate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Bash script template</h4>
+      </div>
+      <div class="modal-body">
+        <pre><code class="bash">
+#!/usr/bin/env bash
+
+NORMAL_STATE="normal";
+FAILURE_STATE="failure";
+
+# run resource state and verify
+# sample
+# echoed string will be used as the resource state
+result="1"
+if [ "$result" == "1" ];
+then
+  echo "$NORMAL_STATE"
+else
+  echo "$FAILURE_STATE"
+fi
+
+#
+# if you need to register extra data, use this format
+#
+state='failure'
+idx1='val1'
+idx2='val2'
+
+printf '{"state":"%s","data":{ "idx1":"%s", "idx2":"%s" }}' "$state" "$idx1" "$idx2"
+#
+# also unix command result state is stored, 0 for success
+exit 0
+        </code></pre>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div><!--.modal-foooter-->
+    </div><!--.modal-content-->
+  </div><!--.modal-dialog-->
+</div><!--.modal-->
+
+
+<!-- Modal to display script template -->
+<div class="modal fade" id="nodeScriptTemplate" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Node script template</h4>
+      </div>
+      <div class="modal-body">
+        <div>
+        <pre><code class="javascript">
+#!/usr/bin/env node
+
+# WARNING : check your current path and name to node binary.
+# could be node or nodejs.
+
+var NORMAL_STATE = 'normal';
+var FAILURE_STATE = 'failure';
+
+/**
+ * check the resource state via
+ *
+ */
+if( true ) {
+  var resourceState = NORMAL_STATE;
+} else {
+  var resourceState = FAILURE_STATE;
+}
+
+console.log( resourceState );
+
+process.exit;
+          </code></pre>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div><!--.modal-foooter-->
+    </div><!--.modal-content-->
+  </div><!--.modal-dialog-->
+</div><!--.modal-->

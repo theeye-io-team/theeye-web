@@ -1,0 +1,36 @@
+<div class="modal fade monitor-modal" 
+  id="process-monitor-modal"
+  tabindex="-1" 
+  role="dialog" 
+  aria-labelledby="process-tpl-modal" 
+  aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" 
+          class="close" 
+          data-dismiss="modal" 
+          aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">
+          Process Monitor
+        </h4>
+      </div>
+      <div class="modal-body">
+
+        <%- include ./monitor/process-tpl-form.ejs %>
+
+      </div>
+      <div class="modal-footer">
+        <button id="process-monitor-save"
+          type="button" 
+          class="btn btn-default monitor-save"
+          data-dismiss="modal"> Save </button>
+        <button type="button" 
+          class="btn btn-default" 
+          data-dismiss="modal"> Close </button>
+      </div><!--.modal-foooter-->
+    </div><!--.modal-content-->
+  </div><!--.modal-dialog-->
+</div><!--.modal-->  

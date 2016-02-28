@@ -1,0 +1,178 @@
+<% block("styles", '<link href="/styles/dropzone.css" rel="stylesheet" type="text/css">') %>
+<% block("scripts", '<script src="/js/application/dropzone.min.js"></script>') %>
+<% block('scripts', '<script src="/js/dependencies/lodash.min.js"></script>') %>
+<% block('scripts', '<script src="/js/application/resources.js"></script>') %>
+<% block('scripts', '<script src="/js/bootstrap/alert.js"></script>') %>
+<% block('scripts', '<script src="/js/ace-editor/ace.js"></script>') %>
+<% block('scripts', '<script src="/js/application/scripts.js"></script>')%>
+<% block('scripts', '<script src="/js/application/searchbox.js"></script>')%>
+
+<!-- Main  -->
+<div class="container admin-container monitorContainer">
+
+  <div class="js-searchable-box">
+    <form>
+      <input type="text" placeholder="Find a Monitor">
+      <button class="clean"><i class="glyphicon glyphicon-remove"></i></button>
+      <button class="search"><i class="glyphicon glyphicon-search"></i></button>
+    </form>
+  </div>
+
+  <div class="resources-panel">
+    <h3>Monitors Admin</h3>
+    <div>
+      <div class="table-header admin">
+        <span class="title">Monitors &nbsp; &nbsp; |</span>
+
+        <div class="dropdown resource new-btn">
+          <span id="dropdownMenu1"
+            data-toggle="dropdown"
+            aria-expanded="true"
+            class="btn btn-default simple-btn dropdown-toggle"
+            data-placement="right"
+            title="Create new monitor"
+            aria-label="Center Align">
+             <span class="glyphicon glyphicon-plus"></span>
+             New Monitor
+           </span>
+
+           <ul class="dropdown-menu"
+             role="menu"
+             aria-labelledby="dropdownMenu1"
+             style="min-width: 120px">
+             <li role="presentation">
+               <a role="menuitem" tabindex="-1"
+                class="createResourceMonitor"
+                  data-toggle="modal"
+                  data-target="#scraperResourceModal"
+                  data-resource-type="scraper"
+                  data-action="create">Web Check</a>
+             </li>
+             <li role="presentation">
+               <a role="menuitem" tabindex="-1"
+                class="createResourceMonitor"
+                data-toggle="modal"
+                data-target="#processResourceModal"
+                data-resource-type="process"
+                data-action="create">Process</a>
+             </li>
+             <li role="presentation">
+               <a role="menuitem" tabindex="-1"
+                class="createResourceMonitor"
+                data-toggle="modal"
+                data-target="#scriptResourceModal"
+                data-resource-type="script"
+                data-action="create">Script</a>
+             </li>
+           </ul>
+        </div>
+
+      </div>
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <% monitors.forEach( function(monitor, key) { %>
+          <%
+          var tags = [
+            "resource",
+            monitor.resource.description,
+            monitor.resource.hostname,
+            monitor.type,
+            monitor.enable?'enabled':'disabled',
+          ].join(',')
+          %>
+          <div class="panel panel-default js-searchable-item" data-tags="<%= tags %>">
+            <div class="panel-heading" role="tab" id="heading<%= monitor.id %>">
+              <h4 class="panel-title">
+                <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= monitor.id %>" aria-expanded="false" aria-controls="collapse<%= monitor.id %>">
+                  <div class="panel-title-content">
+                    <span class="panel-item name" id="<%= monitor.id %>">
+                      <%= monitor.resource.description %>
+                      <span class="monitor-<%= monitor.enable?'enabled':'disabled' %>">
+                        <small><%= ! monitor.enable ? ' > disabled' :'' %> > <%= monitor.type %></small>
+                      </span>
+                    </span>
+                    <div class="panel-item icons">
+
+                      <button class="<%= monitor.type != 'host' ? 'editResourceMonitor ' : ''%> editResource <%= monitor.type %>ResourceEditAction btn btn-default simple-btn tooltiped" aria-label="Center Align"
+                        title="Edit monitor"
+                        data-host_id="<%= monitor.host_id %>"
+                        data-hostname="<%= monitor.resource.hostname %>"
+                        data-resource_id="<%= monitor.resource.id %>"
+                        data-action="edit"
+                        data-toggle="modal"
+                        data-resource-type="<%= monitor.type %>"
+                        data-target="#<%= monitor.type %>ResourceModal"
+                      ><span class="glyphicon glyphicon-edit"></span>
+                      </button>
+
+                      <button class="deleteResource btn btn-default simple-btn tooltiped" title="Delete monitor" aria-label="Center Align" data-resource_id="<%= monitor.resource.id %>">
+                        <span class="glyphicon glyphicon-trash"></span>
+                      </button>
+
+                      <% if( monitor.type == 'host' ) { %>
+                      <div class="dropdown pull-right">
+                         <span id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true" class="btn btn-default simple-btn dropdown-toggle" aria-label="Center Align">
+                           <span class="glyphicon glyphicon-plus"></span>
+                         </span>
+
+                         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" style="min-width: 120px">
+                           <li role="presentation">
+                             <span role="menuitem" tabindex="-1"
+                              class="createResourceMonitor"
+                                data-host_id="<%= monitor.host_id %>"
+                                data-hostname="<%= monitor.resource.hostname %>"
+                                data-toggle="modal"
+                                data-target="#scraperResourceModal"
+                                data-resource-type="scraper"
+                                data-action="create">Web Check</span>
+                           </li>
+                           <li role="presentation">
+                             <span role="menuitem" tabindex="-1"
+                              class="createResourceMonitor"
+                              data-host_id="<%= monitor.host_id %>"
+                              data-hostname="<%= monitor.resource.hostname %>"
+                              data-toggle="modal"
+                              data-target="#processResourceModal"
+                              data-resource-type="process"
+                              data-action="create">Process</span>
+                           </li>
+                           <li role="presentation">
+                             <span role="menuitem" tabindex="-1"
+                              class="createResourceMonitor"
+                              data-host_id="<%= monitor.host_id %>"
+                              data-hostname="<%= monitor.resource.hostname %>"
+                              data-toggle="modal"
+                              data-target="#scriptResourceModal"
+                              data-resource-type="script"
+                              data-action="create">Script</span>
+                           </li>
+                         </ul>
+                      </div>
+                      <% } %>
+
+                    </div>
+                  </div>
+                </a>
+              </h4>
+            </div>
+            <div id="collapse<%= monitor.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= monitor.id %>">
+              <div class="panel-body">
+                <div>
+                  <h4>Type</h4>
+                  <p> <%= monitor.type %> </p>
+                  <h4>Hostname</h4>
+                  <p> <%= monitor.resource.hostname %> </p>
+                </div>
+              </div>
+            </div>
+          </div> <!-- end item -->
+        <% }) %>
+      </div> <!-- end panel -->
+    </div> <!-- Tableresults -->
+  </div>
+</div> <!-- main -->
+
+<%- partial ('./partials/dstat-modal-form.ejs') %>
+<%- partial ('./partials/scraper-modal-form.ejs') %>
+<%- partial ('./partials/process-modal-form.ejs') %>
+<%- partial ('./partials/script-modal-form.ejs') %>
+<%- partial ('../script/partials/modal.ejs') %>

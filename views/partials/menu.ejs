@@ -1,0 +1,86 @@
+<!-- views/menu.ejs -->
+
+
+<!-- menu -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#"><img src="/images/logo-hor.png" alt="The eye"></a>
+    <div class="navData">
+      <div class="user">
+        <a href="/profile" ><span><%= req.user.username %></span></a>
+      </div>
+      Client, <%= req.session.customer %>
+      <div class="client dropdown">
+        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="glyphicon glyphicon-refresh"></i>Change</button>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+          <span class="glyphicon glyphicon-triangle-top"></span>
+          <% req.user.customers.forEach( function(customer, key){ %>
+          <li><a href="#" onClick="javascript:setCustomer('<%= customer %>')" ><%= customer %></a></li>
+          <% }); %>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div id="navbar" class="navbar-collapse collapse">
+    <ul class="navbar-right">
+      <li><a href="/events">Resources</a></li>
+      <li class="tooltiped" title="Resource manager">
+        <div class="client dropdown" >
+          <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <a>
+              <i class="glyphicon glyphicon-cog"></i>
+            </a>
+          </button>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <li><a href="/admin/monitor"> Monitors </a></li>
+            <li><a href="/admin/task"> Tasks </a></li>
+            <li><a href="/admin/script"> Scripts </a></li>
+            <li><a href="/admin/hostgroup"> Templates </a></li>
+            <% if(req.user.credential == 'root'){ %>
+            <li><a href="/admin/user"> Users </a></li>
+            <li><a href="/admin/customer"> Customers </a></li>
+            <% } %>
+          </ul>
+        </div>
+      </li>
+      <!--
+      <li>
+        <a href="/profile" class="glyphicon glyphicon-home" style="padding-bottom: 15px;"></a>
+      </li>
+      -->
+      <li class="tooltiped" title="Logout">
+        <a href="/logout" class="glyphicon glyphicon-log-out" style="padding-bottom: 14px;"></a>
+      </li>
+      <!-- por ahora no.
+      <li><a href="#">Contact</a></li>
+      <li><a href="#">Github</a></li>
+      -->
+    </ul>
+
+  </div>
+</nav>
+<!-- esto va para otro lado, la admin view.
+<li><a href="/script">Scripts</a></li>
+<li><a href="/tasks">Tasks</a></li>
+-->
+
+<script type="text/javascript">
+  $(document).ready(function () {
+    var links = $('.nav li a');
+    $.each(links, function(key, value){
+      $(this).removeClass('active');
+      if(value.href == document.URL){
+        var $parent = $(this).parent();
+        if (!$parent.hasClass('active')) {
+          $parent.addClass('active');
+        }
+      }
+    });
+  });
+</script>

@@ -1,0 +1,250 @@
+/*
+|----------------------------------------------------------------------------
+| VARIABLES
+|----------------------------------------------------------------------------
+*/
+@main_color: #E089AA;
+
+
+
+
+/*
+|----------------------------------------------------------------------------
+| MIXINS
+|----------------------------------------------------------------------------
+*/
+.main_btn_hov(@alpha: 0.55) {
+    background: rgba(red(@main_color), green(@main_color), blue(@main_color), @alpha);
+}
+
+
+
+/*
+|----------------------------------------------------------------------------
+| COLOR REPLACEMENT
+|----------------------------------------------------------------------------
+*/
+/* MISCELLANEOUS STYLE */
+hr {
+	&.separator {
+        border-top: 2px solid @main_color;
+	}
+}
+
+::selection {
+    background: @main_color;
+}
+
+::-webkit-selection {
+    background: @main_color;
+}
+
+::-moz-selection {
+    background: @main_color;
+}
+
+.owl-theme {
+    .owl-controls {
+
+        .owl-buttons div {
+            background: @main_color;
+        }
+
+        .owl-page {
+
+            span {
+                background: @main_color;
+            }
+
+            &.active span {
+                background: @main_color;
+            }
+        }
+
+        &.clickable .owl-page:hover span{
+            background: @main_color;
+        }
+    }
+}
+
+
+
+/* BUTTONS */
+.btn-main {
+    background: darken(@main_color, 15%);
+
+    &:hover {
+        background: darken(@main_color, 20%);
+    }
+}
+
+.btn-learn {
+    background: #fff;
+    color: darken(@main_color, 20%);
+    border: 2px solid #fff;
+
+    &:hover {
+        color: #fff;
+        background: darken(@main_color, 20%);
+    }
+}
+
+.btn-download {
+    background: darken(@main_color, 20%);
+    border: 2px solid #fff;
+    color: #fff;
+
+    &:hover {
+        background: #fff;
+        color: darken(@main_color, 20%);
+    }
+}
+
+
+
+
+/* PRELOADER */
+.spinner-wrapper {
+    background: @main_color;
+}
+
+
+
+/* MAIN NAVIGATION BAR */
+.sticky-navbar .main-navigation {
+	li {
+		a:hover {
+			color: @main_color;
+		}
+
+		&.current {
+			a {
+				color: @main_color;
+			}
+		}
+	}
+}
+
+
+
+/* WAY WE WORK */
+.way-we-work .features .each-item:hover {
+	.fa {
+        background: @main_color;
+        border: 1px solid @main_color;
+    }
+
+    h4 {
+    	color: @main_color;
+    }
+}
+
+
+
+/* APP INTRO */
+.app-intro {
+	background: @main_color;
+}
+
+
+
+/* EASY FEATURES AVAILABLE */
+.easy-features-available .each-easy-step h5.text-colored {
+	color: @main_color;
+}
+
+
+
+/* TESTIMONIALS */
+.testimonials {
+
+	.quote-sym {
+        color: @main_color;
+	}
+
+	figure figcaption{
+
+        .name {
+            color: @main_color;
+        }
+
+        cite {
+            color: darken(@main_color, 15%);
+        }
+    }
+}
+
+
+
+/* PRICING TABLE */
+.pricing-table {
+
+    .table-single {
+
+        &.table-active {
+
+            .meta-title {
+                background: @main_color;
+                color: #fff;
+            }
+        }
+    }
+}
+
+
+
+/* OUR OTHER APPS */
+.our-other-apps .app-description .line-btn{
+    border: 2px solid @main_color;
+    color: @main_color;
+}
+
+
+
+/* CONTACT US SECTION */
+.contact-us {
+
+	.expendable-contact-btn {
+
+		.fa {
+            border: 2px solid @main_color;
+
+            &:hover {
+                background: @main_color;
+            }
+		}
+	}
+
+	.about-us {
+
+		.each-item {
+
+			.ef {
+                border: 1px solid @main_color;
+                color: @main_color;
+			}
+
+			address p a:hover {
+				color: @main_color;
+			}
+		}
+	}
+
+	.contact-form {
+
+		.form-control {
+            border: 1px solid @main_color;
+        }
+	}
+}
+
+
+
+/* FOOTER SECTION */
+.footer {
+
+	.social-icons ul li a:hover,
+	.copyright ul li a:hover {
+		color: @main_color;
+	}
+}

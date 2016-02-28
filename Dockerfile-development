@@ -1,0 +1,18 @@
+FROM node:0.12
+MAINTAINER Javier Ailbirt <jailbirt@interactar.com>
+ENV destDir /home/webon/theeye/web
+# Create app directory
+RUN mkdir -p ${destDir}
+WORKDIR ${destDir}
+# Install app dependencies
+COPY package.json ${destDir}
+RUN npm install
+# Fix something weird related to sails dependencies.
+RUN cd ${destDir}/node_modules/sails/ && npm install && cd ${destDir}
+#Fix Permissions.
+RUN mkdir ${destDir}/.tmp
+RUN chmod -R 1777 ${destDir}/.tmp
+# Bundle app source
+COPY . ${destDir}
+EXPOSE 6080
+CMD [ "npm", "run","devel" ]

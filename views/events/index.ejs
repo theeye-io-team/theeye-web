@@ -1,0 +1,208 @@
+<% block('styles', '<link rel="stylesheet" href="/ladda/ladda-themeless.min.css">') %>
+<% block('scripts', '<script src="/js/dependencies/lodash.min.js"></script>') %>
+<% block('scripts', '<script src="/ladda/spin.min.js"></script>') %>
+<% block('scripts', '<script src="/ladda/ladda.min.js"></script>') %>
+<% block('scripts', '<script src="/js/bootstrap/alert.js"></script>') %>
+<% block('scripts', '<script src="/js/application/searchbox.js"></script>')%>
+<% block('scripts', '<script src="/js/application/events.js"></script>') %>
+<% block('scripts', '<script src="/js/application/resources.js"></script>') %>
+<% block('scripts', '<script src="/js/application/triggers.js"></script>') %>
+
+<!-- Main  -->
+<div class="container admin-container eventsContainer">
+
+  <div class="js-searchable-box" id="searcher">
+    <form>
+      <input type="text" placeholder="Find a resource">
+      <button class="clean"><i class="glyphicon glyphicon-remove"></i></button>
+      <button class="search"><i class="glyphicon glyphicon-search"></i></button>
+    </form>
+  </div>
+
+  <div class="resources-panel">
+    <h3>Monitors</h3>
+
+    <% if(resources.length > 0) {%>
+    <div class="allUpNrunning main-status hidden-container">
+      <i class="glyphicon glyphicon-ok-sign big-icon"></i>
+      <h4>All up and running</h4>
+    </div>
+    <div class="resources-panel-list">
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <% resources.forEach( function(resource, key) { %>
+          <%
+          var tags = [
+            "resource",
+            resource.description,
+            resource.hostname,
+            "state=" + resource.state,
+            resource.type,
+            "resource="+ resource.id
+          ].join(',');
+          %>
+          <div class="resource-container panel panel-default js-searchable-item" id="resource-<%= resource.id %>" data-tags="<%= tags %>">
+            <div class="panel-heading" role="tab" id="heading<%= resource.id %>">
+              <h4 class="panel-title">
+                <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= resource.id %>" aria-expanded="false" aria-controls="collapse<%= resource.id %>">
+                  <div class="panel-title-content">
+                    <span class="panel-item name" id="<%= resource.id %>"><%= resource.description %><small> > <%= resource.type %></small></span>
+                    <span class="panel-item icons">
+                      <button href="#search<%= resource.id %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
+                        <div class="search-icon-container">
+                          <span class="glyphicon glyphicon-search"></span>
+                        </div>
+                      </button>
+                      <div class="state-resource-container" id="state-<%= resource.id %>">
+                        <div class="state-icon-container" data-state="<%= resource.state %>">
+                          <span class="state-icon"></span>
+                        </div>
+                      </div>
+                    </span>
+                  </div>
+                </a>
+              </h4>
+            </div>
+            <div id="collapse<%= resource.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= resource.id %>">
+              <div class="panel-body">
+                <div>
+                  <div class="btn-stats">
+                    <a href="/hoststats/<%= resource.host_id %>" class="btn btn-primary">Stats</a>
+                  </div>
+                  <h4>Last Update</h4>
+                  <p> <%= moment(resource.last_update).startOf('second').fromNow() %> </p>
+                  <h4>Hostname</h4>
+                  <p> <%= resource.hostname %> </p>
+                </div>
+              </div>
+            </div>
+          </div> <!-- end item -->
+        <% }); %>
+      </div> <!-- end panel -->
+    </div> <!-- /resources-panel-list -->
+    <% } else { %><!-- no resources -->
+      <div>
+     <b>
+             Seems like you don't have any resources yet, lets install your first agent, steps are pretty easy:
+     </b>
+      </div>
+           
+     <div class="list-group">
+       <a class="list-group-item">1.: copy the following curl on a linux terminal. Right now only ubuntu:12.04/14.04/15.04/15.10 Centos/Redhat: 7 are supported <pre> <%= agentCurl %> </pre></a>
+       <a href="#" class="list-group-item">2.: Wait until spock apears at your terminal claiming you did it. Press f5 here, now your server should be listed.</a>
+       <a href="#" class="list-group-item">Please If something goes wrong, send us an email to support@theeye.io indicating:
+                  Operative System / Version and attaching your /tmp/*.theEyeInstallation.log.gz <br>
+         <iframe width="560" height="315" src="https://www.youtube.com/embed/L0sOPrG-Dog" frameborder="0" allowfullscreen></iframe>
+     </a>
+     </div>
+      
+    <% } %>
+  </div>
+
+  <!-- Tasks -->
+  <div class="tasks-panel">
+    <h3 class="white">Tasks</h3>
+    <% if(tasks.length > 0) { %>
+    <div>
+      <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <button class="bulkRunner collapse btn btn-danger btn-block ladda-button" data-style="zoom-in">
+          Run all these tasks <span class="playIcon"><i class="status glyphicon glyphicon-forward"></i></span>
+        </button>
+
+        <% tasks.forEach(function(task){ %>
+          <%
+          var tags = [ "task", task.name, task.hostname ];
+          if( task.resource_id ) {
+            tags.push(
+              task.resource_name,
+              task.resource_type,
+              "resource=" + task.resource_id
+            );
+          }
+          tags = tags.join(',');
+          %>
+          <div class="panel panel-default js-searchable-item" data-tags="<%= tags %>" data-taskid="<%=task.id%>" data-taskresourceid="<%=task.resource_id%>" data-username="<%= req.user.username %>">
+            <div class="panel-heading" role="tab" id="heading<%=task.id%>">
+              <h4 class="panel-title">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse<%=task.id%>" aria-expanded="false" aria-controls="collapse<%=task.id%>">
+                  <div class="panel-title-content">
+                    <span class="panel-item name"><%=task.name%><small> > task</small></span>
+                    <div class="panel-item icons">
+                      <% if( !task.host_id || !task.script_id ) { %>
+                        <button class="btn btn-primary btn-sm ladda-button">
+                          <span class="disabledIcon"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                        </button>
+                      <% } else { %>
+                        <button class="btn btn-primary btn-sm ladda-button trigger-task tooltiped" title="Run task" data-style="zoom-in">
+                          <span class="playIcon"><i class="status glyphicon glyphicon-triangle-right"></i></span>
+                        </button>
+                      <% } %>
+                    </div>
+                  </div>
+                </a>
+              </h4>
+            </div>
+            <div id="collapse<%=task.id%>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%=task.id%>">
+              <div class="panel-body">
+                <% if( !task.host_id || !task.script_id ) { %>
+                <div class="fields alert alert-danger">
+                  <div class="field"><p>Task definition Error</p></div>
+                  <div class="field">
+                  <%= ! task.host_id ? 'The Task needs a Host to run.':'' %>
+                  <%= ! task.script_id ? 'The Task needs a Script to execute.':'' %>
+                  </div>
+                  <div style="clear:both"></div>
+                </div>
+                <% } %>
+                <div class="fields">
+                  <div class="field"><p>Name</p></div>
+                  <div class="field"><%=task.name%></div>
+                </div>
+                <div class="fields">
+                  <div class="field"><p>Description</p></div>
+                  <div class="field"><%=task.description%></div>
+                </div>
+                <div class="fields">
+                  <div class="field"><p>Hostname</p></div>
+                  <div class="field"><%=task.hostname%></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+        <div class="load"><i class="glyphicon glyphicon-chevron-down"></i></div>
+      </div>
+    </div>
+    <% } else { %>
+      <div>
+        Seems like you don't have any tasks yet, lets do a hello world task and run it remotely, please follow this steps:
+  <a href="https://theeye.io/admin/task/" target="_blank" class="list-group-item">1.: click for go to tasks Tasks Administration </a>
+  <a href="#" class="list-group-item">2.: Create a new task, give it a name, create a new script.</a>
+  <a href="https://gist.github.com/jailbirt/12343dc435f0cc686ac4" target="_blank" class="list-group-item">3.: select bash as interpreter, then copy and Paste this gist for a hello world with arguments script and later submit it. </a>
+  <a href="#" target="_blank" class="list-group-item">4.: Optional add some params Add an argument at 'Script Arguments' and later select the host/s where that task would run <br>
+  need more Help, please watch the following video:  <br>
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/cRlteE5bSAM" frameborder="0" allowfullscreen></iframe>
+</a>
+      </div>
+    <% } %>
+    <!-- Results Div -->
+    <div id="result_container" class="col-md-12"> </div>
+    <div class="resultTemplate" style="display:none;">
+      <div>
+        <div id="output-block">
+          <button type="button" class="close" style="opacity:1;" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+          <p>Task Completed</p>
+          <p>stdout</p>
+          <div> <pre class="scriptStdout"></pre> </div>
+          <p>stderr</p>
+          <div> <pre class="scriptStderr"></pre> </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div> <!-- main -->
+<script>
+$(document).ready(function(){ });
+</script>

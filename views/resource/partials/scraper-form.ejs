@@ -1,0 +1,79 @@
+<form id="scraperResourceForm" action="/resource" class="form-horizontal">
+  <input data-hook="monitor_type" type="hidden" name="monitor_type" value="scraper" />
+  <input data-hook="resource_id" type="hidden" name="resource_id" value="" />
+  <div class="form-group"> <div class="col-sm-9"><h4>Monitor</h4></div> </div>
+  <div class="form-group">
+    <label for="description" class="col-sm-3 control-label">Give me a name</label>
+    <div class="col-sm-9">
+      <input data-hook="description" type="text" name="description" class="form-control" placeholder="eg: http://theeye.io public website">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="hosts_id" class="col-sm-3 control-label">Where is the service hosted?</label>
+    <div class="col-sm-9 resource-host">
+      <select multiple data-hook="hosts_id" name="hosts_id" class="form-control">
+        <% hosts.forEach(function(h) { %>
+        <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
+        <% }); %>
+      </select>                
+      <input name="host_id" data-hook="host_id" class="hiddenHostInput">
+    </div>
+  </div>
+  <div class="form-group"> <div class="col-sm-9"> <h4>Options</h4> </div> </div>
+  <div class="form-group">
+    <label for="looptime" class="col-sm-3 control-label">Check Interval (mins)</label>
+    <div class="col-sm-9">
+      <select data-hook="looptime" name="looptime" class="form-control">
+        <option value="0" disabled selected><strong>select check interval</strong></option>
+        <% looptimes.forEach(function(t) { %>
+        <option value="<%= t.id %>"><strong><%= t.value %></strong></option>
+        <% }); %>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="url" class="col-sm-3 control-label">URL</label>
+    <div class="col-sm-9">
+      <input data-hook="url" type="text" name="url" class="form-control" placeholder="eg: http://siteurl.com.ar">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="pattern" class="col-sm-3 control-label">Pattern</label>
+    <div class="col-sm-9">
+      <input data-hook="pattern" type="text" name="pattern" class="form-control" placeholder="eg: <h4>match this title</h4>">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="timeout" class="col-sm-3 control-label">Req. Timeout (secs)</label>
+    <div class="col-sm-9">
+      <select data-hook="timeout" name="timeout" class="form-control">
+        <option value="0" disabled selected><strong>select request timeout</strong></option>
+        <% timeouts.forEach(function(t) { %>
+        <option value="<%=t.id%>"><strong><%=t.value%></strong></option>
+        <% }); %>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="external" class="col-sm-3 control-label">Run from external source?<br/>
+      <small>This test needs to be performed from another host/agent <span style="cursor:help" class="glyphicon glyphicon-question-sign"></span></small>
+    </label>
+    <div class="col-sm-9">
+      <input data-hook="external" type="checkbox" name="external" class="form-control" style="width:16px;">
+    </div>
+  </div>
+  <div id="externalScraperHost" class="form-group" style="display:none">
+    <label for="url" class="col-sm-3 control-label">Run check from</label>
+    <div class="col-sm-9">
+      <select data-hook="external_host_id" name="external_host_id" class="form-control">
+        <option value="" selected><strong>select a host</strong></option>
+        <% hosts.forEach(function(h) { %>
+        <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
+        <% }); %>
+        <% scraperHosts.forEach(function(h) { %>
+        <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
+        <% }); %>
+      </select>
+    </div>
+  </div>
+</form>

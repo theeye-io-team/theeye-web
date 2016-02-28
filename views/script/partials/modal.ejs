@@ -1,0 +1,78 @@
+<div class="modal fade" id="script-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+  <div class="modal-dialog modal-lg">
+    
+    <div class="modal-content">
+      
+      <!--.modal-header-->     
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Script</h4>
+      </div>
+      <!--.modal-header-->     
+
+      <!--.modal-body-->     
+      <div class="modal-body">
+        <form data-hook="script-form" class="form-horizontal">
+
+          <div class="form-group">
+            <label for="filename" class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-10">
+              <input name="filename" class="form-control" id="filename" placeholder="auto"></textarea>
+            </div>
+          </div>        
+
+          <div class="form-group">
+            <label for="description" class="col-sm-2 control-label">Description</label>
+            <div class="col-sm-10">
+              <textarea data-hook="description" name="description" class="form-control" id="description" placeholder="description"></textarea>
+            </div>
+          </div>        
+
+          <div class="form-group">
+           <label for="description" class="col-sm-2 control-label">Editor/Upload</label>
+            <div class="col-sm-10">
+              <input data-hook="live-edit" type="radio" name="live-edit" id="live-edit" value="editor" CHECKED/>Live editor
+              <input data-hook="live-edit" type="radio" name="live-edit" id="live-edit" value="fileupload" />File upload
+            </div>
+          </div>
+          
+          <div class="form-group hidden-container" data-hook="dropzone-container">
+            <div class="col-sm-12">
+              <div class="dropzone"></div>
+            </div>
+          </div>
+          
+          <div class="form-group" data-hook="editor-container">
+           <label for="editor-mode" class="col-sm-2 control-label">Interpreter <a href="#" class="example-code">(example)</a></label>
+            <div class="col-sm-10">
+              <select data-hook="editor-mode" id="editor-mode">
+                <option value="javascript">Node</option>
+                <option value="sh">Bash</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group" data-hook="editor-container">
+            <div class="col-sm-12">        
+              <div class="editor" id="ace-editor"></div>
+            </div>
+          </div>
+
+          <input type="hidden" value="" data-hook="script-id"/>
+        </form>
+      </div>      
+      <!--.modal-body-->     
+
+      <!--.modal-foooter-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-hook="submit-form">Save</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+      <!--.modal-foooter-->
+
+    </div><!--.modal-content-->
+
+  </div><!--.modal-dialog-->
+
+</div><!--.modal-->  

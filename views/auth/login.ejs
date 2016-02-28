@@ -1,0 +1,49 @@
+<%- include ../partials/header.ejs %>
+
+  <!-- menu -->
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#"><img src="images/logo-hor.png" alt="The eye"></a>
+
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="navbar-right">
+        <!--
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">Github</a></li>
+        -->
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main  -->
+  <div class="mainContainer">
+    <div class="loginBox">
+      <h1>Sign In to theeye.com</h1>
+      <!--  no por ahora. <a href="#" class="sign facebook"><i class="fa fa-facebook"></i>Facebook</a>
+      <a href="#" class="sign twitter"><i class="fa fa-twitter"></i>Twitter</a> -->
+      <a href="/auth/google"  class="sign google"><i class="fa fa-google-plus"></i>Google+</a>
+      <div class="or"><span>or</span></div>
+
+      <form class="signIn" role="form" action="/auth/local" method="post">
+        <input type="text" name="identifier" placeholder="User or email">
+        <input type="password" name="password" placeholder="Password">
+        <button type="submit">Sign in</button>
+        <!-- <span class="forgotLink">Forgot Password?</span> -->
+      </form>
+
+      <form class="forgotForm" method="post">
+        <input name="email" type="text" placeholder="User email">
+        <button class="retrivePassword">Send password</button>
+        <span class="cancelLink">Cancel</span>
+      </form>
+    </div>
+  </div>
+
+<% block('scripts', '<script src="/js/application/login.js"></script>') %>

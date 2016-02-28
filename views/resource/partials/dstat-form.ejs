@@ -1,0 +1,35 @@
+<!-- modal body -->
+<form id="dstatResourceForm" action="/resource" class="form-horizontal">
+  <input data-hook="resource_id" type="hidden" name="resource_id"/>
+  <input data-hook="hosts_id" type="hidden" name="hosts_id"/>
+  <div class="form-group">
+    <div class="col-sm-12">
+      <h4>Thresholds Check Limits</h4>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="cpu" class="col-sm-2 control-label">CPU %</label>
+    <div class="col-sm-2">
+      <input data-hook="cpu" type="text" name="cpu" class="form-control">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="mem" class="col-sm-2 control-label">Memory %</label>
+    <div class="col-sm-2">
+      <input data-hook="mem" type="text" name="mem" class="form-control">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="cache" class="col-sm-2 control-label">Swap %</label>
+    <div class="col-sm-2">
+      <input data-hook="cache" type="text" name="cache" class="form-control">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="disk" class="col-sm-2 control-label">Disk %</label>
+    <div class="col-sm-2">
+      <input data-hook="disk" type="text" name="disk" class="form-control">
+    </div>
+  </div>
+</form>
+<!-- end modal body -->
