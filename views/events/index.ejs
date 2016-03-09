@@ -45,7 +45,7 @@
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= resource.id %>" aria-expanded="false" aria-controls="collapse<%= resource.id %>">
                   <div class="panel-title-content">
-                    <span class="panel-item name" id="<%= resource.id %>"><%= resource.description %><small> > <%= resource.type %></small></span>
+                    <span class="panel-item name" id="<%= resource.id %>"><%= resource.description %><small> > <%= resource.type %> <% if(resource.type != 'host'){ %>(<%=resource.hostname%>)<% } %></small></span>
                     <span class="panel-item icons">
                       <button href="#search<%= resource.id %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
                         <div class="search-icon-container">
@@ -125,7 +125,7 @@
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse<%=task.id%>" aria-expanded="false" aria-controls="collapse<%=task.id%>">
                   <div class="panel-title-content">
-                    <span class="panel-item name"><%=task.name%><small> > <%=task.hostname%> task</small></span>
+                    <span class="panel-item name"><%=task.name%><small> > task (<%=task.hostname%>)</small></span>
                     <div class="panel-item icons">
                       <% if( !task.host_id || !task.script_id ) { %>
                         <button class="btn btn-primary btn-sm ladda-button">
@@ -175,13 +175,13 @@
     <% } else { %>
       <div>
         Seems like you don't have any tasks yet, lets do a hello world task and run it remotely, please follow this steps:
-  <a href="https://theeye.io/admin/task/" target="_blank" class="list-group-item">1.: click for go to tasks Tasks Administration </a>
-  <a href="#" class="list-group-item">2.: Create a new task, give it a name, create a new script.</a>
-  <a href="https://gist.github.com/jailbirt/12343dc435f0cc686ac4" target="_blank" class="list-group-item">3.: select bash as interpreter, then copy and Paste this gist for a hello world with arguments script and later submit it. </a>
-  <a href="#" target="_blank" class="list-group-item">4.: Optional add some params Add an argument at 'Script Arguments' and later select the host/s where that task would run <br>
-  need more Help, please watch the following video:  <br>
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/cRlteE5bSAM" frameborder="0" allowfullscreen></iframe>
-</a>
+        <a href="https://theeye.io/admin/task/" target="_blank" class="list-group-item">1.: click for go to tasks Tasks Administration </a>
+        <a href="#" class="list-group-item">2.: Create a new task, give it a name, create a new script.</a>
+        <a href="https://gist.github.com/jailbirt/12343dc435f0cc686ac4" target="_blank" class="list-group-item">3.: select bash as interpreter, then copy and Paste this gist for a hello world with arguments script and later submit it. </a>
+        <a href="#" target="_blank" class="list-group-item">4.: Optional add some params Add an argument at 'Script Arguments' and later select the host/s where that task would run <br>
+        need more Help, please watch the following video:  <br>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/cRlteE5bSAM" frameborder="0" allowfullscreen></iframe>
+        </a>
       </div>
     <% } %>
     <!-- Results Div -->
