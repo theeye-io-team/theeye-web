@@ -80,21 +80,21 @@
       </div> <!-- end panel -->
     </div> <!-- /resources-panel-list -->
     <% } else { %><!-- no resources -->
-      <div>
-     <b>
-             Seems like you don't have any resources yet, lets install your first agent, steps are pretty easy:
-     </b>
-      </div>
-           
-     <div class="list-group">
-       <a class="list-group-item">1.: copy the following curl on a linux terminal. Right now only ubuntu:12.04/14.04/15.04/15.10 Centos/Redhat: 7 are supported <pre> <%= agentCurl %> </pre></a>
-       <a href="#" class="list-group-item">2.: Wait until spock apears at your terminal claiming you did it. Press f5 here, now your server should be listed.</a>
-       <a href="#" class="list-group-item">Please If something goes wrong, send us an email to support@theeye.io indicating:
-                  Operative System / Version and attaching your /tmp/*.theEyeInstallation.log.gz <br>
-         <iframe width="560" height="315" src="https://www.youtube.com/embed/L0sOPrG-Dog" frameborder="0" allowfullscreen></iframe>
-     </a>
-     </div>
-      
+    <div>
+      <b>
+        Seems like you don't have any resources yet, lets install your first agent, steps are pretty easy:
+      </b>
+    </div>
+
+    <div class="list-group">
+      <a class="list-group-item">1.: copy the following curl on a linux terminal. Right now only ubuntu:12.04/14.04/15.04/15.10 Centos/Redhat: 7 are supported <pre>sudo <%= agentCurl %> </pre></a>
+      <a href="#" class="list-group-item">2.: Wait until Spock appears at your terminal claiming you did it. Press f5 here, now your server should be listed.</a>
+      <a href="#" class="list-group-item">Please, if something goes wrong, send us an email to support@theeye.io indicating:
+        Operative System / Version and attaching your /tmp/*.theEyeInstallation.log.gz <br>
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/L0sOPrG-Dog" frameborder="0" allowfullscreen></iframe>
+      </a>
+    </div>
+
     <% } %>
   </div>
 
@@ -125,7 +125,7 @@
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse<%=task.id%>" aria-expanded="false" aria-controls="collapse<%=task.id%>">
                   <div class="panel-title-content">
-                    <span class="panel-item name"><%=task.name%><small> > task</small></span>
+                    <span class="panel-item name"><%=task.name%><small> > <%=task.hostname%> task</small></span>
                     <div class="panel-item icons">
                       <% if( !task.host_id || !task.script_id ) { %>
                         <button class="btn btn-primary btn-sm ladda-button">
