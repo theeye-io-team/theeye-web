@@ -14,6 +14,10 @@ function log() {
       log('resource event update received');
       log(resource);
 
+      if( resource.event == "host_registered" ){
+        return document.location.reload();
+      }
+
       if( !resource.type || resource.type!='agent' ) {
         var $resource = $('div.resource-container#resource-' + resource.id);
         if( typeof $resource[0] != 'undefined' ) {
