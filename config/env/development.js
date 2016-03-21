@@ -4,7 +4,9 @@ module.exports = {
     baseUrl : "http://0.0.0.0:6080",
     port : 6080,
     environment : 'development',
-    secret : '692fc164a0c06a9fd02575cf17688c9e'
+    secret : '692fc164a0c06a9fd02575cf17688c9e',
+    client_id: 'theeye.io',
+    client_secret: 'celintocateyente'
   },
   connections: {
     mongo: {

@@ -12,29 +12,36 @@ function Mailer(tr) {
 Mailer.prototype = {
   sendActivationMail: function(email, input, next)
   {
+    if(!email || !input) {
+      return next(new Error('Missing parameters on sendActivationMail'));
+    }
     var self = this;
     var data = {
       'username' : input.username,
-      'activationLink' : input.activationLink
+      'activationLink' : input.activationLink,
+      'inviter': input.inviter,
+      'inviter_email': input.inviter_email
     };
 
-    ejs.renderFile(
-      "views/email/activation.ejs",
-      { locals: data },
-      function(error, str) {
-        var options = {
-          to : email,
-          subject :'The Eye Invitation',
-          html : str
-        };
+    ejs.renderFile("views/email/activation.ejs", { locals: data }, function(error, str) {
+      if(error) {
+        debug('Error parsing "views/email/activation.ejs"');
+        debug(error);
+        return next(error);
+      }
+      var options = {
+        to : email,
+        subject :'The Eye Invitation',
+        html : str
+      };
 
-        self.sendMail(options, function(error, info) {
-          if(error) debug("Error sending email to " + email);
-          else debug('Message sent');
+      self.sendMail(options, function(error, info) {
+        if(error) debug("Error sending email to " + email);
+        else debug('Message sent');
 
-          return next(error);
-        });
+        return next(error);
       });
+    });
   },
   sendRetrivePasswordMail: function(email, data, next)
   {

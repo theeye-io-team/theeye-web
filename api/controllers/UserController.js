@@ -62,6 +62,12 @@ var UserController = module.exports = {
             req.session.customer,
             supervisor,
             function(err, userAgent) {
+              if(err) {
+                // how to set the error on req.flash?
+                sails.log.error('Error getting customerAgentCredentials', err);
+              }
+              //this here so, err or not, userAgent or not, view doesn't fail
+              userAgent = userAgent || {};
               res.view({
                 agentCurl : userAgent.curl,
                 user : user,
@@ -240,8 +246,8 @@ var UserController = module.exports = {
 
       var theeye = passport.protocols.theeye;
       theeye.updateUser(
-        userId, 
-        toUpdate, 
+        userId,
+        toUpdate,
         supervisor,
         function(error, profile){
           if(error) return res.send(500, 'update error');
@@ -281,9 +287,9 @@ var UserController = module.exports = {
               passport.profile.id,
               function(error){
                 sails.log.error(
-                  'error removing supervisor user %s error %s', 
-                  passport.profile.id, 
-                  error 
+                  'error removing supervisor user %s error %s',
+                  passport.profile.id,
+                  error
                 )
               });
           }
@@ -291,8 +297,8 @@ var UserController = module.exports = {
           sails.log.debug('destroying passport %s', passport.protocol);
           passport.destroy(function(err){
             if(err) sails.log.error(
-              'error removing user %s passport %s', 
-              user.id, 
+              'error removing user %s passport %s',
+              user.id,
               passport.protocol
             );
           });

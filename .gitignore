@@ -15,6 +15,7 @@ npm-debug.log
 nbproject
 .idea
 .node_history
+libs
 *.swp
 newrelic*.log
 config/env/production.js

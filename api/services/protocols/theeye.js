@@ -4,6 +4,7 @@
  *
  */
 var format = require('util').format;
+var debug = require('debug')('eye:web:service:protocol:theeye');
 
 
 /**
@@ -15,18 +16,17 @@ var format = require('util').format;
 exports.createUser = function(localUser, params, supervisor, next)
 {
   params.enabled = true;
-
   supervisor.userCreate(params, function (err, profile) {
     if (err || !profile ) return next(err, profile);
 
     var customers = profile
-      .customers
-      .map(function(customer){
-        return {
-          _id: customer.id, 
-          name: customer.name 
-        };
-      });
+    .customers
+    .map(function(customer){
+      return {
+        _id: customer.id,
+        name: customer.name
+      };
+    });
 
     Passport.create({
       'protocol' : 'theeye',
@@ -72,7 +72,7 @@ exports.updateUser = function(localUser, updates, supervisor, doneFn)
 
     supervisor.userUpdate(
       passport.profile.id,
-      updates, 
+      updates,
       function(error, profile){
         if(error) return doneFn(error);
 
@@ -90,8 +90,8 @@ exports.updateUser = function(localUser, updates, supervisor, doneFn)
 var AGENT_INSTALLER_URL = 'http://interactar.com/public/install/041fc48819b171530c47c0d598bf75ad08188836/setup_generic.sh' ;
 
 exports.getCustomerAgentCredentials = function(
-  customer, 
-  supervisor, 
+  customer,
+  supervisor,
   nextFn
 ){
   supervisor.userFetch({

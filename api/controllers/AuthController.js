@@ -1,3 +1,4 @@
+var debug = require('debug')('eye:web:controller:auth');
 var AuthController = {
   /**
    * Render the login page
@@ -213,14 +214,13 @@ var AuthController = {
       }
     }
 
-    passport.callback(req, res, function (err, user)
-    {
+    passport.callback(req, res, function (err, user){
       if(err){
         sails.log.error('fatal error');
         sails.log.error(err);
         return tryAgain();
       }
-      
+
       if(!user){
         sails.log.debug('authentication error %s user %s', err, user);
         return tryAgain();
@@ -234,10 +234,13 @@ var AuthController = {
       {
         req.login(user, function (err)
         {
-          if (err) return tryAgain();
-          else {
+          if (err) {
+            debug('LOGIN ERROR:');
+            debug(err);
+            return tryAgain();
+          } else {
             sails.log.debug('user ready!');
-            res.redirect('/events');      
+            res.redirect('/events');
           }
         });
       }
@@ -259,7 +262,7 @@ var AuthController = {
       if(err)
         res.view({ errors: req.flash('error') });
       else
-        res.redirect ("/profile");      
+        res.redirect ("/profile");
     });
   },
   //Link Between Accounts.

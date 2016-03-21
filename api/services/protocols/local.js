@@ -3,7 +3,7 @@ var crypto 	  	= require("crypto");
 var mailer 	  	= require("../mailer.js");
 var querystring = require("querystring");
 var _           = require("underscore");
-var debug       = require('debug')('eye:web:user:local');
+var debug       = require('debug')('eye:web:service:protocol:local');
 /**
  * Local Authentication Protocol
  *
@@ -93,8 +93,8 @@ exports.createUser = function(req, res, next)
     if (err) return next(err);
 
     Passport.create({
-      protocol : 'local', 
-      password : params.password, 
+      protocol : 'local',
+      password : params.password,
       user : user.id
     }, function (err, passport) {
       if (err) return next(err);
@@ -158,6 +158,8 @@ exports.invite = function (req, res, next)
   var customers = req.param('customer') ? [req.param('customer')] : req.param('customers');
   var credential = req.param('credential');
 
+  //aca podriamos checkar por el logged user credential para evitar que cualuiera
+  //cree usuarios. Eso o activamos acl
   if(!email) {
     req.flash('error', 'Error.Passport.Email.Missing');
     return next(new Error('No email was entered.'));
@@ -169,7 +171,6 @@ exports.invite = function (req, res, next)
     req.flash('error', 'Error.Passport.Customers.Missing');
     return next(new Error('No customers was entered.'));
   }
-
   User.findOne({email: email}, function (err, user)
   {
     if (err)
@@ -206,12 +207,17 @@ exports.invite = function (req, res, next)
           var queryToken = querystring.stringify({token: token});
           debug('Invitation link: ' + sails.config.passport.local.activateUrl + queryToken );
 
-          var data = {
+          var emailData = {
+            email         : email,
             activationLink: sails.config.passport.local.activateUrl + queryToken,
-            username      : email
+            username      : email, // esto no es username, es el invitee's email
+            //TODO esto deberia reemplazarse por nombre y apellido desde el profile
+            //del connected user, para que quede mas serio
+            inviter       : req.user.username,
+            inviter_email : req.user.email
           };
 
-          return next(null, email, data);
+          return next(null, email, emailData);
     		}
   	  });
 	}
@@ -221,16 +227,18 @@ exports.invite = function (req, res, next)
     customers = _.union(user.customers, customers);
 
     //If the user exists and have perms for the selected customers dont send the activation email
-    if(user.customers.length == customers.length)
-    {
-      req.flash('error', 'Error.Passport.User.Exists.Cutomer');
+    if(user.customers.length == customers.length) {
+      req.flash('error', 'Error.Passport.User.Exists.Customer');
       return next(new Error("The user allready exists and have permissions for this customer"));
     }
 
-    User.update({email: email},{customers: customers },function (err, user)
-    {
-        var data = { username: req.user.username };
-        return next(err, email, data);
+    User.update({email: email},{customers: customers },function (err, user) {
+      if(err) {
+        debug('Error updating user');
+        return next(err);
+      }
+      var data = { username: req.user.username };
+      return next(err, email, data);
     });
   }
  });
@@ -240,7 +248,7 @@ exports.getactivationlink = function(input) {
   var token = crypto
     .createHmac('sha1', input.email)
     .digest(encoding='base64');
-    
+
   var queryToken = querystring.stringify({ token: token });
   var url = sails.config.passport.local.activateUrl;
 
@@ -262,8 +270,7 @@ exports.activate = function (req, res, next) {
     , password = req.param('password')
     , invitation_token = req.param('invitation_token')
 
-  if (!username)
-  {
+  if (!username) {
     debug('No username was entered');
     req.flash('error', 'Error.Passport.Username.Missing');
     return next(new Error('No username was entered.'));
@@ -281,10 +288,13 @@ exports.activate = function (req, res, next) {
     return next(new Error('No password was entered.'));
   }
 
-  User.findOne({invitation_token : invitation_token}, function(err, user)
-  {
-    if(!user || err)
-    {
+  User.findOne({invitation_token : invitation_token}, function(err, user) {
+    if(err) {
+      debug('Error getting invitee');
+      debug(err);
+      return next(err);
+    }
+    if(!user) {
       debug('No user found');
       return next(new Error("No user found"));
     }
@@ -314,21 +324,23 @@ exports.activate = function (req, res, next) {
 
           debug("Enabling user %s", user.id);
 
-          User.update({invitation_token : invitation_token},
-          {
+          User.update({invitation_token : invitation_token}, {
             username : username,
             password : password,
             enabled  : true,
             invitation_token : ''
-          }, function (err, user)
-          {
-            if (err)
+          }, function (err, updatedUsers) {
+            if (err || !user || !updatedUsers.length)
             {
+              debug('Error updating user after invite process');
+              debug(err);
               req.flash('error', '"Unexpected Error"');
-              return next(new Error("No user found"));
+              return next(err);
+            } else {
+              //return only the user, not array!
+              return next(null, updatedUsers[0]);
             }
-            else
-              return next(null, user);
+
           });
         });
       });

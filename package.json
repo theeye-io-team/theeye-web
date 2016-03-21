@@ -5,10 +5,10 @@
   "description": "TheEye Web Interface",
   "keywords": [],
   "dependencies": {
-    "theeye-client": "interactar/theeye-client#v0.7.0",
+    "theeye-client": "interactar/theeye-client#v0.7.1",
     "async": "^0.9.2",
     "kerberos": "^0.0.7",
-    "grunt-cli": "^0.1.13",
+    "grunt-cli": "^0.1.13", 
     "bcryptjs": "^2.0.2",
     "bower": "^1.6.5",
     "connect-mongo": "^0.7.0",

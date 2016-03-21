@@ -2,7 +2,8 @@ var path     = require('path')
   , url      = require('url')
   , passport = require('passport')
   , mailer 	 = require("./mailer.js")
-  , debug    = require('debug')('eye:web:user:passport');
+  , debug    = require('debug')('eye:web:user:passport')
+  , TheEyeClient = require('theeye-client')
   ;
 
 /**
@@ -210,8 +211,8 @@ passport.endpoint = function (req, res) {
 
 passport.resendInvitationUser = function(user, next){
   var local = this.protocols.local;
-  var link = local.getactivationlink({ 
-    'email' : user.email 
+  var link = local.getactivationlink({
+    'email' : user.email
   });
 
   var data = {
@@ -231,49 +232,84 @@ passport.resendInvitationUser = function(user, next){
   });
 }
 
-passport.inviteUser = function(req, res, next)
-{
+passport.inviteUser = function(req, res, next) {
   var local = this.protocols.local;
-  return local.invite(req, res, function(err, email, data) {
+  return local.invite(req, res, function(err, email, emailData) {
     if(err) return next(err);
 
-    if(data.activationLink)
-    {
+    if(emailData.activationLink){
       //send activation email
-      mailer.sendActivationMail(email, data, function(error)
-      {
+      mailer.sendActivationMail(emailData.email, emailData, function(err) {
         if(err) {
           req.flash('error', 'Error.Passport.User.Invite');
-          debug('error sending invitation email to "%s"',email);
+          debug('error sending invitation email to "%s"', emailData.email);
           return next(err);
         }
 
         debug('email invitation sent');
-        return next(null, {email : email});
+        return next(null, {email : emailData.email});
       });
-    }
-    else
-    {
+    } else {
       //send new customer notification email
-      mailer.sendNewCustomerMail(email, data, function(error)
-      {
-        if(err)
-        {
+      mailer.sendNewCustomerMail(emailData.email, emailData, function(err) {
+        if(err) {
           req.flash('error', 'Error.Passport.User.Invite');
-          debug("Error sending email to " + email);
+          debug("Error sending email to " + emailData.email);
           return next(err);
         }
 
         debug('Message sent');
-        return next(null, {email : email});
+        return next(null, {email : emailData.email});
       });
     }
   });
 };
+passport.activateUser = function(req, res, next){
+  var self = this;
+  this.protocols.local.activate(req, res, function(err, localUser){
+    if(err) {
+      debug('Error activating user on local protocol');
+      debug(err);
+      return next(err);
+    }
+    if(!localUser) {
+      debug('Error: Activating unexistant user');
+      return next(new Error('Activating unexistant user'));
+    }
+    debug('Activated user: local:');
+    debug(localUser);
 
+    var apiUserData = {
+      'email':localUser.email,
+      'customers':localUser.customers,
+      'credential':localUser.credential,
+      'client_id': localUser.username,
+      'client_secret': localUser.username
+    };
+    var mySupervisor = new TheEyeClient({
+      client_id: sails.config.application.client_id,
+      client_secret: sails.config.application.client_secret,
+      access_token: sails.config.application.token || null,
+      api_url: sails.config.supervisor.url
+    });
+    if(!mySupervisor.access_token) {
+      mySupervisor.refreshToken(function(err,token){
+        if(err) return next(err);
+
+        createTheeyeUser(localUser, apiUserData , mySupervisor, function(err, userSet){
+          if(err) {
+            return next(err);
+          }
+          return next(null, userSet.local);
+        });
+      });
+    }
+
+  });
+}
 passport.retrievePassword = function(req, res, next)
 {
-  return this.protocols.local.retrievePassword(req, res, function(err, email, data)
+  return this.protocols.local.retrievePassword(req, res, function(err, email, userData)
   {
     if(err)
       return next(err);
@@ -299,7 +335,7 @@ function createTheeyeUser (user, input, supervisor, next) {
     'client_id' : input.client_id || null, // supervisor set a random one
     'client_secret' : input.client_secret || null, // supervisor set a random one
     'email' : input.email,
-    'customers' : input.customers,
+    'customers': input.customers
     'credential' : input.credential,
     'enabled' : 'true',
   };
@@ -308,8 +344,8 @@ function createTheeyeUser (user, input, supervisor, next) {
     .protocols
     .theeye
     .createUser(user, client, supervisor, function(error, profile){
-      if(error) next(error);
-      next(null, { local:user, theeye:profile });
+      if(error) return next(error);
+      return next(null, { local:user, theeye:profile });
     });
 }
 
@@ -388,7 +424,7 @@ passport.callback = function (req, res, next) {
       return this.inviteUser(req, res, next);
     }
     if (action === 'activate' && !req.user) {
-      return this.protocols.local.activate(req, res, next);
+      return this.activateUser(req, res, next);
     }
     else if (action === 'connect' && req.user) {
       return this.protocols.local.connect(req, res, next);

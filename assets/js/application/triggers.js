@@ -124,7 +124,7 @@ function log() {
     var elem = this;
     var taskName = $(elem).closest('.panel-title-content').first().find('span.panel-item.name');
     var taskDiv = $(elem).closest('.tasks-panel .js-searchable-item').first();
-    console.log(taskName);
+
     bootbox.confirm('Trigger task?',function(confirmed){
       if( !confirmed ) return;
 
