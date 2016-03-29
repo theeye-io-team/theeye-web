@@ -337,7 +337,7 @@ function createTheeyeUser (user, input, supervisor, next) {
     'email' : input.email,
     'customers': input.customers,
     'credential' : input.credential,
-    'enabled' : 'true',
+    'enabled' : 'true'
   };
 
   passport
