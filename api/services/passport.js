@@ -335,9 +335,9 @@ function createTheeyeUser (user, input, supervisor, next) {
     'client_id' : input.client_id || null, // supervisor set a random one
     'client_secret' : input.client_secret || null, // supervisor set a random one
     'email' : input.email,
-    'customers': input.customers
+    'customers': input.customers,
     'credential' : input.credential,
-    'enabled' : 'true',
+    'enabled' : 'true'
   };
 
   passport

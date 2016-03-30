@@ -19,3 +19,4 @@ libs
 *.swp
 newrelic*.log
 config/env/production.js
+.sailsrc
