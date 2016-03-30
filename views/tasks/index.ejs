@@ -27,11 +27,11 @@
     <div>
       <div class="table-header admin">
         <span class="title">Tasks &nbsp; &nbsp; |</span>
-        <button class="createTask btn btn-default simple-btn new-btn tooltiped" 
-          data-placement="right" 
-          title="Create new task" 
-          aria-label="Left Align" 
-          data-toggle="modal" 
+        <button class="createTask btn btn-default simple-btn new-btn tooltiped"
+          data-placement="right"
+          title="Create new task"
+          aria-label="Left Align"
+          data-toggle="modal"
           data-target="#create-task">
           <span class="glyphicon glyphicon-plus"></span>
           New Task
@@ -62,17 +62,17 @@
                         <span class="panel-item name" id="<%= task.id %>"><%= task.name %></span>
                     <% } %>
                     <div class="panel-item icons">
-                      <button class="editTask btn btn-default simple-btn tooltiped" 
-                        title="Edit task" 
-                        aria-label="Center Align" 
-                        data-task-id="<%= task.id %>" 
-                        data-toggle="modal" 
+                      <button class="editTask btn btn-default simple-btn tooltiped"
+                        title="Edit task"
+                        aria-label="Center Align"
+                        data-task-id="<%= task.id %>"
+                        data-toggle="modal"
                         data-target="#edit-task">
                         <span class="glyphicon glyphicon-edit"></span>
                       </button>
-                      <button class="deleteTask btn btn-default simple-btn tooltiped" 
-                        title="Delete task" 
-                        aria-label="Center Align" 
+                      <button class="deleteTask btn btn-default simple-btn tooltiped"
+                        title="Delete task"
+                        aria-label="Center Align"
                         data-task-id="<%= task.id %>">
                         <span class="glyphicon glyphicon-trash"></span>
                       </button>
