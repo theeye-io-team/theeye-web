@@ -14,7 +14,7 @@ fi
 
 echo -e "\e[92m"
 
-echo "using NODE_ENV=development"
+echo "using NODE_ENV=$NODE_ENV"
 echo -e "\e[39m"
 
 if [ -z $NODE_ENV ];then
