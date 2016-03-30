@@ -22,6 +22,6 @@ if [ -z ${DEBUG+x} ]; then
 fi
 export DEBUG
 
-PORT=1337 NODE_ENV=production $require -i . $path/app.js
+PORT=6080 NODE_ENV=production $require -i . $path/app.js
 
 exit 0;
