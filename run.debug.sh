@@ -18,6 +18,7 @@ echo "using NODE_ENV=$NODE_ENV"
 echo -e "\e[39m"
 
 if [ -z $NODE_ENV ];then
+   echo "!!NODE ENV NOT CONFIGURED, DEFAULT NODE_ENV=$NODE_ENV"
    NODE_ENV=development
 fi
 
