@@ -14,11 +14,15 @@ fi
 
 echo -e "\e[92m"
 
-echo "using NODE_ENV=development"
+echo "using NODE_ENV=$NODE_ENV"
 echo -e "\e[39m"
+
+if [ -z $NODE_ENV ];then
+   NODE_ENV=development
+fi
 
 cd $path;
 
-PORT=6080 DEBUG=eye:$debug NODE_ENV=development $nodemon $path/app.js
+PORT=6080 DEBUG=eye:$debug  $nodemon $path/app.js
 
 exit 0;
