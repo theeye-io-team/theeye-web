@@ -3,7 +3,7 @@
 Modal for creating a task
 
 -->
-<div class="modal fade" id="create-task" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="create-task" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -61,8 +61,8 @@ Modal for creating a task
             <div class="form-group">
               <label for="hostname" class="col-sm-2 control-label">Host</label>
               <div class="col-sm-10">
-                <select data-hook="hosts_id" id="hosts_id" name="hosts_id" class="form-control">
-                  <option value="0" disabled selected><strong></strong></option>
+                <select data-hook="hosts_id" ids="hosts_id" name="hosts_id" class="form-control hosts_id">
+                  <!-- <option value="0" disabled selected><strong></strong></option> -->
                   <% hosts.forEach(function(h) { %>
                   <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
                   <% }); %>
@@ -85,7 +85,7 @@ Modal for creating a task
             <div class="form-group">
               <label for="hostname" class="col-sm-2 control-label">Hosts</label>
               <div class="col-sm-10">
-                <select multiple data-hook="hosts_id" id="hosts_id" name="hosts_id" class="form-control">
+                <select multiple data-hook="hosts_id" ids="hosts_id" name="hosts_id" class="form-control hosts_id">
                   <% hosts.forEach(function(h) { %>
                   <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
                   <% }); %>
