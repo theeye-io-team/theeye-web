@@ -45,7 +45,7 @@
   },
   "scripts": {
     "start": "/bin/bash ./run.sh",
-    "devel": "THEEYE_SUPERVISOR_API_URL='http://0.0.0.0:60080' /bin/bash ./run.debug.sh"
+    "devel": "/bin/bash ./run.debug.sh"
   },
   "main": "app.js",
   "author": "jailbirt, facugon",
