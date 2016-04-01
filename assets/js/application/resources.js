@@ -66,14 +66,18 @@ $(function(){
   function setCallback(type){
     return function(event){
       formSubmit(event,type);
-    }
+    };
   }
 
   $('.modal#processResourceModal button[type=submit]').on('click', setCallback('process'));
   $('.modal#scriptResourceModal button[type=submit]').on('click', setCallback('script'));
   $('.modal#scraperResourceModal button[type=submit]').on('click', setCallback('scraper'));
 
-  function fillForm($form, data) {
+  function fillForm(form, data) {
+    //original signature was $form,data but:
+    // $form was being redefined in the first lines
+    // orginal $form was never used.
+    // So I changed signature to form,data. --CG
     var resource = data.resource;
     var monitor = data.monitors[0];
     var type = monitor.type;
@@ -111,7 +115,7 @@ $(function(){
         $form.find('[data-hook=script_id]').val(monitor.config.script_id);
         $form.find('[data-hook=script_arguments]').val(monitor.config.script_arguments);
         break;
-    };
+    }
   }
 
   function setupEditResourceForm($form, options){
@@ -129,7 +133,21 @@ $(function(){
     })
     .done(function(data){
       fillForm($form, data);
-      $('#' + options.type + 'ResourceModal').modal('show');
+      $('#' + options.type + 'ResourceModal')
+        .one('shown.bs.modal', function(){
+          //one time AUTOCOMPLETE COMBOBOX setup
+
+          //remove select2 if present - no need
+          // $select.data('select2') && $select.select2('destroy');
+
+          $select.select2();
+          $form.find('select#script_id').select2();
+          var $firstInput = $(this).find('input[type!=hidden]').first().focus();
+          $(this).on('shown.bs.modal', function(){
+            $firstInput.focus();
+          });
+        })
+        .modal('show');
       $.unblockUI();
     })
     .fail(function(xhr, err, xhrStatus){
@@ -158,7 +176,22 @@ $(function(){
 
     $form[0].reset();
     $.unblockUI();
-    $('#' + options.type + 'ResourceModal').modal('show');
+    $('#' + options.type + 'ResourceModal')
+      .one('shown.bs.modal', function(){
+        //one time AUTOCOMPLETE COMBOBOX setup
+
+        //remove select2 if present
+        // $select.data('select2') && $select.select2('destroy');
+
+        $select.select2();
+        $form.find('select#script_id').select2();
+
+        var $firstInput = $(this).find('input[type!=hidden]').first().focus();
+        $(this).on('shown.bs.modal', function(){
+          $firstInput.focus();
+        });
+      })
+      .modal('show');
   }
 
   function setupResourceAction(options){
@@ -177,28 +210,23 @@ $(function(){
     event.stopPropagation();
     $.blockUI();
 
-    var id = event.currentTarget.getAttribute('data-resource_id');
-    var type = event.currentTarget.getAttribute('data-resource-type');
-    var host = event.currentTarget.getAttribute('data-host_id');
-    var action = event.currentTarget.getAttribute('data-action');
-    var hostname = event.currentTarget.getAttribute('data-hostname');
-    var enable = event.currentTarget.getAttribute('data-enable');
+    var data = $(this).data();
 
     window.resourceActionData = {
-      'type': type,
-      'action': action,
-      'host_id': host,
-      'resource_id': id,
-      'enable': enable,
-      'hostname': hostname,
+      'type': data.resourceType,
+      'action': data.action,
+      'host_id': data.host_id,
+      'resource_id': data.resource_id,
+      'enable': data.enable,
+      'hostname': data.hostname,
     };
 
     setupResourceAction({
-      host: host,
-      hostname: hostname,
-      action: action,
-      type: type,
-      id: id
+      host: data.host_id,
+      hostname: data.hostname,
+      action: data.action,
+      type: data.resourceType,
+      id: data.resource_id
     });
   }
 
@@ -257,7 +285,7 @@ $(function(){
 
     var $form = $('#dstatResourceModal form');
     var idResource = $form.find('[data-hook=resource_id]').val();
-    var values = $form.serializeArray()
+    var values = $form.serializeArray();
 
     values.push({
       'name':'monitor_type',
