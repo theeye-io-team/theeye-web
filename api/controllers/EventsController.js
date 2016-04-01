@@ -78,8 +78,7 @@ module.exports = {
         });
       } else {
         var message = snsreceiver.parseSNSMessage(body.Message);
-        if ( message == null )
-        {
+        if(!message) {
           return res.json({
             'status': 400,
             'error': {
@@ -87,11 +86,8 @@ module.exports = {
               'received' : body.Message
             }
           });
-        }
-        else
-        {
-          if (action == 'continue')
-          {
+        } else {
+          if(action == 'continue') {
             var room = message.customer_name + '_events';
             debug('sending information via socket to ' + room);
 

@@ -22,6 +22,11 @@ if [ -z ${DEBUG+x} ]; then
 fi
 export DEBUG
 
-PORT=1337 NODE_ENV=production $require -i . $path/app.js
+if [ -z $NODE_ENV ];then
+   echo "!!NODE ENV NOT CONFIGURED, DEFAULT NODE_ENV=$NODE_ENV"
+   NODE_ENV=production
+fi
+
+PORT=6080 $require -i . $path/app.js
 
 exit 0;
