@@ -23,12 +23,12 @@
     <div>
       <div class="table-header admin">
         <span class="title">Host Templates  &nbsp; &nbsp;|</span>
-        <button class="create-group btn btn-default simple-btn new-btn" 
-          aria-label="Left Align" 
-          data-toggle="modal" 
+        <button class="create-group btn btn-default simple-btn new-btn"
+          aria-label="Left Align"
+          data-toggle="modal"
           data-target="#group-template">
           <span class="glyphicon glyphicon-plus"></span>
-          New Template 
+          New Template
         </button>
       </div>
 
@@ -39,8 +39,8 @@
         <a id="js-create-hostsgroup" href="#">
           <div class="alert alert-info help-action" role="alert">
             <span>
-              You didn't create any "Host Template" yet. 
-              Starts creating one?
+              You didn't create any "Host Template" yet.
+              Start creating one?
             </span>
             <span class="glyphicon glyphicon-question-sign help"
               data-toggle="tooltip"
@@ -57,11 +57,11 @@
         <div class="panel panel-default js-searchable-item" data-tags="<%= tags %>">
           <div class="panel-heading" role="tab" id="heading<%= group.id %>">
             <h4 class="panel-title">
-              <a class="collapsed" 
+              <a class="collapsed"
                 data-toggle="collapse"
-                data-parent="#accordion" 
-                href="#collapse<%= group.id %>" 
-                aria-expanded="false" 
+                data-parent="#accordion"
+                href="#collapse<%= group.id %>"
+                aria-expanded="false"
                 aria-controls="collapse<%= group.id %>">
                 <div class="panel-title-content">
                   <span class="panel-item name" id="<%= group.id %>">
@@ -71,15 +71,15 @@
                     </span>
                   </span>
                   <div class="panel-item icons">
-                    <button class="edit btn btn-default simple-btn" 
-                      aria-label="Center Align" 
-                      data-group-id="<%= group.id %>" 
-                      data-toggle="modal" 
+                    <button class="edit btn btn-default simple-btn"
+                      aria-label="Center Align"
+                      data-group-id="<%= group.id %>"
+                      data-toggle="modal"
                       data-target="#group-template">
                       <span class="glyphicon glyphicon-edit"></span>
                     </button>
-                    <button class="delete btn btn-default simple-btn" 
-                      aria-label="Center Align" 
+                    <button class="delete btn btn-default simple-btn"
+                      aria-label="Center Align"
                       data-group-id="<%= group.id %>">
                       <span class="glyphicon glyphicon-trash"></span>
                     </button>
@@ -88,9 +88,9 @@
               </a>
             </h4>
           </div>
-          <div id="collapse<%= group.id %>" 
-            class="panel-collapse collapse" 
-            role="tabpanel" 
+          <div id="collapse<%= group.id %>"
+            class="panel-collapse collapse"
+            role="tabpanel"
             aria-labelledby="heading<%= group.id %>">
             <div class="panel-body">
               <div>
