@@ -42,6 +42,7 @@ module.exports = {
         {'id':15000, 'value':15},
       ];
       data.moment = moment;
+
       res.view(data);
     });
   },
@@ -101,8 +102,8 @@ module.exports = {
   update : function(req,res,next)
   {
     var params = req.params.all();
-    params.enable = 
-      (params.enable == 'on') ? 'true' : 
+    params.enable =
+      (params.enable == 'on') ? 'true' :
       (params.enable == 'off') ? 'false' : null;
 
     var supervisor = req.supervisor;
