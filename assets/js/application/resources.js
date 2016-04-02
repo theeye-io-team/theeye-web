@@ -119,26 +119,33 @@ $(function(){
         var $script = $form.find('select[name=script_id]');
         var $disable = $form.find('input[name=disabled]');
 
-        $disable.change(function(event){
-          if(!this.checked){
-            if(!$script.val()){
-              this.checked=true;
-              bootbox.alert('Please, select a script first to enable the monitor.');
+        if( $disable.is(':checked') )
+        {
+          $disable.on('change',function(event){
+            if(!this.checked){
+              if(!$script.val()){
+                this.checked=true;
+                bootbox.alert('Please, select a script first to enable the monitor.');
+              }
             }
-          }
-        });
-
-        $script.change(function(event){
-          if( $disable.is(':checked') ){
-            var msg = 'You have just added a script. Enable the monitor again?';
-            bootbox.confirm(msg, function(confirmed){
-              if(confirmed) $disable.prop('checked', false);
-            });
-          }
-        });
+          });
+          $script.on('change', function(event){
+            if( $disable.is(':checked') ){
+              var msg = 'You have just added a script. Enable the monitor again?';
+              bootbox.confirm(msg, function(confirmed){
+                if(confirmed) $disable.prop('checked', false);
+              });
+            }
+          });
+          $('.modal#scriptResourceModal').on('hidden.bs.modal', function(e) {
+            $script.off('change');
+            $disable.off('change');
+          })
+        }
 
         $script.val(monitor.config.script_id);
-        $form.find('[data-hook=script_arguments]').val(monitor.config.script_arguments);
+        $form.find('[data-hook=script_arguments]')
+          .val(monitor.config.script_arguments);
       break;
     };
   }
