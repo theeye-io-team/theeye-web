@@ -1,8 +1,8 @@
 // Simple log function to keep the example simple
 var $state = $({});
+var deb = debug('eye:web:events');
 
 function log() {
-  var deb = debug('eye:web:events');
   deb.apply(deb, arguments);
 }
 
@@ -25,9 +25,7 @@ function log() {
 
           log('switching state icon');
           switchStateIcon(resource.state, $icon[0]);
-
           updateStateTag(resource.state, $resource);
-
         }
 
         $state.trigger('new_event', resource);
@@ -77,7 +75,7 @@ function switchStateIcon (state, elSpan) {
       elSpan.className += ' glyphicon glyphicon-remove-sign';
       break;
     default:
-      console.error('invalid state reported by resource');
+      log('invalid state reported by resource');
       break;
   }
 }

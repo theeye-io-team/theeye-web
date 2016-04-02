@@ -1,4 +1,4 @@
-config/local.js
+config/*
 node_modules
 bower_components
 .tmp

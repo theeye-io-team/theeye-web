@@ -10,19 +10,31 @@ var log = debug('eye:web:admin:resources');
 //CREATE RESOURCE FUNCTION
 $(function(){
 
+  function getFormInputValues (inputs) {
+    var values = {};
+    inputs.each(function(){
+      var input = this;
+      if(input.name=='disabled' && input.type=='checkbox'){
+        values['enable'] = !input.checked;
+      } else if(input.name=='hosts_id') {
+        if( !values[input.name] ) values[input.name]=[];
+        values[input.name].push(input.value);
+      } else {
+        values[input.name] = input.value;
+      }
+    });
+    return values;
+  }
+
   function updateResourceMonitor($el){
     var idResource = $el.find("[data-hook=resource_id]").val();
-
-    var vals = $el.serializeArray()
-    .reduce(function(obj, input) {
-      obj[input.name] = input.value;
-      return obj;
-    }, {});
+    var inputs = $el.find(":input");
+    var values = getFormInputValues(inputs);
 
     jQuery.ajax({
       url: '/resource/' + idResource,
       type: 'PUT',
-      data: vals
+      data: values
     }).done(function(data) {
       window.location.reload();
     }).fail(function(xhr, err, xhrStatus) {
@@ -31,22 +43,16 @@ $(function(){
   }
 
   function createResourceMonitor($el){
-    var vals = $el.serializeArray()
-    .reduce(function(obj, input) {
-      if(input.name=='hosts_id'){
-        if(!obj[input.name]) obj[input.name]=[];
-        obj[input.name].push(input.value);
-      }
-      else obj[input.name] = input.value;
-      return obj;
-    }, {});
+    var inputs = $el.find(":input");
+    var values = getFormInputValues(inputs);
 
-    jQuery.post("/resource/" + vals.monitor_type, vals)
+    jQuery
+    .post("/resource/" + values.monitor_type, values)
     .done(function(data){
       window.location.reload();
     })
     .fail(function(xhr, err, xhrStatus){
-     bootbox.alert(xhr.responseText);
+      bootbox.alert(xhr.responseText);
     });
   }
 
@@ -56,11 +62,13 @@ $(function(){
     log('current action %o', window.resourceActionData);
 
     var action = window.resourceActionData.action;
-
     var $form = $("form#" + type + "ResourceForm");
 
-    if(action == 'edit') updateResourceMonitor($form);
-    else createResourceMonitor($form);
+    if(action=='edit'){
+      updateResourceMonitor($form);
+    } else {
+      createResourceMonitor($form);
+    }
   }
 
   function setCallback(type){
@@ -73,7 +81,7 @@ $(function(){
   $('.modal#scriptResourceModal button[type=submit]').on('click', setCallback('script'));
   $('.modal#scraperResourceModal button[type=submit]').on('click', setCallback('scraper'));
 
-  function fillForm($form, data) {
+  function fillForm($form, data){
     var resource = data.resource;
     var monitor = data.monitors[0];
     var type = monitor.type;
@@ -85,14 +93,14 @@ $(function(){
     $form.find('[data-hook=description]').val(resource.description);
     $form.find('[data-hook=hosts_id]').val(resource.host_id);
     $form.find('[data-hook=looptime]').val(monitor.looptime);
-    $form.find('[data-hook=enable]').prop('checked', resource.enable);
+    $form.find('[data-hook=disabled]').prop('checked', !monitor.enable);
 
     switch(type) {
       case 'scraper':
         var $input = $('form#scraperResourceForm input[data-hook=external]');
         if(monitor.config.external) {
           $('form#scraperResourceForm [data-hook=external_host_id]')
-            .val(monitor.host_id);
+          .val(monitor.host_id);
           $input.prop('checked', true);
           $input.trigger('change');
         } else {
@@ -108,9 +116,30 @@ $(function(){
         $form.find('[data-hook=pattern]').val(monitor.config.ps.pattern);
         break;
       case 'script':
-        $form.find('[data-hook=script_id]').val(monitor.config.script_id);
+        var $script = $form.find('select[name=script_id]');
+        var $disable = $form.find('input[name=disabled]');
+
+        $disable.change(function(event){
+          if(!this.checked){
+            if(!$script.val()){
+              this.checked=true;
+              bootbox.alert('Please, select a script first to enable the monitor.');
+            }
+          }
+        });
+
+        $script.change(function(event){
+          if( $disable.is(':checked') ){
+            var msg = 'You have just added a script. Enable the monitor again?';
+            bootbox.confirm(msg, function(confirmed){
+              if(confirmed) $disable.prop('checked', false);
+            });
+          }
+        });
+
+        $script.val(monitor.config.script_id);
         $form.find('[data-hook=script_arguments]').val(monitor.config.script_arguments);
-        break;
+      break;
     };
   }
 
@@ -149,7 +178,8 @@ $(function(){
     if(host){
       $select.hide();
       $input.attr('value', host);
-      $form.find('.resource-host').after('<div class="host-after col-sm-9"><div class="form-control">' + hostname + '</div></div>');
+      $form.find('.resource-host')
+        .after('<div class="host-after col-sm-9"><div class="form-control">' + hostname + '</div></div>');
     } else {
       $select.prop('multiple', true);
       $select.show();
@@ -172,7 +202,7 @@ $(function(){
       setupCreateResourceForm($form, options);
   }
 
-  function handleResourceAction(event) {
+  function handleResourceAction(event){
     event.preventDefault();
     event.stopPropagation();
     $.blockUI();
@@ -182,24 +212,16 @@ $(function(){
     var host = event.currentTarget.getAttribute('data-host_id');
     var action = event.currentTarget.getAttribute('data-action');
     var hostname = event.currentTarget.getAttribute('data-hostname');
-    var enable = event.currentTarget.getAttribute('data-enable');
 
-    window.resourceActionData = {
+    var data = window.resourceActionData = {
       'type': type,
       'action': action,
-      'host_id': host,
-      'resource_id': id,
-      'enable': enable,
+      'host': host,
       'hostname': hostname,
+      'id': id
     };
 
-    setupResourceAction({
-      host: host,
-      hostname: hostname,
-      action: action,
-      type: type,
-      id: id
-    });
+    setupResourceAction(data);
   }
 
   $('.editResourceMonitor').on('click', handleResourceAction);
@@ -328,12 +350,14 @@ $(function(){
     event.stopPropagation();
 
     var idResource = event.currentTarget.getAttribute('data-resource_id');
-
     var $searchComponent = $('.js-searchable-box');
 
     var $input = $searchComponent.find('input');
       $input.val(idResource);
       $input.trigger('input');
-    $searchComponent.find('button.search').trigger('click');
+
+    $searchComponent
+      .find('button.search')
+      .trigger('click');
   });
 });

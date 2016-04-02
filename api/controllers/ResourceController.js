@@ -101,10 +101,6 @@ module.exports = {
   update : function(req,res,next)
   {
     var params = req.params.all();
-    params.enable = 
-      (params.enable == 'on') ? 'true' : 
-      (params.enable == 'off') ? 'false' : null;
-
     var supervisor = req.supervisor;
 
     var id = req.param("id", null);
@@ -120,6 +116,7 @@ module.exports = {
 
     var hostsId = req.body.hosts_id;
     if( hostsId && !(hostsId instanceof Array) ) data.host = hostsId;
+    else if(hostsId instanceof Array && hostsId.length==1) data.host = hostsId[0];
     else return res.send(400,'Host parameter error');
 
     supervisor.patchResource(
