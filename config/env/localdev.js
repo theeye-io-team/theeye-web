@@ -5,8 +5,8 @@ module.exports = {
     port : 6080,
     environment : 'development',
     secret : '692fc164a0c06a9fd02575cf17688c9e',
-    client_id: 'theeye.io',
-    client_secret: 'celintocateyente'
+    client_id: '939e7ad87f616af22325a84b6192ba7974404160',
+    client_secret: '4611b7a50f63c2bb259aa72e0b8b54ae54c326c6'
   },
   connections: {
     mongo: {
