@@ -103,7 +103,7 @@ function log() {
   $searchbox.on('search:done', function(evt){
     console.log('search:done');
     if(!$('.tasks-panel .js-searchable-item:visible').length && !$('.bulkRunner').data('laddaIsRunning')) {
-      $('.bulkRunner').hide()
+      $('.bulkRunner').hide();
       return;
     }
     $('.bulkRunner').show();
@@ -122,15 +122,16 @@ function log() {
     evt.stopPropagation();
 
     var elem = this;
-    var taskName = $(elem).closest('.panel-title-content').first().find('span.panel-item.name');
-    var taskDiv = $(elem).closest('.tasks-panel .js-searchable-item').first();
+    var $taskTitleContent = $(elem).closest('.panel-title-content').first();
+    var $taskName = $taskTitleContent.find('span.panel-item.name');
+    var $taskDiv = $(elem).closest('.tasks-panel .js-searchable-item').first();
 
     bootbox.confirm('Trigger task?',function(confirmed){
       if( !confirmed ) return;
 
       // for a task to be runnable the .js-searchable-item:visible
       // has to have a .data().taskId and a .trigger-task button
-      var taskData = taskDiv.data();
+      var taskData = $taskDiv.data();
       // var triggerButtons = $(e).find('.trigger-task');
       if(!taskData.taskid) {
         return;
@@ -158,13 +159,16 @@ function log() {
           failed = stdout.trim() != 'normal';
         }
 
-        $elem.find('.panel-title-content').first().addClass(failed ? 'alert-danger' : '');
+        $taskTitleContent.addClass(failed ? 'alert-info' : '');
         var $tpl = $('div.resultTemplate div').first().clone().remove();
+        $tpl.one('close.bs.alert', function(){
+          $taskTitleContent.removeClass('alert-info');
+        });
         $tpl.find('.scriptStdout').html(data.result.stdout);
         $tpl.find('.scriptStderr').html(data.result.stderr);
         // $tpl.addClass('col-md-12');
         $elem.find('.panel-body').append($tpl);
-      }
+      };
 
       // handles palancas-update io.socket event
       var handleTaskResult = function(data) {
@@ -177,16 +181,16 @@ function log() {
         io.socket.removeListener('palancas-update', handleTaskResult);
         btn.stop();
 
-        alert(taskName.text() + ' completed');
+        alert($taskName.text() + ' completed');
 
         //append data to task row element
-        taskDiv.data('lastRun', data);
-        lastRunToCollapsible(taskDiv[0]);
+        $taskDiv.data('lastRun', data);
+        lastRunToCollapsible($taskDiv[0]);
       };
 
       io.socket.on('palancas-update', handleTaskResult);
 
-      taskDiv.find('.panel-title-content').first().removeClass('alert-danger');
+      $taskTitleContent.removeClass('alert-info');
 
       $.post("/palanca/trigger", {
         task_id: taskData.taskid,
@@ -251,7 +255,7 @@ function log() {
         $tpl.find('.scriptStderr').html(data.result.stderr);
         // $tpl.addClass('col-md-12');
         $elem.find('.panel-body').append($tpl);
-      }
+      };
 
       // handles palancas-update io.socket event
       var handleTaskResult = function(data) {
@@ -295,7 +299,7 @@ function log() {
         taskQueue[taskData.taskid] = {
           element: e,
           laddaButton: Ladda.create(playButton).start()
-        }
+        };
 
 
         $.post("/palanca/trigger", {
