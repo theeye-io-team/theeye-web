@@ -2,7 +2,7 @@
 
 echo -e "\e[92m"
 
-require='/usr/bin/supervisor'
+require=`which supervisor`
 path=`dirname $0`
 
 if [ ! -f $require ]
