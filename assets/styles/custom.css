@@ -409,3 +409,13 @@ button.bulkRunner {
   line-height:36px;
 }
 .bootstrap-tagsinput span.tag.label { cursor: pointer; }
+
+.tableHeaderIconButton { margin: 7px; margin-left: 0px; margin-right: 0px; }
+
+
+span.deleteSelector.glyphicon-unchecked {
+  color: #BBB;
+}
+.selectedEntry, span.deleteSelector.glyphicon-check {
+  color: #F39B0F;
+}
