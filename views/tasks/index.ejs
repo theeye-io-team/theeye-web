@@ -8,8 +8,8 @@
 <% block('scripts', '<script src="/js/highlight.pack.js"></script>') %>
 <% block('scripts', '<script>hljs.initHighlightingOnLoad();</script>') %>
 
+<% block('scripts', '<script src="/js/application/searchbox.js"></script>')%>
 <% block('scripts', '<script src="/js/application/tasks.js"></script>') %>
-<% block('scripts' , '<script src="/js/application/searchbox.js"></script>')%>
 
 <!-- Main  -->
 <div class="container admin-container">
@@ -27,15 +27,27 @@
     <div>
       <div class="table-header admin">
         <span class="title">Tasks &nbsp; &nbsp; |</span>
-        <button class="createTask btn btn-default simple-btn new-btn tooltiped" 
-          data-placement="right" 
-          title="Create new task" 
-          aria-label="Left Align" 
-          data-toggle="modal" 
+        <button class="createTask btn btn-default simple-btn new-btn tooltiped"
+          data-placement="right"
+          title="Create new task"
+          aria-label="Left Align"
+          data-toggle="modal"
           data-target="#create-task">
           <span class="glyphicon glyphicon-plus"></span>
           New Task
         </button>
+
+        <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
+          title="Delete selected tasks"
+          aria-label="Center Align">
+          <span class="glyphicon glyphicon-trash"></span>
+        </button>
+        <button class="pull-right tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
+          title="Select all"
+          aria-label="Center Align">
+          <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
+        </button>
+
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <% tasks.forEach( function(task, key) { %>
@@ -48,7 +60,11 @@
             "host="+ task.host_id,
           ].join(',');
           %>
-          <div class="panel panel-default js-searchable-item" data-tags="<%= tags %>">
+          <div
+            class="itemRow panel panel-default js-searchable-item"
+            data-item-id="<%= task.id %>"
+            data-item-name="<%= task.name %>"
+            data-tags="<%= tags %>">
             <div class="panel-heading" role="tab" id="heading<%= task.id %>">
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= task.id %>" aria-expanded="false" aria-controls="collapse<%= task.id %>">
@@ -62,17 +78,22 @@
                         <span class="panel-item name" id="<%= task.id %>"><%= task.name %></span>
                     <% } %>
                     <div class="panel-item icons">
-                      <button class="editTask btn btn-default simple-btn tooltiped" 
-                        title="Edit task" 
-                        aria-label="Center Align" 
-                        data-task-id="<%= task.id %>" 
-                        data-toggle="modal" 
+                      <button class="rowSelector btn btn-default simple-btn tooltiped"
+                        title="Select task"
+                        aria-label="Center Align">
+                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
+                      </button>
+                      <button class="editTask btn btn-default simple-btn tooltiped"
+                        title="Edit task"
+                        aria-label="Center Align"
+                        data-task-id="<%= task.id %>"
+                        data-toggle="modal"
                         data-target="#edit-task">
                         <span class="glyphicon glyphicon-edit"></span>
                       </button>
-                      <button class="deleteTask btn btn-default simple-btn tooltiped" 
-                        title="Delete task" 
-                        aria-label="Center Align" 
+                      <button class="deleteTask btn btn-default simple-btn tooltiped"
+                        title="Delete task"
+                        aria-label="Center Align"
                         data-task-id="<%= task.id %>">
                         <span class="glyphicon glyphicon-trash"></span>
                       </button>
