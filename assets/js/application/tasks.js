@@ -148,57 +148,83 @@ $(function() {
     });
   })();
 
+
   // MASS DELETE
   (function massDelete(){
+    // searchbox hook
+    $searchbox.on('search:start', function() {
+      $('.massChecker').trigger('uncheck');
+    });
+    $searchbox.on('search:empty', function() {
+      $('.massChecker').trigger('uncheck');
+    });
+
+    // SETUP
+    var firstConfirmHeader = '<h1>Massive task delete</h1>Heads up!<br /><br />';
+    var firstConfirmFooter = '<br />will be deleted.<h2>Are you sure?</h2>';
+    var secondConfirmHeader = '<h1>Wait, really sure?</h1>' +
+      'Please review the list, just in case:<br /><br />';
+    var secondConfirmFooter = '<br />WILL BE DELETED<h2>Confirm wisely</h2>';
+    var successTitle = 'Tasks deleted';
+    var successFooter = '<br/>...you will be missed :(';
+    var failTitle = 'Tasks deleted (some)';
+    var failFooter = '<br/>...I tried to delete these tasks' +
+      ' yet some of them came back with errors.' +
+      '<br /><br />Please refresh now';
+    var dataId = "itemId"; // the data-something where we get the id of the item
+    var dataDescriptor = "itemName"; // the data-something where we get the name of the item
+    var listTemplate = "{descriptor} ({id})<br />";
+    var itemSelector = 'div.itemRow.selectedItem:visible';
+    var apiUrlEndpoint = '/task/';
+    var apiRequestType = 'DELETE';
+
     // MASS DELETE - OJO
     $('.massDelete').on('click', function(evt){
       evt.preventDefault();
       var taskRows = "";
       var taskIds = [];
-      //collect selected rows.data (taskId & taskName)
-      $('.rowSelect:visible span.glyphicon-check').each(function(i,e){
-        var taskId = $(this).parent().data('taskId');
-        var taskName = $(this).parent().data('taskName');
-        if(taskId) {
-          taskIds.push(taskId);
+      //collect selected rows.data (dataId & dataDescriptor)
+      $('.itemRow.selectedItem:visible').each(function(i,e){
+        var itemId = $(e).data(dataId);
+        var itemName = $(e).data(dataDescriptor);
+        if(itemId) {
+          taskIds.push(itemId);
+          var listItem = listTemplate
+            .replace("{id}", itemId)
+            .replace("{descriptor}", itemName);
           //concatenate notification rows
-          taskRows = taskRows + taskName + " (" + taskId + ")<br />";
+          taskRows = taskRows + listItem;
         }
       });
       if(taskRows) {
-        var confirmMsgHeader = '<h1>Massive task delete</h1>Heads up!<br /><br />';
-        var confirmMsgFooter = '<br />will be deleted.<h2>Are you sure?</h2>';
-        bootbox.confirm(confirmMsgHeader + taskRows + confirmMsgFooter, function(result1){
+        bootbox.confirm(firstConfirmHeader + taskRows + firstConfirmFooter, function(result1){
           if(!result1) {
             return;
           }
-          confirmMsgHeader = '<h1>Really sure?</h1>';
-          confirmMsgHeader = confirmMsgHeader + 'Please review this list, just in case:<br /><br />';
-          confirmMsgFooter = '<br />will be deleted.<h2>Confirm wisely</h2>';
-          bootbox.confirm(confirmMsgHeader + taskRows + confirmMsgFooter, function(result2){
+          bootbox.confirm(secondConfirmHeader + taskRows + secondConfirmFooter, function(result2){
             if(!result2) {
               return;
             }
             $.blockUI();
             var deleteRequests = [];
+            var removeOnSuccess = function(response, status, xhr) {
+              console.log('request success');
+              console.log(arguments);
+              // horrible kludge:
+              // response is "Task TASK_ID deleted"
+              // split by " " and take 2nd result as taskId
+              // API should respond with only id or {taskId: ID}
+              if(status === "success") {
+                $('div.itemRow[data-item-id='+response.split(" ")[1]+']').remove();
+              }
+            };
             for(var ii = 0; ii < taskIds.length; ii++) {
-              var t = taskIds[ii];
               deleteRequests.push(
                 $.ajax({
-                  url: '/task/' + t,
-                  type: 'DELETE',
-                  // en success remove div[data-task=taskId]
-                  success: function(response,status,xhr){
-                    console.log('request success');
-                    console.log(arguments);
-                    // horrible kludge:
-                    // response is "Task TASK_ID deleted"
-                    // split by " " and take 2nd result as taskId
-                    // API should respond with only id or {taskId: ID}
-                    if(status === "success") {
-                      $('div[data-task='+response.split(" ")[1]+']').remove();
-                    }
-                  }
+                  url: apiUrlEndpoint + taskIds[ii],
+                  type: apiRequestType,
+                  // on success remove div[data-item-id=itemId]
+                  success: removeOnSuccess
                 })
               );
             }
@@ -207,14 +233,11 @@ $(function() {
               function(){
                 console.log('then success');
                 console.log(arguments);
-                alert(taskRows + '<br/>...you will be missed :(','Tasks deleted');
+                alert(taskRows + successFooter, successTitle);
               },function(){
                 console.log('then fail');
                 console.log(arguments);
-                var msg = '<br/>...I tried to delete these tasks';
-                msg = msg + ' yet some of them came back with errors.';
-                msg = msg + '<br /><br />Please refresh now';
-                alert(taskRows + msg,'Tasks deleted (some)');
+                alert(taskRows + failFooter, failTitle);
               },
               // then progress nunca se llama ... ?
               function() {
@@ -248,21 +271,26 @@ $(function() {
       evt.stopPropagation();
       var $spanIcon = $this.children('span').first();
       if($this.data('checked')) {
-        //uncheck all
-        $('.rowSelect').trigger('uncheck');
-        $this.data('checked',false);
-        $spanIcon.removeClass('glyphicon-check');
-        $spanIcon.addClass('glyphicon-unchecked');
+        //uncheck all by firing event
+        $this.trigger('uncheck');
       }else{
-        // do an uncheck all, there maybe some left from a prior search
+        // do an "uncheck all", there maybe some left from a prior search
         // this should be hooked on the search event
-        $('.rowSelect').trigger('uncheck');
-        $('.rowSelect:visible').trigger('check');
+        $('.rowSelector').trigger('uncheck');
+        $('.rowSelector:visible').trigger('check');
         $this.data('checked',true);
         $spanIcon.addClass('glyphicon-check');
         $spanIcon.removeClass('glyphicon-unchecked');
       }
       $(this).blur();
+    });
+    $('.massChecker').on('uncheck', function(evt){
+      var $this = $(this);
+      var $spanIcon = $this.children('span').first();
+      $this.data('checked',false);
+      $spanIcon.removeClass('glyphicon-check');
+      $spanIcon.addClass('glyphicon-unchecked');
+      $('.rowSelector').trigger('uncheck');
     });
 
     // MASS CHECKER: when an item changes state it triggers
@@ -272,8 +300,7 @@ $(function() {
       console.log('checking items state');
       var $this = $(this);
       var $spanIcon = $this.children('span').first();
-      $('.rowSelect:visible').each(function(i,e){
-        // console.log($(e).data());
+      $('.rowSelector:visible').each(function(i,e){
         if(!$(e).data('checked')) {
           $this.data('checked', false);
           $spanIcon.removeClass('glyphicon-check');
@@ -284,25 +311,25 @@ $(function() {
     });
 
     // ROW SELECTOR
-    $('.rowSelect').on('check', function(evt){
+    $('.rowSelector').on('check', function(evt){
       var $this = $(this);
       var $spanIcon = $this.children('span').first();
       $this.data('checked',true);
       $spanIcon.addClass('glyphicon-check');
       $spanIcon.removeClass('glyphicon-unchecked');
-      $this.closest('.panel-title-content').addClass('selectedEntry');
+      $this.closest('.itemRow').addClass('selectedItem');
     });
-    $('.rowSelect').on('uncheck', function(evt){
+    $('.rowSelector').on('uncheck', function(evt){
       var $this = $(this);
       var $spanIcon = $this.children('span').first();
       $this.data('checked',false);
       $spanIcon.removeClass('glyphicon-check');
       $spanIcon.addClass('glyphicon-unchecked');
-      $this.closest('.panel-title-content').removeClass('selectedEntry');
+      $this.closest('.itemRow').removeClass('selectedItem');
     });
 
     // ROW SELECTOR on click only determine if checked or not and fire event
-    $('.rowSelect').on('click', function(evt){
+    $('.rowSelector').on('click', function(evt){
       var $this = $(this);
       evt.stopPropagation();
       evt.preventDefault();
