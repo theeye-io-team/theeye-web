@@ -413,9 +413,10 @@ button.bulkRunner {
 .tableHeaderIconButton { margin: 7px; margin-left: 0px; margin-right: 0px; }
 
 
-span.deleteSelector.glyphicon-unchecked {
+span.selectorIcon.glyphicon-unchecked {
   color: #BBB;
 }
-.selectedEntry, span.deleteSelector.glyphicon-check {
+.admin-container .panel-default.selectedItem>.panel-heading,
+span.selectorIcon.glyphicon-check {
   color: #F39B0F;
 }
