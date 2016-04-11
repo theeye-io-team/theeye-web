@@ -9,25 +9,25 @@ $(function(){
         location.reload();
       }
     }, 'json');
-  }
+  };
 
   window.alert = function(msg, title, cbk) {
     var $alert = $("#alert");
 
     $alert.find(".modal-body").html(msg);
     if (title) {
-      $alert.find(".modal-title").html(msg);
+      $alert.find(".modal-title").html(title);
     }
     $("#alert").one('hidden.bs.modal', function () {
       if(cbk) cbk();
       // do something…
     });
     $("#alert").modal("show");
-  }
+  };
 
   $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
-  })
+    $('[data-toggle="tooltip"]').tooltip();
+  });
 
 });
 
