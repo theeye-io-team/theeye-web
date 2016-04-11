@@ -8,8 +8,8 @@
 <% block('scripts', '<script src="/js/highlight.pack.js"></script>') %>
 <% block('scripts', '<script>hljs.initHighlightingOnLoad();</script>') %>
 
+<% block('scripts', '<script src="/js/application/searchbox.js"></script>')%>
 <% block('scripts', '<script src="/js/application/tasks.js"></script>') %>
-<% block('scripts' , '<script src="/js/application/searchbox.js"></script>')%>
 
 <!-- Main  -->
 <div class="container admin-container">
@@ -60,7 +60,11 @@
             "host="+ task.host_id,
           ].join(',');
           %>
-          <div data-task="<%= task.id %>" class="panel panel-default js-searchable-item" data-tags="<%= tags %>">
+          <div
+            class="itemRow panel panel-default js-searchable-item"
+            data-item-id="<%= task.id %>"
+            data-item-name="<%= task.name %>"
+            data-tags="<%= tags %>">
             <div class="panel-heading" role="tab" id="heading<%= task.id %>">
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= task.id %>" aria-expanded="false" aria-controls="collapse<%= task.id %>">
@@ -74,12 +78,10 @@
                         <span class="panel-item name" id="<%= task.id %>"><%= task.name %></span>
                     <% } %>
                     <div class="panel-item icons">
-                      <button class="rowSelect btn btn-default simple-btn tooltiped"
+                      <button class="rowSelector btn btn-default simple-btn tooltiped"
                         title="Select task"
-                        aria-label="Center Align"
-                        data-task-name="<%= task.name %>"
-                        data-task-id="<%= task.id %>">
-                        <span class="deleteSelector glyphicon glyphicon-unchecked"></span>
+                        aria-label="Center Align">
+                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                       </button>
                       <button class="editTask btn btn-default simple-btn tooltiped"
                         title="Edit task"
