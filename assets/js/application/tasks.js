@@ -249,6 +249,9 @@ $(function() {
                 console.log('when progress');
                 console.log(arguments);
               }
+            ).always(function(){
+                $.unblockUI();
+              }
             ).done(function(){
               // done deberia volver con array de results
               // no se si no funciona o es porque el req.DELETE
@@ -256,7 +259,6 @@ $(function() {
               console.log('when done');
               console.log(arguments);
               console.log('ok, they are gone');
-              $.unblockUI();
             });
           });
         });
