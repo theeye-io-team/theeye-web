@@ -67,6 +67,17 @@
            </ul>
         </div>
 
+        <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
+          title="Delete selected monitors"
+          aria-label="Center Align">
+          <span class="glyphicon glyphicon-trash"></span>
+        </button>
+        <button class="pull-right tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
+          title="Select all"
+          aria-label="Center Align">
+          <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
+        </button>
+
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <% monitors.forEach( function(monitor, key) { %>
@@ -77,9 +88,13 @@
             monitor.resource.hostname,
             monitor.type,
             monitor.enable?'enabled':'disabled',
+            "status="+monitor.resource.state
           ].join(',')
           %>
-          <div class="panel panel-default js-searchable-item" data-tags="<%= tags %>">
+          <div class="itemRow panel panel-default js-searchable-item"
+            data-item-id="<%= monitor.resource.id %>"
+            data-item-name="<%= monitor.resource.description %>"
+            data-tags="<%= tags %>">
             <div class="panel-heading" role="tab" id="heading<%= monitor.id %>">
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= monitor.id %>" aria-expanded="false" aria-controls="collapse<%= monitor.id %>">
@@ -89,10 +104,17 @@
                       <span class="monitor-<%= monitor.enable?'enabled':'disabled' %>">
                         <small><%= ! monitor.enable ? ' > disabled' :'' %> > <%= monitor.type %></small>
                       </span>
+                      <small class="<%= monitor.resource.state === 'normal' ? '' : 'remark-alert' %>"> > host status :: <%= monitor.resource.state %></small>
                     </span>
                     <div class="panel-item icons">
+                      <button class="rowSelector btn btn-default simple-btn tooltiped"
+                        title="Select monitor"
+                        aria-label="Center Align">
+                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
+                      </button>
 
-                      <button class="<%= monitor.type != 'host' ? 'editResourceMonitor ' : ''%> editResource <%= monitor.type %>ResourceEditAction btn btn-default simple-btn tooltiped" aria-label="Center Align"
+                      <button class="<%= monitor.type != 'host' ? 'editResourceMonitor ' : ''%> editResource <%= monitor.type %>ResourceEditAction btn btn-default simple-btn tooltiped"
+                        aria-label="Center Align"
                         title="Edit monitor"
                         data-host_id="<%= monitor.host_id %>"
                         data-hostname="<%= monitor.resource.hostname %>"
@@ -104,7 +126,10 @@
                       ><span class="glyphicon glyphicon-edit"></span>
                       </button>
 
-                      <button class="deleteResource btn btn-default simple-btn tooltiped" title="Delete monitor" aria-label="Center Align" data-resource_id="<%= monitor.resource.id %>">
+                      <button class="deleteResource btn btn-default simple-btn tooltiped"
+                        title="Delete monitor"
+                        aria-label="Center Align"
+                        data-resource_id="<%= monitor.resource.id %>">
                         <span class="glyphicon glyphicon-trash"></span>
                       </button>
 
