@@ -69,14 +69,15 @@
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= task.id %>" aria-expanded="false" aria-controls="collapse<%= task.id %>">
                   <div class="panel-title-content">
+                    <span class="panel-item name" id="<%= task.id %>">
                     <% if (!task.script_id || !task.host_id) { %>
-                      <span class="panel-item name" id="<%= task.id %>">
                         <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
-                        &nbsp; <%= task.name %> <small class="remark-alert">> No host or script detected</small>
-                      </span>
+                        &nbsp; <%= task.name %>
+                        <small class="remark-alert">> No host or script detected</small>
                     <% } else { %>
-                        <span class="panel-item name" id="<%= task.id %>"><%= task.name %></span>
+                        <%= task.name %>
                     <% } %>
+                    </span>
                     <div class="panel-item icons">
                       <button class="rowSelector btn btn-default simple-btn tooltiped"
                         title="Select task"
