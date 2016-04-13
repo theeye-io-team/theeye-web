@@ -85,9 +85,9 @@ module.exports = {
       //save the source code to a tmp file, then upload it
       var tmpPath = '/tmp/';
       var fileName = format(
-        '%s_%s.%s', 
-        req.user.id, 
-        Date.now(), 
+        '%s_%s.%s',
+        req.user.id,
+        Date.now(),
         params.extension
       );
       var source = Buffer(params.scriptSource, 'base64').toString('ascii');
@@ -135,7 +135,7 @@ module.exports = {
   /**
    * Create script
    * POST /script
-   */  
+   */
   create: function(req, res)
   {
     var params = req.params.all();
@@ -145,14 +145,14 @@ module.exports = {
       //upload the attached file
       req.file("script").upload({}, function (err, uploadedFiles) {
         if(err) return res.negotiate(err);
-        
+
         // If no files were uploaded, respond with an error.
         if (uploadedFiles.length === 0)
           return res.badRequest('No file was uploaded');
 
         supervisor.createScript(
-          uploadedFiles[0], 
-          params, 
+          uploadedFiles[0],
+          params,
           function(err, response) {
             if(err) return res.send(500, err);
             res.send(200, response);
@@ -165,10 +165,10 @@ module.exports = {
       var tmpPath  = '/tmp/';
       var fileName = req.user.id + '_' + Date.now() + '.' + params.extension;
       var source   = Buffer(params.scriptSource, 'base64').toString('ascii');
-      
+
       fs.writeFile(
-        tmpPath + fileName, 
-        source, 
+        tmpPath + fileName,
+        source,
         'utf-8',
         function(err){
           var scriptFile = {
@@ -185,7 +185,7 @@ module.exports = {
             });
         }
       );
-    }  
+    }
   },
   /**
    * Action blueprints:
@@ -200,10 +200,9 @@ module.exports = {
         debug(err);
         return res.serverError("Error getting data from supervisor: " + err);
       }
-
       return res.view({
         'scripts': scripts
-      })
+      });
     });
   },
   /**
