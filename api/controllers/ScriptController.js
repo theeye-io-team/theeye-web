@@ -170,7 +170,10 @@ module.exports = {
         tmpPath + fileName,
         source,
         'utf-8',
-        function(err){
+        function(writeErr){
+          if(writeErr) {
+            return res.send(500, writeErr);
+          }
           var scriptFile = {
             fd: tmpPath+fileName,
             filename: fileName
