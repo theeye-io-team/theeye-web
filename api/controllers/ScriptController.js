@@ -61,7 +61,7 @@ module.exports = {
     if(!params.id) return res.badRequest('invalid id');
     params.description = params.description || '' ;
 
-    if(params.uploadMehtod === 'fileupload')
+    if(params.uploadMethod === 'fileupload')
     {
       //upload the attached file
       req.file("script").upload({}, function (err, uploadedFiles) {
@@ -140,8 +140,7 @@ module.exports = {
   {
     var params = req.params.all();
     var supervisor = req.supervisor;
-
-    if(params.uploadMehtod === 'fileupload') {
+    if(params.uploadMethod === 'fileupload') {
       //upload the attached file
       req.file("script").upload({}, function (err, uploadedFiles) {
         if(err) return res.negotiate(err);
