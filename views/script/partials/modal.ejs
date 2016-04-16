@@ -16,36 +16,56 @@
         <form data-hook="script-form" class="form-horizontal">
 
           <div class="form-group">
-            <label for="filename" class="col-sm-2 control-label">Name</label>
-            <div class="col-sm-10">
+            <label for="filename" class="col-sm-3 control-label">Name</label>
+            <div class="col-sm-9">
               <input name="filename" class="form-control" id="filename" placeholder="auto">
             </div>
           </div>
 
           <div class="form-group">
-            <label for="description" class="col-sm-2 control-label">Description</label>
-            <div class="col-sm-10">
+            <label for="description" class="col-sm-3 control-label">Description</label>
+            <div class="col-sm-9">
               <textarea data-hook="description" name="description" class="form-control" id="description" placeholder="description"></textarea>
             </div>
           </div>
 
           <div class="form-group">
-           <label for="description" class="col-sm-2 control-label">Editor/Upload</label>
-            <div class="col-sm-10">
-              <input data-hook="live-edit" type="radio" name="live-edit" id="live-edit" value="editor" CHECKED/>Live editor
-              <input data-hook="live-edit" type="radio" name="live-edit" id="live-edit" value="fileupload" />File upload
+           <label for="description" class="col-sm-3 control-label">Editor/Upload</label>
+            <div class="col-sm-9">
+              <label class="radio-inline">
+                <input type="radio" checked name="live-edit" data-hook="live-edit" value="editor"> Live editor
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="live-edit" data-hook="live-edit" value="fileupload"> File upload
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="live-edit" data-hook="live-edit" value="gist"> From gist
+              </label>
             </div>
           </div>
 
-          <div class="form-group hidden-container" data-hook="dropzone-container">
+          <div class="form-group hidden-container option" data-hook="gist-container">
+            <div class="col-sm-12">
+              <div class="input-group">
+                <input type="text" class="form-control" id="gist-url" placeholder="gist url...">
+                <span class="input-group-btn">
+                  <button class="btn btn-default" type="button">
+                    <span class="glyphicon glyphicon-download"></span>
+                  </button>
+                </span>
+              </div><!-- /input-group -->
+            </div>
+          </div>
+
+          <div class="form-group hidden-container option" data-hook="fileupload-container">
             <div class="col-sm-12">
               <div class="dropzone"></div>
             </div>
           </div>
 
-          <div class="form-group" data-hook="editor-container">
-           <label for="editor-mode" class="col-sm-2 control-label">Interpreter <a href="#" class="example-code">(example)</a></label>
-            <div class="col-sm-10">
+          <div class="form-group option" data-hook="editor-mode-container">
+            <label for="editor-mode" class="col-sm-3 control-label">Interpreter <a href="#" class="example-code">(example)</a></label>
+            <div class="col-sm-9">
               <select data-hook="editor-mode" id="editor-mode">
                 <option value="javascript">Node</option>
                 <option value="sh">Bash</option>
@@ -53,7 +73,7 @@
             </div>
           </div>
 
-          <div class="form-group" data-hook="editor-container">
+          <div class="form-group option" data-hook="editor-container">
             <div class="col-sm-12">
               <div class="editor" id="ace-editor"></div>
             </div>
