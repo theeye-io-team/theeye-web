@@ -1,7 +1,7 @@
 Dropzone.autoDiscover = false;
 
 $(function() {
-  var self      = this;
+  var self      = this; // dafuk? why not {}?
   var $state    = $({});
   self.scriptId = null;
 
@@ -24,7 +24,7 @@ $(function() {
   {
     formData.append("filename", $("input#filename").val());
     formData.append("description", $("form[data-hook=script-form] textarea#description").val());
-    formData.append("uploadMehtod", $('input:radio[name=live-edit]:checked').val());
+    formData.append("uploadMethod", $('input:radio[name=live-edit]:checked').val());
   });
 
   scriptDropZone.on("addedfile", function(file){
@@ -46,16 +46,16 @@ $(function() {
   //**live-editor / file-upload toogle**//
   $("[data-hook=live-edit]").click(function(e)
   {
-    var uploadMehtod = $('input:radio[name=live-edit]:checked').val();
-    if(uploadMehtod === 'fileupload')
-    {
-      $("[data-hook=dropzone-container]").removeClass('hidden-container');
-      $("[data-hook=editor-container]").addClass('hidden-container');
-    }
-    else
-    {
-      $("[data-hook=dropzone-container]").addClass('hidden-container');
-      $("[data-hook=editor-container]").removeClass('hidden-container');
+    var uploadMethod = $('input:radio[name=live-edit]:checked').val();
+    $("div.option").addClass('hidden-container');
+    $("div[data-hook="+uploadMethod+"-container]").removeClass('hidden-container');
+    switch(uploadMethod) {
+      case "editor":
+        $("div[data-hook=editor-mode-container]").removeClass('hidden-container');
+      break;
+      case "gist":
+        $("div[data-hook=editor-container]").removeClass('hidden-container');
+      break;
     }
   });
 
@@ -196,8 +196,8 @@ $(function() {
         type = 'PUT';
     }
 
-    var uploadMehtod = $('input:radio[name=live-edit]:checked').val();
-    if(uploadMehtod === 'fileupload')
+    var uploadMethod = $('input:radio[name=live-edit]:checked').val();
+    if(uploadMethod === 'fileupload')
     {
       scriptDropZone.processQueue();
     }
@@ -214,7 +214,7 @@ $(function() {
                 var formData = new FormData();
                 formData.append("filename", $("input#filename").val());
                 formData.append("description", $("form[data-hook=script-form] textarea#description").val());
-                formData.append("uploadMehtod", $('input:radio[name=live-edit]:checked').val());
+                formData.append("uploadMethod", $('input:radio[name=live-edit]:checked').val());
                 formData.append('scriptSource', btoa(source));
                 formData.append('extension', extension);
                 $.ajax({
@@ -245,7 +245,7 @@ $(function() {
         var formData = new FormData();
         formData.append("filename", $("input#filename").val());
         formData.append("description", $("form[data-hook=script-form] textarea#description").val());
-        formData.append("uploadMehtod", $('input:radio[name=live-edit]:checked').val());
+        formData.append("uploadMethod", $('input:radio[name=live-edit]:checked').val());
         formData.append('scriptSource', btoa(source));
         formData.append('extension', extension);
         $.ajax({
@@ -327,6 +327,135 @@ $(function() {
       console.log(err);
     });
   });
+
+  // GIST LOADER INPUT + BUTTON BEHAVIOR
+  (function(){
+
+    var $gistInput = $('input#gist-url');
+    var $downloadButton = $('input#gist-url').parent().find('button');
+    var $downloadButtonIcon = $downloadButton.children('span').first();
+    var $fileNameField = $('input[name=filename]');
+    var $descriptionField = $('textarea[name=description]');
+
+    var failAlert = function(msg){
+      $downloadButtonIcon.addClass('glyphicon-remove');
+      msg = msg || 'Please, paste a public gist id ' +
+        'or URL (aka: single gist ID string or a URL '+
+        'starting with "https://gist.github.com")';
+      alert(msg);
+    };
+    $downloadButton.on('click', function(evt){
+      var urlish = $gistInput.val();
+      //if we are working or no value on input, ignore
+      if($downloadButton.data('loading') || !urlish) {
+        return;
+      }
+
+      var gistId = "";
+
+      if(urlish.split('/').length === 1) {
+        //this is a simple gist id (single string)
+        gistId = urlish;
+      }else{
+        //we'll treat this case as a url
+        if(/https:\/\/gist\.github\.com/.test(urlish) !== true) {
+          //not a gist.github gist
+          failAlert();
+          return;
+        }
+        //assume gist url is correct, assign to element
+        var mockElement = document.createElement('a');
+        mockElement.href = urlish;
+
+        //get pathname of the a.href, split on / and take 3rd item
+        // eg: "/username/r8j4398rj938".split('/') = ["","username","r8j4398rj938"]
+        gistId = mockElement.pathname.split('/')[2];
+      }
+
+      if(!gistId) {
+        //if everything fail to get a gistId, return
+        failAlert();
+        return;
+      }
+
+      // LOAD GIST:
+      $downloadButtonIcon
+        .removeClass('glyphicon-download')
+        .addClass('glyphicon-ban-circle')
+        .data('loading', true);
+      $.getJSON("https://api.github.com/gists/"+gistId, function(){
+        console.log(arguments);
+      })
+      .fail(function(xhr, status, error){
+        console.log('fail');
+        console.log(arguments);
+        $downloadButtonIcon
+          .addClass('glyphicon-remove');
+      })
+      .success(function(res, status, xhr){
+        console.log('success');
+        // console.log(res);
+
+        var files = Object.keys(res.files);
+        if(!files.length) {
+          failAlert("Loaded the gist, but couldn't find any files in it");
+          return;
+        }
+
+        //right now, we only accept a single (first) file
+        var file = res.files[files[0]];
+        console.log(file);
+
+        var source = file.content.replace(/^#!\/.*\n/,'');
+
+        switch(file.language) {
+          case "JavaScript":
+            if(!$('input[name=filename]').val()) {
+              $('input[name=filename]').val(files[0]);
+            }
+            aceEditor.session.setMode("ace/mode/javascript");
+            aceEditor.getSession().setValue('#!/usr/bin/env nodejs \n' + source);
+          break;
+          case "Shell": //horribly, gist calls .sh like this
+            if(!$('input[name=filename]').val()) {
+              $('input[name=filename]').val(files[0]);
+            }
+            aceEditor.session.setMode("ace/mode/sh");
+            aceEditor.getSession().setValue('#!/usr/bin/env bash \n' + source);
+          break;
+          default:
+            failAlert('Sadly, we are only accepting JavaScript (.js) and Shell (.sh) gists. Sorry. Please try another');
+        }
+        if(!$descriptionField.val()) {
+          $descriptionField.val(res.description);
+        }
+
+        $downloadButtonIcon
+          .addClass('glyphicon-ok');
+      })
+      .always(function(res, status, xhr){
+        console.log('always');
+        console.log(arguments);
+        $downloadButtonIcon
+          .removeClass('glyphicon-ban-circle')
+          .data('loading', false);
+      });
+    });
+
+    //reset button to download state on input change
+    $gistInput.on('input', function(evt){
+      $downloadButtonIcon
+        .removeClass('glyphicon-ok')
+        .removeClass('glyphicon-ban-circle')
+        .removeClass('glyphicon-remove')
+        .removeClass('glyphicon-download');
+      if(!$gistInput.val()) {
+        $downloadButtonIcon.addClass('glyphicon-remove');
+      }else{
+        $downloadButtonIcon.addClass('glyphicon-download');
+      }
+    });
+  })();
 
   /* ROW SELECTOR + MASS CHECKER + MASS DELETE */
   (function(){
