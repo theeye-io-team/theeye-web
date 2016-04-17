@@ -18,7 +18,8 @@ echo "using NODE_ENV=$NODE_ENV"
 echo -e "\e[39m"
 
 if [ -z $NODE_ENV ];then
-   NODE_ENV=development
+   echo "!!NODE ENV NOT CONFIGURED, DEFAULT NODE_ENV=$NODE_ENV"
+   export NODE_ENV=development
 fi
 
 cd $path;

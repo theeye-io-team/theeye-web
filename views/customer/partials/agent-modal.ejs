@@ -6,10 +6,21 @@
         <h4 class="modal-title">Install agent</h4>
       </div>
       <div class="modal-body">
+        <!--
         <input data-hook="curl-agent" value="" style="width:90%; padding: 0px; margin-bottom: 10px">
         <button class="clipboard-btn" data-clipboard-target="[data-hook=curl-agent]">
           <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
         </button>
+      -->
+      <div class="input-group">
+        <input type="text" class="form-control" data-hook="curl-agent" value="">
+        <span class="input-group-btn">
+          <button class="btn btn-primary clipboard-btn" type="button"
+            data-clipboard-target="[data-hook=curl-agent]">
+            <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+          </button>
+        </span>
+      </div><!-- /input-group -->
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->

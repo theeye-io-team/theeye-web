@@ -280,11 +280,9 @@ passport.activateUser = function(req, res, next){
     debug(localUser);
 
     var apiUserData = {
-      'email':localUser.email,
-      'customers':localUser.customers,
-      'credential':localUser.credential,
-      'client_id': localUser.username,
-      'client_secret': localUser.username
+      'email': localUser.email,
+      'customers': localUser.customers,
+      'credential': localUser.credential
     };
     var mySupervisor = new TheEyeClient({
       client_id: sails.config.application.client_id,
