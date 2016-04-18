@@ -54,7 +54,7 @@ module.exports = {
 
     if (!req.body.name) return res.send(400, "Name for the action is required");
     if (!req.body.script_id) return res.send(400, "Script is required");
-    if (!req.body.hosts_id && !req.body.resource_id) 
+    if (!req.body.hosts_id && !req.body.resource_id)
       return res.send(400, "Host or Resource is required");
 
     var hosts = req.body.hosts_id;

@@ -19,6 +19,7 @@ $(function() {
   (function update (el){
 
     var $taskForm = $(el);
+    var $singleSelect = $taskForm.find('select.host_id');
 
     function fillForm($viewElement, data) {
       $viewElement[0].reset();
@@ -36,6 +37,7 @@ $(function() {
       $taskForm.data('action','edit');
       jQuery.get("/task/" + taskId).done(function(data){
         fillForm($taskForm, data.task);
+        if(!$singleSelect.data('select2')) $singleSelect.select2();
       }).fail(function(xhr, err, xhrStatus) {
         $state.trigger("task_fetch_error", xhr.responseText, err);
       });
@@ -66,11 +68,21 @@ $(function() {
   (function create(el){
 
     var $taskForm = $(el);
+    var $multihost = $taskForm.find('.hidden-container#hosts-selection');
+    var $singleresource = $taskForm.find('.hidden-container#resource-selection');
+    var $singleSelect = $singleresource.find('select.hosts_id');
+    var $multiSelect = $multihost.find('select.hosts_id');
 
     $(".modal#create-task").on('shown.bs.modal', function(event) {
-      $taskForm.find(".hidden-container#hosts-selection").hide();
+      $multihost.hide();
       $taskForm.data('action','create');
       $taskForm[0].reset();
+
+      //singleSelect is visible from the start, so when the
+      //modal is shown select2 is initialized
+      if(!$singleSelect.data('select2'))
+        $singleSelect.select2({ placeholder: "Select a host..." });
+
     });
 
     $state.on("task_created", function() {
@@ -86,8 +98,6 @@ $(function() {
 
     $taskForm.find("input[type=radio][name=target]").on("change", function(){
       var val = $(this).val();
-      var $multihost = $taskForm.find('.hidden-container#hosts-selection');
-      var $singleresource = $taskForm.find('.hidden-container#resource-selection');
       if( val == 'single-resource' ) {
         $multihost.hide(50);
         $multihost.find("option:selected").removeAttr("selected");
@@ -95,14 +105,20 @@ $(function() {
       } else if( val == 'multi-hosts' ){
         $singleresource.hide(50);
         $singleresource.find("select").val(0);
-        $multihost.show(50);
+
+        //multiSelect is hidden and select2 won't work properly
+        //hook select2 initialization when multiSelect is fully visible
+        $multihost.show(50, function(){
+          if(!$multiSelect.data('select2')) $multiSelect.select2({
+            placeholder: 'Type a hostname or hit Enter to list'
+          });
+        });
       }
     });
 
     $taskForm.on("submit", function(event) {
       event.preventDefault();
       var vals = extractFormData($taskForm);
-
       jQuery.post("/task", vals).done(function(data) {
         $state.trigger("task_created");
       }).fail(function(xhr, err, xhrStatus) {
