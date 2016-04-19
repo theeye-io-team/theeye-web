@@ -30,15 +30,15 @@
           <span class="glyphicon glyphicon-plus"></span>
           New Script
         </button>
-        <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
-          title="Delete selected scripts"
-          aria-label="Center Align">
-          <span class="glyphicon glyphicon-trash"></span>
-        </button>
         <button class="pull-right tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
           title="Select all"
           aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
+        </button>
+        <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
+          title="Delete selected scripts"
+          aria-label="Center Align">
+          <span class="glyphicon glyphicon-trash"></span>
         </button>
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -63,18 +63,18 @@
                     <span class="panel-item name" id="<%= resource.id %>"><%= script.filename %></span>
                     <div class="panel-item icons">
 
-                      <button class="rowSelector btn btn-default simple-btn tooltiped"
-                        title="Select script"
-                        aria-label="Center Align">
-                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
-                      </button>
-
                       <button class="editScript btn btn-default simple-btn tooltiped" title="Edit script" aria-label="Center Align" data-script-id="<%= script.id %>" data-toggle="modal" data-target="#edit-script">
                         <span class="glyphicon glyphicon-edit"></span>
                       </button>
 
                       <button class="deleteScript btn btn-default simple-btn tooltiped" title="Delete script" aria-label="Center Align" data-script-id="<%= script.id %>">
                         <span class="glyphicon glyphicon-trash"></span>
+                      </button>
+
+                      <button class="rowSelector btn btn-default simple-btn tooltiped"
+                        title="Select script"
+                        aria-label="Center Align">
+                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                       </button>
 
                     </div>

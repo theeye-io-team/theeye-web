@@ -67,15 +67,16 @@
            </ul>
         </div>
 
-        <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
-          title="Delete selected monitors"
-          aria-label="Center Align">
-          <span class="glyphicon glyphicon-trash"></span>
-        </button>
         <button class="pull-right tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
           title="Select all"
           aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
+        </button>
+
+        <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
+          title="Delete selected monitors"
+          aria-label="Center Align">
+          <span class="glyphicon glyphicon-trash"></span>
         </button>
 
       </div>
@@ -107,11 +108,6 @@
                       <small class="<%= monitor.resource.state === 'normal' ? '' : 'remark-alert' %>"> > host status :: <%= monitor.resource.state %></small>
                     </span>
                     <div class="panel-item icons">
-                      <button class="rowSelector btn btn-default simple-btn tooltiped"
-                        title="Select monitor"
-                        aria-label="Center Align">
-                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
-                      </button>
 
                       <button class="<%= monitor.type != 'host' ? 'editResourceMonitor ' : ''%> editResource <%= monitor.type %>ResourceEditAction btn btn-default simple-btn tooltiped"
                         aria-label="Center Align"
@@ -131,6 +127,12 @@
                         aria-label="Center Align"
                         data-resource_id="<%= monitor.resource.id %>">
                         <span class="glyphicon glyphicon-trash"></span>
+                      </button>
+
+                      <button class="rowSelector btn btn-default simple-btn tooltiped"
+                        title="Select monitor"
+                        aria-label="Center Align">
+                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                       </button>
 
                       <% if( monitor.type == 'host' ) { %>

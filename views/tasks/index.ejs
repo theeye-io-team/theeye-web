@@ -37,15 +37,15 @@
           New Task
         </button>
 
-        <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
-          title="Delete selected tasks"
-          aria-label="Center Align">
-          <span class="glyphicon glyphicon-trash"></span>
-        </button>
         <button class="pull-right tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
           title="Select all"
           aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
+        </button>
+        <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
+          title="Delete selected tasks"
+          aria-label="Center Align">
+          <span class="glyphicon glyphicon-trash"></span>
         </button>
 
       </div>
@@ -79,11 +79,6 @@
                     <% } %>
                     </span>
                     <div class="panel-item icons">
-                      <button class="rowSelector btn btn-default simple-btn tooltiped"
-                        title="Select task"
-                        aria-label="Center Align">
-                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
-                      </button>
                       <button class="editTask btn btn-default simple-btn tooltiped"
                         title="Edit task"
                         aria-label="Center Align"
@@ -97,6 +92,11 @@
                         aria-label="Center Align"
                         data-task-id="<%= task.id %>">
                         <span class="glyphicon glyphicon-trash"></span>
+                      </button>
+                      <button class="rowSelector btn btn-default simple-btn tooltiped"
+                        title="Select task"
+                        aria-label="Center Align">
+                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                       </button>
                     </div>
                   </div>
