@@ -81,11 +81,7 @@ $(function(){
   $('.modal#scriptResourceModal button[type=submit]').on('click', setCallback('script'));
   $('.modal#scraperResourceModal button[type=submit]').on('click', setCallback('scraper'));
 
-  function fillForm(form, data) {
-    //original signature was $form,data but:
-    // $form was being redefined in the first lines
-    // orginal $form was never used.
-    // So I changed signature to form,data. --CG
+  function fillForm(data){
     var resource = data.resource;
     var monitor = data.monitors[0];
     var type = monitor.type;
@@ -120,10 +116,38 @@ $(function(){
         $form.find('[data-hook=pattern]').val(monitor.config.ps.pattern);
         break;
       case 'script':
-        $form.find('[data-hook=script_id]').val(monitor.config.script_id);
-        $form.find('[data-hook=script_arguments]').val(monitor.config.script_arguments);
-        break;
-    }
+        var $script = $form.find('select[name=script_id]');
+        var $disable = $form.find('input[name=disabled]');
+
+        if( $disable.is(':checked') )
+        {
+          $disable.on('change',function(event){
+            if(!this.checked){
+              if(!$script.val()){
+                this.checked=true;
+                bootbox.alert('Please, select a script first to enable the monitor.');
+              }
+            }
+          });
+          $script.on('change', function(event){
+            if( $disable.is(':checked') ){
+              var msg = 'You have just added a script. Enable the monitor again?';
+              bootbox.confirm(msg, function(confirmed){
+                if(confirmed) $disable.prop('checked', false);
+              });
+            }
+          });
+          $('.modal#scriptResourceModal').on('hidden.bs.modal', function(e) {
+            $script.off('change');
+            $disable.off('change');
+          })
+        }
+
+        $script.val(monitor.config.script_id);
+        $form.find('[data-hook=script_arguments]')
+          .val(monitor.config.script_arguments);
+      break;
+    };
   }
 
   function setupEditResourceForm($form, options){
@@ -140,7 +164,7 @@ $(function(){
       data: { 'monitor_type': options.type }
     })
     .done(function(data){
-      fillForm($form, data);
+      fillForm(data);
       $('#' + options.type + 'ResourceModal')
         .one('shown.bs.modal', function(){
           //one time AUTOCOMPLETE COMBOBOX setup
@@ -219,24 +243,21 @@ $(function(){
     event.stopPropagation();
     $.blockUI();
 
-    var data = $(this).data();
+    var id = event.currentTarget.getAttribute('data-resource_id');
+    var type = event.currentTarget.getAttribute('data-resource-type');
+    var host = event.currentTarget.getAttribute('data-host_id');
+    var action = event.currentTarget.getAttribute('data-action');
+    var hostname = event.currentTarget.getAttribute('data-hostname');
 
-    window.resourceActionData = {
-      'type': data.resourceType,
-      'action': data.action,
-      'host_id': data.host_id,
-      'resource_id': data.resource_id,
-      'enable': data.enable,
-      'hostname': data.hostname,
+    var data = window.resourceActionData = {
+      'type': type,
+      'action': action,
+      'host': host,
+      'hostname': hostname,
+      'id': id
     };
 
-    setupResourceAction({
-      host: data.host_id,
-      hostname: data.hostname,
-      action: data.action,
-      type: data.resourceType,
-      id: data.resource_id
-    });
+    setupResourceAction(data);
   }
 
   $('.editResourceMonitor').on('click', handleResourceAction);
