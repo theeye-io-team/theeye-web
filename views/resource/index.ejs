@@ -103,7 +103,7 @@
                     <span class="panel-item name" id="<%= monitor.id %>">
                       <%= monitor.resource.description %>
                       <span class="monitor-<%= monitor.enable?'enabled':'disabled' %>">
-                        <small><%= ! monitor.enable ? ' > disabled' :'' %> > <%= monitor.type %></small>
+                        <small><% if(monitor.resource.type != 'host'){ %>(<%=monitor.resource.hostname%>)<% } %><%= ! monitor.enable ? ' > disabled' :'' %> > <%= monitor.type %></small>
                       </span>
                       <small class="<%= monitor.resource.state === 'normal' ? '' : 'remark-alert' %>"> > host status :: <%= monitor.resource.state %></small>
                     </span>
