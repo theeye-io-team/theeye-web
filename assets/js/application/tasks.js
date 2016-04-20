@@ -1,4 +1,20 @@
-
+/* NOTE
+Lists are made up with:
+  class="itemRow panel panel-default js-searchable-item"
+so to treat them as items represented in a "row".
+With this in mind, every button in them can reference
+the item they are representing (and its data)
+by calling:
+$(this).closest('.itemRow')
+Ex:
+$('button.edit-task').on('click', function(event){
+  $(this) // the button jQuerized
+    .closest('.itemRow') // the row the button is in
+    .data(); // returns {itemName, itemData, ...}
+});
+This way we can save a lot of markup such as data-id or data-whatever
+usually repeated in every button
+*/
 $(function() {
 
   var $state = $({});
@@ -18,9 +34,6 @@ $(function() {
 
   (function update (el){
 
-    var $taskForm = $(el);
-    var $singleSelect = $taskForm.find('select.host_id');
-
     function fillForm($viewElement, data) {
       $viewElement[0].reset();
       Object.keys(data).forEach(function(k) {
@@ -29,18 +42,33 @@ $(function() {
       });
     }
 
-    $(".modal#edit-task").on('shown.bs.modal', function(event) {
-      event.preventDefault();
-      event.stopPropagation();
-      var taskId = event.relatedTarget.getAttribute('data-task-id');
+    var $taskForm = $(el);
+    var $singleSelect = $('select.host_id', $taskForm);
+
+    $('.editTask').on('click', function(evt){
+      evt.preventDefault();
+      evt.stopPropagation();
+      var taskId = $(this).closest('.itemRow').data('item-id');
       $taskForm.data('task-id',taskId);
       $taskForm.data('action','edit');
-      jQuery.get("/task/" + taskId).done(function(data){
+
+      $.get("/task/" + taskId).done(function(data){
         fillForm($taskForm, data.task);
-        if(!$singleSelect.data('select2')) $singleSelect.select2();
+
+        $('#edit-task').modal('show');
+        // the rest is up to the shown.bs.modal event (below)
       }).fail(function(xhr, err, xhrStatus) {
         $state.trigger("task_fetch_error", xhr.responseText, err);
       });
+    });
+
+    $(".modal#edit-task").on('shown.bs.modal', function(event) {
+      //nice-guy first input auto focus
+      $('#name',this).focus();
+
+      $singleSelect.select2({ placeholder: "Select a host..." });
+
+      $('#script_id', $taskForm).select2({ placeholder: "Select a script..." });
     });
 
     $taskForm.on("submit", function(event) {
@@ -68,12 +96,15 @@ $(function() {
   (function create(el){
 
     var $taskForm = $(el);
-    var $multihost = $taskForm.find('.hidden-container#hosts-selection');
-    var $singleresource = $taskForm.find('.hidden-container#resource-selection');
-    var $singleSelect = $singleresource.find('select.hosts_id');
-    var $multiSelect = $multihost.find('select.hosts_id');
+    var $multihost = $('.hidden-container#hosts-selection', $taskForm);
+    var $multiSelect = $('select.hosts_id', $multihost);
+    var $singleresource = $('.hidden-container#resource-selection', $taskForm);
+    var $singleSelect = $('select.hosts_id', $singleresource);
 
     $(".modal#create-task").on('shown.bs.modal', function(event) {
+      //nice-guy first input auto focus
+      $('#name',this).focus();
+
       $multihost.hide();
       $taskForm.data('action','create');
       $taskForm[0].reset();
@@ -82,6 +113,14 @@ $(function() {
       //modal is shown select2 is initialized
       if(!$singleSelect.data('select2'))
         $singleSelect.select2({ placeholder: "Select a host..." });
+
+      // initialize script_id select2
+      if(!$('#script_id', $taskForm).data('select2'))
+        $('#script_id', $taskForm).select2({ placeholder: "Select a script..." });
+
+      // initialize resource_id select2
+      if(!$('#resource_id', $taskForm).data('select2'))
+        $('#resource_id', $taskForm).select2({ placeholder: "Select a resurce..." });
 
     });
 
@@ -132,9 +171,10 @@ $(function() {
 
 
   (function remove(){
-    $state.on("task_deleted", function(ev,$el) {
-      //$el.remove();
-      location.reload();
+    $state.on("task_deleted", function(ev,data) {
+      console.log(arguments);
+      data.row.remove();
+      // location.reload();
     });
     $state.on("task_delete_error", function(ev, resp, err) {
       alert(resp);
@@ -142,25 +182,23 @@ $(function() {
     $(".deleteTask").on("click",function(ev){
       ev.preventDefault();
       ev.stopPropagation();
+      var itemRow = $(this).closest('.itemRow');
 
       bootbox.confirm('The resource will be removed. Want to continue?',
-      function(confirmed)
-      {
-        if(!confirmed)
-          return;
+        function(confirmed) {
+          if(!confirmed)
+            return;
 
-        var $delTrigger = $(ev.currentTarget);
-        var idTask = $delTrigger.data("task-id");
-
-        $.ajax({
-          url: '/task/' + idTask,
-          type: 'DELETE'
-        }).done(function(data) {
-          $state.trigger("task_deleted", $delTrigger.closest('div.panel-group')[0]);
-        }).fail(function(xhr, err, xhrStatus) {
-          $state.trigger("task_delete_error", xhr.responseText, err);
-        });
-      });
+          $.ajax({
+            url: '/task/' + itemRow.data().itemId,
+            type: 'DELETE'
+          }).done(function(data) {
+            $state.trigger("task_deleted", {row: itemRow});
+          }).fail(function(xhr, err, xhrStatus) {
+            $state.trigger("task_delete_error", xhr.responseText, err);
+          });
+        }
+      );
     });
   })();
 
@@ -361,6 +399,7 @@ $(function() {
       $this.blur();
     });
   })();
+
   $('.modal#scriptUpload div#scriptTemplateDescription').hide();
 
 });

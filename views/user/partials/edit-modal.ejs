@@ -1,5 +1,5 @@
-<!-- 
-Modal for creating a user 
+<!--
+Modal for creating a user
 -->
 
 <div class="modal fade" id="edit-user" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -11,7 +11,7 @@ Modal for creating a user
       </div>
       <div class="modal-body">
         <form id="editUserForm" action="/admin/editUser" class="form-horizontal">
-        
+
           <div class="form-group">
             <label for="username" class="col-sm-2 control-label">Username</label>
             <div class="col-sm-10">
@@ -22,7 +22,7 @@ Modal for creating a user
           <div class="form-group">
             <label for="customers" class="col-sm-2 control-label">Customers</label>
             <div class="col-sm-10">
-              
+
               <select id="customers-edit" class="form-control" name="customers" multiple="multiple" data-hook="customers">
               <% customers.forEach( function(customer, key){ %>
                 <option value="<%= customer.name %>"> <%= customer.name %> </option>
@@ -35,7 +35,7 @@ Modal for creating a user
           <div class="form-group">
             <label for="credential" class="col-sm-2 control-label">Credential</label>
             <div class="col-sm-10">
-              
+
               <select id="credential" class="form-control" name="credential" data-hook="credential">
                 <option value="admin">Admin</option>
                 <option value="owner">Owner</option>
@@ -60,16 +60,10 @@ Modal for creating a user
 
         </form>
       </div>
-      
+
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div><!--.modal-foooter-->
     </div><!--.modal-content-->
   </div><!--.modal-dialog-->
-</div><!--.modal-->  
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#customers-edit').multiselect();
-    });
-</script>
+</div><!--.modal-->
