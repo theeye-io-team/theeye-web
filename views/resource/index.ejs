@@ -67,15 +67,28 @@
            </ul>
         </div>
 
+        <button class="pull-right tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
+          title="Select all"
+          aria-label="Center Align">
+          <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
+        </button>
+
         <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
           title="Delete selected monitors"
           aria-label="Center Align">
           <span class="glyphicon glyphicon-trash"></span>
         </button>
-        <button class="pull-right tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
-          title="Select all"
+
+        <button class="pull-right tableHeaderIconButton massMuteActivate btn btn-default simple-btn tooltiped"
+          title="Activate selected monitors alerts"
           aria-label="Center Align">
-          <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
+          <span class="massiveSelector glyphicon glyphicon-volume-up"></span>
+        </button>
+
+        <button class="pull-right tableHeaderIconButton massMuteDeactivate btn btn-default simple-btn tooltiped"
+          title="Deactivate selected monitors alerts"
+          aria-label="Center Align">
+          <span class="massiveSelector glyphicon glyphicon-volume-off"></span>
         </button>
 
       </div>
@@ -102,16 +115,11 @@
                     <span class="panel-item name" id="<%= monitor.id %>">
                       <%= monitor.resource.description %>
                       <span class="monitor-<%= monitor.enable?'enabled':'disabled' %>">
-                        <small><%= ! monitor.enable ? ' > disabled' :'' %> > <%= monitor.type %></small>
+                        <small><% if(monitor.resource.type != 'host'){ %>(<%=monitor.resource.hostname%>)<% } %><%= ! monitor.enable ? ' > disabled' :'' %> > <%= monitor.type %></small>
                       </span>
                       <small class="<%= monitor.resource.state === 'normal' ? '' : 'remark-alert' %>"> > host status :: <%= monitor.resource.state %></small>
                     </span>
                     <div class="panel-item icons">
-                      <button class="rowSelector btn btn-default simple-btn tooltiped"
-                        title="Select monitor"
-                        aria-label="Center Align">
-                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
-                      </button>
 
                       <button class="<%= monitor.type != 'host' ? 'editResourceMonitor ' : ''%> editResource <%= monitor.type %>ResourceEditAction btn btn-default simple-btn tooltiped"
                         aria-label="Center Align"
@@ -126,11 +134,36 @@
                       ><span class="glyphicon glyphicon-edit"></span>
                       </button>
 
+                      <%
+                      if( monitor.resource.alerts === false ) {
+                        var muteClass='resource-enable-alerts';
+                        var muteIcon='glyphicon-volume-up';
+                        var muteTitle='Activate monitor alerts';
+                      } else {
+                        var muteClass='resource-disable-alerts';
+                        var muteIcon='glyphicon-volume-off';
+                        var muteTitle='Deactivate monitor alerts';
+                      }
+                      %>
+
+                      <button class="<%= muteClass %> btn btn-default simple-btn tooltiped"
+                        title="<%= muteTitle %>"
+                        aria-label="Center Align"
+                        data-resource_id="<%= monitor.resource.id %>">
+                        <span class="glyphicon <%= muteIcon %>"></span>
+                      </button>
+
                       <button class="deleteResource btn btn-default simple-btn tooltiped"
                         title="Delete monitor"
                         aria-label="Center Align"
                         data-resource_id="<%= monitor.resource.id %>">
                         <span class="glyphicon glyphicon-trash"></span>
+                      </button>
+
+                      <button class="rowSelector btn btn-default simple-btn tooltiped"
+                        title="Select monitor"
+                        aria-label="Center Align">
+                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                       </button>
 
                       <% if( monitor.type == 'host' ) { %>

@@ -1,5 +1,5 @@
-<!-- 
-Modal for creating a user 
+<!--
+Modal for creating a user
 -->
 
 <div class="modal fade" id="create-user" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -11,57 +11,58 @@ Modal for creating a user
       </div>
       <div class="modal-body">
         <form id="createUserForm" action="/admin/createUser" method="POST" class="form-horizontal">
-        
+
           <div class="form-group">
-            <label for="username" class="col-sm-2 control-label">Username</label>
-            <div class="col-sm-10">
+            <label for="username" class="col-sm-3 control-label">Username</label>
+            <div class="col-sm-9">
               <input data-hook="name" type="text" name="username" class="form-control" id="name" placeholder="Username">
             </div>
           </div>
-        
+
           <div class="form-group">
-            <label for="email" class="col-sm-2 control-label">Email</label>
-            <div class="col-sm-10">
+            <label for="email" class="col-sm-3 control-label">Email</label>
+            <div class="col-sm-9">
               <input data-hook="email" type="text" name="email" class="form-control" id="email" placeholder="email"/>
             </div>
           </div>
-          
+
           <div class="form-group">
-            <label for="sendInvitation" class="col-sm-2 control-label">Send Invitation</label>
-            <div class="col-sm-10">
+            <label for="sendInvitation" class="col-sm-3 control-label">Send Invitation</label>
+            <div class="col-sm-9">
               <input data-hook="sendInvitation" type="checkbox" name="sendInvitation" id="sendInvitation" CHECKED/>
             </div>
           </div>
 
           <div class="form-group hidden-container set-password">
-            <label for="password" class="col-sm-2 control-label">Password</label>
-            <div class="col-sm-10">
+            <label for="password" class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
               <input data-hook="password" type="password" name="password" class="form-control" id="password"/>
             </div>
           </div>
 
           <div class="form-group hidden-container set-password">
-            <label for="confirmPassword" class="col-sm-2 control-label"></label>
-            <div class="col-sm-10">
+            <label for="confirmPassword" class="col-sm-3 control-label"></label>
+            <div class="col-sm-9">
               <input data-hook="confirmPassword" type="password" name="confirmPassword" class="form-control" id="confirmPassword"/>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="customers" class="col-sm-2 control-label">Customers</label>
-            <div class="col-sm-10">
+            <label for="customers" class="col-sm-3 control-label">Customers</label>
+            <div class="col-sm-9">
               <select id="customers" class="form-control" name="customers" multiple="multiple" style="width:100%">
-              <% customers.forEach( function(customer, key){ %>
-                <option value="<%= customer.name %>"> <%= customer.name %> </option>
-              <% }); %>
+                <option value disabled></option>
+                <% customers.forEach( function(customer, key){ %>
+                  <option value="<%= customer.name %>"> <%= customer.name %> </option>
+                <% }); %>
               </select>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="credential" class="col-sm-2 control-label">Credential</label>
-            <div class="col-sm-10">
-              
+            <label for="credential" class="col-sm-3 control-label">Credential</label>
+            <div class="col-sm-9">
+
               <select id="credential" class="form-control" name="credential">
                 <option value="admin">Admin</option>
                 <option value="owner">Owner</option>
@@ -72,23 +73,17 @@ Modal for creating a user
           </div>
 
           <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
+            <div class="col-sm-offset-3 col-sm-9">
               <button id="userAction" type="submit" class="btn btn-primary">Submit</button>
             </div>
           </div>
 
         </form>
       </div>
-      
+
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div><!--.modal-foooter-->
     </div><!--.modal-content-->
   </div><!--.modal-dialog-->
-</div><!--.modal-->  
-
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#customers').select2();
-    });
-</script>
+</div><!--.modal-->

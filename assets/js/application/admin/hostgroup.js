@@ -63,7 +63,7 @@ $(function(){
     field: function(field) {
       var name = field.name;
       var value = field.value;
-      
+
       var filterFn = this[name];
       return filterFn ? filterFn(value) : value;
     },
@@ -82,7 +82,7 @@ $(function(){
     var changes = {};
     for(var i=0;i<data.length;i++){
       var field = data[i];
-      changes[field.name] = 
+      changes[field.name] =
       this[field.name] = Filter.field(field);
     }
     return changes;
@@ -101,7 +101,7 @@ $(function(){
      * @param {Item} item
      */
     remove: function remove(item, doneFn){
-      var toRemove; 
+      var toRemove;
       var col = group.tasks.filter(function(task){
         if(task._key == item._key){
           toRemove = task;
@@ -156,7 +156,7 @@ $(function(){
      * @param {Item} item
      */
     remove: function remove(item, doneFn) {
-      var toRemove; 
+      var toRemove;
       var col = group.monitors.filter(function(monitor){
         if(monitor._key == item._key){
           toRemove = monitor;
@@ -210,7 +210,7 @@ $(function(){
       }
     })
   }
-  
+
   function fillMonitorForm(monitor, $selector) {
     $selector.find('form :input').each(function(i, e){
       if( e.hasAttributes() ){
@@ -644,4 +644,22 @@ $(function(){
   $createGroupLink.on('click', function(event){
     $createGroupButton.trigger('click');
   });
+
+  // emergency hooks for select2 and form cleanup
+  $taskModal.on('shown.bs.modal',function(evt){
+    // clean up tasks modal form when opening from create-task button
+    if($(evt.relatedTarget).hasClass('create-task')) {
+      $('form', this)[0].reset();
+    }
+    // nice guy first input focus
+    $('#name', this).focus();
+    // select2 init
+    $('select#script_id', this).select2({placeholder:'Select a script...'});
+  });
+
+  $('#script-monitor-modal').on('shown.bs.modal', function(evt){
+    $('input[name=description]', this).first().focus();
+    $('select#script_id', this).select2({placeholder:'Select a script...'});
+  });
+
 });
