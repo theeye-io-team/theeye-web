@@ -247,7 +247,7 @@ $(function(){
         // $select.data('select2') && $select.select2('destroy');
 
         $select.select2();
-        $form.find('select#script_id').select2();
+        $form.find('select#script_id').select2({placeholder:"Select a script..."});
 
         var $firstInput = $(this).find('input[type!=hidden]').first().focus();
         $(this).on('shown.bs.modal', function(){

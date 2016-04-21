@@ -54,7 +54,10 @@
         groups.forEach( function(group){
         var tags = [ "group", group.hostname_regex ].join(',') %>
 
-        <div class="panel panel-default js-searchable-item" data-tags="<%= tags %>">
+        <div class="itemRow panel panel-default js-searchable-item"
+          data-item-id="<%= group.id %>"
+          data-item-name="<%= group.hostname_regex %>"
+          data-tags="<%= tags %>">
           <div class="panel-heading" role="tab" id="heading<%= group.id %>">
             <h4 class="panel-title">
               <a class="collapsed"
