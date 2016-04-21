@@ -17,11 +17,11 @@
     <div>
       <div class="table-header admin">
         <span class="title panel-item name">Users &nbsp; &nbsp; |</span>
-        <button class="createUser btn btn-default simple-btn new-btn tooltiped" 
-          data-placement="right" 
-          title="Create new user" 
-          aria-label="Left Align" 
-          data-toggle="modal" 
+        <button class="createUser btn btn-default simple-btn new-btn tooltiped"
+          data-placement="right"
+          title="Create new user"
+          aria-label="Left Align"
+          data-toggle="modal"
           data-target="#create-user">
           <span class="glyphicon glyphicon-plus"></span>
           New User
@@ -39,23 +39,34 @@
             "credential="+ user.credential
           ].join(',');
           %>
-          <div class="panel panel-default js-searchable-item" data-tags="<%= tags %>">
+          <div class="itemRow panel panel-default js-searchable-item"
+            data-item-id="<%= user.id %>"
+            data-item-name="<%= user.username %>"
+            data-tags="<%= tags %>">
             <div class="panel-heading" role="tab" id="heading<%= user.id %>">
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= user.id %>" aria-expanded="false" aria-controls="collapse<%= user.id %>">
                   <div class="panel-title-content">
                     <span class="panel-item name" id="<%= user.id %>"><%= user.username %> <small>> <%= user.credential %></small></span>
                     <div class="panel-item icons">
-                      <button title="resend user invitation" 
-                        class="reSendInvitation btn btn-default simple-btn tooltiped" 
-                        aria-label="Center Align" 
+                      <button
+                        title="resend user invitation"
+                        class="reSendInvitation btn btn-default simple-btn tooltiped"
+                        aria-label="Center Align"
                         data-user-id="<%= user.id %>">
                         <span class="glyphicon glyphicon-share-alt"></span>
                       </button>
-                      <button class="editUser btn btn-default simple-btn tooltiped" title="Edit user" aria-label="Center Align" data-user-id="<%= user.id %>" data-toggle="modal" data-target="#edit-user">
+                      <button
+                        class="editUser btn btn-default simple-btn tooltiped"
+                        title="Edit user"
+                        aria-label="Center Align">
                         <span class="glyphicon glyphicon-edit"></span>
                       </button>
-                      <button class="deleteUser btn btn-default simple-btn tooltiped" title="Delete user" aria-label="Center Align" data-user-id="<%= user.id %>">
+                      <button
+                        class="deleteUser btn btn-default simple-btn tooltiped"
+                        title="Delete user"
+                        aria-label="Center Align"
+                        data-user-id="<%= user.id %>">
                         <span class="glyphicon glyphicon-trash"></span>
                       </button>
                     </div>
