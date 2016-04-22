@@ -338,12 +338,12 @@ $(function(){
    * ON HOST RESOURCE UPDATES SUBMIT
    * @author Facundo
    */
-  $('.modal#dstatResourceModal button[type=submit]').on('click', function(event){
+  $('.modal#dstat-resource-modal button[type=submit]').on('click', function(event){
     event.preventDefault();
     event.stopPropagation();
     log('saving host config');
 
-    var $form = $('#dstatResourceModal form');
+    var $form = $('#dstat-resource-modal form');
     var idResource = $form.find('[data-hook=resource_id]').val();
     var values = $form.serializeArray();
 
@@ -389,9 +389,9 @@ $(function(){
     var idHost = event.currentTarget.getAttribute('data-host_id');
     var hostname = event.currentTarget.getAttribute('data-hostname');
 
-    var $form = $('#dstatResourceModal form');
+    var $form = $('#dstat-resource-modal form');
 
-    $('#dstatResourceModal span[data-hook=hostname]').html(hostname);
+    $('#dstat-resource-modal span[data-hook=hostname]').html(hostname);
 
     $.blockUI();
     jQuery.ajax({
@@ -401,7 +401,7 @@ $(function(){
     })
     .done(function(data){
       fillHostResourceForm($form, data, function(){
-        $('#dstatResourceModal').modal('show');
+        $('#dstat-resource-modal').modal('show');
         $.unblockUI();
       });
     })

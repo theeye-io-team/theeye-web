@@ -402,6 +402,7 @@ button.bulkRunner {
 .bootstrap-tagsinput span.tag.label { cursor: pointer; }
 
 .tableHeaderIconButton { margin: 7px; margin-left: 0px; margin-right: 0px; }
+.tableHeaderIconButton.pull-left { margin-left: 5px; }
 
 
 span.selectorIcon.glyphicon-unchecked {
