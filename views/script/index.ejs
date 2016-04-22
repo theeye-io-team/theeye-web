@@ -24,16 +24,16 @@
     <h3>Scripts Admin</h3>
     <div>
       <div class="table-header admin">
+        <button class="pull-left tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
+          title="Select all"
+          aria-label="Center Align">
+          <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
+        </button>
         <span class="title panel-item name">Scripts &nbsp; &nbsp; |</span>
 
         <button class="createScript btn btn-default simple-btn new-btn tooltiped" data-placement="right" title="Create new script" aria-label="Left Align">
           <span class="glyphicon glyphicon-plus"></span>
           New Script
-        </button>
-        <button class="pull-right tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
-          title="Select all"
-          aria-label="Center Align">
-          <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
         </button>
         <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
           title="Delete selected scripts"
@@ -60,7 +60,14 @@
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= script.id %>" aria-expanded="false" aria-controls="collapse<%= script.id %>">
                   <div class="panel-title-content">
-                    <span class="panel-item name" id="<%= resource.id %>"><%= script.filename %></span>
+                    <span class="panel-item name" id="<%= resource.id %>">
+                      <button class="rowSelector btn btn-default simple-btn tooltiped"
+                        title="Select script"
+                        aria-label="Center Align">
+                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
+                      </button>
+                      <%= script.filename %>
+                    </span>
                     <div class="panel-item icons">
 
                       <button class="editScript btn btn-default simple-btn tooltiped" title="Edit script" aria-label="Center Align" data-script-id="<%= script.id %>" data-toggle="modal" data-target="#edit-script">
@@ -71,11 +78,6 @@
                         <span class="glyphicon glyphicon-trash"></span>
                       </button>
 
-                      <button class="rowSelector btn btn-default simple-btn tooltiped"
-                        title="Select script"
-                        aria-label="Center Align">
-                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
-                      </button>
 
                     </div>
                   </div>
