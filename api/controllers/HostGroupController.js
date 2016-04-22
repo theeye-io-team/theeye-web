@@ -10,6 +10,9 @@ module.exports = {
       scripts: function(callback) {
         supervisor.scripts(callback);
       },
+      tasks: function(callback) {
+        supervisor.tasks(callback);
+      },
     }, function(err, data) {
       if (err) {
         console.log(err.toString());

@@ -5,6 +5,7 @@
 <% block('scripts', '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>') %>
 <% block('scripts', '<script src="/js/application/scripts.js"></script>') %>
 <!-- END SCRIPTS CRUD -->
+<% block('scripts', "<script> window.tasks = "+ JSON.stringify(tasks)+";</script>") %>
 
 <% block('scripts', '<script src="/js/application/searchbox.js"></script>') %>
 <% block('scripts', '<script src="/js/application/admin/hostgroup.js"></script>') %>

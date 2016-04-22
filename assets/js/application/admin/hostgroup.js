@@ -46,7 +46,6 @@ $(function(){
           break;
         default:
           throw new Error('invalid monitor type ' + type);
-          break;
       }
     } else _.assign(this, monitor);
   }
@@ -71,7 +70,7 @@ $(function(){
       var args = typeof value == 'string' ? value.split(',') : value;
       return args.map(function(val){ return val.trim(); });
     },
-  }
+  };
 
   function Item (key, type) {
     this._key = key || Date.now(); // a simple ux timestamp
@@ -86,7 +85,7 @@ $(function(){
       this[field.name] = Filter.field(field);
     }
     return changes;
-  }
+  };
 
   var Task = {
     add: function add(data) {
@@ -114,9 +113,9 @@ $(function(){
       if(toRemove.id) {
         var nextFn = function(err, data){
           $.unblockUI();
-          doneFn()
+          doneFn();
           if(err) logger(err);
-        }
+        };
 
         var url = '/admin/hostgroup/' + group.id +
           '/tasktemplate/' + item.id;
@@ -141,7 +140,7 @@ $(function(){
       $tasksTags.tagsinput('refresh');
       return item;
     },
-  }
+  };
 
   var Monitor = {
     add: function add(data) {
@@ -169,9 +168,9 @@ $(function(){
       if(toRemove.id) {
         var nextFn = function(err, data){
           $.unblockUI();
-          doneFn()
+          doneFn();
           if(err) logger(err);
-        }
+        };
 
         var url = '/admin/hostgroup/' + group.id +
           '/monitortemplate/' + item.id;
@@ -196,7 +195,7 @@ $(function(){
       $monitorsTags.tagsinput('refresh');
       return item;
     },
-  }
+  };
 
   function fillTaskForm(task, $selector) {
     $selector.find('form :input').each(function(i, e){
@@ -208,7 +207,7 @@ $(function(){
         var value = task[name];
         $(e).val(value);
       }
-    })
+    });
   }
 
   function fillMonitorForm(monitor, $selector) {
@@ -220,14 +219,14 @@ $(function(){
           $(e).val(monitor[name]);
         }
       }
-    })
+    });
   }
 
   function fillGroupForm(data) {
     var monitors = data.monitors;
     for(var i=0;i<monitors.length; i++)
     {
-      var item = monitors[i]
+      var item = monitors[i];
       var monitor = Object
         .keys(item)
         .map(function(val){
@@ -284,10 +283,10 @@ $(function(){
 
     function updateTask(event){
       var doneFn = function(){
-        $taskModal.modal('hide')
-      }
-      event.preventDefault()
-      event.stopPropagation()
+        $taskModal.modal('hide');
+      };
+      event.preventDefault();
+      event.stopPropagation();
 
       bootbox.confirm('Save Task changes?',
         function(confirmed){
@@ -312,10 +311,10 @@ $(function(){
               }).done(function(data){
                 // what next?
                 $.unblockUI();
-                doneFn()
+                doneFn();
               });
             }
-            else doneFn()
+            else doneFn();
           }
         }
       );
@@ -343,7 +342,7 @@ $(function(){
           var task = $taskForm.serializeArray();
           var parsedData = Task.add(task);
 
-          if(group.id != null) {
+          if(group.id !== null) {
             $.blockUI();
             var url = '/admin/hostgroup/' + group.id +
               '/tasktemplate';
@@ -351,8 +350,8 @@ $(function(){
             var nextFn = function(err, data){
               // what next?
               $.unblockUI();
-              doneFn()
-            }
+              doneFn();
+            };
 
             $.ajax({
               'url': url,
@@ -366,10 +365,10 @@ $(function(){
               nextFn(xhr);
             });
           }
-          else doneFn()
+          else doneFn();
         }
       }
-    )
+    );
   }
 
   function updateMonitorItem(item) {
@@ -391,8 +390,8 @@ $(function(){
     function updateMonitor(event){
 
       var doneFn = function(){
-        $modalSelector.modal('hide')
-      }
+        $modalSelector.modal('hide');
+      };
 
       bootbox.confirm('Save Monitor changes?',
         function(confirmed){
@@ -402,7 +401,7 @@ $(function(){
             resetEvents();
             // we are updating an already created task
             // send changes to the server
-            if(item.id && group.id!=null){
+            if(item.id && group.id !== null) {
               $.blockUI();
               var url = '/admin/hostgroup/' + group.id +
                 '/monitortemplate/' + item.id;
@@ -414,12 +413,12 @@ $(function(){
                 'dataType': 'json',
                 'data': JSON.stringify({'monitor': changes})
               }).done(function(data){
-                $.unblockUI()
-                doneFn()
+                $.unblockUI();
+                doneFn();
                 // what next?
               });
             }
-            else doneFn()
+            else doneFn();
           }
         }
       );
@@ -448,7 +447,7 @@ $(function(){
           var monitor = $monitorForm.serializeArray();
           var parsedData = Monitor.add(monitor);
 
-          if(group.id != null) {
+          if(group.id !== null) {
             $.blockUI();
             var url = '/admin/hostgroup/' + group.id +
               '/monitortemplate';
@@ -462,13 +461,13 @@ $(function(){
             }).done(function(data){
               // what next?
               $.unblockUI();
-              doneFn()
+              doneFn();
             });
           }
-          else doneFn()
+          else doneFn();
         }
       }
-    )
+    );
   }
 
   function saveGroup(){
@@ -555,8 +554,8 @@ $(function(){
    */
   var tagsSelector = '.bootstrap-tagsinput span.tag';
   $('body').on('click', tagsSelector, function(event){
-    event.stopPropagation()
-    event.preventDefault()
+    event.stopPropagation();
+    event.preventDefault();
     var item = $(event.target).closest('.tag').data('item');
 
     if( item._type == 'task' ){
@@ -569,8 +568,8 @@ $(function(){
 
   var removeTagsSelector = '.bootstrap-tagsinput span.tag span[data-role=remove]';
   $('body').on('click', removeTagsSelector, function(event){
-    event.stopPropagation()
-    event.preventDefault()
+    event.stopPropagation();
+    event.preventDefault();
     var item = $(event.target).closest('.tag').data('item');
 
     if( item._type == 'task' ){
@@ -594,8 +593,8 @@ $(function(){
   });
 
   $saveTaskButton.on('click',function(event){
-    event.preventDefault()
-    event.stopPropagation()
+    event.preventDefault();
+    event.stopPropagation();
     var $button = $(event.currentTarget);
     if( $button.data('action') != 'change' ){
       saveTaskTemplate(function(){
@@ -605,8 +604,8 @@ $(function(){
   });
 
   $saveMonitorButton.on('click',function(event){
-    event.preventDefault()
-    event.stopPropagation()
+    event.preventDefault();
+    event.stopPropagation();
     var $button = $(event.currentTarget);
     if( $button.data('action') != 'change' ){
       saveMonitorTemplate($button, function(){
@@ -655,6 +654,15 @@ $(function(){
     $('#name', this).focus();
     // select2 init
     $('select#script_id', this).select2({placeholder:'Select a script...'});
+  });
+
+  $('#taskSelect',$taskModal).on('change', function(evt){
+    var val = $(this).val();
+    var t = tasks.filter(function(i){
+      return i.id == val;
+    });
+    console.log(t);
+
   });
 
   $('#script-monitor-modal').on('shown.bs.modal', function(evt){
