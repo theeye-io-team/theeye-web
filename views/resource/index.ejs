@@ -79,6 +79,18 @@
           <span class="glyphicon glyphicon-trash"></span>
         </button>
 
+        <button class="pull-right tableHeaderIconButton massMuteActivate btn btn-default simple-btn tooltiped"
+          title="Activate selected monitors alerts"
+          aria-label="Center Align">
+          <span class="massiveSelector glyphicon glyphicon-volume-up"></span>
+        </button>
+
+        <button class="pull-right tableHeaderIconButton massMuteDeactivate btn btn-default simple-btn tooltiped"
+          title="Deactivate selected monitors alerts"
+          aria-label="Center Align">
+          <span class="massiveSelector glyphicon glyphicon-volume-off"></span>
+        </button>
+
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <% monitors.forEach( function(monitor, key) { %>
@@ -120,6 +132,25 @@
                         data-resource-type="<%= monitor.type %>"
                         data-target="#<%= monitor.type %>ResourceModal"
                       ><span class="glyphicon glyphicon-edit"></span>
+                      </button>
+
+                      <%
+                      if( monitor.resource.alerts === false ) {
+                        var muteClass='resource-enable-alerts';
+                        var muteIcon='glyphicon-volume-up';
+                        var muteTitle='Activate monitor alerts';
+                      } else {
+                        var muteClass='resource-disable-alerts';
+                        var muteIcon='glyphicon-volume-off';
+                        var muteTitle='Deactivate monitor alerts';
+                      }
+                      %>
+
+                      <button class="<%= muteClass %> btn btn-default simple-btn tooltiped"
+                        title="<%= muteTitle %>"
+                        aria-label="Center Align"
+                        data-resource_id="<%= monitor.resource.id %>">
+                        <span class="glyphicon <%= muteIcon %>"></span>
                       </button>
 
                       <button class="deleteResource btn btn-default simple-btn tooltiped"

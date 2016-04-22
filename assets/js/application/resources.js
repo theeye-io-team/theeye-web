@@ -7,6 +7,36 @@ var ResourceStates = {
 
 var log = debug('eye:web:admin:resources');
 
+/**
+ *  MUTE
+ */
+$(function(){
+  function setAlerts (resource_id,enable) {
+    if(typeof enable === 'boolean'){
+      jQuery.ajax({
+        url: '/resource/' + resource_id + '/alerts',
+        type: 'PATCH',
+        data:{ 'enable': enable }, 
+      }).done(function(data) {
+        bootbox.alert('success!',function(){
+          window.location.reload();
+        });
+      }).fail(function(xhr, err, xhrStatus) {
+        bootbox.alert(err);
+      });
+    }
+  }
+
+  $('button.resource-disable-alerts').on('click',function(event){
+    var resource_id = event.currentTarget.dataset.resource_id;
+    setAlerts(resource_id,enable=false);
+  });
+  $('button.resource-enable-alerts').on('click',function(event){
+    var resource_id = event.currentTarget.dataset.resource_id;
+    setAlerts(resource_id,enable=true);
+  });
+});
+
 //CREATE RESOURCE FUNCTION
 $(function(){
 
@@ -414,7 +444,7 @@ $(function(){
       'Please review the list, just in case:<br /><br />';
     var secondConfirmFooter = '<br />WILL BE DELETED<h2>Confirm wisely</h2>';
     var successTitle = 'Monitors deleted';
-    var successFooter = '<br/>...you will be missed :(';
+    var successFooter = '<br/>...you will be missed';
     var failTitle = 'Monitors deleted (some)';
     var failFooter = '<br/>...I tried to delete these monitors' +
       ' yet some of them came back with errors.' +
