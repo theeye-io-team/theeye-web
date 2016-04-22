@@ -1,9 +1,9 @@
 <form class="form-horizontal admin-form">
   <div class="form-group">
-    <label for="name" class="col-sm-3 control-label">Copy from<small>[optional]</small></label>
+    <label for="name" class="col-sm-3 control-label">Copy from <small>[optional]</small></label>
     <div class="col-sm-9">
       <select class="form-control" id="taskSelect">
-        <option value="0" disabled selected></option>
+        <option value selected></option>
         <% tasks.forEach(function(t) { %>
         <option value="<%= t.id %>"><strong><%= t.name %></strong></option>
         <% }); %>

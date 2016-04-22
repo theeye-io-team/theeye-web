@@ -2,7 +2,7 @@ Dropzone.autoDiscover = false;
 
 $(function() {
   var self      = this; // dafuk? why not {}?
-  var $state    = $({});
+  var $state    = window.scriptState = $({});
   self.scriptId = null;
 
   //**initialize ace editor**//
@@ -122,7 +122,7 @@ $(function() {
   //**Script create modal show**//
   $('.createScript').on('click',function(e)
   {
-    self.scriptId = null;
+    self.scriptId = null; // ????????????
     scriptDropZone.options.method = 'POST';
     scriptDropZone.removeAllFiles();
     aceEditor.setValue('#!/usr/bin/env nodejs \n');
@@ -175,8 +175,7 @@ $(function() {
   });
 
   //**Script form submit**//
-  $('[data-hook=submit-form]').click(function(e)
-  {
+  $('[data-hook=submit-form]').click(function(e) {
     var filename = $("input#filename").val();
 
     var regex = new RegExp(/ *[\\~#%&*{}/:<>?/;/ |-]+ */);
@@ -197,51 +196,41 @@ $(function() {
     }
 
     var uploadMethod = $('input:radio[name=live-edit]:checked').val();
-    if(uploadMethod === 'fileupload')
-    {
+    if(uploadMethod === 'fileupload') {
       scriptDropZone.processQueue();
-    }
-    else
-    {
+    } else {
       var extension = $("[data-hook=editor-mode]").val() === 'javascript' ? 'js' : 'sh';
       var source    = aceEditor.getSession().getValue();
-      if(!/^#!\/.*/.test(source))
-      {
-        bootbox.confirm('No interpreter found, want to continue?',function(confirmed)
-        {
-              if(confirmed)
-              {
-                var formData = new FormData();
-                formData.append("filename", $("input#filename").val());
-                formData.append("description", $("form[data-hook=script-form] textarea#description").val());
-                formData.append("uploadMethod", $('input:radio[name=live-edit]:checked').val());
-                formData.append('scriptSource', btoa(source));
-                formData.append('extension', extension);
-                $.ajax({
-                  url: url,
-                  type: type,
-                  data: formData,
-                  processData: false,
-                  contentType: false,
-                  dataType: 'json',
-                })
-                .done(function(data)
-                {
-                  $state.trigger('script_uploaded', data);
-                })
-                .fail(function(error)
-                {
-                  alert("Error processing the script!", "Scripts");
-                });
-              }
-              else
-              {
-                  return;
-              }
+      if(!/^#!\/.*/.test(source)) {
+        bootbox.confirm('No interpreter found, want to continue?',function(confirmed) {
+          if(confirmed) {
+            var formData = new FormData();
+            formData.append("filename", $("input#filename").val());
+            formData.append("description", $("form[data-hook=script-form] textarea#description").val());
+            formData.append("uploadMethod", $('input:radio[name=live-edit]:checked').val());
+            formData.append('scriptSource', btoa(source));
+            formData.append('extension', extension);
+            $.ajax({
+              url: url,
+              type: type,
+              data: formData,
+              processData: false,
+              contentType: false,
+              dataType: 'json',
+            })
+            .done(function(data)
+            {
+              $state.trigger('script_uploaded', data);
+            })
+            .fail(function(error)
+            {
+              alert("Error processing the script!", "Scripts");
+            });
+          } else {
+            return;
+          }
         });
-      }
-      else
-      {
+      } else {
         var formData = new FormData();
         formData.append("filename", $("input#filename").val());
         formData.append("description", $("form[data-hook=script-form] textarea#description").val());
@@ -256,12 +245,10 @@ $(function() {
           contentType: false,
           dataType: 'json',
         })
-        .done(function(data)
-        {
+        .done(function(data) {
           $state.trigger('script_uploaded', data);
         })
-        .fail(function(error)
-        {
+        .fail(function(error) {
           alert("Error processing the script!", "Scripts");
         });
       }
@@ -269,37 +256,34 @@ $(function() {
   });
 
   //**Handle script upload success**//
-  $state.on('script_uploaded', function(ev, data)
-  {
+  $state.on('script_uploaded', function(ev, data) {
+    //WRONG! you should listen to this event on the layout of your
+    //choice, not eval every possible pathname here.
+    //Ported this functionality to assets/js/application/admin/hostgroups.js
 
-    if(location.pathname != '/admin/script')
-    {
-      alert("Script succesfully uploaded","Script upload", function()
-      {
-        $('[data-hook=script_id]').each(function(index, element){
-          $(element).append($('<option>',
-          {
-            value: data.script.id,
-            text: data.script.filename
-          }));
-          $(element).val(data.script.id);
-        });
+    if(location.pathname != '/admin/script') {
+      //restrict the event function to the /admin/script layout
+      return;
 
-        $('#script-modal').modal('hide');
-      });
-    }
-    else
-    {
-      alert("Script succesfully uploaded", "Script upload", function()
-      {
-        if(self.scriptId)
-        {
+      // alert("Script succesfully uploaded","Script upload", function() {
+      //   $('[data-hook=script_id]').each(function(index, element){
+      //     console.log(element);
+      //     $(element).append($('<option>', {
+      //       value: data.script.id,
+      //       text: data.script.filename
+      //     }));
+      //     $(element).val(data.script.id);
+      //   });
+      //
+      //   $('#script-modal').modal('hide');
+      // });
+    } else {
+      alert("Script succesfully uploaded", "Script upload", function() {
+        if(self.scriptId) {
           $('#script-modal').modal('hide');
           $('[data-hook=scriptTitle'+data.script.id+']').html(data.script.filename);
-        }
-        else
-        {
-            location.reload();
+        } else {
+          location.reload();
         }
       });
     }

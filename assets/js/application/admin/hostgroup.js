@@ -265,7 +265,7 @@ $(function(){
       tasks: [],
       monitors: []
     };
-    $('.modal form').each(function(i,f){ f.reset() });
+    // $('.modal form').each(function(i,f){ f.reset() });
     $monitorsTags.tagsinput('removeAll');
     $tasksTags.tagsinput('removeAll');
   }
@@ -485,7 +485,7 @@ $(function(){
       dataType: 'json',
     }).done(function(data){
       $.unblockUI();
-      //window.location.reload();
+      window.location.reload();
     });
   }
 
@@ -509,7 +509,7 @@ $(function(){
     logger('edit group');
     restartWizard();
     group.id = $target.data('group-id');
-    $('.group-modal#group-template button#group-submit').hide();
+    $submitGroupButton.hide();
     $.ajax({
       url:'/admin/hostgroup/' + group.id,
       method:'get',
@@ -571,9 +571,9 @@ $(function(){
     event.stopPropagation();
     event.preventDefault();
     var item = $(event.target).closest('.tag').data('item');
-
+console.log(item);
     if( item._type == 'task' ){
-      bootbox.confirm('The Task will be removed. Continue?',
+      bootbox.confirm('The task '+item.name+' will be removed. Continue?',
         function(confirmed){
           if(confirmed){
             removeTaskItem(item);
@@ -621,7 +621,7 @@ $(function(){
   $createGroupButton.on('click', function(event){
     event.preventDefault();
     event.stopPropagation();
-    $('.group-modal#group-template button#group-submit').show();
+    $submitGroupButton.show();
     beginGroupCreation();
   });
 
@@ -650,24 +650,53 @@ $(function(){
     if($(evt.relatedTarget).hasClass('create-task')) {
       $('form', this)[0].reset();
     }
+
     // nice guy first input focus
     $('#name', this).focus();
-    // select2 init
+    // clone task select2 init
+    $('#taskSelect').select2({
+      placeholder:'select task to clone...',
+      allowClear:true
+    });
+    // script select2 init
     $('select#script_id', this).select2({placeholder:'Select a script...'});
   });
 
   $('#taskSelect',$taskModal).on('change', function(evt){
     var val = $(this).val();
-    var t = tasks.filter(function(i){
-      return i.id == val;
-    });
-    console.log(t);
+    console.log(val);
+    if(val) {
+      var t = tasks.filter(function(i){
+        return i.id == val;
+      })[0];
+      t = JSON.parse(JSON.stringify(t));
+
+      t.name = "Copy of " + t.name;
+
+      fillTaskForm(t,$taskModal);
+      $('select[data-hook=script_id]', $taskForm).trigger('change');
+    }else{
+      $taskForm[0].reset();
+      $('select[data-hook=script_id]', $taskForm).trigger('change');
+    }
 
   });
 
   $('#script-monitor-modal').on('shown.bs.modal', function(evt){
+    $('option', this).removeAttr('selected');
     $('input[name=description]', this).first().focus();
-    $('select#script_id', this).select2({placeholder:'Select a script...'});
+    $('select[data-hook=script_id]', this).select2({placeholder:'Select a script...'});
+  });
+
+  // hook to scripts.js event script_uploaded
+  window.scriptState.on('script_uploaded', function(evt,data){
+    alert("Script succesfully uploaded", "Script upload",function(){
+      var $scriptIdSelect = $('select[data-hook=script_id]');
+      $scriptIdSelect.append('<option value="'+data.script.id+'">'+data.script.filename+'</option>');
+      $scriptIdSelect.val(data.script.id);
+      $scriptIdSelect.trigger('change');
+      $('.modal#script-modal').modal('hide');
+    });
   });
 
 });
