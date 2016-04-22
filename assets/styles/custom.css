@@ -86,6 +86,7 @@ ol.list-group li.red-border { border-color: red; }
 .page-header h1 { margin-bottom:30px; }
 .hidden-container { display: none; }
 
+.events-container .row { color:white; }
 
 
 /* common */
@@ -273,7 +274,7 @@ h3.light { color: #EEE}
 .list-group.tasks h3 { color:#34495e; }
 .panel-group .panel+.panel { margin-top:0; }
 
-.admin-container {width:100%}
+.admin-container {width:100%; color:white;}
 .admin-container h3 {background-color: #202d3a;margin: 0;padding: 6px;color: #fff;font-size: 14px;text-align: center;}
 .admin-container .ladda-button {border: none;text-shadow: none;box-shadow: none}
 
@@ -300,37 +301,27 @@ div.js-searchable-box.affix {
 .admin-container .panel-default.panelActive>.panel-heading {background:#5d6d7e;border-bottom:1px dotted #aaa}
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body {border:none;color:#fff;background:#5d6d7e}
 .admin-container .panel-default .panel-title-content {min-height:50px; padding:10px;}
-
 .admin-container .panel-collapse .btn-stats { float:right; }
-
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body .fields {width:100%;clear:both;}
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body .fields>.field {width:50%;float:left;}
-
 .admin-container .table-header {height:50px; padding:0 10px 0 10px;}
 .admin-container .table-header span.title {padding:10px 1%; padding-left:0; font-size:18px;font-weight:700;color:#fff}
-
 .admin-container .panel-heading {}
 .admin-container .panel-heading .actions label {font-size:20px; text-align:center;}
-
 .admin-container .panel-heading .name,
 .admin-container .panel-heading .hostname {white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-
 /* resources */
 .admin-container .table-header span.title {float:left; width:auto;}
 .admin-container .panel-heading .panel-item.name {float:left; width:50%; padding:0px 5px 0 5px; line-height: normal}
-
 .admin-container .table-header span.resource.title.state-icon {float:left; width:50%; text-align:right;}
 .admin-container .panel-heading .panel-item.icons {float:left; width:50%; text-align:right; padding:0;}
 .admin-container .panel-heading .panel-item.icons .resource-search,
 .admin-container .panel-heading .panel-item.icons .state-resource-container {float:right; margin-left:10px;}
 .admin-container .panel-heading .panel-item.icons .trigger-task {top:-5px;}
-
-
 .admin-container .editIcon,
 .admin-container .playIcon,
 .admin-container .disabledIcon {position:relative;display:inline-block;width:28px;height:28px;vertical-align:top;cursor:pointer;margin-top:1px}
 .admin-container .disabledIcon {font-size:22px;}
-
 .admin-container.hostgroupsContainer .panel-group .panel-body-section {
   border: solid 1px #ACC;
   padding: 10px;
