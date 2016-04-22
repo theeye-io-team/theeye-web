@@ -22,6 +22,12 @@
     <h3>Monitors Admin</h3>
     <div>
       <div class="table-header admin">
+        <button class="pull-left tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
+          title="Select all"
+          aria-label="Center Align">
+          <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
+        </button>
+
         <span class="title">Monitors &nbsp; &nbsp; |</span>
 
         <div class="dropdown resource new-btn">
@@ -67,12 +73,6 @@
            </ul>
         </div>
 
-        <button class="pull-right tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
-          title="Select all"
-          aria-label="Center Align">
-          <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
-        </button>
-
         <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
           title="Delete selected monitors"
           aria-label="Center Align">
@@ -113,6 +113,12 @@
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= monitor.id %>" aria-expanded="false" aria-controls="collapse<%= monitor.id %>">
                   <div class="panel-title-content">
                     <span class="panel-item name" id="<%= monitor.id %>">
+                      <button class="rowSelector btn btn-default simple-btn tooltiped"
+                        title="Select monitor"
+                        aria-label="Center Align">
+                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
+                      </button>
+
                       <%= monitor.resource.description %>
                       <span class="monitor-<%= monitor.enable?'enabled':'disabled' %>">
                         <small><% if(monitor.resource.type != 'host'){ %>(<%=monitor.resource.hostname%>)<% } %><%= ! monitor.enable ? ' > disabled' :'' %> > <%= monitor.type %></small>
@@ -158,12 +164,6 @@
                         aria-label="Center Align"
                         data-resource_id="<%= monitor.resource.id %>">
                         <span class="glyphicon glyphicon-trash"></span>
-                      </button>
-
-                      <button class="rowSelector btn btn-default simple-btn tooltiped"
-                        title="Select monitor"
-                        aria-label="Center Align">
-                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                       </button>
 
                       <% if( monitor.type == 'host' ) { %>

@@ -1,81 +1,96 @@
-<form id="group-form" class="form-horizontal admin-form">
-  <div class="form-group">
-    <label for="regex" class="col-sm-2 control-label">Hostname Regex</label>
-    <div class="col-sm-10">
-      <input type="text" id="hostname-regex" data-hook="hostname-regex" name="hostname-regex" class="form-control" placeholder="Hostname Regex">
+<div>
+  <form id="group-form" class="form-horizontal admin-form">
+    <div class="form-group">
+      <label for="regex" class="col-sm-2 control-label">Hostname Regex</label>
+      <div class="col-sm-10">
+        <input type="text" id="hostname-regex" data-hook="hostname-regex" name="hostname-regex" class="form-control" placeholder="Hostname Regex">
+      </div>
     </div>
-  </div>
-
-  <div class="form-group">
-    <label for="tasks-container" class="col-sm-2 control-label">Tasks<br/><small>Add default tasks</small></label>
-    <div class="col-sm-10">
-      <div class="buttons">
-        <button class="create-task btn btn-default" 
+    <div class="form-group">
+      <label for="threshold" class="col-sm-2 control-label">Alerts Threshold</label>
+      <div class="col-sm-10">
+        <button class="edit-alerts btn btn-default"
           aria-label="Left Align" 
-          aria-labelledby="task-tpl-modal" 
+          aria-labelledby="template-alert-modal" 
           data-toggle="modal" 
-          data-target="#task-modal">
-          <span class="glyphicon glyphicon-plus"></span>
+          data-target="#dstat-resource-modal">
+          <span class="glyphicon glyphicon-edit"></span>
         </button>
-        <!-- <button class="clone-task btn btn-default"
-          aria-label="Left Align" 
-          aria-labelledby="myModalLabel" 
-          data-toggle="modal" 
-          data-target="#task-clone">
-          <span class="glyphicon glyphicon-duplicate"></span>
-        </button> -->
       </div>
-      <input id="tasks-container" placeholder="add more tasks" data-hook="tasks" class="form-control">
     </div>
-  </div>
+    <div class="form-group">
+      <label for="tasks-container" class="col-sm-2 control-label">
+        Tasks<br/><small>Add default tasks</small>
+      </label>
+      <div class="col-sm-10">
+        <div class="buttons">
+          <button class="create-task btn btn-default" 
+            aria-label="Left Align" 
+            aria-labelledby="task-tpl-modal" 
+            data-toggle="modal" 
+            data-target="#task-modal">
+            <span class="glyphicon glyphicon-plus"></span>
+          </button>
+          <!-- <button class="clone-task btn btn-default"
+            aria-label="Left Align" 
+            aria-labelledby="myModalLabel" 
+            data-toggle="modal" 
+            data-target="#task-clone">
+            <span class="glyphicon glyphicon-duplicate"></span>
+          </button> -->
+        </div>
+        <input id="tasks-container" placeholder="add more tasks" data-hook="tasks" class="form-control">
+      </div>
+    </div>
 
-  <div class="form-group">
-    <label for="monitors-container" class="col-sm-2 control-label">
-      Monitors<br/><small>Add default monitors</small>
-    </label>
-    <div class="col-sm-10">
-      <div class="buttons dropdown">
-        <span id="monitor-dropdown-menu" 
-          class="create-monitor btn btn-default dropdown-toggle" 
-          data-toggle="dropdown" 
-          aria-expanded="true" 
-          aria-label="Center Align">
-          <span class="glyphicon glyphicon-plus"></span>
-        </span>
-        <ul class="dropdown-menu"
-          role="menu"
-          aria-labelledby="monitor-dropdown-menu"
-          style="">
-          <li role="presentation">
-            <a role="menuitem" tabindex="-1"
-              data-toggle="modal"
-              data-target="#scraper-monitor-modal"
-              data-resource-type="scraper"
-              data-action="create">Web Check</a>
-          </li>
-          <li role="presentation">
-            <a role="menuitem" tabindex="-1"
-              data-toggle="modal"
-              data-target="#process-monitor-modal"
-              data-resource-type="process"
-              data-action="create">Process</a>
-          </li>
-          <li role="presentation">
-            <a role="menuitem" tabindex="-1"
-              data-toggle="modal"
-              data-target="#script-monitor-modal"
-              data-resource-type="script"
-              data-action="create">Script</a>
-          </li>
-        </ul>
-        <!-- <button class="clone-monitor btn btn-default"
-          aria-label="Left Align" 
-          data-toggle="modal" 
-          data-target="#monitor-clone">
-          <span class="glyphicon glyphicon-duplicate"></span>
-        </button> -->
+    <div class="form-group">
+      <label for="monitors-container" class="col-sm-2 control-label">
+        Monitors<br/><small>Add default monitors</small>
+      </label>
+      <div class="col-sm-10">
+        <div class="buttons dropdown">
+          <span id="monitor-dropdown-menu" 
+            class="create-monitor btn btn-default dropdown-toggle" 
+            data-toggle="dropdown" 
+            aria-expanded="true" 
+            aria-label="Center Align">
+            <span class="glyphicon glyphicon-plus"></span>
+          </span>
+          <ul class="dropdown-menu"
+            role="menu"
+            aria-labelledby="monitor-dropdown-menu"
+            style="">
+            <li role="presentation">
+              <a role="menuitem" tabindex="-1"
+                data-toggle="modal"
+                data-target="#scraper-monitor-modal"
+                data-resource-type="scraper"
+                data-action="create">Web Check</a>
+            </li>
+            <li role="presentation">
+              <a role="menuitem" tabindex="-1"
+                data-toggle="modal"
+                data-target="#process-monitor-modal"
+                data-resource-type="process"
+                data-action="create">Process</a>
+            </li>
+            <li role="presentation">
+              <a role="menuitem" tabindex="-1"
+                data-toggle="modal"
+                data-target="#script-monitor-modal"
+                data-resource-type="script"
+                data-action="create">Script</a>
+            </li>
+          </ul>
+          <!-- <button class="clone-monitor btn btn-default"
+            aria-label="Left Align" 
+            data-toggle="modal" 
+            data-target="#monitor-clone">
+            <span class="glyphicon glyphicon-duplicate"></span>
+          </button> -->
+        </div>
+        <input id="monitors-container" placeholder="add more monitors" data-hook="monitors" class="form-control">
       </div>
-      <input id="monitors-container" placeholder="add more monitors" data-hook="monitors" class="form-control">
     </div>
-  </div>
-</form>
+  </form>
+</div>

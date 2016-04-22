@@ -12,10 +12,37 @@ $(function(){
   var $groupModal = $('div.group-modal#group-template');
   var $taskModal = $('div.modal#task-modal');
 
+  var $dstatResourceModal = $('#dstat-resource-modal');
+  $dstatResourceModal
+    .find('button[type=submit]')
+    .on('click',function(event){
+      var $this = $(this);
+      var inputs = $this.find('form :input');
+      for(var i=0;i<inputs.length;i++){
+        var input = inputs[i];
+        group.dstat[input.name] = input.value;
+      };
+      $dstatResourceModal.modal('hide');
+    });
+  $dstatResourceModal.on('show.bs.modal', function(event){
+    var $this = $(this);
+    var inputs = $this.find('form :input');
+    for(var i=0;i<inputs.length;i++){
+      var input = inputs[i];
+      switch(input.name){
+        case 'cpu': input.value = '60';
+        case 'mem': input.value = '60';
+        case 'cache': input.value = '60';
+        case 'disk': input.value = '60';
+      }
+    };
+  });
+
   var logger = debug('eye:hostgroup');
-  var group = {
+  var group = window.group = {
     id: null,
     action: '',
+    dstat: {},
     hostname_regex: null,
     tasks: [],
     monitors: []
