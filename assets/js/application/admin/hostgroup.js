@@ -292,7 +292,7 @@ $(function(){
       tasks: [],
       monitors: []
     };
-    // $('.modal form').each(function(i,f){ f.reset() });
+    $('.modal form').each(function(i,f){ f.reset() });
     $monitorsTags.tagsinput('removeAll');
     $tasksTags.tagsinput('removeAll');
   }
@@ -710,7 +710,7 @@ console.log(item);
   });
 
   $('#script-monitor-modal').on('shown.bs.modal', function(evt){
-    $('option', this).removeAttr('selected');
+    $('form', this)[0].reset();
     $('input[name=description]', this).first().focus();
     $('select[data-hook=script_id]', this).select2({placeholder:'Select a script...'});
   });
