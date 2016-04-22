@@ -7,6 +7,36 @@ var ResourceStates = {
 
 var log = debug('eye:web:admin:resources');
 
+/**
+ *  MUTE
+ */
+$(function(){
+  function setAlerts (resource_id,enable) {
+    if(typeof enable === 'boolean'){
+      jQuery.ajax({
+        url: '/resource/' + resource_id + '/alerts',
+        type: 'PATCH',
+        data:{ 'enable': enable }, 
+      }).done(function(data) {
+        bootbox.alert('success!',function(){
+          window.location.reload();
+        });
+      }).fail(function(xhr, err, xhrStatus) {
+        bootbox.alert(err);
+      });
+    }
+  }
+
+  $('button.resource-disable-alerts').on('click',function(event){
+    var resource_id = event.currentTarget.dataset.resource_id;
+    setAlerts(resource_id,enable=false);
+  });
+  $('button.resource-enable-alerts').on('click',function(event){
+    var resource_id = event.currentTarget.dataset.resource_id;
+    setAlerts(resource_id,enable=true);
+  });
+});
+
 //CREATE RESOURCE FUNCTION
 $(function(){
 
@@ -81,7 +111,7 @@ $(function(){
   $('.modal#scriptResourceModal button[type=submit]').on('click', setCallback('script'));
   $('.modal#scraperResourceModal button[type=submit]').on('click', setCallback('scraper'));
 
-  function fillForm($uselsess_form, data){
+  function fillForm(data){
     var resource = data.resource;
     var monitor = data.monitors[0];
     var type = monitor.type;
@@ -140,14 +170,14 @@ $(function(){
           $('.modal#scriptResourceModal').on('hidden.bs.modal', function(e) {
             $script.off('change');
             $disable.off('change');
-          });
+          })
         }
 
         $script.val(monitor.config.script_id);
         $form.find('[data-hook=script_arguments]')
           .val(monitor.config.script_arguments);
       break;
-    }
+    };
   }
 
   function setupEditResourceForm($form, options){
@@ -164,8 +194,22 @@ $(function(){
       data: { 'monitor_type': options.type }
     })
     .done(function(data){
-      fillForm($form, data);
-      $('#' + options.type + 'ResourceModal').modal('show');
+      fillForm(data);
+      $('#' + options.type + 'ResourceModal')
+        .one('shown.bs.modal', function(){
+          //one time AUTOCOMPLETE COMBOBOX setup
+
+          //remove select2 if present - no need
+          // $select.data('select2') && $select.select2('destroy');
+
+          $select.select2();
+          $form.find('select#script_id').select2();
+          var $firstInput = $(this).find('input[type!=hidden]').first().focus();
+          $(this).on('shown.bs.modal', function(){
+            $firstInput.focus();
+          });
+        })
+        .modal('show');
       $.unblockUI();
     })
     .fail(function(xhr, err, xhrStatus){
@@ -195,7 +239,22 @@ $(function(){
 
     $form[0].reset();
     $.unblockUI();
-    $('#' + options.type + 'ResourceModal').modal('show');
+    $('#' + options.type + 'ResourceModal')
+      .one('shown.bs.modal', function(){
+        //one time AUTOCOMPLETE COMBOBOX setup
+
+        //remove select2 if present
+        // $select.data('select2') && $select.select2('destroy');
+
+        $select.select2();
+        $form.find('select#script_id').select2({placeholder:"Select a script..."});
+
+        var $firstInput = $(this).find('input[type!=hidden]').first().focus();
+        $(this).on('shown.bs.modal', function(){
+          $firstInput.focus();
+        });
+      })
+      .modal('show');
   }
 
   function setupResourceAction(options){
@@ -385,7 +444,7 @@ $(function(){
       'Please review the list, just in case:<br /><br />';
     var secondConfirmFooter = '<br />WILL BE DELETED<h2>Confirm wisely</h2>';
     var successTitle = 'Monitors deleted';
-    var successFooter = '<br/>...you will be missed :(';
+    var successFooter = '<br/>...you will be missed';
     var failTitle = 'Monitors deleted (some)';
     var failFooter = '<br/>...I tried to delete these monitors' +
       ' yet some of them came back with errors.' +

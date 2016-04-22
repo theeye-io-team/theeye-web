@@ -2,6 +2,14 @@ var debug = require('debug')('eye:web:controller:resource');
 var resource = require('../services/resource');
 var moment = require('moment');
 
+var toBoolean = function(value){
+  if(value==='true'||value===true)
+    return true;
+  if(value==='false'||value===false)
+    return false;
+  return null;
+}
+
 module.exports = {
   //////////////////////////////////MVC ACTIONS//////////////////////////////////
   index: function(req, res) {
@@ -153,5 +161,24 @@ module.exports = {
       if(err) return res.send(500, err);
       res.send(200,{ resource: data.resource, monitors: data.monitor });
     });
+  },
+  updateAlerts: function(req,res) {
+    var supervisor = req.supervisor;
+    var id = req.param("id", null);
+    var value = toBoolean(req.param('enable'));
+
+    if(value===null){
+      return res.send(400,'invalid alerts value');
+    }
+
+    var data = { 'alerts': value.toString() };
+    supervisor.patchResource(
+      req.params.id,
+      data,
+      function(err, resource) {
+        if(err) return res.send(500, err);
+        res.send(200,{ resource: resource });
+      }
+    );
   }
 };

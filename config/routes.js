@@ -59,6 +59,7 @@ module.exports.routes = {
   'get    /resource/:id' : 'ResourceController.get',
   'post   /resource/:type' : 'ResourceController.create',
   'put    /resource/:id' : 'ResourceController.update',
+  'patch  /resource/:id/alerts' : 'ResourceController.updateAlerts',
   'delete /resource/:id' : 'ResourceController.destroy',
   //ContactController routes
   'post   /invitation' : 'ContactController.invitation',
