@@ -26,6 +26,12 @@
     <h3>Tasks Admin</h3>
     <div>
       <div class="table-header admin">
+        <button class="pull-left tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
+          style="margin-left:5px;"
+          title="Select all"
+          aria-label="Center Align">
+          <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
+        </button>
         <span class="title">Tasks &nbsp; &nbsp; |</span>
         <button class="createTask btn btn-default simple-btn new-btn tooltiped"
           data-placement="right"
@@ -37,11 +43,6 @@
           New Task
         </button>
 
-        <button class="pull-right tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
-          title="Select all"
-          aria-label="Center Align">
-          <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
-        </button>
         <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
           title="Delete selected tasks"
           aria-label="Center Align">
@@ -70,6 +71,11 @@
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= task.id %>" aria-expanded="false" aria-controls="collapse<%= task.id %>">
                   <div class="panel-title-content">
                     <span class="panel-item name" id="<%= task.id %>">
+                      <button class="rowSelector btn btn-default simple-btn tooltiped"
+                        title="Select task"
+                        aria-label="Center Align">
+                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
+                      </button>
                     <% if (!task.script_id || !task.host_id) { %>
                         <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
                         &nbsp; <%= task.name %>
@@ -88,11 +94,6 @@
                         title="Delete task"
                         aria-label="Center Align">
                         <span class="glyphicon glyphicon-trash"></span>
-                      </button>
-                      <button class="rowSelector btn btn-default simple-btn tooltiped"
-                        title="Select task"
-                        aria-label="Center Align">
-                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                       </button>
                     </div>
                   </div>
