@@ -20,26 +20,44 @@ $(function() {
   var $state = $({});
 
   function extractFormData ($el) {
-    return $el.serializeArray().reduce(function(obj, input) {
-
-      if(input.name=='hosts_id'){
-        if(!obj[input.name]) obj[input.name]=[];
-        obj[input.name].push(input.value);
-      }
-      else obj[input.name] = input.value;
-      return obj;
-
-    }, {});
+    return $el.find(':input')
+      .toArray()
+      .reduce(function(obj, input) {
+        if(input.name=='hosts_id'){
+          if(!obj[input.name]) obj[input.name]=[];
+          obj[input.name].push(input.value);
+        }
+        else if(input.name=='public'){
+          if(input.checked===true){
+            obj[input.name] = input.value;
+          }
+        } else {
+          obj[input.name] = input.value;
+        }
+        return obj;
+      },{});
   }
 
   (function update (el){
 
-    function fillForm($viewElement, data) {
-      $viewElement[0].reset();
-      Object.keys(data).forEach(function(k) {
-        var $el = $viewElement.find("[data-hook="+ k + "]");
-        $el.val(data[k]);
-      });
+    function fillForm($form, data){
+      $form[0].reset();
+      Object.keys(data)
+        .forEach(function(name,index){
+          var selector = '[data-hook=:name]'.replace(':name',name);
+          var $el = $form.find(selector);
+
+          if($el.length>0){
+            if($el[0].type=='radio'){
+              var radio = '[type=radio][data-hook=:name][value=:value]'
+              .replace(':name',name)
+              .replace(':value',data[name]);
+              $form.find(radio).prop('checked',true);
+            } else {
+              $el.val(data[name]);
+            }
+          }
+        });
     }
 
     var $taskForm = $(el);
@@ -69,6 +87,13 @@ $(function() {
       $singleSelect.select2({ placeholder: "Select a host..." });
 
       $('#script_id', $taskForm).select2({ placeholder: "Select a script..." });
+    });
+
+    $(".modal#create-task button[type=submit]").on('click',function(event){
+      $taskForm.submit();
+    });
+    $(".modal#edit-task button[type=submit]").on('click',function(event){
+      $taskForm.submit();
     });
 
     $taskForm.on("submit", function(event) {

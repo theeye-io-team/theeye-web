@@ -121,12 +121,13 @@ module.exports = {
     if( ! idScript ) return res.send(400,'select a script');
 
     var updates = {
-      name: req.body.name,
-      description: description,
-      host_id: idHost,
-      script_id: idScript,
-      script_arguments: req.body.script_arguments,
-      resource_id: req.body.resource_id || 0
+      'name': req.body.name,
+      'description': description,
+      'host_id': idHost,
+      'script_id': idScript,
+      'script_arguments': req.body.script_arguments,
+      'public': req.body.public,
+      'resource_id': req.body.resource_id || 0
     };
 
     supervisor.patchTask(id, updates, function(err, task) {
