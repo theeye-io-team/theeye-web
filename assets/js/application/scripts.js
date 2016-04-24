@@ -281,7 +281,8 @@ $(function() {
       alert("Script succesfully uploaded", "Script upload", function() {
         if(self.scriptId) {
           $('#script-modal').modal('hide');
-          $('[data-hook=scriptTitle'+data.script.id+']').html(data.script.filename);
+          // $('[data-hook=scriptTitle'+data.script.id+']').html(data.script.filename);
+          $('span.name','div.itemRow[data-item-id='+data.script.id+']').text(data.script.filename);
         } else {
           location.reload();
         }
@@ -392,23 +393,25 @@ $(function() {
 
         var source = file.content.replace(/^#!\/.*\n/,'');
 
+        //set name is none set
+        if(!$('input[name=filename]').val()) {
+          $('input[name=filename]').val(files[0]);
+        }
+        var modelist = ace.require('ace/ext/modelist');
+        var mode = modelist.getModeForPath(file.filename).mode;
+        aceEditor.session.setMode(mode);
         switch(file.language) {
-          case "JavaScript":
-            if(!$('input[name=filename]').val()) {
-              $('input[name=filename]').val(files[0]);
-            }
-            aceEditor.session.setMode("ace/mode/javascript");
-            aceEditor.getSession().setValue('#!/usr/bin/env nodejs \n' + source);
-          break;
           case "Shell": //horribly, gist calls .sh like this
-            if(!$('input[name=filename]').val()) {
-              $('input[name=filename]').val(files[0]);
-            }
-            aceEditor.session.setMode("ace/mode/sh");
+            // aceEditor.session.setMode("ace/mode/sh");
             aceEditor.getSession().setValue('#!/usr/bin/env bash \n' + source);
           break;
+          case "JavaScript":
+            // aceEditor.session.setMode("ace/mode/javascript");
+            aceEditor.getSession().setValue('#!/usr/bin/env nodejs \n' + source);
+          break;
           default:
-            failAlert('Sadly, we are only accepting JavaScript (.js) and Shell (.sh) gists. Sorry. Please try another');
+            aceEditor.getSession().setValue(source);
+            // failAlert('Sadly, we are only accepting JavaScript (.js) and Shell (.sh) gists. Sorry. Please try another');
         }
         if(!$descriptionField.val()) {
           $descriptionField.val(res.description);
