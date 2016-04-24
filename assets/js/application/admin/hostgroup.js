@@ -12,41 +12,20 @@ $(function(){
   var $groupModal = $('div.group-modal#group-template');
   var $taskModal = $('div.modal#task-modal');
 
-  var $dstatResourceModal = $('#dstat-resource-modal');
-  $dstatResourceModal
-    .find('button[type=submit]')
-    .on('click',function(event){
-      var $this = $(this);
-      var inputs = $this.find('form :input');
-      for(var i=0;i<inputs.length;i++){
-        var input = inputs[i];
-        group.dstat[input.name] = input.value;
-      };
-      $dstatResourceModal.modal('hide');
-    });
-  $dstatResourceModal.on('show.bs.modal', function(event){
-    var $this = $(this);
-    var inputs = $this.find('form :input');
-    for(var i=0;i<inputs.length;i++){
-      var input = inputs[i];
-      switch(input.name){
-        case 'cpu': input.value = '60';
-        case 'mem': input.value = '60';
-        case 'cache': input.value = '60';
-        case 'disk': input.value = '60';
-      }
-    };
-  });
+  var group, logger = debug('eye:hostgroup');
 
-  var logger = debug('eye:hostgroup');
-  var group = window.group = {
-    id: null,
-    action: '',
-    dstat: {},
-    hostname_regex: null,
-    tasks: [],
-    monitors: []
-  };
+  function Group () {
+    this.id = null;
+    this.action = '';
+    this.hostname_regex = null;
+    this.tasks = [];
+    this.monitors = [];
+    
+    this.addAlert = function (opts) {
+      if(!opts.threshold||!opts.type) return;
+      this.alerts.push(opts);
+    }
+  }
 
   function MonitorFormData (monitor) {
     var type = monitor.monitor_type || monitor.type;
@@ -71,6 +50,8 @@ $(function(){
         case 'process':
           this.pattern = monitor.pattern || monitor.config.ps.pattern;
           break;
+        case 'dstat':
+          break;
         default:
           throw new Error('invalid monitor type ' + type);
       }
@@ -78,13 +59,13 @@ $(function(){
   }
 
   /**
-   *
-   * all monitor and task are items.
-   *
-   * @class {Item}
-   * @author Facundo
-   *
-   */
+  *
+  * all monitor and task are items.
+  *
+  * @class {Item}
+  * @author Facundo
+  *
+  */
   var Filter = {
     field: function(field) {
       var name = field.name;
@@ -123,9 +104,9 @@ $(function(){
       return item;
     },
     /**
-     * remove Item reference out of the group
-     * @param {Item} item
-     */
+    * remove Item reference out of the group
+    * @param {Item} item
+    */
     remove: function remove(item, doneFn){
       var toRemove;
       var col = group.tasks.filter(function(task){
@@ -158,10 +139,10 @@ $(function(){
       else doneFn();
     },
     /**
-     * update Item reference
-     * @param {Item} item
-     * @param {Array} updates
-     */
+    * update Item reference
+    * @param {Item} item
+    * @param {Array} updates
+    */
     update: function update(item, updates){
       var changes = item.set(updates);
       $tasksTags.tagsinput('refresh');
@@ -178,9 +159,9 @@ $(function(){
       return item;
     },
     /**
-     * remove Item reference out of the group
-     * @param {Item} item
-     */
+    * remove Item reference out of the group
+    * @param {Item} item
+    */
     remove: function remove(item, doneFn) {
       var toRemove;
       var col = group.monitors.filter(function(monitor){
@@ -213,16 +194,22 @@ $(function(){
       else doneFn();
     },
     /**
-     * update Item reference
-     * @param {Item} item
-     * @param {Array} updates
-     */
+    * update Item reference
+    * @param {Item} item
+    * @param {Array} updates
+    */
     update: function update(item, updates){
       var changes = item.set(updates);
       $monitorsTags.tagsinput('refresh');
       return item;
     },
   };
+
+
+
+
+
+
 
   function fillTaskForm(task, $selector) {
     $selector.find('form :input').each(function(i, e){
@@ -285,13 +272,7 @@ $(function(){
 
   function restartWizard() {
     logger('initializing new group');
-    group = {
-      id:null,
-      action:'',
-      hostname_regex: null,
-      tasks: [],
-      monitors: []
-    };
+    group = new Group();
     $('.modal form').each(function(i,f){ f.reset() });
     $monitorsTags.tagsinput('removeAll');
     $tasksTags.tagsinput('removeAll');
@@ -415,7 +396,6 @@ $(function(){
     }
 
     function updateMonitor(event){
-
       var doneFn = function(){
         $modalSelector.modal('hide');
       };
@@ -724,6 +704,26 @@ console.log(item);
       $scriptIdSelect.trigger('change');
       $('.modal#script-modal').modal('hide');
     });
+  });
+
+  var $dstatResourceModal = $('#dstat-monitor-modal');
+  $dstatResourceModal.on('show.bs.modal', function(event){
+    var inputs, $this = $(this);
+    if(group.alerts==null||group.alerts.length==0){
+      group.alerts=[];
+      inputs = $this.find('form :input');
+    } else {
+      inputs = group.alerts;
+    }
+    for(var i=0;i<inputs.length;i++){
+      var input = inputs[i];
+      switch(input.name){
+        case 'cpu': input.value = '60';
+        case 'mem': input.value = '60';
+        case 'cache': input.value = '60';
+        case 'disk': input.value = '60';
+      }
+    };
   });
 
 });
