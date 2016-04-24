@@ -1,0 +1,100 @@
+<form id="createTaskForm" action="/task" class="form-horizontal">
+  <div class="form-group">
+    <label for="name" class="col-sm-3 control-label">Give it a name</label>
+    <div class="col-sm-9">
+      <input data-hook="name" type="text" name="name" class="form-control" id="name" placeholder="Task name">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="description" class="col-sm-3 control-label">More about it</label>
+    <div class="col-sm-9">
+      <textarea data-hook="description" type="text" name="description" class="form-control" id="description" placeholder="Task description"></textarea>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="script_id" class="col-sm-3 control-label">What should it run?</label>
+    <div class="col-sm-6">
+      <select data-hook="script_id" id="script_id" name="script_id" class="form-control">
+        <option value="0" disabled selected></option>
+        <% scripts.forEach(function(s) { %>
+        <option value="<%=s.id%>"><strong><%=s.filename%></strong></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="col-sm-3">
+      <a class="btn btn-primary btn-block createScript">Create a script</a>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="public" class="col-sm-3 control-label">Share it?</label>
+    <div class="col-sm-9">
+      <div>
+        <label class="radio-inline">
+          <input type="radio" name="public" data-hook="public" value="true">
+          Yes. Make it public
+        </label>
+        <label class="radio-inline">
+          <input type="radio" name="public" data-hook="public" value="false" checked>
+          No. Keep it private
+        </label>
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="script_arguments" class="col-sm-3 control-label">Script Arguments<br/><small>[optional]</small></label>
+    <div class="col-sm-9">
+      <div id="script-arguments-input">
+        <input class="form-control tooltiped" title="You can write a comma separated list of arguments" type="text" name="script_arguments" data-hook="script_arguments" placeholder="--color, --exclude-dir='node_modules'">
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="target" class="col-sm-3 control-label">Where should it run?</label>
+    <div class="col-sm-9">
+      <label class="radio-inline">
+        <input type="radio" name="target" data-hook="target" value="single-resource" checked=""> Single Host
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="target" data-hook="target" value="multi-hosts"> Multiple Hosts
+      </label>
+    </div>
+  </div>
+  <div class="hidden-container" id="resource-selection" style="display:block;">
+    <div class="form-group">
+      <label for="hostname" class="col-sm-3 control-label">Host</label>
+      <div class="col-sm-9">
+        <select data-hook="hosts_id" ids="hosts_id" name="hosts_id" class="form-control hosts_id">
+          <!-- <option value="0" disabled selected><strong></strong></option> -->
+          <option disabled selected value></option>
+          <% hosts.forEach(function(h) { %>
+          <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
+          <% }); %>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="resource_id" class="col-sm-3 control-label">Attach to a Resource<br/><small>[optional]</small></label>
+      <div class="col-sm-9">
+        <select data-hook="resource_id" id="resource_id" name="resource_id" title="jump directly to the task from a resource" class="form-control tooltiped">
+          <option disabled selected value></option>
+          <!-- <option value="0" selected><strong>Select a Resource</strong></option>-->
+          <% resources.forEach(function(r) { %>
+          <option value="<%=r.id%>"><strong><%=r.description%> (<%= r.type %>)</strong></option>
+          <% }); %>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="hidden-container" id="hosts-selection">
+    <div class="form-group">
+      <label for="hostname" class="col-sm-3 control-label">Hosts</label>
+      <div class="col-sm-9">
+        <select multiple data-hook="hosts_id" ids="hosts_id" name="hosts_id" class="form-control hosts_id">
+          <% hosts.forEach(function(h) { %>
+          <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
+          <% }); %>
+        </select>
+      </div>
+    </div>
+  </div>
+</form>
