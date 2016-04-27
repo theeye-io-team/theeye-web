@@ -29,8 +29,54 @@ module.exports = {
     replyTo: 'Support <jailbirt@interactar.com>',
     only_support: false,
     include_support_bcc: false,
-    support: [ 'nobody@interactar.com' ],
-    invitation: 'contact@theeye.io'
+    support: [ 'contact@theeye.io' ],
+    invitation: 'contact@theeye.io',
+    transport: {
+      /** 
+       * use aws email service 
+       * more options
+       * https://github.com/andris9/nodemailer-ses-transport
+       *
+       **/
+      //"type":"ses",
+      /**
+      "options":{
+        "accessKeyId":"",
+        "secretAccessKey":"",
+        "sessionToken":"",
+        "region":"",
+        "httpOptions":"",
+        "rateLimit":"",
+      }
+      */
+       "type":"sendmail"
+      /**
+       * use local sendmail smtp , with no options
+       * "type":"sendmail",
+       *
+       * or smtp
+       * more options
+       * https://github.com/nodemailer/nodemailer-smtp-transport
+       *
+       * "type":"smtp",
+       * "options":{
+       *   "port":"",
+       *   "host":"",
+       *   "secure":"",
+       *   "auth":"",
+       *   "ignoreTLS":"",
+       *   "name":"",
+       *   "localAddress":"",
+       *   "connectionTimeout":"",
+       *   "greetingTimeout":"",
+       *   "socketTimeout":"",
+       *   "logger":"",
+       *   "debug":"",
+       *   "authMethod":"",
+       *   "tls":"",
+       * }
+       */
+    }
   },
   passport: {
     local: {

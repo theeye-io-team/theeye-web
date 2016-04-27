@@ -1,21 +1,14 @@
 var debug = require('debug')('eye:web:services:mailer');
 var ejs = require('ejs');
-var nodemailer = require('nodemailer');
-var sendmailTransport = require('nodemailer-sendmail-transport');
-var transporter = nodemailer.createTransport( sendmailTransport() );
 var config = sails.config.mailer;
+var mailer = require('./lib');
 
-function Mailer(tr) {
-  this.transporter = tr ;
-}
-
-Mailer.prototype = {
+module.exports = {
   sendActivationMail: function(email, input, next)
   {
     if(!email || !input) {
       return next(new Error('Missing parameters on sendActivationMail'));
     }
-    var self = this;
     var data = {
       'username' : input.username,
       'activationLink' : input.activationLink,
@@ -35,7 +28,7 @@ Mailer.prototype = {
         html : str
       };
 
-      self.sendMail(options, function(error, info) {
+      mailer.sendMail(options, function(error, info) {
         if(error) debug("Error sending email to " + email);
         else debug('Message sent');
 
@@ -45,7 +38,6 @@ Mailer.prototype = {
   },
   sendRetrivePasswordMail: function(email, data, next)
   {
-    var self  = this;
 
     ejs.renderFile("views/email/retrive-password.ejs", {locals: data}, function(error, str)
     {
@@ -55,7 +47,7 @@ Mailer.prototype = {
         html      : str
       };
 
-      self.sendMail(options, function(error, info)
+      mailer.sendMail(options, function(error, info)
       {
         if(error)
           debug("Error sending email to " + email);
@@ -68,7 +60,6 @@ Mailer.prototype = {
   },
   sendRequestInvitationMail: function(email, data, next)
   {
-    var self  = this;
 
     ejs.renderFile("views/email/invitation.ejs", {locals: data}, function(error, str) {
       var options = {
@@ -78,7 +69,7 @@ Mailer.prototype = {
       };
 
       debug('sending invite notification email...');
-      self.sendMail(options, function(error, info)
+      mailer.sendMail(options, function(error, info)
       {
         if(error) {
           debug("Error sending email to " + config.invitation);
@@ -94,7 +85,7 @@ Mailer.prototype = {
             };
 
             debug('sending invite confirmation email...');
-            self.sendMail(options, function(error, info) {
+            mailer.sendMail(options, function(error, info) {
               if(error) debug("Error sending email to " + email);
               else debug('Invitation confirmation message sent');
               return next(error);
@@ -106,7 +97,6 @@ Mailer.prototype = {
   },
   sendNewCustomerMail: function(email, data, next)
   {
-    var self  = this;
 
     ejs.renderFile("views/email/new-customer.ejs", {locals: data}, function(error, str)
     {
@@ -116,7 +106,7 @@ Mailer.prototype = {
         html      : str
       };
 
-      self.sendMail(options, function(error, info)
+      mailer.sendMail(options, function(error, info)
       {
         if(error)
           debug("Error sending email to " + email);
@@ -126,22 +116,5 @@ Mailer.prototype = {
         return next(error);
       });
     });
-  },
-  sendMail : function(options,callback)
-  {
-    var self = this;
-    options.from = config.from;
-    options.replyTo = config.replyTo;
-
-    if( config.only_support || ! options.to ) {
-      options.to = config.support.join(',');
-    }
-    else if( config.include_support_bcc ) {
-      options.bcc = config.support.join(',');
-    }
-
-    self.transporter.sendMail(options,callback);
   }
 };
-
-module.exports = new Mailer( transporter ) ;

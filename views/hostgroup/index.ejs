@@ -5,6 +5,7 @@
 <% block('scripts', '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>') %>
 <% block('scripts', '<script src="/js/application/scripts.js"></script>') %>
 <!-- END SCRIPTS CRUD -->
+<% block('scripts', "<script> window.tasks = "+ JSON.stringify(tasks)+";</script>") %>
 
 <% block('scripts', '<script src="/js/application/searchbox.js"></script>') %>
 <% block('scripts', '<script src="/js/application/admin/hostgroup.js"></script>') %>
@@ -149,5 +150,5 @@
 <%- include ./partials/process-monitor-modal.ejs %>
 <%- include ./partials/scraper-monitor-modal.ejs %>
 <%- include ./partials/script-monitor-modal.ejs %>
+<%- include ./partials/dstat-monitor-modal.ejs %>
 <%- include ../script/partials/modal.ejs %>
-<%- partial ('../resource/partials/dstat-modal-form.ejs') %>

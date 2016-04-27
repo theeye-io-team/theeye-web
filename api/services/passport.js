@@ -1,7 +1,7 @@
 var path     = require('path')
   , url      = require('url')
   , passport = require('passport')
-  , mailer 	 = require("./mailer.js")
+  , mailer 	 = require("./mailer")
   , debug    = require('debug')('eye:web:user:passport')
   , TheEyeClient = require('theeye-client')
   ;

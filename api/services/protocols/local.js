@@ -1,6 +1,6 @@
 var validator 	= require('validator');
 var crypto 	  	= require("crypto");
-var mailer 	  	= require("../mailer.js");
+var mailer 	  	= require("../mailer");
 var querystring = require("querystring");
 var _           = require("underscore");
 var debug       = require('debug')('eye:web:service:protocol:local');

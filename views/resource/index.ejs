@@ -112,13 +112,12 @@
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= monitor.id %>" aria-expanded="false" aria-controls="collapse<%= monitor.id %>">
                   <div class="panel-title-content">
+                    <button class="rowSelector btn btn-default simple-btn tooltiped"
+                      title="Select monitor"
+                      aria-label="Center Align">
+                      <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
+                    </button>
                     <span class="panel-item name" id="<%= monitor.id %>">
-                      <button class="rowSelector btn btn-default simple-btn tooltiped"
-                        title="Select monitor"
-                        aria-label="Center Align">
-                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
-                      </button>
-
                       <%= monitor.resource.description %>
                       <span class="monitor-<%= monitor.enable?'enabled':'disabled' %>">
                         <small><% if(monitor.resource.type != 'host'){ %>(<%=monitor.resource.hostname%>)<% } %><%= ! monitor.enable ? ' > disabled' :'' %> > <%= monitor.type %></small>

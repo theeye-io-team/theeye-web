@@ -1,7 +1,7 @@
 //Nuevo controller solo para el envio de emails desde la landing page.
 
 var request = require('request');
-var mailer = require("../services/mailer.js");
+var mailer = require("../services/mailer");
 
 var debug = {
   log: require('debug')('eye:web:contact'),

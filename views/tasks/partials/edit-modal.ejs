@@ -1,8 +1,3 @@
-<!--
-
-Modal for editing a task
-
--->
 <div class="modal fade" id="edit-task" role="dialog" aria-labelledby="editTask" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -11,76 +6,19 @@ Modal for editing a task
         <h4 class="modal-title" id="myModalLabel">Scripts runs via tasks. Lets create a task</h4>
       </div>
       <div class="modal-body">
-        <form id="editTaskForm" action="/task" class="form-horizontal">
-          <div class="form-group">
-            <label for="name" class="col-sm-3 control-label">Give me a name</label>
-            <div class="col-sm-9">
-              <input data-hook="name" type="text" name="name" class="form-control" id="name" placeholder="Task name">
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="description" class="col-sm-3 control-label">More about me</label>
-            <div class="col-sm-9">
-              <textarea data-hook="description" type="text" name="description" class="form-control" id="description" placeholder="Task description"></textarea>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="script_id" class="col-sm-3 control-label">What should I run?</label>
-            <div class="col-sm-6">
-              <select data-hook="script_id" id="script_id" name="script_id" class="form-control">
-                <option value disabled selected></option>
-                <% scripts.forEach(function(s) { %>
-                <option value="<%=s.id%>"><strong><%=s.filename%></strong></option>
-                <% }); %>
-              </select>
-            </div>
-            <div class="col-sm-3">
-              <a class="btn btn-primary createScript">Create script</a>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="script_arguments" class="col-sm-3 control-label">Script Arguments<br/><small>[optional]</small></label>
-            <div class="col-sm-9">
-              <div id="script-arguments-input">
-                <input class="form-control tooltiped" title="You can write a comma separated list of arguments" type="text" name="script_arguments" data-hook="script_arguments" placeholder="--color, --exclude-dir='node_modules'">
-              </div>
-            </div>
-          </div>
-          <div id="host">
-            <div class="form-group">
-              <label for="hostname" class="col-sm-3 control-label">Where should I run?</label>
-              <div class="col-sm-9">
-                <select data-hook="host_id" id="host_id" name="host_id" class="form-control host_id">
-                  <!-- <option value="0" disabled selected><strong></strong></option> -->
-                  <% hosts.forEach(function(h) { %>
-                  <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
-                  <% }); %>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div id="resource">
-            <div class="form-group">
-              <label for="resource_id" class="col-sm-3 control-label">Link to a Monitor<br/><small>[optional]</small></label>
-              <div class="col-sm-9">
-                <select data-hook="resource_id" id="resource_id" name="resource_id" title="jump directly to the task from a resource" class="form-control tooltiped">
-                  <option disabled value selected></option>
-                  <% resources.forEach(function(r) { %>
-                  <option value="<%= r.id %>"><strong><%=r.description%> (<%= r.type %>)</strong></option>
-                  <% }); %>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="form-group">
-            <div class="col-sm-offset-3 col-sm-9">
-              <button id="taskAction" type="submit" class="btn btn-primary">Submit</button>
-            </div>
-          </div>
-        </form>
+        <% include task-edit-form %>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button id="taskAction"
+          type="submit"
+          class="btn btn-primary">
+          Submit
+        </button>
+        <button type="button"
+          class="btn btn-default"
+          data-dismiss="modal">
+          Close
+        </button>
       </div><!--.modal-foooter-->
     </div><!--.modal-content-->
   </div><!--.modal-dialog-->

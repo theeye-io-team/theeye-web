@@ -1,8 +1,8 @@
-<div class="modal fade monitor-modal" 
-  id="scraper-monitor-modal"
+<div class="modal fade monitor-modal"
+  id="dstat-monitor-modal"
   tabindex="-1" 
   role="dialog" 
-  aria-labelledby="scraper-tpl-modal" 
+  aria-labelledby="dstat-tpl-modal"
   aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -13,22 +13,23 @@
           aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title"> Web Monitor </h4>
+        <h4 class="modal-title"> Host Stats Monitor </h4>
       </div>
       <div class="modal-body">
-        <%- include ./monitor/scraper-tpl-form.ejs %>
+        <%- include ./monitor/dstat-tpl-form.ejs %>
       </div>
       <div class="modal-footer">
-        <button id="scraper-monitor-save"
-          type="button"
+        <button id="dstat-monitor-save"
+          type="button" 
           class="btn btn-default monitor-save"
-          data-dismiss="modal"> Save </button>
+          data-dismiss="modal">
+          Save
+        </button>
         <button type="button"
-          class="btn btn-default"
-          data-dismiss="modal"> Close </button>
+          class="btn btn-default" data-dismiss="modal">
+          Cancel
+        </button>
       </div><!--.modal-foooter-->
-    </div><!--.modal-content-->
-  </div><!--.modal-dialog-->
-</div><!--.modal-->  
-
-
+    </div>
+  </div>
+</div>

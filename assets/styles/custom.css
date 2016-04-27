@@ -312,9 +312,9 @@ div.js-searchable-box.affix {
 .admin-container .panel-heading .hostname {white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 /* resources */
 .admin-container .table-header span.title {float:left; width:auto;}
-.admin-container .panel-heading .panel-item.name {float:left; width:50%; padding:0px 5px 0 5px; line-height: normal}
+.admin-container .panel-heading .panel-item.name {float:left; width:54%; padding:0px 5px 0 5px; line-height: 28px}
 .admin-container .table-header span.resource.title.state-icon {float:left; width:50%; text-align:right;}
-.admin-container .panel-heading .panel-item.icons {float:left; width:50%; text-align:right; padding:0;}
+.admin-container .panel-heading .panel-item.icons {float:right; width:40%; text-align:right; padding:0;}
 .admin-container .panel-heading .panel-item.icons .resource-search,
 .admin-container .panel-heading .panel-item.icons .state-resource-container {float:right; margin-left:10px;}
 .admin-container .panel-heading .panel-item.icons .trigger-task {top:-5px;}
@@ -404,6 +404,11 @@ button.bulkRunner {
 .tableHeaderIconButton { margin: 7px; margin-left: 0px; margin-right: 0px; }
 .tableHeaderIconButton.pull-left { margin-left: 5px; }
 
+button.rowSelector {
+  float: left;
+  width: 6%;
+  max-width: 46px;
+}
 
 span.selectorIcon.glyphicon-unchecked {
   color: #BBB;

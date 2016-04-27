@@ -44,6 +44,25 @@
             </div>
           </div>
 
+          <div class="form-group">
+            <label for="public" class="col-sm-3 control-label">Share this script?</label>
+            <div class="col-sm-9">
+              <div>
+                <label class="radio-inline tooltiped"
+                  title="Did you came up with a script that could work for others? Be it a
+                  simple process restart or a complex script, you can share it with other
+                  DevOps marking it as public">
+                  <input type="radio" name="public" data-hook="public" value="true">
+                  Yes. Make it public
+                </label>
+                <label class="radio-inline tooltiped" title="No reusability here, only for myself">
+                  <input type="radio" name="public" data-hook="public" value="false" checked>
+                  No. Keep it private
+                </label>
+              </div>
+            </div>
+          </div>
+
           <div class="form-group hidden-container option" data-hook="gist-container">
             <div class="col-sm-12">
               <div class="input-group">
