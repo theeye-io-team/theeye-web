@@ -3,6 +3,7 @@
 <% block("scripts" , '<script src="/js/application/dropzone.min.js"></script>') %>
 <% block("scripts" , "<script> window.scripts = " + JSON.stringify(scripts) + ";</script>") %>
 <% block("scripts" , '<script src="/js/ace-editor/ace.js"></script>') %>
+<% block("scripts" , '<script src="/js/ace-editor/ext-modelist.js"></script>') %>
 <% block("scripts" , '<script src="/js/dependencies/lodash.min.js"></script>') %>
 <% block("scripts" , '<script src="/js/application/scripts.js"></script>') %>
 <% block('scripts' , '<script src="/js/highlight.pack.js"></script>') %>
@@ -60,12 +61,12 @@
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= script.id %>" aria-expanded="false" aria-controls="collapse<%= script.id %>">
                   <div class="panel-title-content">
-                    <span class="panel-item name" id="<%= resource.id %>">
-                      <button class="rowSelector btn btn-default simple-btn tooltiped"
-                        title="Select script"
-                        aria-label="Center Align">
-                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
-                      </button>
+                    <button class="rowSelector btn btn-default simple-btn tooltiped"
+                      title="Select script"
+                      aria-label="Center Align">
+                      <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
+                    </button>
+                    <span class="panel-item name" id="<%= script.id %>">
                       <%= script.filename %>
                     </span>
                     <div class="panel-item icons">
