@@ -1,3 +1,4 @@
+var group ;
 $(function(){
   var $tasksTags = $('#group-form input#tasks-container');
   var $monitorsTags = $('#group-form input#monitors-container');
@@ -12,7 +13,7 @@ $(function(){
   var $groupModal = $('div.group-modal#group-template');
   var $taskModal = $('div.modal#task-modal');
 
-  var group, logger = debug('eye:hostgroup');
+  var logger = debug('eye:hostgroup');
 
   function Group () {
     this.id = null;
@@ -20,12 +21,27 @@ $(function(){
     this.hostname_regex = null;
     this.tasks = [];
     this.monitors = [];
-    
-    this.addAlert = function (opts) {
-      if(!opts.threshold||!opts.type) return;
-      this.alerts.push(opts);
-    }
+    this.dstat = null;
   }
+
+  var $dstatResourceModal = $('#dstat-monitor-modal');
+  $dstatResourceModal.on('show.bs.modal', function(event){
+    var inputs, $this = $(this);
+    if(group.dstat==null){
+      inputs = $this.find('form :input');
+    } else {
+      inputs = group.dstat;
+    }
+    for(var i=0;i<inputs.length;i++){
+      var input = inputs[i];
+      switch(input.name){
+        case 'cpu': input.value = '60';
+        case 'mem': input.value = '60';
+        case 'cache': input.value = '60';
+        case 'disk': input.value = '60';
+      }
+    };
+  });
 
   function MonitorFormData (monitor) {
     var type = monitor.monitor_type || monitor.type;
@@ -51,6 +67,7 @@ $(function(){
           this.pattern = monitor.pattern || monitor.config.ps.pattern;
           break;
         case 'dstat':
+          console.log(monitor);
           break;
         default:
           throw new Error('invalid monitor type ' + type);
@@ -156,6 +173,9 @@ $(function(){
       var setdata = item.set(data);
       group.monitors.push(item);
       $monitorsTags.tagsinput('add',item);
+      if(item.monitor_type == 'dstat'){
+        group.dstat = item;
+      }
       return item;
     },
     /**
@@ -172,6 +192,10 @@ $(function(){
         else return true;
       });
       group.monitors = col;
+
+      if(item.monitor_type == 'dstat'){
+        group.dstat = null;
+      }
 
       if(toRemove.id) {
         var nextFn = function(err, data){
@@ -204,11 +228,6 @@ $(function(){
       return item;
     },
   };
-
-
-
-
-
 
 
   function fillTaskForm(task, $selector) {
@@ -705,25 +724,4 @@ console.log(item);
       $('.modal#script-modal').modal('hide');
     });
   });
-
-  var $dstatResourceModal = $('#dstat-monitor-modal');
-  $dstatResourceModal.on('show.bs.modal', function(event){
-    var inputs, $this = $(this);
-    if(group.alerts==null||group.alerts.length==0){
-      group.alerts=[];
-      inputs = $this.find('form :input');
-    } else {
-      inputs = group.alerts;
-    }
-    for(var i=0;i<inputs.length;i++){
-      var input = inputs[i];
-      switch(input.name){
-        case 'cpu': input.value = '60';
-        case 'mem': input.value = '60';
-        case 'cache': input.value = '60';
-        case 'disk': input.value = '60';
-      }
-    };
-  });
-
 });
