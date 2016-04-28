@@ -59,6 +59,7 @@
             task.name,
             "task="+ task.id,
             "host="+ task.host_id,
+            "script="+ task.script_id
           ].join(',');
           %>
           <div
@@ -79,7 +80,7 @@
                     <% if (!task.script_id || !task.host_id) { %>
                         <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
                         &nbsp; <%= task.name %>
-                        <small class="remark-alert">> No host or script detected</small>
+                        <small class="remark-alert">> Host or script undefined</small>
                     <% } else { %>
                         <%= task.name %> <small>> <%= task.hostname %></small>
                     <% } %>
