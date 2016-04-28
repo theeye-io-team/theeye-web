@@ -40,7 +40,7 @@ $(function() {
     });
 
     $state.on("user_create_error", function(ev, error) {
-      alert(error);
+      alert(error,'Oops...');
     });
 
     // what is this shit?
@@ -65,8 +65,8 @@ $(function() {
 
       jQuery.post("/user", vals).done(function(/*data*/) {
         $state.trigger("user_created");
-      }).fail(function(xhr, err/*, xhrStatus*/) {
-        $state.trigger("user_create_error", xhr.responseText, err);
+      }).fail(function(xhr, status, xhrStatus) {
+        $state.trigger("user_create_error", xhr.responseText, status);
       });
 
       return false;
