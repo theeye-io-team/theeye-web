@@ -190,7 +190,7 @@ var UserController = module.exports = {
     var params = req.params.all();
 
     if(!params.sendInvitation && params.password !== params.confirmPassword)
-      return res.send(400, 'Passwords doesn\'t match');
+      return res.send(400, 'Passwords don\'t match');
     if(!params.sendInvitation && params.password.length < 8)
       return res.send(400, 'Passwords must be at least 8 characters long');
     if(!params.customers)
@@ -198,7 +198,7 @@ var UserController = module.exports = {
 
     if(params.sendInvitation) {
       passport.inviteUser(req, res, function(err, user) {
-        if(err) return res.send(500, err);
+        if(err) return res.send(400, err);
         else return res.json(user);
       });
     }

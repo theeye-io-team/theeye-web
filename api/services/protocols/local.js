@@ -162,14 +162,14 @@ exports.invite = function (req, res, next)
   //cree usuarios. Eso o activamos acl
   if(!email) {
     req.flash('error', 'Error.Passport.Email.Missing');
-    return next(new Error('No email was entered.'));
+    return next('No email was entered.');
   }
 
   var token = crypto.createHmac("sha1", email).digest(encoding="base64");
 
   if (customers.length === 0) {
     req.flash('error', 'Error.Passport.Customers.Missing');
-    return next(new Error('No customers was entered.'));
+    return next('No customers was entered.');
   }
   User.findOne({email: email}, function (err, user)
   {
@@ -200,6 +200,7 @@ exports.invite = function (req, res, next)
                 req.flash('error', 'Error.Passport.Unknown');
               }
     		  }
+          console.log(err);
     		  return next(err);
     		}
     		else
@@ -229,7 +230,10 @@ exports.invite = function (req, res, next)
     //If the user exists and have perms for the selected customers dont send the activation email
     if(user.customers.length == customers.length) {
       req.flash('error', 'Error.Passport.User.Exists.Customer');
-      return next(new Error("The user allready exists and have permissions for this customer"));
+      //text is error
+      //error returning behaviour is somewhat broken
+      //if i send here a new Error('message'), front end receives only {}
+      return next("The user allready exists and have permissions for this customer");
     }
 
     User.update({email: email},{customers: customers },function (err, user) {
