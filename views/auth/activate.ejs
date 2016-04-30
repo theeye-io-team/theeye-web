@@ -12,7 +12,7 @@
 	<% } %>
 
 	<!-- LOGIN FORM -->
-     <form role="form" action="/auth/local/activate?token=<%=encodeURIComponent(token)%>" method="post">
+    <form role="form" action="/auth/local/activate?token=<%=encodeURIComponent(token)%>" method="post">
 		<div class="form-group">
 			<label>Email</label>
 			<input type="text" class="form-control" name="email" placeholder="<%= user.email %>" DISABLED>

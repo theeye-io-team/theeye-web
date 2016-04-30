@@ -16,6 +16,12 @@
     <h3>Users Admin</h3>
     <div>
       <div class="table-header admin">
+        <button class="pull-left tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
+          style="margin-left:5px;"
+          title="Select all"
+          aria-label="Center Align">
+          <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
+        </button>
         <span class="title panel-item name">Users &nbsp; &nbsp; |</span>
         <button class="createUser btn btn-default simple-btn new-btn tooltiped"
           data-placement="right"
@@ -25,6 +31,12 @@
           data-target="#create-user">
           <span class="glyphicon glyphicon-plus"></span>
           New User
+        </button>
+
+        <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
+          title="Delete selected users"
+          aria-label="Center Align">
+          <span class="glyphicon glyphicon-trash"></span>
         </button>
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -47,6 +59,11 @@
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= user.id %>" aria-expanded="false" aria-controls="collapse<%= user.id %>">
                   <div class="panel-title-content">
+                    <button class="rowSelector btn btn-default simple-btn tooltiped"
+                      title="Select user"
+                      aria-label="Center Align">
+                      <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
+                    </button>
                     <span class="panel-item name" id="<%= user.id %>"><%= user.username %> <small>> <%= user.credential %></small></span>
                     <div class="panel-item icons">
                       <button

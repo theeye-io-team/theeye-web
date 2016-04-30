@@ -1,7 +1,7 @@
 <% block('scripts', '<script src="/js/dependencies/lodash.min.js"></script>') %>
 <% block('scripts', '<script src="/js/bootstrap/alert.js"></script>') %>
 <% block('scripts', '<script src="/js/application/admin/customer.js"></script>') %>
-<% block('scripts' , '<script src="/js/application/searchbox.js"></script>')%>
+<% block('scripts', '<script src="/js/application/searchbox.js"></script>')%>
 
 <!-- Main  -->
 <div class="container admin-container">
@@ -18,11 +18,23 @@
     <h3>Customers Admin</h3>
     <div>
       <div class="table-header admin">
+        <button class="pull-left tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
+          style="margin-left:5px;"
+          title="Select all"
+          aria-label="Center Align">
+          <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
+        </button>
         <span class="title panel-item name">Customers &nbsp; &nbsp; |</span>
 
         <button class="createCustomer btn btn-default simple-btn new-btn tooltiped" data-placement="right" title="Create new customer" aria-label="Left Align" data-toggle="modal" data-target="#create-customer">
           <span class="glyphicon glyphicon-plus"></span>
           New Customer
+        </button>
+
+        <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
+          title="Delete selected customers"
+          aria-label="Center Align">
+          <span class="glyphicon glyphicon-trash"></span>
         </button>
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -36,11 +48,19 @@
             "customer="+ customer.id
           ].join(',');
           %>
-          <div class="panel panel-default js-searchable-item" data-tags="<%= tags %>">
+          <div class="itemRow panel panel-default js-searchable-item"
+            data-item-id="<%= customer.id %>"
+            data-item-name="<%= customer.name %>"
+            data-tags="<%= tags %>">
             <div class="panel-heading" role="tab" id="heading<%= customer.id %>">
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= customer.id %>" aria-expanded="false" aria-controls="collapse<%= customer.id %>">
                   <div class="panel-title-content">
+                    <button class="rowSelector btn btn-default simple-btn tooltiped"
+                      title="Select customer"
+                      aria-label="Center Align">
+                      <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
+                    </button>
                     <span class="panel-item name" id="<%= customer.id %>"><%= customer.name %></span>
                     <div class="panel-item icons">
                       <!-- buttons -->

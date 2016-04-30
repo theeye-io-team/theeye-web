@@ -493,7 +493,7 @@ $(function() {
       var taskRows = "";
       var taskIds = [];
       //collect selected rows.data (dataId & dataDescriptor)
-      $('.itemRow.selectedItem:visible').each(function(i,e){
+      $(itemSelector).each(function(i,e){
         var itemId = $(e).data(dataId);
         var itemName = $(e).data(dataDescriptor);
         if(itemId) {
@@ -516,24 +516,21 @@ $(function() {
             }
             $.blockUI();
             var deleteRequests = [];
-            var removeOnSuccess = function(response, status, xhr) {
+            var removeOnSuccess = function(id) {
               console.log('request success');
-              console.log(arguments);
-              // horrible kludge:
-              // response is "Task TASK_ID deleted"
-              // split by " " and take 2nd result as taskId
-              // API should respond with only id or {taskId: ID}
-              if(status === "success") {
-                $('div.itemRow[data-item-id='+response.split(" ")[1]+']').remove();
-              }
+              // console.log('would remove '+'div.itemRow[data-item-id='+id+']');
+              $('div.itemRow[data-item-id='+id+']').remove();
             };
             for(var ii = 0; ii < taskIds.length; ii++) {
+              var t = taskIds[ii];
               deleteRequests.push(
                 $.ajax({
-                  url: apiUrlEndpoint + taskIds[ii],
+                  url: apiUrlEndpoint + t,
                   type: apiRequestType,
                   // on success remove div[data-item-id=itemId]
-                  success: removeOnSuccess
+                  success: (function(aa){
+                    return removeOnSuccess(aa);
+                  })(t)
                 })
               );
             }
