@@ -23,6 +23,8 @@ if [ -z $NODE_ENV ];then
 fi
 
 cd $path;
+echo "Installing packages, useful for development envs"
+npm install
 
 PORT=6080 DEBUG=eye:$debug  $nodemon $path/app.js
 
