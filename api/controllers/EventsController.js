@@ -45,8 +45,6 @@ module.exports = {
           res.view(data);
         }
       );
-
-
     });
   },
   subscribe: function(req, res) {

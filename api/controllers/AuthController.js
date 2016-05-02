@@ -25,7 +25,7 @@ var AuthController = {
    * @param {Object} res
    */
   login: function (req, res) {
-    if(req.user) res.redirect('/events');
+    if(req.user) return res.redirect('/events');
 
     var strategies = sails.config.passport;
     var providers  = {};
@@ -42,8 +42,8 @@ var AuthController = {
 
     // Render the `auth/login.ext` view
     res.view({
-      providers : providers,
-      errors    : req.flash('error')
+      providers: providers,
+      errors: req.flash('error')
     });
   },
   /**
