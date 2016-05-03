@@ -63,7 +63,8 @@ $(function() {
       event.preventDefault();
       var vals = extractFormData($userForm);
 
-      jQuery.post("/user", vals).done(function(/*data*/) {
+      jQuery.post("/user", vals).done(function(data) {
+        console.log(data);
         $state.trigger("user_created");
       }).fail(function(xhr, status, xhrStatus) {
         $state.trigger("user_create_error", xhr.responseText, status);

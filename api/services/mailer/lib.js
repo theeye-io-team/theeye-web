@@ -1,3 +1,4 @@
+/* global sails */
 var config = sails.config.mailer;
 var nodemailer = require('nodemailer');
 
@@ -6,21 +7,20 @@ var nodemailer = require('nodemailer');
  */
 var trType = config.transport.type;
 var options = config.transport.options || {};
-switch(trType)
-{
+var transport;
+switch(trType) {
   case 'ses':
-    var transport = require('nodemailer-ses-transport')(options);
+    transport = require('nodemailer-ses-transport')(options);
     break;
   case 'sendmail':
-    var transport = require('nodemailer-sendmail-transport')(options);
+    transport = require('nodemailer-sendmail-transport')(options);
     break;
   case 'smtp':
-    var transport = require('nodemailer-smtp-transport')(options);
+    transport = require('nodemailer-smtp-transport')(options);
     break;
   default:
     var msg = 'nodemailer transport ' + trType + ' not implemented.';
     throw new Error(msg);
-    break;
 }
 
 var transporter = nodemailer.createTransport(transport);
@@ -42,4 +42,4 @@ module.exports = {
 
     transporter.sendMail(options, callback);
   }
-}
+};
