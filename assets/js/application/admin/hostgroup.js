@@ -1,3 +1,23 @@
+/**
+ *
+ * IMPORTANTE. README before start.
+ *
+ * when the data is being get from the server
+ * the monitor object has a object property named config
+ * from where part of the displayed data is taken.
+ *
+ * after the edition, all the properties are set in one
+ * object with no special structure, and then the data is sent
+ * to the server in that way (with no config property)
+ *
+ * have this in mind whenever you make changes to the code,
+ * config property could be included as well, and will be treated as expected.
+ *
+ * @author Facundo
+ *
+ * NOTE. please, improve the code if you feel you can.
+ *
+ */
 var group ;
 $(function(){
   var $tasksTags = $('#group-form input#tasks-container');
@@ -26,19 +46,26 @@ $(function(){
 
   var $dstatResourceModal = $('#dstat-monitor-modal');
   $dstatResourceModal.on('show.bs.modal', function(event){
-    var inputs, $this = $(this);
+    var inputs, dstat, $this = $(this);
+    inputs = $this.find('form :input');
     if(group.dstat==null){
-      inputs = $this.find('form :input');
+      dstat = {
+        'cpu':'60',
+        'mem':'60',
+        'cache':'60',
+        'disk':'60'
+      };
     } else {
-      inputs = group.dstat;
+      dstat = group.dstat;
     }
+
     for(var i=0;i<inputs.length;i++){
       var input = inputs[i];
       switch(input.name){
-        case 'cpu': input.value = '60';
-        case 'mem': input.value = '60';
-        case 'cache': input.value = '60';
-        case 'disk': input.value = '60';
+        case 'cpu': input.value = dstat['cpu']; break;
+        case 'mem': input.value = dstat['mem']; break;
+        case 'cache': input.value = dstat['cache']; break;
+        case 'disk': input.value = dstat['disk']; break;
       }
     };
   });
@@ -173,9 +200,7 @@ $(function(){
       var setdata = item.set(data);
       group.monitors.push(item);
       $monitorsTags.tagsinput('add',item);
-      if(item.monitor_type == 'dstat'){
-        group.dstat = item;
-      }
+      this.setDstat(item);
       return item;
     },
     /**
@@ -225,8 +250,23 @@ $(function(){
     update: function update(item, updates){
       var changes = item.set(updates);
       $monitorsTags.tagsinput('refresh');
-      return item;
+      if(item.config) delete item.config;
+      this.setDstat(item);
+      return changes;
     },
+    setDstat: function(item){
+      if(
+        item.monitor_type=='dstat'||
+        item.type=='dstat'
+      ){
+        if(item.config&&item.config.limit){
+          dstat = item.config.limit;
+        } else {
+          dstat = item;
+        }
+        group.dstat = dstat;
+      }
+    }
   };
 
 
@@ -597,7 +637,6 @@ $(function(){
     event.stopPropagation();
     event.preventDefault();
     var item = $(event.target).closest('.tag').data('item');
-console.log(item);
     if( item._type == 'task' ){
       bootbox.confirm('The task '+item.name+' will be removed. Continue?',
         function(confirmed){
@@ -690,7 +729,6 @@ console.log(item);
 
   $('#taskSelect',$taskModal).on('change', function(evt){
     var val = $(this).val();
-    console.log(val);
     if(val) {
       var t = tasks.filter(function(i){
         return i.id == val;
@@ -705,13 +743,13 @@ console.log(item);
       $taskForm[0].reset();
       $('select[data-hook=script_id]', $taskForm).trigger('change');
     }
-
   });
 
   $('#script-monitor-modal').on('shown.bs.modal', function(evt){
-    $('form', this)[0].reset();
     $('input[name=description]', this).first().focus();
-    $('select[data-hook=script_id]', this).select2({placeholder:'Select a script...'});
+    $('select[data-hook=script_id]', this).select2({
+      placeholder:'Select a script...'
+    });
   });
 
   // hook to scripts.js event script_uploaded
