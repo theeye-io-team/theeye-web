@@ -80,7 +80,7 @@
                     <% if (!task.script_id || !task.host_id) { %>
                         <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
                         &nbsp; <%= task.name %>
-                        <small class="remark-alert">> Host or script undefined</small>
+                        <small class="remark-alert">> undefined . host or script are missing </small>
                     <% } else { %>
                         <%= task.name %> <small>> <%= task.hostname %></small>
                     <% } %>
