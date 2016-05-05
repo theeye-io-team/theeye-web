@@ -19,10 +19,12 @@ echo -e "\e[39m"
 
 if [ -z $NODE_ENV ];then
    echo "!!NODE ENV NOT CONFIGURED, DEFAULT NODE_ENV=$NODE_ENV"
-   NODE_ENV=development
+   export NODE_ENV=development
 fi
 
 cd $path;
+echo "Installing packages, useful for development envs"
+npm install
 
 PORT=6080 DEBUG=eye:$debug  $nodemon $path/app.js
 

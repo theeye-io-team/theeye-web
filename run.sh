@@ -2,14 +2,15 @@
 
 echo -e "\e[92m"
 
-require='/usr/bin/supervisor'
+#doesn't play nice with harmony_proxy require=`which supervisor`
 path=`dirname $0`
+require=`which nodemon`
 
-if [ ! -f $require ]
-then
-    echo "Error $require is not present on this system, please install it by typing npm install -g supervisor" 
-    exit
-fi
+#doesn't play nice with harmony_proxy if [ ! -f $require ]
+#                                     then
+#                                         echo "Error $require is not present on this system, please install it by typing npm install -g supervisor" 
+#                                         exit
+#                                     fi
 
 DIR=$(dirname $0)
 cd $DIR
@@ -24,7 +25,7 @@ export DEBUG
 
 if [ -z $NODE_ENV ];then
    echo "!!NODE ENV NOT CONFIGURED, DEFAULT NODE_ENV=$NODE_ENV"
-   NODE_ENV=production
+   export NODE_ENV=production
 fi
 
 PORT=6080 $require -i . $path/app.js

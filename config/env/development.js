@@ -87,8 +87,7 @@ module.exports = {
       protocol: 'oauth2',
       strategy: require('passport-google-oauth').OAuth2Strategy,
       scope : ['profile', 'email'],
-      options:
-      {
+      options: {
         clientID : '718619105306-bhgv1ue1r2disr47pvm492r3fust0qee.apps.googleusercontent.com',
         clientSecret : 'bbeYqPLu6wxTWunGIBx-IPuP',
         callbackURL : "http://0.0.0.0:6080/auth/google/callback"
