@@ -112,11 +112,21 @@
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= monitor.id %>" aria-expanded="false" aria-controls="collapse<%= monitor.id %>">
                   <div class="panel-title-content">
+
+                    <% if(monitor.type == 'host') { %>
+                    <button class="rowSelector-not btn btn-default simple-btn tooltiped"
+                      title="Beware: I'm a Host!!"
+                      aria-label="Center Align">
+                      <span class="selectorIcon glyphicon glyphicon-home"></span>
+                    </button>
+                    <% } else { %>
                     <button class="rowSelector btn btn-default simple-btn tooltiped"
                       title="Select monitor"
                       aria-label="Center Align">
                       <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                     </button>
+                    <% } %>
+
                     <span class="panel-item name" id="<%= monitor.id %>">
                       <%= monitor.resource.description %>
                       <span class="monitor-<%= monitor.enable?'enabled':'disabled' %>">
@@ -126,7 +136,9 @@
                     </span>
                     <div class="panel-item icons">
 
-                      <button class="<%= monitor.type != 'host' ? 'editResourceMonitor ' : ''%> editResource <%= monitor.type %>ResourceEditAction btn btn-default simple-btn tooltiped"
+                      <% if( monitor.type != 'host' && monitor.monitor_type != 'host' ) { %>
+
+                      <button class="editResourceMonitor editResource <%= monitor.type %>ResourceEditAction btn btn-default simple-btn tooltiped"
                         aria-label="Center Align"
                         title="Edit monitor"
                         data-host_id="<%= monitor.host_id %>"
@@ -158,15 +170,9 @@
                         <span class="glyphicon <%= muteIcon %>"></span>
                       </button>
 
-                      <button class="deleteResource btn btn-default simple-btn tooltiped"
-                        title="Delete monitor"
-                        aria-label="Center Align"
-                        data-resource_id="<%= monitor.resource.id %>">
-                        <span class="glyphicon glyphicon-trash"></span>
-                      </button>
+                      <% } else { %>
 
-                      <% if( monitor.type == 'host' ) { %>
-                      <div class="dropdown pull-right">
+                      <div class="dropdown pull-right host-menu">
                          <span id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true" class="btn btn-default simple-btn dropdown-toggle" aria-label="Center Align">
                            <span class="glyphicon glyphicon-plus"></span>
                          </span>
@@ -205,6 +211,14 @@
                          </ul>
                       </div>
                       <% } %>
+
+                      <button class="deleteResource btn btn-default simple-btn tooltiped"
+                        title="Delete monitor"
+                        aria-label="Center Align"
+                        data-resource_id="<%= monitor.resource.id %>">
+                        <span class="glyphicon glyphicon-trash"></span>
+                      </button>
+
 
                     </div>
                   </div>
