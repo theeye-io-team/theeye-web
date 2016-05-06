@@ -131,8 +131,10 @@ body {
   background-color: #EFEFEF;
   padding-bottom:80px; /* compensa footer */
 }
-body { background:#34495e;font-family: 'Lato', sans-serif; }
-body.login { background:#34495e url(../images/bg.png) center 0 no-repeat }
+body { background:#304269;font-family: 'Lato', sans-serif; }
+/* Background image doesn t support transparencies so I ride out
+body.login { background:#304269 url(../images/bg.png) center 0 no-repeat }
+ */
 .white {color:#fff}
 hr {border:none;border-bottom:1px dotted #fff}
 
@@ -169,18 +171,18 @@ hr {border:none;border-bottom:1px dotted #fff}
     from { transform: scale(1) rotate(0deg);}
     to { transform: scale(1) rotate(360deg);}
 }
-.consoleCircle {border-radius: 14px;border: 2px solid #fff;width: 28px;height: 28px;background:#34495e;display:inline-block;position:absolute;top:0;right:0}
+.consoleCircle {border-radius: 14px;border: 2px solid #fff;width: 28px;height: 28px;background:#304269;display:inline-block;position:absolute;top:0;right:0}
 .inlineDropdown {position:absolute;top:0;right:0}
 .inlineDropdown .dropdown-menu {left:inherit;right:0;width:300px}
-.inlineDropdown .dropdown-menu h4 {color:#34495e;padding:0 10px}
-.inlineDropdown .dropdown-menu p {background:#34495e;margin:0 10px;padding:10px;font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New}
+.inlineDropdown .dropdown-menu h4 {color:#304269;padding:0 10px}
+.inlineDropdown .dropdown-menu p {background:#304269;margin:0 10px;padding:10px;font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New}
 
 .mainStatus {width:90%;margin:10% auto;border-top:1px dotted #fff;border-bottom:1px dotted #fff;padding:20px 0;text-align:center;color:#fff;font-size:20px;font-weight:700}
 .loginBox, .safeBox { width:80%; margin:110px auto 4%; text-align:center; color:#fff }
 .loginBox h1 {margin-bottom:24px}
 .loginBox .or {border-top:1px dashed #fff;position:relative;margin:40px 0}
 .loginBox input, .loginBox button {width:100%;border:none;border-radius:4px;padding:10px;margin-bottom:10px;text-align:center;font-size:24px}
-.loginBox input {color:#34495e}
+.loginBox input {color:#304269}
 .loginBox button {color:#fff;background: #d78d47;background: -moz-linear-gradient(top,  #d78d47 0%, #af733a 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d78d47), color-stop(100%,#af733a));background: -webkit-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: -o-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: -ms-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: linear-gradient(to bottom,  #d78d47 0%,#af733a 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d78d47', endColorstr='#af733a',GradientType=0 )}
 .loginBox .or span {background:#415c76;padding:10px;position:absolute;top:-22px;left:48%}
 .sign {padding:14px 0;color:#fff;border:1px solid #fff;border-radius:4px;width:100%;display:inline-block;font-size:18px;margin-bottom:6px}
@@ -230,12 +232,12 @@ footer a.image img {margin-top:-4px}
 /* Agregada javi... */
 .container { padding:62px 15px 0px;  color:#EEE; }
 .table-responsive { background-color:#EEE;}
-.table{ color:#34495e;}
-.row{ color:#34495e;}
-.modal-header{ color:#34495e;}
-.modal-body{ color:#34495e;}
+.table{ color:#304269;}
+.row{ color:#304269;}
+.modal-header{ color:#304269;}
+.modal-body{ color:#304269;}
 
-.btn {color:#eee;background-color:#34495e;}
+.btn {color:#eee;background-color:#304269;}
 /* Fin Agregada javi... */
 
 .mainContainer .safeBox h1 span { }
@@ -271,11 +273,11 @@ h3.light { color: #EEE}
 .dropdown-menu>li>a { cursor:pointer; }
 
 /** tasks admin page **/
-.list-group.tasks h3 { color:#34495e; }
+.list-group.tasks h3 { color:#304269; }
 .panel-group .panel+.panel { margin-top:0; }
 
 .admin-container {width:100%; color:white;}
-.admin-container h3 {background-color: #202d3a;margin: 0;padding: 6px;color: #fff;font-size: 14px;text-align: center;}
+.admin-container h3 {background-color: #23324C;margin: 0;padding: 6px;color: #fff;font-size: 14px;text-align: center;}
 .admin-container .ladda-button {border: none;text-shadow: none;box-shadow: none}
 
 div.js-searchable-box {width:100%;font-weight:700;font-size:14px;position:relative;margin:10px 0 24px}
@@ -296,10 +298,10 @@ div.js-searchable-box.affix {
 .admin-container .panel-heading a {text-decoration:none; border:none;}
 .admin-container .panel-heading a div.panel-title-content { width:100%;}
 .admin-container .panel-default {border:none}
-.admin-container .panel-default>.panel-heading {background:#34495e;color:#fff;border-top:1px solid #5d6d7e;border-radius:0}
-.admin-container .panel-default>.panel-heading:hover {background-color: #5d6d7e;-webkit-transition: background-color 500ms linear;-moz-transition: background-color 500ms linear;-o-transition: background-color 500ms linear;-ms-transition: background-color 500ms linear;transition: background-color 500ms linear}
-.admin-container .panel-default.panelActive>.panel-heading {background:#5d6d7e;border-bottom:1px dotted #aaa}
-.admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body {border:none;color:#fff;background:#5d6d7e}
+.admin-container .panel-default>.panel-heading {background:#304269;color:#fff;border-top:1px solid #212F48;border-radius:0}
+.admin-container .panel-default>.panel-heading:hover {background-color: #212F48;-webkit-transition: background-color 500ms linear;-moz-transition: background-color 500ms linear;-o-transition: background-color 500ms linear;-ms-transition: background-color 500ms linear;transition: background-color 500ms linear}
+.admin-container .panel-default.panelActive>.panel-heading {background:#212F48;border-bottom:1px dotted #aaa}
+.admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body {border:none;color:#fff;background:#23324C}
 .admin-container .panel-default .panel-title-content {min-height:50px; padding:10px;}
 .admin-container .panel-collapse .btn-stats { float:right; }
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body .fields {width:100%;clear:both;}
