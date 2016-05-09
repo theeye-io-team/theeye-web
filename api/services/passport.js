@@ -1,3 +1,4 @@
+/* global Passport, User, sails, _ */
 var path     = require('path')
   , url      = require('url')
   , passport = require('passport')
@@ -222,15 +223,15 @@ passport.resendInvitationUser = function(user, next){
 
   mailer.sendActivationMail(user.email, data, function(error) {
     if(error) {
-      req.flash('error','Error.Passport.User.Invite');
-      debug('error sending invitation email to "%s"',email);
-      return next(err);
+      // req.flash('error','Error.Passport.User.Invite');
+      debug('error sending invitation email to "%s"', user.email);
+      return next(error);
     }
 
     debug('email invitation sent');
     return next(null, {'email' : user.email});
   });
-}
+};
 
 passport.inviteUser = function(req, res, next) {
   var local = this.protocols.local;
@@ -265,7 +266,6 @@ passport.inviteUser = function(req, res, next) {
   });
 };
 passport.activateUser = function(req, res, next){
-  var self = this;
   this.protocols.local.activate(req, res, function(err, localUser){
     if(err) {
       debug('Error activating user on local protocol');
@@ -304,27 +304,23 @@ passport.activateUser = function(req, res, next){
     }
 
   });
-}
-passport.retrievePassword = function(req, res, next)
-{
-  return this.protocols.local.retrievePassword(req, res, function(err, email, userData)
-  {
+};
+passport.retrievePassword = function(req, res, next) {
+  return this.protocols.local.retrievePassword(req, res, function(err, email, userData) {
     if(err)
       return next(err);
 
-      mailer.sendRetrivePasswordMail(email, data, function(error)
-      {
-        if(err)
-        {
-          debug("error sending email invitation");
-          req.flash('error', 'Error.Passport.User.Invite');
-          debug("Error sending email to " + email);
-          return next(err);
-        }
+    mailer.sendRetrivePasswordMail(email, null, function(error) {
+      if(err) {
+        debug("error sending email invitation");
+        req.flash('error', 'Error.Passport.User.Invite');
+        debug("Error sending email to " + email);
+        return next(err);
+      }
 
-        debug("email invitation sent");
-        return next(null, email);
-      });
+      debug("email invitation sent");
+      return next(null, email);
+    });
   });
 };
 
@@ -347,7 +343,7 @@ function createTheeyeUser (user, input, supervisor, next) {
     });
 }
 
-var searchpassport = function(user, next){
+function searchpassport (user, next){
   sails.log.debug('searching passport theeye for user "%s"', user.username);
   Passport.findOne({
     user: user.id,
@@ -380,10 +376,9 @@ passport.createmissingtheeyepassports = function(req, res, next) {
         });
       }
     });
-}
+};
 
-passport.createUser = function(req, res, next)
-{
+passport.createUser = function(req, res, next) {
   var supervisor = req.supervisor;
   var passport = this ;
   passport
@@ -421,7 +416,9 @@ passport.callback = function (req, res, next) {
     if (action === 'invite' && req.user) {
       return this.inviteUser(req, res, next);
     }
-    if (action === 'activate' && !req.user) {
+    if (action === 'activate') {
+      //force user logout if logged in
+      if(req.user) req.logout();
       return this.activateUser(req, res, next);
     }
     else if (action === 'connect' && req.user) {
@@ -431,7 +428,7 @@ passport.callback = function (req, res, next) {
       return this.protocols.local.disconnect(req, res, next);
     }
     else {
-      return next(new Error('Invalid action'));
+      return next(new Error('Invalid action: '+ action));
     }
   }
   else
@@ -535,23 +532,22 @@ passport.disconnect = function (req, res, next) {
     , provider = req.param('provider');
 
   Passport.findOne({
-      provider : provider,
-      user     : user.id
-    }, function (err, passport) {
+    provider : provider,
+    user     : user.id
+  }, function (err, passport) {
+    if (err) {
+      return next(err);
+    }
+
+    Passport.destroy(passport.id, function (error) {
       if (err) {
         return next(err);
       }
 
-      Passport.destroy(passport.id, function (error) {
-        if (err) {
-          return next(err);
-        }
-
-        next(null, user);
-      });
+      next(null, user);
+    });
   });
 };
-
 
 /**
  * Change password for local passport
@@ -560,10 +556,9 @@ passport.disconnect = function (req, res, next) {
  * @param  {Object} res
  * @param  {Function} next
  */
-passport.updateLocalPassport = function (req, res, next)
-{
+passport.updateLocalPassport = function (req, res, next) {
   return this.protocols.local.update(req, res, next);
-}
+};
 
 passport.serializeUser(function (user, next) {
   sails.log.debug('serializing user %j', user);
@@ -595,7 +590,7 @@ passport.deserializeUser(function (id, next) {
       user.theeye = {
         'client_id' : passport.profile.client_id,
         'client_secret' : passport.profile.client_secret,
-        'access_token' : passport.token,
+        'access_token' : passport.token
       };
       next(error,user);
     });

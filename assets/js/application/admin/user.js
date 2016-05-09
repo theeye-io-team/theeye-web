@@ -63,7 +63,8 @@ $(function() {
       event.preventDefault();
       var vals = extractFormData($userForm);
 
-      jQuery.post("/user", vals).done(function(/*data*/) {
+      jQuery.post("/user", vals).done(function(data) {
+        console.log(data);
         $state.trigger("user_created");
       }).fail(function(xhr, status, xhrStatus) {
         $state.trigger("user_create_error", xhr.responseText, status);
@@ -182,14 +183,16 @@ $(function() {
 
   (function reSendInvitation() {
     $state.on("invitation_sent", function() {
-      alert("Invitation sent");
+      alert("Invitation sent","Up she goes...");
     });
 
     $state.on("invitation_error", function() {
-      alert("Error sending the invitation");
+      alert("Error sending the invitation", "Oops...");
     });
 
     $(".reSendInvitation").on("click",function(ev){
+      ev.stopPropagation();
+      ev.preventDefault();
       var $delTrigger = $(ev.currentTarget);
       var idUser = $delTrigger.data("user-id");
 

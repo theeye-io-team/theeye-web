@@ -1,3 +1,4 @@
+/* global passport, sails, User */
 var debug = require('debug')('eye:web:controller:auth');
 var AuthController = {
   /**
@@ -140,14 +141,13 @@ var AuthController = {
    * @param {Object} req
    * @param {Object} res
    */
-  updateLocalPassport: function (req, res)
-  {
+  updateLocalPassport: function (req, res) {
     sails.log.debug("update local passport password");
 
     passport.updateLocalPassport(req, res, function(err)
     {
       if(err)
-        return res.send(500, err.toString())
+        return res.send(500, err.toString());
       else
         return res.send(200);
     });
@@ -253,8 +253,7 @@ var AuthController = {
    * @param {Object} req
    * @param {Object} res
    */
-  disconnect: function (req, res)
-  {
+  disconnect: function (req, res) {
     sails.log.debug("disconnect %s passport for current user", req.param('provider'));
 
     passport.disconnect(req, res, function(err, user)
