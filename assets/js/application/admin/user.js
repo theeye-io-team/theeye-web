@@ -183,14 +183,16 @@ $(function() {
 
   (function reSendInvitation() {
     $state.on("invitation_sent", function() {
-      alert("Invitation sent");
+      alert("Invitation sent","Up she goes...");
     });
 
     $state.on("invitation_error", function() {
-      alert("Error sending the invitation");
+      alert("Error sending the invitation", "Oops...");
     });
 
     $(".reSendInvitation").on("click",function(ev){
+      ev.stopPropagation();
+      ev.preventDefault();
       var $delTrigger = $(ev.currentTarget);
       var idUser = $delTrigger.data("user-id");
 
