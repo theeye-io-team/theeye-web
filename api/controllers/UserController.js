@@ -105,7 +105,7 @@ var UserController = module.exports = {
 
       passport.resendInvitationUser(user, function(error){
         if(error){
-          sails.log.error(err);
+          sails.log.error(error);
           return res.send(500);
         }
         return res.send(200);
@@ -178,6 +178,16 @@ var UserController = module.exports = {
   },
   //POST  /admin/user/:id
   create: function(req, res) {
+    /* TODO
+    * Evaluate errors to be able to trace them.
+    * Errors here can come from:
+    *   services/passport,
+    *   services/passport/[protocol],
+    *   db/validations
+    *   services/mailer
+    * Maybe some evaluateError fn to normalize all distinct error
+    * sources and types
+    */
     var params = req.params.all();
 
     if(!params.customers)
@@ -185,8 +195,10 @@ var UserController = module.exports = {
 
     if(params.sendInvitation) {
       passport.inviteUser(req, res, function(err, user) {
-        if(err) return res.send(400, err);
-        else return res.json(user);
+        if(err) {
+          debug(err);
+          return res.send(400, err);
+        }else return res.json(user);
       });
     } else {
       if(params.password !== params.confirmPassword)
