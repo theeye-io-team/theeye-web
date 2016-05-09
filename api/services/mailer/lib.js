@@ -17,10 +17,7 @@ switch(trType) {
   case 'gmail':
     transport = {
       service: 'Gmail',
-      auth: {
-        user: options.user,
-        pass: options.pass
-      }
+      auth: { user: options.user, pass: options.pass }
     };
     break;
   case 'smtp':
@@ -50,4 +47,4 @@ module.exports = {
 
     transporter.sendMail(options, callback);
   }
-}
+};
