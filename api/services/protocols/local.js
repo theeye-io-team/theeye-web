@@ -448,6 +448,14 @@ exports.connect = function (req, res, next) {
  * @param {Function} next
  */
 exports.login = function (req, identifier, password, next) {
+  //no pude hacer andar esto, le puse attribute required al password
+  //en login.ejs como paleativo, pero cuando se manda sin password alguien
+  //lo esta cortando en el camino (passport?)
+  if(!password) {
+    console.log('//////////////////');
+    req.flash('error', 'Error.Passport.Password.Empty');
+    return next(null, false);
+  }
   var isEmail = validator.isEmail(identifier)
     , query   = {};
 
