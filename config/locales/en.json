@@ -1,6 +1,7 @@
 {
   "Error.Passport.Password.Wrong": "Whoa, that password wasn't quite right!",
   "Error.Passport.Password.NotSet": "Oh no, you haven't set a password yet!",
+  "Error.Passport.Password.Empty": "Really? Empty password? Are you familiar with the phrase <em>'You shall not pass!'</em>?",
   "Error.Passport.Password.NotMatch": "The passwords don't match!",
   "Error.Passport.Username.NotFound": "Uhm, what's your name again?",
   "Error.Passport.Email.NotFound": "That email doesn't seem right",

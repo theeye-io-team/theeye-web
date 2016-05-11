@@ -1,6 +1,7 @@
-var validator 	= require('validator');
-var crypto 	  	= require("crypto");
-var mailer 	  	= require("../mailer");
+/* global User, Passport, sails */
+var validator   = require('validator');
+var crypto      = require("crypto");
+// var mailer 	  	= require("../mailer");
 var querystring = require("querystring");
 var _           = require("underscore");
 var debug       = require('debug')('eye:web:service:protocol:local');
@@ -46,10 +47,7 @@ exports.register = function (req, res, next) {
     return next(new Error('No password was entered.'));
   }
 
-  User.create({
-    username : username
-  , email    : email
-  }, function (err, user) {
+  User.create({ username: username, email : email }, function (err, user) {
     if (err) {
       if (err.code === 'E_VALIDATION') {
         if (err.invalidAttributes.email) {
@@ -65,9 +63,9 @@ exports.register = function (req, res, next) {
     }
 
     Passport.create({
-      protocol : 'local'
-    , password : password
-    , user     : user.id
+      protocol: 'local',
+      password: password,
+      user: user.id
     }, function (err, passport) {
       if (err) {
         if (err.code === 'E_VALIDATION') {
@@ -84,8 +82,7 @@ exports.register = function (req, res, next) {
   });
 };
 
-exports.createUser = function(req, res, next)
-{
+exports.createUser = function(req, res, next) {
   var params = req.params.all();
   params.enabled = true;
 
@@ -102,7 +99,7 @@ exports.createUser = function(req, res, next)
       return next(null, user);
     });
   });
-}
+};
 
 /**
  * Restore user password
@@ -113,12 +110,10 @@ exports.createUser = function(req, res, next)
  * @param {Object}   res
  * @param {Function} next
  */
-exports.retrievePassword = function (req, res, next)
-{
+exports.retrievePassword = function (req, res, next) {
   var email      = req.param('email');
 
-  if (!email)
-  {
+  if (!email) {
     req.flash('error', 'Error.Passport.Email.Missing');
     return next(new Error('No email was entered.'));
   }
@@ -126,8 +121,7 @@ exports.retrievePassword = function (req, res, next)
   var hmac  = crypto.createHmac("sha1", email);
   var token = hmac.digest(encoding="base64");
 
-  User.update({email: email},{invitation_token : token},function (err, user)
-  {
+  User.update({email: email},{invitation_token : token},function (err, user) {
     if (err)
       return next(err);
 
@@ -152,8 +146,7 @@ exports.retrievePassword = function (req, res, next)
  * @param {Object}   res
  * @param {Function} next
  */
-exports.invite = function (req, res, next)
-{
+exports.invite = function (req, res, next) {
   var email = req.param('email');
   var customers = req.param('customer') ? [req.param('customer')] : req.param('customers');
   var credential = req.param('credential');
@@ -165,46 +158,45 @@ exports.invite = function (req, res, next)
     return next('No email was entered.');
   }
 
-  var token = crypto.createHmac("sha1", email).digest(encoding="base64");
-
   if (customers.length === 0) {
     req.flash('error', 'Error.Passport.Customers.Missing');
     return next('No customers was entered.');
   }
-  User.findOne({email: email}, function (err, user)
-  {
-    if (err)
-      return next(err);
 
-    if(!user)
-    {
-  	  //Scenario: User dont exist
-  	  //Action: create the user and send email invitation
-  	  User.create({
-  		invitation_token : token
-  	  , username 		 : email
-  	  , email    		 : email
-  	  , customers        : customers
-  	  , credential       : credential
-  	  }, function (err, user)
-      {
-        if (err)
-        {
-          if (err.code === 'E_VALIDATION')
-          {
-              if (err.invalidAttributes.email) {
-                req.flash('error', 'Error.Passport.Email.Exists');
-              }else if (err.invalidAttributes.username) {
-                req.flash('error', 'Error.Passport.User.Exists');
-              } else {
-                req.flash('error', 'Error.Passport.Unknown');
-              }
-    		  }
-          console.log(err);
-    		  return next(err);
-    		}
-    		else
-    		{
+  var token = crypto.createHmac("sha1", email).digest(encoding="base64");
+
+  User.findOne({email: email}, function (err, user) {
+    if (err) {
+      // error from db, don't expose to clients, send generic err
+      debug('////////////////// ERROR.DB ///////////////////');
+      debug(err);
+      return next('Error.DB');
+    }
+
+    if(!user) {
+      //Scenario: User dont exist
+      //Action: create the user and send email invitation
+      User.create({
+        invitation_token: token,
+        username: email,
+        email: email,
+        customers: customers,
+        credential: credential
+      }, function (err, user) {
+        if (err) {
+          if (err.code === 'E_VALIDATION') {
+            debug('////////////////// ERROR.DB.VALIDATION ///////////////////');
+            if (err.invalidAttributes.email) {
+              req.flash('error', 'Error.Passport.Email.Exists');
+            }else if (err.invalidAttributes.username) {
+              req.flash('error', 'Error.Passport.User.Exists');
+            } else {
+              req.flash('error', 'Error.Passport.Unknown');
+            }
+          }
+          debug(err);
+          return next(err);
+        } else {
           var queryToken = querystring.stringify({token: token});
           debug('Invitation link: ' + sails.config.passport.local.activateUrl + queryToken );
 
@@ -219,33 +211,31 @@ exports.invite = function (req, res, next)
           };
 
           return next(null, email, emailData);
-    		}
-  	  });
-	}
-	else
-  {
-    //Scenario: User exist
-    customers = _.union(user.customers, customers);
+        }
+      });
+    } else {
+      //Scenario: User exist
+      customers = _.union(user.customers, customers);
 
-    //If the user exists and have perms for the selected customers dont send the activation email
-    if(user.customers.length == customers.length) {
-      req.flash('error', 'Error.Passport.User.Exists.Customer');
-      //text is error
-      //error returning behaviour is somewhat broken
-      //if i send here a new Error('message'), front end receives only {}
-      return next("The user allready exists and have permissions for this customer");
-    }
-
-    User.update({email: email},{customers: customers },function (err, user) {
-      if(err) {
-        debug('Error updating user');
-        return next(err);
+      //If the user exists and have perms for the selected customers dont send the activation email
+      if(user.customers.length == customers.length) {
+        req.flash('error', 'Error.Passport.User.Exists.Customer');
+        //text is error
+        //error returning behaviour is somewhat broken
+        //if i send here a new Error('message'), front end receives only {}
+        return next("The user allready exists and have permissions for this customer");
       }
-      var data = { username: req.user.username };
-      return next(err, email, data);
-    });
-  }
- });
+
+      User.update({email: email},{customers: customers },function (err, user) {
+        if(err) {
+          debug('Error updating user');
+          return next(err);
+        }
+        var data = { username: req.user.username };
+        return next(err, email, data);
+      });
+    }
+  });
 };
 
 exports.getactivationlink = function(input) {
@@ -257,7 +247,7 @@ exports.getactivationlink = function(input) {
   var url = sails.config.passport.local.activateUrl;
 
   return url + queryToken;
-}
+};
 
 /**
  * Activate user account
@@ -272,7 +262,7 @@ exports.getactivationlink = function(input) {
 exports.activate = function (req, res, next) {
   var username = req.param('username')
     , password = req.param('password')
-    , invitation_token = req.param('invitation_token')
+    , invitation_token = req.param('invitation_token');
 
   if (!username) {
     debug('No username was entered');
@@ -303,25 +293,39 @@ exports.activate = function (req, res, next) {
       return next(new Error("No user found"));
     }
 
-    User.findOne().where({ username: username, id : {'!': user.id}}).exec(function(err, duplicatedUser)
-    {
-
-      if(duplicatedUser)
-      {
+    User
+    .findOne()
+    .where({
+      username: username,
+      id : {'!': user.id}
+    }).exec(function(err, duplicatedUser) {
+      if(err) {
+        debug('//////////////// ERROR.DB ////////////////');
+        debug(err);
+        return next(new Error('DB Error'));
+      }
+      if(duplicatedUser) {
         debug('duplicated user');
         req.flash('error', 'Error.Passport.User.Exists');
-        return next(new Error("No user found"));
+        return next(new Error("User exists"));
       }
 
       debug("Creating user %s local passport", user.id);
-      Passport.destroy({ protocol : 'local', user : user.id}, function (err, passport)
-      {
-        Passport.create({ protocol : 'local', password : password, user : user.id}, function (err, passport)
-        {
-          if (err)
-          {
-            if (err.code === 'E_VALIDATION')
+      Passport.destroy({
+        protocol : 'local',
+        user : user.id
+      }, function (err, passport) {
+        Passport.create({
+          protocol : 'local',
+          password : password,
+          user : user.id
+        }, function (err, passport) {
+          if (err) {
+            debug('//////////////// ERROR.DB ////////////////');
+            debug(err);
+            if (err.code === 'E_VALIDATION') {
               req.flash('error', 'Error.Passport.Password.Invalid');
+            }
 
             return next(new Error("Valiidation error"));
           }
@@ -376,8 +380,7 @@ exports.update = function (req, res, next) {
   if (confirmPassword !== newPassword)
     return next(new Error('Passwords do not match.'));
 
-  User.findOne({username : username},function (err, user)
-  {
+  User.findOne({username : username},function (err, user) {
     if (err)
       return next(err);
 
@@ -386,16 +389,13 @@ exports.update = function (req, res, next) {
 
     Passport.update( {protocol : 'local', user: user.id},
     {password: newPassword},
-    function (err, passport)
-    {
-      if(err)
-      {
+    function (err, passport) {
+      if(err) {
         if (err.code === 'E_VALIDATION')
           return next(new Error("Invalid password"));
         else
           return next(err);
-      }
-      else
+      } else
         return next(null);
     });
   });
@@ -416,10 +416,7 @@ exports.connect = function (req, res, next) {
   var user     = req.user
     , password = req.param('password');
 
-  Passport.findOne({
-    protocol : 'local'
-  , user     : user.id
-  }, function (err, passport) {
+  Passport.findOne({ protocol: 'local' , user: user.id }, function (err, passport) {
     if (err) {
       return next(err);
     }
@@ -432,8 +429,7 @@ exports.connect = function (req, res, next) {
       }, function (err, passport) {
         next(err, user);
       });
-    }
-    else {
+    } else {
       next(null, user);
     }
   });
@@ -452,13 +448,20 @@ exports.connect = function (req, res, next) {
  * @param {Function} next
  */
 exports.login = function (req, identifier, password, next) {
+  //no pude hacer andar esto, le puse attribute required al password
+  //en login.ejs como paleativo, pero cuando se manda sin password alguien
+  //lo esta cortando en el camino (passport?)
+  if(!password) {
+    console.log('//////////////////');
+    req.flash('error', 'Error.Passport.Password.Empty');
+    return next(null, false);
+  }
   var isEmail = validator.isEmail(identifier)
     , query   = {};
 
   if (isEmail) {
     query.email = identifier;
-  }
-  else {
+  } else {
     query.username = identifier;
   }
 
@@ -498,8 +501,7 @@ exports.login = function (req, identifier, password, next) {
             return next(null, user);
           }
         });
-      }
-      else {
+      } else {
         sails.log.debug('error password not set');
         req.flash('error', 'Error.Passport.Password.NotSet');
         return next(null, false);

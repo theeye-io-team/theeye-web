@@ -1,3 +1,4 @@
+/* global debug, _, bootbox, tasks */
 /**
  *
  * IMPORTANTE. README before start.
@@ -67,7 +68,7 @@ $(function(){
         case 'cache': input.value = dstat['cache']; break;
         case 'disk': input.value = dstat['disk']; break;
       }
-    };
+    }
   });
 
   function MonitorFormData (monitor) {
@@ -121,7 +122,7 @@ $(function(){
     script_arguments: function(value){
       var args = typeof value == 'string' ? value.split(',') : value;
       return args.map(function(val){ return val.trim(); });
-    },
+    }
   };
 
   function Item (key, type) {
@@ -142,7 +143,7 @@ $(function(){
   var Task = {
     add: function add(data) {
       var item = new Item(data._key,'task');
-      var setdata = item.set(data);
+      item.set(data);
       group.tasks.push(item);
       $tasksTags.tagsinput('add',item);
       return item;
@@ -173,7 +174,7 @@ $(function(){
           '/tasktemplate/' + item.id;
         $.ajax({
           url: url,
-          method: 'DELETE',
+          method: 'DELETE'
         }).done(function(data){
           nextFn(null, data);
         }).fail(function(xhr){
@@ -188,16 +189,16 @@ $(function(){
     * @param {Array} updates
     */
     update: function update(item, updates){
-      var changes = item.set(updates);
+      item.set(updates);
       $tasksTags.tagsinput('refresh');
       return item;
-    },
+    }
   };
 
   var Monitor = {
     add: function add(data) {
       var item = new Item(data._key,'monitor');
-      var setdata = item.set(data);
+      item.set(data);
       group.monitors.push(item);
       $monitorsTags.tagsinput('add',item);
       this.setDstat(item);
@@ -233,7 +234,7 @@ $(function(){
           '/monitortemplate/' + item.id;
         $.ajax({
           url: url,
-          method: 'DELETE',
+          method: 'DELETE'
         }).done(function(data){
           nextFn(null, data);
         }).fail(function(xhr){
@@ -255,6 +256,7 @@ $(function(){
       return changes;
     },
     setDstat: function(item){
+      var dstat;
       if(
         item.monitor_type=='dstat'||
         item.type=='dstat'
@@ -313,12 +315,12 @@ $(function(){
     }
 
     var tasks = data.tasks;
-    for(var i=0;i<tasks.length; i++){
-      var item = tasks[i]
+    for(var ii=0;ii<tasks.length; ii++){
+      var item2 = tasks[ii];
       var task = Object
-        .keys(item)
+        .keys(item2)
         .map(function(val, key){
-          return { 'name': val, 'value': item[val] };
+          return { 'name': val, 'value': item2[val] };
         });
       Task.add(task);
     }
@@ -333,7 +335,7 @@ $(function(){
   function restartWizard() {
     logger('initializing new group');
     group = new Group();
-    $('.modal form').each(function(i,f){ f.reset() });
+    $('.modal form').each(function(i,f){ f.reset(); });
     $monitorsTags.tagsinput('removeAll');
     $tasksTags.tagsinput('removeAll');
   }
@@ -510,7 +512,7 @@ $(function(){
       function(confirmed){
         if(confirmed){
           logger('saving monitor template');
-          $monitorForm = $button.parents('.monitor-modal').find('form');
+          var $monitorForm = $button.parents('.monitor-modal').find('form');
           var monitor = $monitorForm.serializeArray();
           var parsedData = Monitor.add(monitor);
 
@@ -549,10 +551,14 @@ $(function(){
       method: method,
       contentType: 'application/json',
       data: JSON.stringify({'group': group}),
-      dataType: 'json',
+      dataType: 'json'
     }).done(function(data){
       $.unblockUI();
       window.location.reload();
+    }).fail(function(xhr,status,statusText){
+      $.unblockUI();
+      var msg = xhr.responseJSON ? xhr.responseJSON.data : statusText;
+      alert(msg, 'Error saving hostgroup');
     });
   }
 
@@ -566,7 +572,7 @@ $(function(){
     var groupId = $item.data('group-id');
     $.ajax({
       method:'delete',
-      url:'/admin/hostgroup/' + groupId,
+      url:'/admin/hostgroup/' + groupId
     }).done(function(){
       window.location.reload();
     });
@@ -581,7 +587,7 @@ $(function(){
       url:'/admin/hostgroup/' + group.id,
       method:'get',
       contentType:'application/json',
-      dataType:'json',
+      dataType:'json'
     }).done(function(data){
       fillGroupForm(data);
       group.action = 'change';
@@ -600,13 +606,13 @@ $(function(){
   $monitorsTags.tagsinput({
     itemValue: '_key',
     itemText: 'description',
-    readOnly: true,
+    readOnly: true
   });
 
   $tasksTags.tagsinput({
     itemValue: '_key',
     itemText: 'name',
-    readOnly: true,
+    readOnly: true
   });
 
   /**

@@ -4,18 +4,18 @@ var User = {
   schema: true,
   tableName: 'web_user',
   attributes: {
-    username: { type: 'string', unique: true, required: true },
-    email: { type: 'email', unique: true, required: true },
+    username: { type: 'string', unique: true, required: true, notNull:true, truthy: true },
+    email: { type: 'email', unique: true, required: true, notNull:true, truthy: true },
     customers: { type: 'array', defaultsTo: [] },
     credential: { type: 'string', defaultsTo: 'admin' },
     enabled: { type: 'boolean', defaultsTo: false },
     invitation_token: { type: 'string', defaultsTo: "" },
-    passports: { collection: 'Passport', via: 'user' },
+    passports: { collection: 'Passport', via: 'user' }
   },
   beforeCreate: function(values, next) {
     var email = values.email;
     var username = values.username;
-    
+
     if(!email){
       var error = {
         invalidAttributes: { email: true },
@@ -34,7 +34,7 @@ var User = {
 
     this.find({
       $or: [
-        { email: email }, 
+        { email: email },
         { username: username }
       ]
     }).exec(function(err, result) {

@@ -1,11 +1,11 @@
+/* global sails */
 var debug = require('debug')('eye:web:services:mailer');
 var ejs = require('ejs');
 var config = sails.config.mailer;
 var mailer = require('./lib');
 
 module.exports = {
-  sendActivationMail: function(email, input, next)
-  {
+  sendActivationMail: function(email, input, next) {
     if(!email || !input) {
       return next(new Error('Missing parameters on sendActivationMail'));
     }
@@ -36,8 +36,7 @@ module.exports = {
       });
     });
   },
-  sendRetrivePasswordMail: function(email, data, next)
-  {
+  sendRetrivePasswordMail: function(email, data, next) {
 
     ejs.renderFile("views/email/retrive-password.ejs", {locals: data}, function(error, str)
     {
@@ -58,8 +57,7 @@ module.exports = {
       });
     });
   },
-  sendRequestInvitationMail: function(email, data, next)
-  {
+  sendRequestInvitationMail: function(email, data, next) {
 
     ejs.renderFile("views/email/invitation.ejs", {locals: data}, function(error, str) {
       var options = {
@@ -95,8 +93,7 @@ module.exports = {
       });
     });
   },
-  sendNewCustomerMail: function(email, data, next)
-  {
+  sendNewCustomerMail: function(email, data, next) {
 
     ejs.renderFile("views/email/new-customer.ejs", {locals: data}, function(error, str)
     {

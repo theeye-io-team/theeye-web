@@ -1,3 +1,4 @@
+/* global async */
 var debug = require('debug')('eye:web:controller:hostgroup');
 
 module.exports = {
@@ -12,7 +13,7 @@ module.exports = {
       },
       tasks: function(callback) {
         supervisor.tasks(callback);
-      },
+      }
     }, function(err, data) {
       if (err) {
         console.log(err.toString());
@@ -30,7 +31,7 @@ module.exports = {
       data.timeouts = [
         {'id':5000, 'value':5},
         {'id':10000, 'value':10},
-        {'id':15000, 'value':15},
+        {'id':15000, 'value':15}
       ];
       res.view(data);
     });
@@ -75,5 +76,5 @@ module.exports = {
         if(err) return res.send(err.statusCode, err);
         res.send(200,{ group: group });
       });
-  },
-}
+  }
+};
