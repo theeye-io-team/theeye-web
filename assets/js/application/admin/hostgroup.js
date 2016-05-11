@@ -94,7 +94,7 @@ $(function(){
           this.pattern = monitor.pattern || monitor.config.ps.pattern;
           break;
         case 'dstat':
-          console.log(monitor);
+        case 'psaux':
           break;
         default:
           throw new Error('invalid monitor type ' + type);
@@ -305,6 +305,7 @@ $(function(){
         .map(function(val){
           if(val=='name')
             return { 'name': 'description', 'value': item[val] };
+
 
           return { 'name': val, 'value': item[val] };
         });
@@ -751,6 +752,21 @@ $(function(){
       placeholder:'Select a script...'
     });
   });
+
+  /*
+  $('#psaux-monitor-button').on('click', function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    var psaux = {
+      _key:Date.now(),
+
+    };
+    Monitor.add(psaux);
+    if(group.action=='change'){
+    }else{
+    }
+  });
+  */
 
   // hook to scripts.js event script_uploaded
   window.scriptState.on('script_uploaded', function(evt,data){
