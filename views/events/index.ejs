@@ -27,8 +27,8 @@
       </div>
       <div class="resources-panel-list">
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-          <% resources.forEach( function(resource, key) { %>
-            <%
+          <% resources.forEach(function(resource, key){ %>
+            <% if(resource.type!='psaux'){
             var tags = [
               "resource",
               resource.description,
@@ -74,7 +74,7 @@
                 </div>
               </div>
             </div> <!-- end item -->
-          <% }); %>
+          <% }}); %>
         </div> <!-- end panel -->
       </div> <!-- /resources-panel-list -->
       <% } else { %><!-- no resources -->
