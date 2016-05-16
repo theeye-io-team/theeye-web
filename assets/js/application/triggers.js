@@ -1,4 +1,4 @@
-
+/* global Ladda, $searchbox, bootbox, debug */
 // Simple log function to keep the example simple
 function log() {
   var deb = debug('eye:web:triggers');

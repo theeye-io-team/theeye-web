@@ -1,3 +1,4 @@
+/* global bootbox, $searchbox */
 /* NOTE
 Lists are made up with:
   class="itemRow panel panel-default js-searchable-item"
@@ -227,7 +228,50 @@ $(function() {
     });
   })();
 
+  (function schedule(){
+    var $modal = $('#schedule-task-modal');
+    var $form = $('form', $modal);
+    var $submitter = $('button[type=submit]',$modal);
 
+    //show modal on scheduleTask click
+    $('.scheduleTask').click(function(evt){
+      evt.preventDefault();
+      evt.stopPropagation();
+      console.log(this);
+      var itemData = $(this).closest('.itemRow').data();
+      console.log(itemData);
+      //prepare form
+      $form.data('task-id',itemData.itemId);
+      //prepare modal
+      $('h4.modal-title',$modal).text('Schedule task: ' + itemData.itemName);
+      $modal.modal('show');
+      return;
+    });
+
+    $submitter.click(function(evt){
+      var datetime = $('input[name=datetime]',$form).val();
+      //SCHEDULE!!!
+      $.post("/palanca/schedule", {
+        task_id: $form.data('task-id'),
+        scheduleData: {
+          // repeatsEvery: '24 hours',
+          runOn: datetime
+        }
+      }).done(function(data,status,xhr){
+        console.log(data);
+      }).fail(function(xhr, status, message) {
+        console.log('fail');
+        console.log(arguments);
+      });
+    });
+
+    //catch form submit
+    $form.on('submit', function(evt){
+      evt.preventDefault();
+    });
+
+
+  })();
   // MASS DELETE
   (function massDelete(){
     // searchbox hook
@@ -310,7 +354,8 @@ $(function() {
                 console.log('then success');
                 console.log(arguments);
                 alert(taskRows + successFooter, successTitle);
-              },function(){
+              },
+              function(){
                 console.log('then fail');
                 console.log(arguments);
                 alert(taskRows + failFooter, failTitle);
@@ -322,13 +367,11 @@ $(function() {
               }
             // when progress nunca se llama tampoco ... ?
             ).progress(function(){
-                console.log('when progress');
-                console.log(arguments);
-              }
-            ).always(function(){
-                $.unblockUI();
-              }
-            ).done(function(){
+              console.log('when progress');
+              console.log(arguments);
+            }).always(function(){
+              $.unblockUI();
+            }).done(function(){
               // done deberia volver con array de results
               // no se si no funciona o es porque el req.DELETE
               // no devuelve nada, habria que probar de cambiar la API

@@ -1,6 +1,7 @@
-var request = require('request');
+/* global Passport, User, sails */
+// var request = require('request');
 var snsreceiver = require('../services/snshandler');
-var customeruri = require('../services/customeruri');
+// var customeruri = require('../services/customeruri');
 
 var debug = {
   log: require('debug')('eye:web:palanca'),
@@ -23,16 +24,26 @@ module.exports = {
       message: 'subscribed to customer palancas'
     });
   },
-  trigger: function(req, res)
-  {
+  schedule: function(req,res) {
+    var supervisor = req.supervisor;
+    console.log(req.body);
+
+    supervisor.jobSchedule(req.body, function(err, job){
+      if(err) {
+        return res.send(500, err);
+      }
+      res.json(job);
+    });
+  },
+  trigger: function(req, res) {
     var supervisor = req.supervisor;
     debug.log(req.body);
 
-    triggerResult = function(err, job) {
+    var triggerResult = function(err, job) {
       if (err) {
         return res.send(400, {
           message: "Error creating job on supervisor: " + err
-        })
+        });
       }
       res.json({ job: job, message: 'Job created' });
     };
@@ -49,8 +60,7 @@ module.exports = {
   /**
    * Receive SNS messages, automatically sent by the supervisor.
    */
-  update: function(req, res)
-  {
+  update: function(req, res) {
     // sns updates received
     var body = req.body;
     debug.log('trigger/job update received');
