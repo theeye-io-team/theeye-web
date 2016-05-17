@@ -1,3 +1,4 @@
+/* global async, sails, _ */
 var debug = require('debug')('eye:web:events');
 var moment = require('moment');
 var snsreceiver = require('../services/snshandler');
@@ -42,6 +43,18 @@ module.exports = {
           }
           data.agentCurl = userAgent.curl;
           data.moment = moment;
+          // var tester = _.groupBy(data.resources,"host_id");
+          // tester = _.mapValues(tester, function(e){
+          //   return _.indexBy(e,"type");
+          // });
+
+          data.indexedResources = _.chain(data.resources)
+            .groupBy("host_id")
+            .mapValues(function(e){
+              return _.indexBy(e,"type");
+            })
+            .value();
+
           res.view(data);
         }
       );
