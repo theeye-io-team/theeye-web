@@ -1,3 +1,4 @@
+/* global bootbox, $searchbox */
 /* NOTE
 Lists are made up with:
   class="itemRow panel panel-default js-searchable-item"
@@ -17,7 +18,8 @@ usually repeated in every button
 */
 $(function() {
 
-  var $state = $({});
+  window.scriptState = window.scriptState ? window.scriptState : $({});
+  var $state = window.scriptState;
 
   function extractFormData ($el) {
     return $el.find(':input')
@@ -89,10 +91,8 @@ $(function() {
       $('#script_id', $taskForm).select2({ placeholder: "Select a script..." });
     });
 
-    $(".modal#create-task button[type=submit]").on('click',function(event){
-      $taskForm.submit();
-    });
     $(".modal#edit-task button[type=submit]").on('click',function(event){
+      console.log('marimba');
       $taskForm.submit();
     });
 
@@ -180,7 +180,33 @@ $(function() {
       }
     });
 
+    $(".modal#create-task button[type=submit]").on('click',function(event){
+      $taskForm.submit();
+    });
+
+    $state.on('script_uploaded', function(ev, data) {
+
+      if(location.pathname != '/admin/task') {
+        //restrict the event function to the /admin/task layout
+        return;
+      }
+      alert("Script succesfully uploaded","Script upload", function() {
+        $('[data-hook=script_id]').each(function(index, element){
+          console.log(element);
+          $(element).append($('<option>', {
+            value: data.script.id,
+            text: data.script.filename
+          }));
+          $(element).val(data.script.id);
+          $(element).trigger('change');
+        });
+
+        $('#script-modal').modal('hide');
+      });
+
+    });
     $taskForm.on("submit", function(event) {
+      console.log('tropa');
       event.preventDefault();
       var vals = extractFormData($taskForm);
       jQuery.post("/task", vals).done(function(data) {
@@ -310,7 +336,8 @@ $(function() {
                 console.log('then success');
                 console.log(arguments);
                 alert(taskRows + successFooter, successTitle);
-              },function(){
+              },
+              function(){
                 console.log('then fail');
                 console.log(arguments);
                 alert(taskRows + failFooter, failTitle);
@@ -322,12 +349,12 @@ $(function() {
               }
             // when progress nunca se llama tampoco ... ?
             ).progress(function(){
-                console.log('when progress');
-                console.log(arguments);
-              }
+              console.log('when progress');
+              console.log(arguments);
+            }
             ).always(function(){
-                $.unblockUI();
-              }
+              $.unblockUI();
+            }
             ).done(function(){
               // done deberia volver con array de results
               // no se si no funciona o es porque el req.DELETE

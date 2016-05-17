@@ -1,8 +1,10 @@
+/* global Dropzone, ace, bootbox, $searchbox */
 Dropzone.autoDiscover = false;
 
 $(function() {
   var self      = this; // dafuk? why not {}?
-  var $state    = window.scriptState = $({});
+  window.scriptState = window.scriptState ? window.scriptState : $({});
+  var $state = window.scriptState;
   //what is the advantage of storing the scriptId on
   //a pseudo class function, its value always come from [data-hook=script-id]
   //and is re-set every time a script is created/loaded for editing
@@ -15,13 +17,13 @@ $(function() {
 
   //**initialize dropzone**//
   var scriptDropZone = new Dropzone(".dropzone", {
-      url: "/script",
-      paramName: "script",
-      maxFiles: 1,
-      addRemoveLinks: true,
-      uploadMultiple: false,
-      autoProcessQueue: false
-    });
+    url: "/script",
+    paramName: "script",
+    maxFiles: 1,
+    addRemoveLinks: true,
+    uploadMultiple: false,
+    autoProcessQueue: false
+  });
 
   scriptDropZone.on("sending", function(file, xhr, formData) {
     formData.append("filename", $("input#filename").val());
@@ -53,10 +55,10 @@ $(function() {
     switch(uploadMethod) {
       case "editor":
         $("div[data-hook=editor-mode-container]").removeClass('hidden-container');
-      break;
+        break;
       case "gist":
         $("div[data-hook=editor-container]").removeClass('hidden-container');
-      break;
+        break;
     }
   });
 
@@ -74,10 +76,10 @@ $(function() {
       {
         case 'javascript':
           aceEditor.getSession().setValue('#!/usr/bin/env nodejs \n' + source);
-        break;
+          break;
         case 'sh':
           aceEditor.getSession().setValue('#!/usr/bin/env bash \n' + source);
-        break;
+          break;
       }
     }
   });
@@ -118,16 +120,17 @@ $(function() {
 
   //**Script create modal show**//
   $('.createScript').on('click',function(e) {
+    var $scriptModal = $("#script-modal");
     self.scriptId = null; // ????????????
     scriptDropZone.options.method = 'POST';
     scriptDropZone.removeAllFiles();
     aceEditor.setValue('#!/usr/bin/env nodejs \n');
-    $("[data-hook=script-id]").val('');
-    $("[data-hook=editor-mode]").val('javascript');
-    $("form[data-hook=script-form] textarea#description").val("");
-    $("input#filename").val("");
-    $("input[data-hook=public]").removeAttr('checked');
-    $("input[data-hook=public][value=false]")[0].checked = true;
+    $("[data-hook=script-id]",$scriptModal).val('');
+    $("[data-hook=editor-mode]",$scriptModal).val('javascript');
+    $("form[data-hook=script-form] textarea#description",$scriptModal).val("");
+    $("input#filename",$scriptModal).val("");
+    $("input[data-hook=public]",$scriptModal).removeAttr('checked');
+    $("input[data-hook=public][value=false]",$scriptModal)[0].checked = true;
     $("#script-modal").modal();
   });
 
@@ -196,8 +199,8 @@ $(function() {
     var url  = '/script';
     var type = 'POST';
     if(self.scriptId) {
-        url  = '/script/' + self.scriptId;
-        type = 'PUT';
+      url  = '/script/' + self.scriptId;
+      type = 'PUT';
     }
 
     var uploadMethod = $('input:radio[name=live-edit]:checked').val();
@@ -222,7 +225,7 @@ $(function() {
               data: formData,
               processData: false,
               contentType: false,
-              dataType: 'json',
+              dataType: 'json'
             })
             .done(function(data)
             {
@@ -250,7 +253,7 @@ $(function() {
           data: formData,
           processData: false,
           contentType: false,
-          dataType: 'json',
+          dataType: 'json'
         })
         .done(function(data) {
           $state.trigger('script_uploaded', data);
@@ -411,11 +414,11 @@ $(function() {
           case "Shell": //horribly, gist calls .sh like this
             // aceEditor.session.setMode("ace/mode/sh");
             aceEditor.getSession().setValue('#!/usr/bin/env bash \n' + source);
-          break;
+            break;
           case "JavaScript":
             // aceEditor.session.setMode("ace/mode/javascript");
             aceEditor.getSession().setValue('#!/usr/bin/env nodejs \n' + source);
-          break;
+            break;
           default:
             aceEditor.getSession().setValue(source);
             // failAlert('Sadly, we are only accepting JavaScript (.js) and Shell (.sh) gists. Sorry. Please try another');
@@ -540,7 +543,8 @@ $(function() {
                 console.log('then success');
                 console.log(arguments);
                 alert(taskRows + successFooter, successTitle);
-              },function(){
+              },
+              function(){
                 console.log('then fail');
                 console.log(arguments);
                 alert(taskRows + failFooter, failTitle);
@@ -552,13 +556,13 @@ $(function() {
               }
             // when progress nunca se llama tampoco ... ?
             ).progress(function(){
-                console.log('when progress');
-                console.log(arguments);
-              }
+              console.log('when progress');
+              console.log(arguments);
+            }
             ).always(function(){
-                console.log('always');
-                $.unblockUI();
-              }
+              console.log('always');
+              $.unblockUI();
+            }
             ).done(function(){
               // done deberia volver con array de results
               // no se si no funciona o es porque el req.DELETE
