@@ -124,6 +124,12 @@ $(function(){
     var hostName = $(this).closest('.itemRow').data('item-name');
     window.location = "/admin/monitor#search="+hostName;
   });
+  $('.monitorStats').on('click', function(evt){
+    evt.preventDefault();
+    evt.stopPropagation();
+    var hostId = $(this).closest('.itemRow').data('item-id');
+    window.location = "/hoststats/"+hostId;
+  });
 
   checkAllUpAndRuning();
 });
