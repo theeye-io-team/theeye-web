@@ -49,12 +49,13 @@ module.exports = {
           // });
 
           data.indexedResources = _.chain(data.resources)
+            .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
             .groupBy("host_id")
             .mapValues(function(e){
               return _.indexBy(e,"type");
             })
             .value();
-
+          console.log(data.resources);
           res.view(data);
         }
       );
