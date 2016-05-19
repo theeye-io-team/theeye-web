@@ -1,3 +1,4 @@
+/* global log */
 (function ( $ ){
   $.searchbox = function(){
     var $emitter = $({});
@@ -45,7 +46,7 @@
       log('clean search');
 
       lastTimer && clearTimeout(lastTimer);
-      var search = $searchInput.val('');
+      $searchInput.val('');
       $searchBtn.trigger('click');
     });
 
@@ -59,8 +60,8 @@
       if(!$searchInput.val()) {
         $searchInput.trigger('input');
         $searchItems.slideDown(200);
-        return
-      };
+        return;
+      }
 
       var waitForIt = false;
       log('searching');
@@ -135,8 +136,16 @@
       }
     });
 
+    var existingSearch = window.getHashParams();
+    console.log(existingSearch);
+    if(existingSearch.search) {
+      $searchInput.val(existingSearch.search);
+      $searchBtn.trigger('click');
+      // $searchInput.trigger('input');
+      // $searchItems.slideDown(200);
+    }
     return $emitter;
-  }
+  };
 }( jQuery ));
 
-$searchbox = $.searchbox();
+window.$searchbox = $.searchbox();

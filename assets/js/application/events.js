@@ -1,3 +1,4 @@
+/* global debug, $searchbox */
 // Simple log function to keep the example simple
 var $state = $({});
 var deb = debug('eye:web:events');
@@ -80,8 +81,8 @@ function switchStateIcon (state, elSpan) {
   }
 }
 
-$upNrunning = $(".resources-panel .allUpNrunning");
-$resourcesList = $(".resources-panel .resources-panel-list");
+var $upNrunning = $(".resources-panel .allUpNrunning");
+var $resourcesList = $(".resources-panel .resources-panel-list");
 
 $searchbox.on('search:start', function() {
   log('searching');
@@ -100,16 +101,11 @@ $state.on('new_event', function(event, resource) {
 
 function checkAllUpAndRuning()
 {
-  var states = $('div.state-resource-container');
-  var showResources = false;
-  for(var i=0; i<states.length; i++)
-  {
-    var stateContainer = states[i];
-    var stateIcon = $(stateContainer).find('span.status');
-    var state = stateIcon[0].title;
+  var sadStates =
+    $('div.state-resource-container .state-icon.icon-warn').length +
+    $('div.state-resource-container .state-icon.icon-error').length;
 
-    if(state != 'normal') showResources = true;
-  }
+  var showResources = sadStates > 0;
 
   if(showResources) {
     $upNrunning.slideUp();
@@ -122,15 +118,12 @@ function checkAllUpAndRuning()
 
 $(function(){
 
-  var states = $('div.state-resource-container');
-
-  for(var i=0; i<states.length; i++)
-  {
-    var stateContainer = states[i];
-    var state = $(stateContainer).find('div.state-icon-container').data('state') ;
-    var stateIcon = $(stateContainer).find('span.state-icon');
-    switchStateIcon( state, stateIcon[0] );
-  }
+  $('.editMonitors').on('click', function(evt){
+    evt.preventDefault();
+    evt.stopPropagation();
+    var hostName = $(this).closest('.itemRow').data('item-name');
+    window.location = "/admin/monitor#search="+hostName;
+  });
 
   checkAllUpAndRuning();
 });
