@@ -49,7 +49,7 @@ pre { max-width: 100%; padding: 10px; margin: 20px 0; }
 
 #psaux-container #psaux-search { margin-bottom: 20px; }
 #psaux-div { height:400px; overflow:auto; }
-#psaux-table { font-family: monospace; }
+#psaux-table {color:#304269; font-family: monospace; }
 #psaux-table th[data-sort]{ cursor:pointer; }
 
 .filterable { margin-top: 15px; }
@@ -232,7 +232,7 @@ footer a.image img {margin-top:-4px}
 /* Agregada javi... */
 .container { padding:62px 15px 0px;  color:#EEE; }
 .table-responsive { background-color:#EEE;}
-.table{ color:#304269;}
+
 .row{ color:#304269;}
 .modal-header{ color:#304269;}
 .modal-body{ color:#304269;}
@@ -298,8 +298,18 @@ div.js-searchable-box.affix {
 .admin-container .panel-heading a {text-decoration:none; border:none;}
 .admin-container .panel-heading a div.panel-title-content { width:100%;}
 .admin-container .panel-default {border:none}
-.admin-container .panel-default>.panel-heading {background:#304269;color:#fff;border-bottom:1px solid #212F48;border-radius:0}
-.admin-container .panel-default>.panel-heading:hover {background-color: #212F48;-webkit-transition: background-color 500ms linear;-moz-transition: background-color 500ms linear;-o-transition: background-color 500ms linear;-ms-transition: background-color 500ms linear;transition: background-color 500ms linear}
+.admin-container .panel-default>.panel-heading {
+  background:#304269;
+  color:#fff;
+  border-bottom:1px solid #212F48;
+  border-radius:0}
+.admin-container .panel-default>.panel-heading:hover {
+  background-color: #212F48;
+  -webkit-transition: background-color 500ms linear;
+     -moz-transition: background-color 500ms linear;
+       -o-transition: background-color 500ms linear;
+      -ms-transition: background-color 500ms linear;
+          transition: background-color 500ms linear}
 .admin-container .panel-default.panelActive>.panel-heading {background:#212F48;border-bottom:1px dotted #aaa}
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body {border:none;color:#fff;background:#23324C}
 .admin-container .panel-default .panel-title-content {min-height:50px; padding:10px;}
@@ -477,6 +487,21 @@ span.selectorIcon.glyphicon-check {
 .events-panel h4.panel-title {
   padding-right:21px;
   padding-left: 50px;
+  background-repeat: no-repeat;
+  background-size: 36px;
+  background-position: 14px 7px;
+}
+.events-panel h4.panel-title.host {
+  background-image: url('/images/The-eye-icons-28.png');
+}
+.events-panel h4.panel-title.scraper {
+  background-image: url('/images/The-eye-icons-17.png');
+}
+.events-panel h4.panel-title.script {
+  background-image: url('/images/The-eye-icons-18.png');
+}
+.events-panel h4.panel-title.task {
+  background-image: url('/images/The-eye-icons-27.png');
 }
 .events-panel h3 {
   height: 40px;
