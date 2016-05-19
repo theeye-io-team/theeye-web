@@ -43,19 +43,40 @@ module.exports = {
           }
           data.agentCurl = userAgent.curl;
           data.moment = moment;
-          // var tester = _.groupBy(data.resources,"host_id");
-          // tester = _.mapValues(tester, function(e){
-          //   return _.indexBy(e,"type");
-          // });
 
-          data.indexedResources = _.chain(data.resources)
+          var subs = _.chain(data.resources)
             .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
-            .groupBy("host_id")
-            .mapValues(function(e){
-              return _.indexBy(e,"type");
+            .filter(function(r){
+              return r.type != 'host' && r.type != 'scraper' && r.type != 'script';
             })
+            .groupBy('host_id')
             .value();
-          console.log(data.resources);
+
+          var indexed = _.chain(data.resources)
+            .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
+            .filter(function(r){
+              return r.type == 'host' || r.type == 'scraper' || r.type == 'script';
+            })
+            .map(function(i){
+              if(i.type == 'host' && subs[i.host_id]) {
+                i.subs = subs[i.host_id];
+              }else{
+                i.subs = []; //consistency on view iterator
+              }
+              return i;
+            })
+            .sortBy('name')
+            .value();
+
+          // data.indexedResources = _.chain(data.resources)
+          //   .reject({type:'psaux'})
+          //   .groupBy("host_id")
+          //   .mapValues(function(e){
+          //     return _.indexBy(e,"type");
+          //   })
+          //   .value();
+          // console.log(indexed);
+          data.indexedResources = indexed;
           res.view(data);
         }
       );
