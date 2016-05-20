@@ -1,4 +1,4 @@
-
+/* global debug, $searchbox, bootbox, Ladda */
 // Simple log function to keep the example simple
 function log() {
   var deb = debug('eye:web:triggers');
@@ -122,7 +122,7 @@ function log() {
     evt.stopPropagation();
 
     var elem = this;
-    var $taskTitleContent = $(elem).closest('.panel-title-content').first();
+    var $taskTitleContent = $(elem).closest('h4.panel-title').first();
     var $taskName = $taskTitleContent.find('span.panel-item.name');
     var $taskDiv = $(elem).closest('.tasks-panel .js-searchable-item').first();
 
@@ -159,10 +159,10 @@ function log() {
           failed = stdout.trim() != 'normal';
         }
 
-        $taskTitleContent.addClass(failed ? 'alert-info' : '');
+        $taskTitleContent.addClass(failed ? 'task-done' : '');
         var $tpl = $('div.resultTemplate div').first().clone().remove();
         $tpl.one('close.bs.alert', function(){
-          $taskTitleContent.removeClass('alert-info');
+          $taskTitleContent.removeClass('task-done');
         });
         $tpl.find('.scriptStdout').html(data.result.stdout);
         $tpl.find('.scriptStderr').html(data.result.stderr);
@@ -190,7 +190,7 @@ function log() {
 
       io.socket.on('palancas-update', handleTaskResult);
 
-      $taskTitleContent.removeClass('alert-info');
+      $taskTitleContent.removeClass('task-done');
 
       $.post("/palanca/trigger", {
         task_id: taskData.taskid,

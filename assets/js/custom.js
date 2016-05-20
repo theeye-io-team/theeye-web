@@ -38,4 +38,17 @@ $(document).ready(function() {
   if(!window.visitor.isTouch) {
     $('.tooltiped').tooltip({container: 'tooltipHolder'});
   }
+
+  $('a.switcher').on('click', function(evt){
+    console.log(evt);
+    $('#clientSelect').removeClass('hidden');
+    //.trigger('click',evt.originalEvent);
+  });
+  $('#clientSelect').on('blur', function(evt){
+    $(this).addClass('hidden');
+  });
+  $('#clientSelect').on('change', function(evt){
+    $(this).addClass('hidden');
+    window.setCustomer($(this).val());
+  });
 });
