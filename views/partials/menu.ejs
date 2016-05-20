@@ -10,12 +10,42 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="#"><img src="/images/logo-hor.png" alt="The eye"></a>
+    <a class="navbar-brand" href="/events"><img src="/images/logo-hor.png" alt="The eye"></a>
     <div class="navData">
+      <span class="clientName"><%= req.session.customer %></span>
+      <div class="client hidden-sm hidden-md hidden-lg">
+        <a href="#" class="switcher"><img src="/images/switcher.png" /></a>
+        <select id="clientSelect" class="hidden " tabindex=-1>
+          <% req.user.customers.forEach( function(customer, key){ %>
+            <option value="<%= customer %>"><%= customer %></option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="hidden-xs client dropdown">
+        <a href="#" data-toggle="dropdown" class="switcher"><img src="/images/switcher.png" /></a>
+        <ul class="dropdown-menu" role="menu">
+          <span class="glyphicon glyphicon-triangle-top"></span>
+          <% req.user.customers.forEach( function(customer, key){ %>
+          <li><a href="#" onClick="javascript:setCustomer('<%= customer %>')" ><%= customer %></a></li>
+          <% }); %>
+        </ul>
+      </div>
+      <!--
+      <button type="button" class="btn btn-light btn-circle">
+        <span class="icon-switch"></span>
+      </button>
+      <button type="button" class="btn btn-default">
+        <span class="icon-switch"></span>
+      </button>
+      <button type="button" class="btn btn-default">
+        <span class="glyphicon glyphicon-remove"></span>
+      </button>
+
       <div class="user">
         <a href="/profile" ><span><%= req.user.username %></span></a>
       </div>
-      Client, <%= req.session.customer %>
+      -->
+      <!--
       <div class="client dropdown">
         <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="glyphicon glyphicon-refresh"></i>Change</button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
@@ -25,6 +55,7 @@
           <% }); %>
         </ul>
       </div>
+      -->
     </div>
   </div>
   <div id="navbar" class="navbar-collapse collapse">
