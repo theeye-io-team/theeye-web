@@ -510,7 +510,6 @@ span.selectorIcon.glyphicon-check {
   float: right;
 }*/
 .events-panel h4.panel-title {
-  padding-right:21px;
   padding-left: 50px;
   background-repeat: no-repeat;
   background-size: 36px;
@@ -538,9 +537,8 @@ span.selectorIcon.glyphicon-check {
 }
 
 .events-panel .panel-item.icons .icon-edit,
-.events-panel .panel-item.icons .state-icon.icon-error,
-.events-panel .panel-item.icons .state-icon.icon-check,
-.events-panel .panel-item.icons .state-icon.icon-warn {
+.events-panel .panel-item.icons .state-icon {
+  vertical-align:middle;
   font-size: 30px;
 }
 
@@ -591,6 +589,21 @@ span.selectorIcon.glyphicon-check {
 
 .task-done {
   background-color: #4D719E;
+}
+
+@media (max-width: 500px) {
+  .events-panel .panel-item.icons .btn-icon-image {
+    background-size: cover;
+    width: 22px;
+    height: 22px;
+    margin-top:6px;
+  }
+  .events-panel .panel-item.icons .state-icon {
+    font-size: 22px;
+  }
+  .events-panel .panel-item.icons .state-resource-container {
+    margin-top:6px;
+  }
 }
 /*
 h4.panel-title-content::after {
