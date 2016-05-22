@@ -20,14 +20,50 @@ function log() {
       }
 
       if( !resource.type || resource.type!='agent' ) {
-        var $resource = $('div.resource-container#resource-' + resource.id);
-        if( typeof $resource[0] != 'undefined' ) {
-          var $icon = $resource.find('div#state-' + resource.id + ' span.status');
 
-          log('switching state icon');
-          switchStateIcon(resource.state, $icon[0]);
-          updateStateTag(resource.state, $resource);
+        var iconsDicc = {
+          normal: "icon-check",
+          failure: "icon-warn",
+          updates_stopped: "icon-error",
+          unknown: "icon-nonsense"
+        };
+
+        //row of the host
+        var $rowItem = $('tr.resource'+resource.id).closest('.itemRow');
+
+        //table tr with host entry
+        var $tr = $('tr.resource'+resource.id, $rowItem);
+        $('span.state_text', $tr).text(resource.state);
+        $('span.state_last_update', $tr).text(resource.last_update_moment);
+        $('.state-icon', $tr).removeClass("icon-check icon-warn icon-error");
+        $('.state-icon', $tr).addClass(iconsDicc[resource.state]);
+
+        var worstState = "normal";
+        //determine row icon based on worst status on table
+        if(resource.state == "updates_stopped") {
+          worstState = resource.state;
+        }else if( $('tr span.state-icon.icon-error', $rowItem).length ) {
+          worstState = "updates_stopped";
+        }else if ( $('tr span.state-icon.icon-warn', $rowItem).length ) {
+          worstState = "failure";
         }
+
+        $('.state-icon',$rowItem)
+          .first()
+          .attr('data-original-title', worstState)
+          .tooltip('fixTitle')
+          .removeClass("icon-check icon-warn icon-error")
+          .addClass(iconsDicc[worstState]);
+
+
+        // var $resource = $('div.resource-container#resource-' + resource.id);
+        // if( typeof $resource[0] != 'undefined' ) {
+        //   var $icon = $resource.find('div#state-' + resource.id + ' span.status');
+        //
+        //   log('switching state icon');
+        //   switchStateIcon(resource.state, $icon[0]);
+        //   updateStateTag(resource.state, $resource);
+        // }
 
         $state.trigger('new_event', resource);
       }
@@ -102,8 +138,8 @@ $state.on('new_event', function(event, resource) {
 function checkAllUpAndRuning()
 {
   var sadStates =
-    $('div.state-resource-container .state-icon.icon-warn').length +
-    $('div.state-resource-container .state-icon.icon-error').length;
+    $('.state-icon.icon-warn').length +
+    $('.state-icon.icon-error').length;
 
   var showResources = sadStates > 0;
 
@@ -127,7 +163,7 @@ $(function(){
   $('.monitorStats').on('click', function(evt){
     evt.preventDefault();
     evt.stopPropagation();
-    var hostId = $(this).closest('.itemRow').data('item-id');
+    var hostId = $(this).closest('.itemRow').data('item-host-id');
     window.location = "/hoststats/"+hostId;
   });
 
