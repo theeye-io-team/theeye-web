@@ -43,7 +43,8 @@
             var overallState = resource.state;
             var tags = [
               "resource",
-              "resource="+ resource.id
+              "resource="+ resource.id,
+              resource.hostname
             ];
             resource.subs.forEach(function(subresource){
               if(statesDicc[subresource.state] > statesDicc[overallState]) {
@@ -58,10 +59,11 @@
             tags = tags.join(',');
           %>
             <div class="itemRow resource-container panel panel-default js-searchable-item"
-              data-item-id="<%= resource.host_id %>"
+              data-item-id="<%= resource.id %>"
+              data-item-host-id="<%= resource.host_id %>"
               data-item-name="<%= resource.hostname %>"
               data-item-state="<%= overallState %>"
-              id="resource-<%= resource.host_id %>"
+              id="resource-<%= resource.id %>"
               data-tags="<%= tags %>">
               <div class="panel-heading" role="tab" id="heading<%= resource.id %>">
                 <h4 class="panel-title <%= resource.type %>">
@@ -100,22 +102,22 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
+                        <tr class="resource<%=resource.id%>">
                           <td class="text-center">
                             <span class="state-icon <%=iconsDicc[resource.state]%>"></span>
                           </td>
                           <td><%= resource.type %></td>
-                          <td><%= resource.state %></td>
-                          <td><%= moment(resource.last_update).startOf('second').fromNow() %></td>
+                          <td><span class="state_text"><%= resource.state %></span></td>
+                          <td><span class="state_last_update"><%= moment(resource.last_update).startOf('second').fromNow() %></span></td>
                         </tr>
                         <% resource.subs.forEach(function(subresource){ %>
-                          <tr>
+                          <tr class="resource<%=subresource.id%>">
                             <td class="text-center">
                               <span class="state-icon <%=iconsDicc[subresource.state]%>"></span>
                             </td>
                             <td><%= subresource.type %></td>
-                            <td><%= subresource.state %></td>
-                            <td><%= moment(subresource.last_update).startOf('second').fromNow() %></td>
+                            <td><span class="state_text"><%= subresource.state %></span></td>
+                            <td><span class="state_last_update"><%= moment(subresource.last_update).startOf('second').fromNow() %></span></td>
                           </tr>
                         <% }); %>
                       </tbody>

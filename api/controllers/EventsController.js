@@ -123,7 +123,7 @@ module.exports = {
           if(action == 'continue') {
             var room = message.customer_name + '_events';
             debug('sending information via socket to ' + room);
-
+            message.last_update_moment = moment(message.last_update).startOf('second').fromNow();
             var io = sails.io;
             io.sockets.in(room).emit('events-update', message);
 
