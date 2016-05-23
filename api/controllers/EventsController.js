@@ -1,3 +1,4 @@
+/* global async, sails, _ */
 var debug = require('debug')('eye:web:events');
 var moment = require('moment');
 var snsreceiver = require('../services/snshandler');
@@ -42,6 +43,40 @@ module.exports = {
           }
           data.agentCurl = userAgent.curl;
           data.moment = moment;
+
+          var subs = _.chain(data.resources)
+            .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
+            .filter(function(r){
+              return r.type != 'host' && r.type != 'scraper' && r.type != 'script';
+            })
+            .groupBy('host_id')
+            .value();
+
+          var indexed = _.chain(data.resources)
+            .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
+            .filter(function(r){
+              return r.type == 'host' || r.type == 'scraper' || r.type == 'script';
+            })
+            .map(function(i){
+              if(i.type == 'host' && subs[i.host_id]) {
+                i.subs = subs[i.host_id];
+              }else{
+                i.subs = []; //consistency on view iterator
+              }
+              return i;
+            })
+            .sortBy('name')
+            .value();
+
+          // data.indexedResources = _.chain(data.resources)
+          //   .reject({type:'psaux'})
+          //   .groupBy("host_id")
+          //   .mapValues(function(e){
+          //     return _.indexBy(e,"type");
+          //   })
+          //   .value();
+          // console.log(indexed);
+          data.indexedResources = indexed;
           res.view(data);
         }
       );
@@ -88,7 +123,7 @@ module.exports = {
           if(action == 'continue') {
             var room = message.customer_name + '_events';
             debug('sending information via socket to ' + room);
-
+            message.last_update_moment = moment(message.last_update).startOf('second').fromNow();
             var io = sails.io;
             io.sockets.in(room).emit('events-update', message);
 

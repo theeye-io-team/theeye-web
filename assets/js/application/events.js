@@ -1,3 +1,4 @@
+/* global debug, $searchbox */
 // Simple log function to keep the example simple
 var $state = $({});
 var deb = debug('eye:web:events');
@@ -19,14 +20,50 @@ function log() {
       }
 
       if( !resource.type || resource.type!='agent' ) {
-        var $resource = $('div.resource-container#resource-' + resource.id);
-        if( typeof $resource[0] != 'undefined' ) {
-          var $icon = $resource.find('div#state-' + resource.id + ' span.status');
 
-          log('switching state icon');
-          switchStateIcon(resource.state, $icon[0]);
-          updateStateTag(resource.state, $resource);
+        var iconsDicc = {
+          normal: "icon-check",
+          failure: "icon-warn",
+          updates_stopped: "icon-error",
+          unknown: "icon-nonsense"
+        };
+
+        //row of the host
+        var $rowItem = $('tr.resource'+resource.id).closest('.itemRow');
+
+        //table tr with host entry
+        var $tr = $('tr.resource'+resource.id, $rowItem);
+        $('span.state_text', $tr).text(resource.state);
+        $('span.state_last_update', $tr).text(resource.last_update_moment);
+        $('.state-icon', $tr).removeClass("icon-check icon-warn icon-error");
+        $('.state-icon', $tr).addClass(iconsDicc[resource.state]);
+
+        var worstState = "normal";
+        //determine row icon based on worst status on table
+        if(resource.state == "updates_stopped") {
+          worstState = resource.state;
+        }else if( $('tr span.state-icon.icon-error', $rowItem).length ) {
+          worstState = "updates_stopped";
+        }else if ( $('tr span.state-icon.icon-warn', $rowItem).length ) {
+          worstState = "failure";
         }
+
+        $('.state-icon',$rowItem)
+          .first()
+          .attr('data-original-title', worstState)
+          .tooltip('fixTitle')
+          .removeClass("icon-check icon-warn icon-error")
+          .addClass(iconsDicc[worstState]);
+
+
+        // var $resource = $('div.resource-container#resource-' + resource.id);
+        // if( typeof $resource[0] != 'undefined' ) {
+        //   var $icon = $resource.find('div#state-' + resource.id + ' span.status');
+        //
+        //   log('switching state icon');
+        //   switchStateIcon(resource.state, $icon[0]);
+        //   updateStateTag(resource.state, $resource);
+        // }
 
         $state.trigger('new_event', resource);
       }
@@ -80,8 +117,8 @@ function switchStateIcon (state, elSpan) {
   }
 }
 
-$upNrunning = $(".resources-panel .allUpNrunning");
-$resourcesList = $(".resources-panel .resources-panel-list");
+var $upNrunning = $(".resources-panel .allUpNrunning");
+var $resourcesList = $(".resources-panel .resources-panel-list");
 
 $searchbox.on('search:start', function() {
   log('searching');
@@ -100,16 +137,11 @@ $state.on('new_event', function(event, resource) {
 
 function checkAllUpAndRuning()
 {
-  var states = $('div.state-resource-container');
-  var showResources = false;
-  for(var i=0; i<states.length; i++)
-  {
-    var stateContainer = states[i];
-    var stateIcon = $(stateContainer).find('span.status');
-    var state = stateIcon[0].title;
+  var sadStates =
+    $('.state-icon.icon-warn').length +
+    $('.state-icon.icon-error').length;
 
-    if(state != 'normal') showResources = true;
-  }
+  var showResources = sadStates > 0;
 
   if(showResources) {
     $upNrunning.slideUp();
@@ -122,15 +154,18 @@ function checkAllUpAndRuning()
 
 $(function(){
 
-  var states = $('div.state-resource-container');
-
-  for(var i=0; i<states.length; i++)
-  {
-    var stateContainer = states[i];
-    var state = $(stateContainer).find('div.state-icon-container').data('state') ;
-    var stateIcon = $(stateContainer).find('span.state-icon');
-    switchStateIcon( state, stateIcon[0] );
-  }
+  $('.editMonitors').on('click', function(evt){
+    evt.preventDefault();
+    evt.stopPropagation();
+    var hostName = $(this).closest('.itemRow').data('item-name');
+    window.location = "/admin/monitor#search="+hostName;
+  });
+  $('.monitorStats').on('click', function(evt){
+    evt.preventDefault();
+    evt.stopPropagation();
+    var hostId = $(this).closest('.itemRow').data('item-host-id');
+    window.location = "/hoststats/"+hostId;
+  });
 
   checkAllUpAndRuning();
 });

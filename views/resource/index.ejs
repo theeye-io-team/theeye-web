@@ -147,8 +147,8 @@
                         data-action="edit"
                         data-toggle="modal"
                         data-resource-type="<%= monitor.type %>"
-                        data-target="#<%= monitor.type %>ResourceModal"
-                      ><span class="glyphicon glyphicon-edit"></span>
+                        data-target="#<%= monitor.type %>ResourceModal">
+                        <span class="glyphicon glyphicon-edit"></span>
                       </button>
 
                       <%
@@ -172,12 +172,12 @@
 
                       <% } else { %>
 
-                      <div class="dropdown pull-right host-menu">
-                         <span id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true" class="btn btn-default simple-btn dropdown-toggle" aria-label="Center Align">
+                      <div class="dropdown host-menu">
+                         <button id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true" class="btn btn-default simple-btn dropdown-toggle" aria-label="Center Align">
                            <span class="glyphicon glyphicon-plus"></span>
-                         </span>
+                         </button>
 
-                         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" style="min-width: 120px">
+                         <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1" style="min-width: 120px">
                            <li role="presentation">
                              <span role="menuitem" tabindex="-1"
                               class="createResourceMonitor"

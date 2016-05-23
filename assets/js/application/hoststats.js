@@ -22,11 +22,25 @@ window.theeye.stats = {
 
 (function hoststats(io){
 
+  var socket = io.socket;
+
+  function subscribeSocketNotifications(socket, resource) {
+    var host = window.location.pathname.split('/')[2];
+    socket.post('/hoststats/subscribe/' + host, {
+      resource: resource
+    }, function serviceSocketSubscription(data, jwres) {
+      log(data);
+      log(jwres);
+    });
+  }
+
   function onSocketIoConnect() {
     log('socket connected');
 
-    $(function (){
+    function initPsaux(){
       var psaux = _.findWhere(theeye.cachedStats, { type: "psaux" });
+      if(!psaux) return;
+
       Psaux.createControl();
       Psaux.update({
         // Hago el map porque las properties llegan en diferente
@@ -47,38 +61,29 @@ window.theeye.stats = {
           ]
         })
       });
+      // subscribe psaux notifications
+      socket.on("psaux_update", Psaux.update);
+      subscribeSocketNotifications(socket, 'psaux');
+    }
 
+    function initDstat(){
       var dstat = _.findWhere(theeye.cachedStats, { type: "dstat" });
       Dstat.initialize({ disks: Object.keys(dstat.stats.disk) });
       Dstat.update(dstat);
 
-      var socket = io.socket;
-      function subscribeSocketNotifications(socket, resource) {
-        var host = window.location.pathname.split('/')[2];
-        socket.post('/hoststats/subscribe/' + host, {
-          resource: resource
-        }, function serviceSocketSubscription(data, jwres) {
-          log(data);
-          log(jwres);
-        });
-      }
-
       // subscribe dstat notifications
       socket.on('host-stats_update', Dstat.update);
       subscribeSocketNotifications(socket, 'host-stats');
+    }
 
-      // subscribe psaux notifications
-      socket.on("psaux_update", Psaux.update);
-      subscribeSocketNotifications(socket, 'psaux');
-
-    }); // $(function() {})
+    $(function(){
+      initPsaux();
+      initDstat();
+    });
   }
 
-  var socket = io.socket;
-  if( socket.socket && socket.socket.connected ) {
-    onSocketIoConnect();
-  }
   log('listening sockets connect');
+  if( socket.socket && socket.socket.connected ) onSocketIoConnect();
   socket.on("connect", onSocketIoConnect);
 
   var Psaux = (function() {
