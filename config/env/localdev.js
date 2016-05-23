@@ -10,35 +10,35 @@ module.exports = {
   },
   connections: {
     mongo: {
-      adapter: 'sails-mongo',
-      host: 'localhost',
-      port: 27017,
-      database: dbName
+      adapter : 'sails-mongo',
+      host : 'localhost',
+      port : 27017,
+      database : dbName
     }
   },
   session: {
-    secret: '692fc164a0c06a9fd02575cf17688c9e',
-    collection: 'web_session',
-    adapter: 'mongo',
-    host: 'localhost',
-    port: 27017,
-    db: dbName,
+    secret : '692fc164a0c06a9fd02575cf17688c9e',
+    collection : 'web_session',
+    adapter : 'mongo',
+    host : 'localhost',
+    port : 27017,
+    db : dbName,
   },
   mailer: {
-    from: 'TheEye.io <jailbirt@interactar.com>',
-    replyTo: 'Support <jailbirt@interactar.com>',
-    only_support: false,
-    include_support_bcc: false,
-    support: [ 'contact@theeye.io' ],
-    invitation: 'contact@theeye.io',
+    from : 'TheEye.io <jailbirt@interactar.com>',
+    replyTo : 'Support <jailbirt@interactar.com>',
+    only_support : false,
+    include_support_bcc : false,
+    support : [ 'jailbirt@interactar.com',  'facugon@interactar.com' ],
+    invitation : 'contact@theeye.io',
     transport: {
-      /** 
-       * use aws email service 
+      /**
+       * use aws email service
        * more options
        * https://github.com/andris9/nodemailer-ses-transport
        *
        **/
-      //"type":"ses",
+      "type":"ses",
       /**
       "options":{
         "accessKeyId":"",
@@ -49,7 +49,21 @@ module.exports = {
         "rateLimit":"",
       }
       */
-       "type":"sendmail"
+      /**
+       * use google account
+       * The account needs to be configured to allow "Less secure apps"
+       * NOTE: mind the letterCase, type is Gmail
+       *
+      "type":"gmail",
+       */
+      /**
+       * Must have:
+       *
+      "options":{
+       "user":"cgastrell@interactar.com",
+       "pass":"yourBigFurryPasswordHere"
+      }
+       */
       /**
        * use local sendmail smtp , with no options
        * "type":"sendmail",
@@ -96,7 +110,7 @@ module.exports = {
     }
   },
   supervisor: {
-    url: 'http://localhost:60080',
+    url: 'http://0.0.0.0:60080',
     port: 60080,
     palancas: {
       resource : 'job'

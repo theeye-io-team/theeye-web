@@ -256,10 +256,16 @@ h3.light { color: #EEE}
  * ultimos cambios marcelo
  ***/
 
-.navbar-right .client.dropdown li {font-size:14px;float:none}
-
-.client.dropdown button { border:none; background:none; padding:0; width:100%; text-align:left; }
-.client.dropdown .dropdown-menu {/*position:relative;*/float:none}
+.navbar-right .dropdown li {
+  font-size:14px;float:none
+}
+.navbar-right .dropdown button {
+  border:none; background:none; padding:0; width:100%; text-align:left;
+}
+.navbar-right .dropdown .dropdown-menu {
+  /*position:relative;*/
+  float:none;
+}
 
 /**
  *
@@ -372,6 +378,27 @@ div.js-searchable-box.affix {
 ol.list-group.scripts,
 ol.list-group.tasks { color:#34495E }
 
+
+.navbar-right {
+  margin:16px 0 0 0;
+  float: right;
+}
+.navbar-right li {
+  float:left;
+  border-bottom:none;
+  font-size:14px;
+}
+.navbar-right li a:hover {
+  background:#d88e47;
+  color:#fff;
+  text-shadow:none;
+  -webkit-transition: background-color 250ms linear;
+  -moz-transition: background-color 250ms linear;
+  -o-transition: background-color 250ms linear;
+  -ms-transition: background-color 250ms linear;
+  transition: background-color 250ms linear;
+}
+
 @media (min-width: 768px) {
   .container {padding-top:85px;}
   .mainStatus {font-size:40px;width:60%;padding:60px 0}
@@ -384,15 +411,20 @@ ol.list-group.tasks { color:#34495E }
     line-height: 52px;
   }
   .navData .user span {font-size:18px}
-  .navbar-right {margin:30px 15px 0 0}
-  .navbar-right li {float:left;border-bottom:none;font-size:18px}
-  .navbar-right li a:hover {background:#d88e47;color:#fff;text-shadow:none;-webkit-transition: background-color 250ms linear;-moz-transition: background-color 250ms linear;-o-transition: background-color 250ms linear;-ms-transition: background-color 250ms linear;transition: background-color 250ms linear}
+  .navbar-right {
+    margin:30px 0 0 0;
+    float: right;
+  }
+  .navbar-right li {
+    font-size: 18px;
+  }
   /* searchbox searcher */
   div.js-searchable-box.affix {
     z-index: 1000;
     position: fixed;
     top: 68px;
   }
+  .client.dropdown .dropdown-menu {position:absolute;float:left}
 }
 
 @media (min-width: 1024px) {
@@ -403,14 +435,11 @@ ol.list-group.tasks { color:#34495E }
   .loginBox {width:35%}
 }
 
-@media (min-width: 768px) {
-  .client.dropdown .dropdown-menu {position:absolute;float:left}
-  /*
-  .navbar-collapse.collapse .client.dropdown #dLabel {margin-left:0}
-  */
-}
 
 @media (max-width: 768px) {
+  .navbar-brand {
+    padding-left: 0;
+  }
 }
 
 ::-webkit-scrollbar{width:4px;height:4px;}

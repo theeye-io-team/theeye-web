@@ -23,6 +23,7 @@ if [ -z $NODE_ENV ];then
 fi
 
 cd $path;
+
 if [[ "$NODE_ENV" != "localdev" ]]
 then
   echo "Installing packages, useful for development envs"
