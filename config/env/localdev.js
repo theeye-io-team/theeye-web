@@ -52,7 +52,6 @@ module.exports = {
       /**
        * use google account
        * The account needs to be configured to allow "Less secure apps"
-       * NOTE: mind the letterCase, type is Gmail
        *
       "type":"gmail",
        */
