@@ -262,31 +262,35 @@ $(function() {
     $('.scheduleTask').click(function(evt){
       evt.preventDefault();
       evt.stopPropagation();
-      console.log(this);
+      // console.log(this);
       var itemData = $(this).closest('.itemRow').data();
-      console.log(itemData);
+      // console.log(itemData);
       //prepare form
       $form.data('task-id',itemData.itemId);
       //prepare modal
       $('h4.modal-title',$modal).text('Schedule task: ' + itemData.itemName);
+      $('input[name=datetime]').val('');
       $modal.modal('show');
       return;
     });
 
     $submitter.click(function(evt){
-      var datetime = $('input[name=datetime]',$form).val();
+      var datetime = $('input[name=datetime]',$form).datetimepicker('getValue');
       //SCHEDULE!!!
       $.post("/palanca/schedule", {
         task_id: $form.data('task-id'),
         scheduleData: {
           // repeatsEvery: '24 hours',
-          runOn: datetime
+          runDate: datetime
         }
       }).done(function(data,status,xhr){
-        console.log(data);
+        alert("All right! Your task will run on: " + data.nextRun, function(){
+          $modal.modal('hide');
+        });
+        // console.log(data);
       }).fail(function(xhr, status, message) {
         console.log('fail');
-        console.log(arguments);
+        // console.log(arguments);
       });
     });
 
@@ -296,7 +300,15 @@ $(function() {
     });
 
 
+    //datetime picker
+    //http://xdsoft.net/jqplugins/datetimepicker/
+    $('input[name=datetime]').datetimepicker({
+      minDate: 0,
+      allowBlank: true,
+      closeOnDateSelect:false
+    });
   })();
+  
   // MASS DELETE
   (function massDelete(){
     // searchbox hook
