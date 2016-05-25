@@ -1,34 +1,51 @@
 <form id="scheduleTaskForm" action="#" class="form-horizontal">
   <div class="form-group">
-    <label for="datetime" class="col-sm-3 control-label">When shall I run?</label>
+    <label for="target" class="col-sm-3 control-label">Human or robot</label>
     <div class="col-sm-9">
-      <input type="text" name="datetime"
-        class="form-control"
-        placeholder="pick-a-date"
-        title="You can use a 'human interval' expression like 'in 1 hour' or use de date/time picker">
+      <label class="radio-inline">
+        <input type="radio" name="mode" value="human" checked
+          class="tooltiped"
+          title="I like colorful ponies and rainbows :)"
+          > I'll use a date picker
+      </label>
+      <label class="radio-inline">
+        <input type="radio" name="mode" value="cron"
+          class="tooltiped"
+          title="allows you to use a cron expression like * * * 30 *"
+          > I'm a CRON man
+      </label>
     </div>
   </div>
-  <div class="form-group">
-    <label for="frequency" class="col-sm-3 control-label">Then repeat every:</label>
-    <div class="col-sm-9">
-      <input type="text" name="frequency"
+  <div class="hidden cron">
+    <div class="form-group">
+      <label for="frequency" class="col-sm-3 control-label">CRON:</label>
+      <div class="col-sm-9">
+        <input type="text" name="frequency"
+        class="form-control"
+        placeholder="* * * 30 *">
+      </div>
+    </div>
+  </div>
+  <div class="human">
+    <div class="form-group">
+      <label for="datetime" class="col-sm-3 control-label">When shall I run?</label>
+      <div class="col-sm-9">
+        <input type="text" name="datetime"
+        class="form-control"
+        placeholder="pick-a-date">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="frequency" class="col-sm-3 control-label">Then repeat every:</label>
+      <div class="col-sm-9">
+        <input type="text" name="frequency"
         class="form-control tooltiped"
         placeholder="1 day"
         title="Use a 'human interval' expression like '1 hour', '3 days', '2 weeks', etc... Leave empty for no repetition">
+      </div>
     </div>
   </div>
   <!--
-  <div class="form-group">
-    <label for="target" class="col-sm-3 control-label">Where should it run?</label>
-    <div class="col-sm-9">
-      <label class="radio-inline">
-        <input type="radio" name="target" data-hook="target" value="single-resource" checked=""> Single Host
-      </label>
-      <label class="radio-inline">
-        <input type="radio" name="target" data-hook="target" value="multi-hosts"> Multiple Hosts
-      </label>
-    </div>
-  </div>
   <div class="hidden-container" id="resource-selection" style="display:block;">
     <div class="form-group">
       <label for="hostname" class="col-sm-3 control-label">Host</label>
