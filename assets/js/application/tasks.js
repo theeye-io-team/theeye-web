@@ -258,6 +258,17 @@ $(function() {
     var $form = $('form', $modal);
     var $submitter = $('button[type=submit]',$modal);
 
+    //mode selector
+    $('input[name=mode]').on('change', function(evt){
+      if($(this).val() == 'human') {
+        $('div.human').removeClass('hidden');
+        $('div.cron').addClass('hidden');
+      }else{
+        $('div.cron').removeClass('hidden');
+        $('div.human').addClass('hidden');
+      }
+    });
+
     //show modal on scheduleTask click
     $('.scheduleTask').click(function(evt){
       evt.preventDefault();
@@ -308,7 +319,7 @@ $(function() {
       closeOnDateSelect:false
     });
   })();
-  
+
   // MASS DELETE
   (function massDelete(){
     // searchbox hook
