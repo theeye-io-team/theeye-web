@@ -82,7 +82,7 @@ if(matchMedia('(min-width: 640px)').matches) {
       "align": "centerXY",
       "width": 1280,
       "height": 720,
-      "path": "http://www.theeye.io.s3-website-us-east-1.amazonaws.com/video/",
+      "path": "https://s3.amazonaws.com/www.theeye.io/video/",
       "filename": "video",
       "types": ["mp4","ogv","webm"]
   });
