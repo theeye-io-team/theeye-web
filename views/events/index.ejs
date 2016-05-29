@@ -69,16 +69,14 @@
                 <h4 class="panel-title <%= resource.type %>">
                   <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= resource.id %>" aria-expanded="false" aria-controls="collapse<%= resource.id %>">
                     <div class="panel-title-content">
-                      <span class="panel-item name" id="<%= resource.id %>"><%= resource.hostname %><small> > <%= resource.type %></small></span>
+                      <span class="panel-item name" id="<%= resource.id %>"><%= resource.name %><small> > <%= resource.type %></small></span>
                       <span class="panel-item icons">
                         <button href="#search<%= resource.id %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
                           <span class="glyphicon glyphicon-search"></span>
                         </button>
-                        <button class="monitorStats btn btn-icon-image icon-image-stats tooltiped"
-                        title="Stats">
+                        <button class="monitorStats btn btn-icon-image icon-image-stats tooltiped" title="Stats">
                         </button>
-                        <button class="editMonitors btn btn-icon-image icon-image-edit tooltiped"
-                          title="Edit monitors">
+                        <button class="editMonitors btn btn-icon-image icon-image-edit tooltiped" title="Edit monitors">
                         </button>
                         <div class="state-resource-container">
                           <span class="tooltiped state-icon <%= iconsDicc[overallState] %>" title="<%=overallState%>"></span>
