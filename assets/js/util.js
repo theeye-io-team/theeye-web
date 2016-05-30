@@ -1,11 +1,11 @@
 $(function(){
 
   window.setCustomer = function (customer) {
+    $.blockUI();
     $.post('/setcustomer/' + customer, {}, function(data, status, jqxhr) {
       if(status !== 'success' || jqxhr.status !== 200)
         alert('Error setting customer!');
       else {
-        $.blockUI();
         location.reload();
       }
     }, 'json');

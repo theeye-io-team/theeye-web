@@ -33,7 +33,6 @@ $(document).ready(function() {
   }
 
   $('a.switcher').on('click', function(evt){
-    console.log(evt);
     $('#clientSelect').removeClass('hidden');
     //.trigger('click',evt.originalEvent);
   });
@@ -44,4 +43,18 @@ $(document).ready(function() {
     $(this).addClass('hidden');
     window.setCustomer($(this).val());
   });
+
+  $.blockUI.defaults.message = '<div><img src="/images/orange-loading.gif"><h1>LOADING...</h1></div>';
+  $.blockUI.defaults.css = {
+    padding:        0, 
+    margin:         0, 
+    width:          '30%', 
+    top:            '40%', 
+    left:           '35%', 
+    textAlign:      'center', 
+    color:          '#FFF', 
+    border:         'none', 
+    backgroundColor:'', 
+    cursor:         'wait' 
+  }; 
 });
