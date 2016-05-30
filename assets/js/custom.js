@@ -26,13 +26,6 @@ $(document).ready(function() {
     // console.log('hidden');
   });
 
-  // window resize handler
-  var resizeMatters = function(){
-    $('footer').css('position', $(document).height() <= $(window).height() ? 'fixed' : 'relative');
-    $('body').css('padding-bottom', $('footer').css('position') == 'fixed' ? '80px' : '0');
-  };
-  $(window).on('resize', resizeMatters);
-  resizeMatters();
 
   // tooltip initialization, only for non touch devices
   if(!window.visitor.isTouch) {

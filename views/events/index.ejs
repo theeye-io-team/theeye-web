@@ -8,15 +8,16 @@
 <% block('scripts', '<script src="/js/application/resources.js"></script>') %>
 <% block('scripts', '<script src="/js/application/triggers.js"></script>') %>
 
-<div class="container admin-container events-container"><!-- MAIN -->
-  <div class="row js-searchable-box" id="searcher">
+<div class="admin-container events-container"><!-- MAIN -->
+  <div class="js-searchable-box" id="searcher">
     <form>
       <input type="text" placeholder="Find a resource">
       <button class="clean"><i class="glyphicon glyphicon-remove"></i></button>
       <button class="search"><i class="glyphicon glyphicon-search"></i></button>
     </form>
   </div>
-  <div class="row"><!-- PANEL ROW -->
+
+  <div class="admin-panel"><!-- PANEL ROW -->
     <div class="col-md-6 resources-panel events-panel">
       <h3>Monitors</h3>
       <% if(resources.length > 0) {%>
@@ -249,7 +250,3 @@
     </div>
   </div> <!-- END PANEL ROW -->
 </div> <!-- END MAIN -->
-
-<script>
-$(document).ready(function(){ });
-</script>

@@ -97,6 +97,8 @@ button {outline:none}
 .big-icon{ font-size: 10em }
 /* header */
 /*.navbar {max-height:100px;}*/
+.navbar {margin-bottom:0px;}
+.navbar-header {width:100%;}
 .navbar-brand>img {height:32px;/*max-height:78px;*/}
 .navbar-inverse a {color:#38688a;text-shadow:0 1px 0 rgba(255,255,255,0.8)}
 .navbar-inverse .navbar-toggle .icon-bar {background-color:#144e77}
@@ -291,23 +293,17 @@ h3.light { color: #EEE}
 .list-group.tasks h3 { color:#304269; }
 .panel-group .panel+.panel { margin-top:0; }
 
-.admin-container {width:100%; color:white;}
-.admin-container h3 {background-color: #23324C;margin: 0;padding: 6px;color: #fff;font-size: 14px;text-align: center;}
-.admin-container .ladda-button {border: none;text-shadow: none;box-shadow: none}
-
-div.js-searchable-box {width:100%;font-weight:700;font-size:14px;position:relative;margin:10px 0 5px}
-div.js-searchable-box input {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a; -webkit-border-radius: 4px;-moz-border-radius: 4px;border-radius: 4px}
-div.js-searchable-box button {color:#fff;background:#d88e47;border:none;padding:8px 12px;position:absolute;top:0;right:0; -webkit-border-radius: 0 4px 4px 0;-moz-border-radius: 0 4px 4px 0;border-radius: 0 4px 4px 0; width:39px;}
-div.js-searchable-box button.clean {-webkit-border-radius: 0;-moz-border-radius: 0;border-radius: 0; right:39px;color:#999;background:#ccc;}
+div.js-searchable-box {width:100%;font-weight:700;font-size:14px;position:fixed;z-index: 1000;}
+div.js-searchable-box input {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
+div.js-searchable-box button {color:#fff;background:#d88e47;border:none;padding:8px 12px;position:absolute;top:0;right:0;width:39px;}
+div.js-searchable-box button.clean {right:39px;color:#999;background:#ccc;}
 div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 
-/* searchbox searcher */
-div.js-searchable-box.affix {
-    z-index: 1000;
-    position: fixed;
-    top: 48px;
-}
+.admin-container .admin-panel {top:36px; position:relative;}
 
+.admin-container { margin-top:75px; width:100%; color:white;}
+.admin-container h3 {background-color: #23324C;margin: 0;padding: 6px;color: #fff;font-size: 14px;text-align: center;}
+.admin-container .ladda-button {border: none;text-shadow: none;box-shadow: none}
 .admin-container .panel-heading {padding:0;}
 .admin-container .panel-group {margin-bottom:0;}
 .admin-container .panel-heading a {text-decoration:none; border:none;}
@@ -328,11 +324,7 @@ div.js-searchable-box.affix {
 .admin-container .panel-default.panelActive>.panel-heading {background:#212F48;border-bottom:1px dotted #aaa}
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body {border:none;color:#fff;background:#23324C}
 .admin-container .panel-default .panel-title-content {min-height:50px; padding:10px;}
-.admin-container .panel-collapse .btn-stats {
-  float:right;
-  /* la grasada */
-  margin-top:-12px;
-}
+.admin-container .panel-collapse .btn-stats { float:right; margin-top:-12px; }
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body .fields {width:100%;clear:both;}
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body .fields>.field {width:50%;float:left;}
 .admin-container .table-header {height:50px; padding:0 10px 0 10px;}
@@ -341,19 +333,9 @@ div.js-searchable-box.affix {
 .admin-container .panel-heading .actions label {font-size:20px; text-align:center;}
 .admin-container .panel-heading .name,
 .admin-container .panel-heading .hostname {white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-/* resources */
 .admin-container .table-header span.title {float:left; width:auto;}
-.admin-container .panel-heading .panel-item.name {float:left; width:54%; padding:0px 5px 0 5px; line-height: 28px}
-/*
-.admin-container .table-header span.resource.title.state-icon {
-  float:left;
-  width:50%;
-  text-align:right;
-}
-*/
+.admin-container .panel-heading .panel-item.name {float:left; width:50%; padding:0px 5px 0 5px; line-height: 28px}
 .admin-container .panel-heading .panel-item.icons {float:right; text-align:right; padding:0;}
-/*
-*/
 .admin-container .panel-heading .panel-item.icons .host-menu.dropdown {
   display: inline-block;
   width: 38px;
@@ -363,6 +345,9 @@ div.js-searchable-box.affix {
 .admin-container .panel-heading .panel-item.icons .state-resource-container {
   float:right;
   margin-left:10px;
+}
+.admin-container .panel-default.selectedItem>.panel-heading{
+  color: #F39B0F;
 }
 .admin-container .panel-heading .panel-item.icons .trigger-task {top:-5px;}
 .admin-container .editIcon,
@@ -379,15 +364,8 @@ ol.list-group.scripts,
 ol.list-group.tasks { color:#34495E }
 
 
-.navbar-right {
-  margin:16px 0 0 0;
-  float: right;
-}
-.navbar-right li {
-  float:left;
-  border-bottom:none;
-  font-size:14px;
-}
+.navbar-right { margin:16px 0 0 0; float: right; }
+.navbar-right li { float:left; border-bottom:none; font-size:14px; }
 .navbar-right li a:hover {
   background:#d88e47;
   color:#fff;
@@ -402,7 +380,6 @@ ol.list-group.tasks { color:#34495E }
 @media (min-width: 768px) {
   .container {padding-top:85px;}
   .mainStatus {font-size:40px;width:60%;padding:60px 0}
-  .navbar-brand>img {height:52px}
   .switch{margin:0 auto}
   .loginBox {width:50%}
   .sign {width:32%;margin-bottom:0}
@@ -411,13 +388,9 @@ ol.list-group.tasks { color:#34495E }
     line-height: 52px;
   }
   .navData .user span {font-size:18px}
-  .navbar-right {
-    margin:30px 0 0 0;
-    float: right;
-  }
-  .navbar-right li {
-    font-size: 18px;
-  }
+  .navbar-brand>img {height:52px}
+  .navbar-right { margin:31px 0 0 0; float: right; }
+  .navbar-right li { font-size: 18px; }
   /* searchbox searcher */
   div.js-searchable-box.affix {
     z-index: 1000;
@@ -427,19 +400,18 @@ ol.list-group.tasks { color:#34495E }
   .client.dropdown .dropdown-menu {position:absolute;float:left}
 }
 
+@media (max-width:767px) {
+  .admin-container{
+    margin-top:55px;
+  }
+}
+
 @media (min-width: 1024px) {
   .loginBox {width:40%}
 }
 
 @media (min-width: 1200px) {
   .loginBox {width:35%}
-}
-
-
-@media (max-width: 768px) {
-  .navbar-brand {
-    padding-left: 0;
-  }
 }
 
 ::-webkit-scrollbar{width:4px;height:4px;}
@@ -494,7 +466,6 @@ button.rowSelector {
 span.selectorIcon.glyphicon-unchecked {
   color: #BBB;
 }
-.admin-container .panel-default.selectedItem>.panel-heading,
 span.selectorIcon.glyphicon-check {
   color: #F39B0F;
 }
@@ -511,28 +482,21 @@ span.selectorIcon.glyphicon-check {
 }
 
 
-/* EVENTS PANEL
-  col-md-6 tweak
-*/
-@media (min-width: 768px) {
-  .events-panel {
-    padding-left: 0;
-    padding-right: 0;
-    background-color: #23324C;
-  }
-
-  .events-panel.resources-panel {
-    border-right:2px solid #23324C;
-  }
-  .events-panel.tasks-panel {
-    border-left:2px solid #23324C;
-  }
-
+/*
+ * EVENTS PANEL
+ * col-md-6 tweak
+ */
+.events-panel {
+  padding-left: 0;
+  padding-right: 0;
+  background-color: #23324C;
 }
-@media (max-width: 768px) {
-  .events-panel h3 {
-    margin-top:10px;
-  }
+
+.events-panel.resources-panel {
+  border-right:2px solid #23324C;
+}
+.events-panel.tasks-panel {
+  border-left:2px solid #23324C;
 }
 
 /*.events-panel.tasks-panel {

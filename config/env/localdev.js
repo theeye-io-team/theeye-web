@@ -25,12 +25,12 @@ module.exports = {
     db : dbName,
   },
   mailer: {
-    from : 'TheEye.io <jailbirt@interactar.com>',
-    replyTo : 'Support <jailbirt@interactar.com>',
-    only_support : false,
-    include_support_bcc : false,
-    support : [ 'jailbirt@interactar.com',  'facugon@interactar.com' ],
-    invitation : 'contact@theeye.io',
+    from: 'TheEye.io <jailbirt@interactar.com>',
+    replyTo: 'Support <jailbirt@interactar.com>',
+    only_support: false,
+    include_support_bcc: false,
+    support: [],
+    invitation: 'contact@theeye.io',
     transport: {
       /**
        * use aws email service
