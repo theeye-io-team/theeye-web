@@ -206,16 +206,16 @@ hr {border:none;border-bottom:1px dotted #fff}
 
 /* footer */
 .footer {
-    width:100%;
-    position:fixed;
-    height:40px;
-    padding: 10px;
-    bottom:0;
-    left:0;
-    right:0;
-    background-color:#154E79;
-    color: #FFFEFB;
-    z-index:1000;
+  width:100%;
+  position:fixed;
+  height:40px;
+  padding: 10px;
+  bottom:0;
+  left:0;
+  right:0;
+  background-color:#154E79;
+  color: #FFFEFB;
+  z-index:1000;
 }
 footer {
     padding:8px 15px;
@@ -553,6 +553,9 @@ span.selectorIcon.glyphicon-check {
 }
 .events-panel h4.panel-title.scraper {
   background-image: url('/images/The-eye-icons-17.png');
+}
+.events-panel h4.panel-title.process {
+  background-image: url('/images/The-eye-icons-30.png');
 }
 .events-panel h4.panel-title.script {
   background-image: url('/images/The-eye-icons-18.png');

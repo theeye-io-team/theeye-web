@@ -59,11 +59,11 @@
             tags = tags.join(',');
           %>
             <div class="itemRow resource-container panel panel-default js-searchable-item"
+              id="resource-<%= resource.id %>"
               data-item-id="<%= resource.id %>"
               data-item-host-id="<%= resource.host_id %>"
               data-item-name="<%= resource.hostname %>"
               data-item-state="<%= overallState %>"
-              id="resource-<%= resource.id %>"
               data-tags="<%= tags %>">
               <div class="panel-heading" role="tab" id="heading<%= resource.id %>">
                 <h4 class="panel-title <%= resource.type %>">

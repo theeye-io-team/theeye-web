@@ -47,7 +47,7 @@ module.exports = {
           var subs = _.chain(data.resources)
             .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
             .filter(function(r){
-              return r.type != 'host' && r.type != 'scraper' && r.type != 'script';
+              return r.type != 'host' && r.type != 'scraper' && r.type != 'script' && r.type != 'process';
             })
             .groupBy('host_id')
             .value();
@@ -55,7 +55,7 @@ module.exports = {
           var indexed = _.chain(data.resources)
             .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
             .filter(function(r){
-              return r.type == 'host' || r.type == 'scraper' || r.type == 'script';
+              return r.type == 'host' || r.type == 'scraper' || r.type == 'script' || r.type == 'process';
             })
             .map(function(i){
               if(i.type == 'host' && subs[i.host_id]) {
