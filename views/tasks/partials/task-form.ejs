@@ -63,7 +63,7 @@
     <div class="form-group">
       <label for="hostname" class="col-sm-3 control-label">Host</label>
       <div class="col-sm-9">
-        <select data-hook="hosts_id" ids="hosts_id" name="hosts_id" class="form-control hosts_id">
+        <select data-hook="hosts_id" name="hosts_id" class="form-control hosts_id">
           <!-- <option value="0" disabled selected><strong></strong></option> -->
           <option disabled selected value></option>
           <% hosts.forEach(function(h) { %>
@@ -89,7 +89,7 @@
     <div class="form-group">
       <label for="hostname" class="col-sm-3 control-label">Hosts</label>
       <div class="col-sm-9">
-        <select multiple data-hook="hosts_id" ids="hosts_id" name="hosts_id" class="form-control hosts_id">
+        <select multiple data-hook="hosts_id" name="hosts_id" class="form-control hosts_id multiple">
           <% hosts.forEach(function(h) { %>
           <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
           <% }); %>

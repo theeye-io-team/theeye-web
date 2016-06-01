@@ -39,7 +39,6 @@ $(function(){
 
 //CREATE RESOURCE FUNCTION
 $(function(){
-
   function getFormInputValues (inputs) {
     var values = {};
     inputs.each(function(){
@@ -292,11 +291,9 @@ $(function(){
 
   $('.editResourceMonitor').on('click', handleResourceAction);
   $('.createResourceMonitor').on('click', handleResourceAction);
-
 });
 
 $(function(){
-
   (function(){
     var $externalHostInput = $("form#scraperResourceForm div#externalScraperHost");
     var $input = $("form#scraperResourceForm input[name=external]");

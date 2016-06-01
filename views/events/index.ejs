@@ -44,8 +44,9 @@
             var overallState = resource.state;
             var tags = [
               "resource",
-              "resource="+ resource.id,
-              resource.hostname
+              "id="+resource.id,
+              "type="+resource.type,
+              "hostname="+resource.hostname
             ];
             resource.subs.forEach(function(subresource){
               if(statesDicc[subresource.state] > statesDicc[overallState]) {

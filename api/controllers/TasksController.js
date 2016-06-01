@@ -1,26 +1,6 @@
-/**
- * TasksController
- *
- * @module      :: Controller
- * @description	:: A set of functions called `actions`.
- *
- *                 Actions contain code telling Sails how to respond to a certain type of request.
- *                 (i.e. do stuff, then send some JSON, show an HTML page, or redirect to another URL)
- *
- *                 You can configure the blueprint URLs which trigger these actions (`config/controllers.js`)
- *                 and/or override them with custom routes (`config/routes.js`)
- *
- *                 NOTE: The code you write here supports both HTTP and Socket.io automatically.
- *
- * @docs        :: http://sailsjs.org/#!documentation/controllers
- */
 var debug = require("debug")("eye:controller:tasks");
 var async = require("async");
 module.exports = {
-  /**
-  *
-  *
-  */
   index: function(req, res) {
     var supervisor = req.supervisor;
     async.parallel({
@@ -43,10 +23,6 @@ module.exports = {
       res.view(data);
     });
   },
-  /**
-  *
-  *
-  */
   create: function(req, res)
   {
     var description = req.body.description || req.body.name;
@@ -60,13 +36,14 @@ module.exports = {
     var hosts = req.body.hosts_id;
 
     supervisor.createTask({
-      name: req.body.name,
-      description: description,
-      hosts_id: hosts,
-      target: req.body.target,
-      script_id: req.body.script_id,
-      script_arguments: req.body.script_arguments,
-      resource_id: req.body.resource_id
+      'public': req.body.public,
+      'name': req.body.name,
+      'description': description,
+      'hosts_id': hosts,
+      'target': req.body.target,
+      'script_id': req.body.script_id,
+      'script_arguments': req.body.script_arguments,
+      'resource_id': req.body.resource_id
     }, function(err, task) {
       if (err) {
         return res.send(500, err.toString());
