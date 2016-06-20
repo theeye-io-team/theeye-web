@@ -94,58 +94,22 @@
           $emitter.trigger({type:'search:done', matches:$(searchItemSelector+':visible').length});
         },210);
       }
-
     });
 
     $emitter.input = $searchInput;
 
-
-    // affix for searchbox
-    $searchBox.affix({offset: {top: 10 } });
-    // $searchBox.width(function(){
-    //   $searchBox.width($searchBox.parent().width());
-    // });
-
-    // check the size of the searchbox on orientationchange
-    $(window).on('orientationchange', function(){
-      if($searchBox.hasClass('affix-top')) {
-        // it it's at its topmost position
-        // reassure a 100%
-        $searchBox.width('100%');
-      }else{
-        // added a timeout here. The parent didn't get
-        // the memo on time on my moto G
-        setTimeout(function(){
-          $searchBox.width($searchBox.parent().width());
-        }, 250);
-      }
-    });
-
-
-    $searchBox.on('affix.bs.affix', function(){
-      var $this = $searchBox;
-      $this.width($this.parent().width());
-      var top = parseInt($this.parent().css('padding-top'));
-      $this.data('parentPaddingTop', top);
-      $this.parent().css('padding-top', (top + $this.outerHeight(true)) + 'px');
-    });
-    $searchBox.on('affixed-top.bs.affix', function(){
-      $searchBox.width('100%');
-      if($searchBox.data('parentPaddingTop')) {
-        $searchBox.parent().css('padding-top', $searchBox.data('parentPaddingTop'));
-      }
-    });
-
     var existingSearch = window.getHashParams();
-    console.log(existingSearch);
     if(existingSearch.search) {
       $searchInput.val(existingSearch.search);
       $searchBtn.trigger('click');
-      // $searchInput.trigger('input');
-      // $searchItems.slideDown(200);
     }
     return $emitter;
   };
 }( jQuery ));
 
 window.$searchbox = $.searchbox();
+
+var qs = window.location.href.split('?')[1];
+var $input = $('.js-searchable-box input');
+$input.val(qs);
+$('.js-searchable-box button.search').click();

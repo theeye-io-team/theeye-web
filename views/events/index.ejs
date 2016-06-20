@@ -8,15 +8,16 @@
 <% block('scripts', '<script src="/js/application/resources.js"></script>') %>
 <% block('scripts', '<script src="/js/application/triggers.js"></script>') %>
 
-<div class="container admin-container events-container"><!-- MAIN -->
-  <div class="row js-searchable-box" id="searcher">
+<div class="admin-container events-container"><!-- MAIN -->
+  <div class="js-searchable-box" id="searcher">
     <form>
       <input type="text" placeholder="Find a resource">
       <button class="clean"><i class="glyphicon glyphicon-remove"></i></button>
       <button class="search"><i class="glyphicon glyphicon-search"></i></button>
     </form>
   </div>
-  <div class="row"><!-- PANEL ROW -->
+
+  <div class="admin-panel"><!-- PANEL ROW -->
     <div class="col-md-6 resources-panel events-panel">
       <h3>Monitors</h3>
       <% if(resources.length > 0) {%>
@@ -43,8 +44,9 @@
             var overallState = resource.state;
             var tags = [
               "resource",
-              "resource="+ resource.id,
-              resource.hostname
+              "id="+resource.id,
+              "type="+resource.type,
+              "hostname="+resource.hostname
             ];
             resource.subs.forEach(function(subresource){
               if(statesDicc[subresource.state] > statesDicc[overallState]) {
@@ -59,26 +61,24 @@
             tags = tags.join(',');
           %>
             <div class="itemRow resource-container panel panel-default js-searchable-item"
+              id="resource-<%= resource.id %>"
               data-item-id="<%= resource.id %>"
               data-item-host-id="<%= resource.host_id %>"
               data-item-name="<%= resource.hostname %>"
               data-item-state="<%= overallState %>"
-              id="resource-<%= resource.id %>"
               data-tags="<%= tags %>">
               <div class="panel-heading" role="tab" id="heading<%= resource.id %>">
                 <h4 class="panel-title <%= resource.type %>">
                   <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= resource.id %>" aria-expanded="false" aria-controls="collapse<%= resource.id %>">
                     <div class="panel-title-content">
-                      <span class="panel-item name" id="<%= resource.id %>"><%= resource.hostname %><small> > <%= resource.type %></small></span>
+                      <span class="panel-item name" id="<%= resource.id %>"><%= resource.name %><small> > <%= resource.type %></small></span>
                       <span class="panel-item icons">
                         <button href="#search<%= resource.id %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
                           <span class="glyphicon glyphicon-search"></span>
                         </button>
-                        <button class="monitorStats btn btn-icon-image icon-image-stats tooltiped"
-                        title="Stats">
+                        <button class="monitorStats btn btn-icon-image icon-image-stats tooltiped" title="Stats">
                         </button>
-                        <button class="editMonitors btn btn-icon-image icon-image-edit tooltiped"
-                          title="Edit monitors">
+                        <button class="editMonitors btn btn-icon-image icon-image-edit tooltiped" title="Edit monitors">
                         </button>
                         <div class="state-resource-container">
                           <span class="tooltiped state-icon <%= iconsDicc[overallState] %>" title="<%=overallState%>"></span>
@@ -251,7 +251,3 @@
     </div>
   </div> <!-- END PANEL ROW -->
 </div> <!-- END MAIN -->
-
-<script>
-$(document).ready(function(){ });
-</script>

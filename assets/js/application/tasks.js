@@ -25,13 +25,18 @@ $(function() {
     return $el.find(':input')
       .toArray()
       .reduce(function(obj, input) {
+        if(!input.name) return obj;
+
         if(input.name=='hosts_id'){
           if(!obj[input.name]) obj[input.name]=[];
-          obj[input.name].push(input.value);
+          obj[input.name] = $('select.hosts_id.multiple').val();
         }
         else if(input.name=='public'){
-          if(input.checked===true){
-            obj[input.name] = input.value;
+          if(input.value=='true'&&input.checked===true){
+            obj[input.name] = true;
+          }
+          if(input.value=='false'&&input.checked===true){
+            obj[input.name] = false;
           }
         } else {
           obj[input.name] = input.value;
@@ -146,7 +151,6 @@ $(function() {
       // initialize resource_id select2
       if(!$('#resource_id', $taskForm).data('select2'))
         $('#resource_id', $taskForm).select2({ placeholder: "Select a resurce..." });
-
     });
 
     $state.on("task_created", function() {

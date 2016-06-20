@@ -1,4 +1,3 @@
-var dbName = 'theeye';
 module.exports = {
   application: {
     baseUrl : "http://0.0.0.0:6080",
@@ -10,19 +9,19 @@ module.exports = {
   },
   connections: {
     mongo: {
-      adapter : 'sails-mongo',
-      host : 'localhost',
-      port : 27017,
-      database : dbName
+      adapter:'sails-mongo',
+      host:'theeye-db',
+      port:27017,
+      database:'theeye'
     }
   },
   session: {
-    secret : '692fc164a0c06a9fd02575cf17688c9e',
-    collection : 'web_session',
-    adapter : 'mongo',
-    host : 'localhost',
-    port : 27017,
-    db : dbName,
+    secret:'692fc164a0c06a9fd02575cf17688c9e',
+    collection:'web_session',
+    adapter:'mongo',
+    host:'theeye-db',
+    port:27017,
+    db:'theeye'
   },
   mailer: {
     from: 'TheEye.io <jailbirt@interactar.com>',
@@ -109,7 +108,7 @@ module.exports = {
     }
   },
   supervisor: {
-    url: 'http://0.0.0.0:60080',
+    url: 'http://theeye-supervisor:60080',
     port: 60080,
     palancas: {
       resource : 'job'
