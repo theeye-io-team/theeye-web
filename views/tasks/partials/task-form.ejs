@@ -51,19 +51,11 @@
   <div class="form-group">
     <label for="target" class="col-sm-3 control-label">Where should it run?</label>
     <div class="col-sm-9">
-      <label class="radio-inline">
-        <input type="radio" name="target" data-hook="target" value="single-resource" checked=""> Single Host
-      </label>
-      <label class="radio-inline">
-        <input type="radio" name="target" data-hook="target" value="multi-hosts"> Multiple Hosts
-      </label>
-    </div>
-  </div>
-  <div class="hidden-container" id="resource-selection" style="display:block;">
-    <div class="form-group">
-      <label for="hostname" class="col-sm-3 control-label">Host</label>
-      <div class="col-sm-9">
-        <select data-hook="hosts_id" name="hosts_id" class="form-control hosts_id">
+
+      <!-- single host selection -->
+
+      <div class="hidden-container" id="single-host-selection">
+        <select data-hook="hosts_id" name="host_id" class="form-control hosts_id">
           <!-- <option value="0" disabled selected><strong></strong></option> -->
           <option disabled selected value></option>
           <% hosts.forEach(function(h) { %>
@@ -71,24 +63,10 @@
           <% }); %>
         </select>
       </div>
-    </div>
-    <div class="form-group">
-      <label for="resource_id" class="col-sm-3 control-label">Attach to a Resource<br/><small>[optional]</small></label>
-      <div class="col-sm-9">
-        <select data-hook="resource_id" id="resource_id" name="resource_id" title="jump directly to the task from a resource" class="form-control tooltiped">
-          <option disabled selected value></option>
-          <!-- <option value="0" selected><strong>Select a Resource</strong></option>-->
-          <% resources.forEach(function(r) { %>
-          <option value="<%=r.id%>"><strong><%=r.description%> (<%= r.type %>)</strong></option>
-          <% }); %>
-        </select>
-      </div>
-    </div>
-  </div>
-  <div class="hidden-container" id="hosts-selection">
-    <div class="form-group">
-      <label for="hostname" class="col-sm-3 control-label">Hosts</label>
-      <div class="col-sm-9">
+
+      <!-- or multiple host selection -->
+
+      <div class="hidden-container" id="multiple-host-selection">
         <select multiple data-hook="hosts_id" name="hosts_id" class="form-control hosts_id multiple">
           <% hosts.forEach(function(h) { %>
           <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>

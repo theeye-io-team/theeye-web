@@ -29,9 +29,8 @@ $(function() {
 
         if(input.name=='hosts_id'){
           if(!obj[input.name]) obj[input.name]=[];
-          obj[input.name] = $('select.hosts_id.multiple').val();
-        }
-        else if(input.name=='public'){
+          obj[input.name] = $(input).val();
+        } else if(input.name=='public'){
           if(input.value=='true'&&input.checked===true){
             obj[input.name] = true;
           }
@@ -126,31 +125,27 @@ $(function() {
   (function create(el){
 
     var $taskForm = $(el);
-    var $multihost = $('.hidden-container#hosts-selection', $taskForm);
+    var $multihost = $('.hidden-container#multiple-host-selection', $taskForm);
     var $multiSelect = $('select.hosts_id', $multihost);
-    var $singleresource = $('.hidden-container#resource-selection', $taskForm);
-    var $singleSelect = $('select.hosts_id', $singleresource);
 
     $(".modal#create-task").on('shown.bs.modal', function(event) {
       //nice-guy first input auto focus
       $('#name',this).focus();
 
-      $multihost.hide();
+      $multihost.show();
+      if(!$multiSelect.data('select2')){
+        $multiSelect.select2({
+          placeholder: 'Type a hostname or hit Enter to list'
+        });
+      }
+
       $taskForm.data('action','create');
       $taskForm[0].reset();
 
-      //singleSelect is visible from the start, so when the
-      //modal is shown select2 is initialized
-      if(!$singleSelect.data('select2'))
-        $singleSelect.select2({ placeholder: "Select a host..." });
-
       // initialize script_id select2
-      if(!$('#script_id', $taskForm).data('select2'))
+      if(!$('#script_id', $taskForm).data('select2')){
         $('#script_id', $taskForm).select2({ placeholder: "Select a script..." });
-
-      // initialize resource_id select2
-      if(!$('#resource_id', $taskForm).data('select2'))
-        $('#resource_id', $taskForm).select2({ placeholder: "Select a resurce..." });
+      }
     });
 
     $state.on("task_created", function() {
@@ -160,28 +155,8 @@ $(function() {
       });
     });
 
-    $state.on("task_create_error", function(ev, error) {
+    $state.on("task_create_error",function(ev, error){
       alert(error);
-    });
-
-    $taskForm.find("input[type=radio][name=target]").on("change", function(){
-      var val = $(this).val();
-      if( val == 'single-resource' ) {
-        $multihost.hide(50);
-        $multihost.find("option:selected").removeAttr("selected");
-        $singleresource.show(50);
-      } else if( val == 'multi-hosts' ){
-        $singleresource.hide(50);
-        $singleresource.find("select").val(0);
-
-        //multiSelect is hidden and select2 won't work properly
-        //hook select2 initialization when multiSelect is fully visible
-        $multihost.show(50, function(){
-          if(!$multiSelect.data('select2')) $multiSelect.select2({
-            placeholder: 'Type a hostname or hit Enter to list'
-          });
-        });
-      }
     });
 
     $(".modal#create-task button[type=submit]").on('click',function(event){
@@ -189,14 +164,12 @@ $(function() {
     });
 
     $state.on('script_uploaded', function(ev, data) {
-
       if(location.pathname != '/admin/task') {
         //restrict the event function to the /admin/task layout
         return;
       }
       alert("Script succesfully uploaded","Script upload", function() {
         $('[data-hook=script_id]').each(function(index, element){
-          console.log(element);
           $(element).append($('<option>', {
             value: data.script.id,
             text: data.script.filename
@@ -207,10 +180,9 @@ $(function() {
 
         $('#script-modal').modal('hide');
       });
-
     });
+
     $taskForm.on("submit", function(event) {
-      console.log('tropa');
       event.preventDefault();
       var vals = extractFormData($taskForm);
       jQuery.post("/task", vals).done(function(data) {
