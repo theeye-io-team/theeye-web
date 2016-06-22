@@ -43,7 +43,7 @@
     "sails-generate-auth": "^0.3.0",
     "sails-mongo": "^0.10.8",
     "style-loader": "^0.13.1",
-    "theeye-client": "interactar/theeye-client#v0.7.3",
+    "theeye-client": "interactar/theeye-client#v0.7.5",
     "underscore": "^1.8.3",
     "validator": "^3.40.1",
     "webpack": "^1.13.0"
