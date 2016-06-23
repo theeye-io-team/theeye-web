@@ -61,17 +61,4 @@
       </div>
     </div>
   </div>
-  <div id="resource">
-    <div class="form-group">
-      <label for="resource_id" class="col-sm-3 control-label">Link to a Monitor<br/><small>[optional]</small></label>
-      <div class="col-sm-9">
-        <select data-hook="resource_id" id="resource_id" name="resource_id" title="jump directly to the task from a resource" class="form-control tooltiped">
-          <option disabled value selected></option>
-          <% resources.forEach(function(r) { %>
-          <option value="<%= r.id %>"><strong><%=r.description%> (<%= r.type %>)</strong></option>
-          <% }); %>
-        </select>
-      </div>
-    </div>
-  </div>
 </form>
