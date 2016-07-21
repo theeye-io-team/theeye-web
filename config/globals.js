@@ -1,5 +1,5 @@
 module.exports.globals = {
-	_: true,
+	_ : true,
 	async: true,
 	sails: true,
 	services: true,
