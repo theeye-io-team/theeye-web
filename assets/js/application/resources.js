@@ -46,8 +46,7 @@ $(function(){
       if(input.name=='disabled' && input.type=='checkbox'){
         values.enable = !input.checked;
       } else if(input.name=='hosts_id') {
-        if( !values[input.name] ) values[input.name]=[];
-        values[input.name].push(input.value);
+        values[input.name] = $(input).val();
       } else {
         values[input.name] = input.value;
       }

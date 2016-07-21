@@ -5,7 +5,7 @@
   <div class="navbar-header">
     <a class="navbar-brand" href="/events"><img src="/images/logo-hor.png" alt="The eye"></a>
     <div class="navData">
-      <span class="clientName"><%= req.session.customer %></span>
+      <a href="/profile"><span class="clientName"><%= req.session.customer %></span></a>
       <div class="client hidden-sm hidden-md hidden-lg">
         <a href="#" class="switcher"><img src="/images/switcher.png" /></a>
         <select id="clientSelect" class="hidden " tabindex=-1>
@@ -19,7 +19,7 @@
         <ul class="dropdown-menu" role="menu">
           <span class="glyphicon glyphicon-triangle-top"></span>
           <% req.user.customers.forEach( function(customer, key){ %>
-          <li><a href="#" onClick="javascript:setCustomer('<%= customer %>')" ><%= customer %></a></li>
+          <li><a onClick="javascript:setCustomer('<%= customer %>')" ><%= customer %></a></li>
           <% }); %>
         </ul>
       </div>
