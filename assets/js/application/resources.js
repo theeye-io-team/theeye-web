@@ -196,10 +196,6 @@ $(function(){
       $('#' + options.type + 'ResourceModal')
         .one('shown.bs.modal', function(){
           //one time AUTOCOMPLETE COMBOBOX setup
-
-          //remove select2 if present - no need
-          // $select.data('select2') && $select.select2('destroy');
-
           $select.select2();
           $form.find('select#script_id').select2();
           var $firstInput = $(this).find('input[type!=hidden]').first().focus();
@@ -239,13 +235,10 @@ $(function(){
     $.unblockUI();
     $('#' + options.type + 'ResourceModal')
       .one('shown.bs.modal', function(){
-        //one time AUTOCOMPLETE COMBOBOX setup
-
-        //remove select2 if present
-        // $select.data('select2') && $select.select2('destroy');
-
         $select.select2();
-        $form.find('select#script_id').select2({placeholder:"Select a script..."});
+        $form.find('select#script_id').select2({
+          placeholder:"Select a script..."
+        });
 
         var $firstInput = $(this).find('input[type!=hidden]').first().focus();
         $(this).on('shown.bs.modal', function(){

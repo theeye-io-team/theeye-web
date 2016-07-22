@@ -1,22 +1,21 @@
-<% block("styles"  , '<link href="/styles/dropzone.css" rel="stylesheet" type="text/css">') %>
-<% block('styles', '<link rel="stylesheet" href="/styles/highlight/default.css"></script>') %>
-<% block('styles', '<link rel="stylesheet" href="/styles/jquery.datetimepicker.min.css"></script>') %>
-<% block("scripts" , '<script src="/js/application/dropzone.min.js"></script>') %>
-<% block('scripts', "<script> window.scripts = "+ JSON.stringify(scripts)+";</script>") %>
-<% block("scripts" , '<script src="/js/ace-editor/ace.js"></script>') %>
-<% block("scripts" , '<script src="/js/ace-editor/ext-modelist.js"></script>') %>
-<% block('scripts', '<script src="/js/dependencies/lodash.min.js"></script>')%>
-<% block('scripts', '<script src="/js/application/scripts.js"></script>')%>
-<% block('scripts', '<script src="/js/highlight.pack.js"></script>') %>
-<% block('scripts', '<script>hljs.initHighlightingOnLoad();</script>') %>
+<% block('styles' ,'<link href="/styles/dropzone.css" rel="stylesheet" type="text/css">') %>
+<% block('styles' ,'<link rel="stylesheet" href="/styles/highlight/default.css"></script>') %>
+<% block('styles' ,'<link rel="stylesheet" href="/styles/jquery.datetimepicker.min.css"></script>') %>
 
-<% block('scripts', '<script src="/js/application/searchbox.js"></script>')%>
-<% block('scripts', '<script src="/js/jquery.datetimepicker.full.min.js"></script>') %>
-<% block('scripts', '<script src="/js/application/tasks.js"></script>') %>
+<% block('scripts','<script src="/js/application/dropzone.min.js"></script>') %>
+<% block('scripts','<script> window.scripts = '+ JSON.stringify(scripts)+';</script>') %>
+<% block('scripts','<script src="/js/ace-editor/ace.js"></script>') %>
+<% block('scripts','<script src="/js/ace-editor/ext-modelist.js"></script>') %>
+<% block('scripts','<script src="/js/dependencies/lodash.min.js"></script>')%>
+<% block('scripts','<script src="/js/application/scripts.js"></script>')%>
+<% block('scripts','<script src="/js/highlight.pack.js"></script>') %>
+<% block('scripts','<script>hljs.initHighlightingOnLoad();</script>') %>
+<% block('scripts','<script src="/js/application/searchbox.js"></script>')%>
+<% block('scripts','<script src="/js/jquery.datetimepicker.full.min.js"></script>') %>
+<% block('scripts','<script src="/js/application/tasks.js"></script>') %>
 
 <!-- Main  -->
 <div class="admin-container">
-
   <div class="js-searchable-box">
     <form>
       <input type="text" placeholder="Find a Task">
@@ -24,7 +23,6 @@
       <button class="search"><i class="glyphicon glyphicon-search"></i></button>
     </form>
   </div>
-
   <div class="admin-panel tasks-admin">
     <h3>Tasks Admin</h3>
     <div>
@@ -45,26 +43,22 @@
           <span class="glyphicon glyphicon-plus"></span>
           New Task
         </button>
-
         <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
           title="Delete selected tasks"
           aria-label="Center Align">
           <span class="glyphicon glyphicon-trash"></span>
         </button>
-
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <% tasks.forEach( function(task, key) { %>
-          <%
-          var tags = [
-            "task",
+          <% var tags = [
+            'task',
             task.description,
             task.name,
-            "task="+ task.id,
-            "host="+ task.host_id,
-            "script="+ task.script_id
-          ].join(',');
-          %>
+            'task='+ task.id,
+            'host='+ task.host_id,
+            'script='+ task.script_id
+          ].join(','); %>
           <div
             class="itemRow panel panel-default js-searchable-item"
             data-item-id="<%= task.id %>"

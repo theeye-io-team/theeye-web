@@ -21,6 +21,17 @@ $(function() {
   window.scriptState = window.scriptState ? window.scriptState : $({});
   var $state = window.scriptState;
 
+/**
+  // initialize script_id select2
+  $('.host-select2').select2({
+    placeholder: "Select a host..."
+  });
+
+  $('.script-select2').select2({
+    placeholder: "Select a script..."
+  });
+  */
+
   function extractFormData ($el) {
     return $el.find(':input')
       .toArray()
@@ -45,6 +56,7 @@ $(function() {
   }
 
   (function update (el){
+    var $taskForm = $(el);
 
     function fillForm($form, data){
       $form[0].reset();
@@ -66,9 +78,6 @@ $(function() {
         });
     }
 
-    var $taskForm = $(el);
-    var $singleSelect = $('select.host_id', $taskForm);
-
     $('.editTask').on('click', function(evt){
       evt.preventDefault();
       evt.stopPropagation();
@@ -78,25 +87,25 @@ $(function() {
 
       $.get("/task/" + taskId).done(function(data){
         fillForm($taskForm, data.task);
-
-        $('#edit-task').modal('show');
+        $('.modal#edit-task').modal('show');
         // the rest is up to the shown.bs.modal event (below)
       }).fail(function(xhr, err, xhrStatus) {
-        $state.trigger("task_fetch_error", xhr.responseText, err);
+        alert(xhr.responseText);
       });
     });
 
     $(".modal#edit-task").on('shown.bs.modal', function(event) {
-      //nice-guy first input auto focus
+      $taskForm.find('select.host-select2').select2({
+        placeholder: "Select a host..."
+      });
+      $taskForm.find('select.script-select2').select2({
+        placeholder: "Select a script..."
+      });
+      // nice-guy first input auto focus
       $('#name',this).focus();
-
-      $singleSelect.select2({ placeholder: "Select a host..." });
-
-      $('#script_id', $taskForm).select2({ placeholder: "Select a script..." });
     });
 
     $(".modal#edit-task button[type=submit]").on('click',function(event){
-      console.log('marimba');
       $taskForm.submit();
     });
 
@@ -121,19 +130,16 @@ $(function() {
     return $taskForm;
   })("form#editTaskForm");
 
-
   (function create(el){
-
     var $taskForm = $(el);
-    var $multihost = $('.hidden-container#multiple-host-selection', $taskForm);
-    var $multiSelect = $('select.hosts_id', $multihost);
+    var $multihost = $taskForm.find('.hidden-container.multiple-host-selection');
+    var $multiSelect = $taskForm.find('select.host-select2');
 
     $(".modal#create-task").on('shown.bs.modal', function(event) {
       //nice-guy first input auto focus
       $('#name',this).focus();
-
       $multihost.show();
-      if(!$multiSelect.data('select2')){
+      if( ! $multiSelect.data('select2') ){
         $multiSelect.select2({
           placeholder: 'Type a hostname or hit Enter to list'
         });
@@ -143,8 +149,11 @@ $(function() {
       $taskForm[0].reset();
 
       // initialize script_id select2
-      if(!$('#script_id', $taskForm).data('select2')){
-        $('#script_id', $taskForm).select2({ placeholder: "Select a script..." });
+      var $scriptSelect = $taskForm.find('select.script-select2');
+      if( ! $scriptSelect.data('select2') ){
+        $scriptSelect.select2({
+          placeholder: "Select a script..."
+        });
       }
     });
 
@@ -193,19 +202,9 @@ $(function() {
 
       return false;
     });
-
   })("form#createTaskForm");
 
-
   (function remove(){
-    $state.on("task_deleted", function(ev,data) {
-      console.log(arguments);
-      data.row.remove();
-      // location.reload();
-    });
-    $state.on("task_delete_error", function(ev, resp, err) {
-      alert(resp);
-    });
     $(".deleteTask").on("click",function(ev){
       ev.preventDefault();
       ev.stopPropagation();
@@ -213,16 +212,15 @@ $(function() {
 
       bootbox.confirm('The resource will be removed. Want to continue?',
         function(confirmed) {
-          if(!confirmed)
-            return;
-
+          if(!confirmed) return;
           $.ajax({
             url: '/task/' + itemRow.data().itemId,
             type: 'DELETE'
           }).done(function(data) {
-            $state.trigger("task_deleted", {row: itemRow});
+            itemRow.remove();
+            // location.reload();
           }).fail(function(xhr, err, xhrStatus) {
-            $state.trigger("task_delete_error", xhr.responseText, err);
+            alert(xhr.responseText);
           });
         }
       );
@@ -490,5 +488,4 @@ $(function() {
   })();
 
   $('.modal#scriptUpload div#scriptTemplateDescription').hide();
-
 });
