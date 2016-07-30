@@ -4,7 +4,17 @@
   <body>
     <tooltipHolder style="position:absolute;width:100%"></tooltipHolder>
     <div>
+      <script src="/js/dependencies/socket.io.min.js"></script>
       <script src="/js/dependencies/sails.io.js"></script>
+      <script>
+        io.sails={
+          autoConnect:true,
+          useCORSRouteToGetCookie:true,
+          environment:'production',
+          url:'<%- process.env.SOCKET_AUTH_URL || '' %>'
+        };
+        SailsIOClient();
+      </script>
 
       <% if ( typeof (req.user) !== "undefined") { %>
       <%- partial('partials/menu') %>

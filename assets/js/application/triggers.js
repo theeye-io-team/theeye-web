@@ -5,75 +5,13 @@ function log() {
   deb.apply(deb, arguments);
 }
 
-//ye old code
-// function trigger(event, task_id, resource_id, username) {
-//   var elem = this;
-//   event.preventDefault();
-//   event.stopPropagation();
-//
-//   bootbox.confirm('Trigger Task?',function(confirmed){
-//     if( !confirmed ) return;
-//
-//     var taskResultHandler = function(laddaBtn) {
-//
-//       function onServerSentTaskResult(task, btn, handler) {
-//         btn.stop();
-//         io.socket.removeListener("palancas-update", handler);
-//
-//         var $tpl = $('div.resultTemplate div').clone();
-//         $tpl.find('.scriptStdout').html(task.result.stdout);
-//         $tpl.find('.scriptStderr').html(task.result.stderr);
-//         //$tpl.find('.scriptResCode').html(task.result.code);
-//
-//         var $resultContainer = $("div#result_container");
-//         $resultContainer.append( $tpl.html() );
-//       }
-//
-//       function handler (task) {
-//         log('task updates received');
-//         log(task);
-//         onServerSentTaskResult(task, laddaBtn, handler);
-//       }
-//
-//       return handler;
-//     }
-//
-//     var btn = Ladda.create(elem);
-//     btn.start();
-//
-//     io.socket.on('palancas-update', taskResultHandler(btn));
-//
-//     var id = resource_id;
-//     $.post("/palanca/trigger", {
-//       task_id: task_id,
-//       service_id: id,
-//       username: username
-//     }, function(data) {
-//       var newJob = data.job;
-//       //alert("You triggered task '" + newJob.name + "'");
-//     }).done(function(data, event_type, xhr) {
-//       //alert(data.message);
-//     }).fail(function(xhr) {
-//       var data = JSON.parse(xhr.responseText);
-//       alert(data.message);
-//       btn.stop();
-//     });
-//
-//   });
-//
-//   return;
-// }
-
 (function triggers(io){
-  console.log('initializing triggers');
-  // var socket = io.socket;
-  // for some reason, assigning the var socket was messing in firefox
-  // maybe io.socket has some (if(instanceof this !== 'whateverClass') return new whateverClass())
+  log('initializing triggers');
   function onSocketIoConnect(){
-    console.log('onSocketIoConnect fired');
+    log('onSocketIoConnect fired');
     io.socket.post('/palanca/subscribe', {}, function (data, jwres){
       //esto no esta sucediendo
-      console.log('palanca/subscribe posted');
+      log('palanca/subscribe posted');
     });
   }
 
@@ -90,7 +28,7 @@ function log() {
   // listen search:start and show bulkRunner button
   // unless there are no visible tasks in the div.tasks-panel
   $searchbox.on('search:start', function(evt){
-    console.log('search:start');
+    log('search:start');
     if(!$('.tasks-panel .js-searchable-item:visible').length) {
       $('.bulkRunner').hide();
       return;
@@ -101,7 +39,7 @@ function log() {
   // listen search:done and show bulkRunner button
   // except: runner is running || no visible tasks in div.tasks-panel
   $searchbox.on('search:done', function(evt){
-    console.log('search:done');
+    log('search:done');
     if(!$('.tasks-panel .js-searchable-item:visible').length && !$('.bulkRunner').data('laddaIsRunning')) {
       $('.bulkRunner').hide();
       return;
@@ -177,7 +115,7 @@ function log() {
           return;
         }
         //trailer ended
-        console.log('removing listener');
+        log('removing listener');
         io.socket.removeListener('palancas-update', handleTaskResult);
         btn.stop();
 
@@ -197,8 +135,8 @@ function log() {
         service_id: taskData.taskresourceid,
         username: taskData.username
       }).fail(function(xhr, status, message) {
-        console.log('fail');
-        console.log(arguments);
+        log('fail');
+        log(arguments);
         // TO DO:
         // handle if xhr.responseText is json or not
 
@@ -274,7 +212,7 @@ function log() {
 
         if(Object.keys(taskQueue).length < 1) {
           //trailer ended
-          console.log('removing listener');
+          log('removing listener');
           io.socket.removeListener('palancas-update', handleTaskResult);
           btn.stop();
           $(elem).data('laddaIsRunning', false);
@@ -307,20 +245,9 @@ function log() {
           service_id: taskData.taskresourceid,
           username: taskData.username
         }
-        //can't/shouldn't do anything but failing
-        // , function(data) {
-        //   // var newJob = data.job;
-        //   console.log('callback');
-        //   //alert("You triggered task '" + newJob.name + "'");
-        // }).done(function(data, event_type, xhr) {
-        //   //alert(data.message);
-        //   console.log('done');
-        // }
         ).fail(function(xhr, status, message) {
-          console.log('fail');
-          console.log(arguments);
-          // TO DO:
-          // handle if xhr.responseText is json or not
+          log('fail');
+          log(arguments);
 
           var fauxMessage = {
             task_id: taskData.taskid,
