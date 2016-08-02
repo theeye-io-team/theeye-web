@@ -1,5 +1,7 @@
 
-process.env.SOCKET_AUTH_URL||(process.env.SOCKET_AUTH_URL = 'http://' + require('os').hostname());
+process.env.INSTANCE_FQDN||(process.env.INSTANCE_FQDN=require('os').hostname());
+
+process.env.SOCKET_AUTH_URL||(process.env.SOCKET_AUTH_URL = 'http://' + process.env.INSTANCE_FQDN);
 
 console.log('socket connection url is set to : %s', process.env.SOCKET_AUTH_URL);
 

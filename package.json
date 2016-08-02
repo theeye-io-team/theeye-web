@@ -50,7 +50,7 @@
   "scripts": {
     "start": "/bin/bash ./run.sh",
     "devel": "/bin/bash ./run.debug.sh",
-    "local": "SOCKET_AUTH_URL='http://localhost:6080' NODE_ENV='localdev' /bin/bash ./run.debug.sh"
+    "local": "INSTANCE_FQDN='localhost:6080' NODE_ENV='localdev' /bin/bash ./run.debug.sh"
   },
   "main": "app.js",
   "author": "jailbirt, facugon, cgastrell",

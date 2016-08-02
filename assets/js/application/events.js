@@ -8,10 +8,9 @@ function log() {
 }
 
 (function(io) {
-  var socket = io.socket;
   function onSocketIoConnect(){
-    socket.on('events-update', function onServerSentResourceEvent(resource)
-    {
+    log('socket connected!');
+    io.socket.on('events-update', function(resource) {
       log('resource event update received');
       log(resource);
 
@@ -69,16 +68,16 @@ function log() {
       }
 
     });
-    socket.post('/events/subscribe', {}, function resourceSocketSubscription(data, jwres) {
+    io.socket.post('/events/subscribe', {}, function resourceSocketSubscription(data, jwres) {
       log('subscribed to events updates');
     });
   }
 
-  if( socket.socket && socket.socket.connected ) {
+  log('listening sockets connect');
+  if( io.socket.socket && io.socket.socket.connected ) {
     onSocketIoConnect();
   }
-  log('listening sockets connect');
-  socket.on("connect",onSocketIoConnect);
+  io.socket.on("connect",onSocketIoConnect);
 
 })( window.io );
 
