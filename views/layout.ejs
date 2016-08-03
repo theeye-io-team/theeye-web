@@ -10,7 +10,7 @@
         io.sails={
           autoConnect:true,
           useCORSRouteToGetCookie:true,
-          environment:'production',
+          environment:'<%- process.env.NODE_ENV %>',
           url:'<%- process.env.SOCKET_AUTH_URL || '' %>'
         };
         SailsIOClient();

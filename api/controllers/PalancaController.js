@@ -75,8 +75,8 @@ module.exports = {
       }
       else
       {
-        var message = snsreceiver.parseSNSMessage(body.Message);
-        if(!message) {
+        var result = snsreceiver.parseSNSMessage(body.Message);
+        if(!result) {
           return res.json({
             'status': 400,
             'error': {
@@ -90,7 +90,7 @@ module.exports = {
           // sns updates received
           Passport.findOne({
             'protocol': 'theeye',
-            'api_user': message.user_id
+            'api_user': result.user_id
           }, function(err, passport){
 
             if(!passport){
@@ -116,10 +116,10 @@ module.exports = {
                 });
               }
 
-              var room = message.customer_name + '_' + user.username + '_palancas';
+              var room = result.customer_name + '_' + user.username + '_palancas';
               debug.log('sending information via socket to ' + room);
               var io = sails.io;
-              io.sockets.in(room).emit('palancas-update', message);
+              io.sockets.in(room).emit('palancas-update', result);
               return res.json({ message: 'palancas updates received' });
             });
           });
