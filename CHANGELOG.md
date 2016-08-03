@@ -1,5 +1,11 @@
 # CHANGELOG
 
+### 0.2.0 - 2016-08-03
+
+> rename environment variabe required to set socket connection uri.
+
+> socket debug mode on when `NODE_ENV != production`
+
 ### 0.1.0 - 2016-07-29
 
 > added CHANGELOG.md
