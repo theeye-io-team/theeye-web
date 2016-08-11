@@ -1,5 +1,7 @@
-var debug = require("debug")("eye:controller:tasks");
-var async = require("async");
+var debug = require('debug')('eye:controller:tasks');
+var async = require('async');
+var extend = require('util')._extend;
+
 module.exports = {
   index: function(req, res) {
     var supervisor = req.supervisor;
@@ -25,29 +27,22 @@ module.exports = {
   },
   create: function(req, res)
   {
-    var description = req.body.description || req.body.name;
     var supervisor = req.supervisor;
 
-    if (!req.body.name) return res.send(400, "Name for the action is required");
-    if (!req.body.script_id) return res.send(400, "Script is required");
-    if (!req.body.hosts_id && !req.body.resource_id)
-      return res.send(400, "Host or Resource is required");
+    if (!req.body.name) return res.send(400, 'Name for the action is required');
+    if (!req.body.script_id) return res.send(400, 'Script is required');
+    if (!req.body.hosts_id && !req.body.resource_id){
+      return res.send(400, 'Host or Resource is required');
+    }
 
     var hosts = req.body.hosts_id;
+    var data = extend({
+      'description': req.body.description || req.body.name,
+      'hosts_id': hosts
+    }, req.body);
 
-    supervisor.createTask({
-      'public': req.body.public,
-      'name': req.body.name,
-      'description': description,
-      'hosts_id': hosts,
-      'target': req.body.target,
-      'script_id': req.body.script_id,
-      'script_arguments': req.body.script_arguments,
-      'resource_id': req.body.resource_id
-    }, function(err, task) {
-      if (err) {
-        return res.send(500, err.toString());
-      }
+    supervisor.createTask(data,(err, task) => {
+      if(err) return res.send(500, err.toString());
       res.json(task);
     });
   },
@@ -97,15 +92,12 @@ module.exports = {
     if( ! idHost ) return res.send(400,'select a host');
     if( ! idScript ) return res.send(400,'select a script');
 
-    var updates = {
-      'name': req.body.name,
+    var updates = extend({
       'description': description,
       'host_id': idHost,
       'script_id': idScript,
-      'script_arguments': req.body.script_arguments,
-      'public': req.body.public,
-      'resource_id': req.body.resource_id || 0
-    };
+      'resource_id': 0
+    },req.body);
 
     supervisor.patchTask(id, updates, function(err, task) {
       if(err) return res.send(500, err);
