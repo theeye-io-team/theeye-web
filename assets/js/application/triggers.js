@@ -110,6 +110,7 @@ function log() {
 
       // handles palancas-update io.socket event
       var handleTaskResult = function(data) {
+        log(data);
         if(data.task_id !== taskData.taskid) {
           //this wasn't meant for us, move on
           return;
