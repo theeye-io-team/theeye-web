@@ -173,23 +173,27 @@
                       <% } else { %>
 
                       <div class="dropdown host-menu">
-                         <button id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true" class="btn btn-default simple-btn dropdown-toggle" aria-label="Center Align">
-                           <span class="glyphicon glyphicon-plus"></span>
-                         </button>
+                        <button id="dropdownMenu1" 
+                          data-toggle="dropdown" 
+                          aria-expanded="true" 
+                          class="btn btn-default simple-btn dropdown-toggle" 
+                          aria-label="Center Align">
+                          <span class="glyphicon glyphicon-plus"></span>
+                        </button>
 
-                         <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1" style="min-width: 120px">
-                           <li role="presentation">
-                             <span role="menuitem" tabindex="-1"
+                        <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1" style="min-width: 120px">
+                          <li role="presentation">
+                            <span role="menuitem" tabindex="-1"
                               class="createResourceMonitor"
-                                data-host_id="<%= monitor.host_id %>"
-                                data-hostname="<%= monitor.resource.hostname %>"
-                                data-toggle="modal"
-                                data-target="#scraperResourceModal"
-                                data-resource-type="scraper"
-                                data-action="create">Web Check</span>
-                           </li>
-                           <li role="presentation">
-                             <span role="menuitem" tabindex="-1"
+                              data-host_id="<%= monitor.host_id %>"
+                              data-hostname="<%= monitor.resource.hostname %>"
+                              data-toggle="modal"
+                              data-target="#scraperResourceModal"
+                              data-resource-type="scraper"
+                              data-action="create">Web Check</span>
+                          </li>
+                          <li role="presentation">
+                            <span role="menuitem" tabindex="-1"
                               class="createResourceMonitor"
                               data-host_id="<%= monitor.host_id %>"
                               data-hostname="<%= monitor.resource.hostname %>"
@@ -197,9 +201,9 @@
                               data-target="#processResourceModal"
                               data-resource-type="process"
                               data-action="create">Process</span>
-                           </li>
-                           <li role="presentation">
-                             <span role="menuitem" tabindex="-1"
+                          </li>
+                          <li role="presentation">
+                            <span role="menuitem" tabindex="-1"
                               class="createResourceMonitor"
                               data-host_id="<%= monitor.host_id %>"
                               data-hostname="<%= monitor.resource.hostname %>"
@@ -207,8 +211,8 @@
                               data-target="#scriptResourceModal"
                               data-resource-type="script"
                               data-action="create">Script</span>
-                           </li>
-                         </ul>
+                          </li>
+                        </ul>
                       </div>
                       <% } %>
 

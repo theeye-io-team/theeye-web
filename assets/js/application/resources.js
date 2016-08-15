@@ -174,6 +174,8 @@ $(function(){
         $script.val(monitor.config.script_id);
         $form.find('[data-hook=script_arguments]')
           .val(monitor.config.script_arguments);
+        $form.find('[data-hook=script_runas]')
+          .val(monitor.config.script_runas);
       break;
     };
   }
@@ -220,22 +222,16 @@ $(function(){
     var $select = $form.find('.resource-host select');
     var $input  = $form.find('.resource-host input');
 
-    if(host){
-      $select.hide();
-      $input.attr('value', host);
-      $form.find('.resource-host')
-        .after('<div class="host-after col-sm-9"><div class="form-control">' + hostname + '</div></div>');
-    } else {
-      $select.prop('multiple', true);
-      $select.show();
-      $input.attr('value','');
-    }
+    $select.prop('multiple', true);
+    $input.attr('value','');
 
     $form[0].reset();
     $.unblockUI();
     $('#' + options.type + 'ResourceModal')
       .one('shown.bs.modal', function(){
         $select.select2();
+        if(host) $select.val(host).trigger('change');
+
         $form.find('select#script_id').select2({
           placeholder:"Select a script..."
         });
