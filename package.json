@@ -51,8 +51,8 @@
     "nodemon": "1.10.0"
   },
   "scripts": {
-    "start": "NODE_ENV='production' PORT=6080 DEBUG=eye:*:error node .",
-    "devel": "NODE_ENV='development' PORT=6080 DEBUG=eye:* node .",
+    "start": "node .",
+    "devel": "NODE_ENV='development' PORT=6080 DEBUG=eye:* nodemon .",
     "local": "NODE_ENV='localdev' PORT=6080 DEBUG=eye:* INSTANCE_FQDN='localhost:6080' ./node_modules/.bin/nodemon ."
   },
   "main": "app.js",
