@@ -1,5 +1,4 @@
 var debug = require('debug')('eye:web:controller:resource');
-var resource = require('../services/resource');
 var moment = require('moment');
 
 var toBoolean = function(value){
@@ -84,20 +83,15 @@ module.exports = {
     if( !req.body.monitor_type )
       return res.send(400,"No resource type supplied");
 
-    var data = resource.validate(req.body.monitor_type, params);
-
-    //for now return only the first error to avoid refactor
-    if(data.error) return res.send(400, data.error[0].description);
-
-    data.type = req.params.type;
-    data.hosts = [];
+    params.type = req.params.type;
+    params.hosts = [];
     var hostId = req.body.host_id;
     var hostsId = req.body.hosts_id;
 
-    if(!hostsId) data.hosts.push(hostId);
-    else data.hosts = hostsId;
+    if(!hostsId) params.hosts.push(hostId);
+    else params.hosts = hostsId;
 
-    supervisor.createResource( data, function(err, resource) {
+    supervisor.createResource( params, function(err, resource) {
       if(err) return res.send(500, err);
       res.send(201,{ resource: resource });
     });
@@ -117,19 +111,14 @@ module.exports = {
     if( !req.body.monitor_type )
       return res.send(400,"No resource type supplied");
 
-    var data = resource.validate(req.body.monitor_type, params);
-
-    //for now return only the first error to avoid refactor
-    if(data.error) return res.send(400, data.error[0].description);
-
     var hostsId = req.body.hosts_id;
-    if( hostsId && !(hostsId instanceof Array) ) data.host = hostsId;
-    else if(hostsId instanceof Array && hostsId.length==1) data.host = hostsId[0];
+    if( hostsId && !(hostsId instanceof Array) ) params.host = hostsId;
+    else if(hostsId instanceof Array && hostsId.length==1) params.host = hostsId[0];
     else return res.send(400,'Host parameter error');
 
     supervisor.patchResource(
       req.params.id,
-      data,
+      params,
       function(err, resource) {
         if(err) return res.send(500, err);
         res.send(200,{ resource: resource });
