@@ -117,14 +117,11 @@ var AuthController = {
    */
   activate: function (req, res) {
     var token = req.query.token;
-    User.findOne({invitation_token: token}).exec(function(err, user)
-    {
-      if(err || !user)
-      {
-        res.redirect('/events');
-      }
-      else
-      {
+    User.findOne({invitation_token: token})
+    .exec(function(err, user) {
+      if(err || !user) {
+        res.redirect('/');
+      } else {
         res.view({
           errors: req.flash('error'),
           token: token,
@@ -230,10 +227,10 @@ var AuthController = {
 
       var action = req.param('action');
       sails.log.debug('processing action %s', action);
-      if(action != 'invite')
-      {
-        req.login(user, function (err)
-        {
+      if(action == 'invite') {
+        res.redirect('/events');
+      } else {
+        req.login(user, function (err) {
           if (err) {
             debug('LOGIN ERROR:');
             debug(err);
@@ -244,7 +241,6 @@ var AuthController = {
           }
         });
       }
-      else res.redirect('/events');
     });
   },
   /**

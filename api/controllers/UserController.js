@@ -90,7 +90,7 @@ var UserController = module.exports = {
       res.send(200,{});
     } else res.send(403,{});
   },
-  reSendInvitation: function(req, res) {
+  sendActivationLink: function(req, res) {
     var params = req.params.all();
     var userId = params.id;
 
@@ -102,6 +102,7 @@ var UserController = module.exports = {
         return res.send(500);
       }
       if(!user) return res.send(404);
+      if(user.enabled) return res.send(400,'The user is already active');
 
       passport.resendInvitationUser(user, function(error){
         if(error){

@@ -23,7 +23,7 @@ module.exports.routes = {
   'post   /setcustomer/:customer' : 'UserController.setcustomer',
   'get    /admin/user' : 'UserController.index',
   'get    /profile' : 'UserController.profile',
-  'put    /user/:id/reinvite' : 'UserController.reSendInvitation',
+  'put    /user/:id/reinvite' : 'UserController.sendActivationLink',
   'put    /user/resetpass' : 'UserController.retrievePassword',
   'get    /user'  : 'UserController.fetch',
   'get    /user/:id' : 'UserController.get',
@@ -78,5 +78,5 @@ module.exports.routes = {
   'post   /admin/hostgroup/:groupid/monitortemplate' : 'HostGroupMonitorTemplateController.create',
   'delete /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.destroy',
   // Internal process controller. to run manually only by a root user
-  'get    /process/dHV2aWVqYQo' : 'ProcessController.updatetheeyepassports'
+  //'get    /process/dHV2aWVqYQo' : 'ProcessController.updatetheeyepassports'
 };

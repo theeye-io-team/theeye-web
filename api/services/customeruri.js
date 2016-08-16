@@ -1,8 +1,7 @@
 var supervisor = sails.config.supervisor ;
 
-var uris = {
-  jobs : function jobsUri(user)
-  {
+module.exports = {
+  jobs : function jobsUri(user) {
     var parts = [
       supervisor.url ,
       user.customers[0] ,
@@ -13,5 +12,3 @@ var uris = {
     return parts.join('/');
   }
 };
-
-module.exports = uris ;
