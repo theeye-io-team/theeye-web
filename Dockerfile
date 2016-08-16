@@ -1,4 +1,4 @@
-FROM node:0.12
+FROM node:4
 MAINTAINER Javier Ailbirt <jailbirt@interactar.com>
 ENV destDir /src/theeye/web
 # Create app directory
@@ -10,7 +10,7 @@ WORKDIR ${destDir}
 # Bundle app source
 COPY . ${destDir}
 # Install app dependencies
-RUN cd ${destDir}; npm install
+RUN cd ${destDir}; npm install --production
 # Fix something weird related to sails dependencies.
 RUN cd ${destDir}/node_modules/sails/ && npm install && cd ${destDir}
 #Fix Permissions.
