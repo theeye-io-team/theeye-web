@@ -1,4 +1,4 @@
-FROM node:0.12
+FROM node:4
 MAINTAINER Javier Ailbirt <jailbirt@interactar.com>
 ENV destDir /src/theeye/web
 # Create app directory
