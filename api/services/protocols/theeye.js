@@ -29,15 +29,16 @@ exports.createUser = function(localUser, params, supervisor, next)
     });
 
     Passport.create({
-      'protocol' : 'theeye',
-      'user' : localUser.id ,
-      'token' : profile.token,
-      'api_user' : profile.id,
-      'profile' : {
-        'id' : profile.id,
-        'client_id' : profile.client_id,
-        'client_secret' : profile.client_secret,
-        'customers' : customers,
+      'protocol': 'theeye',
+      'provider': 'theeye',
+      'user': localUser.id ,
+      'token': profile.token,
+      'api_user': profile.id,
+      'profile': {
+        'id': profile.id,
+        'client_id': profile.client_id,
+        'client_secret': profile.client_secret,
+        'customers': customers,
       }
     }, function (err, passport) {
       if (err) return next(err);

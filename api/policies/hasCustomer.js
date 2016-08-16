@@ -1,4 +1,3 @@
-var Acl = sails.config.acl;
 
 module.exports = function hasCustomer (req, res, next)
 {  

@@ -183,7 +183,7 @@ $(function() {
 
   (function reSendInvitation() {
     $state.on("invitation_sent", function() {
-      alert("Invitation sent","Up she goes...");
+      alert("Invitation sent","Done!");
     });
 
     $state.on("invitation_error", function() {

@@ -210,7 +210,7 @@ exports.invite = function (req, res, next) {
             inviter_email : req.user.email
           };
 
-          return next(null, email, emailData);
+          return next(null, email, emailData, user);
         }
       });
     } else {

@@ -50,7 +50,7 @@
   "scripts": {
     "start": "/bin/bash ./run.sh",
     "devel": "/bin/bash ./run.debug.sh",
-    "local": "INSTANCE_FQDN='localhost:6080' NODE_ENV='localdev' /bin/bash ./run.debug.sh",
+    "local": "INSTANCE_FQDN='localhost:6080' NODE_ENV='localdev' PORT=6080 DEBUG=eye:* ./node_modules/.bin/nodemon .",
     "prod": "INSTANCE_FQDN='localhost:6080' NODE_ENV='production' PORT=6080 DEBUG=eye:* ./node_modules/.bin/nodemon ."
   },
   "main": "app.js",
