@@ -12,7 +12,7 @@ COPY . ${destDir}
 # Install app dependencies
 RUN cd ${destDir}; npm install --production
 # Fix something weird related to sails dependencies.
-RUN cd ${destDir}/node_modules/sails/ && npm install && cd ${destDir}
+RUN cd ${destDir}/node_modules/sails/ && npm install --production && cd ${destDir}
 #Fix Permissions.
 RUN mkdir ${destDir}/.tmp
 RUN chmod -R 1777 ${destDir}/.tmp
