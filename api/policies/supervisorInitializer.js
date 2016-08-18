@@ -11,13 +11,18 @@ module.exports = function supervisorInitializer (req, res, next)
     'access_token': req.user.theeye && req.user.theeye.access_token || null
   };
 
+  if( ! req.user.theeye ) {
+    sails.log.error("User has not got access to the API > %s.", req.user.username);
+    return res.serverError('Internal Error');
+  }
+
   if(
-    !req.user.theeye ||
-    !req.user.theeye.client_id ||
-    !req.user.theeye.client_secret
-  ){
-    sails.log.error("TheEye passport is not created for user %s.", req.user.username);
-    return res.forbidden('You are not permitted to perform this action.');
+    ! req.user.theeye.client_id &&
+    ! req.user.theeye.client_secret &&
+    ! req.user.theeye.token
+  ) {
+    sails.log.error("TheEye passport is not properly created for user %s.", req.user.username);
+    return res.serverError('Internal Error');
   }
 
   req.supervisor = new TheEyeClient(config);

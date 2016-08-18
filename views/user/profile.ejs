@@ -1,6 +1,6 @@
 <% block('scripts', '<script src="/js/application/auth.js"></script>') %>
 <% block('scripts', '<script src="/js/application/profile.js"></script>') %>
-<div class="container">
+<div class="container profile-page">
   <div class="row">
     <% if(req.user.credential === 'owner' || req.user.credential === 'root') { %>
     <div class="col-sm-6">
@@ -32,14 +32,11 @@
         <% } %>
       </div>
     </div>
-  </div>
 
-  <div class="row">
     <!-- LOCAL INFORMATION -->
     <div class="col-sm-6">
       <div class="well">
         <h3><span class="fa fa-user"></span> Local</h3>
-
         <% var session=req.user; %>
         <p>
           <strong>id</strong>: <%= session.id %><br>
@@ -52,10 +49,8 @@
         <% } else { %>
         <a href="/connect" class="btn btn-default">Connect Local</a>
         <% } %>
-
         <!-- GOOGLE INFORMATION -->
         <h3 class="text-danger"><span class="fa fa-google-plus"></span> Google</h3>
-
         <% if(passports.oauth2){ %>
         <p>
           <strong>id</strong>: <%= passports.oauth2.id %><br>
@@ -65,7 +60,18 @@
         <% } else { %>
         <a href="/connect/google" class="btn btn-danger">Connect Google</a>
         <% } %>
+      </div>
+    </div>
 
+    <div class="col-sm-6">
+      <div class="well info-container col-sm-12">
+        <h3><span class="fa fa-user"></span>TheEye Passport API</h3>
+        <h4>This are your credentials to connect TheEye Supervisor API.</h4>
+        <p>
+          <div><label class="col-20">client id</label> <span class=""><%= passports.theeye.profile.client_id %></span></div>
+          <div><label class="col-20">client secret</label> <span class=""><%= passports.theeye.profile.client_secret %></span></div>
+          <div><label class="col-20">access token</label> <span class=""><%= passports.theeye.token %></span></div>
+        </p>
       </div>
     </div>
   </div>

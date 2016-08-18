@@ -2,7 +2,7 @@
 var validator   = require('validator');
 var crypto      = require("crypto");
 var querystring = require("querystring");
-var _           = require("underscore");
+var underscore  = require("underscore");
 var debug       = require('debug')('eye:web:service:protocol:local');
 /**
  * Local Authentication Protocol
@@ -137,44 +137,49 @@ exports.retrievePassword = function (req, res, next) {
  *
  * @param {Function} next
  */
-exports.resetActivationLink = function(user, next){
-  var seed = user.email + Date.now();
-  var token = crypto
-    .createHmac("sha1",seed)
-    .digest("hex");
+exports.resetActivationToken = function (user, next) {
+  var token = getActivationToken(user.email);
 
   var query = { id: user.id };
   var updates = { invitation_token: token };
-  User.update(query,updates,function(error, user){
+  User.update(query, updates, function (error, user) {
     if(error) {
       debug('Error updating user');
       return next(error);
     }
 
-    var queryToken = querystring.stringify({ token: token });
-    var url = sails.config.passport.local.activateUrl;
-
-    return next(null, url + queryToken);
+    return next(null, token);
   });
 }
 
+exports.getActivationLink = function (user) {
+  var queryToken = querystring.stringify({ token: user.invitation_token });
+  var url = sails.config.passport.local.activateUrl;
+  return (url + queryToken);
+}
+
+function getActivationToken (string){
+  var seed = string + Date.now();
+  var token = crypto.createHmac("sha1",seed).digest("hex");
+  return token;
+}
+
 /**
- * Invite a new user
+ * Invite a user to a customer
  *
- * This method creates a new user from a specified email
- * and assign the newly created user a local Passport.
+ * This method creates a new user if does not exists and assign to a customer.
+ * If it exists assign the customer
  *
  * @param {Object}   req
  * @param {Object}   res
  * @param {Function} next
+ * @return {User}
  */
-exports.invite = function (req, res, next) {
+exports.inviteToCustomer = function (req, res, next) {
   var email = req.param('email');
   var customers = req.param('customer') ? [req.param('customer')] : req.param('customers');
   var credential = req.param('credential');
 
-  //aca podriamos checkar por el logged user credential para evitar que cualuiera
-  //cree usuarios. Eso o activamos acl
   if(!email) {
     req.flash('error', 'Error.Passport.Email.Missing');
     return next('No email was entered.');
@@ -185,8 +190,6 @@ exports.invite = function (req, res, next) {
     return next('No customers was entered.');
   }
 
-  var token = crypto.createHmac("sha1", email).digest("hex");
-
   User.findOne({email: email}, function (err, user) {
     if (err) {
       debug('//////////////// ERROR.DB ////////////////');
@@ -195,9 +198,11 @@ exports.invite = function (req, res, next) {
     }
 
     if(!user) {
-      //Scenario: User dont exist
-      //Action: create the user and send email invitation
+      // Scenario: User dont exist
+      // Action: create the user disabled
+      var token = getActivationToken(email);
       User.create({
+        enabled: false,
         invitation_token: token,
         username: email,
         email: email,
@@ -218,23 +223,13 @@ exports.invite = function (req, res, next) {
           debug(err);
           return next(err);
         } else {
-          var queryToken = querystring.stringify({token: token});
-          var emailData = {
-            email         : email,
-            activationLink: sails.config.passport.local.activateUrl + queryToken,
-            username      : email, // esto no es username, es el invitee's email
-            //TODO esto deberia reemplazarse por nombre y apellido desde el profile
-            //del connected user, para que quede mas serio
-            inviter       : req.user.username,
-            inviter_email : req.user.email
-          };
-
-          return next(null, email, emailData, user);
+          return next(null, user);
         }
       });
     } else {
-      //Scenario: User exist
-      customers = _.union(user.customers, customers);
+      // Scenario: User exist
+      // Action: Assign the customer
+      customers = underscore.union(user.customers, customers);
 
       //If the user exists and have perms for the selected customers dont send the activation email
       if(user.customers.length == customers.length) {
@@ -245,17 +240,17 @@ exports.invite = function (req, res, next) {
         return next("The user allready exists and have permissions for this customer");
       }
 
-      User.update({email: email},{customers: customers },function (err, user) {
-        if(err) {
-          debug('Error updating user');
-          return next(err);
-        }
-        var data = { username: req.user.username };
-        return next(err, email, data);
-      });
+      User.update({ id: user.id },{ customers: customers },
+        function(error, users) {
+          if(error) {
+            debug('Error updating user');
+            debug(error);
+          }
+          return next(error, users[0]);
+        });
     }
   });
-};
+}
 
 /**
  * Activate user account

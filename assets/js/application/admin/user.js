@@ -182,14 +182,6 @@ $(function() {
   })();
 
   (function reSendInvitation() {
-    $state.on("invitation_sent", function() {
-      alert("Invitation sent","Done!");
-    });
-
-    $state.on("invitation_error", function() {
-      alert("Error sending the invitation", "Oops...");
-    });
-
     $(".reSendInvitation").on("click",function(ev){
       ev.stopPropagation();
       ev.preventDefault();
@@ -200,9 +192,9 @@ $(function() {
         url: '/user/' + idUser + '/reinvite',
         type: 'PUT'
       }).done(function() {
-        $state.trigger("invitation_sent", $delTrigger.closest('tr')[0]);
+        alert("Invitation sent","Done!");
       }).fail(function(xhr, err) {
-        $state.trigger("invitation_error", xhr.responseText, err);
+        alert("Error sending the invitation. " + xhr.responseText, "Oops...");
       });
     });
   })();
