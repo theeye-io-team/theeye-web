@@ -2,7 +2,7 @@ var request = require('request');
 var debug = require('debug')('eye:web:services:snshandler');
 
 module.exports = {
-  handleSubscription : function handleSubscription(data, next)
+  handleSubscription : function (data, next)
   {
     var error = null;
     var success = null;

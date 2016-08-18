@@ -8,8 +8,7 @@ console.log('socket connection url is set to : %s', process.env.SOCKET_AUTH_URL)
 if( ! process.env.PORT )
 {
     console.error('ERROR : PORT environment variable definition is required');
-    console.error('ERROR : Define it in run.sh and run.debug.sh, via shell');
-    console.error('ERROR : The Eye Web is not initialized.');
+    console.error('ERROR : The Eye Web not running.');
     return;
 }
 

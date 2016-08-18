@@ -1,7 +1,6 @@
 /* global User, Passport, sails */
 var validator   = require('validator');
 var crypto      = require("crypto");
-// var mailer 	  	= require("../mailer");
 var querystring = require("querystring");
 var _           = require("underscore");
 var debug       = require('debug')('eye:web:service:protocol:local');
@@ -111,30 +110,53 @@ exports.createUser = function(req, res, next) {
  * @param {Function} next
  */
 exports.retrievePassword = function (req, res, next) {
-  var email      = req.param('email');
+  var email = req.param('email');
 
   if (!email) {
     req.flash('error', 'Error.Passport.Email.Missing');
     return next(new Error('No email was entered.'));
   }
 
-  var hmac  = crypto.createHmac("sha1", email);
-  var token = hmac.digest(encoding="base64");
+  var token = crypto.createHmac("sha1", email).digest("hex");
 
   User.update({email: email},{invitation_token : token},function (err, user) {
     if (err)
       return next(err);
 
     var queryToken = querystring.stringify({token: token});
-    debug('Reset password link: ' + sails.config.passport.local.activateUrl + queryToken );
-
     var data = {
       activationLink: sails.config.passport.local.activateUrl + queryToken,
-      username      : email
+      username: email
     };
     return next(null, email, data);
   });
 };
+
+/**
+ * Reset activation link & token for a user
+ *
+ * @param {Function} next
+ */
+exports.resetActivationLink = function(user, next){
+  var seed = user.email + Date.now();
+  var token = crypto
+    .createHmac("sha1",seed)
+    .digest("hex");
+
+  var query = { id: user.id };
+  var updates = { invitation_token: token };
+  User.update(query,updates,function(error, user){
+    if(error) {
+      debug('Error updating user');
+      return next(error);
+    }
+
+    var queryToken = querystring.stringify({ token: token });
+    var url = sails.config.passport.local.activateUrl;
+
+    return next(null, url + queryToken);
+  });
+}
 
 /**
  * Invite a new user
@@ -158,17 +180,16 @@ exports.invite = function (req, res, next) {
     return next('No email was entered.');
   }
 
-  if (customers.length === 0) {
+  if(customers.length === 0) {
     req.flash('error', 'Error.Passport.Customers.Missing');
     return next('No customers was entered.');
   }
 
-  var token = crypto.createHmac("sha1", email).digest(encoding="base64");
+  var token = crypto.createHmac("sha1", email).digest("hex");
 
   User.findOne({email: email}, function (err, user) {
     if (err) {
-      // error from db, don't expose to clients, send generic err
-      debug('////////////////// ERROR.DB ///////////////////');
+      debug('//////////////// ERROR.DB ////////////////');
       debug(err);
       return next('Error.DB');
     }
@@ -198,8 +219,6 @@ exports.invite = function (req, res, next) {
           return next(err);
         } else {
           var queryToken = querystring.stringify({token: token});
-          debug('Invitation link: ' + sails.config.passport.local.activateUrl + queryToken );
-
           var emailData = {
             email         : email,
             activationLink: sails.config.passport.local.activateUrl + queryToken,
@@ -238,17 +257,6 @@ exports.invite = function (req, res, next) {
   });
 };
 
-exports.getactivationlink = function(input) {
-  var token = crypto
-    .createHmac('sha1', input.email)
-    .digest(encoding='base64');
-
-  var queryToken = querystring.stringify({ token: token });
-  var url = sails.config.passport.local.activateUrl;
-
-  return url + queryToken;
-};
-
 /**
  * Activate user account
  *
@@ -282,7 +290,9 @@ exports.activate = function (req, res, next) {
     return next(new Error('No password was entered.'));
   }
 
-  User.findOne({invitation_token : invitation_token}, function(err, user) {
+  User.findOne({
+    invitation_token : invitation_token
+  }, function(err, user) {
     if(err) {
       debug('Error getting invitee');
       debug(err);
@@ -293,9 +303,7 @@ exports.activate = function (req, res, next) {
       return next(new Error("No user found"));
     }
 
-    User
-    .findOne()
-    .where({
+    User.findOne().where({
       username: username,
       id : {'!': user.id}
     }).exec(function(err, duplicatedUser) {
