@@ -295,14 +295,18 @@ passport.inviteUser = function(req, res, next) {
 function activateTheeyeUser (user, next) {
   next||(next=function(){});
 
-	var client = new TheEyeClient({
-		'client_secret': sails.config.supervisor.client_secret,
-		'client_id': sails.config.supervisor.client_id,
-		'api_url': sails.config.supervisor.url
-	});
+  var client = new TheEyeClient({
+    'client_secret': sails.config.supervisor.client_secret,
+    'client_id': sails.config.supervisor.client_id,
+    'api_url': sails.config.supervisor.url
+  });
 
   client.refreshToken(function(err,token){
-    if(err) return next(err);
+    if(err){
+      debug(err);
+      return next(err);
+    }
+
     debug('supervisor access token refresh success');
     var data = {
       'email':user.email,
@@ -311,6 +315,7 @@ function activateTheeyeUser (user, next) {
       'enabled':true
     };
 
+    debug("Creating user %s theeye passport", user.id);
     createTheeyeUser(user, data, client, function(err, profile){
       if(err) return next(err);
       return next(null, profile);
@@ -319,25 +324,23 @@ function activateTheeyeUser (user, next) {
 }
 
 passport.activateUser = function(req, res, next){
-  this.protocols.local.activate(req, res,
-    function(err, user){
-      if(err) {
-        debug('Error activating user on local protocol');
-        debug(err);
-        return next(err);
-      }
-
-      if(!user) {
-        var error = new Error('cannot activate, user does not exist');
-        debug(error);
-        return next(error);
-      }
-
-      activateTheeyeUser(user,function(error){
-        next(error, user);
-      });
+  this.protocols.local.activate(req,res,function(err, user){
+    if(err) {
+      debug('Error activating user on local protocol');
+      debug(err);
+      return next(err);
     }
-  );
+
+    if(!user) {
+      var error = new Error('Cannot activate, user does not exist');
+      debug(error);
+      return next(error);
+    }
+
+    activateTheeyeUser(user,function(error){
+      next(error, user);
+    });
+  });
 };
 
 passport.retrievePassword = function(req, res, next) {

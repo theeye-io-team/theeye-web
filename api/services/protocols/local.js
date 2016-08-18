@@ -264,8 +264,8 @@ exports.inviteToCustomer = function (req, res, next) {
  */
 exports.activate = function (req, res, next) {
   var username = req.param('username')
-    , password = req.param('password')
-    , invitation_token = req.param('invitation_token');
+  , password = req.param('password')
+  , invitation_token = req.param('invitation_token');
 
   if (!username) {
     debug('No username was entered');
@@ -286,78 +286,48 @@ exports.activate = function (req, res, next) {
   }
 
   User.findOne({
-    invitation_token : invitation_token
-  }, function(err, user) {
+    invitation_token: invitation_token
+  }, function(err, user){
     if(err) {
-      debug('Error getting invitee');
       debug(err);
       return next(err);
     }
+
     if(!user) {
-      debug('No user found');
+      debug('User not found');
       return next(new Error("No user found"));
     }
 
-    User.findOne().where({
-      username: username,
-      id : {'!': user.id}
-    }).exec(function(err, duplicatedUser) {
+    debug("Creating user %s local passport", user.id);
+    Passport.create({
+      protocol : 'local',
+      password : password,
+      user : user.id
+    }, function (err, passport) {
       if(err) {
-        debug('//////////////// ERROR.DB ////////////////');
         debug(err);
-        return next(new Error('DB Error'));
-      }
-      if(duplicatedUser) {
-        debug('duplicated user');
-        req.flash('error', 'Error.Passport.User.Exists');
-        return next(new Error("User exists"));
+        return next(err);
       }
 
-      debug("Creating user %s local passport", user.id);
-      Passport.destroy({
-        protocol : 'local',
-        user : user.id
-      }, function (err, passport) {
-        Passport.create({
-          protocol : 'local',
-          password : password,
-          user : user.id
-        }, function (err, passport) {
-          if (err) {
-            debug('//////////////// ERROR.DB ////////////////');
-            debug(err);
-            if (err.code === 'E_VALIDATION') {
-              req.flash('error', 'Error.Passport.Password.Invalid');
-            }
+      debug("Enabling user %s", user.id);
 
-            return next(new Error("Valiidation error"));
-          }
-
-          debug("Enabling user %s", user.id);
-
-          User.update({invitation_token : invitation_token}, {
-            username : username,
-            password : password,
-            enabled  : true,
-            invitation_token : ''
-          }, function (err, updatedUsers) {
-            if (err || !user || !updatedUsers.length)
-            {
-              debug('Error updating user after invite process');
-              debug(err);
-              req.flash('error', '"Unexpected Error"');
-              return next(err);
-            } else {
-              //return only the user, not array!
-              return next(null, updatedUsers[0]);
-            }
-
-          });
-        });
+      User.update({
+        invitation_token : invitation_token
+      }, {
+        username: username,
+        password: password,
+        enabled: true,
+        invitation_token: ''
+      }, function (err, users) {
+        if(err) {
+          debug(err);
+          return next(err);
+        }
+        return next(null, users[0]);
       });
     });
   });
-};
+}
 
 /**
  * Update user local passport
@@ -402,7 +372,7 @@ exports.update = function (req, res, next) {
         return next(null);
     });
   });
-};
+}
 
 /**
  * Assign local Passport to user
@@ -436,7 +406,7 @@ exports.connect = function (req, res, next) {
       next(null, user);
     }
   });
-};
+}
 
 /**
  * Validate a login request
