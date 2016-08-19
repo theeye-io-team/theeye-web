@@ -98,7 +98,7 @@
                   <p> <%= user.email %> </p>
                   <h4>Credential</h4>
                   <p> <%= user.credential %> </p>
-                  <h4>Customers</h4>
+                  <h4>Organizations</h4>
                   <p> <%= user.customers %> </p>
                 </div>
                 <% var theeye = protocols.filter(function(proto){ return proto.user == user.id; })[0] || { profile: {} } ; %>
