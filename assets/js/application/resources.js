@@ -297,6 +297,18 @@ $(function(){
     $('.modal#scriptUpload div#scriptTemplateDescription').hide();
   })();
 
+  function deleteResourceRequest (idResource,done) {
+    jQuery.ajax({
+      url: '/resource/' + idResource,
+      type: 'DELETE'
+    }).done(function(data) {
+      if(done) done(null,data);
+      else window.location.reload();
+    }).fail(function(xhr, err, xhrStatus) {
+      bootbox.alert(xhr.responseText);
+    });
+  }
+
   /**
    * DELETE RESEOURCE FUNCTION
    */
@@ -304,17 +316,26 @@ $(function(){
     bootbox.confirm('The resource will be removed. Want to continue?',
       function(confirmed){
         if(!confirmed) return;
-
         var $delTrigger = $(event.currentTarget);
         var idResource = $delTrigger.attr("data-resource_id");
+        deleteResourceRequest(idResource);
+      });
+  });
 
-        jQuery.ajax({
-          url: '/resource/' + idResource,
-          type: 'DELETE'
-        }).done(function(data) {
-          window.location.reload();
-        }).fail(function(xhr, err, xhrStatus) {
-          bootbox.alert(xhr.responseText);
+  /**
+   * DELETE HOST RESEOURCE FUNCTION
+   */
+  $(".deleteHostResource").on("click",function (event) {
+    bootbox.confirm('<h3>WARNING!</h3><p>The selected HOST and all the monitors attached to it will be removed. This is operation cannot be undo.</p><p>Are you sure you want to continue?</p>',
+      function(confirmed){
+        if(!confirmed) return;
+        var $delTrigger = $(event.currentTarget);
+        var idResource = $delTrigger.attr("data-resource_id");
+        deleteResourceRequest(idResource,function(){
+          bootbox.alert('Ok, the host is gone. Dont\' forget to shutdown and remove the AGENT from the host.',
+            function(){
+              window.location.reload();
+            });
         });
       });
   });

@@ -170,6 +170,13 @@
                         <span class="glyphicon <%= muteIcon %>"></span>
                       </button>
 
+                      <button class="deleteResource btn btn-default simple-btn tooltiped"
+                        title="Delete monitor"
+                        aria-label="Center Align"
+                        data-resource_id="<%= monitor.resource.id %>">
+                        <span class="glyphicon glyphicon-trash"></span>
+                      </button>
+
                       <% } else { %>
 
                       <div class="dropdown host-menu">
@@ -214,15 +221,15 @@
                           </li>
                         </ul>
                       </div>
-                      <% } %>
 
-                      <button class="deleteResource btn btn-default simple-btn tooltiped"
+                      <button class="deleteHostResource btn btn-default simple-btn tooltiped"
                         title="Delete monitor"
                         aria-label="Center Align"
                         data-resource_id="<%= monitor.resource.id %>">
                         <span class="glyphicon glyphicon-trash"></span>
                       </button>
 
+                      <% } %>
 
                     </div>
                   </div>

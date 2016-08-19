@@ -36,12 +36,11 @@ module.exports = {
       theeye.getCustomerAgentCredentials(
         req.session.customer,
         supervisor,
-        function(err, userAgent) {
-          if(err) {
-            debug(err);
-            return res.serverError("Error getting agent cURL: " + err);
+        function(error, userAgent) {
+          if(error) {
+            debug(error);
           }
-          data.agentCurl = userAgent.curl;
+          data.agentCurl = userAgent&&userAgent.curl||'ERROR: Agent-User not found';
           data.moment = moment;
 
           var subs = _.chain(data.resources)

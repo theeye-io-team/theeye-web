@@ -28,22 +28,27 @@ module.exports = {
   create: function(req, res)
   {
     var supervisor = req.supervisor;
+    var params = req.params.all();
 
-    if (!req.body.name) return res.send(400, 'Name for the action is required');
-    if (!req.body.script_id) return res.send(400, 'Script is required');
-    if (!req.body.hosts_id && !req.body.resource_id){
-      return res.send(400, 'Host or Resource is required');
-    }
+    if(!params.name) return res.send(400,'Name for the action is required');
+    if(!params.script_id) return res.send(400,'Script is required');
+    if(!params.hosts_id) return res.send(400,'Host is required');
 
-    var hosts = req.body.hosts_id;
-    var data = extend({
-      'description': req.body.description || req.body.name,
-      'hosts_id': hosts
-    }, req.body);
+    var data = {
+      'name': params.name,
+      'description': params.description || params.name,
+      'script': params.script_id,
+      'public': params.public,
+      'script_arguments': params.script_arguments.split(','),
+      'script_runas': params.script_runas,
+      'hosts': params.hosts_id
+    };
 
-    supervisor.createTask(data,(err, task) => {
-      if(err) return res.send(500, err.toString());
-      res.json(task);
+    supervisor.create({
+      resource: supervisor.TASK,
+      body: data,
+      failure: error => res.send(500, error),
+      success: task => res.json(task),
     });
   },
   /**

@@ -98,7 +98,7 @@ exports.getCustomerAgentCredentials = function(
   supervisor.userFetch({
     'customer': customer,
     'credential': 'agent'
-  }, function(error,users) {
+  },function(error,users){
     if(error) return nextFn(error);
     if(!users) return nextFn(null);
 
@@ -114,6 +114,6 @@ exports.getCustomerAgentCredentials = function(
       return nextFn(null, user);
     }
 
-    return nextFn(new Error('error on user fetch. not defined'), user);
+    return nextFn();
   });
 }
