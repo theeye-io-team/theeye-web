@@ -1,6 +1,8 @@
 /* global async, Passport, sails, User */
 var passport = require('../services/passport');
+var mailer = require('../services/mailer');
 var debug = require('debug')('eye:web:controller:user');
+var underscore = require('underscore');
 
 var UserController = module.exports = {
   index: function(req, res) {
@@ -36,8 +38,7 @@ var UserController = module.exports = {
   //Current user home
   profile: function (req, res) {
     var supervisor = req.supervisor;
-    if (typeof req.user !== 'undefined' )
-    {
+    if (typeof req.user !== 'undefined' ) {
       User
       .findOne({id:req.user.id})
       .populate('passports')
@@ -48,13 +49,12 @@ var UserController = module.exports = {
             user : 'Error!',
             errors : req.flash('error')
           });
-        }
-        else
-        {
+        } else {
           var passports = {};
           user.passports.forEach(function(passport) {
             passports[passport.protocol] = passport;
           });
+
           var theeye = passport.protocols.theeye;
           theeye.getCustomerAgentCredentials(
             req.session.customer,
@@ -90,28 +90,8 @@ var UserController = module.exports = {
       res.send(200,{});
     } else res.send(403,{});
   },
-  sendActivationLink: function(req, res) {
-    var params = req.params.all();
-    var userId = params.id;
-
-    User.findOne({
-      id : userId
-    }, function(err, user) {
-      if(err) {
-        sails.log.error(err);
-        return res.send(500);
-      }
-      if(!user) return res.send(404);
-      if(user.enabled) return res.send(400,'The user is already active');
-
-      passport.resendInvitationUser(user, function(error){
-        if(error){
-          sails.log.error(error);
-          return res.send(500);
-        }
-        return res.send(200);
-      });
-    });
+  sendActivationLink: function(req, res, next) {
+    passport.resendInvitation(req, res, next);
   },
   retrievePassword: function(req, res) {
     var params = req.params.all();
@@ -179,47 +159,51 @@ var UserController = module.exports = {
   },
   //POST  /admin/user/:id
   create: function(req, res) {
-    /* TODO
-    * Evaluate errors to be able to trace them.
-    * Errors here can come from:
-    *   services/passport,
-    *   services/passport/[protocol],
-    *   db/validations
-    *   services/mailer
-    * Maybe some evaluateError fn to normalize all distinct error
-    * sources and types
-    */
     var params = req.params.all();
+    if(!params.customers) return res.send(400, 'You must select at least one customer');
+    if(!params.username) return res.send(400, 'You must select a username');
+    if(!params.email) return res.send(400, 'You must select an email');
 
-    if(!params.customers)
-      return res.send(400, 'You must select at least one customer');
+    User.findOne({
+      or: [
+        {email: params.email},
+        {username: params.username}
+      ]
+    }).exec((error,user) => {
+      if (user) {
+        if(user.username == params.username)
+          return res.send(400, 'The username is taken. Choose another one');
+        if(user.email == params.email)
+          return res.send(400, 'The email is taken. Choose another one');
+      } else {
+        if (params.sendInvitation) {
+          passport.inviteUser(req, res, function(err, user) {
+            if(err) {
+              debug(err);
+              return res.send(400, err);
+            } else return res.json(user);
+          });
+        } else {
+          if(params.password !== params.confirmPassword)
+            return res.send(400, 'Passwords don\'t match');
+          if(params.password.length < 8)
+            return res.send(400, 'Passwords must be at least 8 characters long');
 
-    if(params.sendInvitation) {
-      passport.inviteUser(req, res, function(err, user) {
-        if(err) {
-          debug(err);
-          return res.send(400, err);
-        }else return res.json(user);
-      });
-    } else {
-      if(params.password !== params.confirmPassword)
-        return res.send(400, 'Passwords don\'t match');
-      if(params.password.length < 8)
-        return res.send(400, 'Passwords must be at least 8 characters long');
-
-      passport.createUser(req, res, function(err, user) {
-        if(err) {
-          if (err.code === 'E_VALIDATION') {
-            if (err.invalidAttributes.email)
-              return res.send(400, 'Invalid email or already exists');
-            if (err.invalidAttributes.username)
-              return res.send(400, 'Invalid username or already exists');
-          }
-          return res.send(400, 'Invalid params');
+          passport.createUser(req, res, function(err, user) {
+            if(err) {
+              if (err.code === 'E_VALIDATION') {
+                if (err.invalidAttributes.email)
+                  return res.send(400, 'Invalid email or already exists');
+                if (err.invalidAttributes.username)
+                  return res.send(400, 'Invalid username or already exists');
+              }
+              return res.send(400, 'Invalid params');
+            }
+            return res.json(user);
+          });
         }
-        return res.json(user);
-      });
-    }
+      }
+    });
   },
   /**
    *
@@ -229,33 +213,41 @@ var UserController = module.exports = {
   edit: function(req, res) {
     var params = req.params.all();
     var userId = params.id;
-    var supervisor = req.supervisor;
 
     if(!params.customers) return res.send(400, 'select at least one customer');
 
-    var toUpdate = {};
-    toUpdate.customers = params.customers;
-    toUpdate.enabled = params.enabled;
+    var updates = {};
+    updates.customers = params.customers;
+    updates.enabled = params.enabled;
+    if(params.credential) updates.credential = params.credential;
 
-    if(params.credential) toUpdate.credential = params.credential;
+    User.findOne({id: userId},(error, user) => {
+      if( !user ) return res.send(404,'user not found');
 
-    var query = User.update({ id : userId }, toUpdate);
-    query.exec(function(error, user) {
-      if(error){
-        debug(error);
-        return res.send(500, 'internal server error');
+      if(
+        underscore.difference(user.customers, updates.customers).length !== 0 &&
+        user.enabled
+      ){
+        // notify the user customers permissions changed
+        mailer.sendCustomerPermissionsChanged(user, error => debug(error));
       }
 
-      var theeye = passport.protocols.theeye;
-      theeye.updateUser(
-        userId,
-        toUpdate,
-        supervisor,
-        function(error, profile){
-          if(error) return res.send(500, 'update error');
-          res.json(user);
+      User.update({id: userId}, updates).exec((error,user) => {
+        if(error){
+          debug(error);
+          return res.send(500, 'internal server error');
         }
-      );
+
+        res.json(user);
+
+        var theeye = passport.protocols.theeye;
+        theeye.updateUser(
+          userId,
+          updates,
+          req.supervisor,
+          error => debug(error)
+        );
+      });
     });
   },
   /**

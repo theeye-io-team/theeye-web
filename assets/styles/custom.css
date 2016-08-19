@@ -598,3 +598,5 @@ h4.panel-title-content::after {
   content: '...'
 }
 */
+
+.profile-page .col-20 { width:20%; }

@@ -212,79 +212,101 @@ passport.endpoint = function (req, res) {
   this.authenticate(provider, options)(req, res, req.next);
 };
 
-passport.resendInvitationUser = function(user, next){
-  var local = this.protocols.local;
-  local.resetActivationLink(user, function(error, link){
+passport.resendInvitation = function(req, res, next){
+  var self = this;
+  var params = req.params.all();
+  var userId = params.id;
 
-    var data = {
-      'activationLink': link,
-      'username': user.username
-    };
+  User.findOne({ id: userId }, function(err, invitee){
+    if(err) {
+      sails.log.error(err);
+      return res.send(500);
+    }
+    if( ! invitee ) return res.send(404,'User not found');
+    if( invitee.enabled ) return res.send(400,'The user is already active');
 
-    debug('Invitation link is %s', link);
-
-    mailer.sendActivationMail(user.email, data, function(error) {
-      if(error) {
-        // req.flash('error','Error.Passport.User.Invite');
-        debug('error sending invitation email to "%s"', user.email);
-        return next(error);
-      }
-
-      debug('email invitation sent');
-      return next(null);
+    passport.protocols.local.resetActivationToken(invitee, function(error, token){
+      invitee.invitation_token = token;
+      passport.sendUserActivationEmail(req.user, invitee, function(error){
+        if(error){
+          sails.log.error(error);
+          return res.send(500);
+        }
+        return res.send(200, invitee);
+      });
     });
   });
 }
 
+/**
+ *
+ * the user is new and has been invited to complete registration
+ * @author Facugon
+ * @param {User} inviter
+ * @param {User} invitee
+ *
+ */
+passport.sendUserActivationEmail = function (inviter, invitee, next){
+  var activationLink = this.protocols.local.getActivationLink(invitee);
+  debug('Activation Link is %s', activationLink);
+
+  var data = {
+    inviter: inviter,
+    invitee: invitee,
+    activationLink: activationLink
+  };
+
+  mailer.sendActivationMail(data, function(err) {
+    if(err) {
+      debug('error sending invitation email to "%s"', invitee.email);
+      return next(err);
+    }
+
+    debug('invitation email sent');
+    return next(null);
+  });
+}
+
 passport.inviteUser = function(req, res, next) {
-  var local = this.protocols.local;
   var supervisor = req.supervisor;
-  return local.invite(req, res,
-    function(err, email, emailData, user) {
+
+  return this.protocols.local.inviteToCustomer(
+    req, res, function(err, invitee) {
       if(err) return next(err);
 
-      if(emailData.activationLink){
-        debug('Invitation link is %s', emailData.activationLink);
-
-        //send activation email
-        mailer.sendActivationMail(emailData.email, emailData, function(err) {
-          if(err) {
-            req.flash('error', 'Error.Passport.User.Invite');
-            debug('error sending invitation email to "%s"', emailData.email);
-            return next(err);
-          }
-
-          debug('email invitation sent');
-          return next(null, {email : emailData.email});
+      if( invitee.enabled === false ){
+        passport.sendUserActivationEmail( req.user, invitee, error => {
+          req.flash('error', 'Error.Passport.User.Invite');
+          next(error, invitee)
         });
       } else {
-        //send new customer notification email
-        mailer.sendNewCustomerMail(emailData.email, emailData, function(err) {
-          if(err) {
+        mailer.sendNewCustomerEMail(invitee, error => {
+          if(error) {
+            debug('Error sending email to ' + invitee.email);
             req.flash('error', 'Error.Passport.User.Invite');
-            debug("Error sending email to " + emailData.email);
-            return next(err);
           }
 
-          debug('Message sent');
-          return next(null, {email : emailData.email});
+          return next(error, invitee)
         });
       }
-    }
-  );
+    });
 };
 
 function activateTheeyeUser (user, next) {
   next||(next=function(){});
 
-	var client = new TheEyeClient({
-		'client_secret': sails.config.supervisor.client_secret,
-		'client_id': sails.config.supervisor.client_id,
-		'api_url': sails.config.supervisor.url
-	});
+  var client = new TheEyeClient({
+    'client_secret': sails.config.supervisor.client_secret,
+    'client_id': sails.config.supervisor.client_id,
+    'api_url': sails.config.supervisor.url
+  });
 
   client.refreshToken(function(err,token){
-    if(err) return next(err);
+    if(err){
+      debug(err);
+      return next(err);
+    }
+
     debug('supervisor access token refresh success');
     var data = {
       'email':user.email,
@@ -293,6 +315,7 @@ function activateTheeyeUser (user, next) {
       'enabled':true
     };
 
+    debug("Creating user %s theeye passport", user.id);
     createTheeyeUser(user, data, client, function(err, profile){
       if(err) return next(err);
       return next(null, profile);
@@ -301,25 +324,23 @@ function activateTheeyeUser (user, next) {
 }
 
 passport.activateUser = function(req, res, next){
-  this.protocols.local.activate(req, res,
-    function(err, user){
-      if(err) {
-        debug('Error activating user on local protocol');
-        debug(err);
-        return next(err);
-      }
-
-      if(!user) {
-        var error = new Error('cannot activate, user does not exist');
-        debug(error);
-        return next(error);
-      }
-
-      activateTheeyeUser(user,function(error){
-        next(error, user);
-      });
+  this.protocols.local.activate(req,res,function(err, user){
+    if(err) {
+      debug('Error activating user on local protocol');
+      debug(err);
+      return next(err);
     }
-  );
+
+    if(!user) {
+      var error = new Error('Cannot activate, user does not exist');
+      debug(error);
+      return next(error);
+    }
+
+    activateTheeyeUser(user,function(error){
+      next(error, user);
+    });
+  });
 };
 
 passport.retrievePassword = function(req, res, next) {
@@ -398,11 +419,8 @@ passport.createmissingtheeyepassports = function(req, res, next) {
 
 passport.createUser = function(req, res, next) {
   var supervisor = req.supervisor;
-  var passport = this ;
-  passport
-    .protocols
-    .local
-    .createUser(req, res, function(error, user){
+  this.protocols.local.createUser(
+    req, res, function(error, user){
       if(error) next(error);
       var input = req.params.all();
 
