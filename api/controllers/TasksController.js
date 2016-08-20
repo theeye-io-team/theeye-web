@@ -34,15 +34,12 @@ module.exports = {
     if(!params.script_id) return res.send(400,'Script is required');
     if(!params.hosts_id) return res.send(400,'Host is required');
 
-    var data = {
-      'name': params.name,
+    var data = extend(params,{
       'description': params.description || params.name,
       'script': params.script_id,
-      'public': params.public,
       'script_arguments': params.script_arguments.split(','),
-      'script_runas': params.script_runas,
       'hosts': params.hosts_id
-    };
+    });
 
     supervisor.create({
       resource: supervisor.TASK,
