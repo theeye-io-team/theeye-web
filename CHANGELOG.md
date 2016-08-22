@@ -8,6 +8,8 @@
 
 > update theeye-client usaga and calls. remove proxy methods for resource/monitor and task       
 
+> update some texts
+
 
 ### 0.3.0 - 2016-08-19
 
