@@ -48,7 +48,8 @@
     "validator": "3.43.0"
   },
   "devDependencies": {
-    "nodemon": "1.10.0"
+    "nodemon": "1.10.0",
+    "npm-2": "^2.15.0"
   },
   "scripts": {
     "start": "node .",

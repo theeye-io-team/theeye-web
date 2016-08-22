@@ -13,6 +13,8 @@
 <% block('scripts','<script src="/js/application/searchbox.js"></script>')%>
 <% block('scripts','<script src="/js/jquery.datetimepicker.full.min.js"></script>') %>
 <% block('scripts','<script src="/js/application/tasks.js"></script>') %>
+<% block('scripts','<script src="/js/application/tags.js"></script>')%>
+<% block('scripts','<script> window.CustomerTags = PrepareTags(' + JSON.stringify(tags) + '); </script>') %>
 
 <!-- Main  -->
 <div class="admin-container">
@@ -58,7 +60,7 @@
             'task='+ task.id,
             'host='+ task.hostname,
             'script='+ task.script_id
-          ].join(','); %>
+          ].concat(task.tags).join(','); %>
           <div
             class="itemRow panel panel-default js-searchable-item"
             data-item-id="<%= task.id %>"

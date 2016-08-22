@@ -6,6 +6,8 @@
 <% block('scripts','<script src="/js/ace-editor/ace.js"></script>') %>
 <% block('scripts','<script src="/js/application/scripts.js"></script>')%>
 <% block('scripts','<script src="/js/application/searchbox.js"></script>')%>
+<% block('scripts','<script src="/js/application/tags.js"></script>')%>
+<% block('scripts','<script> window.CustomerTags = PrepareTags(' + JSON.stringify(tags) + '); </script>') %>
 
 <!-- Main  -->
 <div class="admin-container monitorContainer">
@@ -96,13 +98,12 @@
         <% monitors.forEach( function(monitor, key) { %>
           <%
           var tags = [
-            "resource",
-            "description="+monitor.resource.description,
-            "hostname="+monitor.resource.hostname,
-            "type="+monitor.type,
-            monitor.enable?'enabled':'disabled',
-            "status="+monitor.resource.state
-          ].join(',')
+            "id="          + monitor.resource.id,
+            "description=" + monitor.resource.description,
+            "hostname="    + monitor.resource.hostname,
+            "type="        + monitor.type,
+            "state="       + monitor.resource.state,
+          ].concat(monitor.tags).join(',')
           %>
           <div class="itemRow panel panel-default js-searchable-item"
             data-item-id="<%= monitor.resource.id %>"

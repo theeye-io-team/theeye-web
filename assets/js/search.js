@@ -1,22 +1,19 @@
 var log = debug('eye:web:admin:search');
 
-$(function()
-{
+$(function(){
 
   $('button.resource-search').click(function(event){
     event.preventDefault();
     event.stopPropagation();
 
-    var idResource = event.currentTarget.getAttribute('data-resource_id');
+    var search = event.currentTarget.getAttribute('data-search');
+    var $searchComponent = $('.js-searchable-box form');
 
-    var $searchComponent = $('.js-searchable-box form.search');
-
-    $searchComponent.find('input').val(idResource);
-    $searchComponent.find('button').trigger('click');
+    $searchComponent.find('input').val(search);
+    $searchComponent.find('button.search').trigger('click');
   });
 
   (function(){
-
     var $searchItems = $('.js-searchable-box .js-searchable');
     var $searchFrom = $('.js-searchable-box form.search');
     var $searchBtn =  $searchFrom.find('button');

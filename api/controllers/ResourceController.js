@@ -1,5 +1,6 @@
 var debug = require('debug')('eye:web:controller:resource');
 var moment = require('moment');
+var extend = require('util')._extend
 
 var toBoolean = function(value){
   if(value==='true'||value===true)
@@ -28,12 +29,11 @@ module.exports = {
       },
       scraperHosts: function(callback) {
         supervisor.scraperHosts(callback);
-      }
+      },
+      tags: callback => supervisor.tags(callback)
     }, function(err, data) {
-      if (err) {
-        console.log(err.toString());
-        return res.serverError("Error getting data from supervisor: " + err.toString());
-      }
+      if (err) return res.serverError("Error getting data from supervisor: " + err.toString());
+
       // milliseconds
       data.looptimes = [
         {'id':'15000','value':'0.25'},
@@ -75,25 +75,27 @@ module.exports = {
    */
   create : function(req,res,next)
   {
-    var params = req.params.all();
     var supervisor = req.supervisor;
+    var params = req.params.all();
 
-    if( !req.body.host_id && !req.body.hosts_id )
-      return res.send(400, 'At least one host is required');
-    if( !req.body.monitor_type )
-      return res.send(400,"No resource type supplied");
+    var hosts = [];
+    if( params.hosts_id ) hosts = params.hosts_id;
+    else if( params.host_id ) hosts = [ params.host_id ];
+    else return res.send(400, 'At least one host is required');
+    if( !params.monitor_type ) return res.send(400,"No resource type supplied");
 
-    params.type = req.params.type;
-    params.hosts = [];
-    var hostId = req.body.host_id;
-    var hostsId = req.body.hosts_id;
+    var data = extend(params, { hosts: hosts });
+    if( params.script_arguments ){
+      data.script_arguments = params.script_arguments
+        .split(',')
+        .map(arg => arg.trim());
+    }
 
-    if(!hostsId) params.hosts.push(hostId);
-    else params.hosts = hostsId;
-
-    supervisor.createResource( params, function(err, resource) {
-      if(err) return res.send(500, err);
-      res.send(201,{ resource: resource });
+    supervisor.create({
+      route: supervisor.RESOURCE,
+      body: data,
+      failure: error => res.send(500, error),
+      success: monitor => res.json(monitor),
     });
   },
   /**
@@ -102,27 +104,29 @@ module.exports = {
    */
   update : function(req,res,next)
   {
-    var params = req.params.all();
     var supervisor = req.supervisor;
+    var params = req.params.all();
 
-    var id = req.param("id", null);
-    if( ! id || ! id.match(/^[a-fA-F0-9]{24}$/) )
-      return res.send(400,'invalid id');
-    if( !req.body.monitor_type )
-      return res.send(400,"No resource type supplied");
+    var hosts = [];
+    if( params.hosts_id ) hosts = params.hosts_id;
+    else if( params.host_id ) hosts = [ params.host_id ];
+    else return res.send(400, 'At least one host is required');
+    if( !params.monitor_type ) return res.send(400,"No resource type supplied");
 
-    var hostsId = req.body.hosts_id;
-    if( hostsId && !(hostsId instanceof Array) ) params.host = hostsId;
-    else if(hostsId instanceof Array && hostsId.length==1) params.host = hostsId[0];
-    else return res.send(400,'Host parameter error');
+    var data = extend(params, { hosts: hosts });
+    if( params.script_arguments ){
+      data.script_arguments = params.script_arguments
+        .split(',')
+        .map(arg => arg.trim());
+    }
 
-    supervisor.patchResource(
-      req.params.id,
-      params,
-      function(err, resource) {
-        if(err) return res.send(500, err);
-        res.send(200,{ resource: resource });
-      });
+    supervisor.patch({
+      id: params.id,
+      route: supervisor.RESOURCE,
+      body: data,
+      failure: error => res.send(500, error),
+      success: resource => res.json(resource),
+    });
   },
   /**
    * Get resource

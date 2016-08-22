@@ -7,7 +7,7 @@
 <% block('scripts', '<script src="/js/application/events.js"></script>') %>
 
 <div class="admin-container events-container"><!-- MAIN -->
-  <div class="js-searchable-box" id="searcher">
+  <div class="js-searchable-box">
     <form>
       <input type="text" placeholder="Find a resource">
       <button class="clean"><i class="glyphicon glyphicon-remove"></i></button>
@@ -41,22 +41,25 @@
           indexedResources.forEach(function(resource){
             var overallState = resource.state;
             var tags = [
-              "resource",
-              "id="+resource.id,
-              "type="+resource.type,
-              "hostname="+resource.hostname
+              "id="          + resource.id,
+              "description=" + resource.description,
+              "hostname="    + resource.hostname,
+              "type="        + resource.type,
+              "state="       + resource.state
             ];
             resource.subs.forEach(function(subresource){
               if(statesDicc[subresource.state] > statesDicc[overallState]) {
                 overallState = subresource.state;
               }
-              tags.push(subresource.type);
-              tags.push("resource="+ subresource.id);
+              tags.push("resource=" + subresource.id);
               tags.push(subresource.description);
               tags.push(subresource.hostname);
+              tags.push(subresource.type);
               tags.push("state=" + subresource.state);
+              tags.concat(subresource.tags);
             });
-            tags = tags.join(',');
+
+            tags = tags.concat(resource.monitor.tags).join(',');
           %>
             <div class="itemRow resource-container panel panel-default js-searchable-item"
               id="resource-<%= resource.id %>"
@@ -71,7 +74,7 @@
                     <div class="panel-title-content">
                       <span class="panel-item name" id="<%= resource.id %>"><%= resource.description %><small> > <%= resource.type %></small></span>
                       <span class="panel-item icons">
-                        <button href="#search<%= resource.id %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
+                        <button data-search="<%= resource.name %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
                           <span class="glyphicon glyphicon-search"></span>
                         </button>
                         <button class="monitorStats btn btn-icon-image icon-image-stats tooltiped" title="Stats">
@@ -155,17 +158,14 @@
           </button>
 
           <% tasks.forEach(function(task){ %>
-            <%
-            var tags = [ "task", task.name, task.hostname ];
-            if( task.resource_id ) {
-              tags.push(
-                task.resource_name,
-                task.resource_type,
-                "resource=" + task.resource_id
-              );
-            }
-            tags = tags.join(',');
-            %>
+            <% var tags = [
+              'task',
+              task.description,
+              task.name,
+              'task='+ task.id,
+              'host='+ task.hostname,
+              'script='+ task.script_id
+            ].concat(task.tags).join(','); %>
             <div class="panel panel-default js-searchable-item" data-tags="<%= tags %>" data-taskid="<%=task.id%>" data-taskresourceid="<%=task.resource_id%>" data-username="<%= req.user.username %>">
               <div class="panel-heading" role="tab" id="heading<%=task.id%>">
                 <h4 class="panel-title task">
