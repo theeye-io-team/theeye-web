@@ -1,4 +1,4 @@
-/* global bootbox, $searchbox */
+/* global bootbox, $searchbox, CustomerTags, _ */
 /* NOTE
 Lists are made up with:
   class="itemRow panel panel-default js-searchable-item"
@@ -115,7 +115,7 @@ $(function(){
         type:'PUT',
         url:'/task/' + $taskForm.data('task-id'),
         data: JSON.stringify(vals),
-        contentType: "application/json; charset=utf-8",
+        contentType: "application/json; charset=utf-8"
       }).done(function(data) {
         $(".modal#edit-task").modal("hide");
         window.location.reload();
@@ -178,14 +178,14 @@ $(function(){
         method:'POST',
         url:'/task',
         data: JSON.stringify(vals),
-        contentType: "application/json; charset=utf-8",
+        contentType: "application/json; charset=utf-8"
       }).done(function(data) {
         $(".modal#create-task").modal("hide");
         alert('Task Created','Task', function(){
           window.location.reload();
         });
       }).fail(function(xhr, err, xhrStatus) {
-        alert(error);
+        alert(err);
       });
 
       return false;
@@ -219,6 +219,45 @@ $(function(){
     var $modal = $('#schedule-task-modal');
     var $form = $('form', $modal);
     var $submitter = $('button[type=submit]',$modal);
+    var $calendarElement, scheduleData;
+
+    function getEventSeries(title, startingDate, interval) {
+      var events = [];
+      interval = interval ? humanInterval(interval) : false;
+      //60 iterations / dates
+      if(interval) {
+        for(var ii = 0; ii < 60; ii++) {
+          events.push({
+            title: title,
+            start: new Date(startingDate + (interval * ii))
+          });
+        }
+      }else{
+        events.push({
+          title: title,
+          start: new Date(startingDate)
+        });
+      }
+      return events;
+    }
+
+    function getEventSources(scheduleData, name) {
+      return _.map(scheduleData, function(scheduleEvent){
+        console.log(scheduleEvent.data.scheduleData.runDate);
+        var ms = new Date(scheduleEvent.data.scheduleData.runDate);
+        return {
+          id: scheduleEvent._id,
+          color: 'red',
+          textColor: 'white',
+          events: getEventSeries(
+            name,
+            ms.valueOf(),
+            scheduleEvent.data.scheduleData.repeatEvery
+          )
+        };
+      });
+
+    }
 
     //mode selector
     $('input[name=mode]').on('change', function(evt){
@@ -235,25 +274,51 @@ $(function(){
     $('.scheduleTask').click(function(evt){
       evt.preventDefault();
       evt.stopPropagation();
+
+      scheduleData = [];
       // console.log(this);
       var itemData = $(this).closest('.itemRow').data();
-      // console.log(itemData);
-      //prepare form
-      $form.data('task-id',itemData.itemId);
-      //prepare modal
-      $('h4.modal-title',$modal).text('Schedule task: ' + itemData.itemName);
-      $('input[name=datetime]').val('');
-      $modal.modal('show');
+      $.get("/task/" + itemData.itemId).done(function(data){
+        scheduleData = getEventSources(data.scheduleData, itemData.itemName);
+        //prepare form
+        $form.data('task-id',itemData.itemId);
+        //prepare modal
+        $('h4.modal-title',$modal).text('Schedule task: ' + itemData.itemName);
+        $('input[name=datetime]').val('');
+        $('input[name=frequency]').val('');
+
+        //calendar stuff on event handler below
+        $modal.modal('show');
+
+      }).fail(function(xhr, err, xhrStatus) {
+        alert(xhr.responseText);
+      });
       return;
+    });
+
+    //initialize calendar only once
+    $modal.on('shown.bs.modal', function(event) {
+      if(!$calendarElement) {
+        $calendarElement = window.ttt = $('.taskScheduleCalendar', $modal).fullCalendar();
+      }
+      scheduleData.forEach(function(item){
+        $calendarElement.fullCalendar('addEventSource', item);
+      });
+
+    });
+    $modal.on('hide.bs.modal', function(event) {
+      $calendarElement.fullCalendar('removeEventSources');
+      scheduleData = [];
     });
 
     $submitter.click(function(evt){
       var datetime = $('input[name=datetime]',$form).datetimepicker('getValue');
+      var frequency = $('input[name=frequency]', $form).val();
       //SCHEDULE!!!
       $.post("/palanca/schedule", {
         task_id: $form.data('task-id'),
         scheduleData: {
-          // repeatsEvery: '24 hours',
+          repeatEvery: frequency,
           runDate: datetime
         }
       }).done(function(data,status,xhr){
