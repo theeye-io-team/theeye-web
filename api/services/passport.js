@@ -109,8 +109,7 @@ passport.connect = function (req, query, profile, next) {
   }, function (err, passport) {
     if (err) return next(err);
 
-    if (!req.user)
-    {
+    if (!req.user) {
       User.findOne({email: user.email}, function(err, usr){
         if(usr)
         {
@@ -127,17 +126,22 @@ passport.connect = function (req, query, profile, next) {
             //           authentication provider for the first time
             // Action:   Find the user, set the status to enable, clear the invitation_token,
             //			 and assign them a passport.
-            User.update({email: usr.email}, {enabled : true, invitation_token : ''}, function(err, user)
-            {
-              if(err) return next(err);
-              else {
-                Passport.create(query, function (err, passport) {
-                  // If a passport wasn't created, bail out
-                  if (err) return next(err);
-                  return next(null, user[0]);
-                });
-              }
-            });
+            User.update(
+              {email: usr.email},
+              {enabled : true, invitation_token : ''},
+              function(err, user) {
+                if(err) return next(err);
+                else {
+                  Passport.create(query, function (err, passport) {
+                    // If a passport wasn't created, bail out
+                    if (err) return next(err);
+
+                    activateTheeyeUser(user[0],function(error){
+                      return next(error,user[0]);
+                    });
+                  });
+                }
+              });
           }
           else if( ! passport )
           {
