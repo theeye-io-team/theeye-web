@@ -41,18 +41,20 @@
           indexedResources.forEach(function(resource){
             var overallState = resource.state;
             var tags = [
-              "id="          + resource.id,
-              "description=" + resource.description,
-              "hostname="    + resource.hostname,
-              "type="        + resource.type,
-              "state="       + resource.state
+              resource.id,
+              resource.description,
+              resource.name,
+              "hostname=" + resource.hostname,
+              "type=" + resource.type,
+              "state=" + resource.state
             ];
             resource.subs.forEach(function(subresource){
               if(statesDicc[subresource.state] > statesDicc[overallState]) {
                 overallState = subresource.state;
               }
-              tags.push("resource=" + subresource.id);
+              tags.push(subresource.id);
               tags.push(subresource.description);
+              tags.push(subresource.name);
               tags.push(subresource.hostname);
               tags.push(subresource.type);
               tags.push("state=" + subresource.state);
@@ -74,7 +76,7 @@
                     <div class="panel-title-content">
                       <span class="panel-item name" id="<%= resource.id %>"><%= resource.description %><small> > <%= resource.type %></small></span>
                       <span class="panel-item icons">
-                        <button data-search="<%= resource.name %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
+                        <button data-search="<%= resource.description %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
                           <span class="glyphicon glyphicon-search"></span>
                         </button>
                         <button class="monitorStats btn btn-icon-image icon-image-stats tooltiped" title="Stats">
