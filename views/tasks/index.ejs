@@ -1,18 +1,26 @@
 <% block('styles' ,'<link href="/styles/dropzone.css" rel="stylesheet" type="text/css">') %>
-<% block('styles' ,'<link rel="stylesheet" href="/styles/highlight/default.css"></script>') %>
-<% block('styles' ,'<link rel="stylesheet" href="/styles/jquery.datetimepicker.min.css"></script>') %>
+<% block('styles' ,'<link rel="stylesheet" href="/styles/highlight/default.css">') %>
+<% block('styles' ,'<link rel="stylesheet" href="/styles/jquery.datetimepicker.min.css">') %>
+<% block('styles', '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.9.1/fullcalendar.min.css">') %>
 
 <% block('scripts','<script src="/js/application/dropzone.min.js"></script>') %>
 <% block('scripts','<script> window.scripts = '+ JSON.stringify(scripts)+';</script>') %>
 <% block('scripts','<script src="/js/ace-editor/ace.js"></script>') %>
 <% block('scripts','<script src="/js/ace-editor/ext-modelist.js"></script>') %>
 <% block('scripts','<script src="/js/dependencies/lodash.min.js"></script>')%>
+
+<% block("scripts",'<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>') %>
+<% block("scripts",'<script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.9.1/fullcalendar.min.js"></script>') %>
+<% block("scripts",'<script src="/js/human-interval.js"></script>') %>
+
 <% block('scripts','<script src="/js/application/scripts.js"></script>')%>
 <% block('scripts','<script src="/js/highlight.pack.js"></script>') %>
 <% block('scripts','<script>hljs.initHighlightingOnLoad();</script>') %>
 <% block('scripts','<script src="/js/application/searchbox.js"></script>')%>
 <% block('scripts','<script src="/js/jquery.datetimepicker.full.min.js"></script>') %>
 <% block('scripts','<script src="/js/application/tasks.js"></script>') %>
+<% block('scripts','<script src="/js/application/tags.js"></script>')%>
+<% block('scripts','<script> window.CustomerTags = PrepareTags(' + JSON.stringify(tags) + '); </script>') %>
 
 <!-- Main  -->
 <div class="admin-container">
@@ -58,7 +66,7 @@
             'task='+ task.id,
             'host='+ task.hostname,
             'script='+ task.script_id
-          ].join(','); %>
+          ].concat(task.tags).join(','); %>
           <div
             class="itemRow panel panel-default js-searchable-item"
             data-item-id="<%= task.id %>"

@@ -32,8 +32,8 @@
 
       <!-- single host selection -->
 
-      <div class="hidden-container" id="single-host-selection">
-        <select data-hook="hosts_id" name="host_id" class="host-select2 form-control hosts_id">
+      <div class="hidden-container single-host-selection">
+        <select data-hook="hosts_id" name="host_id" class="hosts select form-control" style="width:100%">
           <!-- <option value="0" disabled selected><strong></strong></option> -->
           <option disabled selected value></option>
           <% hosts.forEach(function(h) { %>
@@ -44,8 +44,8 @@
 
       <!-- or multiple host selection -->
 
-      <div class="hidden-container multiple-host-selection">
-        <select multiple data-hook="hosts_id" name="hosts_id" class="host-select2 form-control hosts_id multiple">
+      <div class="hidden-container multiple-hosts-selection">
+        <select data-hook="hosts_id" name="hosts_id" class="select form-control" multiple style="width:100%">
           <% hosts.forEach(function(h) { %>
           <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
           <% }); %>
@@ -56,7 +56,7 @@
   <div class="form-group">
     <label for="script_id" class="col-sm-3 control-label">What script should it run?</label>
     <div class="col-sm-6">
-      <select data-hook="script_id" name="script_id" class="script-select2 form-control">
+      <select data-hook="script_id" name="script_id" class="form-control" style="width:100%">
         <option value="0" disabled selected></option>
         <% scripts.forEach(function(s) { %>
         <option value="<%=s.id%>"><strong><%=s.filename%></strong></option>
@@ -89,6 +89,14 @@
     <div class="col-sm-9">
       <div id="script-arguments-input">
         <input class="form-control tooltiped" title="You can write a comma separated list of arguments" type="text" name="script_arguments" data-hook="script_arguments" placeholder="--color, --exclude-dir='node_modules'">
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="tags" class="col-sm-3 control-label">Tags<br/><small>[optional]</small></label>
+    <div class="col-sm-9">
+      <div>
+        <select class="form-control tooltiped select" title="" name="tags" data-hook="tags" multiple style="width:100%"> </select>
       </div>
     </div>
   </div>

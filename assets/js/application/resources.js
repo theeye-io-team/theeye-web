@@ -39,16 +39,16 @@ $(function(){
 
 //CREATE RESOURCE FUNCTION
 $(function(){
-  function getFormInputValues (inputs) {
+  function extractFormData($el){
+    var inputs = $el.find(":input");
     var values = {};
     inputs.each(function(){
       var input = this;
+      if(!input.value) return;
       if(input.name=='disabled' && input.type=='checkbox'){
         values.enable = !input.checked;
-      } else if(input.name=='hosts_id') {
-        values[input.name] = $(input).val();
       } else {
-        values[input.name] = input.value;
+        values[input.name] = $(input).val();
       }
     });
     return values;
@@ -56,10 +56,8 @@ $(function(){
 
   function updateResourceMonitor($el){
     var idResource = $el.find("[data-hook=resource_id]").val();
-    var inputs = $el.find(":input");
-    var values = getFormInputValues(inputs);
-
-    jQuery.ajax({
+    var values = extractFormData($el);
+    $.ajax({
       url: '/resource/' + idResource,
       type: 'PUT',
       data: values
@@ -71,15 +69,15 @@ $(function(){
   }
 
   function createResourceMonitor($el){
-    var inputs = $el.find(":input");
-    var values = getFormInputValues(inputs);
-
-    jQuery
-    .post("/resource/" + values.monitor_type, values)
-    .done(function(data){
+    var values = extractFormData($el);
+    $.ajax({
+      method:'POST',
+      url:'/resource/' + values.monitor_type,
+      data: JSON.stringify(values),
+      contentType: "application/json; charset=utf-8",
+    }).done(function(data){
       window.location.reload();
-    })
-    .fail(function(xhr, err, xhrStatus){
+    }).fail(function(xhr, err, xhrStatus){
       bootbox.alert(xhr.responseText);
     });
   }
@@ -122,6 +120,18 @@ $(function(){
     $form.find('[data-hook=hosts_id]').val(resource.host_id);
     $form.find('[data-hook=looptime]').val(monitor.looptime);
     $form.find('[data-hook=disabled]').prop('checked', !monitor.enable);
+
+    var $tags = $form.find('select[name=tags]');
+
+    function setSelectedTags (tags) {
+      if(!tags||!Array.isArray(tags)||tags.length===0)return;
+      tags.forEach(function(tag){
+        //$tags.val(tag.id);
+        $tags.append('<option value="'+ tag +'" selected="selected">'+ tag +'</option>');
+      });
+    }
+
+    setSelectedTags( monitor.tags );
 
     switch(type) {
       case 'scraper':
@@ -200,6 +210,7 @@ $(function(){
           //one time AUTOCOMPLETE COMBOBOX setup
           $select.select2();
           $form.find('select#script_id').select2();
+          $form.find('select[name=tags]').select2({ placeholder:"Tags", data: CustomerTags, tags:true });
           var $firstInput = $(this).find('input[type!=hidden]').first().focus();
           $(this).on('shown.bs.modal', function(){
             $firstInput.focus();
@@ -214,7 +225,7 @@ $(function(){
     });
   }
 
-  function setupCreateResourceForm($form, options){
+  function setupCreateResourceForm ($form, options) {
     log('setting up for "create"');
     var host = options.host;
     var hostname = options.hostname;
@@ -232,9 +243,8 @@ $(function(){
         $select.select2();
         if(host) $select.val(host).trigger('change');
 
-        $form.find('select#script_id').select2({
-          placeholder:"Select a script..."
-        });
+        $form.find('select#script_id').select2({ placeholder:"Select a script..." });
+        $form.find('select[name=tags]').select2({ placeholder:"Tags", data: CustomerTags, tags:true });
 
         var $firstInput = $(this).find('input[type!=hidden]').first().focus();
         $(this).on('shown.bs.modal', function(){
@@ -244,7 +254,7 @@ $(function(){
       .modal('show');
   }
 
-  function setupResourceAction(options){
+  function setupResourceAction (options) {
     var formSelector = 'form#' + options.type + 'ResourceForm';
     var $form = $(formSelector);
     var $next = $form.find('.resource-host').next('.host-after');
@@ -362,7 +372,8 @@ $(function(){
     jQuery.ajax({
       url: '/resource/' + idResource,
       type: 'PUT',
-      data: values
+      data: JSON.stringify(values),
+      contentType: "application/json; charset=utf-8",
     }).done(function(data) {
       window.location.reload();
     }).fail(function(xhr, err, xhrStatus) {

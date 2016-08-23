@@ -30,7 +30,7 @@
     <div class="form-group">
       <label for="hostname" class="col-sm-3 control-label">Where should I run?</label>
       <div class="col-sm-9">
-        <select data-hook="host_id" id="host_id" name="host_id" class="host-select2 form-control host_id">
+        <select data-hook="host_id" id="host_id" name="host_id" class="select form-control" style="width:100%">
           <option value="0" disabled selected><strong></strong></option>
           <% hosts.forEach(function(h) { %>
           <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
@@ -42,7 +42,7 @@
   <div class="form-group">
     <label for="script_id" class="col-sm-3 control-label">What script should it run?</label>
     <div class="col-sm-6">
-      <select data-hook="script_id" name="script_id" class="script-select2 form-control">
+      <select data-hook="script_id" name="script_id" class="form-control" style="width:100%">
         <option value="0" disabled selected></option>
         <% scripts.forEach(function(s) { %>
         <option value="<%=s.id%>"><strong><%=s.filename%></strong></option>
@@ -75,6 +75,15 @@
     <div class="col-sm-9">
       <div id="script-arguments-input">
         <input class="form-control tooltiped" title="You can write a comma separated list of arguments" type="text" name="script_arguments" data-hook="script_arguments" placeholder="--color, --exclude-dir='node_modules'">
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="tags" class="col-sm-3 control-label">Tags<br/><small>[optional]</small></label>
+    <div class="col-sm-9">
+      <div>
+        <select class="form-control tooltiped select" title="" name="tags" data-hook="tags" multiple style="width:100%">
+        </select>
       </div>
     </div>
   </div>

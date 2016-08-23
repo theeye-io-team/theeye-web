@@ -1,4 +1,4 @@
-/* global bootbox, $searchbox */
+/* global bootbox, $searchbox, CustomerTags, _ */
 /* NOTE
 Lists are made up with:
   class="itemRow panel panel-default js-searchable-item"
@@ -16,66 +16,65 @@ $('button.edit-task').on('click', function(event){
 This way we can save a lot of markup such as data-id or data-whatever
 usually repeated in every button
 */
-$(function() {
+
+$(function(){
 
   window.scriptState = window.scriptState ? window.scriptState : $({});
   var $state = window.scriptState;
 
-/**
-  // initialize script_id select2
-  $('.host-select2').select2({
-    placeholder: "Select a host..."
-  });
-
-  $('.script-select2').select2({
-    placeholder: "Select a script..."
-  });
-  */
-
   function extractFormData ($el) {
-    return $el.find(':input')
-      .toArray()
-      .reduce(function(obj, input) {
-        if(!input.name) return obj;
+    var data = $el.find(':input').toArray();
+    return data.reduce(function(obj, input) {
+      if(!input.name) return obj;
 
-        if(input.name=='hosts_id'){
-          if(!obj[input.name]) obj[input.name]=[];
-          obj[input.name] = $(input).val();
-        } else if(input.name=='public'){
-          if(input.value=='true'&&input.checked===true){
+      if(input.name=='hosts_id'||input.name=='tags'){
+        var val = $(input).val();
+        obj[input.name] = val;
+      } else if(input.name=='public') {
+        if(input.checked===true){
+          if(input.value=='true'){
             obj[input.name] = true;
           }
-          if(input.value=='false'&&input.checked===true){
+          else if(input.value=='false'){
             obj[input.name] = false;
           }
-        } else {
-          obj[input.name] = input.value;
         }
-        return obj;
-      },{});
+      } else {
+        obj[input.name] = input.value;
+      }
+      return obj;
+    },{});
   }
 
   (function update (el){
     var $taskForm = $(el);
+    var $tags = $taskForm.find('select[name=tags]');
 
     function fillForm($form, data){
       $form[0].reset();
-      Object.keys(data)
-        .forEach(function(name,index){
-          var selector = '[data-hook=:name]'.replace(':name',name);
-          var $el = $form.find(selector);
+      Object.keys(data).forEach(function(name,index){
+        var selector = '[data-hook=:name]'.replace(':name',name);
+        var $el = $form.find(selector);
 
-          if($el.length>0){
-            if($el[0].type=='radio'){
-              var radio = '[type=radio][data-hook=:name][value=:value]'
-              .replace(':name',name)
-              .replace(':value',data[name]);
-              $form.find(radio).prop('checked',true);
-            } else {
-              $el.val(data[name]);
-            }
+        if($el.length>0){
+          if($el[0].type=='radio'){
+            var radio = '[type=radio][data-hook=:name][value=:value]'
+            .replace(':name',name)
+            .replace(':value',data[name]);
+            $form.find(radio).prop('checked',true);
+          } else {
+            $el.val(data[name]);
           }
-        });
+        }
+      });
+    }
+
+    function setSelectedTags (tags) {
+      if(!tags||!Array.isArray(tags)||tags.length===0)return;
+      tags.forEach(function(tag){
+        //$tags.val(tag.id);
+        $tags.append('<option value="'+ tag +'" selected="selected">'+ tag +'</option>');
+      });
     }
 
     $('.editTask').on('click', function(evt){
@@ -86,7 +85,9 @@ $(function() {
       $taskForm.data('action','edit');
 
       $.get("/task/" + taskId).done(function(data){
+        $tags.find('option').remove().end();
         fillForm($taskForm, data.task);
+        setSelectedTags(data.task.tags);
         $('.modal#edit-task').modal('show');
         // the rest is up to the shown.bs.modal event (below)
       }).fail(function(xhr, err, xhrStatus) {
@@ -95,14 +96,11 @@ $(function() {
     });
 
     $(".modal#edit-task").on('shown.bs.modal', function(event) {
-      $taskForm.find('select.host-select2').select2({
-        placeholder: "Select a host..."
-      });
-      $taskForm.find('select.script-select2').select2({
-        placeholder: "Select a script..."
-      });
       // nice-guy first input auto focus
       $('#name',this).focus();
+      $taskForm.find('select[name=host_id]').select2({ placeholder: "Choose a host" });
+      $taskForm.find('select[name=script_id]').select2({ placeholder: "Choose a script" });
+      $tags.select2({ placeholder: "Choose tags", tags: true, data: CustomerTags });
     });
 
     $(".modal#edit-task button[type=submit]").on('click',function(event){
@@ -114,9 +112,10 @@ $(function() {
       var vals = extractFormData($taskForm);
 
       jQuery.ajax({
-        url:"/task/" + $taskForm.data('task-id'),
-        data:vals,
-        type:'put'
+        type:'PUT',
+        url:'/task/' + $taskForm.data('task-id'),
+        data: JSON.stringify(vals),
+        contentType: "application/json; charset=utf-8"
       }).done(function(data) {
         $(".modal#edit-task").modal("hide");
         window.location.reload();
@@ -132,40 +131,21 @@ $(function() {
 
   (function create(el){
     var $taskForm = $(el);
-    var $multihost = $taskForm.find('.hidden-container.multiple-host-selection');
-    var $multiSelect = $taskForm.find('select.host-select2');
+    var $multihostContainer = $taskForm.find('.hidden-container.multiple-hosts-selection');
+    var $hosts = $taskForm.find('select[name=hosts_id]');
+    var $script = $taskForm.find('select[name=script_id]');
+    var $tags = $taskForm.find('select[name=tags]');
 
     $(".modal#create-task").on('shown.bs.modal', function(event) {
-      //nice-guy first input auto focus
-      $('#name',this).focus();
-      $multihost.show();
-      if( ! $multiSelect.data('select2') ){
-        $multiSelect.select2({
-          placeholder: 'Type a hostname or hit Enter to list'
-        });
-      }
-
-      $taskForm.data('action','create');
       $taskForm[0].reset();
+      $taskForm.data('action','create');
+      $taskForm.find('[data-hook=name]').focus();
 
-      // initialize script_id select2
-      var $scriptSelect = $taskForm.find('select.script-select2');
-      if( ! $scriptSelect.data('select2') ){
-        $scriptSelect.select2({
-          placeholder: "Select a script..."
-        });
-      }
-    });
+      $hosts.select2({ placeholder: 'Type a hostname or hit Enter to list' });
+      $script.select2({ placeholder: 'Choose a script' });
+      $tags.select2({ placeholder:'Tags', tags:true, data: CustomerTags });
 
-    $state.on("task_created", function() {
-      $(".modal#create-task").modal("hide");
-      alert('task created','Task', function(){
-        window.location.reload();
-      });
-    });
-
-    $state.on("task_create_error",function(ev, error){
-      alert(error);
+      $multihostContainer.show();
     });
 
     $(".modal#create-task button[type=submit]").on('click',function(event){
@@ -194,10 +174,18 @@ $(function() {
     $taskForm.on("submit", function(event) {
       event.preventDefault();
       var vals = extractFormData($taskForm);
-      jQuery.post("/task", vals).done(function(data) {
-        $state.trigger("task_created");
+      $.ajax({
+        method:'POST',
+        url:'/task',
+        data: JSON.stringify(vals),
+        contentType: "application/json; charset=utf-8"
+      }).done(function(data) {
+        $(".modal#create-task").modal("hide");
+        alert('Task Created','Task', function(){
+          window.location.reload();
+        });
       }).fail(function(xhr, err, xhrStatus) {
-        $state.trigger("task_create_error", xhr.responseText, err);
+        alert(err);
       });
 
       return false;
@@ -231,6 +219,45 @@ $(function() {
     var $modal = $('#schedule-task-modal');
     var $form = $('form', $modal);
     var $submitter = $('button[type=submit]',$modal);
+    var $calendarElement, scheduleData;
+
+    function getEventSeries(title, startingDate, interval) {
+      var events = [];
+      interval = interval ? humanInterval(interval) : false;
+      //60 iterations / dates
+      if(interval) {
+        for(var ii = 0; ii < 60; ii++) {
+          events.push({
+            title: title,
+            start: new Date(startingDate + (interval * ii))
+          });
+        }
+      }else{
+        events.push({
+          title: title,
+          start: new Date(startingDate)
+        });
+      }
+      return events;
+    }
+
+    function getEventSources(scheduleData, name) {
+      return _.map(scheduleData, function(scheduleEvent){
+        console.log(scheduleEvent.data.scheduleData.runDate);
+        var ms = new Date(scheduleEvent.data.scheduleData.runDate);
+        return {
+          id: scheduleEvent._id,
+          color: 'red',
+          textColor: 'white',
+          events: getEventSeries(
+            name,
+            ms.valueOf(),
+            scheduleEvent.data.scheduleData.repeatEvery
+          )
+        };
+      });
+
+    }
 
     //mode selector
     $('input[name=mode]').on('change', function(evt){
@@ -247,25 +274,51 @@ $(function() {
     $('.scheduleTask').click(function(evt){
       evt.preventDefault();
       evt.stopPropagation();
+
+      scheduleData = [];
       // console.log(this);
       var itemData = $(this).closest('.itemRow').data();
-      // console.log(itemData);
-      //prepare form
-      $form.data('task-id',itemData.itemId);
-      //prepare modal
-      $('h4.modal-title',$modal).text('Schedule task: ' + itemData.itemName);
-      $('input[name=datetime]').val('');
-      $modal.modal('show');
+      $.get("/task/" + itemData.itemId).done(function(data){
+        scheduleData = getEventSources(data.scheduleData, itemData.itemName);
+        //prepare form
+        $form.data('task-id',itemData.itemId);
+        //prepare modal
+        $('h4.modal-title',$modal).text('Schedule task: ' + itemData.itemName);
+        $('input[name=datetime]').val('');
+        $('input[name=frequency]').val('');
+
+        //calendar stuff on event handler below
+        $modal.modal('show');
+
+      }).fail(function(xhr, err, xhrStatus) {
+        alert(xhr.responseText);
+      });
       return;
+    });
+
+    //initialize calendar only once
+    $modal.on('shown.bs.modal', function(event) {
+      if(!$calendarElement) {
+        $calendarElement = window.ttt = $('.taskScheduleCalendar', $modal).fullCalendar();
+      }
+      scheduleData.forEach(function(item){
+        $calendarElement.fullCalendar('addEventSource', item);
+      });
+
+    });
+    $modal.on('hide.bs.modal', function(event) {
+      $calendarElement.fullCalendar('removeEventSources');
+      scheduleData = [];
     });
 
     $submitter.click(function(evt){
       var datetime = $('input[name=datetime]',$form).datetimepicker('getValue');
+      var frequency = $('input[name=frequency]', $form).val();
       //SCHEDULE!!!
       $.post("/palanca/schedule", {
         task_id: $form.data('task-id'),
         scheduleData: {
-          // repeatsEvery: '24 hours',
+          repeatEvery: frequency,
           runDate: datetime
         }
       }).done(function(data,status,xhr){

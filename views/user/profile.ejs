@@ -13,7 +13,7 @@
 
     <div class="col-sm-6">
       <div class="well info-container">
-        <h3><span class="fa fa-user"></span>Install the agent</h3>
+        <h3><span class="fa fa-user"></span>Linux Agent Installer</h3>
         <% if(agentCurl) { %>
         <!-- <pre><%=agentCurl%></pre> -->
         Run this cURL command from a bash console to install
@@ -26,9 +26,14 @@
               <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
             </button>
           </span>
-        <p>
-          <strong>Windows Users, please download the installer:</strong>        </p>
-          <a href="https://s3.amazonaws.com/theeye.agent/theEyeInstaller-x64.exe" class="btn btn-default">Download</a>
+        </div><!-- /input-group -->
+        <% } else { %>
+              <pre>ERROR: Agent-User not found!</pre>
+        <% } %>
+
+        <h3><span class="fa fa-user"></span>Window Agent Installer</h3>
+        <p><strong>Windows Users, please download the installer:</strong></p>
+        <a href="https://s3.amazonaws.com/theeye.agent/theEyeInstaller-x64.exe" class="btn btn-default">Download</a>
       </div>
     </div>
 

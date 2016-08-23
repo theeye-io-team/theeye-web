@@ -1,5 +1,16 @@
 # CHANGELOG
 
+### 0.3.1 - 2016-08-22
+
+> added tags in task and monitor creation and edition     
+
+> added missing task script run as in task creation      
+
+> update theeye-client usaga and calls. remove proxy methods for resource/monitor and task       
+
+> update some texts
+
+
 ### 0.3.0 - 2016-08-19
 
 > change texts       

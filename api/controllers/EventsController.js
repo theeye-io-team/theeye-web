@@ -67,14 +67,6 @@ module.exports = {
             .sortBy('name')
             .value();
 
-          // data.indexedResources = _.chain(data.resources)
-          //   .reject({type:'psaux'})
-          //   .groupBy("host_id")
-          //   .mapValues(function(e){
-          //     return _.indexBy(e,"type");
-          //   })
-          //   .value();
-          // console.log(indexed);
           data.indexedResources = indexed;
           res.view(data);
         }

@@ -1,7 +1,6 @@
 <form id="scriptResourceForm" action="/resource" class="form-horizontal">
   <input data-hook="monitor_type" type="hidden" name="monitor_type" value="script"></input>
   <input data-hook="resource_id" type="hidden" name="resource_id" value=""></input>
-  <div class="form-group"> <div class="col-sm-9"><h4>Monitor</h4></div> </div>
   <div class="form-group">
     <label for="description" class="col-sm-3 control-label">Give me a name</label>
     <div class="col-sm-9">
@@ -19,7 +18,6 @@
       <input name="host_id" value="" class="hiddenHostInput">
     </div>
   </div>
-  <div class="form-group"><div class="col-sm-9"><h4>Options</h4></div></div>
   <div class="form-group">
     <label for="looptime" class="col-sm-3 control-label">Check Interval (mins)</label>
     <div class="col-sm-9">
@@ -74,6 +72,15 @@
     <label for="disabled" class="col-sm-3 control-label">Disabled</label>
     <div class="col-sm-9">
       <input data-hook="disabled" type="checkbox" name="disabled" class="form-control" style="width:16px;">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="tags" class="col-sm-3 control-label">Tags<br/><small>[optional]</small></label>
+    <div class="col-sm-9">
+      <div>
+        <select class="form-control tooltiped select" title="" name="tags" data-hook="tags" multiple style="width:100%">
+        </select>
+      </div>
     </div>
   </div>
 </form>
