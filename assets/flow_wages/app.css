@@ -1,0 +1,136 @@
+.demo {
+    /* for IE10+ touch devices */
+    touch-action:none;
+}
+
+.flowchart-demo .window {
+    border: none;
+    -moz-border-radius: 0.5em;
+    border-radius: 0.5em;
+    opacity: 0.9;
+    width: 200px;
+    height: 80px;
+    line-height: 80px;
+    cursor: pointer;
+    text-align: center;
+    z-index: 20;
+    position: absolute;
+    background-color: #fff;
+    color: black;
+    font-family: helvetica, sans-serif;
+    padding: 0.5em;
+    font-size: 14px;
+    -webkit-transition: -webkit-box-shadow 0.15s ease-in;
+    -moz-transition: -moz-box-shadow 0.15s ease-in;
+    -o-transition: -o-box-shadow 0.15s ease-in;
+    transition: box-shadow 0.15s ease-in;
+}
+
+
+
+.flowchart-demo .window:hover {
+    box-shadow: 2px 2px 19px #444;
+    -o-box-shadow: 2px 2px 19px #444;
+    -webkit-box-shadow: 2px 2px 19px #444;
+    -moz-box-shadow: 2px 2px 19px #444;
+    opacity: 0.6;
+}
+
+.flowchart-demo .active {
+    border: 1px dotted green;
+}
+
+.flowchart-demo .hover {
+    border: 1px dotted red;
+}
+
+#flowchartWindow1 {
+    top: 25em;
+    left: 15em;
+}
+
+#flowchartWindow2 {
+    top: 27em;
+    left: 45em;
+}
+
+#flowchartWindow3 {
+    top: 29em;
+    left: 80em;
+}
+
+#flowchartWindow4 {
+    top: 53em;
+    left: 70em;
+}
+
+#sourceWindow1 {
+    top: 5em;
+    left: 20em;
+}
+
+#sourceWindow2 {
+    top: 5em;
+    left: 50em;
+}
+
+#sourceWindow3 {
+    top: 5em;
+    left: 75em;
+}
+
+.flowchart-demo .jsplumb-connector {
+    z-index: 4;
+}
+
+.flowchart-demo .jsplumb-endpoint, .endpointTargetLabel, .endpointSourceLabel {
+    z-index: 21;
+    cursor: pointer;
+}
+
+.flowchart-demo .aLabel {
+    background-color: white;
+    padding: 0.4em;
+    font: 12px sans-serif;
+    color: #444;
+    z-index: 21;
+    border: 1px dotted gray;
+    opacity: 0.8;
+    cursor: pointer;
+}
+
+.flowchart-demo .aLabel.jsplumb-hover {
+    background-color: #5C96BC;
+    color: white;
+    border: 1px solid white;
+}
+
+.window.jsplumb-connected {
+    border: 2px solid green;
+}
+
+.jsplumb-drag {
+    outline: 4px solid pink !important;
+}
+
+path, .jsplumb-endpoint {
+    cursor: pointer;
+}
+
+.jsplumb-overlay {
+    background-color:transparent;
+}
+
+/* custom styles */
+.header {background:#fff;padding:5px 30px}
+.header img {width:50px}
+body {margin:0;background:#304269}
+.jtk-demo-main {width:100%;max-width:none;border-top:3px solid #d88e47;border-bottom:3px solid #d88e47;margin-top:0}
+.jtk-demo-canvas {background:#304269;border:none}
+.window.jsplumb-connected {border-color:#d88e47}
+.flowchart-demo .window {background:rgb(216, 142, 71);opacity:1;color:#fff}
+.index-round .flowchart-demo .window {border-radius:200px;height:200px;line-height:200px;background:none;color:#fff;border-width:5px}
+.index-round .flowchart-demo .window img {vertical-align:middle}
+.flowchart-demo .window.image-node {background:none;border:none;width:80px}
+circle {stroke:rgb(48, 66, 105);fill: rgb(216, 142, 71)}
+path {stroke:rgb(186, 186, 186);fill: rgb(186, 186, 186)}
