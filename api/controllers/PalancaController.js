@@ -24,17 +24,6 @@ module.exports = {
       message: 'subscribed to customer palancas'
     });
   },
-  schedule: function(req,res) {
-    var supervisor = req.supervisor;
-    console.log(req.body);
-
-    supervisor.jobSchedule(req.body, function(err, job){
-      if(err) {
-        return res.send(500, err);
-      }
-      res.json(job);
-    });
-  },
   trigger: function(req, res) {
     var supervisor = req.supervisor;
     debug.log(req.body);
