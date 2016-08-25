@@ -1,5 +1,15 @@
 # CHANGELOG
 
+### 0.3.[!!!] - 2016-08-22
+
+> moved scheduled method from PalancaController to TasksController
+
+> added getSchedule to TasksController and refactored assets/js/application/tasks.js and routes properly
+
+> moved schedule form buttons on top of calendar
+
+> needs client update!!!
+
 ### 0.3.1 - 2016-08-22
 
 > added tags in task and monitor creation and edition     
@@ -57,7 +67,7 @@
 
 > socket.io & sails.io.js separated in two files.
 
-> sails.io.js return a function to initialize. 
+> sails.io.js return a function to initialize.
 
 > sails.io configuration can be set from outside the library now (including connection url)
 

@@ -6,6 +6,7 @@
     },
     "extends": "eslint:recommended",
     "rules": {
+        "arrow-parens": ["error", "as-needed"],
         "indent": [
             "error",
             2,

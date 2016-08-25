@@ -1,4 +1,4 @@
-/* global bootbox, $searchbox, CustomerTags, _ */
+/* global bootbox, $searchbox, CustomerTags, _, humanInterval */
 /* NOTE
 Lists are made up with:
   class="itemRow panel panel-default js-searchable-item"
@@ -221,7 +221,7 @@ $(function(){
     var $submitter = $('button[type=submit]',$modal);
     var $calendarElement, scheduleData;
 
-    function getEventSeries(title, startingDate, interval) {
+    function buildEventSeries(title, startingDate, interval) {
       var events = [];
       interval = interval ? humanInterval(interval) : false;
       //60 iterations / dates
@@ -243,13 +243,12 @@ $(function(){
 
     function getEventSources(scheduleData, name) {
       return _.map(scheduleData, function(scheduleEvent){
-        console.log(scheduleEvent.data.scheduleData.runDate);
         var ms = new Date(scheduleEvent.data.scheduleData.runDate);
         return {
           id: scheduleEvent._id,
           color: 'red',
           textColor: 'white',
-          events: getEventSeries(
+          events: buildEventSeries(
             name,
             ms.valueOf(),
             scheduleEvent.data.scheduleData.repeatEvery
@@ -278,7 +277,8 @@ $(function(){
       scheduleData = [];
       // console.log(this);
       var itemData = $(this).closest('.itemRow').data();
-      $.get("/task/" + itemData.itemId).done(function(data){
+      //esto tiene que apuntar a /task/:id/schedule
+      $.get("/task/" + itemData.itemId + "/schedule").done(function(data){
         scheduleData = getEventSources(data.scheduleData, itemData.itemName);
         //prepare form
         $form.data('task-id',itemData.itemId);
@@ -315,8 +315,8 @@ $(function(){
       var datetime = $('input[name=datetime]',$form).datetimepicker('getValue');
       var frequency = $('input[name=frequency]', $form).val();
       //SCHEDULE!!!
-      $.post("/palanca/schedule", {
-        task_id: $form.data('task-id'),
+      $.post("/task/schedule", {
+        task: $form.data('task-id'),
         scheduleData: {
           repeatEvery: frequency,
           runDate: datetime

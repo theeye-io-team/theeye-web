@@ -1,3 +1,8 @@
+/*
+Ported from https://github.com/rschmukler/human-interval
+Same lib is used on Agenda to parse strings to miliseconds:
+day, week, month = 1 day, 1 week, 1 month
+*/
 function humanInterval (time) {
   if (!time) return time;
   if (typeof time === 'number') return time;

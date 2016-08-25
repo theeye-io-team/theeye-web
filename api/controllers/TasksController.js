@@ -106,4 +106,28 @@ module.exports = {
       success: task => res.json(task),
     });
   },
+  // POST
+  schedule: function(req,res) {
+    var supervisor = req.supervisor;
+
+    supervisor.create({
+      route: supervisor.TASK + '/schedule',
+      body: req.body,
+      failure: error => res.send(500, error),
+      success: task => res.json(task)
+    });
+  },
+  // GET
+  getSchedule: function(req, res) {
+    var supervisor = req.supervisor;
+    var id = req.param("id", null);
+    if( ! id || ! id.match(/^[a-fA-F0-9]{24}$/) )
+      return res.send(400,'invalid id');
+    else {
+      supervisor.getTaskSchedule(id, function(err, scheduleData){
+        if (err) return res.send(500, err);
+        res.send(200, scheduleData);
+      });
+    }
+  }
 };
