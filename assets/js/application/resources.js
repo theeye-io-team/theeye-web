@@ -292,14 +292,15 @@ $(function(){
 });
 
 $(function(){
+
   (function(){
     var $externalHostInput = $("form#scraperResourceForm div#externalScraperHost");
     var $input = $("form#scraperResourceForm input[name=external]");
     $input.on("change",function(event){
       if( $input.is(":checked") ) {
-        $externalHostInput.slideDown(100);
+        $externalHostInput.slideDown(80);
       } else {
-        $externalHostInput.slideUp(100);
+        $externalHostInput.slideUp(80);
         $externalHostInput.find("option:eq(0)").prop('selected', true);
       }
     });
@@ -638,4 +639,50 @@ $(function(){
       $this.blur();
     });
   })();
+});
+
+function APIMonitorEvents (options) {
+
+  var $container = this.$container = $(options.container);
+
+  function q (selector) {
+    return $container.find(selector);
+  }
+
+  // binding events
+  $responseSection = q('section[data-hook=response]');
+  $requestSection = q('section[data-hook=request]');
+
+  q('[data-hook=response-section-toggle]').on('click',function(event){
+    $responseSection.toggle();
+    $("i", this).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
+  });
+
+  q('[data-hook=request-section-toggle]').on('click',function(event){
+    $requestSection.toggle();
+    $("i", this).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
+  });
+
+  function methodHasBody (method) {
+    return method == 'POST' ||
+      method == 'PUT' ||
+      method == 'PATCH' ||
+      method == 'OPTIONS' ||
+      method == 'DELETE';
+  }
+
+  $bodyContainer = q('[data-hook=body-container]');
+  $methods = q('select[name=method]');
+  $methods.on('change',function(event){
+    var method = $methods.val();
+    var hasBody = methodHasBody(method);
+    if(hasBody) $bodyContainer.slideDown(80);
+    else $bodyContainer.slideUp(80);
+  });
+
+  return this;
+}
+
+var requestMonitor = new APIMonitorEvents({
+  container: 'form#scraperResourceForm'
 });

@@ -61,7 +61,8 @@
               tags.concat(subresource.tags);
             });
 
-            tags = tags.concat(resource.monitor.tags).join(',');
+            var monitorTags = resource.monitor && resource.monitor.tags;
+            tags = tags.concat(monitorTags).join(',');
           %>
             <div class="itemRow resource-container panel panel-default js-searchable-item"
               id="resource-<%= resource.id %>"
