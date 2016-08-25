@@ -1,3 +1,4 @@
+/* global bootbox, CustomerTags, $searchbox, debug */
 var ResourceStates = {
   normalState  : 'normal',
   failureState : 'failure',
@@ -16,7 +17,7 @@ $(function(){
       jQuery.ajax({
         url: '/resource/' + resource_id + '/alerts',
         type: 'PATCH',
-        data:{ 'enable': enable },
+        data:{ 'enable': enable }
       }).done(function(data) {
         bootbox.alert('success!',function(){
           window.location.reload();
@@ -74,7 +75,7 @@ $(function(){
       method:'POST',
       url:'/resource/' + values.monitor_type,
       data: JSON.stringify(values),
-      contentType: "application/json; charset=utf-8",
+      contentType: "application/json; charset=utf-8"
     }).done(function(data){
       window.location.reload();
     }).fail(function(xhr, err, xhrStatus){
@@ -178,7 +179,7 @@ $(function(){
           $('.modal#scriptResourceModal').on('hidden.bs.modal', function(e) {
             $script.off('change');
             $disable.off('change');
-          })
+          });
         }
 
         $script.val(monitor.config.script_id);
@@ -186,15 +187,15 @@ $(function(){
           .val(monitor.config.script_arguments);
         $form.find('[data-hook=script_runas]')
           .val(monitor.config.script_runas);
-      break;
-    };
+        break;
+    }
   }
 
   function setupEditResourceForm($form, options){
     log('setting up for "edit"');
 
     var $select = $form.find('.resource-host select');
-    var $input  = $form.find('.resource-host input');
+    // var $input  = $form.find('.resource-host input');
     $select.prop('multiple', false);
     $select.show();
 
@@ -228,7 +229,7 @@ $(function(){
   function setupCreateResourceForm ($form, options) {
     log('setting up for "create"');
     var host = options.host;
-    var hostname = options.hostname;
+    // var hostname = options.hostname;
 
     var $select = $form.find('.resource-host select');
     var $input  = $form.find('.resource-host input');
@@ -289,6 +290,19 @@ $(function(){
 
   $('.editResourceMonitor').on('click', handleResourceAction);
   $('.createResourceMonitor').on('click', handleResourceAction);
+
+  // hook to scripts.js event script_uploaded
+  window.scriptState.on('script_uploaded', function(evt,data){
+    console.log(arguments);
+    alert("Script succesfully uploaded", "Script upload",function(){
+      var $scriptIdSelect = $('select[data-hook=script_id]');
+      $scriptIdSelect.append('<option value="'+data.script.id+'">'+data.script.filename+'</option>');
+      $scriptIdSelect.val(data.script.id);
+      $scriptIdSelect.trigger('change');
+      $('.modal#script-modal').modal('hide');
+    });
+  });
+
 });
 
 $(function(){
@@ -373,7 +387,7 @@ $(function(){
       url: '/resource/' + idResource,
       type: 'PUT',
       data: JSON.stringify(values),
-      contentType: "application/json; charset=utf-8",
+      contentType: "application/json; charset=utf-8"
     }).done(function(data) {
       window.location.reload();
     }).fail(function(xhr, err, xhrStatus) {
@@ -403,7 +417,7 @@ $(function(){
 
     log('edit host');
     var idResource = event.currentTarget.getAttribute('data-resource_id');
-    var idHost = event.currentTarget.getAttribute('data-host_id');
+    // var idHost = event.currentTarget.getAttribute('data-host_id');
     var hostname = event.currentTarget.getAttribute('data-hostname');
 
     var $form = $('#dstat-resource-modal form');
@@ -436,8 +450,8 @@ $(function(){
     var $searchComponent = $('.js-searchable-box');
 
     var $input = $searchComponent.find('input');
-      $input.val(idResource);
-      $input.trigger('input');
+    $input.val(idResource);
+    $input.trigger('input');
 
     $searchComponent
       .find('button.search')
@@ -526,7 +540,8 @@ $(function(){
                 console.log('then success');
                 console.log(arguments);
                 alert(taskRows + successFooter, successTitle);
-              },function(){
+              },
+              function(){
                 console.log('then fail');
                 console.log(arguments);
                 alert(taskRows + failFooter, failTitle);
@@ -538,13 +553,13 @@ $(function(){
               }
             // when progress nunca se llama tampoco ... ?
             ).progress(function(){
-                console.log('when progress');
-                console.log(arguments);
-              }
+              console.log('when progress');
+              console.log(arguments);
+            }
             ).always(function(){
-                console.log('always');
-                $.unblockUI();
-              }
+              console.log('always');
+              $.unblockUI();
+            }
             ).done(function(){
               // done deberia volver con array de results
               // no se si no funciona o es porque el req.DELETE
