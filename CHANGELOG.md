@@ -1,6 +1,6 @@
 # CHANGELOG
 
-### 0.3.[!!!] - 2016-08-22
+### 0.3.2 - 2016-08-22
 
 > moved scheduled method from PalancaController to TasksController         
 
