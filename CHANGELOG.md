@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 0.3.3 - 2016-08-24
+
+> added script_uploaded listener to catch the script modal save operation on admin/monitor layout
+
 ### 0.3.2 - 2016-08-22
 
 > moved scheduled method from PalancaController to TasksController         

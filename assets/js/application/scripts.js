@@ -329,7 +329,7 @@ $(function() {
     var $gistInput = $('input#gist-url');
     var $downloadButton = $('input#gist-url').parent().find('button');
     var $downloadButtonIcon = $downloadButton.children('span').first();
-    var $fileNameField = $('input[name=filename]');
+    // var $fileNameField = $('input[name=filename]');
     var $descriptionField = $('textarea[name=description]');
 
     var failAlert = function(msg){
