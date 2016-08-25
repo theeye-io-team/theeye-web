@@ -109,13 +109,12 @@ module.exports = {
   // POST
   schedule: function(req,res) {
     var supervisor = req.supervisor;
-    console.log(req.body);
 
-    supervisor.scheduleTask(req.body, function(err, job){
-      if(err) {
-        return res.send(500, err);
-      }
-      res.json(job);
+    supervisor.create({
+      route: supervisor.TASK + '/schedule',
+      body: req.body,
+      failure: error => res.send(500, error),
+      success: task => res.json(task)
     });
   },
   // GET
