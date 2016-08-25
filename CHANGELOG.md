@@ -1,14 +1,15 @@
 # CHANGELOG
 
-### 0.3.[!!!] - 2016-08-22
+### 0.3.2 - 2016-08-22
 
-> moved scheduled method from PalancaController to TasksController
+> moved scheduled method from PalancaController to TasksController         
 
-> added getSchedule to TasksController and refactored assets/js/application/tasks.js and routes properly
+> added getSchedule to TasksController and refactored assets/js/application/tasks.js and routes properly       
 
-> moved schedule form buttons on top of calendar
+> moved schedule form buttons on top of calendar      
 
-> needs client update!!!
+> package updated with `theeye-client v0.9.3`     
+
 
 ### 0.3.1 - 2016-08-22
 

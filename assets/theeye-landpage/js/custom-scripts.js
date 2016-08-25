@@ -104,7 +104,7 @@ function mailchimpCallback(resp) {
             .html('<i class="icon_check_alt2"></i>' + resp.msg)
             .delay(500)
             .fadeIn(1000);
-
+        fbq('track', "CompleteRegistration"); //FB Confirmation JAvi / Nxtp
         $('.subscription-failed').fadeOut(500);
 
     } else if(resp.result === 'error') {
