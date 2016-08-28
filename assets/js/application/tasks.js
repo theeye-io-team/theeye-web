@@ -243,6 +243,7 @@ $(function(){
 
     function getEventSources(scheduleData, name) {
       return _.map(scheduleData, function(scheduleEvent){
+        console.log(scheduleEvent);
         var ms = new Date(scheduleEvent.data.scheduleData.runDate);
         return {
           id: scheduleEvent._id,
@@ -256,6 +257,10 @@ $(function(){
         };
       });
 
+    }
+
+    function eventClickHandler() {
+      console.log(arguments);
     }
 
     //mode selector
@@ -299,7 +304,9 @@ $(function(){
     //initialize calendar only once
     $modal.on('shown.bs.modal', function(event) {
       if(!$calendarElement) {
-        $calendarElement = window.ttt = $('.taskScheduleCalendar', $modal).fullCalendar();
+        $calendarElement = $('.taskScheduleCalendar', $modal).fullCalendar({
+          eventClick: eventClickHandler
+        });
       }
       scheduleData.forEach(function(item){
         $calendarElement.fullCalendar('addEventSource', item);

@@ -293,7 +293,6 @@ $(function(){
 
   // hook to scripts.js event script_uploaded
   window.scriptState.on('script_uploaded', function(evt,data){
-    console.log(arguments);
     alert("Script succesfully uploaded", "Script upload",function(){
       var $scriptIdSelect = $('select[data-hook=script_id]');
       $scriptIdSelect.append('<option value="'+data.script.id+'">'+data.script.filename+'</option>');
