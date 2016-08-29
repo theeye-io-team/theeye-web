@@ -569,12 +569,15 @@ $(function(){
   }
 
   function deleteGroup($item){
-    var groupId = $item.data('group-id');
-    $.ajax({
-      method:'delete',
-      url:'/admin/hostgroup/' + groupId
-    }).done(function(){
-      window.location.reload();
+    bootbox.confirm('Delete Group?',function(confirmed){
+      if(!confirmed) return;
+      var groupId = $item.data('group-id');
+      $.ajax({
+        method:'delete',
+        url:'/admin/hostgroup/' + groupId
+      }).done(function(){
+        window.location.reload();
+      });
     });
   }
 

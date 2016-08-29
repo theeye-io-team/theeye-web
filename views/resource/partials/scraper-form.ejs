@@ -45,13 +45,21 @@
   </div>
   <section data-hook="request">
     <div class="form-group">
-      <label for="url" class="col-sm-3 control-label">URL</label>
+      <label for="url" class="col-sm-3 control-label">
+        URL
+        <span class="tooltiped glyphicon glyphicon-question-sign"
+          title="remember to urlescape any query string you use."
+          style="cursor:help" >
+        </span>
+      </label>
       <div class="col-sm-9">
         <input data-hook="url" type="text" name="url" class="form-control" placeholder="https://username:password@domain.com.ar/path?param=value">
       </div>
     </div>
     <div class="form-group">
-      <label for="url" class="col-sm-3 control-label">Method</label>
+      <label for="url" class="col-sm-3 control-label">
+        Method
+      </label>
       <div class="col-sm-9">
         <select data-hook="method" name="method" class="form-control">
           <option value="GET">GET</option>
@@ -67,7 +75,7 @@
     <div data-hook="body-container" class="form-group" style="display:none">
       <label for="url" class="col-sm-3 control-label">Body</label>
       <div class="col-sm-9">
-        <textarea name="body" class="form-control" style="width:100%;"></textarea>
+        <textarea data-hook="body" name="body" class="form-control" style="width:100%;"></textarea>
       </div>
     </div>
     <div class="form-group">
@@ -84,7 +92,7 @@
     <div class="form-group">
       <label for="external" class="col-sm-3 control-label">
         Run from external source? [optional]
-        <span title="This monitor need to be run from outside of the service host"
+        <span title="This monitor need to be executed from outside of the host"
           style="cursor:help" class="tooltiped glyphicon glyphicon-question-sign">
         </span>
       </label>
@@ -113,22 +121,22 @@
   </div>
   <section data-hook="response">
     <div class="form-group">
-      <label for="pattern" class="col-sm-3 control-label">Success Status Code</label>
+      <label for="status_code" class="col-sm-3 control-label">Success Status Code</label>
       <div class="col-sm-9">
-        <input data-hook="status-code" type="text" name="pattern" class="form-control" placeholder="Match eg. '2[0-9][0-9]'">
+        <input data-hook="status_code" type="text" name="status_code" class="form-control" placeholder="Match eg. '2[0-9][0-9]'">
       </div>
     </div>
     <div class="form-group">
-      <label for="pattern" class="col-sm-3 control-label">Success Pattern</label>
+      <label for="success_pattern" class="col-sm-3 control-label">Success Pattern</label>
       <div class="col-sm-1" style=text-align:center;>
-        <input data-hook=match-pattern-selection type=radio name=response-parser value=1>
+        <input data-hook=match-pattern-selection type=radio name=response_parser value=success_pattern>
       </div>
       <div class="col-sm-8">
-        <input data-hook="match-pattern" type="text" name="pattern" class="form-control" placeholder="Match this string or regular expression, eg. '<h1>My Site Title</h1>'">
+        <input data-hook="success_pattern" type="text" name="success_pattern" class="form-control" placeholder="Match this string or regular expression, eg. '<h1>My Site Title</h1>'">
       </div>
     </div>
     <div class="form-group">
-      <label for="pattern" class="col-sm-3 control-label">
+      <label for="parser_script" class="col-sm-3 control-label">
         Parse response with a Script
         <span class="tooltiped glyphicon glyphicon-question-sign"
           title="make your own script to parse the response."
@@ -136,10 +144,10 @@
         </span>
       </label>
       <div class="col-sm-1" style=text-align:center;>
-        <input data-hook=script-parser-selection type=radio name=response-parser value=2>
+        <input data-hook=script-parser-selection type=radio name=response_parser value=parser_script>
       </div>
       <div class="col-sm-7">
-        <select data-hook="script-parser" id="script_id" name="script_id" class="form-control" style="width:100%;">
+        <select data-hook="parser_script" name="parser_script" class="form-control" style="width:100%;">
           <option value disabled selected></option>
           <% scripts.forEach(function(s) { %>
           <option value="<%=s.id%>"><strong><%= s.filename %></strong></option>
