@@ -250,7 +250,7 @@ footer a.image img {margin-top:-4px}
 .modal-header{ color:#304269;}
 .modal-body{ color:#304269;}
 
-.btn {color:#eee;background-color:#304269;}
+/*.btn {color:#eee;background-color:#304269;}*/
 /* Fin Agregada javi... */
 
 .mainContainer .safeBox h1 span { }
@@ -424,7 +424,8 @@ ol.list-group.tasks { color:#34495E }
 .info-container{ color: #23527c; min-height: 200px }
 
 .editor{ min-height: 100px;}
-.btn-default { text-shadow: none; }
+.btn { text-shadow: none; box-shadow: none; }
+.btn-primary { border-color:#304269;background-color:#304269; }
 .simple-btn{ border: none; box-shadow: none; }
 .new-btn{ float: left; margin: 7px; margin-left: 0px; margin-right: 0px; }
 .btn-light{
@@ -567,6 +568,7 @@ span.selectorIcon.glyphicon-check {
     width: 31px;
     height: 31px;
     background-repeat: no-repeat;
+    background-color: #304269;
 }
 .events-panel .panel-item.icons .btn-icon-image.icon-image-edit {
   background-image: url(/images/The-eye-icons-23.png);
@@ -600,3 +602,10 @@ h4.panel-title-content::after {
 */
 
 .profile-page .col-20 { width:20%; }
+
+.calendarEvent {
+  cursor: pointer;
+}
+.calendarEvent:hover {
+  border-color: red;
+}
