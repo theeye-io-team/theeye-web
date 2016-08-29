@@ -1,5 +1,17 @@
 # CHANGELOG
 
+### 0.4.0 - 2016-08-29
+
+> added web scraper form the posibility to submit custom request and respose parameters    
+
+> put resouce methods into a namespace     
+
+> put resource extract form data in global namespace     
+
+> added loop duration interval to dstat monitor      
+
+> added tooltips with help in scraper form       
+
 ### 0.3.2 - 2016-08-22
 
 > moved scheduled method from PalancaController to TasksController         
