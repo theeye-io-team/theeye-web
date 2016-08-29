@@ -1,5 +1,19 @@
 # CHANGELOG
 
+### 0.3.4 - 2016-08-29
+
+> added cancel schedule functionality
+
+> restored edit monitors button functionality (pre search)
+
+> refactored btn-default / btn-primary styling on all main screens
+
+> added some styles for calendar view
+
+> double modal on schedule delete has some funny behaviour
+
+> needs client update, will crash backend on any schedule delete interaction
+
 ### 0.3.3 - 2016-08-24
 
 > added script_uploaded listener to catch the script modal save operation on admin/monitor layout

@@ -41,13 +41,14 @@ module.exports.routes = {
   //HostController routes
   'get    /hoststats/:host' : 'HostStatsController.index',
   //TaskController routes
-  'get    /admin/task'        : 'TasksController.index',
-  'post   /task'              : 'TasksController.create',
-  'post   /task/schedule'     : 'TasksController.schedule',
-  'get    /task/:id?'         : 'TasksController.get',
-  'get    /task/:id/schedule' : 'TasksController.getSchedule',
-  'delete /task/:id?'         : 'TasksController.destroy',
-  'put    /task/:id?'         : 'TasksController.update',
+  'get    /admin/task'                    : 'TasksController.index',
+  'post   /task'                          : 'TasksController.create',
+  'post   /task/schedule'                 : 'TasksController.schedule',
+  'get    /task/:id?'                     : 'TasksController.get',
+  'get    /task/:id/schedule'             : 'TasksController.getSchedule',
+  'delete /task/:id/schedule/:scheduleId' : 'TasksController.cancelSchedule',
+  'delete /task/:id?'                     : 'TasksController.destroy',
+  'put    /task/:id?'                     : 'TasksController.update',
   //ScriptController routes
   'get    /admin/script' : 'ScriptController.index',
   'post   /admin/script/download' : 'ScriptController.downloadPublicScript',

@@ -216,9 +216,11 @@ $(function(){
   })();
 
   (function schedule(){
-    var $modal = $('#schedule-task-modal');
-    var $form = $('form', $modal);
-    var $submitter = $('button[type=submit]',$modal);
+    var $mainModal = $('#schedule-task-modal');
+    var $deleteModal = $('#schedule-delete-modal');
+    var $form = $('form', $mainModal);
+    var $submitter = $('button[type=submit]',$mainModal);
+    var $scheduleDeleter = $('.deleteSchedule', $deleteModal);
     var $calendarElement, scheduleData;
 
     function buildEventSeries(title, startingDate, interval) {
@@ -242,13 +244,21 @@ $(function(){
     }
 
     function getEventSources(scheduleData, name) {
-      return _.map(scheduleData, function(scheduleEvent){
-        console.log(scheduleEvent);
+      return _.map(scheduleData, function(scheduleEvent, index, arr){
+        // console.log(arr.length);
         var ms = new Date(scheduleEvent.data.scheduleData.runDate);
+        // 200 is the offset of the color wheel where 0 is red, change at will.
+        // 180 is how wide will the angle be to get colors from,
+        // lower (narrower) angle will get you a more subtle palette.
+        // Tone values are evenly sparsed based on array.length.
+        // Check this: http://www.workwithcolor.com/hsl-color-picker-01.htm
+        var wheelDegree = 200 + 180 / arr.length * ++index;
         return {
           id: scheduleEvent._id,
-          color: 'red',
+          backgroundColor: 'hsl('+wheelDegree+', 80%, 48%)',
           textColor: 'white',
+          className: ["calendarEvent"],
+          scheduleData: scheduleEvent,
           events: buildEventSeries(
             name,
             ms.valueOf(),
@@ -259,8 +269,28 @@ $(function(){
 
     }
 
-    function eventClickHandler() {
-      console.log(arguments);
+    function showDeleteModal(eventObject) {
+      // console.log(eventObject);
+      var eventData = eventObject.source.scheduleData;
+      $deleteModal.modal('show');
+
+      // TODO potential bug here
+      // If agenda has been stopped for any period of time, when it's
+      // started again it will check for scheduled jobs that SHOULD HAVE RAN
+      // while it was stopped. Any job that fits this situation will be run
+      // when agenda is started. Hence this problem occurs: lastRun is set to
+      // the re-start moment and nextRun RE-CALCULATED based on schedule
+      // repeat interval. In an ideal world the agenda would never be stopped,
+      // but if it happens, then the event series estimation (UI) will differ from
+      // what's really gonna happen with the schedule (DB). --cg
+      $('.startsOn', $deleteModal).text(new Date(eventData.data.scheduleData.runDate));
+      $('.repeatEvery', $deleteModal).text(eventData.data.scheduleData.repeatEvery || "Never");
+
+      // this two are hidden till we figure out how last/next Run is really set
+      $('.lastRun', $deleteModal).text(eventData.lastRunAt);
+      $('.nextRun', $deleteModal).text(eventData.nextRunAt);
+
+      $scheduleDeleter.data('schedule', eventObject);
     }
 
     //mode selector
@@ -288,12 +318,12 @@ $(function(){
         //prepare form
         $form.data('task-id',itemData.itemId);
         //prepare modal
-        $('h4.modal-title',$modal).text('Schedule task: ' + itemData.itemName);
+        $('h4.modal-title', $mainModal).text('Schedule task: ' + itemData.itemName);
         $('input[name=datetime]').val('');
         $('input[name=frequency]').val('');
 
         //calendar stuff on event handler below
-        $modal.modal('show');
+        $mainModal.modal('show');
 
       }).fail(function(xhr, err, xhrStatus) {
         alert(xhr.responseText);
@@ -302,10 +332,10 @@ $(function(){
     });
 
     //initialize calendar only once
-    $modal.on('shown.bs.modal', function(event) {
+    $mainModal.on('shown.bs.modal', function(event) {
       if(!$calendarElement) {
-        $calendarElement = $('.taskScheduleCalendar', $modal).fullCalendar({
-          eventClick: eventClickHandler
+        $calendarElement = $('.taskScheduleCalendar', $mainModal).fullCalendar({
+          eventClick: showDeleteModal
         });
       }
       scheduleData.forEach(function(item){
@@ -313,7 +343,7 @@ $(function(){
       });
 
     });
-    $modal.on('hide.bs.modal', function(event) {
+    $mainModal.on('hide.bs.modal', function(event) {
       $calendarElement.fullCalendar('removeEventSources');
       scheduleData = [];
     });
@@ -330,13 +360,41 @@ $(function(){
         }
       }).done(function(data,status,xhr){
         alert("All right! Your task will run on: " + data.nextRun, function(){
-          $modal.modal('hide');
+          $mainModal.modal('hide');
         });
         // console.log(data);
       }).fail(function(xhr, status, message) {
         console.log('fail');
         // console.log(arguments);
       });
+    });
+
+    $scheduleDeleter.click(function(evt){
+      evt.preventDefault();
+
+      var scheduleData = $(this).data('schedule');
+      if(!scheduleData.source.id) {
+        console.log('Error, schedule ID not set');
+        console.log($(this).data());
+        return;
+      }
+      //confirm and request DELETE
+      bootbox.confirm('The schedule will be canceled. Want to continue?',
+        function(confirmed) {
+          if(!confirmed) return;
+          // console.log('deleting', scheduleData.source.id);
+          $.ajax({
+            url: '/task/' + scheduleData.source.scheduleData.data.task_id +
+              '/schedule/' + scheduleData.source.id,
+            type: 'DELETE'
+          }).done(function(data) {
+            $deleteModal.modal('hide');
+            $calendarElement.fullCalendar('removeEventSource', scheduleData.source);
+          }).fail(function(xhr, err, xhrStatus) {
+            alert(xhr.responseText);
+          });
+        }
+      );
     });
 
     //catch form submit
