@@ -113,7 +113,3 @@ var qs = window.location.href.split('?')[1];
 var $input = $('.js-searchable-box input');
 $input.val(qs);
 $('.js-searchable-box button.search').click();
-
-//$(document).on('keypress',function(){
-//  $input.focus();
-//});

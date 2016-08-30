@@ -8,6 +8,14 @@ $(function(){
 
   var log = debug('eye:web:admin:resources');
 
+  function methodHasBody (method) {
+    return method == 'POST' ||
+    method == 'PUT' ||
+    method == 'PATCH' ||
+    method == 'OPTIONS' ||
+    method == 'DELETE';
+  }
+
   function extractFormData($el){
     var inputs = $el.find(":input");
     var values = {};
@@ -17,7 +25,7 @@ $(function(){
       if(input.name=='disabled' && input.type=='checkbox'){
         values.enable = !input.checked;
       } else if(input.type=='checkbox') {
-        values[input.name] = input.checked;
+        values[input.name] = Boolean(input.checked);
       } else if(input.type=='radio') {
         if( input.checked )
           values[input.name] = input.value;
@@ -156,20 +164,28 @@ $(function(){
           var response_options = monitor.config.response_options;
           var request_options  = monitor.config.request_options;
 
-          $form.find('[data-hook=method]').val(request_options.method);
-          $form.find('[data-hook=body]').val(request_options.body).trigger('change');
-          $form.find('[data-hook=url]').val(request_options.url);
-          $form.find('[data-hook=timeout]').val(request_options.timeout);
-          $form.find('[data-hook=status_code]').val(response_options.status_code);
-
-          if( response_options.parser_script ){
-            $form.find('[data-hook=parser_script]')
-            .val(response_options.parser_script)
-            .trigger('change');
-          } else if( response_options.success_pattern ) {
-            $form.find('[data-hook=success_pattern]')
-            .val(response_options.success_pattern)
-            .trigger('change');
+          for(prop in response_options){
+            var value = response_options[prop];
+            $form.find('[data-hook=' + prop + ']').val( value );
+          }
+          for(prop in request_options){
+            var value = request_options[prop];
+            var input = $form.find('[data-hook=' + prop + ']');
+            if( input.is(':checkbox') ) {
+              if( Boolean(value) === true )
+                input[0].checked = true;
+            } else {
+              input.val( value );
+            }
+          }
+          if( response_options.script ){
+            $form.find('[data-hook=script]').trigger('change');
+          }
+          if( response_options.pattern ) {
+            $form.find('[data-hook=pattern]').trigger('change');
+          }
+          if( request_options.body && methodHasBody(request_options.method) ){
+            $form.find('[data-hook=method]').trigger('change');
           }
           break;
         case 'process':
@@ -680,21 +696,13 @@ $(function(){
       $("i", this).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
     });
 
-    q('[data-hook=parser_script]').on('click change',function(event){
+    q('[data-hook=script]').on('click change',function(event){
       q('[data-hook=script-parser-selection]').click();
     });
 
-    q('[data-hook=success_pattern]').on('click change',function(event){
+    q('[data-hook=pattern]').on('click change',function(event){
       q('[data-hook=match-pattern-selection]').click();
     });
-
-    function methodHasBody (method) {
-      return method == 'POST' ||
-      method == 'PUT' ||
-      method == 'PATCH' ||
-      method == 'OPTIONS' ||
-      method == 'DELETE';
-    }
 
     $bodyContainer = q('[data-hook=body-container]');
     $methods = q('select[name=method]');
