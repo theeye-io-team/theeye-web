@@ -50,11 +50,11 @@
              style="min-width: 120px">
              <li role="presentation">
                <a role="menuitem" tabindex="-1"
-                class="createResourceMonitor"
-                  data-toggle="modal"
-                  data-target="#scraperResourceModal"
-                  data-resource-type="scraper"
-                  data-action="create">WEB/API Check</a>
+                 data-hook="create-scraper-monitor"
+                 data-toggle="modal"
+                 data-target="#scraperResourceModal"
+                 data-resource-type="scraper"
+                 data-action="create">WEB/API Check</a>
              </li>
              <li role="presentation">
                <a role="menuitem" tabindex="-1"
@@ -192,7 +192,7 @@
                         <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1" style="min-width: 120px">
                           <li role="presentation">
                             <span role="menuitem" tabindex="-1"
-                              class="createResourceMonitor"
+                              data-hook="create-scraper-monitor"
                               data-host_id="<%= monitor.host_id %>"
                               data-hostname="<%= monitor.resource.hostname %>"
                               data-toggle="modal"

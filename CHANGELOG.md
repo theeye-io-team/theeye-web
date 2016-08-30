@@ -1,5 +1,22 @@
 # CHANGELOG
 
+### 0.4.1 - 2016-08-30
+
+> added handlebars for javascript client side template     
+
+> added grunt handlebars compile task       
+
+> scraper-monitor is no longer handled the same way as the rest of the monitors          
+
+> added scraper handler and form renderer client side          
+
+> remove jst template compiler (not being used)        
+
+> added scraper template       
+
+> monitor template scraper use scraper-template      
+
+
 ### 0.4.0 - 2016-08-29
 
 > added web scraper form the posibility to submit custom request and respose parameters       

@@ -1,0 +1,176 @@
+<form class="form-horizontal">
+  <input data-hook="monitor_type" type="hidden" name="monitor_type" value="scraper" />
+  <input data-hook="resource_id" type="hidden" name="resource_id" value="" />
+
+  <div class="form-group">
+    <label for="description" class="col-sm-3 control-label">Give me a name</label>
+    <div class="col-sm-9">
+      <input data-hook="description" type="text" name="description" class="form-control" placeholder="eg: http://theeye.io public website">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="hosts_id" class="col-sm-3 control-label">Where is the service hosted?</label>
+    <div class="col-sm-9 resource-host">
+      <select multiple data-hook="hosts_id" name="hosts_id" class="form-control"> </select>                
+      <input name="host_id" data-hook="host_id" class="hiddenHostInput">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="looptime" class="col-sm-3 control-label">Check Interval (mins)</label>
+    <div class="col-sm-9">
+      <select data-hook="looptime" name="looptime" class="form-control">
+        <option value="0" disabled selected><strong>select check interval</strong></option>
+      </select>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="tags" class="col-sm-3 control-label">Tags<br/><small>[optional]</small></label>
+    <div class="col-sm-9">
+      <div>
+        <select class="form-control tooltiped select" title="" name="tags" data-hook="tags" multiple style="width:100%"> </select>
+      </div>
+    </div>
+  </div>
+  <div class="scraper-section-title" data-hook="request-section-toggle">
+    <label>Request</label>
+    <i class="glyphicon glyphicon-chevron-down"></i>
+  </div>
+  <section data-hook="request">
+    <div class="form-group">
+      <label for="url" class="col-sm-3 control-label">
+        URL
+        <span class="tooltiped glyphicon glyphicon-question-sign"
+          title="remember to urlescape any query string you use."
+          style="cursor:help" >
+        </span>
+      </label>
+      <div class="col-sm-9">
+        <input data-hook="url" type="text" name="url" class="form-control" placeholder="https://username:password@domain.com.ar/path?param=value">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="url" class="col-sm-3 control-label">
+        Method
+      </label>
+      <div class="col-sm-9">
+        <select data-hook="method" name="method" class="form-control">
+          <option value="GET">GET</option>
+          <option value="DELETE">DELETE</option>
+          <option value="POST">POST</option>
+          <option value="PUT">PUT</option>
+          <option value="PATCH">PATCH</option>
+          <option value="OPTIONS">OPTIONS</option>
+          <option value="HEAD">HEAD</option>
+        </select>
+      </div>
+    </div>
+    <div data-hook="body-container" class="form-group" style="display:none">
+      <label for="url" class="col-sm-3 control-label">Body</label>
+      <div class="col-sm-9">
+        <textarea data-hook="body" name="body" class="form-control" style="width:100%;"></textarea>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="timeout" class="col-sm-3 control-label">Req. Timeout (secs)</label>
+      <div class="col-sm-9">
+        <select data-hook="timeout" name="timeout" class="form-control" style="width:100%;">
+          <option value="0" disabled selected><strong>select request timeout</strong></option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="gzip" class="col-sm-3 control-label">
+        Use Gzip
+        <span class="tooltiped glyphicon glyphicon-question-sign"
+          title="Add an Accept-Encoding header to request compressed content encodings from the server (if not already present) and decode supported content encodings in the response."
+          style="cursor:help" >
+        </span>
+      </label>
+      <div class="col-sm-3">
+        <input data-hook=gzip type=checkbox name=gzip class="form-control" style="width:16px;">
+      </div>
+      <label for="json" class="col-sm-3 control-label">
+        Use JSON
+        <span class="tooltiped glyphicon glyphicon-question-sign"
+          title="sets body to JSON representation of value and adds Content-type: application/json header. Additionally, parses the response body as JSON."
+          style="cursor:help" >
+        </span>
+      </label>
+      <div class="col-sm-3">
+        <input data-hook=json type=checkbox name=json class="form-control" style="width:16px;">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="external" class="col-sm-3 control-label">
+        Run from external source? [optional]
+        <span title="This monitor need to be executed from outside of the host"
+          style="cursor:help" class="tooltiped glyphicon glyphicon-question-sign">
+        </span>
+      </label>
+      <div class="col-sm-9">
+        <input data-hook="external" type="checkbox" name="external" class="form-control" style="width:16px;">
+      </div>
+    </div>
+    <div class="form-group" style="display:none">
+      <label for="url" class="col-sm-3 control-label">Run check from</label>
+      <div class="col-sm-9">
+        <select data-hook="external_host_id" name="external_host_id" class="form-control" style="width:100%;"> </select>
+      </div>
+    </div>
+  </section>
+  <div class="scraper-section-title" data-hook="response-section-toggle">
+    <label>Response</label>
+    <i class="glyphicon glyphicon-chevron-down"></i>
+  </div>
+  <section data-hook="response">
+    <div class="form-group">
+      <label for="status_code" class="col-sm-3 control-label">Success Status Code</label>
+      <div class="col-sm-9">
+        <input data-hook="status_code" type="text" name="status_code" class="form-control" placeholder="Match eg. '2[0-9][0-9]'">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="pattern" class="col-sm-3 control-label">
+        Success Pattern
+        <span class="tooltiped glyphicon glyphicon-question-sign"
+          title="eg. '<h1>My Site Title</h1>', using RegEx ^[a-zA-Z0-9]{24}$ "
+          style="cursor:help" >
+        </span>
+      </label>
+      <div class="col-sm-1" style=text-align:center;>
+        <!-- <input data-hook=match-pattern-selection type=radio name=parser value=pattern> -->
+        <input data-hook=match-pattern-selection type=checkbox name=parser value=pattern>
+      </div>
+      <div class="col-sm-8">
+        <input data-hook="pattern" type="text" name="pattern" class="form-control" placeholder="Match this string or regular expression">
+      </div>
+    </div>
+    <!--
+    <div class="form-group">
+      <label for="script" class="col-sm-3 control-label">
+        Parse response with a Script
+        <span class="tooltiped glyphicon glyphicon-question-sign"
+          title="make your own script to parse the response."
+          style="cursor:help" >
+        </span>
+      </label>
+      <div class="col-sm-1" style=text-align:center;>
+        <input data-hook=script-parser-selection type=radio name=parser value=script>
+      </div>
+      <div class="col-sm-7">
+        <select data-hook="script" name="script" class="form-control" style="width:100%;">
+          <option value disabled selected></option>
+          <% scripts.forEach(function(s) { %>
+          <option value="<%=s.id%>"><strong><%= s.filename %></strong></option>
+          <% }); %>
+        </select>
+      </div>
+      <div class="col-sm-1">
+        <a class="tooltiped createScript btn btn-primary" style="width:100%;" title="Create a new Script">
+          <i class="glyphicon glyphicon-plus"></i>
+        </a>
+      </div>
+    </div>
+    -->
+  </section>
+</form>

@@ -762,6 +762,22 @@ $(function(){
     });
   });
 
+  var scraperForm = new Scraper.FormView({
+    container: '#scraper-monitor-modal [data-hook=scraper-modal-body]',
+    autoRender: false,
+    hosts:{},
+    looptime:{},
+    timeouts:{},
+    externalHosts:{},
+  });
+  $('#scraper-monitor-modal').on('show.bs.modal', function(evt){
+    scraperForm.render();
+  });
+
+  $('#scraper-monitor-modal').on('hidden.bs.modal', function(evt){
+    scraperForm.remove();
+  });
+
   /*
   $('#psaux-monitor-button').on('click', function(event){
     event.preventDefault();
