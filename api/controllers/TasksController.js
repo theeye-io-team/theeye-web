@@ -69,7 +69,8 @@ module.exports = {
     if( !params.script_id ) return res.send(400,'select a script');
 
     var updates = extend(params,{
-      'description': params.description || params.name
+      'description': params.description || params.name,
+      'script_arguments': params.script_arguments.split(',')
     });
 
     supervisor.patch({

@@ -603,9 +603,6 @@ h4.panel-title-content::after {
 
 .profile-page .col-20 { width:20%; }
 
-.calendarEvent {
-  cursor: pointer;
-}
-.calendarEvent:hover {
-  border-color: red;
-}
+.calendarEvent { cursor: pointer; }
+.calendarEvent:hover { border-color: red; }
+input[type=checkbox], input[type=radio] { margin:0; width:16px;height:16px; margin-top:8px;}

@@ -407,3 +407,11 @@ function triggers(io){
   triggers(io);
 
 })(window.io);
+
+
+//
+// auto focus search input on keypress
+//
+$(document).on('keypress',function(){
+  $input.focus();
+});
