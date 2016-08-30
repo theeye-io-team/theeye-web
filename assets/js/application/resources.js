@@ -26,7 +26,7 @@ $(function(){
       if(input.name=='disabled' && input.type=='checkbox'){
         values.enable = !input.checked;
       } else if(input.type=='checkbox') {
-        if(input.value){
+        if(input.value && input.value != 'on'){
           if(input.checked) values[input.name] = input.value;
         } else {
           values[input.name] = input.checked;
