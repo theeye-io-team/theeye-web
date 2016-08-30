@@ -26,7 +26,11 @@ $(function(){
       if(input.name=='disabled' && input.type=='checkbox'){
         values.enable = !input.checked;
       } else if(input.type=='checkbox') {
-        values[input.name] = Boolean(input.checked);
+        if(input.value){
+          if(input.checked) values[input.name] = input.value;
+        } else {
+          values[input.name] = input.checked;
+        }
       } else if(input.type=='radio') {
         if( input.checked )
           values[input.name] = input.value;
@@ -173,15 +177,15 @@ $(function(){
             var value = request_options[prop];
             var input = $form.find('[data-hook=' + prop + ']');
             if( input.is(':checkbox') ) {
-              if( Boolean(value) === true )
+              if( value === true || value === 'true' )
                 input[0].checked = true;
             } else {
               input.val( value );
             }
           }
-          if( response_options.script ){
-            $form.find('[data-hook=script]').trigger('change');
-          }
+          //if( response_options.script ){
+          //  $form.find('[data-hook=script]').trigger('change');
+          //}
           if( response_options.pattern ) {
             $form.find('[data-hook=pattern]').trigger('change');
           }
@@ -710,7 +714,7 @@ $(function(){
     });
 
     q('[data-hook=pattern]').on('click change',function(event){
-      q('[data-hook=match-pattern-selection]').click();
+      q('[data-hook=match-pattern-selection]').prop('checked', Boolean(this.value));
     });
 
     $bodyContainer = q('[data-hook=body-container]');

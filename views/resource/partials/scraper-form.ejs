@@ -157,12 +157,14 @@
         </span>
       </label>
       <div class="col-sm-1" style=text-align:center;>
-        <input data-hook=match-pattern-selection type=radio name=parser value=pattern>
+        <!-- <input data-hook=match-pattern-selection type=radio name=parser value=pattern> -->
+        <input data-hook=match-pattern-selection type=checkbox name=parser value=pattern>
       </div>
       <div class="col-sm-8">
         <input data-hook="pattern" type="text" name="pattern" class="form-control" placeholder="Match this string or regular expression">
       </div>
     </div>
+    <!--
     <div class="form-group">
       <label for="script" class="col-sm-3 control-label">
         Parse response with a Script
@@ -188,5 +190,6 @@
         </a>
       </div>
     </div>
+    -->
   </section>
 </form>
