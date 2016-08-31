@@ -104,13 +104,13 @@ $(function(){
   }
 
   /**
-  *
-  * all monitor and task are items.
-  *
-  * @class {Item}
-  * @author Facundo
-  *
-  */
+   *
+   * all monitor and task are items.
+   *
+   * @class {Item}
+   * @author Facundo
+   *
+   */
   var Filter = {
     field: function(field) {
       var name = field.name;

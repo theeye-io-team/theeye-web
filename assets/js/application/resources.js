@@ -1,5 +1,5 @@
 $(function(){
-  /* global bootbox, CustomerTags, $searchbox, debug */
+  /* global bootbox, Tags, $searchbox, debug */
   var ResourceStates = {
     normalState: 'normal',
     failureState: 'failure',
@@ -8,14 +8,6 @@ $(function(){
   };
 
   var log = debug('eye:web:admin:resources');
-
-  function methodHasBody (method) {
-    return method == 'POST' ||
-    method == 'PUT' ||
-    method == 'PATCH' ||
-    method == 'OPTIONS' ||
-    method == 'DELETE';
-  }
 
   function extractFormData($el){
     var inputs = $el.find(":input");
@@ -252,7 +244,7 @@ $(function(){
           //one time AUTOCOMPLETE COMBOBOX setup
           $select.select2();
           $form.find('select#script_id').select2();
-          $form.find('select[name=tags]').select2({ placeholder:"Tags", data: CustomerTags, tags:true });
+          $form.find('select[name=tags]').select2({ placeholder:"Tags", data: Select2Data.PrepareTags(Tags), tags:true });
           var $firstInput = $(this).find('input[type!=hidden]').first().focus();
           $(this).on('shown.bs.modal', function(){
             $firstInput.focus();
@@ -270,7 +262,6 @@ $(function(){
     function setupCreateResourceForm ($form, options) {
       log('setting up for "create"');
       var host = options.host;
-
       var $select = $form.find('.resource-host select');
       var $input  = $form.find('.resource-host input');
 
@@ -285,7 +276,7 @@ $(function(){
         if(host) $select.val(host).trigger('change');
 
         $form.find('select#script_id').select2({ placeholder:"Select a script..." });
-        $form.find('select[name=tags]').select2({ placeholder:"Tags", data: CustomerTags, tags:true });
+        $form.find('select[name=tags]').select2({ placeholder:"Tags", data: Select2Data.PrepareTags(Tags), tags:true });
 
         var $firstInput = $(this).find('input[type!=hidden]').first().focus();
         $(this).on('shown.bs.modal', function(){
@@ -328,7 +319,9 @@ $(function(){
       setupResourceAction(data);
     }
 
-    $('.editResourceMonitor').on('click', handleResourceAction);
+    $('[data-hook=edit-process-monitor]').on('click', handleResourceAction);
+    $('[data-hook=edit-script-monitor]').on('click', handleResourceAction);
+    $('[data-hook=edit-dstat-monitor]').on('click', handleResourceAction);
     $('.createResourceMonitor').on('click', handleResourceAction);
 
     // hook to scripts.js event script_uploaded
@@ -344,21 +337,9 @@ $(function(){
 
   })();
 
-  (function(){
-    (function(){
-      var $externalHostInput = $("form#scraperResourceForm div#externalScraperHost");
-      var $input = $("form#scraperResourceForm input[name=external]");
-      $input.on("change",function(event){
-        if( $input.is(":checked") ) {
-          $externalHostInput.slideDown(80);
-        } else {
-          $externalHostInput.slideUp(80);
-          $externalHostInput.find("option:eq(0)").prop('selected', true);
-        }
-      });
+  $('.modal#scriptUpload div#scriptTemplateDescription').hide();
 
-      $('.modal#scriptUpload div#scriptTemplateDescription').hide();
-    })();
+  (function(){
 
     function deleteResourceRequest (idResource,done) {
       jQuery.ajax({
@@ -687,49 +668,69 @@ $(function(){
     })();
   })();
 
-  function APIMonitorEvents (options) {
 
-    var $container = this.$container = $(options.container);
+  // define and call
+  (function SetupScraperMonitorCRUD(){
 
-    function q (selector) {
-      return $container.find(selector);
+    // initialize a scraper form
+    var scraperForm = new Scraper.FormView({
+      container: '[data-hook=scraper-form-container]',
+      looptimes: window.Looptimes,
+      timeouts: window.Timeouts,
+      hosts: window.Hosts,
+      scraperHosts: window.ScraperHosts,
+      tags: window.Tags,
+    });
+    window.form = scraperForm;
+
+    var $scraperModal = $('[data-hook=scraper-resource-modal]');
+
+    function openModal (event){
+      event.preventDefault();
+      event.stopPropagation();
+
+      $scraperModal.one('shown.bs.modal', function(){ scraperForm.focus(); });
+
+      // once hide modal remove scraper form
+      $scraperModal.one('hidden.bs.modal', function(){ scraperForm.remove(); });
+
+      // once show modal render scraper form
+      $scraperModal.modal('show');
     }
 
-    // binding events
-    $responseSection = q('section[data-hook=response]');
-    $requestSection = q('section[data-hook=request]');
+    function createOnClick (el) {
+      var $el = $(el);
+      $el.on('click',function(event){
+        // on click create render form
+        scraperForm.render();
+        openModal(event);
+      });
+    }
 
-    q('[data-hook=response-section-toggle]').on('click',function(event){
-      $responseSection.slideToggle();
-      $("i", this).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
-    });
 
-    q('[data-hook=request-section-toggle]').on('click',function(event){
-      $requestSection.slideToggle();
-      $("i", this).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
-    });
+    // test data
+    var values = {
+      'description':'prueba',
+      'json':true,
+      'method':'POST',
+      'tags': ['Nueva','123','321'],
+      'timeout':5000,
+      'looptime':15000,
+      'hosts':['57b8ab16648d46911ff0b270']
+    };
+    function editOnClick (el) {
+      var $el = $(el);
+      $el.on('click',function(event){
+        // on click create render form
+        scraperForm.render();
+        scraperForm.values = values;
+        openModal(event);
+      });
+    }
 
-    q('[data-hook=script]').on('click change',function(event){
-      q('[data-hook=script-parser-selection]').click();
-    });
+    createOnClick('.dropdown.resource [data-hook=create-scraper-monitor]');
+    createOnClick('.panel-group [data-hook=create-scraper-monitor]');
+    editOnClick('[data-hook=edit-scraper-monitor]');
 
-    q('[data-hook=pattern]').on('click change',function(event){
-      q('[data-hook=match-pattern-selection]').prop('checked', Boolean(this.value));
-    });
-
-    $bodyContainer = q('[data-hook=body-container]');
-    $methods = q('select[name=method]');
-    $methods.on('change',function(event){
-      var method = $methods.val();
-      var hasBody = methodHasBody(method);
-      if(hasBody) $bodyContainer.slideDown(80);
-      else $bodyContainer.slideUp(80);
-    });
-
-    return this;
-  }
-
-  var requestMonitor = new APIMonitorEvents({
-    container: 'form#scraperResourceForm'
-  });
+  })();
 });

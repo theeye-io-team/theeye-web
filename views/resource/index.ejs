@@ -7,7 +7,13 @@
 <% block('scripts','<script src="/js/ace-editor/ace.js"></script>') %>
 <% block('scripts','<script src="/js/application/searchbox.js"></script>')%>
 <% block('scripts','<script src="/js/application/tags.js"></script>')%>
-<% block('scripts','<script> window.CustomerTags = PrepareTags(' + JSON.stringify(tags) + '); </script>') %>
+
+<% block('scripts','<script> window.Tags = ' + JSON.stringify(tags) + '; </script>') %>
+<% block('scripts','<script> window.Looptimes = ' + JSON.stringify(looptimes) + '; </script>') %>
+<% block('scripts','<script> window.Timeouts = ' + JSON.stringify(timeouts) + '; </script>') %>
+<% block('scripts','<script> window.Hosts = ' + JSON.stringify(hosts) + '; </script>') %>
+<% block('scripts','<script> window.ScraperHosts = ' + JSON.stringify(scraperHosts) + '; </script>') %>
+<% block('scripts','<script> window.Scripts = ' + JSON.stringify(scripts) + '; </script>') %>
 
 <!-- Main  -->
 <div class="admin-container monitorContainer">
@@ -40,39 +46,37 @@
             data-placement="right"
             title="Create new monitor"
             aria-label="Center Align">
-             <span class="glyphicon glyphicon-plus"></span>
-             New Monitor
-           </span>
+            <span class="glyphicon glyphicon-plus"></span> New Monitor
+          </span>
 
-           <ul class="dropdown-menu"
-             role="menu"
-             aria-labelledby="dropdownMenu1"
-             style="min-width: 120px">
-             <li role="presentation">
-               <a role="menuitem" tabindex="-1"
-                 data-hook="create-scraper-monitor"
-                 data-toggle="modal"
-                 data-target="#scraperResourceModal"
-                 data-resource-type="scraper"
-                 data-action="create">WEB/API Check</a>
-             </li>
-             <li role="presentation">
-               <a role="menuitem" tabindex="-1"
-                class="createResourceMonitor"
+          <ul class="dropdown-menu"
+            role="menu"
+            aria-labelledby="dropdownMenu1"
+            style="min-width: 120px">
+            <li role="presentation">
+              <a role="menuitem" tabindex="-1"
+                class="create-monitor"
+                data-hook="create-scraper-monitor"
+                data-resource-type="scraper"
+                data-action="create">WEB/API Check</a>
+            </li>
+            <li role="presentation">
+              <a role="menuitem" tabindex="-1"
+                class="create-monitor createResourceMonitor"
                 data-toggle="modal"
                 data-target="#processResourceModal"
                 data-resource-type="process"
                 data-action="create">Process</a>
-             </li>
-             <li role="presentation">
-               <a role="menuitem" tabindex="-1"
-                class="createResourceMonitor"
+            </li>
+            <li role="presentation">
+              <a role="menuitem" tabindex="-1"
+                class="create-monitor createResourceMonitor"
                 data-toggle="modal"
                 data-target="#scriptResourceModal"
                 data-resource-type="script"
                 data-action="create">Script</a>
-             </li>
-           </ul>
+            </li>
+          </ul>
         </div>
 
         <button class="pull-right tableHeaderIconButton massDelete btn btn-primary simple-btn tooltiped"
@@ -142,6 +146,7 @@
                       <button class="editResourceMonitor editResource <%= monitor.type %>ResourceEditAction btn btn-primary simple-btn tooltiped"
                         aria-label="Center Align"
                         title="Edit monitor"
+                        data-hook="edit-<%= monitor.type %>-monitor"
                         data-host_id="<%= monitor.host_id %>"
                         data-hostname="<%= monitor.resource.hostname %>"
                         data-resource_id="<%= monitor.resource.id %>"
@@ -192,17 +197,16 @@
                         <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1" style="min-width: 120px">
                           <li role="presentation">
                             <span role="menuitem" tabindex="-1"
+                              class="create-monitor"
                               data-hook="create-scraper-monitor"
                               data-host_id="<%= monitor.host_id %>"
                               data-hostname="<%= monitor.resource.hostname %>"
-                              data-toggle="modal"
-                              data-target="#scraperResourceModal"
                               data-resource-type="scraper"
                               data-action="create">WEB/API Check</span>
                           </li>
                           <li role="presentation">
                             <span role="menuitem" tabindex="-1"
-                              class="createResourceMonitor"
+                              class="create-monitor createResourceMonitor"
                               data-host_id="<%= monitor.host_id %>"
                               data-hostname="<%= monitor.resource.hostname %>"
                               data-toggle="modal"
@@ -212,7 +216,7 @@
                           </li>
                           <li role="presentation">
                             <span role="menuitem" tabindex="-1"
-                              class="createResourceMonitor"
+                              class="create-monitor createResourceMonitor"
                               data-host_id="<%= monitor.host_id %>"
                               data-hostname="<%= monitor.resource.hostname %>"
                               data-toggle="modal"
