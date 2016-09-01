@@ -80,9 +80,10 @@ module.exports = {
 
     var hosts = [];
     if( params.hosts_id ) hosts = params.hosts_id;
+    else if( params.hosts ) hosts = params.hosts;
     else if( params.host_id ) hosts = [ params.host_id ];
     else return res.send(400, 'At least one host is required');
-    if( !params.monitor_type ) return res.send(400,"No resource type supplied");
+    if( ! params.type ) return res.send(400,"No resource type supplied");
 
     var data = extend(params, { hosts: hosts });
     if( params.script_arguments ){
@@ -109,9 +110,10 @@ module.exports = {
 
     var hosts = [];
     if( params.hosts_id ) hosts = params.hosts_id;
+    else if( params.hosts ) hosts = params.hosts;
     else if( params.host_id ) hosts = [ params.host_id ];
-    else return res.send(400, 'At least one host is required');
-    if( !params.monitor_type ) return res.send(400,"No resource type supplied");
+    else return res.send(400,'a host is required');
+    if( !params.type ) return res.send(400,'No resource type supplied');
 
     var data = extend(params, { hosts: hosts });
     if( params.script_arguments ){
@@ -136,10 +138,8 @@ module.exports = {
   {
     var supervisor = req.supervisor;
     var id = req.param("id", null);
-    var type = req.param("monitor_type", null);
 
     if( ! id || ! id.match(/^[a-fA-F0-9]{24}$/) ) return res.send(400,'invalid id');
-    if( ! type )  return res.send(400,'monitor type is required');
 
     async.parallel({
       resource: function(callback){
@@ -148,7 +148,7 @@ module.exports = {
       },
       monitor: function(callback){
         debug('fetching monitors');
-        supervisor.monitorFetch({ 'resource': id, 'type': type }, callback );
+        supervisor.monitorFetch({ 'resource': id }, callback);
       }
     },function(err, data){
       if(err) return res.send(500, err);

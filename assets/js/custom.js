@@ -57,4 +57,17 @@ $(document).ready(function() {
     backgroundColor:'', 
     cursor:         'wait' 
   }; 
+
+  (function () {
+    var links = $('.nav li a');
+    $.each(links, function(key, value){
+      $(this).removeClass('active');
+      if(value.href == document.URL){
+        var $parent = $(this).parent();
+        if (!$parent.hasClass('active')) {
+          $parent.addClass('active');
+        }
+      }
+    });
+  })();
 });

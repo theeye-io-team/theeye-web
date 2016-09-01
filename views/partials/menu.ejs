@@ -10,7 +10,7 @@
         <a href="#" class="switcher"><img src="/images/switcher.png" /></a>
         <select id="clientSelect" class="hidden " tabindex=-1>
           <% req.user.customers.forEach( function(customer, key){ %>
-            <option value="<%= customer %>"><%= customer %></option>
+          <option value="<%= customer %>"><%= customer %></option>
           <% }); %>
         </select>
       </div>
@@ -23,32 +23,6 @@
           <% }); %>
         </ul>
       </div>
-      <!--
-      <button type="button" class="btn btn-light btn-circle">
-        <span class="icon-switch"></span>
-      </button>
-      <button type="button" class="btn btn-default">
-        <span class="icon-switch"></span>
-      </button>
-      <button type="button" class="btn btn-default">
-        <span class="glyphicon glyphicon-remove"></span>
-      </button>
-
-      <div class="user">
-        <a href="/profile" ><span><%= req.user.username %></span></a>
-      </div>
-      -->
-      <!--
-      <div class="client dropdown">
-        <button id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="glyphicon glyphicon-refresh"></i>Change</button>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-          <span class="glyphicon glyphicon-triangle-top"></span>
-          <% req.user.customers.forEach( function(customer, key){ %>
-          <li><a href="#" onClick="javascript:setCustomer('<%= customer %>')" ><%= customer %></a></li>
-          <% }); %>
-        </ul>
-      </div>
-      -->
     </div>
     <ul class="navbar-right">
       <li><a href="/events">Resources</a></li>
@@ -63,39 +37,19 @@
             <li><a href="/admin/script"> Scripts </a></li>
             <li><a href="/admin/hostgroup"> Templates </a></li>
             <% if(req.user.credential == 'root'){ %>
-              <li><a href="/admin/user"> Users </a></li>
-              <li><a href="/admin/customer"> Organizations </a></li>
-              <% } %>
+            <li><a href="/admin/user"> Users </a></li>
+            <li><a href="/admin/customer"> Organizations </a></li>
+            <% } %>
             <li><a href="/profile"> Profile </a></li>
-              <li>
-                <a href="/logout" style="padding-bottom: 14px;">
-                  <i class="glyphicon glyphicon-log-out"></i>
-                  Logout
-                </a>
-              </li>
-            </ul>
-          </div>
-        </li>
-      </ul>
+            <li>
+              <a href="/logout" style="padding-bottom: 14px;">
+                <i class="glyphicon glyphicon-log-out"></i>
+                Logout
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
   </div>
-
 </nav>
-<!-- esto va para otro lado, la admin view.
-<li><a href="/script">Scripts</a></li>
-<li><a href="/tasks">Tasks</a></li>
--->
-
-<script type="text/javascript">
-  $(document).ready(function () {
-    var links = $('.nav li a');
-    $.each(links, function(key, value){
-      $(this).removeClass('active');
-      if(value.href == document.URL){
-        var $parent = $(this).parent();
-        if (!$parent.hasClass('active')) {
-          $parent.addClass('active');
-        }
-      }
-    });
-  });
-</script>

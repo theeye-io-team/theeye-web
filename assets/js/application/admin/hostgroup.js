@@ -84,8 +84,8 @@ $(function(){
       switch(type) {
         case 'scraper':
           this.pattern = monitor.pattern || monitor.config.pattern;
-          this.url = monitor.url || monitor.config.request_options.url;
-          this.timeout = monitor.timeout || monitor.config.request_options.timeout;
+          this.url = monitor.url || monitor.config.url;
+          this.timeout = monitor.timeout || monitor.config.timeout;
           break;
         case 'script':
           this.script_id = monitor.script_id || monitor.config.script_id;
@@ -104,13 +104,13 @@ $(function(){
   }
 
   /**
-  *
-  * all monitor and task are items.
-  *
-  * @class {Item}
-  * @author Facundo
-  *
-  */
+   *
+   * all monitor and task are items.
+   *
+   * @class {Item}
+   * @author Facundo
+   *
+   */
   var Filter = {
     field: function(field) {
       var name = field.name;
@@ -760,6 +760,22 @@ $(function(){
     $('select[data-hook=script_id]', this).select2({
       placeholder:'Select a script...'
     });
+  });
+
+  var scraperForm = new Scraper.FormView({
+    container: '#scraper-monitor-modal [data-hook=scraper-modal-body]',
+    autoRender: false,
+    hosts:{},
+    looptime:{},
+    timeouts:{},
+    externalHosts:{},
+  });
+  $('#scraper-monitor-modal').on('show.bs.modal', function(evt){
+    scraperForm.render();
+  });
+
+  $('#scraper-monitor-modal').on('hidden.bs.modal', function(evt){
+    scraperForm.remove();
   });
 
   /*

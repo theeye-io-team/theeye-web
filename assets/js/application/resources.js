@@ -1,5 +1,5 @@
 $(function(){
-  /* global bootbox, CustomerTags, $searchbox, debug */
+  /* global bootbox, Tags, $searchbox, debug */
   var ResourceStates = {
     normalState: 'normal',
     failureState: 'failure',
@@ -8,14 +8,6 @@ $(function(){
   };
 
   var log = debug('eye:web:admin:resources');
-
-  function methodHasBody (method) {
-    return method == 'POST' ||
-    method == 'PUT' ||
-    method == 'PATCH' ||
-    method == 'OPTIONS' ||
-    method == 'DELETE';
-  }
 
   function extractFormData($el){
     var inputs = $el.find(":input");
@@ -26,7 +18,7 @@ $(function(){
       if(input.name=='disabled' && input.type=='checkbox'){
         values.enable = !input.checked;
       } else if(input.type=='checkbox') {
-        if(input.value){
+        if(input.value && input.value != 'on'){
           if(input.checked) values[input.name] = input.value;
         } else {
           values[input.name] = input.checked;
@@ -124,7 +116,6 @@ $(function(){
 
     $('.modal#processResourceModal button[type=submit]').on('click', setCallback('process'));
     $('.modal#scriptResourceModal button[type=submit]').on('click', setCallback('script'));
-    $('.modal#scraperResourceModal button[type=submit]').on('click', setCallback('scraper'));
 
     function fillForm(data){
       var resource = data.resource;
@@ -154,45 +145,6 @@ $(function(){
       setSelectedTags( monitor.tags );
 
       switch(type) {
-        case 'scraper':
-          var $input = $('form#scraperResourceForm input[data-hook=external]');
-          if(monitor.config.external) {
-            $('form#scraperResourceForm [data-hook=external_host_id]')
-            .val(monitor.host_id);
-            $input.prop('checked', true);
-            $input.trigger('change');
-          } else {
-            $input.prop('checked', false);
-            $input.trigger('change');
-          }
-
-          var response_options = monitor.config.response_options;
-          var request_options  = monitor.config.request_options;
-
-          for(prop in response_options){
-            var value = response_options[prop];
-            $form.find('[data-hook=' + prop + ']').val( value );
-          }
-          for(prop in request_options){
-            var value = request_options[prop];
-            var input = $form.find('[data-hook=' + prop + ']');
-            if( input.is(':checkbox') ) {
-              if( value === true || value === 'true' )
-                input[0].checked = true;
-            } else {
-              input.val( value );
-            }
-          }
-          //if( response_options.script ){
-          //  $form.find('[data-hook=script]').trigger('change');
-          //}
-          if( response_options.pattern ) {
-            $form.find('[data-hook=pattern]').trigger('change');
-          }
-          if( request_options.body && methodHasBody(request_options.method) ){
-            $form.find('[data-hook=method]').trigger('change');
-          }
-          break;
         case 'process':
           $form.find('[data-hook=pattern]').val(monitor.config.ps.pattern);
           break;
@@ -252,7 +204,7 @@ $(function(){
           //one time AUTOCOMPLETE COMBOBOX setup
           $select.select2();
           $form.find('select#script_id').select2();
-          $form.find('select[name=tags]').select2({ placeholder:"Tags", data: CustomerTags, tags:true });
+          $form.find('select[name=tags]').select2({ placeholder:"Tags", data: Select2Data.PrepareTags(Tags), tags:true });
           var $firstInput = $(this).find('input[type!=hidden]').first().focus();
           $(this).on('shown.bs.modal', function(){
             $firstInput.focus();
@@ -270,7 +222,6 @@ $(function(){
     function setupCreateResourceForm ($form, options) {
       log('setting up for "create"');
       var host = options.host;
-
       var $select = $form.find('.resource-host select');
       var $input  = $form.find('.resource-host input');
 
@@ -285,7 +236,7 @@ $(function(){
         if(host) $select.val(host).trigger('change');
 
         $form.find('select#script_id').select2({ placeholder:"Select a script..." });
-        $form.find('select[name=tags]').select2({ placeholder:"Tags", data: CustomerTags, tags:true });
+        $form.find('select[name=tags]').select2({ placeholder:"Tags", data: Select2Data.PrepareTags(Tags), tags:true });
 
         var $firstInput = $(this).find('input[type!=hidden]').first().focus();
         $(this).on('shown.bs.modal', function(){
@@ -328,7 +279,9 @@ $(function(){
       setupResourceAction(data);
     }
 
-    $('.editResourceMonitor').on('click', handleResourceAction);
+    $('[data-hook=edit-process-monitor]').on('click', handleResourceAction);
+    $('[data-hook=edit-script-monitor]').on('click', handleResourceAction);
+    $('[data-hook=edit-dstat-monitor]').on('click', handleResourceAction);
     $('.createResourceMonitor').on('click', handleResourceAction);
 
     // hook to scripts.js event script_uploaded
@@ -344,21 +297,9 @@ $(function(){
 
   })();
 
-  (function(){
-    (function(){
-      var $externalHostInput = $("form#scraperResourceForm div#externalScraperHost");
-      var $input = $("form#scraperResourceForm input[name=external]");
-      $input.on("change",function(event){
-        if( $input.is(":checked") ) {
-          $externalHostInput.slideDown(80);
-        } else {
-          $externalHostInput.slideUp(80);
-          $externalHostInput.find("option:eq(0)").prop('selected', true);
-        }
-      });
+  $('.modal#scriptUpload div#scriptTemplateDescription').hide();
 
-      $('.modal#scriptUpload div#scriptTemplateDescription').hide();
-    })();
+  (function(){
 
     function deleteResourceRequest (idResource,done) {
       jQuery.ajax({
@@ -687,49 +628,5 @@ $(function(){
     })();
   })();
 
-  function APIMonitorEvents (options) {
-
-    var $container = this.$container = $(options.container);
-
-    function q (selector) {
-      return $container.find(selector);
-    }
-
-    // binding events
-    $responseSection = q('section[data-hook=response]');
-    $requestSection = q('section[data-hook=request]');
-
-    q('[data-hook=response-section-toggle]').on('click',function(event){
-      $responseSection.slideToggle();
-      $("i", this).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
-    });
-
-    q('[data-hook=request-section-toggle]').on('click',function(event){
-      $requestSection.slideToggle();
-      $("i", this).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
-    });
-
-    q('[data-hook=script]').on('click change',function(event){
-      q('[data-hook=script-parser-selection]').click();
-    });
-
-    q('[data-hook=pattern]').on('click change',function(event){
-      q('[data-hook=match-pattern-selection]').prop('checked', Boolean(this.value));
-    });
-
-    $bodyContainer = q('[data-hook=body-container]');
-    $methods = q('select[name=method]');
-    $methods.on('change',function(event){
-      var method = $methods.val();
-      var hasBody = methodHasBody(method);
-      if(hasBody) $bodyContainer.slideDown(80);
-      else $bodyContainer.slideUp(80);
-    });
-
-    return this;
-  }
-
-  var requestMonitor = new APIMonitorEvents({
-    container: 'form#scraperResourceForm'
-  });
+  ScraperMonitorCRUD();
 });
