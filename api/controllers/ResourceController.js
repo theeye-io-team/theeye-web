@@ -165,13 +165,13 @@ module.exports = {
     }
 
     var data = { 'alerts': value.toString() };
-    supervisor.patchResource(
-      req.params.id,
-      data,
-      function(err, resource) {
-        if(err) return res.send(500, err);
-        res.send(200,{ resource: resource });
-      }
-    );
+    supervisor.patch({
+      id: req.params.id,
+      route: supervisor.RESOURCE,
+      child: 'alerts',
+      body: data,
+      failure: error => res.send(500, error),
+      success: resource => res.send(200,{ resource: resource })
+    });
   }
 };

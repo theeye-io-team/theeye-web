@@ -1,8 +1,32 @@
 # CHANGELOG
 
-### 0.3.3 - 2016-08-24
+### 0.4.0 - 2016-08-29
 
-> added script_uploaded listener to catch the script modal save operation on admin/monitor layout
+> added web scraper form the posibility to submit custom request and respose parameters       
+
+> put resouce methods into a namespace       
+
+> put resource extract form data in global namespace       
+
+> added loop duration interval to dstat monitor        
+
+> added tooltips with help in scraper form          
+
+> added cancel schedule functionality        
+
+> restored edit monitors button functionality (pre search)        
+
+> refactored btn-default / btn-primary styling on all main screens        
+
+> added some styles for calendar view       
+
+> double modal on schedule delete has some funny behaviour       
+
+> needs client update, will crash backend on any schedule delete interaction       
+
+> added script_uploaded listener to catch the script modal save operation on admin/monitor layout      
+
+
 
 ### 0.3.2 - 2016-08-22
 

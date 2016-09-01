@@ -227,12 +227,10 @@ $(function() {
               contentType: false,
               dataType: 'json'
             })
-            .done(function(data)
-            {
+            .done(function(data) {
               $state.trigger('script_uploaded', data);
             })
-            .fail(function(error)
-            {
+            .fail(function(error) {
               alert("Error processing the script!", "Scripts");
             });
           } else {

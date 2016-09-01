@@ -35,14 +35,14 @@
     <h3>Tasks Admin</h3>
     <div>
       <div class="table-header admin">
-        <button class="pull-left tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
+        <button class="pull-left tableHeaderIconButton massChecker btn btn-primary simple-btn tooltiped"
           style="margin-left:5px;"
           title="Select all"
           aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
         </button>
         <span class="title">Tasks &nbsp; &nbsp; |</span>
-        <button class="createTask btn btn-default simple-btn new-btn tooltiped"
+        <button class="createTask btn btn-primary simple-btn new-btn tooltiped"
           data-placement="right"
           title="Create new task"
           aria-label="Left Align"
@@ -51,7 +51,7 @@
           <span class="glyphicon glyphicon-plus"></span>
           New Task
         </button>
-        <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
+        <button class="pull-right tableHeaderIconButton massDelete btn btn-primary simple-btn tooltiped"
           title="Delete selected tasks"
           aria-label="Center Align">
           <span class="glyphicon glyphicon-trash"></span>
@@ -76,7 +76,7 @@
               <h4 class="panel-title">
                 <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= task.id %>" aria-expanded="false" aria-controls="collapse<%= task.id %>">
                   <div class="panel-title-content">
-                    <button class="rowSelector btn btn-default simple-btn tooltiped"
+                    <button class="rowSelector btn btn-primary simple-btn tooltiped"
                       title="Select task"
                       aria-label="Center Align">
                       <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
@@ -91,17 +91,17 @@
                     <% } %>
                     </span>
                     <div class="panel-item icons">
-                      <button class="editTask btn btn-default simple-btn tooltiped"
+                      <button class="editTask btn btn-primary simple-btn tooltiped"
                         title="Edit task"
                         aria-label="Center Align">
                         <span class="glyphicon glyphicon-edit"></span>
                       </button>
-                      <button class="scheduleTask btn btn-default simple-btn tooltiped"
+                      <button class="scheduleTask btn btn-primary simple-btn tooltiped"
                         title="Schedule task"
                         aria-label="Center Align">
                         <span class="glyphicon glyphicon-time"></span>
                       </button>
-                      <button class="deleteTask btn btn-default simple-btn tooltiped"
+                      <button class="deleteTask btn btn-primary simple-btn tooltiped"
                         title="Delete task"
                         aria-label="Center Align">
                         <span class="glyphicon glyphicon-trash"></span>
@@ -134,3 +134,4 @@
 <%- include ./partials/edit-modal.ejs %>
 <%- include ../script/partials/modal.ejs %>
 <%- include ./partials/scheduler-modal.ejs %>
+<%- include ./partials/schedule-delete-modal.ejs %>

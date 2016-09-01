@@ -24,7 +24,7 @@
     <h3>Monitors Admin</h3>
     <div>
       <div class="table-header admin">
-        <button class="pull-left tableHeaderIconButton massChecker btn btn-default simple-btn tooltiped"
+        <button class="pull-left tableHeaderIconButton massChecker btn btn-primary simple-btn tooltiped"
           title="Select all"
           aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
@@ -36,7 +36,7 @@
           <span id="dropdownMenu1"
             data-toggle="dropdown"
             aria-expanded="true"
-            class="btn btn-default simple-btn dropdown-toggle"
+            class="btn btn-primary simple-btn dropdown-toggle"
             data-placement="right"
             title="Create new monitor"
             aria-label="Center Align">
@@ -54,7 +54,7 @@
                   data-toggle="modal"
                   data-target="#scraperResourceModal"
                   data-resource-type="scraper"
-                  data-action="create">Web Check</a>
+                  data-action="create">WEB/API Check</a>
              </li>
              <li role="presentation">
                <a role="menuitem" tabindex="-1"
@@ -75,19 +75,19 @@
            </ul>
         </div>
 
-        <button class="pull-right tableHeaderIconButton massDelete btn btn-default simple-btn tooltiped"
+        <button class="pull-right tableHeaderIconButton massDelete btn btn-primary simple-btn tooltiped"
           title="Delete selected monitors"
           aria-label="Center Align">
           <span class="glyphicon glyphicon-trash"></span>
         </button>
 
-        <button class="pull-right tableHeaderIconButton massMuteActivate btn btn-default simple-btn tooltiped"
+        <button class="pull-right tableHeaderIconButton massMuteActivate btn btn-primary simple-btn tooltiped"
           title="Activate selected monitors alerts"
           aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-volume-up"></span>
         </button>
 
-        <button class="pull-right tableHeaderIconButton massMuteDeactivate btn btn-default simple-btn tooltiped"
+        <button class="pull-right tableHeaderIconButton massMuteDeactivate btn btn-primary simple-btn tooltiped"
           title="Deactivate selected monitors alerts"
           aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-volume-off"></span>
@@ -115,13 +115,13 @@
                   <div class="panel-title-content">
 
                     <% if(monitor.type == 'host') { %>
-                    <button class="rowSelector-not btn btn-default simple-btn tooltiped"
+                    <button class="rowSelector-not btn btn-primary simple-btn tooltiped"
                       title="Beware: I'm a Host!!"
                       aria-label="Center Align">
                       <span class="selectorIcon glyphicon glyphicon-home"></span>
                     </button>
                     <% } else { %>
-                    <button class="rowSelector btn btn-default simple-btn tooltiped"
+                    <button class="rowSelector btn btn-primary simple-btn tooltiped"
                       title="Select monitor"
                       aria-label="Center Align">
                       <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
@@ -139,7 +139,7 @@
 
                       <% if( monitor.type != 'host' && monitor.monitor_type != 'host' ) { %>
 
-                      <button class="editResourceMonitor editResource <%= monitor.type %>ResourceEditAction btn btn-default simple-btn tooltiped"
+                      <button class="editResourceMonitor editResource <%= monitor.type %>ResourceEditAction btn btn-primary simple-btn tooltiped"
                         aria-label="Center Align"
                         title="Edit monitor"
                         data-host_id="<%= monitor.host_id %>"
@@ -164,14 +164,14 @@
                       }
                       %>
 
-                      <button class="<%= muteClass %> btn btn-default simple-btn tooltiped"
+                      <button class="<%= muteClass %> btn btn-primary simple-btn tooltiped"
                         title="<%= muteTitle %>"
                         aria-label="Center Align"
                         data-resource_id="<%= monitor.resource.id %>">
                         <span class="glyphicon <%= muteIcon %>"></span>
                       </button>
 
-                      <button class="deleteResource btn btn-default simple-btn tooltiped"
+                      <button class="deleteResource btn btn-primary simple-btn tooltiped"
                         title="Delete monitor"
                         aria-label="Center Align"
                         data-resource_id="<%= monitor.resource.id %>">
@@ -184,7 +184,7 @@
                         <button id="dropdownMenu1"
                           data-toggle="dropdown"
                           aria-expanded="true"
-                          class="btn btn-default simple-btn dropdown-toggle"
+                          class="btn btn-primary simple-btn dropdown-toggle"
                           aria-label="Center Align">
                           <span class="glyphicon glyphicon-plus"></span>
                         </button>
@@ -198,7 +198,7 @@
                               data-toggle="modal"
                               data-target="#scraperResourceModal"
                               data-resource-type="scraper"
-                              data-action="create">Web Check</span>
+                              data-action="create">WEB/API Check</span>
                           </li>
                           <li role="presentation">
                             <span role="menuitem" tabindex="-1"
@@ -223,7 +223,7 @@
                         </ul>
                       </div>
 
-                      <button class="deleteHostResource btn btn-default simple-btn tooltiped"
+                      <button class="deleteHostResource btn btn-primary simple-btn tooltiped"
                         title="Delete monitor"
                         aria-label="Center Align"
                         data-resource_id="<%= monitor.resource.id %>">

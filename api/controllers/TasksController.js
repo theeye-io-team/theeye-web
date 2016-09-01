@@ -69,7 +69,8 @@ module.exports = {
     if( !params.script_id ) return res.send(400,'select a script');
 
     var updates = extend(params,{
-      'description': params.description || params.name
+      'description': params.description || params.name,
+      'script_arguments': params.script_arguments.split(',')
     });
 
     supervisor.patch({
@@ -103,7 +104,7 @@ module.exports = {
       route: supervisor.TASK,
       body: data,
       failure: error => res.send(500, error),
-      success: task => res.json(task),
+      success: task => res.json(task)
     });
   },
   // POST
@@ -129,5 +130,30 @@ module.exports = {
         res.send(200, scheduleData);
       });
     }
+  },
+  cancelSchedule: function(req, res) {
+    console.log('CANCEL SCHEDULE');
+    console.log(req.params);
+    var supervisor = req.supervisor;
+    var taskId = req.param("id", null);
+    var scheduleId = req.param("scheduleId", null);
+    if( ! taskId || ! taskId.match(/^[a-fA-F0-9]{24}$/) ) {
+      return res.send(400,'invalid id');
+    } else if (! scheduleId || ! scheduleId.match(/^[a-fA-F0-9]{24}$/)) {
+      return res.send(400,'invalid schedule id');
+    } else {
+      supervisor.remove({
+        route: '/:customer/task',
+        id: taskId,
+        child: 'schedule/' + scheduleId,
+        failure: error => res.send(500, error),
+        success: task => res.json(task)
+      });
+      // supervisor.getTaskSchedule(id, function(err, scheduleData){
+      //   if (err) return res.send(500, err);
+      //   res.send(200, scheduleData);
+      // });
+    }
+
   }
 };
