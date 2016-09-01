@@ -84,8 +84,8 @@ $(function(){
       switch(type) {
         case 'scraper':
           this.pattern = monitor.pattern || monitor.config.pattern;
-          this.url = monitor.url || monitor.config.request_options.url;
-          this.timeout = monitor.timeout || monitor.config.request_options.timeout;
+          this.url = monitor.url || monitor.config.url;
+          this.timeout = monitor.timeout || monitor.config.timeout;
           break;
         case 'script':
           this.script_id = monitor.script_id || monitor.config.script_id;

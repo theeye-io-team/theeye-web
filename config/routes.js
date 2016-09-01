@@ -60,7 +60,7 @@ module.exports.routes = {
   //ResourceController routes
   'get    /admin/monitor' : 'ResourceController.index',
   'get    /resource/:id' : 'ResourceController.get',
-  'post   /resource/:type' : 'ResourceController.create',
+  'post   /resource/:type?' : 'ResourceController.create',
   'put    /resource/:id' : 'ResourceController.update',
   'patch  /resource/:id/alerts' : 'ResourceController.updateAlerts',
   'delete /resource/:id' : 'ResourceController.destroy',

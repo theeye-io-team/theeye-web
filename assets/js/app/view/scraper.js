@@ -120,7 +120,8 @@ var Scraper = (function Scraper(){
       return this.find('[data-hook=' + name +']');
     }
 
-    FormView.prototype.render = function(){
+    FormView.prototype.render = function(options){
+      options||(options={});
       this.renderTemplate();
 
       // initialize & render select2 combos
@@ -145,6 +146,15 @@ var Scraper = (function Scraper(){
         placeholder: 'External Host',
         data: Select2Data.PrepareHosts( this.options.scraperHosts )
       });
+
+      if( options.model ){
+        this.values = options.model.attributes;
+        if( ! options.model.isNew() ){
+          this.queryByHook('hosts').select2({
+            multiple:false
+          });
+        }
+      }
     }
 
     FormView.prototype.remove = function(){

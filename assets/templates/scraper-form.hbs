@@ -1,17 +1,16 @@
 <form class="form-horizontal">
-  <input data-hook="monitor_type" type="hidden" name="monitor_type" value="scraper" />
-  <input data-hook="resource_id" type="hidden" name="resource_id" value="" />
+  <input data-hook="type" type="hidden" name="type" value="scraper" />
 
   <div class="form-group">
-    <label for="description" class="col-sm-3 control-label">Give me a name</label>
+    <label for="name" class="col-sm-3 control-label">Give me a name</label>
     <div class="col-sm-9">
-      <input data-hook="description" type="text" name="description" class="form-control" placeholder="eg: http://theeye.io public website">
+      <input data-hook="name" type="text" name="name" class="form-control" placeholder="eg: http://theeye.io public website">
     </div>
   </div>
   <div class="form-group">
     <label for="hosts" class="col-sm-3 control-label">Where is the service hosted?</label>
     <div class="col-sm-9 resource-host">
-      <select data-hook="hosts" multiple name="hosts" class="form-control" style="width:100%"> </select>
+      <select data-hook="hosts" name="hosts" class="form-control" style="width:100%" multiple> </select>
     </div>
   </div>
   <div class="form-group">
@@ -109,7 +108,7 @@
     <div data-hook="external-hosts-container" class="form-group" style="display:none">
       <label for="url" class="col-sm-3 control-label">Run check from</label>
       <div class="col-sm-9">
-        <select data-hook="external_hosts" name="external_host_id" class="form-control" style="width:100%;"> </select>
+        <select data-hook="external_host" name="external_host_id" class="form-control" style="width:100%;"> </select>
       </div>
     </div>
   </section>
@@ -133,39 +132,11 @@
         </span>
       </label>
       <div class="col-sm-1" style=text-align:center;>
-        <!-- <input data-hook=match-pattern-selection type=radio name=parser value=pattern> -->
         <input data-hook=match-pattern-selection type=checkbox name=parser value=pattern>
       </div>
       <div class="col-sm-8">
         <input data-hook="pattern" type="text" name="pattern" class="form-control" placeholder="Match this string or regular expression">
       </div>
     </div>
-    <!--
-    <div class="form-group">
-      <label for="script" class="col-sm-3 control-label">
-        Parse response with a Script
-        <span class="tooltiped glyphicon glyphicon-question-sign"
-          title="make your own script to parse the response."
-          style="cursor:help" >
-        </span>
-      </label>
-      <div class="col-sm-1" style=text-align:center;>
-        <input data-hook=script-parser-selection type=radio name=parser value=script>
-      </div>
-      <div class="col-sm-7">
-        <select data-hook="script" name="script" class="form-control" style="width:100%;">
-          <option value disabled selected></option>
-          <% scripts.forEach(function(s) { %>
-          <option value="<%=s.id%>"><strong><%= s.filename %></strong></option>
-          <% }); %>
-        </select>
-      </div>
-      <div class="col-sm-1">
-        <a class="tooltiped createScript btn btn-primary" style="width:100%;" title="Create a new Script">
-          <i class="glyphicon glyphicon-plus"></i>
-        </a>
-      </div>
-    </div>
-    -->
   </section>
 </form>

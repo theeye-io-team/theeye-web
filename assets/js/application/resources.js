@@ -116,7 +116,6 @@ $(function(){
 
     $('.modal#processResourceModal button[type=submit]').on('click', setCallback('process'));
     $('.modal#scriptResourceModal button[type=submit]').on('click', setCallback('script'));
-    $('.modal#scraperResourceModal button[type=submit]').on('click', setCallback('scraper'));
 
     function fillForm(data){
       var resource = data.resource;
@@ -146,45 +145,6 @@ $(function(){
       setSelectedTags( monitor.tags );
 
       switch(type) {
-        case 'scraper':
-          var $input = $('form#scraperResourceForm input[data-hook=external]');
-          if(monitor.config.external) {
-            $('form#scraperResourceForm [data-hook=external_host_id]')
-            .val(monitor.host_id);
-            $input.prop('checked', true);
-            $input.trigger('change');
-          } else {
-            $input.prop('checked', false);
-            $input.trigger('change');
-          }
-
-          var response_options = monitor.config.response_options;
-          var request_options  = monitor.config.request_options;
-
-          for(prop in response_options){
-            var value = response_options[prop];
-            $form.find('[data-hook=' + prop + ']').val( value );
-          }
-          for(prop in request_options){
-            var value = request_options[prop];
-            var input = $form.find('[data-hook=' + prop + ']');
-            if( input.is(':checkbox') ) {
-              if( value === true || value === 'true' )
-                input[0].checked = true;
-            } else {
-              input.val( value );
-            }
-          }
-          //if( response_options.script ){
-          //  $form.find('[data-hook=script]').trigger('change');
-          //}
-          if( response_options.pattern ) {
-            $form.find('[data-hook=pattern]').trigger('change');
-          }
-          if( request_options.body && methodHasBody(request_options.method) ){
-            $form.find('[data-hook=method]').trigger('change');
-          }
-          break;
         case 'process':
           $form.find('[data-hook=pattern]').val(monitor.config.ps.pattern);
           break;
@@ -668,69 +628,5 @@ $(function(){
     })();
   })();
 
-
-  // define and call
-  (function SetupScraperMonitorCRUD(){
-
-    // initialize a scraper form
-    var scraperForm = new Scraper.FormView({
-      container: '[data-hook=scraper-form-container]',
-      looptimes: window.Looptimes,
-      timeouts: window.Timeouts,
-      hosts: window.Hosts,
-      scraperHosts: window.ScraperHosts,
-      tags: window.Tags,
-    });
-    window.form = scraperForm;
-
-    var $scraperModal = $('[data-hook=scraper-resource-modal]');
-
-    function openModal (event){
-      event.preventDefault();
-      event.stopPropagation();
-
-      $scraperModal.one('shown.bs.modal', function(){ scraperForm.focus(); });
-
-      // once hide modal remove scraper form
-      $scraperModal.one('hidden.bs.modal', function(){ scraperForm.remove(); });
-
-      // once show modal render scraper form
-      $scraperModal.modal('show');
-    }
-
-    function createOnClick (el) {
-      var $el = $(el);
-      $el.on('click',function(event){
-        // on click create render form
-        scraperForm.render();
-        openModal(event);
-      });
-    }
-
-
-    // test data
-    var values = {
-      'description':'prueba',
-      'json':true,
-      'method':'POST',
-      'tags': ['Nueva','123','321'],
-      'timeout':5000,
-      'looptime':15000,
-      'hosts':['57b8ab16648d46911ff0b270']
-    };
-    function editOnClick (el) {
-      var $el = $(el);
-      $el.on('click',function(event){
-        // on click create render form
-        scraperForm.render();
-        scraperForm.values = values;
-        openModal(event);
-      });
-    }
-
-    createOnClick('.dropdown.resource [data-hook=create-scraper-monitor]');
-    createOnClick('.panel-group [data-hook=create-scraper-monitor]');
-    editOnClick('[data-hook=edit-scraper-monitor]');
-
-  })();
+  ScraperMonitorCRUD();
 });

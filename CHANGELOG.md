@@ -1,22 +1,5 @@
 # CHANGELOG
 
-### 0.4.1 - 2016-08-30
-
-> added handlebars for javascript client side template     
-
-> added grunt handlebars compile task       
-
-> scraper-monitor is no longer handled the same way as the rest of the monitors          
-
-> added scraper handler and form renderer client side          
-
-> remove jst template compiler (not being used)        
-
-> added scraper template       
-
-> monitor template scraper use scraper-template      
-
-
 ### 0.4.0 - 2016-08-29
 
 > added web scraper form the posibility to submit custom request and respose parameters       
@@ -43,7 +26,31 @@
 
 > added script_uploaded listener to catch the script modal save operation on admin/monitor layout      
 
+> added handlebars for javascript client side template     
 
+> added grunt handlebars compile task       
+
+> scraper-monitor is no longer handled the same way as the rest of the monitors          
+
+> added scraper handler and form renderer client side          
+
+> remove jst template compiler (not being used)        
+
+> added scraper template       
+
+> monitor template scraper use scraper-template      
+
+> added handlebars, underscore and backbone        
+
+> created assets/js/app directory for new structured code      
+
+> removed scraper.config.request_options & response_options      
+
+> move jquery to assets and include automatically in build process     
+
+> add assets/js/app/**/*.js to build process       
+
+> organize js client dependencies       
 
 ### 0.3.2 - 2016-08-22
 

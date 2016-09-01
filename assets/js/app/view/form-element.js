@@ -17,11 +17,9 @@ FormElement.prototype.values = function(){
   inputs.each(function(){
     var input = this;
     if(!input.name) return;
-    if(input.name=='disabled' && input.type=='checkbox'){
-      values.enable = !input.checked;
-    } else if(input.type=='checkbox') {
+    if(input.type=='checkbox') {
       if(input.value && input.value != 'on'){
-        if(input.checked) values[input.name] = input.value;
+        values[input.name] = input.checked ? input.value : null;
       } else {
         values[input.name] = input.checked;
       }
@@ -42,12 +40,15 @@ FormElement.prototype.set = function(values){
     var $input = $form.find('[name=' + name + ']');
     
     var input = $input[0];
-    if( input.type == 'text' ) input.value = value;
-    if( input.type == 'checkbox' ) input.checked = value;
-    if( input.type == 'radio' ) console.log( 'radio button not handled' );
-    if( input.type == 'select-one' ) input.value = value;
-    if( input.type == 'select-multiple' ) $input.val( value );
-
-    $input.trigger('change');
+    if( input ){
+      if( input.type == 'text' ) input.value = value;
+      if( input.type == 'checkbox' ) input.checked = value;
+      if( input.type == 'radio' ) console.log( 'radio button not handled' );
+      if( input.type == 'select-one' ) input.value = value;
+      if( input.type == 'select-multiple' ) $input.val( value );
+      $input.trigger('change');
+    } else {
+      console.log('not found input named ' + name );
+    }
   }
 }
