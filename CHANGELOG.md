@@ -52,6 +52,8 @@
 
 > organize js client dependencies       
 
+> added underscore , move lodash _. to lodash. with no conflict
+
 ### 0.3.2 - 2016-08-22
 
 > moved scheduled method from PalancaController to TasksController         

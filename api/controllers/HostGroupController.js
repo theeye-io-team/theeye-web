@@ -5,15 +5,11 @@ module.exports = {
   index: function(req, res) {
     var supervisor = req.supervisor;
     async.parallel({
-      groups: function(callback) {
-        supervisor.hostgroupFetch({}, callback);
-      },
-      scripts: function(callback) {
-        supervisor.scripts(callback);
-      },
-      tasks: function(callback) {
-        supervisor.tasks(callback);
-      }
+      groups: (callback) => supervisor.hostgroupFetch({}, callback),
+      scripts: (callback) => supervisor.scripts(callback),
+      tasks: (callback) => supervisor.tasks(callback),
+      tags: (callback) => supervisor.tags(callback),
+      scraperHosts: (callback) => supervisor.scraperHosts(callback),
     }, function(err, data) {
       if (err) {
         console.log(err.toString());

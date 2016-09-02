@@ -149,7 +149,9 @@ var Scraper = (function Scraper(){
 
       if( options.model ){
         this.values = options.model.attributes;
-        if( ! options.model.isNew() ){
+        if( options.model.isTemplate === true ){
+          this.queryByHook('hosts-container').remove();
+        } else if( ! options.model.isNew() ){
           this.queryByHook('hosts').select2({
             multiple:false
           });
@@ -158,6 +160,9 @@ var Scraper = (function Scraper(){
     }
 
     FormView.prototype.remove = function(){
+      var $parent = $( this.parent );
+      $parent.off('click');
+      $parent.off('change');
       this.$el.remove();
     }
 

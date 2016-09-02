@@ -15,21 +15,11 @@ module.exports = {
   index: function(req, res) {
     var supervisor = req.supervisor;
     async.parallel({
-      monitors: function(callback) {
-        supervisor.monitorFetch({},callback);
-      },
-      scripts: function(callback) {
-        supervisor.scripts(callback);
-      },
-      hosts: function(callback) {
-        supervisor.hosts(callback);
-      },
-      resourceTypes: function(callback) {
-        supervisor.resourceTypes(callback);
-      },
-      scraperHosts: function(callback) {
-        supervisor.scraperHosts(callback);
-      },
+      monitors: (callback) => supervisor.monitorFetch({},callback),
+      scripts: (callback) => supervisor.scripts(callback),
+      hosts: (callback) => supervisor.hosts(callback),
+      resourceTypes: (callback) => supervisor.resourceTypes(callback),
+      scraperHosts: (callback) => supervisor.scraperHosts(callback),
       tags: callback => supervisor.tags(callback)
     }, function(err, data) {
       if (err) return res.serverError("Error getting data from supervisor: " + err.toString());

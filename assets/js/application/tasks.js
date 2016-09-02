@@ -244,7 +244,7 @@ $(function(){
     }
 
     function getEventSources(scheduleData, name) {
-      return _.map(scheduleData, function(scheduleEvent, index, arr){
+      return lodash.map(scheduleData, function(scheduleEvent, index, arr){
         // console.log(arr.length);
         var ms = new Date(scheduleEvent.data.scheduleData.runDate);
         // 200 is the offset of the color wheel where 0 is red, change at will.

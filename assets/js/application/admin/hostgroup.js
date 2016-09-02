@@ -36,6 +36,55 @@ $(function(){
 
   var logger = debug('eye:hostgroup');
 
+  // scraper monitor form handler
+  var scraperModal = new ScraperModal.TemplateMonitorCRUD({
+    container:'[data-hook=scraper-form-container]'
+  });
+  window.scraper = scraperModal;
+
+  $('#group-form .buttons.dropdown [data-hook=create-scraper-monitor]')
+  .on('click',function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    scraperModal.openCreateForm(group.id);
+  });
+
+  $('.modal[data-hook=scraper-monitor-modal] .modal-footer [data-hook=save]')
+  .on('click',function(event){
+
+    //
+    // this is only already created groups
+    //
+    if( group.id === null ) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    var scraper = scraperModal.model;
+    if( scraper.isNew() ){
+      var onSuccess = function(){
+        Monitor.add(scraper.serializeArray());
+      }
+    } else {
+      var onSuccess = function(item){
+        Monitor.update(item, scraper.serializeArray());
+      }
+    }
+    bootbox.confirm('Save Monitor?',function(confirmed){
+      if(confirmed){
+        scraperModal.persist(function(error,success,item){
+          if(error){
+            bootbox.alert(error);
+          } else {
+            bootbox.alert('Monitor Saved');
+            scraperModal.close();
+            onSuccess(item);
+          }
+        });
+      }
+    });
+  });
+
   function Group () {
     this.id = null;
     this.action = '';
@@ -78,14 +127,11 @@ $(function(){
     /** its comes from the api **/
     if( monitor.config ) {
       this.monitor_type = type;
-      this.description = monitor.description;
+      this.description = monitor.description||monitor.name;
       this.looptime = monitor.looptime;
 
       switch(type) {
         case 'scraper':
-          this.pattern = monitor.pattern || monitor.config.pattern;
-          this.url = monitor.url || monitor.config.url;
-          this.timeout = monitor.timeout || monitor.config.timeout;
           break;
         case 'script':
           this.script_id = monitor.script_id || monitor.config.script_id;
@@ -97,10 +143,9 @@ $(function(){
         case 'dstat':
         case 'psaux':
           break;
-        default:
-          throw new Error('invalid monitor type ' + type);
+        default: throw new Error('invalid monitor type ' + type);
       }
-    } else _.assign(this, monitor);
+    } else lodash.assign(this, monitor);
   }
 
   /**
@@ -199,6 +244,8 @@ $(function(){
     add: function add(data) {
       var item = new Item(data._key,'monitor');
       item.set(data);
+      item.description||(item.description=item.name||item.type);
+      item.name||(item.name=item.description||item.type);
       group.monitors.push(item);
       $monitorsTags.tagsinput('add',item);
       this.setDstat(item);
@@ -271,7 +318,6 @@ $(function(){
     }
   };
 
-
   function fillTaskForm(task, $selector) {
     $selector.find('form :input').each(function(i, e){
       var attrs = e.attributes;
@@ -299,16 +345,14 @@ $(function(){
 
   function fillGroupForm(data) {
     var monitors = data.monitors;
-    for(var i=0;i<monitors.length; i++)
-    {
+    for(var i=0;i<monitors.length; i++) {
       var item = monitors[i];
       var monitor = Object
         .keys(item)
         .map(function(val){
-          if(val=='name')
+          if(val=='name'){
             return { 'name': 'description', 'value': item[val] };
-
-
+          }
           return { 'name': val, 'value': item[val] };
         });
       Monitor.add(monitor);
@@ -447,8 +491,7 @@ $(function(){
     var formData = new MonitorFormData(item);
     fillMonitorForm(formData, $modalSelector);
 
-    var $saveButton = $modalSelector
-      .find('.modal-footer button.monitor-save');
+    var $saveButton = $modalSelector.find('.modal-footer button.monitor-save');
 
     function resetEvents(){
       logger('reset monitor events');
@@ -494,8 +537,8 @@ $(function(){
     }
 
     $saveButton.data('action','change');
-    $saveButton.one('click', updateMonitor);
-    $modalSelector.one('hide.bs.modal', resetEvents);
+    $saveButton.one('click',updateMonitor);
+    $modalSelector.one('hide.bs.modal',resetEvents);
     $modalSelector.modal('show');
   }
 
@@ -636,9 +679,12 @@ $(function(){
 
     if( item._type == 'task' ){
       updateTaskItem(item);
-    } else
-    if( item._type == 'monitor' ){
-      updateMonitorItem(item);
+    } else if( item._type == 'monitor' ){
+      if( item.type == 'scraper' ){
+        scraperModal.openEditForm(group.id, item);
+      } else {
+        updateMonitorItem(item);
+      }
     }
   });
 
@@ -729,10 +775,7 @@ $(function(){
     // nice guy first input focus
     $('#name', this).focus();
     // clone task select2 init
-    $('#taskSelect').select2({
-      placeholder:'select task to clone...',
-      allowClear:true
-    });
+    $('#taskSelect').select2({ placeholder:'select task to clone...', allowClear:true });
     // script select2 init
     $('select#script_id', this).select2({placeholder:'Select a script...'});
   });
@@ -757,41 +800,8 @@ $(function(){
 
   $('#script-monitor-modal').on('shown.bs.modal', function(evt){
     $('input[name=description]', this).first().focus();
-    $('select[data-hook=script_id]', this).select2({
-      placeholder:'Select a script...'
-    });
+    $('select[data-hook=script_id]', this).select2({ placeholder:'Select a script...' });
   });
-
-  var scraperForm = new Scraper.FormView({
-    container: '#scraper-monitor-modal [data-hook=scraper-modal-body]',
-    autoRender: false,
-    hosts:{},
-    looptime:{},
-    timeouts:{},
-    externalHosts:{},
-  });
-  $('#scraper-monitor-modal').on('show.bs.modal', function(evt){
-    scraperForm.render();
-  });
-
-  $('#scraper-monitor-modal').on('hidden.bs.modal', function(evt){
-    scraperForm.remove();
-  });
-
-  /*
-  $('#psaux-monitor-button').on('click', function(event){
-    event.preventDefault();
-    event.stopPropagation();
-    var psaux = {
-      _key:Date.now(),
-
-    };
-    Monitor.add(psaux);
-    if(group.action=='change'){
-    }else{
-    }
-  });
-  */
 
   // hook to scripts.js event script_uploaded
   window.scriptState.on('script_uploaded', function(evt,data){

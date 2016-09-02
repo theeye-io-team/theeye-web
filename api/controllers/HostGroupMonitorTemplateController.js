@@ -5,14 +5,16 @@ module.exports = {
     if( !req.is('application/json') ) return res.send(406);
 
     var supervisor = req.supervisor;
-    var jsonbody = req.body;
+    var body = req.body;
     var groupid = req.params.groupid;
     var monitorid = req.params.monitorid;
+
+    var data = ! body.monitor ? { monitor: body } : body;
 
     supervisor.hostgroupmonitortemplateUpdate(
       groupid,
       monitorid,
-      jsonbody,
+      data,
       function(err, monitor){
         if(err) return res.send(err.statusCode, err);
         res.send(200,{ monitor: monitor });
@@ -22,12 +24,14 @@ module.exports = {
     if( !req.is('application/json') ) return res.send(406);
 
     var supervisor = req.supervisor;
-    var jsonbody = req.body;
+    var body = req.body;
     var groupid = req.params.groupid;
+
+    var data = ! body.monitor ? { monitor: body } : body;
 
     supervisor.hostgroupmonitortemplateCreate(
       groupid,
-      jsonbody,
+      data,
       function(err, monitor){
         if(err) return res.send(err.statusCode, err);
         res.send(200,{ monitor: monitor });

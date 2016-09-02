@@ -628,5 +628,6 @@ $(function(){
     })();
   })();
 
-  ScraperMonitorCRUD();
+  ScraperModal.MonitorCRUD('[data-hook=scraper-form-container]');
+
 });

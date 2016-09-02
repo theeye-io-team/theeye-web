@@ -6,11 +6,13 @@ window.Model.Scraper = Backbone.Model.extend({
     var monitor = response.monitor||response.monitors[0];
 		var config = monitor.config;
 		return {
+      // monitor
 			name : monitor.name,
 			hosts : [ monitor.host_id ],
 			looptime : monitor.looptime,
 			type : monitor.type,
 			tags : monitor.tags,
+      // config
 			body : config.body,
 			external : config.external,
 			external_host_id : config.external_host_id,

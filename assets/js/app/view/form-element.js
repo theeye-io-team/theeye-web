@@ -30,7 +30,7 @@ FormElement.prototype.values = function(){
       values[input.name] = $(input).val();
     }
   });
-  return values;
+  return new Values(values);
 }
 
 FormElement.prototype.set = function(values){

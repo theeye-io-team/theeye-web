@@ -1,5 +1,5 @@
 <div class="modal fade monitor-modal" 
-  id="scraper-monitor-modal"
+  data-hook="scraper-monitor-modal"
   tabindex="-1" 
   role="dialog" 
   aria-labelledby="scraper-tpl-modal" 
@@ -15,16 +15,19 @@
         </button>
         <h4 class="modal-title"> Web Monitor </h4>
       </div>
-      <div data-hook="scraper-modal-body" class="modal-body">
+      <div data-hook="scraper-form-container" class="modal-body">
       </div>
       <div class="modal-footer">
-        <button id="scraper-monitor-save"
+        <button data-hook="save"
           type="button"
-          class="btn btn-default monitor-save"
-          data-dismiss="modal"> Save </button>
+          class="btn btn-default" >
+          Save
+        </button>
         <button type="button"
           class="btn btn-default"
-          data-dismiss="modal"> Close </button>
+          data-dismiss="modal">
+          Close 
+        </button>
       </div><!--.modal-foooter-->
     </div><!--.modal-content-->
   </div><!--.modal-dialog-->
