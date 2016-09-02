@@ -86,7 +86,7 @@ module.exports = {
       route: supervisor.RESOURCE,
       body: data,
       failure: error => res.send(500, error),
-      success: monitor => res.json(monitor),
+      success: monitors => res.json(monitors),
     });
   },
   /**

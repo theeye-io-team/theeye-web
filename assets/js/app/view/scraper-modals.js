@@ -13,7 +13,7 @@ var ScraperModal = new (function ScraperModal(){
   }
 
   function getScraper(id,done){
-    var scraper = new Model.Scraper({ id: id });
+    var scraper = new Model.ScraperMonitor({ id: id });
     scraper.fetch({
       success:function(model, response, options){
         // on click render form
@@ -26,10 +26,15 @@ var ScraperModal = new (function ScraperModal(){
     });
   }
 
-  this.MonitorCRUD = function(container){
-    var _form = initializeForm(container);
+  this.MonitorCRUD = function(formContainer){
+    var _form = initializeForm(formContainer);
 
-    var $scraperModal = $('[data-hook=scraper-monitor-modal]');
+    Object.defineProperty(this, 'form', {
+      get: function(){ return _form; },
+      enumerable: true
+    });
+
+    var _$modal = $('[data-hook=scraper-monitor-modal]');
 
     (function initializeModal($modal){
       $modal.on('shown.bs.modal', function(){
@@ -40,78 +45,50 @@ var ScraperModal = new (function ScraperModal(){
         _form.remove(); 
         $modal.off('click','button[data-hook=save]');
       });
-    })($scraperModal);
+    })(_$modal);
 
-    function setupModal (options){
-      options||(options={});
-      // once show modal render scraper form
-      $scraperModal.modal('show');
-      var clickFn = options.onClickSave||function(event){
-        console.log('click event');
-      }
-      $scraperModal.on('click','button[data-hook=save]',clickFn);
+    this.create = function () {
+      var scraper = new Model.ScraperMonitor({});
+      _form.render();
+      _$modal.on('click','button[data-hook=save]',function(){
+        var data = _form.data;
+        scraper.set(data);
+        scraper.save({},{
+          success:function(model, response, options){
+            bootbox.alert('Monitor Created',function(){
+              window.location.reload();
+            });
+          },
+          error:function(model, response, options){
+            bootbox.alert(new Error('error'));
+          }
+        });
+      });
+      _$modal.modal('show');
     }
 
-    function create () {
-      var scraper = new Model.Scraper({});
-      _form.render();
-      setupModal({
-        onClickSave:function(){
-          var values = _form.values;
+    this.edit = function (scraper_id) {
+      getScraper(scraper_id,function(error,scraper){
+        _form.render({ model: scraper });
+        _$modal.on('click','button[data-hook=save]',function(){
+          var values = _form.data;
           scraper.set(values);
           scraper.save({},{
             success:function(model, response, options){
-              bootbox.alert('Monitor Created',function(){
+              bootbox.alert('Monitor Updated',function(){
                 window.location.reload();
               });
             },
             error:function(model, response, options){
-              bootbox.alert(new Error('error'));
+              bootbox.alert('Error');
             }
           });
-        }
-      });
-    }
-
-    function edit (scraper_id) {
-      getScraper(scraper_id,function(error,scraper){
-        _form.render({ model: scraper });
-        setupModal({
-          onClickSave:function(){
-            var values = _form.values;
-            scraper.set(values);
-            scraper.save({},{
-              success:function(model, response, options){
-                bootbox.alert('Monitor Updated',function(){
-                  window.location.reload();
-                });
-              },
-              error:function(model, response, options){
-                bootbox.alert('Error');
-              }
-            });
-          }
         });
+        _$modal.modal('show');
       });
     }
 
-    // on click create , render form
-    function onClickCreate(event){
-      event.preventDefault();
-      event.stopPropagation();
-      create();
-    }
-    // on click edit , fetch scraper and render form
-    function onClickEdit(event){
-      event.preventDefault();
-      event.stopPropagation();
-      var scraper_id = event.currentTarget.getAttribute('data-resource_id');
-      edit(scraper_id);
-    }
-
-    $('.dropdown.resource [data-hook=create-scraper-monitor]').on('click',onClickCreate);
-    $('.panel-group [data-hook=create-scraper-monitor]').on('click',onClickCreate);
-    $('[data-hook=edit-scraper-monitor]').on('click',onClickEdit);
+    return this;
   }
 
   this.TemplateMonitorCRUD = function(options){
@@ -148,6 +125,7 @@ var ScraperModal = new (function ScraperModal(){
 
     // start create
     this.openCreateForm = function(group){
+      _tag = null ;
       _model = new Model.ScraperTemplate({
         group: group
       });
@@ -158,9 +136,7 @@ var ScraperModal = new (function ScraperModal(){
 
     // start edit
     this.openEditForm = function(group, tag){
-
       _tag = tag;
-
       var data = tag;
       _model = new Model.ScraperTemplate({
         id: data.id,
@@ -178,7 +154,7 @@ var ScraperModal = new (function ScraperModal(){
 
     this.persist = function(done){
       var tag = _tag;
-      var values = _form.values;
+      var values = _form.data;
       _model.set(values);
       _model.save({},{
         success:function(model, response, options){

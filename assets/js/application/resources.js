@@ -628,6 +628,36 @@ $(function(){
     })();
   })();
 
-  ScraperModal.MonitorCRUD('[data-hook=scraper-form-container]');
+  /**
+   *
+   * scraper modal CRUD
+   *
+   */
+  (function setupScraperModal(){
+    var formContainer = '[data-hook=scraper-form-container]';
+    var scraperModal = new ScraperModal.MonitorCRUD(formContainer);
+
+    window.scraper = scraperModal;
+
+    // on click create , render form
+    function onClickCreate(event){
+      event.preventDefault();
+      event.stopPropagation();
+      scraperModal.create();
+    }
+    // on click edit , fetch scraper and render form
+    function onClickEdit(event){
+      event.preventDefault();
+      event.stopPropagation();
+      var scraper_id = event.currentTarget.getAttribute('data-resource_id');
+      scraperModal.edit(scraper_id);
+    }
+
+    $('.dropdown.resource [data-hook=create-scraper-monitor]').on('click',onClickCreate);
+    $('.panel-group [data-hook=create-scraper-monitor]').on('click',onClickCreate);
+    $('[data-hook=edit-scraper-monitor]').on('click',onClickEdit);
+
+  })();
+
 
 });

@@ -10,7 +10,7 @@ function FormElement (el){
   this.$el = $(el);
 }
 
-FormElement.prototype.values = function(){
+FormElement.prototype.get = function(){
   var $el = this.$el;
   var inputs = $el.find(":input");
   var values = {};
@@ -30,7 +30,7 @@ FormElement.prototype.values = function(){
       values[input.name] = $(input).val();
     }
   });
-  return new Values(values);
+  return values;
 }
 
 FormElement.prototype.set = function(values){

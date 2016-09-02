@@ -1,9 +1,19 @@
 window.Model = window.Model || {};
 
-window.Model.Scraper = Backbone.Model.extend({
+window.Model.ScraperMonitor = Backbone.Model.extend({
   urlRoot:'/resource',
   parse:function(response){
-    var monitor = response.monitor||response.monitors[0];
+    if(Array.isArray(response)){
+      if(response.length>1){
+        console.log('multiple responses');
+        return {};
+      } else {
+        var monitor = response[0].monitor;
+      }
+    } else {
+      var monitor = response.monitor || response.monitors[0];
+    }
+
 		var config = monitor.config;
 		return {
       // monitor

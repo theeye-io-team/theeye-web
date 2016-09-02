@@ -39,14 +39,14 @@ var Scraper = (function Scraper(){
       }
 
       var self = this;
-      Object.defineProperty(this,'values',{
+      Object.defineProperty(this,'data',{
         get: function(){
           var form = new FormElement( self.$el[0] );
-          return form.values();
+          return form.get();
         },
-        set: function(values){
+        set: function(data){
           var form = new FormElement( self.$el[0] );
-          form.set( values );
+          form.set( data );
           return self;
         },
         enumerable: true
@@ -148,7 +148,7 @@ var Scraper = (function Scraper(){
       });
 
       if( options.model ){
-        this.values = options.model.attributes;
+        this.data = options.model.attributes;
         if( options.model.isTemplate === true ){
           this.queryByHook('hosts-container').remove();
         } else if( ! options.model.isNew() ){
