@@ -32,6 +32,7 @@ var Scraper = (function Scraper(){
         throw new Error('need a container. specify the DOM container element!');
       }
 
+      // container is a selector not a node element
       this.parent = this.options.container;
 
       if( this.options.autoRender === true ){
@@ -107,13 +108,16 @@ var Scraper = (function Scraper(){
     }
 
     FormView.prototype.renderTemplate = function(){
-      this.el = this.template();
+      var html = this.template();
+      var $parent = $( this.parent );
+      $parent.html( html );
+
+      this.el = $parent[0].firstChild;
       this.$el = $(this.el);
 
-      this.$el.appendTo( this.parent );
       this.bindFormEvents();
-      
-      return this.el;
+
+      return this;
     }
 
     FormView.prototype.queryByHook = function(name){

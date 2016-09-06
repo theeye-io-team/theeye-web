@@ -13,7 +13,7 @@ var ScraperModal = new (function ScraperModal(){
   }
 
   function getScraper(id,done){
-    var scraper = new Model.ScraperMonitor({ id: id });
+    var scraper = new App.Models.ScraperMonitor({ id: id });
     scraper.fetch({
       success:function(model, response, options){
         // on click render form
@@ -48,7 +48,7 @@ var ScraperModal = new (function ScraperModal(){
     })(_$modal);
 
     this.create = function () {
-      var scraper = new Model.ScraperMonitor({});
+      var scraper = new App.Models.ScraperMonitor({});
       _form.render();
       _$modal.on('click','button[data-hook=save]',function(){
         var data = _form.data;
@@ -91,6 +91,88 @@ var ScraperModal = new (function ScraperModal(){
     return this;
   }
 
+  this.TaskCRUD = function(){
+    var modal = new Modal({ title: 'API Request Task' });
+    modal.render();
+    var _form = initializeForm( modal.queryByHook('container') );
+
+    Object.defineProperty(this, 'form', {
+      get: function(){ return _form; },
+      enumerable: true
+    });
+
+    (function initializeModal($modal){
+      $modal.on('shown.bs.modal', function(){
+        _form.focus();
+      });
+      // once hide modal remove scraper form
+      $modal.on('hidden.bs.modal', function(){
+        _form.remove(); 
+        $modal.off('click','button[data-hook=save]');
+      });
+    })( modal.$el );
+
+    this.create = function () {
+      var scraper = new App.Models.ScraperTask({});
+
+      // this is done every time , because the template is re-rendered every time
+      _form.render({ model: scraper });
+      _form.find('[data-hook=name-container] label').html('Give it a name');
+      _form.find('[data-hook=hosts-container] label').html('Where it has to run?');
+      _form.find('[data-hook=looptime-container]').remove();
+
+      modal.$el.on('click','button[data-hook=save]',function(){
+        var data = _form.data;
+        scraper.set(data);
+        scraper.save({},{
+          success:function(model, response, options){
+            bootbox.alert('Task Created',function(){
+              window.location.reload();
+            });
+          },
+          error:function(model, response, options){
+            bootbox.alert(new Error('error'));
+          }
+        });
+      });
+      modal.show();
+    }
+
+    this.edit = function (scraper_id) {
+      var scraper = new App.Models.ScraperTask({ id: scraper_id });
+      scraper.fetch({
+        success:function(model, response, options){
+          _form.render({ model: scraper });
+          _form.find('[data-hook=name-container] label').html('Give it a name');
+          _form.find('[data-hook=hosts-container] label').html('Where it has to run?');
+          _form.find('[data-hook=looptime-container]').remove();
+
+          modal.$el.on('click','button[data-hook=save]',function(){
+            var values = _form.data;
+            scraper.set(values);
+            scraper.save({},{
+              success:function(model, response, options){
+                bootbox.alert('Task Updated',function(){
+                  window.location.reload();
+                });
+              },
+              error:function(model, response, options){
+                bootbox.alert('Error');
+              }
+            });
+          });
+
+          modal.show();
+        },
+        error:function(model, response, options){
+          bootbox.alert(arguments);
+        }
+      });
+    }
+
+    return this;
+  }
+
   this.TemplateMonitorCRUD = function(options){
 
     var _form = initializeForm(options.container);
@@ -126,7 +208,7 @@ var ScraperModal = new (function ScraperModal(){
     // start create
     this.openCreateForm = function(group){
       _tag = null ;
-      _model = new Model.ScraperTemplate({
+      _model = new App.Models.ScraperTemplate({
         group: group
       });
       _form.render({ model: _model });
@@ -138,7 +220,7 @@ var ScraperModal = new (function ScraperModal(){
     this.openEditForm = function(group, tag){
       _tag = tag;
       var data = tag;
-      _model = new Model.ScraperTemplate({
+      _model = new App.Models.ScraperTemplate({
         id: data.id,
         group: group
       });

@@ -20,7 +20,7 @@ module.exports = {
       hosts: (callback) => supervisor.hosts(callback),
       resourceTypes: (callback) => supervisor.resourceTypes(callback),
       scraperHosts: (callback) => supervisor.scraperHosts(callback),
-      tags: callback => supervisor.tags(callback)
+      tags: (callback) => supervisor.tags(callback)
     }, function(err, data) {
       if (err) return res.serverError("Error getting data from supervisor: " + err.toString());
 
@@ -73,9 +73,11 @@ module.exports = {
     else if( params.hosts ) hosts = params.hosts;
     else if( params.host_id ) hosts = [ params.host_id ];
     else return res.send(400, 'At least one host is required');
-    if( ! params.type ) return res.send(400,"No resource type supplied");
 
-    var data = extend(params, { hosts: hosts });
+    var type = params.monitor_type || params.type;
+    if( !type ) return res.send(400,"No resource type supplied");
+
+    var data = extend(params, { hosts: hosts, type: type });
     if( params.script_arguments ){
       data.script_arguments = params.script_arguments
         .split(',')
@@ -103,9 +105,11 @@ module.exports = {
     else if( params.hosts ) hosts = params.hosts;
     else if( params.host_id ) hosts = [ params.host_id ];
     else return res.send(400,'a host is required');
-    if( !params.type ) return res.send(400,'No resource type supplied');
 
-    var data = extend(params, { hosts: hosts });
+    var type = params.monitor_type || params.type;
+    if( !type ) return res.send(400,'No resource type supplied');
+
+    var data = extend(params, { hosts: hosts, type: type });
     if( params.script_arguments ){
       data.script_arguments = params.script_arguments
         .split(',')

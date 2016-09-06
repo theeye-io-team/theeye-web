@@ -1,25 +1,24 @@
 <form class="form-horizontal">
   <input data-hook="type" type="hidden" name="type" value="scraper" />
-
-  <div class="form-group">
+  <div data-hook="name-container" class="form-group">
     <label for="name" class="col-sm-3 control-label">Give me a name</label>
     <div class="col-sm-9">
-      <input data-hook="name" type="text" name="name" class="form-control" placeholder="eg: http://theeye.io public website">
+      <input data-hook="name" type="text" name="name" class="form-control" placeholder="e.g.: http://theeye.io public website">
     </div>
   </div>
-  <div class="form-group" data-hook="hosts-container">
+  <div data-hook="hosts-container" class="form-group">
     <label for="hosts" class="col-sm-3 control-label">Where is the service hosted?</label>
     <div class="col-sm-9 resource-host">
       <select data-hook="hosts" name="hosts" class="form-control" style="width:100%" multiple> </select>
     </div>
   </div>
-  <div class="form-group">
+  <div data-hook="looptime-container" class="form-group">
     <label for="looptime" class="col-sm-3 control-label">Check Interval (mins)</label>
     <div class="col-sm-9">
       <select data-hook="looptimes" name="looptime" class="form-control" style="width:100%"> </select>
     </div>
   </div>
-  <div class="form-group">
+  <div data-hook="tags-container" class="form-group">
     <label for="tags" class="col-sm-3 control-label">Tags<br/><small>[optional]</small></label>
     <div class="col-sm-9">
       <div>
@@ -118,16 +117,22 @@
   </div>
   <section data-hook="response">
     <div class="form-group">
-      <label for="status_code" class="col-sm-3 control-label">Success Status Code</label>
+      <label for="status_code" class="col-sm-3 control-label">
+        Success Status Code
+        <span class="tooltiped glyphicon glyphicon-question-sign"
+          title="Match e.g. '2[0-9][0-9]' for the group 2XX success status"
+          style="cursor:help" >
+        </span>
+      </label>
       <div class="col-sm-9">
-        <input data-hook="status_code" type="text" name="status_code" class="form-control" placeholder="Match eg. '2[0-9][0-9]'">
+        <input data-hook="status_code" type="text" name="status_code" class="form-control" placeholder="Response HTTP Status Code" value="200">
       </div>
     </div>
     <div class="form-group">
       <label for="pattern" class="col-sm-3 control-label">
         Success Pattern
         <span class="tooltiped glyphicon glyphicon-question-sign"
-          title="eg. '<h1>My Site Title</h1>', using RegEx ^[a-zA-Z0-9]{24}$ "
+          title="e.g. '<h1>My Site Title</h1>', using RegEx ^[a-zA-Z0-9]{24}$ "
           style="cursor:help" >
         </span>
       </label>

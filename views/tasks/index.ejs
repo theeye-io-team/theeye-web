@@ -1,26 +1,26 @@
 <% block('styles' ,'<link href="/styles/dropzone.css" rel="stylesheet" type="text/css">') %>
 <% block('styles' ,'<link rel="stylesheet" href="/styles/highlight/default.css">') %>
 <% block('styles' ,'<link rel="stylesheet" href="/styles/jquery.datetimepicker.min.css">') %>
-<% block('styles', '<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.9.1/fullcalendar.min.css">') %>
+<% block('styles', '<link rel="stylesheet" href="/styles/jquery.fullcalendar.min.css">') %>
 
 <% block('scripts','<script src="/js/application/dropzone.min.js"></script>') %>
-<% block('scripts','<script> window.scripts = '+ JSON.stringify(scripts)+';</script>') %>
 <% block('scripts','<script src="/js/ace-editor/ace.js"></script>') %>
 <% block('scripts','<script src="/js/ace-editor/ext-modelist.js"></script>') %>
 <% block('scripts','<script src="/js/dependencies/lodash.min.js"></script>')%>
-
-<% block("scripts",'<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>') %>
-<% block("scripts",'<script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.9.1/fullcalendar.min.js"></script>') %>
 <% block("scripts",'<script src="/js/human-interval.js"></script>') %>
-
 <% block('scripts','<script src="/js/application/scripts.js"></script>')%>
 <% block('scripts','<script src="/js/highlight.pack.js"></script>') %>
-<% block('scripts','<script>hljs.initHighlightingOnLoad();</script>') %>
+<% block('scripts','<script> hljs.initHighlightingOnLoad(); </script>') %>
 <% block('scripts','<script src="/js/application/searchbox.js"></script>')%>
 <% block('scripts','<script src="/js/jquery.datetimepicker.full.min.js"></script>') %>
 <% block('scripts','<script src="/js/application/tasks.js"></script>') %>
-<% block('scripts','<script src="/js/application/tags.js"></script>')%>
-<% block('scripts','<script> window.CustomerTags = PrepareTags(' + JSON.stringify(tags) + '); </script>') %>
+
+<% block('scripts','<script> window.Tags = ' + JSON.stringify(tags) + '; </script>') %>
+<% block('scripts','<script> window.Looptimes = ' + JSON.stringify(looptimes) + '; </script>') %>
+<% block('scripts','<script> window.Timeouts = ' + JSON.stringify(timeouts) + '; </script>') %>
+<% block('scripts','<script> window.Hosts = ' + JSON.stringify(hosts) + '; </script>') %>
+<% block('scripts','<script> window.ScraperHosts = ' + JSON.stringify(scraperHosts) + '; </script>') %>
+<% block('scripts','<script> window.Scripts = ' + JSON.stringify(scripts) + '; </script>') %>
 
 <!-- Main  -->
 <div class="admin-container">
@@ -42,15 +42,42 @@
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
         </button>
         <span class="title">Tasks &nbsp; &nbsp; |</span>
-        <button class="createTask btn btn-primary simple-btn new-btn tooltiped"
-          data-placement="right"
-          title="Create new task"
-          aria-label="Left Align"
-          data-toggle="modal"
-          data-target="#create-task">
-          <span class="glyphicon glyphicon-plus"></span>
-          New Task
-        </button>
+
+        <div class="dropdown new-btn">
+          <span id="dropdownMenu1"
+            data-toggle="dropdown"
+            aria-expanded="true"
+            class="btn btn-primary simple-btn dropdown-toggle"
+            data-placement="right"
+            title="Create"
+            aria-label="Center Align">
+            <span class="glyphicon glyphicon-plus"></span> New Task
+          </span>
+          <ul class="dropdown-menu"
+            role="menu"
+            aria-labelledby="dropdownMenu1"
+            style="min-width: 120px">
+            <li role="presentation">
+              <a role="menuitem"
+                tabindex="-1"
+                class="menu-create-button"
+                data-hook="create-scraper-task"
+                data-action="create">
+                WEB/API Request
+              </a>
+            </li>
+            <li role="presentation">
+              <a role="menuitem"
+                tabindex="-1"
+                class="menu-create-button"
+                data-toggle="modal"
+                data-target="#create-task">
+                Script
+              </a>
+            </li>
+          </ul>
+        </div>
+
         <button class="pull-right tableHeaderIconButton massDelete btn btn-primary simple-btn tooltiped"
           title="Delete selected tasks"
           aria-label="Center Align">
@@ -82,28 +109,40 @@
                       <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                     </button>
                     <span class="panel-item name" id="<%= task.id %>">
-                    <% if (!task.script_id || !task.host_id) { %>
-                        <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
-                        &nbsp; <%= task.name %>
-                        <small class="remark-alert">> undefined . host or script are missing </small>
-                    <% } else { %>
-                        <%= task.name %> <small>> <%= task.hostname %></small>
-                    <% } %>
+                      <% if( task.type=='script' && (!task.script_id||!task.host_id) ) { %>
+
+                      <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
+                      &nbsp; <%= task.name %>
+                      <small class="remark-alert">> undefined . host or script are missing </small>
+
+                      <% } else if( task.type=='scraper' && !task.host_id ) { %>
+
+                      <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
+                      &nbsp; <%= task.name %>
+                      <small class="remark-alert">> undefined . host is missing </small>
+
+                      <% } else { %>
+
+                      <%= task.name %> <small><%= task.type %> > <%= task.hostname %></small>
+
+                      <% } %>
                     </span>
                     <div class="panel-item icons">
-                      <button class="editTask btn btn-primary simple-btn tooltiped"
+                      <% if( task.type == 'scraper' ){ %>
+                      <button data-hook="edit-scraper-task"
+                        data-task="<%= task.id %>"
+                        class="btn btn-primary simple-btn tooltiped"
                         title="Edit task"
-                        aria-label="Center Align">
+                        aria-label="Center Align" >
+                      <% } else { %>
+                      <button class="editTask btn btn-primary simple-btn tooltiped" title="Edit task" aria-label="Center Align">
+                      <% } %>
                         <span class="glyphicon glyphicon-edit"></span>
                       </button>
-                      <button class="scheduleTask btn btn-primary simple-btn tooltiped"
-                        title="Schedule task"
-                        aria-label="Center Align">
+                      <button class="scheduleTask btn btn-primary simple-btn tooltiped" title="Schedule task" aria-label="Center Align">
                         <span class="glyphicon glyphicon-time"></span>
                       </button>
-                      <button class="deleteTask btn btn-primary simple-btn tooltiped"
-                        title="Delete task"
-                        aria-label="Center Align">
+                      <button class="deleteTask btn btn-primary simple-btn tooltiped" title="Delete task" aria-label="Center Align">
                         <span class="glyphicon glyphicon-trash"></span>
                       </button>
                     </div>

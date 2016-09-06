@@ -1,4 +1,4 @@
-/* global bootbox, $searchbox, CustomerTags, _, humanInterval */
+/* global bootbox, $searchbox,  _, humanInterval */
 /* NOTE
 Lists are made up with:
   class="itemRow panel panel-default js-searchable-item"
@@ -84,10 +84,13 @@ $(function(){
       $taskForm.data('task-id',taskId);
       $taskForm.data('action','edit');
 
-      $.get("/task/" + taskId).done(function(data){
+      jQuery.ajax({
+        type:'get',
+        url: '/task/' + taskId,
+      }).done(function(task){
         $tags.find('option').remove().end();
-        fillForm($taskForm, data.task);
-        setSelectedTags(data.task.tags);
+        fillForm($taskForm, task);
+        setSelectedTags(task.tags);
         $('.modal#edit-task').modal('show');
         // the rest is up to the shown.bs.modal event (below)
       }).fail(function(xhr, err, xhrStatus) {
@@ -100,23 +103,24 @@ $(function(){
       $('#name',this).focus();
       $taskForm.find('select[name=host_id]').select2({ placeholder: "Choose a host" });
       $taskForm.find('select[name=script_id]').select2({ placeholder: "Choose a script" });
-      $tags.select2({ placeholder: "Choose tags", tags: true, data: CustomerTags });
+      $tags.select2({ placeholder: "Choose tags", tags: true, data: Tags });
     });
 
     $(".modal#edit-task button[type=submit]").on('click',function(event){
       $taskForm.submit();
     });
 
-    $taskForm.on("submit", function(event) {
+    $taskForm.on("submit", function(event){
       event.preventDefault();
       var vals = extractFormData($taskForm);
+      vals.type = 'script';
 
       jQuery.ajax({
         type:'PUT',
         url:'/task/' + $taskForm.data('task-id'),
         data: JSON.stringify(vals),
         contentType: "application/json; charset=utf-8"
-      }).done(function(data) {
+      }).done(function(task) {
         $(".modal#edit-task").modal("hide");
         window.location.reload();
       }).fail(function(xhr, err, xhrStatus) {
@@ -143,7 +147,7 @@ $(function(){
 
       $hosts.select2({ placeholder: 'Type a hostname or hit Enter to list' });
       $script.select2({ placeholder: 'Choose a script' });
-      $tags.select2({ placeholder:'Tags', tags:true, data: CustomerTags });
+      $tags.select2({ placeholder:'Tags', tags:true, data: Tags });
 
       $multihostContainer.show();
     });
@@ -174,12 +178,13 @@ $(function(){
     $taskForm.on("submit", function(event) {
       event.preventDefault();
       var vals = extractFormData($taskForm);
+      vals.type = 'script';
       $.ajax({
         method:'POST',
         url:'/task',
         data: JSON.stringify(vals),
         contentType: "application/json; charset=utf-8"
-      }).done(function(data) {
+      }).done(function(task) {
         $(".modal#create-task").modal("hide");
         alert('Task Created','Task', function(){
           window.location.reload();
@@ -204,7 +209,7 @@ $(function(){
           $.ajax({
             url: '/task/' + itemRow.data().itemId,
             type: 'DELETE'
-          }).done(function(data) {
+          }).done(function(response) {
             itemRow.remove();
             // location.reload();
           }).fail(function(xhr, err, xhrStatus) {
@@ -606,4 +611,16 @@ $(function(){
   })();
 
   $('.modal#scriptUpload div#scriptTemplateDescription').hide();
+
+  var scraperCRUD = new ScraperModal.TaskCRUD();
+  $('[data-hook=create-scraper-task]').on('click',function(event){
+    event.preventDefault(); event.stopPropagation();
+    scraperCRUD.create();
+  });
+  $('[data-hook=edit-scraper-task]').on('click',function(event){
+    event.preventDefault(); event.stopPropagation();
+    var id = $( event.currentTarget ).data('task');
+    scraperCRUD.edit(id);
+  });
+  window.scraper = scraperCRUD;
 });

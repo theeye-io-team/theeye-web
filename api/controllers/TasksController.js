@@ -6,21 +6,29 @@ module.exports = {
   index: function(req, res) {
     var supervisor = req.supervisor;
     async.parallel({
-      tasks: function(callback) {
-        supervisor.tasks(callback);
-      },
-      scripts: function(callback) {
-        supervisor.scripts(callback);
-      },
-      hosts: function(callback) {
-        supervisor.hosts(callback);
-      },
-      resources: function(callback) {
-        supervisor.resources(callback);
-      },
-      tags: callback => supervisor.tags(callback)
+      tasks: (callback) => supervisor.tasks(callback),
+      scripts: (callback) => supervisor.scripts(callback),
+      hosts:(callback) => supervisor.hosts(callback),
+      resources: (callback) => supervisor.resources(callback),
+      scraperHosts: (callback) => supervisor.scraperHosts(callback),
+      tags: (callback) => supervisor.tags(callback)
     }, function(err, data) {
       if (err) return res.serverError("Error getting data from supervisor: " + err.toString());
+
+      // milliseconds
+      data.looptimes = [
+        {'id':'15000','value':'0.25'},
+        {'id':'30000','value':'0.5'},
+        {'id':'60000','value':'1'},
+        {'id':'300000','value':'5'},
+        {'id':'900000','value':'15'}
+      ];
+      // milliseconds
+      data.timeouts = [
+        {'id':5000, 'value':5},
+        {'id':10000, 'value':10},
+        {'id':15000, 'value':15},
+      ];
 
       res.view(data);
     });
@@ -38,7 +46,7 @@ module.exports = {
     else {
       supervisor.deleteTask(id, function(err){
         if (err) return res.send(500, err);
-        res.send(200,"Task %s deleted".replace('%s',id));
+        res.json(200,'success');
       });
     }
   },
@@ -64,13 +72,10 @@ module.exports = {
     var params = req.params.all();
     var id = params.id;
 
-    if( !id || !id.match(/^[a-fA-F0-9]{24}$/) ) return res.send(400,'invalid id');
-    if( !params.host_id ) return res.send(400,'select a host');
-    if( !params.script_id ) return res.send(400,'select a script');
-
     var updates = extend(params,{
-      'description': params.description || params.name,
-      'script_arguments': params.script_arguments.split(',')
+      'description': params.description||params.name,
+      'script': params.script_id,
+      'hosts': params.hosts_id
     });
 
     supervisor.patch({
@@ -88,16 +93,11 @@ module.exports = {
   create: function(req, res) {
     var supervisor = req.supervisor;
     var params = req.params.all();
-
-    if(!params.name) return res.send(400,'Name for the action is required');
-    if(!params.script_id) return res.send(400,'Script is required');
-    if(!params.hosts_id) return res.send(400,'Host is required');
-
+    
     var data = extend(params,{
       'description': params.description || params.name,
       'script': params.script_id,
-      'script_arguments': params.script_arguments.split(','),
-      'hosts': params.hosts_id
+      'hosts': params.hosts_id||params.hosts
     });
 
     supervisor.create({
