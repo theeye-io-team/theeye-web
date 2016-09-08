@@ -147,20 +147,8 @@ function triggers(io){
       var lastRunToCollapsible = function(element) {
         var $elem = $(element);
         var data = $elem.data('lastRun');
-        //evaluate result
-        //have to guess if its json or not
-        var stdout;
-        var failed;
-        try{
-          stdout = JSON.parse(data.result.stdout);
-          failed = stdout.state != 'normal';
-        }catch(e){
-          //probably text string
-          stdout = data.result.stdout;
-          failed = stdout.trim() != 'normal';
-        }
 
-        $taskTitleContent.addClass(failed ? 'task-done' : '');
+        $taskTitleContent.addClass('task-done');
         var $tpl = $('div.resultTemplate div').first().clone().remove();
         $tpl.one('close.bs.alert', function(){
           $taskTitleContent.removeClass('task-done');
@@ -236,20 +224,8 @@ function triggers(io){
       var lastRunToCollapsible = function(element) {
         var $elem = $(element);
         var data = $elem.data('lastRun');
-        //evaluate result
-        //have to guess if its json or not
-        var stdout;
-        var failed;
-        try{
-          stdout = JSON.parse(data.result.stdout);
-          failed = stdout.state != 'normal';
-        }catch(e){
-          //probably text string
-          stdout = data.result.stdout;
-          failed = stdout.trim() != 'normal';
-        }
 
-        $elem.find('.panel-title-content').first().addClass(failed ? 'alert-danger' : '');
+        $elem.find('.panel-title-content').first().addClass('task-done');
         var $tpl = $('div.resultTemplate div').first().clone().remove();
         $tpl.find('.scriptStdout').html(data.result.stdout);
         $tpl.find('.scriptStderr').html(data.result.stderr);

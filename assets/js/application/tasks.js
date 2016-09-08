@@ -103,7 +103,7 @@ $(function(){
       $('#name',this).focus();
       $taskForm.find('select[name=host_id]').select2({ placeholder: "Choose a host" });
       $taskForm.find('select[name=script_id]').select2({ placeholder: "Choose a script" });
-      $tags.select2({ placeholder: "Choose tags", tags: true, data: Tags });
+      $tags.select2({ placeholder: "Choose tags", tags: true, data: Select2Data.PrepareTags(Tags) });
     });
 
     $(".modal#edit-task button[type=submit]").on('click',function(event){
@@ -147,7 +147,7 @@ $(function(){
 
       $hosts.select2({ placeholder: 'Type a hostname or hit Enter to list' });
       $script.select2({ placeholder: 'Choose a script' });
-      $tags.select2({ placeholder:'Tags', tags:true, data: Tags });
+      $tags.select2({ placeholder:'Tags', tags:true, data: Select2Data.PrepareTags(Tags) });
 
       $multihostContainer.show();
     });

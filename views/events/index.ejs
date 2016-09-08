@@ -176,7 +176,7 @@
                     <div class="panel-title-content">
                       <span class="panel-item name"><%=task.name%><small> > task (<%=task.hostname%>)</small></span>
                       <div class="panel-item icons">
-                        <% if( !task.host_id || !task.script_id ) { %>
+                        <% if( !task.host_id || (task.type=='script' && !task.script_id) ) { %>
                           <button class="btn btn-primary btn-sm ladda-button">
                             <span class="disabledIcon"><i class="glyphicon glyphicon-ban-circle"></i></span>
                           </button>
@@ -192,12 +192,12 @@
               </div>
               <div id="collapse<%=task.id%>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%=task.id%>">
                 <div class="panel-body">
-                  <% if( !task.host_id || !task.script_id ) { %>
+                  <% if( !task.host_id || (task.type=='script' && !task.script_id) ) { %>
                   <div class="fields alert alert-danger">
                     <div class="field"><p>Task definition Error</p></div>
                     <div class="field">
                     <%= ! task.host_id ? 'The Task needs a Host to run.':'' %>
-                    <%= ! task.script_id ? 'The Task needs a Script to execute.':'' %>
+                    <%= (task.type=='script' && ! task.script_id) ? 'The Task needs a Script to execute.':'' %>
                     </div>
                     <div style="clear:both"></div>
                   </div>
