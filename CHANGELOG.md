@@ -1,6 +1,6 @@
 # CHANGELOG
 
-### 0.4.0 - 2016-08-29
+### 0.4.0 - 2016-09-08
 
 > added web scraper form the posibility to submit custom request and respose parameters       
 
@@ -52,7 +52,9 @@
 
 > organize js client dependencies       
 
-> added underscore , move lodash _. to lodash. with no conflict
+> added underscore , move lodash _. to lodash. with no conflict         
+
+> added web scraper on template & web scraper task creation and execution        
 
 ### 0.3.2 - 2016-08-22
 
