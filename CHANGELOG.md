@@ -1,5 +1,13 @@
 # CHANGELOG
 
+### 0.4.1 - 2016-09-09
+
+> show scraper task result as json .       
+
+> fix and organize code to display tasks result . unify the code     
+
+> fix styles and wrong use of HTML properties in elements     
+
 ### 0.4.0 - 2016-09-08
 
 > added web scraper form the posibility to submit custom request and respose parameters       
