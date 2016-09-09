@@ -117,6 +117,32 @@ function triggers(io){
     $('.bulkRunner').hide();
   });
 
+
+      // fetches template from first div in div.resultTemplate
+      // makes clone and removes from dom
+      // uses passed element's data.lastRun to show result of task ran
+      var lastRunToCollapsible = function(element) {
+        var $elem = $(element);
+        var data = $elem.data('lastRun');
+
+        if( data._type == 'ScraperJob' ){
+          var t = document.querySelector('div[data-hook=scraper-job-result-template');
+          var $tpl = $( t.innerHTML );
+          $tpl.find('div[data-hook=json-container]').jsonViewer( data.result );
+        }
+
+        if( data._type == 'ScriptJob' ){
+          var $tpl = $('div.resultTemplate div').first().clone().remove();
+          $tpl.find('.scriptStdout').html(data.result.stdout);
+          $tpl.find('.scriptStderr').html(data.result.stderr);
+          // $tpl.addClass('col-md-12');
+        }
+
+        $elem.find('.panel-title-content').first().addClass('task-done');
+        $elem.find('.panel-body [data-hook="job-result-container"]').append($tpl);
+      };
+
+
   // new task runner click handler
   $('.trigger-task').on('click', function(evt){
     evt.preventDefault();
@@ -140,24 +166,6 @@ function triggers(io){
       //ladda button init
       var btn = Ladda.create(elem);
       btn.start();
-
-      // fetches template from first div in div.resultTemplate
-      // makes clone and removes from dom
-      // uses passed element's data.lastRun to show result of task ran
-      var lastRunToCollapsible = function(element) {
-        var $elem = $(element);
-        var data = $elem.data('lastRun');
-
-        $taskTitleContent.addClass('task-done');
-        var $tpl = $('div.resultTemplate div').first().clone().remove();
-        $tpl.one('close.bs.alert', function(){
-          $taskTitleContent.removeClass('task-done');
-        });
-        $tpl.find('.scriptStdout').html(data.result.stdout);
-        $tpl.find('.scriptStderr').html(data.result.stderr);
-        // $tpl.addClass('col-md-12');
-        $elem.find('.panel-body').append($tpl);
-      };
 
       // handles palancas-update io.socket event
       var handleTaskResult = function(data) {
@@ -205,6 +213,8 @@ function triggers(io){
     });
   });
 
+
+
   // bulkRunner click event handler
   $('.bulkRunner').on('click', function(evt){
     var elem = this;
@@ -217,21 +227,6 @@ function triggers(io){
       $(elem).data('laddaIsRunning',true);
 
       var taskQueue = {};
-
-      // fetches template from first div in div.resultTemplate
-      // makes clone and removes from dom
-      // uses passed element's data.lastRun to show result of task ran
-      var lastRunToCollapsible = function(element) {
-        var $elem = $(element);
-        var data = $elem.data('lastRun');
-
-        $elem.find('.panel-title-content').first().addClass('task-done');
-        var $tpl = $('div.resultTemplate div').first().clone().remove();
-        $tpl.find('.scriptStdout').html(data.result.stdout);
-        $tpl.find('.scriptStderr').html(data.result.stderr);
-        // $tpl.addClass('col-md-12');
-        $elem.find('.panel-body').append($tpl);
-      };
 
       // handles palancas-update io.socket event
       var handleTaskResult = function(data) {

@@ -214,6 +214,7 @@
                     <div class="field"><p>Hostname</p></div>
                     <div class="field"><%=task.hostname%></div>
                   </div>
+                  <div class="fields" data-hook="job-result-container"></div>
                 </div>
               </div>
             </div>
@@ -232,23 +233,33 @@
           </a>
         </div>
       <% } %>
+
       <!-- Results Div
       <div id="result_container" class="col-md-12"> </div>
       -->
       <div class="resultTemplate" style="display:none;">
-        <div>
-          <div id="output-block">
-            <button type="button" class="close" style="opacity:1;" data-dismiss="alert" aria-label="Close">
-              <span aria-hidden="true">×</span>
-            </button>
-            <p>Task Completed</p>
-            <p>stdout</p>
-            <div> <pre class="scriptStdout"></pre> </div>
-            <p>stderr</p>
-            <div> <pre class="scriptStderr"></pre> </div>
-          </div>
+        <button type="button" class="close" style="opacity:1;" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+        <div id="output-block" style="clear:both;">
+          <p>Script execution result</p>
+          <p>stdout</p>
+          <div> <pre class="scriptStdout"></pre> </div>
+          <p>stderr</p>
+          <div> <pre class="scriptStderr"></pre> </div>
         </div>
       </div>
+
+      <div data-hook="scraper-job-result-template" style="display:none;">
+        <button type="button" class="close" style="opacity:1;" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+        <div id="output-block" style="clear:both;">
+          <p>Web Request result</p>
+          <div data-hook="json-container" style="padding-left: 10px;"></div>
+        </div>
+      </div>
+
     </div>
   </div> <!-- END PANEL ROW -->
 </div> <!-- END MAIN -->

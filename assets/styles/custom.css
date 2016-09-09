@@ -606,3 +606,8 @@ h4.panel-title-content::after {
 .calendarEvent { cursor: pointer; }
 .calendarEvent:hover { border-color: red; }
 input[type=checkbox], input[type=radio] { margin:0; width:16px;height:16px; margin-top:8px;}
+
+/*
+ * JSON Viewer custom style
+ */
+.json-literal { color : #d4b209 }
