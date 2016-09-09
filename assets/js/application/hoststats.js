@@ -38,7 +38,7 @@ window.theeye.stats = {
     log('socket connected');
 
     function initPsaux(){
-      var psaux = lodash.findWhere(theeye.cachedStats, { type: "psaux" });
+      var psaux = _.findWhere(theeye.cachedStats, { type: "psaux" });
       if(!psaux) return;
 
       Psaux.createControl();
@@ -67,7 +67,7 @@ window.theeye.stats = {
     }
 
     function initDstat(){
-      var dstat = lodash.findWhere(theeye.cachedStats, { type: "dstat" });
+      var dstat = _.findWhere(theeye.cachedStats, { type: "dstat" });
       Dstat.initialize({ disks: Object.keys(dstat.stats.disk) });
       Dstat.update(dstat);
 
@@ -121,7 +121,7 @@ window.theeye.stats = {
           var inputText = $(that).val().toLowerCase().trim();
 
           theeye.stats.psaux.filter = inputText;
-          lodash.debounce(Psaux.filterProcesses, 500)();
+          _.debounce(Psaux.filterProcesses, 500)();
         });
       },
       render : function (rows) {
@@ -146,7 +146,7 @@ window.theeye.stats = {
         if (!theeye.stats.psaux.sort.column) {
           return;
         }
-        stat = lodash.sortByOrder($psauxTable.data("data"), [theeye.stats.psaux.sort.column], [theeye.stats.psaux.sort.direction]);
+        stat = _.sortByOrder($psauxTable.data("data"), [theeye.stats.psaux.sort.column], [theeye.stats.psaux.sort.direction]);
         $psauxTable.data("data", stat);
       },
       filterProcesses : function () {
@@ -196,7 +196,7 @@ window.theeye.stats = {
       //window.theeye.stats.gauges.diskConsumption.refresh(diskValue.toFixed(2));
       var gauges = window.theeye.stats.gauges.disks;
       var disks = dstat.stat.disk;
-      lodash.each(disks,function(disk,index){ // object
+      _.each(disks,function(disk,index){ // object
         gauges.forEach(function(gauge){ // array
           if(gauge.name == index){
             var value = (disk.usage.used * 100 / disk.usage.total);
