@@ -118,29 +118,44 @@ function triggers(io){
   });
 
 
-      // fetches template from first div in div.resultTemplate
-      // makes clone and removes from dom
-      // uses passed element's data.lastRun to show result of task ran
-      var lastRunToCollapsible = function(element) {
-        var $elem = $(element);
-        var data = $elem.data('lastRun');
+  /**
+   * @chris mira como cambio tu lastRunToCollapsible duplicado villero jeje
+   *
+   * belleza
+   */
+  var JobResultView = function (options) {
 
-        if( data._type == 'ScraperJob' ){
-          var t = document.querySelector('div[data-hook=scraper-job-result-template');
-          var $tpl = $( t.innerHTML );
-          $tpl.find('div[data-hook=json-container]').jsonViewer( data.result );
-        }
+    var container = options.container;
+    var data = options.data;
 
-        if( data._type == 'ScriptJob' ){
-          var $tpl = $('div.resultTemplate div').first().clone().remove();
-          $tpl.find('.scriptStdout').html(data.result.stdout);
-          $tpl.find('.scriptStderr').html(data.result.stderr);
-          // $tpl.addClass('col-md-12');
-        }
+    var $tpl ;
 
-        $elem.find('.panel-title-content').first().addClass('task-done');
-        $elem.find('.panel-body [data-hook="job-result-container"]').append($tpl);
-      };
+    if( data._type == 'ScraperJob' ){
+      var t = document.querySelector('div[data-hook=scraper-job-result-template]');
+      $tpl = $( t.innerHTML ); // create an element with the block content
+      $tpl.find('div[data-hook=json-container]').jsonViewer( data.result );
+    }
+
+    if( data._type == 'ScriptJob' ){
+      $tpl = $('div.resultTemplate div').first().clone().remove();
+      $tpl.find('.scriptStdout').html(data.result.stdout);
+      $tpl.find('.scriptStderr').html(data.result.stderr);
+      // $tpl.addClass('col-md-12');
+    }
+
+    var $container = $( container );
+    var $title = $container.find('.panel-title-content').first();
+    $title.addClass('task-done');
+
+    $tpl.one('close.bs.alert', function(){
+      $title.removeClass('task-done');
+
+      options.onClose && options.onClose();
+    });
+
+    $container.find('.panel-body [data-hook="job-result-container"]').append($tpl);
+  }
+
 
 
   // new task runner click handler
@@ -181,14 +196,16 @@ function triggers(io){
 
         alert($taskName.text() + ' completed');
 
-        //append data to task row element
-        $taskDiv.data('lastRun', data);
-        lastRunToCollapsible($taskDiv[0]);
+        new JobResultView({
+          data: data,
+          container: $taskDiv[0],
+          onClose:function(){
+          }
+        });
       };
 
       io.socket.on('palancas-update', handleTaskResult);
 
-      $taskTitleContent.removeClass('task-done');
 
       $.post("/palanca/trigger", {
         task_id: taskData.taskid,
@@ -221,8 +238,8 @@ function triggers(io){
     bootbox.confirm('With great power comes great responsibility',function(confirmed){
       if( !confirmed ) return;
 
-      var tasks = $('.tasks-panel .js-searchable-item:visible');
-      if(!tasks.length) return;
+      var $tasks = $('.tasks-panel .js-searchable-item:visible');
+      if(!$tasks.length) return;
 
       $(elem).data('laddaIsRunning',true);
 
@@ -234,9 +251,13 @@ function triggers(io){
           //this wasn't meant for us, move on
           return;
         }
-        //append data to task row element
-        $(taskQueue[data.task_id].element).data('lastRun', data);
-        lastRunToCollapsible(taskQueue[data.task_id].element);
+
+        new JobResultView({
+          data: data,
+          container: taskQueue[data.task_id].element,
+          onClose:function(){
+          }
+        });
 
         //stop button and remove from queue
         taskQueue[data.task_id].laddaButton.stop();
@@ -255,7 +276,7 @@ function triggers(io){
 
       io.socket.on('palancas-update', handleTaskResult);
 
-      tasks.each(function(i,e){
+      $tasks.each(function(i,e){
         // for a task to be runnable the .js-searchable-item:visible
         // has to have a .data().taskId and a .trigger-task button
         var taskData = $(e).data();
@@ -271,7 +292,6 @@ function triggers(io){
           element: e,
           laddaButton: Ladda.create(playButton).start()
         };
-
 
         $.post("/palanca/trigger", {
           task_id: taskData.taskid,

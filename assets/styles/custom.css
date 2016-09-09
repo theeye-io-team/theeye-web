@@ -69,7 +69,7 @@ pre { max-width: 100%; padding: 10px; margin: 20px 0; }
 /*
 * Events page
 */
-#output-block {
+.output-block {
     background: #222;
     color: #eee;
     padding:10px;
