@@ -128,7 +128,7 @@ $(function(){
       $form.find('[data-hook=monitor_type]').val(type);
       $form.find('[data-hook=description]').val(resource.description);
       $form.find('[data-hook=hosts_id]').val(resource.host_id);
-      $form.find('[data-hook=looptime]').val(monitor.looptime);
+      if( monitor.looptime ) $form.find('[data-hook=looptime]').val(monitor.looptime);
       $form.find('[data-hook=disabled]').prop('checked', !monitor.enable);
 
       var $tags = $form.find('select[name=tags]');

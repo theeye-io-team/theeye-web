@@ -140,7 +140,9 @@
                     </span>
                     <div class="panel-item icons">
 
-                      <% if( monitor.type != 'host' && monitor.monitor_type != 'host' ) { %>
+                      <% 
+                      var type = monitor.type || monitor.monitor_type;
+                      if( type != 'host' && type != 'psaux' ) { %>
 
                       <button class="editResourceMonitor editResource <%= monitor.type %>ResourceEditAction btn btn-primary simple-btn tooltiped"
                         aria-label="Center Align"

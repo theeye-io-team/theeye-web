@@ -1,5 +1,13 @@
 # CHANGELOG
 
+### 0.4.2 - 2016-09-10
+
+> set default looptime in monitor when not selected        
+
+> allow to change dstat description       
+
+> hide psaux edit button, did nothing      
+
 ### 0.4.1 - 2016-09-09
 
 > show scraper task result as json .       
