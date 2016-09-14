@@ -13,13 +13,34 @@
 
     <div class="col-sm-6">
       <div class="well info-container">
+        <h3>Agent Credentials</h3>
+        <div class="row">
+          <span class="col-sm-4">Customer :</span>
+          <span class="col-sm-8"> <i><%= agent.customers[0].name %></i> </span>
+        </div>
+        <div class="row">
+          <span class="col-sm-4">Client ID :</span>
+          <span class="col-sm-8"><i><%= agent.client_id %></i></span>
+        </div>
+        <div class="row">
+          <span class="col-sm-4">Client Secret :</span>
+          <span class="col-sm-8" data-hook="agent-secret" >
+            <i data-hook="blurry"> <%= agent.client_secret %> </i>
+          </span>
+        </div>
+        <div class="row">
+          <span class="col-sm-4">Current Access Token :</span>
+          <span class="col-sm-8" data-hook="agent-token">
+            <i data-hook="blurry"> <%= agent.token %> </i>
+          </span>
+        </div>
+
         <h3><span class="fa fa-user"></span>Linux Agent Installer</h3>
-        <% if(agentCurl) { %>
-        <!-- <pre><%=agentCurl%></pre> -->
+        <% if(agent) { %>
         Run this cURL command from a bash console to install
         the agent on the client<br /><br />
         <div class="input-group">
-          <input readonly type="text" id="agentCurl" class="form-control" data-hook="curl-agent" value="<%=agentCurl%>">
+          <input readonly type="text" id="agentCurl" class="form-control" data-hook="curl-agent" value="<%= agent.curl %>">
           <span class="input-group-btn">
             <button class="btn btn-primary clipboard-btn" type="button"
               data-clipboard-target="#agentCurl">
@@ -72,9 +93,18 @@
         <h3><span class="fa fa-user"></span>TheEye Passport API</h3>
         <h4>This are your credentials to connect TheEye Supervisor API.</h4>
         <p>
-          <div><label class="col-20">client id</label> <span class=""><%= passports.theeye.profile.client_id %></span></div>
-          <div><label class="col-20">client secret</label> <span class=""><%= passports.theeye.profile.client_secret %></span></div>
-          <div><label class="col-20">access token</label> <span class=""><%= passports.theeye.token %></span></div>
+          <div>
+            <label class="col-20">client id</label>
+            <i><%= passports.theeye.profile.client_id %></i>
+          </div>
+          <div>
+            <label class="col-20">client secret</label>
+            <i data-hook="blurry"><%= passports.theeye.profile.client_secret %></i>
+          </div>
+          <div>
+            <label class="col-20">access token</label>
+            <i data-hook="blurry"><%= passports.theeye.token %></i>
+          </div>
         </p>
       </div>
     </div>

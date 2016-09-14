@@ -1,5 +1,9 @@
 # CHANGELOG
 
+### 0.4.3 - 2016-09-13
+
+> show user agent credentials for current customer logged in user      
+
 ### 0.4.2 - 2016-09-10
 
 > set default looptime in monitor when not selected        
