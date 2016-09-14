@@ -63,6 +63,7 @@
               <a role="menuitem" tabindex="-1"
                 class="create-monitor createResourceMonitor"
                 data-toggle="modal"
+                data-hook="create-monitor"
                 data-target="#processResourceModal"
                 data-resource-type="process"
                 data-action="create">Process</a>
@@ -71,10 +72,31 @@
               <a role="menuitem" tabindex="-1"
                 class="create-monitor createResourceMonitor"
                 data-toggle="modal"
+                data-hook="create-monitor"
                 data-target="#scriptResourceModal"
                 data-resource-type="script"
                 data-action="create">Script</a>
             </li>
+            <li role="presentation">
+              <a role="menuitem" tabindex="-1"
+                class="create-monitor createResourceMonitor"
+                data-toggle="modal"
+                data-hook="create-monitor"
+                data-target="#dstat-resource-modal"
+                data-resource-type="dstat"
+                data-action="create">Host Stats</a>
+            </li>
+            <!--
+            <li role="presentation">
+              <a role="menuitem" tabindex="-1"
+                class="create-monitor createResourceMonitor"
+                data-toggle="modal"
+                data-hook="create-monitor"
+                data-target="#psauxResourceModal"
+                data-resource-type="psaux"
+                data-action="create">Process List</a>
+            </li>
+            -->
           </ul>
         </div>
 
@@ -186,6 +208,7 @@
 
                       <% } else { %>
 
+                      <%  if( type == 'host' ) { %>
                       <div class="dropdown host-menu">
                         <button id="dropdownMenu1"
                           data-toggle="dropdown"
@@ -211,6 +234,7 @@
                               data-host_id="<%= monitor.host_id %>"
                               data-hostname="<%= monitor.resource.hostname %>"
                               data-toggle="modal"
+                              data-hook="create-monitor"
                               data-target="#processResourceModal"
                               data-resource-type="process"
                               data-action="create">Process</span>
@@ -221,12 +245,38 @@
                               data-host_id="<%= monitor.host_id %>"
                               data-hostname="<%= monitor.resource.hostname %>"
                               data-toggle="modal"
+                              data-hook="create-monitor"
                               data-target="#scriptResourceModal"
                               data-resource-type="script"
                               data-action="create">Script</span>
                           </li>
+                          <li role="presentation">
+                            <span role="menuitem" tabindex="-1"
+                              class="create-monitor createResourceMonitor"
+                              data-host_id="<%= monitor.host_id %>"
+                              data-hostname="<%= monitor.resource.hostname %>"
+                              data-toggle="modal"
+                              data-hook="create-monitor"
+                              data-target="#dstat-resource-modal"
+                              data-resource-type="dstat"
+                              data-action="create">Host Stats</span>
+                          </li>
+                          <!--
+                          <li role="presentation">
+                            <span role="menuitem" tabindex="-1"
+                              class="create-monitor createResourceMonitor"
+                              data-host_id="<%= monitor.host_id %>"
+                              data-hostname="<%= monitor.resource.hostname %>"
+                              data-toggle="modal"
+                              data-hook="create-monitor"
+                              data-target="#psauxResourceModal"
+                              data-resource-type="psaux"
+                              data-action="create">Process List</span>
+                          </li>
+                          -->
                         </ul>
                       </div>
+                      <% } %>
 
                       <button class="deleteHostResource btn btn-primary simple-btn tooltiped"
                         title="Delete monitor"

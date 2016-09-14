@@ -1,23 +1,13 @@
 <div class="container statsContainer">
   <% if(error) { %>
+
   <div class="alert alert-danger">Server connection error</div>
+
   <% } else { %>
 
   <link rel="stylesheet" type="text/css" href="/styles/epoch.min.css">
   <h2>Host</h2>
-  <h3><%= host.hostname %> 
-    <small>(agent <%= host.agent_version %>)</small> 
-    | <%= host.os_name %> 
-    | Agent <%
-    var lastUpdate = new Date(host.last_update).getTime() / 1000 ;
-    var now = Date.now() / 1000 ;
-    if( (now - lastUpdate) > 120 ) { %>
-    <span style="color:rgb(254, 12, 0);"><b>is not reporting.</b></span>
-    <% } else { %>
-    <span style="color:#5cb85c;"><b>is alive.</b></span>
-    <% } %>
-    <small>(last update on <%= moment(host.last_update).calendar() %>)</small>
-  </h3>
+  <section data-hook="host-container"></section>
   <div>
     <h4>load average : 
       <span class="loadAverage" id="lavg1"></span>,
@@ -72,17 +62,19 @@
         </thead>
         <tbody>
         </tbody>
-      </table>   
+      </table>
     </div>
   </div>
 
   <script>
-    theeye = window.theeye || {};
-    theeye.cachedStats = <%-JSON.stringify(cachedStats)%>;
+    var state = {
+      cachedStats : <%- JSON.stringify(cachedStats) %> ,
+      agent       : <%- JSON.stringify(hostResource) %> ,
+      host        : <%- JSON.stringify(host) %>
+    };
   </script>
-  <% block('scripts', '<script src="/js/justgage/raphael.2.1.0.min.js"></script>') %>
-  <% block('scripts', '<script src="/js/justgage/justgage.1.0.1.js"></script>') %>
-  <% block('scripts', '<script src="/js/dependencies/lodash.min.js"></script>') %>
-  <% block('scripts', '<script src="/js/application/hoststats.js"></script>') %>
+
+  <% block('scripts', '<script> new HostStats( window.io, state ); </script>'); %>
+
   <% } %>
 </div>

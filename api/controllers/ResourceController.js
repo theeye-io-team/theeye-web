@@ -68,11 +68,9 @@ module.exports = {
     var supervisor = req.supervisor;
     var params = req.params.all();
 
-    var hosts = [];
-    if( params.hosts_id ) hosts = params.hosts_id;
-    else if( params.hosts ) hosts = params.hosts;
-    else if( params.host_id ) hosts = [ params.host_id ];
-    else return res.send(400, 'At least one host is required');
+    var hosts = params.hosts_id || params.hosts || params.host_id ;
+    if( ! hosts ) res.send(400, 'At least one host is required');
+    hosts = ( ! Array.isArray(hosts) ) ? [ hosts ] : hosts;
 
     var type = params.monitor_type || params.type;
     if( !type ) return res.send(400,"No resource type supplied");

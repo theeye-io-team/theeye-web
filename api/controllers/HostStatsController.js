@@ -8,27 +8,19 @@ module.exports = {
   index: function(req, res) {
     var supervisor = req.supervisor;
     async.parallel({
-      host: function(callback){
-        return supervisor.host(req.params.host, callback);
-      },
-      hostStats: function(callback){
-        return supervisor.hostStats(req.params.host, callback);
-      },
-      hostResource: function(callback){
-        return supervisor.hostResource(req.params.host, callback);
-      }
+      host: (callback) => supervisor.host(req.params.host, callback) ,
+      hostStats: (callback) => supervisor.hostStats(req.params.host, callback) ,
+      hostResource: (callback) => supervisor.hostResource(req.params.host, callback) 
     },function(err, data){
       if(err) {
         debug('supervisor request error');
         res.view({ error: 'cannot connect server' });
       } else {
         res.view({
-          initTime: Date.now(),
+          error: null,
           host: data.host,
           cachedStats: data.hostStats,
-          hostResource: data.hostResource,
-          error: null,
-          moment: require('moment')
+          hostResource: data.hostResource
         });
       }
     });

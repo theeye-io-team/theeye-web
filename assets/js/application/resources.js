@@ -116,6 +116,7 @@ $(function(){
 
     $('.modal#processResourceModal button[type=submit]').on('click', setCallback('process'));
     $('.modal#scriptResourceModal button[type=submit]').on('click', setCallback('script'));
+    $('.modal#psauxResourceModal button[type=submit]').on('click', setCallback('psaux'));
 
     function fillForm(data){
       var resource = data.resource;
@@ -230,8 +231,8 @@ $(function(){
 
       $form[0].reset();
       $.unblockUI();
-      $('#' + options.type + 'ResourceModal')
-      .one('shown.bs.modal', function(){
+
+      function onShowModal () {
         $select.select2();
         if(host) $select.val(host).trigger('change');
 
@@ -242,19 +243,41 @@ $(function(){
         $(this).on('shown.bs.modal', function(){
           $firstInput.focus();
         });
-      })
-      .modal('show');
+      }
+
+      var $modal = $('#' + options.type + 'ResourceModal');
+      $modal.one('shown.bs.modal', onShowModal);
+      $modal.modal('show');
+    }
+
+    function createDstat (options) {
+      var host = options.host;
+      var $form = $('[data-hook=dstat-modal] form');
+
+      var $hosts = $('<select name="hosts_id"></select>');
+      $hosts.select2({
+        placeholder: 'Hosts',
+        data: Select2Data.PrepareHosts(window.Hosts)
+      });
+      $form.find('[data-hook=hosts_id]').html();
     }
 
     function setupResourceAction (options) {
-      var formSelector = 'form#' + options.type + 'ResourceForm';
-      var $form = $(formSelector);
-      var $next = $form.find('.resource-host').next('.host-after');
-      if($next.length > 0) $next.remove();
-      if(options.action == 'edit')
-        setupEditResourceForm($form, options);
-      else if(options.action == 'create')
-        setupCreateResourceForm($form, options);
+      if(options.action=='create' && options.type=='dstat'){
+
+        createDstat(options);
+
+      } else {
+        var formSelector = 'form#' + options.type + 'ResourceForm';
+        var $form = $(formSelector);
+        var $next = $form.find('.resource-host').next('.host-after');
+        if($next.length > 0) $next.remove();
+        if(options.action == 'edit') {
+          setupEditResourceForm($form, options);
+        } else if(options.action == 'create') {
+          setupCreateResourceForm($form, options);
+        }
+      }
     }
 
     function handleResourceAction(event){
@@ -282,7 +305,7 @@ $(function(){
     $('[data-hook=edit-process-monitor]').on('click', handleResourceAction);
     $('[data-hook=edit-script-monitor]').on('click', handleResourceAction);
     $('[data-hook=edit-dstat-monitor]').on('click', handleResourceAction);
-    $('.createResourceMonitor').on('click', handleResourceAction);
+    $('[data-hook=create-monitor').on('click', handleResourceAction);
 
     // hook to scripts.js event script_uploaded
     window.scriptState.on('script_uploaded', function(evt,data){
@@ -348,12 +371,12 @@ $(function(){
     * ON HOST RESOURCE UPDATES SUBMIT
     * @author Facundo
     */
-    $('.modal#dstat-resource-modal button[type=submit]').on('click', function(event){
+    $('.modal#dstatResourceModal button[type=submit]').on('click', function(event){
       event.preventDefault();
       event.stopPropagation();
       log('saving host config');
 
-      var $form = $('#dstat-resource-modal form');
+      var $form = $('#dstatResourceModal form');
       var data = extractFormData($form);
 
       log('saving values %o', data);
@@ -394,9 +417,9 @@ $(function(){
       var idResource = event.currentTarget.getAttribute('data-resource_id');
       var hostname = event.currentTarget.getAttribute('data-hostname');
 
-      var $form = $('#dstat-resource-modal form');
+      var $form = $('#dstatResourceModal form');
 
-      $('#dstat-resource-modal span[data-hook=hostname]').html(hostname);
+      $('#dstatResourceModal span[data-hook=hostname]').html(hostname);
 
       $.blockUI();
       jQuery.ajax({
@@ -406,7 +429,7 @@ $(function(){
       })
       .done(function(data){
         fillHostResourceForm($form, data, function(){
-          $('#dstat-resource-modal').modal('show');
+          $('#dstatResourceModal').modal('show');
           $.unblockUI();
         });
       })

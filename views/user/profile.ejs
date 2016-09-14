@@ -2,15 +2,6 @@
 <% block('scripts', '<script src="/js/application/profile.js"></script>') %>
 <div class="container profile-page">
   <div class="row">
-    <% if(req.user.credential === 'owner' || req.user.credential === 'root') { %>
-    <div class="col-sm-6">
-      <div class="well info-container">
-        <h3><span class="fa fa-user"></span>Invite</h3>
-        <a href="/invite"class="glyphicon glyphicon-plus"> teammate / collaborator </a>
-      </div>
-    </div>
-    <% } %>
-
     <div class="col-sm-6">
       <div class="well info-container">
         <h3>Agent Credentials</h3>
@@ -58,6 +49,36 @@
       </div>
     </div>
 
+    <% if(req.user.credential === 'owner' || req.user.credential === 'root') { %>
+    <div class="col-sm-6">
+      <div class="well info-container">
+        <h3><span class="fa fa-user"></span>Invite</h3>
+        <a href="/invite"class="glyphicon glyphicon-plus"> teammate / collaborator </a>
+      </div>
+    </div>
+    <% } %>
+
+    <div class="col-sm-6">
+      <div class="well info-container col-sm-12">
+        <h3><span class="fa fa-user"></span>TheEye Passport API</h3>
+        <h4>This are your credentials to connect TheEye Supervisor API.</h4>
+        <p>
+          <div>
+            <label class="col-20">client id</label>
+            <i><%= passports.theeye.profile.client_id %></i>
+          </div>
+          <div>
+            <label class="col-20">client secret</label>
+            <i data-hook="blurry"><%= passports.theeye.profile.client_secret %></i>
+          </div>
+          <div>
+            <label class="col-20">access token</label>
+            <i data-hook="blurry"><%= passports.theeye.token %></i>
+          </div>
+        </p>
+      </div>
+    </div>
+
     <!-- LOCAL INFORMATION -->
     <div class="col-sm-6">
       <div class="well">
@@ -88,26 +109,7 @@
       </div>
     </div>
 
-    <div class="col-sm-6">
-      <div class="well info-container col-sm-12">
-        <h3><span class="fa fa-user"></span>TheEye Passport API</h3>
-        <h4>This are your credentials to connect TheEye Supervisor API.</h4>
-        <p>
-          <div>
-            <label class="col-20">client id</label>
-            <i><%= passports.theeye.profile.client_id %></i>
-          </div>
-          <div>
-            <label class="col-20">client secret</label>
-            <i data-hook="blurry"><%= passports.theeye.profile.client_secret %></i>
-          </div>
-          <div>
-            <label class="col-20">access token</label>
-            <i data-hook="blurry"><%= passports.theeye.token %></i>
-          </div>
-        </p>
-      </div>
-    </div>
+
   </div>
 </div>
 <%- partial ('./partials/update-password-modal.ejs') %>
