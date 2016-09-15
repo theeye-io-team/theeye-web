@@ -7,9 +7,11 @@ module.exports = {
   index: function(req, res) {
     var supervisor = req.supervisor;
     async.parallel({
-      resources: function(callback) {
-        supervisor.resources(callback);
-      },
+      resources: (callback) => supervisor.fetch({
+        route: supervisor.RESOURCE,
+        success: (body) => callback(null, body),
+        failure: (err) => callback(err)
+      }),
       tasks: function(callback) {
         supervisor.tasks(callback);
       },

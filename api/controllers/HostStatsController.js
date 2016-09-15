@@ -10,7 +10,28 @@ module.exports = {
     async.parallel({
       host: (callback) => supervisor.host(req.params.host, callback) ,
       hostStats: (callback) => supervisor.hostStats(req.params.host, callback) ,
-      hostResource: (callback) => supervisor.hostResource(req.params.host, callback) 
+      hostResource: (callback) => {
+        supervisor.fetch({
+          route: supervisor.RESOURCE,
+          query:{
+            where:{
+              host_id: req.params.host,
+              type: 'host',
+              enable: true
+            },
+            limit: 1
+          },
+          success: (body) => {
+            var err;
+            if( Array.isArray(body) ){
+              var resource = (body.length > 0) ? body[0] : null;
+            }
+            else err = new Error('server response error');
+            callback(err, resource||null);
+          },
+          failure: (err) => callback(err)
+        });
+      }
     },function(err, data){
       if(err) {
         debug('supervisor request error');

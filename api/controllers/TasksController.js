@@ -8,8 +8,12 @@ module.exports = {
     async.parallel({
       tasks: (callback) => supervisor.tasks(callback),
       scripts: (callback) => supervisor.scripts(callback),
-      hosts:(callback) => supervisor.hosts(callback),
-      resources: (callback) => supervisor.resources(callback),
+      hosts: (callback) => supervisor.hosts(callback),
+      resources: (callback) => supervisor.fetch({
+        route: supervisor.RESOURCE,
+        success: (body) => callback(null, body),
+        failure: (err) => callback(err)
+      }),
       scraperHosts: (callback) => supervisor.scraperHosts(callback),
       tags: (callback) => supervisor.tags(callback)
     }, function(err, data) {

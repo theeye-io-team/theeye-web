@@ -4,6 +4,12 @@
 
 > show user agent credentials for current customer logged in user      
 
+> fixed host dstat page . added js validation and show resource status       
+
+> used fetch from theeye-client instead of custom resource fetch method      
+
+> added query via querystring       
+
 ### 0.4.2 - 2016-09-10
 
 > set default looptime in monitor when not selected        
