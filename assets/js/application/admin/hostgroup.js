@@ -810,11 +810,11 @@ $(function(){
   });
 
   // hook to scripts.js event script_uploaded
-  window.scriptState.on('script_uploaded', function(evt,data){
+  window.scriptState.on('script_uploaded', function(evt,script){
     alert("Script succesfully uploaded", "Script upload",function(){
       var $scriptIdSelect = $('select[data-hook=script_id]');
-      $scriptIdSelect.append('<option value="'+data.script.id+'">'+data.script.filename+'</option>');
-      $scriptIdSelect.val(data.script.id);
+      $scriptIdSelect.append('<option value="'+script.id+'">'+script.filename+'</option>');
+      $scriptIdSelect.val(script.id);
       $scriptIdSelect.trigger('change');
       $('.modal#script-modal').modal('hide');
     });

@@ -333,13 +333,16 @@ var HostStats = function (io, specs) {
   (function HostState(){
 
     var template = Templates['assets/templates/host-stats.hbs'];
-    var agentFailure = _.template('<span>Agent <span style="color:rgb(254, 12, 0);"><b>is not reporting.</b></span></span>');
+    var agentFailure = _.template('<span>Agent <span style="color:rgb(254, 12, 0);"><b>has failed.</b></span></span>');
     var agentSuccess = _.template('<span>Agent <span style="color:#5cb85c;"><b>is reporting.</b></span></span>');
+    var agentStopped = _.template('<span>Agent <span style="color:#5cb85c;"><b>is not reporting.</b></span></span>');
     var $container = $('[data-hook=host-container]');
 
     if( agent.state === 'normal' ) {
       var message = agentSuccess() ;
-    } else if( agent.state === 'failure' ) {
+    } else if( agent.state === 'updates_stopped' ) {
+      var message = agentStopped() ;
+    } else {
       var message = agentFailure() ;
     }
 

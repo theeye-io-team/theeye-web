@@ -156,7 +156,7 @@ $(function(){
       $taskForm.submit();
     });
 
-    $state.on('script_uploaded', function(ev, data) {
+    $state.on('script_uploaded', function(ev, script) {
       if(location.pathname != '/admin/task') {
         //restrict the event function to the /admin/task layout
         return;
@@ -164,10 +164,10 @@ $(function(){
       alert("Script succesfully uploaded","Script upload", function() {
         $('[data-hook=script_id]').each(function(index, element){
           $(element).append($('<option>', {
-            value: data.script.id,
-            text: data.script.filename
+            value: script.id,
+            text: script.filename
           }));
-          $(element).val(data.script.id);
+          $(element).val(script.id);
           $(element).trigger('change');
         });
 
