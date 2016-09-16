@@ -16,7 +16,7 @@ RUN cd ${destDir}; npm install --production
 RUN cd ${destDir}/node_modules/sails/ && npm install --production && cd ${destDir}
 #Fix Permissions.
 RUN mkdir ${destDir}/.tmp
-RUN chmod -R 1777 ${destDir}/.tmp
+#commented, ya esta en la v. 15_09_16 RUN chmod -R 1777 ${destDir}/.tmp
 # Bundle app source
 EXPOSE 6080
 #By default run prod, If development is requiered This command would be override by docker-compose up
