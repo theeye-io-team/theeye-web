@@ -1,5 +1,18 @@
 # CHANGELOG
 
+
+### 0.5.1 - 2016-09-15
+
+> corrected behaviour of modal over modal on task scheduler
+
+> removed some styling on `<input>`
+
+> added script types support: batchfile, python and php
+
+> added filename preview
+
+> changed how script filenames are submitted
+
 ### 0.5.0 -
 
 > moved several js files to grunt build directory. files are added automatically to the site and production bundle      
@@ -8,7 +21,7 @@
 
 > ScraperForm view migrated to Backbone.View (allow .extend)       
 
-> TaskScraperForm created to include inputs that allow Event-* > *-Task mecanism     
+> TaskScraperForm created to include inputs that allow Event- *>* -Task mecanism     
 
 ### 0.4.3 - 2016-09-13
 

@@ -1,4 +1,4 @@
-/* global bootbox, $searchbox,  _, humanInterval */
+/* global bootbox, $searchbox, humanInterval, Select2Data, Tags, lodash, ScraperModal */
 /* NOTE
 Lists are made up with:
   class="itemRow panel panel-default js-searchable-item"
@@ -86,7 +86,7 @@ $(function(){
 
       jQuery.ajax({
         type:'get',
-        url: '/task/' + taskId,
+        url: '/task/' + taskId
       }).done(function(task){
         $tags.find('option').remove().end();
         fillForm($taskForm, task);
@@ -297,6 +297,10 @@ $(function(){
 
       $scheduleDeleter.data('schedule', eventObject);
     }
+    //fix para el scroll despues de abrir modal sobre modal
+    $deleteModal.on('hidden.bs.modal', function(event){
+      $('body').addClass('modal-open');
+    });
 
     //mode selector
     $('input[name=mode]').on('change', function(evt){
