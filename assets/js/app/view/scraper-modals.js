@@ -2,14 +2,15 @@ var ScraperModal = new (function ScraperModal(){
 
   function initializeForm(container){
     // initialize a scraper form
-    return new Scraper.FormView({
-      container: container,
+    var view = new Scraper.FormView({
       looptimes: window.Looptimes,
       timeouts: window.Timeouts,
       hosts: window.Hosts,
       scraperHosts: window.ScraperHosts,
       tags: window.Tags,
     });
+    view.targetEl = container;
+    return view ;
   }
 
   function getScraper(id,done){
@@ -27,7 +28,8 @@ var ScraperModal = new (function ScraperModal(){
   }
 
   this.MonitorCRUD = function(formContainer){
-    var _form = initializeForm(formContainer);
+
+    var _form = initializeForm( $(formContainer)[0] );
 
     Object.defineProperty(this, 'form', {
       get: function(){ return _form; },
@@ -94,12 +96,25 @@ var ScraperModal = new (function ScraperModal(){
   this.TaskCRUD = function(){
     var modal = new Modal({ title: 'API Request Task' });
     modal.render();
-    var _form = initializeForm( modal.queryByHook('container') );
+
+    var _scraper = new App.Models.ScraperTask();
+
+    var _form = new Scraper.TaskFormView({
+      model: _scraper,
+      looptimes: window.Looptimes,
+      timeouts: window.Timeouts,
+      hosts: window.Hosts,
+      scraperHosts: window.ScraperHosts,
+      tags: window.Tags,
+      events: window.Events
+    });
+    _form.targetEl = modal.queryByHook('container')[0];
 
     Object.defineProperty(this, 'form', {
       get: function(){ return _form; },
       enumerable: true
     });
+
 
     (function initializeModal($modal){
       $modal.on('shown.bs.modal', function(){
@@ -113,18 +128,17 @@ var ScraperModal = new (function ScraperModal(){
     })( modal.$el );
 
     this.create = function () {
-      var scraper = new App.Models.ScraperTask({});
-
+      _scraper.clear();
       // this is done every time , because the template is re-rendered every time
-      _form.render({ model: scraper });
+      _form.render();
       _form.find('[data-hook=name-container] label').html('Give it a name');
       _form.find('[data-hook=hosts-container] label').html('Where it has to run?');
       _form.find('[data-hook=looptime-container]').remove();
 
       modal.$el.on('click','button[data-hook=save]',function(){
         var data = _form.data;
-        scraper.set(data);
-        scraper.save({},{
+        _scraper.set(data);
+        _scraper.save({},{
           success:function(model, response, options){
             bootbox.alert('Task Created',function(){
               window.location.reload();
@@ -139,18 +153,19 @@ var ScraperModal = new (function ScraperModal(){
     }
 
     this.edit = function (scraper_id) {
-      var scraper = new App.Models.ScraperTask({ id: scraper_id });
-      scraper.fetch({
+      _scraper.clear();
+      _scraper.id = scraper_id ;
+      _scraper.fetch({
         success:function(model, response, options){
-          _form.render({ model: scraper });
+          _form.render();
           _form.find('[data-hook=name-container] label').html('Give it a name');
           _form.find('[data-hook=hosts-container] label').html('Where it has to run?');
           _form.find('[data-hook=looptime-container]').remove();
 
           modal.$el.on('click','button[data-hook=save]',function(){
             var values = _form.data;
-            scraper.set(values);
-            scraper.save({},{
+            _scraper.set(values);
+            _scraper.save({},{
               success:function(model, response, options){
                 bootbox.alert('Task Updated',function(){
                   window.location.reload();
@@ -175,7 +190,7 @@ var ScraperModal = new (function ScraperModal(){
 
   this.TemplateMonitorCRUD = function(options){
 
-    var _form = initializeForm(options.container);
+    var _form = initializeForm( $(options.container)[0] );
 
     var _model = null ;
     var _tag = null ; // this is the tag in the group , is only set when edit

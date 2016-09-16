@@ -617,3 +617,6 @@ input[type=checkbox].form-control {
  * JSON Viewer custom style
  */
 .json-literal { color : #d4b209 }
+
+.blurry-text { color: transparent; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
+.cursor-pointer { cursor: pointer; }

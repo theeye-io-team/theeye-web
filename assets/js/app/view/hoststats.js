@@ -1,26 +1,25 @@
-/**
- *
- */
-function log() {
-  var deb = debug('eye:web:events');
-  deb.apply(deb, arguments);
-}
+var HostStats = function (io, specs) {
 
-window.theeye = window.theeye || {};
-window.theeye.stats = {
-  loadAverage: {},
-  gauges: {},
-  psaux: {
-    filter: '',
-    sort: {
-      column: '',
-      direction: 0
-    }
+  var cachedStats = specs.cachedStats ;
+  var agent = specs.agent ;
+  var host = specs.host ;
+
+  function log() {
+    var deb = debug('eye:web:events');
+    deb.apply(deb, arguments);
   }
-};
 
-
-(function hoststats(io){
+  var Stats = {
+    loadAverage: {},
+    gauges: {},
+    psaux: {
+      filter: '',
+      sort: {
+        column: '',
+        direction: 0
+      }
+    }
+  };
 
   var socket = io.socket;
 
@@ -38,7 +37,7 @@ window.theeye.stats = {
     log('socket connected');
 
     function initPsaux(){
-      var psaux = _.findWhere(theeye.cachedStats, { type: "psaux" });
+      var psaux = _.findWhere(cachedStats, { type: "psaux" });
       if(!psaux) return;
 
       Psaux.createControl();
@@ -67,7 +66,7 @@ window.theeye.stats = {
     }
 
     function initDstat(){
-      var dstat = _.findWhere(theeye.cachedStats, { type: "dstat" });
+      var dstat = _.findWhere(cachedStats, { type: "dstat" });
       Dstat.initialize({ disks: Object.keys(dstat.stats.disk) });
       Dstat.update(dstat);
 
@@ -106,10 +105,10 @@ window.theeye.stats = {
         // Click sobre el th[data-sort] ordena por esa columna
         $psauxTable.find("th[data-sort]").click(function() {
           var sortBy = $(this).data("sort");
-          if (sortBy == theeye.stats.psaux.sort.column) {
-            theeye.stats.psaux.sort.direction = theeye.stats.psaux.sort.direction == 1 ? 0 : 1;
+          if (sortBy == Stats.psaux.sort.column) {
+            Stats.psaux.sort.direction = Stats.psaux.sort.direction == 1 ? 0 : 1;
           }
-          theeye.stats.psaux.sort.column = sortBy;
+          Stats.psaux.sort.column = sortBy;
           // reverse the order if sort is the current sort order
           Psaux.sort();
           Psaux.render($psauxTable.data("data"));
@@ -120,7 +119,7 @@ window.theeye.stats = {
           var that = this;
           var inputText = $(that).val().toLowerCase().trim();
 
-          theeye.stats.psaux.filter = inputText;
+          Stats.psaux.filter = inputText;
           _.debounce(Psaux.filterProcesses, 500)();
         });
       },
@@ -143,10 +142,10 @@ window.theeye.stats = {
         $psauxTbody.append($rows);
       },
       sort : function () {
-        if (!theeye.stats.psaux.sort.column) {
+        if (!Stats.psaux.sort.column) {
           return;
         }
-        stat = _.sortByOrder($psauxTable.data("data"), [theeye.stats.psaux.sort.column], [theeye.stats.psaux.sort.direction]);
+        stat = _.sortByOrder($psauxTable.data("data"), [Stats.psaux.sort.column], [Stats.psaux.sort.direction]);
         $psauxTable.data("data", stat);
       },
       filterProcesses : function () {
@@ -157,14 +156,14 @@ window.theeye.stats = {
 
           //Lower text for case insensitive
           var rowText = $(val).text().toLowerCase();
-          if (theeye.stats.psaux.filter != '') {
+          if (Stats.psaux.filter != '') {
             $psauxTable.find('.search-query-sf').remove();
-            $psauxTbody.prepend('<tr class="search-query-sf"><td colspan="6"><strong>Searching for: "' + theeye.stats.psaux.filter + '"</strong></td></tr>');
+            $psauxTbody.prepend('<tr class="search-query-sf"><td colspan="6"><strong>Searching for: "' + Stats.psaux.filter + '"</strong></td></tr>');
           } else {
             $psauxTable.find('.search-query-sf').remove();
           }
 
-          if (rowText.indexOf(theeye.stats.psaux.filter) == -1) {
+          if (rowText.indexOf(Stats.psaux.filter) == -1) {
             //hide rows
             tableRowsClass.eq(i).hide();
 
@@ -184,17 +183,17 @@ window.theeye.stats = {
   var Dstat = (function(){
     function updateGauges(dstat) {
       var memoryValue = (dstat.stat.mem_used * 100 / dstat.stat.mem_total);
-      window.theeye.stats.gauges.memoryConsumption.refresh(memoryValue.toFixed(2));
+      Stats.gauges.memoryConsumption.refresh(memoryValue.toFixed(2));
 
       var cpuValue = (100 - dstat.stat.cpu_idle);
-      window.theeye.stats.gauges.cpuConsumption.refresh(cpuValue.toFixed(2));
+      Stats.gauges.cpuConsumption.refresh(cpuValue.toFixed(2));
 
       var cacheValue = ((dstat.stat.cacheTotal - dstat.stat.cacheFree) * 100 / dstat.stat.cacheTotal);
-      window.theeye.stats.gauges.cacheConsumption.refresh(cacheValue.toFixed(2));
+      Stats.gauges.cacheConsumption.refresh(cacheValue.toFixed(2));
 
       //var diskValue = (dstat.stat.disk.total.usage.used * 100 / dstat.stat.disk.total.usage.total);
-      //window.theeye.stats.gauges.diskConsumption.refresh(diskValue.toFixed(2));
-      var gauges = window.theeye.stats.gauges.disks;
+      //Stats.gauges.diskConsumption.refresh(diskValue.toFixed(2));
+      var gauges = Stats.gauges.disks;
       var disks = dstat.stat.disk;
       _.each(disks,function(disk,index){ // object
         gauges.forEach(function(gauge){ // array
@@ -248,11 +247,11 @@ window.theeye.stats = {
     }
 
     function createGauges() {
-      if (Object.keys(theeye.stats.gauges).length) {
+      if (Object.keys(Stats.gauges).length) {
         // Si los gauges ya está creados
         return;
       }
-      theeye.stats.gauges.memoryConsumption = new JustGage({
+      Stats.gauges.memoryConsumption = new JustGage({
         id: "memoryconsumption",
         value: 0,
         min: 0,
@@ -264,7 +263,7 @@ window.theeye.stats = {
         labelFontColor : "#eee",
 
       });
-      theeye.stats.gauges.cpuConsumption = new JustGage({
+      Stats.gauges.cpuConsumption = new JustGage({
         id: "cpuconsumption",
         value: 0,
         min: 0,
@@ -275,7 +274,7 @@ window.theeye.stats = {
         valueFontColor : "#eee",
         labelFontColor : "#eee",
       });
-      theeye.stats.gauges.cacheConsumption = new JustGage({
+      Stats.gauges.cacheConsumption = new JustGage({
         id: "cacheconsumption",
         value: 0,
         min: 0,
@@ -312,7 +311,7 @@ window.theeye.stats = {
           });
         }
       });
-      theeye.stats.gauges.disks = disksGauges;
+      Stats.gauges.disks = disksGauges;
     }
 
     return {
@@ -331,4 +330,31 @@ window.theeye.stats = {
     };
   })();
 
-})(window.io);
+  (function HostState(){
+
+    var template = Templates['assets/templates/host-stats.hbs'];
+    var agentFailure = _.template('<span>Agent <span style="color:rgb(255, 255, 0);"><b>is failing.</b></span></span>');
+    var agentSuccess = _.template('<span>Agent <span style="color:#5cb85c;"><b>is reporting.</b></span></span>');
+    var agentStopped = _.template('<span>Agent <span style="color:rgb(255, 0, 0);"><b>is not reporting.</b></span></span>');
+    var $container = $('[data-hook=host-container]');
+
+    if( agent.state === 'normal' ) {
+      var message = agentSuccess() ;
+    } else if( agent.state === 'updates_stopped' ) {
+      var message = agentStopped() ;
+    } else {
+      var message = agentFailure() ;
+    }
+
+    var last_update = moment( new Date(host.last_update) );
+    var html = template({
+      host: host,
+      agentState: message,
+      lastUpdateCalendar: last_update.calendar()
+    });
+
+    $container.html( html );
+
+  })();
+
+};

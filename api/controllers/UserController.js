@@ -40,7 +40,7 @@ var UserController = module.exports = {
     var supervisor = req.supervisor;
     if (typeof req.user !== 'undefined' ) {
       User
-      .findOne({id:req.user.id})
+      .findOne({ id: req.user.id })
       .populate('passports')
       .exec(function(err, user) {
         if(err) {
@@ -67,7 +67,7 @@ var UserController = module.exports = {
               //this here so, err or not, userAgent or not, view doesn't fail
               userAgent = userAgent || {};
               res.view({
-                agentCurl : userAgent.curl,
+                agent : userAgent,
                 user : user,
                 passports : passports,
                 errors : req.flash('error')

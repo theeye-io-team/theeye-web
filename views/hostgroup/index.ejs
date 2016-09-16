@@ -1,15 +1,11 @@
 <!-- SCRIPTS CRUD -->
 <% block('styles' , '<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/dropzone.css">') %>
-<% block('styles' , '<link rel="stylesheet" href="/styles/highlight/default.css"></script>') %>
-<% block('scripts', '<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.0.1/min/dropzone.min.js"></script>') %>
-<% block('scripts', '<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.9/ace.js"></script>') %>
+<% block('styles' , '<link rel="stylesheet" type="text/css" href="/styles/highlight/default.css"></script>') %>
 <% block('scripts', '<script src="/js/application/scripts.js"></script>') %>
-<!-- END SCRIPTS CRUD -->
-<% block('scripts', "<script> window.tasks = "+ JSON.stringify(tasks)+";</script>") %>
-
 <% block('scripts', '<script src="/js/application/searchbox.js"></script>') %>
 <% block('scripts', '<script src="/js/application/admin/hostgroup.js"></script>') %>
 
+<% block('scripts','<script> window.tasks = ' + JSON.stringify(tasks) + ';</script>') %>
 <% block('scripts','<script> window.Tags = ' + JSON.stringify(tags) + '; </script>') %>
 <% block('scripts','<script> window.Looptimes = ' + JSON.stringify(looptimes) + '; </script>') %>
 <% block('scripts','<script> window.Timeouts = ' + JSON.stringify(timeouts) + '; </script>') %>

@@ -1,6 +1,7 @@
 # CHANGELOG
 
-### 0.4.1 - 2016-09-15
+
+### 0.5.1 - 2016-09-15
 
 > corrected behaviour of modal over modal on task scheduler
 
@@ -11,6 +12,42 @@
 > added filename preview
 
 > changed how script filenames are submitted
+
+### 0.5.0 -
+
+> moved several js files to grunt build directory. files are added automatically to the site and production bundle      
+
+> remove manual inclusion of js from ejs views     
+
+> ScraperForm view migrated to Backbone.View (allow .extend)       
+
+> TaskScraperForm created to include inputs that allow Event- *>* -Task mecanism     
+
+### 0.4.3 - 2016-09-13
+
+> show user agent credentials for current customer logged in user      
+
+> fixed host dstat page . added js validation and show resource status       
+
+> used fetch from theeye-client instead of custom resource fetch method      
+
+> added query via querystring       
+
+### 0.4.2 - 2016-09-10
+
+> set default looptime in monitor when not selected        
+
+> allow to change dstat description       
+
+> hide psaux edit button, did nothing      
+
+### 0.4.1 - 2016-09-09
+
+> show scraper task result as json .       
+
+> fix and organize code to display tasks result . unify the code     
+
+> fix styles and wrong use of HTML properties in elements     
 
 ### 0.4.0 - 2016-09-08
 

@@ -8,14 +8,29 @@ module.exports = {
   index: function(req, res) {
     var supervisor = req.supervisor;
     async.parallel({
-      host: function(callback){
-        return supervisor.host(req.params.host, callback);
-      },
-      hostStats: function(callback){
-        return supervisor.hostStats(req.params.host, callback);
-      },
-      hostResource: function(callback){
-        return supervisor.hostResource(req.params.host, callback);
+      host: (callback) => supervisor.host(req.params.host, callback) ,
+      hostStats: (callback) => supervisor.hostStats(req.params.host, callback) ,
+      hostResource: (callback) => {
+        supervisor.fetch({
+          route: supervisor.RESOURCE,
+          query:{
+            where:{
+              host_id: req.params.host,
+              type: 'host',
+              enable: true
+            },
+            limit: 1
+          },
+          success: (body) => {
+            var err;
+            if( Array.isArray(body) ){
+              var resource = (body.length > 0) ? body[0] : null;
+            }
+            else err = new Error('server response error');
+            callback(err, resource||null);
+          },
+          failure: (err) => callback(err)
+        });
       }
     },function(err, data){
       if(err) {
@@ -23,12 +38,10 @@ module.exports = {
         res.view({ error: 'cannot connect server' });
       } else {
         res.view({
-          initTime: Date.now(),
+          error: null,
           host: data.host,
           cachedStats: data.hostStats,
-          hostResource: data.hostResource,
-          error: null,
-          moment: require('moment')
+          hostResource: data.hostResource
         });
       }
     });

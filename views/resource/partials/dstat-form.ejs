@@ -10,6 +10,12 @@
     </div>
   </div>
   <div class="form-group">
+    <label for="description" class="col-sm-3 control-label">Description</label>
+    <div class="col-sm-9">
+      <input data-hook="description" type="text" name="description" class="form-control">
+    </div>
+  </div>
+  <div class="form-group">
     <label for="cpu" class="col-sm-3 control-label">CPU %</label>
     <div class="col-sm-9">
       <input data-hook="cpu" type="text" name="cpu" class="form-control">
@@ -37,9 +43,10 @@
     <label for="looptime" class="col-sm-3 control-label">Check Interval (mins)</label>
     <div class="col-sm-9">
       <select data-hook="looptime" name="looptime" class="form-control">
-        <option value="0" disabled selected><strong>select check interval</strong></option>
-        <% looptimes.forEach(function(t) { %>
-        <option value="<%= t.id %>"><strong><%= t.value %></strong></option>
+        <% looptimes.forEach(function(t) {
+        var extraAttributes = '';
+        if( t.id==30000 ) { extraAttributes += ' selected'; } %>
+        <option value="<%= t.id %>" <%= extraAttributes %>><strong><%= t.value %></strong></option>
         <% }); %>
       </select>
     </div>
