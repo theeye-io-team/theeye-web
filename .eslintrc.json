@@ -7,7 +7,7 @@
     },
     "extends": "eslint:recommended",
     "rules": {
-        "arrow-parens": ["error", "as-needed"],
+        "arrow-parens": ["warn", "as-needed"],
         "indent": [
             "error",
             2,
