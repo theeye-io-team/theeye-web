@@ -1,5 +1,17 @@
 # CHANGELOG
 
+### 0.4.1 - 2016-09-15
+
+> corrected behaviour of modal over modal on task scheduler
+
+> removed some styling on `<input>`
+
+> added script types support: batchfile, python and php
+
+> added filename preview
+
+> changed how script filenames are submitted
+
 ### 0.4.0 - 2016-09-08
 
 > added web scraper form the posibility to submit custom request and respose parameters       
