@@ -15,7 +15,7 @@ RUN cd ${destDir}; npm install --production
 # Fix something weird related to sails dependencies.
 RUN cd ${destDir}/node_modules/sails/ && npm install --production && cd ${destDir}
 #Fix Permissions.
-RUN mkdir ${destDir}/.tmp
+#commented, ya esta en la v. 15_09_16RUN mkdir ${destDir}/.tmp
 #commented, ya esta en la v. 15_09_16 RUN chmod -R 1777 ${destDir}/.tmp
 # Bundle app source
 EXPOSE 6080
