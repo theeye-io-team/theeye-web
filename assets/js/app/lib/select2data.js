@@ -27,5 +27,36 @@ var Select2Data = new (function Select2Data(){
     });
   }
 
+  this.PrepareEvents = function (events) {
+    if( !Array.isArray(events) || events.length==0 ){
+      return [];
+    }
+
+    var optgroup = events.reduce(function(optgroup, event){
+      var emitter = event.emitter;
+      var label = (emitter._type||emitter.type) + '_' + emitter.name ;
+      var text = event.name;
+
+      var opt = { id: event.id, text: text };
+
+      if( ! optgroup[ label ] ){
+        optgroup[ label ] = {
+          text: label,
+          children: []
+        };
+      }
+
+      optgroup[ label ].children.push( opt );
+      return optgroup;
+    },{});
+
+    var result = [];
+    for( var o in optgroup ){
+      result.push( optgroup[o] );
+    }
+
+    return result;
+  }
+
   return this;
 })();

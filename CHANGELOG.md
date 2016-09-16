@@ -1,5 +1,15 @@
 # CHANGELOG
 
+### 0.5.0 -
+
+> moved several js files to grunt build directory. files are added automatically to the site and production bundle      
+
+> remove manual inclusion of js from ejs views     
+
+> ScraperForm view migrated to Backbone.View (allow .extend)       
+
+> TaskScraperForm created to include inputs that allow Event-* > *-Task mecanism     
+
 ### 0.4.3 - 2016-09-13
 
 > show user agent credentials for current customer logged in user      

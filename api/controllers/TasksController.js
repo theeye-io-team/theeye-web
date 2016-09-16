@@ -15,7 +15,12 @@ module.exports = {
         failure: (err) => callback(err)
       }),
       scraperHosts: (callback) => supervisor.scraperHosts(callback),
-      tags: (callback) => supervisor.tags(callback)
+      tags: (callback) => supervisor.tags(callback),
+      events: (callback) => supervisor.fetch({
+        route: supervisor.EVENTS,
+        success: (body) => callback(null, body),
+        failure: (err) => callback(err)
+      })
     }, function(err, data) {
       if (err) return res.serverError("Error getting data from supervisor: " + err.toString());
 
