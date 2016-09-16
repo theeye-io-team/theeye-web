@@ -2,7 +2,7 @@
 Dropzone.autoDiscover = false;
 
 $(function() {
-  var self      = this; // dafuk? why not {}?
+  var self = this; // dafuk? why not {}?
   window.scriptState = window.scriptState ? window.scriptState : $({});
   var $state = window.scriptState;
   //what is the advantage of storing the scriptId on
@@ -14,6 +14,45 @@ $(function() {
   var aceEditor = ace.edit("ace-editor");
   aceEditor.setTheme("ace/theme/twilight");
   aceEditor.session.setMode("ace/mode/javascript");
+
+  var ext = ".js";
+
+  function extension2mode(extension) {
+    //remove initial dot (.) if any
+    if(extension.indexOf('.') == 0) {
+      extension = extension.substr(1);
+    }
+    var mode = "";
+    switch(extension) {
+      case "js": mode = "javascript";
+        break;
+      case "bat": mode = "batchfile";
+        break;
+      case "sh": mode = "bash";
+        break;
+      case "py": mode = "python";
+        break;
+      case "php": mode = "php";
+        break;
+    }
+    return mode;
+  }
+  function mode2extension(mode) {
+    var extension = "";
+    switch(mode) {
+      case "javascript": extension = "js";
+        break;
+      case "batchfile": extension = "bat";
+        break;
+      case "bash": extension = "sh";
+        break;
+      case "python": extension = "py";
+        break;
+      case "php": extension = "php";
+        break;
+    }
+    return extension;
+  }
 
   //**initialize dropzone**//
   var scriptDropZone = new Dropzone(".dropzone", {
@@ -47,6 +86,10 @@ $(function() {
     scriptDropZone.removeAllFiles();
   }
 
+  $('input[name=filename]').on('input', function(event){
+    $('#filenamePreview').text($(this).val() + "." + ext);
+  });
+
   //**live-editor / file-upload toogle**//
   $("[data-hook=live-edit]").click(function(e) {
     var uploadMethod = $('input:radio[name=live-edit]:checked').val();
@@ -66,22 +109,8 @@ $(function() {
   $("[data-hook=editor-mode]").change(function() {
     var mode = $("[data-hook=editor-mode]").val();
     aceEditor.session.setMode("ace/mode/"+mode);
-    var source    = aceEditor.getSession().getValue();
-    // source = (source === '#!/usr/bin/env nodejs \n' || source === '#!/usr/bin/env bash \n') ? '' : source;
-    source = source.replace(/^#!\/.*\n/,'');
-
-    if(source === '' || !/^#!\/.*/.test(source))
-    {
-      switch (mode)
-      {
-        case 'javascript':
-          aceEditor.getSession().setValue('#!/usr/bin/env nodejs \n' + source);
-          break;
-        case 'sh':
-          aceEditor.getSession().setValue('#!/usr/bin/env bash \n' + source);
-          break;
-      }
-    }
+    ext = mode2extension(mode);
+    $('#filenamePreview').text($('input[name=filename]').val()+ext);
   });
 
   //**Delete script**//
@@ -124,13 +153,20 @@ $(function() {
     self.scriptId = null; // ????????????
     scriptDropZone.options.method = 'POST';
     scriptDropZone.removeAllFiles();
-    aceEditor.setValue('#!/usr/bin/env nodejs \n');
+
+    ext = "js";
+    $('#filenamePreview').text("[auto]" + ext);
+
     $("[data-hook=script-id]",$scriptModal).val('');
     $("[data-hook=editor-mode]",$scriptModal).val('javascript');
     $("form[data-hook=script-form] textarea#description",$scriptModal).val("");
     $("input#filename",$scriptModal).val("");
     $("input[data-hook=public]",$scriptModal).removeAttr('checked');
     $("input[data-hook=public][value=false]",$scriptModal)[0].checked = true;
+
+    aceEditor.getSession().setValue("");
+    aceEditor.session.setMode("ace/mode/javascript");
+
     $("#script-modal").modal();
   });
 
@@ -156,10 +192,22 @@ $(function() {
       var script = data.script;
       var file   = data.file;
       var isPublic = script.public;
+      var filename = script.filename;
+      var seemsToHaveExtension = !!~filename.lastIndexOf('.');
 
-      console.log(script);
+      if(seemsToHaveExtension && !script.extension) {
+        ext = filename.substr(filename.lastIndexOf('.'));
+        filename = filename.substr(0,filename.lastIndexOf('.'));
+      }else if(seemsToHaveExtension && script.extension){
+        ext = script.extension;
+        filename = filename.substr(0,filename.lastIndexOf('.'));
+      }else{
+        //defaults when fails to get info
+        ext = "js";
+      }
+
       $("textarea#description", $form).val(script.description);
-      $("input#filename", $form).val(script.filename);
+      $("input#filename", $form).val(filename);
 
       $('input[data-hook=public]', $form).removeAttr('checked');
       if(isPublic) {
@@ -168,12 +216,17 @@ $(function() {
         $("input[data-hook=public][value=false]", $form)[0].checked = true;
       }
 
-      if(script.extension == 'js')
-        $("[data-hook=editor-mode]").val('javascript');
-      if(script.extension == 'sh')
-        $("[data-hook=editor-mode]").val('sh');
 
-      var mode = $("[data-hook=editor-mode]").val();
+      $('#filenamePreview').text(filename + "." + ext);
+
+      // dejo esto aca porque podria servir eventualmente
+      // var modelist = ace.require("ace/ext/modelist")
+      // var filePath = "blahblah/weee/some.js"
+      // var mode = modelist.getModeForPath(filePath).mode
+      // editor.session.setMode(mode)
+
+      var mode = extension2mode(ext);
+      $("[data-hook=editor-mode]").val(mode);
 
       var newSession = ace.createEditSession(file, "ace/mode/"+mode);
       aceEditor.setSession(newSession);
@@ -189,10 +242,17 @@ $(function() {
     var isPublic = $('input[data-hook=public]:checked').val();
 
     var regex = new RegExp(/ *[\\~#%&*{}/:<>?/;/ |-]+ */);
-    if(  regex.test(filename)) {
+    if(regex.test(filename)) {
       bootbox.alert("Invalid file filename!");
       return;
     }
+
+    var source = aceEditor.getSession().getValue();
+    if(!source.trim()) {
+      bootbox.alert("Script should not be empty!");
+      return;
+    }
+    var extension = ext;
 
     self.scriptId = $("[data-hook=script-id]").val();
 
@@ -207,9 +267,7 @@ $(function() {
     if(uploadMethod === 'fileupload') {
       scriptDropZone.processQueue();
     } else {
-      var extension = $("[data-hook=editor-mode]").val() === 'javascript' ? 'js' : 'sh';
-      var source    = aceEditor.getSession().getValue();
-      if(!/^#!\/.*/.test(source)) {
+      if(!/^#!\/.*/.test(source) && 1 == 2) { //remove this part, makes no sense
         bootbox.confirm('No interpreter found, want to continue?',function(confirmed) {
           if(confirmed) {
             var formData = new FormData();
@@ -239,7 +297,7 @@ $(function() {
         });
       } else {
         var formData = new FormData();
-        formData.append("filename", $("input#filename").val());
+        formData.append("filename", filename + "." + extension);
         formData.append("description", $("form[data-hook=script-form] textarea#description").val());
         formData.append("uploadMethod", $('input:radio[name=live-edit]:checked').val());
         formData.append('scriptSource', btoa(source));
