@@ -4,6 +4,10 @@ MAINTAINER Javier Ailbirt <jailbirt@interactar.com>
 ENV destDir /src/theeye/web
 # Create app directory
 RUN mkdir -p ${destDir}
+# Temporary Move node_modules for avoiding packages reinstallation
+RUN mv ${destDir}/node_modules/ /tmp/
+# And remove that directory
+RUN rm -rf ${destDir}
 # Install Supervisor
 #RUN npm install supervisor -g
 #Set working Directory
