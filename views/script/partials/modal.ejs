@@ -16,6 +16,9 @@
             <div class="col-sm-9">
               <input name="filename" class="form-control" id="filename" placeholder="auto">
             </div>
+            <div class="col-sm-offset-3 col-sm-9" style="color:grey">
+              filename: <span id="filenamePreview"></span>
+            </div>
           </div>
 
           <div class="form-group">
@@ -82,8 +85,11 @@
             <label for="editor-mode" class="col-sm-3 control-label">Interpreter <a href="#" class="example-code">(example)</a></label>
             <div class="col-sm-9">
               <select data-hook="editor-mode" id="editor-mode">
-                <option value="javascript">Node</option>
-                <option value="sh">Bash</option>
+                <option value="javascript">node</option>
+                <option value="sh">bash</option>
+                <option value="batchfile">batch/cmd</option>
+                <option value="python">python</option>
+                <option value="php">php</option>
               </select>
             </div>
           </div>

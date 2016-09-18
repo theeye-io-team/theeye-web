@@ -605,8 +605,14 @@ h4.panel-title-content::after {
 
 .calendarEvent { cursor: pointer; }
 .calendarEvent:hover { border-color: red; }
+/*
+no puedo recordar para que estaba esto, pero rompe los input
 input[type=checkbox], input[type=radio] { margin:0; width:16px;height:16px; margin-top:8px;}
-
+*/
+input[type=checkbox].form-control {
+  box-shadow: none;
+  -webkit-box-shadow: none;
+}
 /*
  * JSON Viewer custom style
  */
