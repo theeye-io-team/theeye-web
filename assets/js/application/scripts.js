@@ -15,7 +15,9 @@ $(function() {
   aceEditor.setTheme("ace/theme/twilight");
   aceEditor.session.setMode("ace/mode/javascript");
 
-  var ext = ".js";
+  var ext = "js";
+
+  var $filenameInput = $("input[name=filename]");
 
   function extension2mode(extension) {
     //remove initial dot (.) if any
@@ -28,7 +30,7 @@ $(function() {
         break;
       case "bat": mode = "batchfile";
         break;
-      case "sh": mode = "bash";
+      case "sh": mode = "sh";
         break;
       case "py": mode = "python";
         break;
@@ -44,7 +46,7 @@ $(function() {
         break;
       case "batchfile": extension = "bat";
         break;
-      case "bash": extension = "sh";
+      case "sh": extension = "sh";
         break;
       case "python": extension = "py";
         break;
@@ -86,8 +88,8 @@ $(function() {
     scriptDropZone.removeAllFiles();
   }
 
-  $('input[name=filename]').on('input', function(event){
-    $('#filenamePreview').text($(this).val() + "." + ext);
+  $filenameInput.on('input', function(event){
+    $('#filenamePreview').text( ($filenameInput.val() || "[auto]") + "." + ext);
   });
 
   //**live-editor / file-upload toogle**//
@@ -110,7 +112,7 @@ $(function() {
     var mode = $("[data-hook=editor-mode]").val();
     aceEditor.session.setMode("ace/mode/"+mode);
     ext = mode2extension(mode);
-    $('#filenamePreview').text($('input[name=filename]').val()+ext);
+    $('#filenamePreview').text( ($filenameInput.val() || "[auto]") + "." +ext);
   });
 
   //**Delete script**//
@@ -155,7 +157,7 @@ $(function() {
     scriptDropZone.removeAllFiles();
 
     ext = "js";
-    $('#filenamePreview').text("[auto]" + ext);
+    $('#filenamePreview').text("[auto]." + ext);
 
     $("[data-hook=script-id]",$scriptModal).val('');
     $("[data-hook=editor-mode]",$scriptModal).val('javascript');
