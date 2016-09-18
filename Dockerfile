@@ -10,6 +10,8 @@ RUN mkdir -p ${destDir}
 WORKDIR ${destDir}
 # Bundle app source
 COPY . ${destDir}
+# Move back packages
+RUN mv /tmp/node_modules ${destDir}
 # Install app dependencies
 RUN cd ${destDir}; npm install --production
 # Fix something weird related to sails dependencies.
