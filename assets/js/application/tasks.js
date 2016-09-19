@@ -22,6 +22,7 @@ $(function(){
   window.scriptState = window.scriptState ? window.scriptState : $({});
   var $state = window.scriptState;
 
+  /**
   function extractFormData ($el) {
     var data = $el.find(':input').toArray();
     return data.reduce(function(obj, input) {
@@ -45,37 +46,15 @@ $(function(){
       return obj;
     },{});
   }
+  */
 
   (function update (el){
     var $taskForm = $(el);
-    var $tags = $taskForm.find('select[name=tags]');
 
-    function fillForm($form, data){
-      $form[0].reset();
-      Object.keys(data).forEach(function(name,index){
-        var selector = '[data-hook=:name]'.replace(':name',name);
-        var $el = $form.find(selector);
-
-        if($el.length>0){
-          if($el[0].type=='radio'){
-            var radio = '[type=radio][data-hook=:name][value=:value]'
-            .replace(':name',name)
-            .replace(':value',data[name]);
-            $form.find(radio).prop('checked',true);
-          } else {
-            $el.val(data[name]);
-          }
-        }
-      });
-    }
-
-    function setSelectedTags (tags) {
-      if(!tags||!Array.isArray(tags)||tags.length===0)return;
-      tags.forEach(function(tag){
-        //$tags.val(tag.id);
-        $tags.append('<option value="'+ tag +'" selected="selected">'+ tag +'</option>');
-      });
-    }
+    $taskForm.find('select[name=host_id]').select2({ placeholder: 'Choose a host' });
+    $taskForm.find('select[name=script_id]').select2({ placeholder: 'Choose a script' });
+    $taskForm.find('select[name=tags]').select2({ placeholder: 'Choose tags', data: Select2Data.PrepareTags(Tags), tags: true });
+    $taskForm.find('select[name=triggers]').select2({ placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
 
     $('.editTask').on('click', function(evt){
       evt.preventDefault();
@@ -84,35 +63,33 @@ $(function(){
       $taskForm.data('task-id',taskId);
       $taskForm.data('action','edit');
 
+      $taskForm[0].reset();
+
       jQuery.ajax({
         type:'get',
         url: '/task/' + taskId
       }).done(function(task){
-        $tags.find('option').remove().end();
-        fillForm($taskForm, task);
-        setSelectedTags(task.tags);
+
+        $('#name',$taskForm).focus();
+
+        var form = new FormElement( $taskForm[0] );
+        form.set( task );
+
         $('.modal#edit-task').modal('show');
-        // the rest is up to the shown.bs.modal event (below)
+
       }).fail(function(xhr, err, xhrStatus) {
         alert(xhr.responseText);
       });
     });
 
-    $(".modal#edit-task").on('shown.bs.modal', function(event) {
-      // nice-guy first input auto focus
-      $('#name',this).focus();
-      $taskForm.find('select[name=host_id]').select2({ placeholder: "Choose a host" });
-      $taskForm.find('select[name=script_id]').select2({ placeholder: "Choose a script" });
-      $tags.select2({ placeholder: "Choose tags", tags: true, data: Select2Data.PrepareTags(Tags) });
-    });
-
-    $(".modal#edit-task button[type=submit]").on('click',function(event){
+    $('.modal#edit-task button[type=submit]').on('click',function(event){
       $taskForm.submit();
     });
 
     $taskForm.on("submit", function(event){
       event.preventDefault();
-      var vals = extractFormData($taskForm);
+      var form = new FormElement($taskForm);
+      var vals = form.get();
       vals.type = 'script';
 
       jQuery.ajax({
@@ -133,21 +110,21 @@ $(function(){
     return $taskForm;
   })("form#editTaskForm");
 
+
+
   (function create(el){
     var $taskForm = $(el);
     var $multihostContainer = $taskForm.find('.hidden-container.multiple-hosts-selection');
-    var $hosts = $taskForm.find('select[name=hosts_id]');
-    var $script = $taskForm.find('select[name=script_id]');
-    var $tags = $taskForm.find('select[name=tags]');
+
+    $taskForm.find('select[name=hosts_id]').select2({ placeholder: 'Type a hostname or hit Enter to list' });
+    $taskForm.find('select[name=script_id]').select2({ placeholder: 'Choose a script' });
+    $taskForm.find('select[name=tags]').select2({ placeholder:'Tags', tags:true, data: Select2Data.PrepareTags(Tags) });
+    $taskForm.find('select[name=triggers]').select2({ placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
 
     $(".modal#create-task").on('shown.bs.modal', function(event) {
       $taskForm[0].reset();
       $taskForm.data('action','create');
       $taskForm.find('[data-hook=name]').focus();
-
-      $hosts.select2({ placeholder: 'Type a hostname or hit Enter to list' });
-      $script.select2({ placeholder: 'Choose a script' });
-      $tags.select2({ placeholder:'Tags', tags:true, data: Select2Data.PrepareTags(Tags) });
 
       $multihostContainer.show();
     });
@@ -161,7 +138,7 @@ $(function(){
         //restrict the event function to the /admin/task layout
         return;
       }
-      alert("Script succesfully uploaded","Script upload", function() {
+      alert('Script succesfully uploaded','Script upload', function() {
         $('[data-hook=script_id]').each(function(index, element){
           $(element).append($('<option>', {
             value: script.id,
@@ -175,17 +152,19 @@ $(function(){
       });
     });
 
-    $taskForm.on("submit", function(event) {
+    $taskForm.on('submit', function(event) {
       event.preventDefault();
-      var vals = extractFormData($taskForm);
+      var form = new FormElement($taskForm);
+      var vals = form.get();
       vals.type = 'script';
+
       $.ajax({
         method:'POST',
         url:'/task',
         data: JSON.stringify(vals),
-        contentType: "application/json; charset=utf-8"
+        contentType: 'application/json; charset=utf-8'
       }).done(function(task) {
-        $(".modal#create-task").modal("hide");
+        $('.modal#create-task').modal('hide');
         alert('Task Created','Task', function(){
           window.location.reload();
         });
@@ -195,10 +174,12 @@ $(function(){
 
       return false;
     });
-  })("form#createTaskForm");
+  })('form#createTaskForm');
+
+
 
   (function remove(){
-    $(".deleteTask").on("click",function(ev){
+    $('.deleteTask').on('click',function(ev){
       ev.preventDefault();
       ev.stopPropagation();
       var itemRow = $(this).closest('.itemRow');
@@ -411,7 +392,6 @@ $(function(){
       evt.preventDefault();
     });
 
-
     //datetime picker
     //http://xdsoft.net/jqplugins/datetimepicker/
     $('input[name=datetime]').datetimepicker({
@@ -616,15 +596,33 @@ $(function(){
 
   $('.modal#scriptUpload div#scriptTemplateDescription').hide();
 
+  $(".modal").on("click","[data-hook=advanced-section-toggler]", function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    $(".modal section[data-hook=advanced]").slideToggle();
+    $("i", this).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
+  });
+
+
+  //
+  // START SCRAPER
+  //
+  // ATTACH SCRAPER MODAL & FORM TO THIS VIEW ELEMENTS
+  //
   var scraperCRUD = new ScraperModal.TaskCRUD();
   $('[data-hook=create-scraper-task]').on('click',function(event){
-    event.preventDefault(); event.stopPropagation();
+    event.preventDefault();
+    event.stopPropagation();
     scraperCRUD.create();
   });
   $('[data-hook=edit-scraper-task]').on('click',function(event){
-    event.preventDefault(); event.stopPropagation();
+    event.preventDefault();
+    event.stopPropagation();
     var id = $( event.currentTarget ).data('task');
     scraperCRUD.edit(id);
   });
   window.scraper = scraperCRUD;
+  //
+  // END SCRAPER
+  //
 });

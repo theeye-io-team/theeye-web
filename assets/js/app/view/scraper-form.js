@@ -300,16 +300,18 @@ var Scraper = (function Scraper(){
   var TaskFormView = FormView.extend({
     render: function() {
       // parent render
-      FormView.prototype.render.apply(this, arguments);
+      this.renderTemplate();
+      this.bindFormEvents();
+      this.setupSelect();
 
       var triggerInputsHTML = Templates['assets/templates/trigger-inputs.hbs']();
-
       this.queryByHook('advanced').append( triggerInputsHTML );
-
       this.queryByHook('events-container').select2({
         placeholder: 'Events',
         data: Select2Data.PrepareEvents( this.events )
       });
+
+      this.setFormData(this.model);
     }
   });
 

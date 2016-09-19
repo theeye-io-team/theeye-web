@@ -12,21 +12,6 @@
       <textarea data-hook="description" type="text" name="description" class="form-control" id="description" placeholder="Task description"></textarea>
     </div>
   </div>
-  <div class="form-group">
-    <label for="public" class="col-sm-3 control-label">Share this Task?</label>
-    <div class="col-sm-9">
-      <div>
-        <label class="radio-inline">
-          <input type="radio" name="public" data-hook="public" value="true">
-          Yes. Make it public
-        </label>
-        <label class="radio-inline">
-          <input type="radio" name="public" data-hook="public" value="false" checked>
-          No. Keep it private
-        </label>
-      </div>
-    </div>
-  </div>
   <div id="host">
     <div class="form-group">
       <label for="hostname" class="col-sm-3 control-label">Where should I run?</label>
@@ -55,31 +40,6 @@
     </div>
   </div>
   <div class="form-group">
-    <label for="script_runas" class="col-sm-3 control-label">
-      RunAs<br/><small>[optional]</small>
-      <span style="cursor:help" class="glyphicon glyphicon-question-sign"></span>
-    </label>
-    <div class="col-sm-9">
-      <div>
-        <input class="form-control tooltiped"
-          title="Surround the script with something else, eg. sudo. Use '%script%' to include the script. Before execution will be replaced with the script path"
-          type="text"
-          name="script_runas"
-          data-hook="script_runas"
-          placeholder="sudo -u facugon $(%script%)"
-        >
-      </div>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="script_arguments" class="col-sm-3 control-label">Script Arguments<br/><small>[optional]</small></label>
-    <div class="col-sm-9">
-      <div id="script-arguments-input">
-        <input class="form-control tooltiped" title="You can write a comma separated list of arguments" type="text" name="script_arguments" data-hook="script_arguments" placeholder="--color, --exclude-dir='node_modules'">
-      </div>
-    </div>
-  </div>
-  <div class="form-group">
     <label for="tags" class="col-sm-3 control-label">Tags<br/><small>[optional]</small></label>
     <div class="col-sm-9">
       <div>
@@ -88,30 +48,85 @@
       </div>
     </div>
   </div>
-  <!-- TRIGGER TASK ON EVENT -->
-  <div class="form-group">
-    <label for="triggers" class="col-sm-3 control-label">
-      Trigger on Events<br/><small>[optional]</small>
-    </label>
-    <div class="col-sm-9">
-      <div data-hook="events-container"></div>
-    </div>
+
+  <div class="scraper-section-title" data-hook="advanced-section-toggler">
+    <label>Advanced</label>
+    <i class="glyphicon glyphicon-chevron-down"></i>
   </div>
-  <div class="form-group" style="display:none">
-    <label for="grace_time" class="col-sm-3 control-label">
-      Grace Time<br/><small>[optional]</small>
-    </label>
-    <div class="col-sm-9">
-      <select name="grace_time"
-        class="form-control tooltiped select"
-        title=""
-        data-hook="grace_time"
-        style="width:100%">
-        <option value="0">Immediately / No Cancelation</option>
-        <option value="300">5</option>
-        <option value="600">10</option>
-        <option value="900">15</option>
-      </select> mins.
+
+  <section data-hook="advanced" style="display:none">
+    <div class="form-group">
+      <label for="public" class="col-sm-3 control-label">Share this Task?</label>
+      <div class="col-sm-9">
+        <div>
+          <label class="radio-inline">
+            <input type="radio" name="public" data-hook="public" value="true">
+            Yes. Make it public
+          </label>
+          <label class="radio-inline">
+            <input type="radio" name="public" data-hook="public" value="false" checked>
+            No. Keep it private
+          </label>
+        </div>
+      </div>
     </div>
-  </div>
+    <div class="form-group">
+      <label for="script_runas" class="col-sm-3 control-label">
+        RunAs<br/><small>[optional]</small>
+        <span style="cursor:help" class="glyphicon glyphicon-question-sign"></span>
+      </label>
+      <div class="col-sm-9">
+        <div>
+          <input class="form-control tooltiped"
+          title="Surround the script with something else, eg. sudo. Use '%script%' to include the script. Before execution will be replaced with the script path"
+          type="text"
+          name="script_runas"
+          data-hook="script_runas"
+          placeholder="sudo -u facugon $(%script%)"
+          >
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="script_arguments" class="col-sm-3 control-label">Script Arguments<br/><small>[optional]</small></label>
+      <div class="col-sm-9">
+        <div id="script-arguments-input">
+          <input class="form-control tooltiped" title="You can write a comma separated list of arguments" type="text" name="script_arguments" data-hook="script_arguments" placeholder="--color, --exclude-dir='node_modules'">
+        </div>
+      </div>
+    </div>
+    <!-- TRIGGER TASK ON EVENT -->
+    <div class="form-group">
+      <label for="triggers" class="col-sm-3 control-label">
+        Trigger on Events<br/><small>[optional]</small>
+      </label>
+      <div class="col-sm-9">
+        <select data-hook="events-container"
+          name="triggers"
+          class="form-control"
+          style="width:100%;"
+          multiple>
+        </select>
+      </div>
+    </div>
+    <!-- GRACE TIME FOR CANCELATION -->
+    <div class="form-group">
+      <label for="grace_time" class="col-sm-3 control-label">
+        Grace Time (mins)<br/><small>[optional]</small>
+      </label>
+      <div class="col-sm-9">
+        <select name="grace_time"
+          class="form-control tooltiped select"
+          title=""
+          data-hook="grace_time"
+          style="width:100%">
+          <option value="0">No wait / No Cancelation</option>
+          <option value="300">5</option>
+          <option value="600">10</option>
+          <option value="900">15</option>
+        </select>
+      </div>
+    </div>
+    <!-- /GRACE TIME FOR CANCELATION -->
+  </section>
 </form>

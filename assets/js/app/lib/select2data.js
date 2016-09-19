@@ -34,20 +34,29 @@ var Select2Data = new (function Select2Data(){
 
     var optgroup = events.reduce(function(optgroup, event){
       var emitter = event.emitter;
-      var label = (emitter._type||emitter.type) + '_' + emitter.name ;
-      var text = event.name;
+      var host = event.emitter.host;
+      if( host ){
+        var type = (emitter._type||emitter.type);
+        var name = emitter.name;
+        var hostname = host.hostname;
 
-      var opt = { id: event.id, text: text };
+        var label = type + ' ' + hostname;
 
-      if( ! optgroup[ label ] ){
-        optgroup[ label ] = {
-          text: label,
-          children: []
+        var opt = {
+          id: event.id,
+          text: label + ' > ' + emitter.name + ', ' + event.name
         };
-      }
 
-      optgroup[ label ].children.push( opt );
-      return optgroup;
+        if( ! optgroup[ label ] ){
+          optgroup[ label ] = {
+            text: label,
+            children: []
+          };
+        }
+
+        optgroup[ label ].children.push( opt );
+        return optgroup;
+      }
     },{});
 
     var result = [];

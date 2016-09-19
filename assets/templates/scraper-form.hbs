@@ -39,6 +39,21 @@
       <input data-hook="url" type="text" name="url" class="form-control" placeholder="https://username:password@domain.com.ar/path?param=value">
     </div>
   </div>
+  <!-- TAGS -->
+  <div data-hook="tags-container" class="form-group">
+    <label for="tags" class="col-sm-3 control-label">Tags<br/><small>[optional]</small></label>
+    <div class="col-sm-9">
+      <div>
+        <select data-hook="tags"
+          class="form-control tooltiped select"
+          title=""
+          name="tags"
+          multiple style="width:100%">
+        </select>
+      </div>
+    </div>
+  </div>
+  <!-- /TAGS -->
 
   <div class="scraper-section-title" data-hook="advanced-section-toggler">
     <label>Advanced</label>
@@ -149,19 +164,6 @@
       </div>
       <div class="col-sm-8">
         <input data-hook="pattern" type="text" name="pattern" class="form-control" placeholder="Match this string or regular expression">
-      </div>
-    </div>
-    <div data-hook="tags-container" class="form-group">
-      <label for="tags" class="col-sm-3 control-label">Tags<br/><small>[optional]</small></label>
-      <div class="col-sm-9">
-        <div>
-          <select data-hook="tags"
-            class="form-control tooltiped select"
-            title=""
-            name="tags"
-            multiple style="width:100%">
-          </select>
-        </div>
       </div>
     </div>
   </section>

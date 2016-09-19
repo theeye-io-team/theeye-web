@@ -43,12 +43,15 @@ FormElement.prototype.set = function(values){
     if( input ){
       if( input.type == 'text' ) input.value = value;
       if( input.type == 'checkbox' ) input.checked = value;
-      if( input.type == 'radio' ) console.log( 'radio button not handled' );
+      if( input.type == 'radio' ){
+        var selector = '[name=' + name + '][type=radio][value=' + String(value) + ']';
+        $form.find(selector).attr('checked', true);
+      }
       if( input.type == 'select-one' ) input.value = value;
       if( input.type == 'select-multiple' ) $input.val( value );
       $input.trigger('change');
     } else {
-      console.log('not found input named ' + name );
+      //console.log('not found input named ' + name );
     }
   }
 }
