@@ -151,6 +151,13 @@ $(function() {
 
   //**Script create modal show**//
   $('.createScript').on('click',function(e) {
+    // the .createScript is updated to .editScript, but the
+    // listener remains. So, when the button toggles to .editScript
+    // it is also provided with a data('script-id').
+    // If data('script-id') exits, cancel the "createScript" routine
+    if($(this).data('script-id')) {
+      return;
+    }
     var $scriptModal = $("#script-modal");
     self.scriptId = null; // ????????????
     scriptDropZone.options.method = 'POST';
@@ -173,7 +180,7 @@ $(function() {
   });
 
   //**Script edit modal show and load**//
-  $('.editScript').on('click',function(e) {
+  $(document).on('click', '.editScript',function(e) {
     e.preventDefault();
     e.stopPropagation();
     var $form = $('form[data-hook=script-form]');

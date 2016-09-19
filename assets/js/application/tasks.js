@@ -46,6 +46,10 @@ $(function(){
     },{});
   }
 
+  $('#script-modal').on('hidden.bs.modal', function(){
+    $('body').addClass('modal-open');
+  });
+
   (function update (el){
     var $taskForm = $(el);
     var $tags = $taskForm.find('select[name=tags]');
@@ -76,6 +80,23 @@ $(function(){
         $tags.append('<option value="'+ tag +'" selected="selected">'+ tag +'</option>');
       });
     }
+
+    $(".modal#edit-task").on('shown.bs.modal', function(event) {
+      if(!$('[data-hook=script_id]',$taskForm).val()) {
+        console.log('no data on script_id input, this should never happen');
+        $('a.editScript', $taskForm)
+          .text('Create script')
+          .removeClass('editScript')
+          .addClass('createScript')
+          .data('script-id', null);
+      }else{
+        $('a.createScript')
+          .text('Update script')
+          .removeClass('createScript')
+          .addClass('editScript')
+          .data('script-id', $('[data-hook=script_id]',$taskForm).val());
+      }
+    });
 
     $('.editTask').on('click', function(evt){
       evt.preventDefault();
@@ -144,9 +165,21 @@ $(function(){
       $taskForm[0].reset();
       $taskForm.data('action','create');
       $taskForm.find('[data-hook=name]').focus();
+      $('a.editScript', $taskForm)
+        .text('Create script')
+        .removeClass('editScript')
+        .addClass('createScript')
+        .data('script-id', null);
 
       $hosts.select2({ placeholder: 'Type a hostname or hit Enter to list' });
-      $script.select2({ placeholder: 'Choose a script' });
+      $script.select2({ placeholder: 'Choose a script' })
+        .on('change', function(event){
+          $('a.createScript')
+            .text('Update script')
+            .removeClass('createScript')
+            .addClass('editScript')
+            .data('script-id',event.currentTarget.value);
+        });
       $tags.select2({ placeholder:'Tags', tags:true, data: Select2Data.PrepareTags(Tags) });
 
       $multihostContainer.show();
@@ -163,6 +196,9 @@ $(function(){
       }
       alert("Script succesfully uploaded","Script upload", function() {
         $('[data-hook=script_id]').each(function(index, element){
+          if($(element).val()) {
+            return;
+          }
           $(element).append($('<option>', {
             value: script.id,
             text: script.filename
@@ -172,6 +208,7 @@ $(function(){
         });
 
         $('#script-modal').modal('hide');
+        $('body').addClass('modal-open');
       });
     });
 
@@ -250,7 +287,6 @@ $(function(){
 
     function getEventSources(scheduleData, name) {
       return lodash.map(scheduleData, function(scheduleEvent, index, arr){
-        // console.log(arr.length);
         var ms = new Date(scheduleEvent.data.scheduleData.runDate);
         // 200 is the offset of the color wheel where 0 is red, change at will.
         // 180 is how wide will the angle be to get colors from,
@@ -275,7 +311,6 @@ $(function(){
     }
 
     function showDeleteModal(eventObject) {
-      // console.log(eventObject);
       var eventData = eventObject.source.scheduleData;
       $deleteModal.modal('show');
 
@@ -319,7 +354,6 @@ $(function(){
       evt.stopPropagation();
 
       scheduleData = [];
-      // console.log(this);
       var itemData = $(this).closest('.itemRow').data();
       //esto tiene que apuntar a /task/:id/schedule
       $.get("/task/" + itemData.itemId + "/schedule").done(function(data){
@@ -371,10 +405,8 @@ $(function(){
         alert("All right! Your task will run on: " + data.nextRun, function(){
           $mainModal.modal('hide');
         });
-        // console.log(data);
       }).fail(function(xhr, status, message) {
         console.log('fail');
-        // console.log(arguments);
       });
     });
 
@@ -391,7 +423,6 @@ $(function(){
       bootbox.confirm('The schedule will be canceled. Want to continue?',
         function(confirmed) {
           if(!confirmed) return;
-          // console.log('deleting', scheduleData.source.id);
           $.ajax({
             url: '/task/' + scheduleData.source.scheduleData.data.task_id +
               '/schedule/' + scheduleData.source.id,
