@@ -1,11 +1,11 @@
+/* global bootbox, Tags, $searchbox, debug, ScraperModal, Select2Data */
 $(function(){
-  /* global bootbox, Tags, $searchbox, debug */
-  var ResourceStates = {
-    normalState: 'normal',
-    failureState: 'failure',
-    loadingState: 'unknown',
-    unknownState: 'updates_stopped'
-  };
+  // var ResourceStates = {
+  //   normalState: 'normal',
+  //   failureState: 'failure',
+  //   loadingState: 'unknown',
+  //   unknownState: 'updates_stopped'
+  // };
 
   var log = debug('eye:web:admin:resources');
 
@@ -251,7 +251,7 @@ $(function(){
     }
 
     function createDstat (options) {
-      var host = options.host;
+      // var host = options.host;
       var $form = $('[data-hook=dstat-modal] form');
 
       var $hosts = $('<select name="hosts_id"></select>');
@@ -384,7 +384,7 @@ $(function(){
         url: '/resource/' + data.resource_id,
         type: 'PUT',
         data: JSON.stringify(data),
-        contentType: "application/json; charset=utf-8",
+        contentType: "application/json; charset=utf-8"
       }).done(function(data) {
         bootbox.alert('Limits updated',function(){
         });
@@ -537,7 +537,8 @@ $(function(){
                   console.log('then success');
                   console.log(arguments);
                   alert(taskRows + successFooter, successTitle);
-                },function(){
+                },
+                function(){
                   console.log('then fail');
                   console.log(arguments);
                   alert(taskRows + failFooter, failTitle);
