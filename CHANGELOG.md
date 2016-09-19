@@ -1,7 +1,14 @@
 # CHANGELOG
 
+### 0.5.0 - 2016-09-19
 
-### 0.5.2 - 2016-09-19
+> moved several js files to grunt build directory. files are added automatically to the site and production bundle      
+
+> remove manual inclusion of js from ejs views     
+
+> ScraperForm view migrated to Backbone.View (allow .extend)       
+
+> TaskScraperForm created to include inputs that allow Event- *>* -Task mecanism     
 
 > emprolijed profile section, added copy-to-clipboard functionality to tokens, div classes, etc
 
@@ -13,8 +20,6 @@
   - info-container min-height lowered to 20px
   - tooltip placement for settings manager (nav menu)
 
-### 0.5.1 - 2016-09-15
-
 > corrected behaviour of modal over modal on task scheduler
 
 > removed some styling on `<input>`
@@ -24,16 +29,6 @@
 > added filename preview
 
 > changed how script filenames are submitted
-
-### 0.5.0 -
-
-> moved several js files to grunt build directory. files are added automatically to the site and production bundle      
-
-> remove manual inclusion of js from ejs views     
-
-> ScraperForm view migrated to Backbone.View (allow .extend)       
-
-> TaskScraperForm created to include inputs that allow Event- *>* -Task mecanism     
 
 ### 0.4.3 - 2016-09-13
 

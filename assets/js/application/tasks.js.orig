@@ -60,6 +60,23 @@ $(function(){
     $taskForm.find('select[name=tags]').select2({ placeholder: 'Choose tags', data: Select2Data.PrepareTags(Tags), tags: true });
     $taskForm.find('select[name=triggers]').select2({ placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
 
+    $(".modal#edit-task").on('shown.bs.modal', function(event) {
+      if(!$('[data-hook=script_id]',$taskForm).val()) {
+        console.log('no data on script_id input, this should never happen');
+        $('a.editScript', $taskForm)
+          .text('Create script')
+          .removeClass('editScript')
+          .addClass('createScript')
+          .data('script-id', null);
+      }else{
+        $('a.createScript')
+          .text('Update script')
+          .removeClass('createScript')
+          .addClass('editScript')
+          .data('script-id', $('[data-hook=script_id]',$taskForm).val());
+      }
+    });
+
     $('.editTask').on('click', function(evt){
       evt.preventDefault();
       evt.stopPropagation();
@@ -75,20 +92,6 @@ $(function(){
       }).done(function(task){
 
         $('#name',$taskForm).focus();
-
-        if(!$('[data-hook=script_id]',$taskForm).val()) {
-          $('a.editScript', $taskForm)
-            .text('Create script')
-            .removeClass('editScript')
-            .addClass('createScript')
-            .data('script-id', null);
-        }else{
-          $('a.createScript')
-            .text('Update script')
-            .removeClass('createScript')
-            .addClass('editScript')
-            .data('script-id', $('[data-hook=script_id]',$taskForm).val());
-        }
 
         var form = new FormElement( $taskForm[0] );
         form.set( task );
@@ -135,15 +138,7 @@ $(function(){
     var $multihostContainer = $taskForm.find('.hidden-container.multiple-hosts-selection');
 
     $taskForm.find('select[name=hosts_id]').select2({ placeholder: 'Type a hostname or hit Enter to list' });
-    $taskForm.find('select[name=script_id]')
-      .select2({ placeholder: 'Choose a script' })
-      .on('change', function(event){
-        $('a.createScript')
-          .text('Update script')
-          .removeClass('createScript')
-          .addClass('editScript')
-          .data('script-id',event.currentTarget.value);
-      });
+    $taskForm.find('select[name=script_id]').select2({ placeholder: 'Choose a script' });
     $taskForm.find('select[name=tags]').select2({ placeholder:'Tags', tags:true, data: Select2Data.PrepareTags(Tags) });
     $taskForm.find('select[name=triggers]').select2({ placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
 
@@ -151,13 +146,31 @@ $(function(){
       $taskForm[0].reset();
       $taskForm.data('action','create');
       $taskForm.find('[data-hook=name]').focus();
-
       $('a.editScript', $taskForm)
         .text('Create script')
         .removeClass('editScript')
         .addClass('createScript')
         .data('script-id', null);
 
+<<<<<<< HEAD
+||||||| merged common ancestors
+      $hosts.select2({ placeholder: 'Type a hostname or hit Enter to list' });
+      $script.select2({ placeholder: 'Choose a script' });
+      $tags.select2({ placeholder:'Tags', tags:true, data: Select2Data.PrepareTags(Tags) });
+
+=======
+      $hosts.select2({ placeholder: 'Type a hostname or hit Enter to list' });
+      $script.select2({ placeholder: 'Choose a script' })
+        .on('change', function(event){
+          $('a.createScript')
+            .text('Update script')
+            .removeClass('createScript')
+            .addClass('editScript')
+            .data('script-id',event.currentTarget.value);
+        });
+      $tags.select2({ placeholder:'Tags', tags:true, data: Select2Data.PrepareTags(Tags) });
+
+>>>>>>> 3f61cda8e80f7d7d38d15b3acd3896d8ceb3bc3a
       $multihostContainer.show();
     });
 

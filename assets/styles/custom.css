@@ -620,3 +620,14 @@ input[type=checkbox].form-control {
 
 .blurry-text { color: transparent; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
 .cursor-pointer { cursor: pointer; }
+
+
+@media (min-width: 979px) {
+  nav.navbar ul.navbar-right div.dropdown > ul.dropdown-menu {
+    top: 38px;
+  }
+
+  nav.navbar ul.navbar-right div.dropdown:hover > ul.dropdown-menu {
+    display: block;
+  }
+}

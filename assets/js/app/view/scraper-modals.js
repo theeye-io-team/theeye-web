@@ -154,7 +154,7 @@ var ScraperModal = new (function ScraperModal(){
 
     this.edit = function (scraper_id) {
       _scraper.clear();
-      _scraper.id = scraper_id ;
+      _scraper.set('id', scraper_id);
       _scraper.fetch({
         success:function(model, response, options){
           _form.render();
