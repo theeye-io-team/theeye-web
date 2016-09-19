@@ -1,4 +1,4 @@
-/* global debug, $searchbox */
+/* global debug, $searchbox, log, Ladda, bootbox */
 
 
 function updateStateTag (state, $resource) {
@@ -154,7 +154,7 @@ function triggers(io){
     });
 
     $container.find('.panel-body [data-hook="job-result-container"]').append($tpl);
-  }
+  };
 
 
 
