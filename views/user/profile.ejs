@@ -1,88 +1,131 @@
 <% block('scripts', '<script src="/js/application/auth.js"></script>') %>
 <% block('scripts', '<script src="/js/application/profile.js"></script>') %>
-<div class="container profile-page">
+<div class="container-fluid profile-page">
   <div class="row">
-    <div class="col-sm-6">
+    <div class="col-md-6">
       <div class="well info-container">
         <h3>Agent Credentials</h3>
         <div class="row">
-          <span class="col-sm-4">Customer :</span>
-          <span class="col-sm-8"> <i><%= agent.customers[0].name %></i> </span>
+          <div class="col-xs-4"><label>Customer :</label></div>
+          <div class="col-xs-8"> <i><%= agent.customers[0].name %></i> </div>
         </div>
         <div class="row">
-          <span class="col-sm-4">Client ID :</span>
-          <span class="col-sm-8"><i><%= agent.client_id %></i></span>
+          <div class="col-xs-4"><label>Client ID :</label></div>
+          <div class="col-xs-8"><i><%= agent.client_id %></i></div>
         </div>
         <div class="row">
-          <span class="col-sm-4">Client Secret :</span>
-          <span class="col-sm-8" data-hook="agent-secret" >
-            <i data-hook="blurry"> <%= agent.client_secret %> </i>
-          </span>
+          <div class="col-xs-4"><label>Client Secret :</label></div>
+          <div class="col-xs-8" data-hook="agent-secret" >
+            <i data-hook="blurry" class="hidden"> <%= agent.client_secret %> </i>
+          </div>
         </div>
         <div class="row">
-          <span class="col-sm-4">Current Access Token :</span>
-          <span class="col-sm-8" data-hook="agent-token">
-            <i data-hook="blurry"> <%= agent.token %> </i>
-          </span>
+          <div class="col-xs-4"><label>Current Access Token :</label></div>
+          <!-- <div class="col-xs-8" data-hook="agent-token"> <i data-hook="blurry" class="hidden"> <%= agent.token %> </i> </div> -->
+          <div class="input-group col-xs-8">
+            <input data-hook="blurry"
+              readonly type="text"
+              id="agentToken"
+              class="form-control"
+              value="<%= agent.token %>">
+            <span class="input-group-btn">
+              <button class="btn btn-primary clipboard-agent-token-btn" type="button"
+                data-clipboard-target="#agentToken">
+                <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+              </button>
+            </span>
+          </div><!-- /input-group -->
         </div>
 
-        <h3><span class="fa fa-user"></span>Linux Agent Installer</h3>
+        <h3>Linux Agent Installer</h3>
         <% if(agent) { %>
-        Run this cURL command from a bash console to install
-        the agent on the client<br /><br />
-        <div class="input-group">
-          <input readonly type="text" id="agentCurl" class="form-control" data-hook="curl-agent" value="<%= agent.curl %>">
-          <span class="input-group-btn">
-            <button class="btn btn-primary clipboard-btn" type="button"
-              data-clipboard-target="#agentCurl">
-              <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
-            </button>
-          </span>
-        </div><!-- /input-group -->
+          Run this cURL command from a bash console to install
+          the agent on the client<br /><br />
+          <div class="input-group">
+            <input readonly type="text"
+              id="agentCurl"
+              class="form-control"
+              data-hook="curl-agent"
+              value="<%= agent.curl %>">
+            <span class="input-group-btn">
+              <button class="btn btn-primary clipboard-btn" type="button"
+                data-clipboard-target="#agentCurl">
+                <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+              </button>
+            </span>
+          </div><!-- /input-group -->
         <% } else { %>
-              <pre>ERROR: Agent-User not found!</pre>
+          <div>
+            <pre>ERROR: Agent-User not found!</pre>
+          </div>
         <% } %>
 
-        <h3><span class="fa fa-user"></span>Window Agent Installer</h3>
-        <p><strong>Windows Users, please download the installer:</strong></p>
-        <a href="https://s3.amazonaws.com/theeye.agent/theEyeInstaller-x64.exe" class="btn btn-default">Download</a>
-      </div>
-    </div>
-
-    <% if(req.user.credential === 'owner' || req.user.credential === 'root') { %>
-    <div class="col-sm-6">
-      <div class="well info-container">
-        <h3><span class="fa fa-user"></span>Invite</h3>
-        <a href="/invite"class="glyphicon glyphicon-plus"> teammate / collaborator </a>
-      </div>
-    </div>
-    <% } %>
-
-    <div class="col-sm-6">
-      <div class="well info-container col-sm-12">
-        <h3><span class="fa fa-user"></span>TheEye Passport API</h3>
-        <h4>This are your credentials to connect TheEye Supervisor API.</h4>
+        <h3>Window Agent Installer</h3>
         <p>
-          <div>
-            <label class="col-20">client id</label>
-            <i><%= passports.theeye.profile.client_id %></i>
-          </div>
-          <div>
-            <label class="col-20">client secret</label>
-            <i data-hook="blurry"><%= passports.theeye.profile.client_secret %></i>
-          </div>
-          <div>
-            <label class="col-20">access token</label>
-            <i data-hook="blurry"><%= passports.theeye.token %></i>
-          </div>
+          <strong>Windows Users, please download the installer:</strong>
+          <a href="https://s3.amazonaws.com/theeye.agent/theEyeInstaller-x64.exe" class="btn btn-default">
+            theEyeInstaller-x64.exe <span class="glyphicon glyphicon-download"></span></a>
         </p>
       </div>
     </div>
 
+    <% if(req.user.credential === 'owner' || req.user.credential === 'root') { %>
+    <div class="col-md-6">
+      <div class="well info-container">
+        <h3>Invite</h3>
+        <a href="/invite"><span class="glyphicon glyphicon-plus"></span> teammate / collaborator </a>
+      </div>
+    </div>
+    <% } %>
+
+    <div class="col-md-6">
+      <div class="well info-container">
+        <h3>TheEye Passport API</h3>
+        <h4>This are your credentials to connect TheEye Supervisor API.</h4>
+
+          <div class="row">
+            <!-- <label class="col-20">client id</label> -->
+            <!-- <i><%= passports.theeye.profile.client_id %></i> -->
+            <div class="col-xs-3"><label>client id</label></div>
+            <div class="col-xs-9">
+              <i data-hook="blurry" class="hidden"><%= passports.theeye.profile.client_id %></i>
+            </div>
+          </div>
+          <div class="row">
+            <!-- <label class="col-20">client secret</label> -->
+            <!-- <i data-hook="blurry" class="hidden"><%= passports.theeye.profile.client_secret %></i> -->
+            <div class="col-xs-3"><label>client secret</label></div>
+            <div class="col-xs-9">
+              <i data-hook="blurry" class="hidden"><%= passports.theeye.profile.client_secret %></i>
+            </div>
+          </div>
+          <div class="row">
+            <!-- <label class="col-20">access token</label> -->
+            <!-- <i data-hook="blurry" class="hidden"><%= passports.theeye.token %></i> -->
+            <div class="col-xs-3"><label>access token</label></div>
+            <div class="input-group col-xs-9">
+              <input data-hook="blurry"
+                readonly type="text"
+                id="theeyeToken"
+                class="form-control"
+                value="<%= passports.theeye.token %>">
+              <span class="input-group-btn">
+                <button class="btn btn-primary clipboard-token-btn" type="button"
+                  data-clipboard-target="#theeyeToken">
+                  <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+                </button>
+              </span>
+            </div><!-- /input-group -->
+
+          </div>
+
+      </div>
+    </div>
+
     <!-- LOCAL INFORMATION -->
-    <div class="col-sm-6">
+    <div class="col-md-6">
       <div class="well">
-        <h3><span class="fa fa-user"></span> Local</h3>
+        <h3>Local</h3>
         <% var session=req.user; %>
         <p>
           <strong>id</strong>: <%= session.id %><br>
