@@ -1,6 +1,18 @@
 # CHANGELOG
 
 
+### 0.5.2 - 2016-09-19
+
+> emprolijed profile section, added copy-to-clipboard functionality to tokens, div classes, etc
+
+> css hiccups fix, including:
+
+  - container-fluid for profile page container
+  - container padding-top failing its job
+  - footer's z-index for always on top
+  - info-container min-height lowered to 20px
+  - tooltip placement for settings manager (nav menu)
+
 ### 0.5.1 - 2016-09-15
 
 > corrected behaviour of modal over modal on task scheduler
