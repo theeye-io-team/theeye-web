@@ -237,8 +237,13 @@ $(function() {
       var mode = extension2mode(ext);
       $("[data-hook=editor-mode]").val(mode);
 
-      var newSession = ace.createEditSession(file, "ace/mode/"+mode);
-      aceEditor.setSession(newSession);
+      aceEditor.session.setMode("ace/mode/" + mode);
+      // delay de content for when modal is visible
+      $('#script-modal').one('shown.bs.modal', function(){
+        aceEditor.getSession().setValue(file || "");
+      });
+      // var newSession = ace.createEditSession(file || "", "ace/mode/"+mode);
+      // aceEditor.setSession(newSession);
       $("#script-modal").modal();
     })
     .fail(function(error){

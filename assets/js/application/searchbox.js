@@ -1,4 +1,4 @@
-/* global log */
+/* global log, getHashParams */
 (function ( $ ){
   $.searchbox = function(){
     var $emitter = $({});
@@ -109,7 +109,11 @@
 
 window.$searchbox = $.searchbox();
 
-var qs = window.location.href.split('#')[1];
 var $input = $('.js-searchable-box input');
-$input.val(qs);
-$('.js-searchable-box button.search').click();
+(function(){
+  var params = getHashParams();
+  if(params.search) {
+    $input.val(params.search);
+    $('.js-searchable-box button.search').click();
+  }
+});

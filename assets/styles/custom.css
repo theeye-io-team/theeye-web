@@ -422,7 +422,10 @@ ol.list-group.tasks { color:#34495E }
 ::-webkit-scrollbar-thumb:horizontal{width:50px;background-color:rgba(0, 0, 0, 0.5);-webkit-border-radius:8px;}
 
 .info-container{ color: #23527c; min-height: 20px }
-
+.info-container label {
+  margin-bottom:0;
+  line-height: 2.5em;
+}
 .editor{ min-height: 100px;}
 .btn { text-shadow: none; box-shadow: none; }
 .btn-primary { border-color:#304269;background-color:#304269; }
