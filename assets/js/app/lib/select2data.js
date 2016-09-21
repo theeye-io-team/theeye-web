@@ -55,8 +55,8 @@ var Select2Data = new (function Select2Data(){
         }
 
         optgroup[ label ].children.push( opt );
-        return optgroup;
       }
+      return optgroup;
     },{});
 
     var result = [];
