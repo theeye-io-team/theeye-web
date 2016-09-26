@@ -1,6 +1,6 @@
 # CHANGELOG
 
-### 0.5.0 - 2016-09-19
+### 0.5.2 - 2016-09-26
 
 > moved several js files to grunt build directory. files are added automatically to the site and production bundle      
 
