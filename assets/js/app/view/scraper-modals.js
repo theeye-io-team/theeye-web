@@ -164,6 +164,7 @@ var ScraperModal = new (function ScraperModal(){
 
           modal.$el.on('click','button[data-hook=save]',function(){
             var values = _form.data;
+            values.host_id = values.hosts;
             _scraper.set(values);
             _scraper.save({},{
               success:function(model, response, options){

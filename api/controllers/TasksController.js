@@ -82,9 +82,9 @@ module.exports = {
     var id = params.id;
 
     var updates = extend(params,{
-      'description': params.description||params.name,
+      'description': params.description || params.name,
       'script': params.script_id,
-      'hosts': params.hosts_id
+      //'hosts': params.hosts_id
     });
 
     supervisor.patch({

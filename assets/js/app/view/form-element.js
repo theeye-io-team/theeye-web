@@ -41,7 +41,7 @@ FormElement.prototype.set = function(values){
     
     var input = $input[0];
     if( input ){
-      if( input.type == 'text' ) input.value = value;
+      if( input.type == 'text' || input.type == 'textarea' ) input.value = value;
       if( input.type == 'checkbox' ) input.checked = value;
       if( input.type == 'radio' ){
         var selector = '[name=' + name + '][type=radio][value=' + String(value) + ']';
