@@ -26,6 +26,7 @@
     </div>
     <ul class="navbar-right">
       <li><a href="/events">Resources</a></li>
+      <% if ( req.user.credential != 'user' ) { %>
       <li class="tooltiped" data-placement="left" title="Resource manager">
         <div class="dropdown" >
           <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -50,6 +51,7 @@
           </ul>
         </div>
       </li>
+      <% } %>
     </ul>
   </div>
 </nav>
