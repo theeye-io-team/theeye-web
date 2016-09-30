@@ -65,9 +65,8 @@ var UserController = module.exports = {
                 sails.log.error('Error getting customerAgentCredentials', err);
               }
               //this here so, err or not, userAgent or not, view doesn't fail
-              userAgent = userAgent || {};
               res.view({
-                agent : userAgent,
+                agent : userAgent || null,
                 user : user,
                 passports : passports,
                 errors : req.flash('error')
