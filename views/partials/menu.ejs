@@ -25,7 +25,7 @@
       </div>
     </div>
     <ul class="navbar-right">
-      <li><a href="/events">Resources</a></li>
+      <li><a href="/events" style="padding-bottom: 14px;">Dashboard</a></li>
       <% if ( req.user.credential != 'user' ) { %>
       <li class="tooltiped" data-placement="left" title="Resource manager">
         <div class="dropdown" >
@@ -50,6 +50,16 @@
             </li>
           </ul>
         </div>
+      </li>
+      <% } else { %>
+      <li>
+        <a href="/profile" style="padding-bottom: 14px;"> Profile </a>
+      </li>
+      <li>
+        <a href="/logout" style="padding-bottom: 14px;">
+          <i class="glyphicon glyphicon-log-out"></i>
+          Logout
+        </a>
       </li>
       <% } %>
     </ul>
