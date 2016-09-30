@@ -4,10 +4,14 @@
 
 module.exports.routes = {
   //Home
-  '/' : function(req, res, next){ res.sendfile(sails.config.appPath + '/assets/theeye-landpage/index.html'); },
-  '/mantenimiento' : { view: 'mantenimiento' },
-   //AuthController routes
-   //'get /register' : 'AuthController.register',
+  '/' : function(req, res, next){
+    res.sendfile(sails.config.appPath + '/assets/theeye-landpage/index.html');
+  },
+  '/mantenimiento': {
+    view: 'mantenimiento'
+  },
+  //AuthController routes
+  //'get /register' : 'AuthController.register',
   'get    /login' : 'AuthController.login',
   'get    /logout' : 'AuthController.logout',
   'get    /invite' : 'AuthController.invite',
@@ -80,6 +84,14 @@ module.exports.routes = {
   'put    /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.update',
   'post   /admin/hostgroup/:groupid/monitortemplate' : 'HostGroupMonitorTemplateController.create',
   'delete /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.destroy',
-  // Internal process controller. to run manually only by a root user
-  //'get    /process/dHV2aWVqYQo' : 'ProcessController.updatetheeyepassports'
+  /**
+   *
+   * generic api endpoints
+   *
+   */
+  'post /api/:customer/:resource':'ApiController.create',
+  'put /api/:customer/:resource/:id':'ApiController.update',
+  'delete /api/:customer/:resource/:id':'ApiController.remove',
+  'get /api/:customer/:resource':'ApiController.fetch',
+  'get /api/:customer/:resource/:id':'ApiController.get'
 };

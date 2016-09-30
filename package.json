@@ -59,9 +59,9 @@
   },
   "scripts": {
     "start": "node .",
-    "devel": "NODE_ENV='development' PORT=6080 DEBUG=eye:* nodemon .",
-    "core": "PORT=6080 DEBUG=eye:* nodemon .",
-    "local": "NODE_ENV='localdev' PORT=6080 DEBUG=eye:* INSTANCE_FQDN='localhost:6080' ./node_modules/.bin/nodemon .",
+    "devel": "NODE_ENV='development' PORT=6080 DEBUG=eye:* ./node_modules/.bin/nodemon .",
+    "core": "PORT=6080 DEBUG=eye:* INSTANCE_FQDN=localhost:6080 ./node_modules/.bin/nodemon .",
+    "local": "NODE_ENV=localdev PORT=6080 DEBUG=eye:* INSTANCE_FQDN='localhost:6080' ./node_modules/.bin/nodemon .",
     "hbs-compile": "./handlebars assets/js/app/templates/*.hbs -f assets/js/templates.js --e hbs"
   },
   "main": "app.js",
