@@ -4,6 +4,12 @@
   <div class="row">
     <div class="col-md-6">
       <div class="well info-container">
+        <% if ( ! agent ) { %>
+
+        agent is not available.
+
+        <% } else { %>
+
         <h3>Agent Credentials</h3>
         <div class="row">
           <div class="col-xs-3"><label>Customer :</label></div>
@@ -12,7 +18,7 @@
               readonly type="text"
               id="customerName"
               class="form-control"
-              value="<%= agent.customers[0].name %>">
+              value="<%= ( Array.isArray(agent.customers) && agent.customers.length > 0 ) ? agent.customers[0].name : '' %>">
             <span class="input-group-btn">
               <button class="btn btn-primary clipboard-customer-name-btn" type="button"
                 data-clipboard-target="#customerName">
@@ -100,6 +106,8 @@
           <a href="https://s3.amazonaws.com/theeye.agent/theEyeInstaller-x64.exe" class="btn btn-default">
             theEyeInstaller-x64.exe <span class="glyphicon glyphicon-download"></span></a>
         </p>
+
+        <% } %>
       </div>
     </div>
 
