@@ -1,0 +1,57 @@
+<div class="itemRow panel panel-default js-searchable-item" data-tags="{{ tags }}">
+  <div class="panel-heading" role="tab">
+    <h4 class="panel-title">
+      <a class="collapsed" data-toggle="collapse"
+        data-parent="#accordion"
+        href="#collapse{{ attributes.id }}"
+        aria-expanded="false"
+        aria-controls="collapse{{ attributes.id }}">
+        <div class="panel-title-content">
+          <button class="rowSelector btn btn-primary simple-btn tooltiped"
+            data-hook="select"
+            title="select webhook"
+            aria-label="Center Align">
+            <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
+          </button>
+          <span class="panel-item name">{{ attributes.name }}</span>
+          <div class="panel-item icons">
+            <button class="btn btn-primary simple-btn tooltiped"
+              data-hook="edit"
+              title="Edit"
+              aria-label="Center Align">
+              <span class="glyphicon glyphicon-edit"></span>
+            </button>
+            <button class="btn btn-primary simple-btn tooltiped"
+              data-hook="remove"
+              title="Delete"
+              aria-label="Center Align">
+              <span class="glyphicon glyphicon-trash"></span>
+            </button>
+          </div>
+        </div>
+      </a>
+    </h4>
+  </div>
+  <div id="collapse{{ attributes.id }}"
+    class="panel-collapse collapse"
+    role="tabpanel"
+    aria-labelledby="heading{{ attributes.id }}">
+    <div class="panel-body">
+      <!--
+      <a class="btn btn-primary simple-btn"
+        href="/api/webhook/{{ attributes.id }}/trigger">
+        Trigger !
+      </a>
+      -->
+      <div class="row">
+        <span class="col-xs-3">Name</span>
+        <span class="col-xs-9">{{ attributes.name }}</span> </div>
+      <div class="row">
+        <span class="col-xs-3">Hook Unique ID</span>
+        <span class="col-xs-9">{{ attributes.id }}</span> </div>
+      <div class="row">
+        <span class="col-xs-3">Supervisor URL</span>
+        <span class="col-xs-9">{{ triggerUrl }}</span> </div>
+    </div>
+  </div>
+</div> <!-- end item -->
