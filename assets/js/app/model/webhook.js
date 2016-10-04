@@ -14,7 +14,7 @@ window.App.Models.Webhook = Backbone.Model.extend({
         var customer = cookie.customer;
 
         return url + '/' + customer + '/webhook/' +
-          this.id + '/trigger?access_token=***' ;
+          this.id + '/trigger/secret/' + this.attributes.secret ;
       }
     });
   }
