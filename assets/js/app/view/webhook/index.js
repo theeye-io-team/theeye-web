@@ -13,6 +13,8 @@ var WebhookPage = (function(){
   // webhooks collection
   var webhooks = new App.Collections.Webhooks();
 
+  new Clipboard('.clip');
+
   var WebhookActions = {
     remove:function(webhook){
       webhook.destroy({
@@ -35,6 +37,17 @@ var WebhookPage = (function(){
           bootbox.alert('Webhook Created',function(){ });
           webhooks.add( webhook );
         }
+      });
+    },
+    trigger:function(webhook){
+      $.ajax({
+        method:'POST',
+        url:webhook.triggerUrl,
+        dataType:'json'
+      }).done(function(data){
+        bootbox.alert('Webhook triggered');
+      }).fail(function(xhr,status){
+        bootbox.alert('Webhook trigger error');
       });
     }
   }
@@ -77,6 +90,22 @@ var WebhookPage = (function(){
     events: {
       "click [data-hook=edit]":"onClickEdit",
       "click [data-hook=remove]":"onClickRemove",
+      "click [data-hook=trigger]":"onClickTrigger",
+    },
+    onClickEdit:function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      this.edit();
+    },
+    onClickRemove:function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      WebhookActions.remove(this.model);
+    },
+    onClickTrigger:function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      WebhookActions.trigger(this.model);
     },
     initialize:function(){
       BaseView.prototype.initialize.apply(this, arguments);
@@ -115,20 +144,8 @@ var WebhookPage = (function(){
 
       modal.show();
     },
-    onClickEdit:function(event){
-      event.preventDefault();
-      event.stopPropagation();
-      this.edit();
-    },
-    onClickRemove:function(event){
-      event.preventDefault();
-      event.stopPropagation();
-
-      WebhookActions.remove(this.model);
-    },
     remove:function(){
       BaseView.prototype.remove.apply(this, arguments);
-
       this.form.remove();
     }
   });
