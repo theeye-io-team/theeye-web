@@ -80,7 +80,7 @@ var WebhookPage = (function(){
     },
     focus:function(){
       this.find('input[name=name]').focus();
-    }
+    },
   });
 
 
@@ -125,23 +125,22 @@ var WebhookPage = (function(){
       var form = this.form,
       model = this.model;
 
-      form.container = modal.queryByHook('container')[0];
-      modal.$el.on('show.bs.modal',function(){
-        form.render();
-      });
-      modal.$el.on('shown.bs.modal', function(){
+      modal.$el.one('shown.bs.modal', function(){
         form.focus();
       }); 
-      // once hide modal remove scraper form
-      modal.$el.on('hidden.bs.modal', function(){
+
+      modal.$el.one('hidden.bs.modal', function(){
         form.remove(); 
         modal.$el.off('click','button[data-hook=save]');
       }); 
+
       modal.$el.on('click','button[data-hook=save]',function(){
         model.set(form.data);
         WebhookActions.update(model);
       });
 
+      form.container = modal.queryByHook('container')[0];
+      form.render();
       modal.show();
     },
     remove:function(){
@@ -162,19 +161,16 @@ var WebhookPage = (function(){
     create:function(){
       var webhook = new App.Models.Webhook();
       var form = new WebhookFormView({ model: webhook });
-
       form.container = modal.queryByHook('container')[0];
-      modal.$el.on('show.bs.modal',function(){
-        form.render();
-      });
-      modal.$el.on('shown.bs.modal', function(){
+      form.render();
+
+      modal.$el.one('shown.bs.modal', function(){
         form.focus();
-      }); 
-      // once hide modal remove scraper form
-      modal.$el.on('hidden.bs.modal', function(){
-        form.remove(); 
+      });
+      modal.$el.one('hidden.bs.modal', function(){
+        form.remove();
         modal.$el.off('click','button[data-hook=save]');
-      }); 
+      });
       modal.$el.on('click','button[data-hook=save]',function(){
         webhook.set(form.data);
         WebhookActions.create(webhook);
