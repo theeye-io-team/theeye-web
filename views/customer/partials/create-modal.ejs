@@ -51,12 +51,3 @@ Modal for creating a customer
     </div><!--.modal-content-->
   </div><!--.modal-dialog-->
 </div><!--.modal-->  
-
-<script type="text/javascript">
-  $('[data-hook=emails-create]').on('beforeItemAdd', function(event) {  
-    var re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
-    if(!re.test(event.item)) {
-      event.cancel = true;
-    }   
-  });
-</script>

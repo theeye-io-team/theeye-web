@@ -4,19 +4,20 @@ var extend = require('lodash/assign');
 
 var user = {
   "api" : ['*'],
-  "events"    : ['*'],
+  "events" : ['*'],
   "hoststats" : ['*'],
-  "palanca"   : ['*'],
-  "auth"      : ['login', 'activate', 'google', 'connect', 'unlink', 'logout'],
-  "user"      : ['profile','setcustomer'],
+  "palanca" : ['*'],
+  "auth" : ['login', 'activate', 'google', 'connect', 'unlink', 'logout'],
+  "user" : ['profile','setcustomer'],
 };
 
 var admin = extend({},user,{
-  "tasks"                    : ['*'],
-  "script"                   : ['*'],
-  "resource"                 : ['*'],
-  "hostgroup"                : ['*'],
-  "hostgrouptasktemplate"    : ['*'],
+  "webhook" : ['index'],
+  "tasks" : ['*'],
+  "script" : ['*'],
+  "resource" : ['*'],
+  "hostgroup" : ['*'],
+  "hostgrouptasktemplate" : ['*'],
   "hostgroupmonitortemplate" : ['*'],
 });
 

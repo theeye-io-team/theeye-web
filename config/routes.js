@@ -89,9 +89,11 @@ module.exports.routes = {
    * generic api endpoints
    *
    */
-  'post /api/:customer/:resource':'ApiController.create',
-  'put /api/:customer/:resource/:id':'ApiController.update',
-  'delete /api/:customer/:resource/:id':'ApiController.remove',
-  'get /api/:customer/:resource':'ApiController.fetch',
-  'get /api/:customer/:resource/:id':'ApiController.get'
+  'post /api/:resource':'ApiController.create',
+  'put /api/:resource/:id':'ApiController.update',
+  'delete /api/:resource/:id':'ApiController.remove',
+  'get /api/:resource':'ApiController.fetch',
+  'get /api/:resource/:id':'ApiController.get',
+  // template only render
+  'get /admin/webhook':'WebhookController.index',
 };

@@ -243,10 +243,10 @@ footer a.image img {margin-top:-4px}
 
 
 /* Agregada javi... */
-.container, .container-fluid { padding:65px 15px 0px;  color:#EEE; }
+.container, .container-fluid { padding:65px 15px 0px; }
 .table-responsive { background-color:#EEE;}
 
-.row{ color:#304269;}
+body{ color:#304269;}
 .modal-header{ color:#304269;}
 .modal-body{ color:#304269;}
 
