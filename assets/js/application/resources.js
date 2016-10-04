@@ -151,37 +151,40 @@ $(function(){
           break;
         case 'script':
           var $script = $form.find('select[name=script_id]');
-          var $disable = $form.find('input[name=disabled]');
+          // var $disable = $form.find('input[name=disabled]');
 
-          if( $disable.is(':checked') )
-          {
-            $disable.on('change',function(event){
-              if(!this.checked){
-                if(!$script.val()){
-                  this.checked=true;
-                  bootbox.alert('Please, select a script first to enable the monitor.');
-                }
-              }
-            });
-            $script.on('change', function(event){
-              if( $disable.is(':checked') ){
-                var msg = 'You have just added a script. Enable the monitor again?';
-                bootbox.confirm(msg, function(confirmed){
-                  if(confirmed) $disable.prop('checked', false);
-                });
-              }
-            });
-            $('.modal#scriptResourceModal').on('hidden.bs.modal', function(e) {
-              $script.off('change');
-              $disable.off('change');
-            });
-          }
+          // if( $disable.is(':checked') )
+          // {
+          //   $disable.on('change',function(event){
+          //     if(!this.checked){
+          //       if(!$script.val()){
+          //         this.checked=true;
+          //         bootbox.alert('Please, select a script first to enable the monitor.');
+          //       }
+          //     }
+          //   });
+          //   $script.on('change', function(event){
+          //     if( $disable.is(':checked') ){
+          //       var msg = 'You have just added a script. Enable the monitor again?';
+          //       bootbox.confirm(msg, function(confirmed){
+          //         if(confirmed) $disable.prop('checked', false);
+          //       });
+          //     }
+          //   });
+          //   $('.modal#scriptResourceModal').on('hidden.bs.modal', function(e) {
+          //     $script.off('change');
+          //     $disable.off('change');
+          //   });
+          // }
+
+          //esto adosa el script_id al boton de editar/crear script
+          $('a.scripter', $form).data('script-id', monitor.config.script_id);
 
           $script.val(monitor.config.script_id);
           $form.find('[data-hook=script_arguments]')
-          .val(monitor.config.script_arguments);
+            .val(monitor.config.script_arguments);
           $form.find('[data-hook=script_runas]')
-          .val(monitor.config.script_runas);
+            .val(monitor.config.script_runas);
           break;
       }
     }
@@ -204,7 +207,25 @@ $(function(){
         .one('shown.bs.modal', function(){
           //one time AUTOCOMPLETE COMBOBOX setup
           $select.select2();
-          $form.find('select#script_id').select2();
+          $form.find('select#script_id')
+            .select2({allowClear:true, placeholder: 'Select a script...'})
+            .on('change', function(event){
+              if($(this).val()) {
+                $('a.scripter', '#' + options.type + 'ResourceModal')
+                  .text('Update script')
+                  .removeClass('createScript')
+                  .addClass('editScript')
+                  .data('script-id', $(this).val() );
+              }else{
+                $('a.scripter', '#' + options.type + 'ResourceModal')
+                  .text('Create script')
+                  .removeClass('editScript')
+                  .addClass('createScript')
+                  .data('script-id', null);
+              }
+            })
+            .trigger('change');
+
           $form.find('select[name=tags]').select2({ placeholder:"Tags", data: Select2Data.PrepareTags(Tags), tags:true });
           var $firstInput = $(this).find('input[type!=hidden]').first().focus();
           $(this).on('shown.bs.modal', function(){
@@ -225,6 +246,7 @@ $(function(){
       var host = options.host;
       var $select = $form.find('.resource-host select');
       var $input  = $form.find('.resource-host input');
+      var $modal = $('#' + options.type + 'ResourceModal');
 
       $select.prop('multiple', true);
       $input.attr('value','');
@@ -236,7 +258,25 @@ $(function(){
         $select.select2();
         if(host) $select.val(host).trigger('change');
 
-        $form.find('select#script_id').select2({ placeholder:"Select a script..." });
+        $form.find('select#script_id')
+          .select2({allowClear:true, placeholder:"Select a script..." })
+          .on('change', function(event){
+            if($(this).val()) {
+              $('a.scripter', $modal)
+                .text('Update script')
+                .removeClass('createScript')
+                .addClass('editScript')
+                .data('script-id', $(this).val());
+            }else{
+              $('a.scripter', $modal)
+                .text('Create script')
+                .removeClass('editScript')
+                .addClass('createScript')
+                .data('script-id', null);
+            }
+          })
+          .trigger('change');
+
         $form.find('select[name=tags]').select2({ placeholder:"Tags", data: Select2Data.PrepareTags(Tags), tags:true });
 
         var $firstInput = $(this).find('input[type!=hidden]').first().focus();
@@ -245,7 +285,6 @@ $(function(){
         });
       }
 
-      var $modal = $('#' + options.type + 'ResourceModal');
       $modal.one('shown.bs.modal', onShowModal);
       $modal.modal('show');
     }

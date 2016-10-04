@@ -56,7 +56,24 @@ $(function(){
     var $taskForm = $(el);
 
     $taskForm.find('select[name=host_id]').select2({ placeholder: 'Choose a host' });
-    $taskForm.find('select[name=script_id]').select2({ placeholder: 'Choose a script' });
+    $taskForm.find('select[name=script_id]')
+      .select2({ allowClear:true, placeholder: 'Choose a script' })
+      .on('change', function(event){
+        console.log('change');
+        if($(this).val()) {
+          $('a.scripter', $taskForm)
+            .text('Update script')
+            .removeClass('createScript')
+            .addClass('editScript')
+            .data('script-id', $(this).val());
+        }else{
+          $('a.scripter', $taskForm)
+            .text('Create script')
+            .removeClass('editScript')
+            .addClass('createScript')
+            .data('script-id', null);
+        }
+      });
     $taskForm.find('select[name=tags]').select2({ placeholder: 'Choose tags', data: Select2Data.PrepareTags(Tags), tags: true });
     $taskForm.find('select[name=triggers]').select2({ placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
 
@@ -76,23 +93,25 @@ $(function(){
 
         $('#name',$taskForm).focus();
 
-        if(!$('[data-hook=script_id]',$taskForm).val()) {
-          $('a.editScript', $taskForm)
-            .text('Create script')
-            .removeClass('editScript')
-            .addClass('createScript')
-            .data('script-id', null);
-        }else{
-          $('a.createScript')
-            .text('Update script')
-            .removeClass('createScript')
-            .addClass('editScript')
-            .data('script-id', $('[data-hook=script_id]',$taskForm).val());
-        }
+        // if(!$('[data-hook=script_id]',$taskForm).val()) {
+        //   $('a.editScript', $taskForm)
+        //     .text('Create script')
+        //     .removeClass('editScript')
+        //     .addClass('createScript')
+        //     .data('script-id', null);
+        // }else{
+        //   $('a.createScript', $taskForm)
+        //     .text('Update script')
+        //     .removeClass('createScript')
+        //     .addClass('editScript')
+        //     .data('script-id', $('[data-hook=script_id]',$taskForm).val());
+        // }
 
         var form = new FormElement( $taskForm[0] );
         form.set( task );
-
+        $('.modal#edit-task').on('shown.bs.modal', function(){
+          $('select[data-hook=script_id]').trigger('change');
+        });
         $('.modal#edit-task').modal('show');
 
       }).fail(function(xhr, err, xhrStatus) {
@@ -136,13 +155,21 @@ $(function(){
 
     $taskForm.find('select[name=hosts_id]').select2({ placeholder: 'Type a hostname or hit Enter to list' });
     $taskForm.find('select[name=script_id]')
-      .select2({ placeholder: 'Choose a script' })
+      .select2({ allowClear:true, placeholder: 'Choose a script' })
       .on('change', function(event){
-        $('a.createScript')
-          .text('Update script')
-          .removeClass('createScript')
-          .addClass('editScript')
-          .data('script-id',event.currentTarget.value);
+        if($(this).val()) {
+          $('a.scripter', $taskForm)
+            .text('Update script')
+            .removeClass('createScript')
+            .addClass('editScript')
+            .data('script-id',event.currentTarget.value);
+        }else{
+          $('a.scripter', $taskForm)
+            .text('Create script')
+            .removeClass('editScript')
+            .addClass('createScript')
+            .data('script-id', null);
+        }
       });
     $taskForm.find('select[name=tags]').select2({ placeholder:'Tags', tags:true, data: Select2Data.PrepareTags(Tags) });
     $taskForm.find('select[name=triggers]').select2({ placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
@@ -152,7 +179,8 @@ $(function(){
       $taskForm.data('action','create');
       $taskForm.find('[data-hook=name]').focus();
 
-      $('a.editScript', $taskForm)
+      //reset script button to default state
+      $('a.scripter', $taskForm)
         .text('Create script')
         .removeClass('editScript')
         .addClass('createScript')
