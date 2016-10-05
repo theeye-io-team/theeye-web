@@ -11,15 +11,13 @@ module.exports = function hasCustomer (req, res, next)
   }
 
   function validCustomer () {
-    if( ! req.socket ){
-      res.cookie(
-        'theeye', JSON.stringify({
-          customer: req.session.customer,
-          base_url: sails.config.application.baseUrl + '/api',
-          supervisor_url: sails.config.supervisor.url
-        })
-      );
-    }
+    res.cookie(
+      'theeye', JSON.stringify({
+        customer: req.session.customer,
+        base_url: sails.config.application.baseUrl + '/api',
+        supervisor_url: sails.config.supervisor.url
+      })
+    );
 
     return next();
   }
