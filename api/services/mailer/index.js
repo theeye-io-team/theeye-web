@@ -1,5 +1,4 @@
 /* global sails */
-var debug = require('debug')('eye:web:services:mailer');
 var ejs = require('ejs');
 var config = sails.config.mailer;
 var mailer = require('./lib');
@@ -9,8 +8,8 @@ module.exports = {
     var data = { locals: input };
     ejs.renderFile("views/email/activation.ejs", data, function(error, html) {
       if(error) {
-        debug('Error parsing "views/email/activation.ejs"');
-        debug(error);
+        sails.log.error('Error parsing "views/email/activation.ejs"');
+        sails.log.error(error);
         return next(error);
       }
 
@@ -21,23 +20,25 @@ module.exports = {
       };
 
       mailer.sendMail(options, function(error, info) {
-        if(error) debug("Error sending email to " + input.invitee.email);
-        else debug('Message sent');
+        if(error) sails.log.error("Error sending email to " + input.invitee.email);
+        else sails.log.debug('Message sent');
         return next(error);
       });
     });
   },
-  sendRetrivePasswordMail: function(email, data, next) {
-    ejs.renderFile("views/email/retrive-password.ejs", {locals: data}, function(error, html) {
+  sendPasswordRecoveryEMail: function(data, next) {
+    ejs.renderFile("views/email/retrive-password.ejs", {
+      locals: data
+    }, function(error, html) {
       var options = {
-        to: email,
+        to: data.user.email,
         subject: 'The Eye Password Restore',
-        html:html 
+        html: html 
       };
 
       mailer.sendMail(options, function(error, info) {
-        if(error) debug("Error sending email to " + email);
-        else debug('Message sent');
+        if(error) sails.log.error("Error sending email to " + email);
+        else sails.log.debug('Message sent');
         return next(error);
       });
     });
@@ -51,13 +52,13 @@ module.exports = {
         html:html 
       };
 
-      debug('sending invite notification email...');
+      sails.log.debug('sending invite notification email...');
       mailer.sendMail(options, function(error, info) {
         if(error) {
-          debug("Error sending email to " + config.invitation);
+          sails.log.error("Error sending email to " + config.invitation);
           return next(error);
         } else {
-          debug('Invitation message sent');
+          sails.log.debug('Invitation message sent');
           ejs.renderFile("views/email/invitation-confirmation.ejs", {locals: data}, function(error, html) {
             var options = {
               to: email,
@@ -65,10 +66,10 @@ module.exports = {
               html:html 
             };
 
-            debug('sending invite confirmation email...');
+            sails.log.debug('sending invite confirmation email...');
             mailer.sendMail(options, function(error, info) {
-              if(error) debug("Error sending email to " + email);
-              else debug('Invitation confirmation message sent');
+              if(error) sails.log.error("Error sending email to " + email);
+              else sails.log.debug('Invitation confirmation message sent');
               return next(error);
             });
           });

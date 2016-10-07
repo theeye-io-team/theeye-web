@@ -195,7 +195,7 @@ hr {border:none;border-bottom:1px dotted #fff}
 .loginBox h1 {margin-bottom:24px}
 .loginBox .or {border-top:1px dashed #fff;position:relative;margin:40px 0}
 .loginBox input, .loginBox button {width:100%;border:none;border-radius:4px;padding:10px;margin-bottom:10px;text-align:center;font-size:24px}
-.loginBox input {color:#304269}
+.loginBox input {color:#304269;height:50px; }
 .loginBox button {color:#fff;background: #d78d47;background: -moz-linear-gradient(top,  #d78d47 0%, #af733a 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d78d47), color-stop(100%,#af733a));background: -webkit-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: -o-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: -ms-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: linear-gradient(to bottom,  #d78d47 0%,#af733a 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d78d47', endColorstr='#af733a',GradientType=0 )}
 .loginBox .or span {background:#415c76;padding:10px;position:absolute;top:-22px;left:48%}
 .sign {padding:14px 0;color:#fff;border:1px solid #fff;border-radius:4px;width:100%;display:inline-block;font-size:18px;margin-bottom:6px}
