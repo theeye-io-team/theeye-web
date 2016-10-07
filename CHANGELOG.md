@@ -1,6 +1,10 @@
 # CHANGELOG
 
-### 0.6.0 - 2016-10-05
+### 0.6.1 - 2016-10-07
+
+> set is_regexp and raw_search (pattern replacement) for the search .   
+
+### 0.6.0 - 2016-10-06
 
 > create proxy api controler - redirect authenticated requests to the supervisor     
 

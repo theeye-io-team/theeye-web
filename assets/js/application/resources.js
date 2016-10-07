@@ -1,14 +1,9 @@
 /* global bootbox, Tags, $searchbox, debug, ScraperModal, Select2Data */
 $(function(){
-  // var ResourceStates = {
-  //   normalState: 'normal',
-  //   failureState: 'failure',
-  //   loadingState: 'unknown',
-  //   unknownState: 'updates_stopped'
-  // };
 
   var log = debug('eye:web:admin:resources');
 
+  /**
   function extractFormData($el){
     var inputs = $el.find(":input");
     var values = {};
@@ -32,6 +27,7 @@ $(function(){
     });
     return values;
   }
+  */
 
   /**
   *  MUTE
@@ -67,7 +63,8 @@ $(function(){
   (function(){
     function updateResourceMonitor($el){
       var idResource = $el.find("[data-hook=resource_id]").val();
-      var values = extractFormData($el);
+      //var values = extractFormData($el);
+      var values = (new FormElement($el)).get();
       $.ajax({
         url: '/resource/' + idResource,
         type: 'PUT',
@@ -80,7 +77,8 @@ $(function(){
     }
 
     function createResourceMonitor($el){
-      var values = extractFormData($el);
+      //var values = extractFormData($el);
+      var values = (new FormElement($el)).get();
       $.ajax({
         method:'POST',
         url:'/resource/' + values.monitor_type,
@@ -147,7 +145,8 @@ $(function(){
 
       switch(type) {
         case 'process':
-          $form.find('[data-hook=pattern]').val(monitor.config.ps.pattern);
+          $form.find('[name=raw_search]').val(monitor.config.ps.raw_search);
+          $form.find('[name=is_regexp]').prop('checked',monitor.config.ps.is_regexp);
           break;
         case 'script':
           var $script = $form.find('select[name=script_id]');
@@ -416,7 +415,8 @@ $(function(){
       log('saving host config');
 
       var $form = $('#dstatResourceModal form');
-      var data = extractFormData($form);
+      //var data = extractFormData($form);
+      var data = (new FormElement($form)).get();
 
       log('saving values %o', data);
       jQuery.ajax({
@@ -721,6 +721,25 @@ $(function(){
     $('[data-hook=edit-scraper-monitor]').on('click',onClickEdit);
 
   })();
+
+  /**
+   * no funca
+   * @author facugon
+  var BeautyCheckboxView = function($el){
+    var $checkbox = $el.find('input[name=is_regexp]');
+    var $fakeCheckbox = $el.find('span[data-hook=is_regexp]');
+
+    $checkbox.on('change',function() {
+      // toggle
+      $fakeCheckbox.toggleClass('glyphicon-unchecked glyphicon-check');
+    });
+
+    $fakeCheckbox.on('click',function(event){
+      $checkbox.trigger('click');
+    });
+  }
+  new BeautyCheckboxView( $('form[data-hook=process-monitor-form] [data-hook=pattern-section]') );
+  */
 
 
 });
