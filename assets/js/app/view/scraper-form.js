@@ -71,6 +71,7 @@ var Scraper = (function Scraper(){
         else $bodyContainer.slideUp(80);
       });
 
+      /**
       $parent.on('change','input[name=external]',function(event){
         var $container = self.queryByHook('external-hosts-container');
         if( this.checked === true ) {
@@ -80,6 +81,7 @@ var Scraper = (function Scraper(){
           $container.find("option:eq(0)").prop('selected', true);
         }
       });
+      */
 
       this.find('span.tooltiped').tooltip();
 

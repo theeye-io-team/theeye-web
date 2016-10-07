@@ -1,4 +1,4 @@
-<form id="processResourceForm" action="/resource" class="form-horizontal">
+<form data-hook="process-monitor-form" id="processResourceForm" action="/resource" class="form-horizontal">
   <input data-hook="monitor_type" type="hidden" name="monitor_type" value="process"></input>
   <input data-hook="resource_id" type="hidden" name="resource_id" value=""></input>
   <div class="form-group">
@@ -29,12 +29,23 @@
       </select>
     </div>
   </div>
-  <div class="form-group">
-    <label for="pattern" class="col-sm-3 control-label">What should I search for? <br/><small>RegExp are allowed</small></label>
+
+  <!-- raw_search INPUT -->
+  <div data-hook="raw_search-section" class="form-group">
+    <label for="raw_search" class="col-sm-3 control-label">What should I search for? <br/></label>
     <div class="col-sm-9">
-      <input data-hook="pattern" type="text" name="pattern" class="form-control" placeholder="eg: apache2 -k start Or termsvcs ">
+      <div class="input-group">
+        <input data-hook="raw_search" type="text" name="raw_search" class="form-control" placeholder="eg: apache2 -k start Or termsvcs ">
+        <label class="input-group-addon">
+          <!-- initialized not checked -->
+          RegExp <input type="checkbox" name="is_regexp">
+          <!-- <span data-hook="is_regexp" data-value="false" class="glyphicon glyphicon-unchecked"></span> -->
+        </label>
+      </div>
     </div>
   </div>
+  <!-- /raw_search INPUT -->
+
   <div class="form-group">
     <label for="tags" class="col-sm-3 control-label">Tags<br/><small>[optional]</small></label>
     <div class="col-sm-9">
