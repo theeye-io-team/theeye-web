@@ -6,71 +6,81 @@
 module.exports = {
   /**
    * @method GET
-   * @route /api/:customer/:resource
+   * @route /api/:resource
    *
-   * @param {String} customer
    * @param {String} resource
    */
   fetch (req, res, next) {
-    var supervisor = req.supervisor;
-    var customer = params.customer,
-      resource = params.resource;
-    var params = req.params.all();
+    req.supervisor.fetch({
+      query: req.query,
+      route: `/${req.session.customer}/${req.params.resource}`,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
+    })
   },
   /**
    * @method POST
-   * @route /api/:customer/:resource
+   * @route /api/:resource
    *
-   * @param {String} customer
    * @param {String} resource
    */
   create (req, res, next){
-    var supervisor = req.supervisor;
-    var customer = params.customer,
-      resource = params.resource;
-    var params = req.body;
+    req.supervisor.create({
+      route: `/${req.session.customer}/${req.params.resource}`,
+      body: req.body,
+      query: req.query,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
+    });
   },
   /**
    * @method PUT
-   * @route /api/:customer/:resource/:id
+   * @route /api/:resource/:id
    *
-   * @param {String} customer
    * @param {String} resource
    * @param {String} id
    */
   update (req, res, next){
-    var supervisor = req.supervisor;
-    var id = params.id,
-      customer = params.customer,
-      resource = params.resource;
-    var params = req.body;
+    console.log(req.params);
+    req.supervisor.update({
+      query: req.query,
+      route: `/${req.session.customer}/${req.params.resource}`,
+      id: req.params.id,
+      body: req.body,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
+    });
   },
   /**
    * @method GET
-   * @route /api/:customer/:resource/:id
+   * @route /api/:resource/:id
    *
-   * @param {String} customer
    * @param {String} resource
    * @param {String} id
    */
   get (req, res, next) {
-    var supervisor = req.supervisor;
-    var id = params.id,
-      customer = params.customer,
-      resource = params.resource;
+    req.supervisor.get({
+      query: req.query,
+      route: `/${req.session.customer}/${req.params.resource}`,
+      id: req.params.id,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
+    });
   },
   /**
    * @method DELETE
-   * @route /api/:customer/:resource/:id
+   * @route /api/:resource/:id
    *
-   * @param {String} customer
    * @param {String} resource
    * @param {String} id
    */
   remove (req, res, next){
-    var supervisor = req.supervisor;
-    var id = params.id,
-      customer = params.customer,
-      resource = params.resource;
+    req.supervisor.remove({
+      query: req.query,
+      route: `/${req.session.customer}/${req.params.resource}`,
+      id: req.params.id,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
+    });
   }
 }

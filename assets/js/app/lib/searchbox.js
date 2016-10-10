@@ -109,6 +109,7 @@
 
 window.$searchbox = $.searchbox();
 
+/*
 var $input = $('.js-searchable-box input');
 (function(){
   var params = getHashParams();
@@ -117,3 +118,4 @@ var $input = $('.js-searchable-box input');
     $('.js-searchable-box button.search').click();
   }
 });
+*/

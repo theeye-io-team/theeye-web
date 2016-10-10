@@ -74,7 +74,7 @@
     };
   </script>
 
-  <% block('scripts', '<script> new HostStats( window.io, state ); </script>'); %>
+  <% block('scripts', '<script> $(document).ready(function(){ new HostStats( window.io, state ); }) </script>'); %>
 
   <% } %>
 </div>

@@ -9,7 +9,7 @@ var ScraperModal = new (function ScraperModal(){
       scraperHosts: window.ScraperHosts,
       tags: window.Tags,
     });
-    view.targetEl = container;
+    view.container = container;
     return view ;
   }
 
@@ -108,7 +108,7 @@ var ScraperModal = new (function ScraperModal(){
       tags: window.Tags,
       events: window.Events
     });
-    _form.targetEl = modal.queryByHook('container')[0];
+    _form.container = modal.queryByHook('container')[0];
 
     Object.defineProperty(this, 'form', {
       get: function(){ return _form; },

@@ -4,10 +4,12 @@
 
 module.exports.routes = {
   //Home
-  '/' : function(req, res, next){ res.sendfile(sails.config.appPath + '/assets/theeye-landpage/index.html'); },
-  '/mantenimiento' : { view: 'mantenimiento' },
-   //AuthController routes
-   //'get /register' : 'AuthController.register',
+  '/' : function(req, res, next){
+    res.sendfile(sails.config.appPath + '/assets/theeye-landpage/index.html');
+  },
+  '/mantenimiento': { view: 'mantenimiento' },
+  //AuthController routes
+  //'get /register' : 'AuthController.register',
   'get    /login' : 'AuthController.login',
   'get    /logout' : 'AuthController.logout',
   'get    /invite' : 'AuthController.invite',
@@ -19,18 +21,25 @@ module.exports.routes = {
   'post   /auth/local/update' : 'AuthController.updateLocalPassport',
   'post   /auth/local' : 'AuthController.callback',
   'post   /auth/local/:action' : 'AuthController.callback',
-  //UserController routes
+  // UserController routes
   'post   /setcustomer/:customer' : 'UserController.setcustomer',
   'get    /admin/user' : 'UserController.index',
   'get    /profile' : 'UserController.profile',
   'put    /user/:id/reinvite' : 'UserController.sendActivationLink',
-  'put    /user/resetpass' : 'UserController.retrievePassword',
   'get    /user'  : 'UserController.fetch',
   'get    /user/:id' : 'UserController.get',
   'put    /user/:id' : 'UserController.edit',
   'post   /user'  : 'UserController.create',
   'delete /user/:id' : 'UserController.remove',
-  //CustomerController routes
+  /**
+   * Password Recovery
+   */
+  'post   /password/resetmail':'PasswordController.sendResetMail',
+  'get    /password/resetform/:token':'PasswordController.resetForm',
+  'put    /password/reset':'PasswordController.reset',
+  /**
+   * CustomerController routes
+   */
   'get    /admin/customer' : 'CustomerController.index',
   'get    /customer' : 'CustomerController.fetch',
   'get    /customer/:id' : 'CustomerController.get',
@@ -80,6 +89,16 @@ module.exports.routes = {
   'put    /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.update',
   'post   /admin/hostgroup/:groupid/monitortemplate' : 'HostGroupMonitorTemplateController.create',
   'delete /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.destroy',
-  // Internal process controller. to run manually only by a root user
-  //'get    /process/dHV2aWVqYQo' : 'ProcessController.updatetheeyepassports'
+  /**
+   *
+   * generic api endpoints
+   *
+   */
+  'post /api/:resource':'ApiController.create',
+  'put /api/:resource/:id':'ApiController.update',
+  'delete /api/:resource/:id':'ApiController.remove',
+  'get /api/:resource':'ApiController.fetch',
+  'get /api/:resource/:id':'ApiController.get',
+  // template only render
+  'get /admin/webhook':'WebhookController.index',
 };
