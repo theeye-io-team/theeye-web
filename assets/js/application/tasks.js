@@ -59,7 +59,6 @@ $(function(){
     $taskForm.find('select[name=script_id]')
       .select2({ allowClear:true, placeholder: 'Choose a script' })
       .on('change', function(event){
-        console.log('change');
         if($(this).val()) {
           $('a.scripter', $taskForm)
             .text('Update script')
