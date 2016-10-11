@@ -5,7 +5,7 @@ var path     = require('path')
   , url      = require('url')
   , passport = require('passport')
   , mailer 	 = require("./mailer")
-  , TheEyeClient = require('theeye-client')
+  , TheEyeClient = require('../libs/theeye-client')
   ;
 
 /**
