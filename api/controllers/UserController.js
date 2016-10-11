@@ -92,36 +92,6 @@ var UserController = module.exports = {
   sendActivationLink: function(req, res, next) {
     passport.resendInvitation(req, res, next);
   },
-  retrievePassword: function(req, res) {
-    var params = req.params.all();
-    var email = params.email;
-
-    User.findOne({email : email}, function(err, user)
-    {
-      if(err || !user)
-        return res.send(500, "User not found");
-
-      user.destroy(function(err)
-      {
-        if(err)
-          return res.send(500, "Error deleting user");
-        else
-        {
-          req.params.email             = user.email;
-          req.params.credential        = user.credential;
-          req.params.customers         = user.customers;
-
-          passport.retrievePassword(req, res, function(err, email)
-          {
-            if(err)
-              return res.send(500, "Invitation not sent");
-            else
-              return res.json({email: email});
-          });
-        }
-      });
-    });
-  },
   //ABM FUNCTIONS//
   //FETCH  /admin/user
   fetch: function(req, res) {

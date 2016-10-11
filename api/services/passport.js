@@ -5,7 +5,6 @@ var path     = require('path')
   , url      = require('url')
   , passport = require('passport')
   , mailer 	 = require("./mailer")
-  , debug    = require('debug')('eye:web:user:passport')
   , TheEyeClient = require('theeye-client')
   ;
 
@@ -252,7 +251,7 @@ passport.resendInvitation = function(req, res, next){
  */
 passport.sendUserActivationEmail = function (inviter, invitee, next){
   var activationLink = this.protocols.local.getActivationLink(invitee);
-  debug('Activation Link is %s', activationLink);
+ sails.log.debug('Activation Link is %s', activationLink);
 
   var data = {
     inviter: inviter,
@@ -262,11 +261,11 @@ passport.sendUserActivationEmail = function (inviter, invitee, next){
 
   mailer.sendActivationMail(data, function(err) {
     if(err) {
-      debug('error sending invitation email to "%s"', invitee.email);
+     sails.log.debug('error sending invitation email to "%s"', invitee.email);
       return next(err);
     }
 
-    debug('invitation email sent');
+   sails.log.debug('invitation email sent');
     return next(null);
   });
 }
@@ -286,7 +285,7 @@ passport.inviteUser = function(req, res, next) {
       } else {
         mailer.sendNewCustomerEMail(invitee, error => {
           if(error) {
-            debug('Error sending email to ' + invitee.email);
+           sails.log.debug('Error sending email to ' + invitee.email);
             req.flash('error', 'Error.Passport.User.Invite');
           }
 
@@ -307,11 +306,11 @@ function activateTheeyeUser (user, next) {
 
   client.refreshToken(function(err,token){
     if(err){
-      debug(err);
+     sails.log.debug(err);
       return next(err);
     }
 
-    debug('supervisor access token refresh success');
+   sails.log.debug('supervisor access token refresh success');
     var data = {
       'email':user.email,
       'customers':user.customers,
@@ -319,7 +318,7 @@ function activateTheeyeUser (user, next) {
       'enabled':true
     };
 
-    debug("Creating user %s theeye passport", user.id);
+   sails.log.debug("Creating user %s theeye passport", user.id);
     createTheeyeUser(user, data, client, function(err, profile){
       if(err) return next(err);
       return next(null, profile);
@@ -330,14 +329,14 @@ function activateTheeyeUser (user, next) {
 passport.activateUser = function(req, res, next){
   this.protocols.local.activate(req,res,function(err, user){
     if(err) {
-      debug('Error activating user on local protocol');
-      debug(err);
+     sails.log.error('Error activating user on local protocol');
+     sails.log.error(err);
       return next(err);
     }
 
     if(!user) {
       var error = new Error('Cannot activate, user does not exist');
-      debug(error);
+     sails.log.error(error);
       return next(error);
     }
 
@@ -347,27 +346,9 @@ passport.activateUser = function(req, res, next){
   });
 };
 
-passport.retrievePassword = function(req, res, next) {
-  return this.protocols.local.retrievePassword(req, res, function(err, email, userData) {
-    if(err)
-      return next(err);
-
-    mailer.sendRetrivePasswordMail(email, null, function(error) {
-      if(err) {
-        debug("error sending email invitation");
-        req.flash('error', 'Error.Passport.User.Invite');
-        debug("Error sending email to " + email);
-        return next(err);
-      }
-
-      debug("email invitation sent");
-      return next(null, email);
-    });
-  });
-};
 
 function createTheeyeUser (user, input, supervisor, next) {
-  debug('creating theeye user');
+ sails.log.debug('creating theeye user');
   var client = {
     'email': input.email,
     'customers': input.customers,

@@ -206,7 +206,6 @@ function triggers(io){
 
       io.socket.on('palancas-update', handleTaskResult);
 
-
       $.post("/palanca/trigger", {
         task_id: taskData.taskid,
         service_id: taskData.taskresourceid,
@@ -273,7 +272,6 @@ function triggers(io){
           alert('All tasks processed. You\'re most welcome.');
         }
       };
-
       io.socket.on('palancas-update', handleTaskResult);
 
       $tasks.each(function(i,e){
@@ -378,7 +376,7 @@ function triggers(io){
 
   function subscribeToTriggers(){
     log('initializing task triggers');
-    io.socket.post('/palanca/subscribe', {}, function (data, jwres){
+    io.socket.post('/palanca/subscribe', { customer: Cookies.getJSON('theeye').customer }, function (data, jwres){
       log('subscribed to trigger updates');
     });
   }

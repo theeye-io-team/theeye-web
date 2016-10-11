@@ -27,6 +27,7 @@
     "grunt-sails-linker": "~0.9.6",
     "grunt-sync": "~0.0.8",
     "include-all": "~0.1.6",
+    "jsonwebtoken": "7.1.9",
     "kerberos": "0.0.21",
     "moment": "~2.14.1",
     "nodemailer": "~1.11.0",
