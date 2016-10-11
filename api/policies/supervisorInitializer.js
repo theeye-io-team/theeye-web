@@ -1,5 +1,5 @@
 
-var TheEyeClient = require('theeye-client');
+var TheEyeClient = require('../libs/theeye-client');
 
 module.exports = function supervisorInitializer (req, res, next)
 {
