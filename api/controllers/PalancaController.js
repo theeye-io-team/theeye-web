@@ -3,122 +3,75 @@
 var snsreceiver = require('../services/snshandler');
 // var customeruri = require('../services/customeruri');
 
-var debug = {
-  log: require('debug')('eye:web:palanca'),
-  error: require('debug')('eye:web:palanca:error')
-};
-
 module.exports = {
+  _config: {
+    shortcurts: false,
+    rest: false
+  },
   index: function(req, res) {
     res.view(); // template render
   },
   subscribe: function(req, res) {
     var socket = req.socket;
-    for (var i in req.user.customers) {
-      var customer = req.user.customers[i];
-      var username = req.user.username;
-      socket.join(customer + '_' + username + '_palancas');
+    var user = req.user;
+    var customer = req.params.all().customer;
+
+    if( user.customers.indexOf( customer ) === -1 ){
+      res.send( 403, JSON.stringify({ message: 'forbiden' }) );
     }
 
+    var room = customer + '_job_updates';
+    socket.join(room);
+
+    sails.log.debug('client subscribed to ' + room);
+
     res.json({
-      message: 'subscribed to customer palancas'
+      message: 'subscribed to ' + customer + ' customer job updates'
     });
   },
   trigger: function(req, res) {
     var supervisor = req.supervisor;
-    debug.log(req.body);
-
-    var triggerResult = function(err, job) {
-      if (err) {
-        return res.send(400, {
-          message: "Error creating job on supervisor: " + err
-        });
-      }
-      res.json({ job: job, message: 'Job created' });
-    };
-
-    supervisor.jobCreate( req.body.task_id, function (err, job) {
-      if (err) {
-        debug.error(err);
-        return triggerResult(err);
-      }
-      debug.log('Job created');
-      triggerResult(null, job);
+    supervisor.create({
+      route: supervisor.JOB,
+      query: { task: req.body.task_id },
+      failure: error => res.send(error.statusCode, error),
+      success: job => res.json(job)
     });
   },
   /**
    * Receive SNS messages, automatically sent by the supervisor.
    */
-  update: function(req, res) {
+  update: function(req, res, next) {
     // sns updates received
     var body = req.body;
-    debug.log('trigger/job update received');
-    debug.log(body);
+    sails.log.debug('trigger/job update received');
+    sails.log.debug(body);
 
     snsreceiver.handleSubscription(body, function(error, action) {
-      if( error || ! body.Message )
-      {
-        debug.error('Error Invalid request');
-        debug.error(body);
-        res.json({'status':400,'error':{'message':'invalid request'}});
-      }
-      else
-      {
+      if(error||!body.Message) {
+        sails.log.error('Error Invalid request');
+        sails.log.error(body);
+        return res.json({'status':400,'error':{'message':'invalid request'}});
+      } else {
         var result = snsreceiver.parseSNSMessage(body.Message);
         if(!result) {
           return res.json({
             'status': 400,
             'error': {
               'message': "SNS body.Message Couldn't be parsed" ,
-              'received' : body.Message
+              'received': body.Message
             }
           });
         }
 
-        if(action == 'continue') {
-          // sns updates received
-          Passport.findOne({
-            'protocol': 'theeye',
-            'api_user': result.user_id
-          }, function(err, passport){
-
-            if(!passport){
-              debug.error('user passport not found!');
-              return res.send(500);
-            }
-
-            var query = User.findOne().where({ id : passport.user });
-            query.exec(function(err, user) {
-              if(err) {
-                debug.error('internal error. cannot fetch user');
-                return res.json({
-                  'status': 400,
-                  'error': { 'message': 'invalid request' }
-                });
-              }
-
-              if(!user) {
-                debug.error('user not found');
-                return res.json({
-                  'status': 404,
-                  'error': { 'message': 'job was not found' }
-                });
-              }
-
-              var room = result.customer_name + '_' + user.username + '_palancas';
-              debug.log('sending information via socket to ' + room);
-              var io = sails.io;
-              io.sockets.in(room).emit('palancas-update', result);
-              return res.json({ message: 'palancas updates received' });
-            });
-          });
+        if(action == 'continue'){
+          var room = result.customer_name + '_job_updates';
+          sails.log.debug('sending information via socket to ' + room);
+          var io = sails.io;
+          io.sockets.in(room).emit('palancas-update', result);
         }
-        else res.json({ message: 'no response' });
+        return res.json({ status: 'ok' });
       }
     });
-  },
-  _config: {
-    shortcurts: false,
-    rest: false
   }
 };
