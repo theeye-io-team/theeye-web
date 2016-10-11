@@ -7,6 +7,9 @@ module.exports.policies = {
     'hasCustomer',
     'supervisorInitializer'
   ],
+  PasswordController: {
+    '*':['noSession'],
+  },
   AuthController: {
     '*':'passport',
   },
@@ -21,8 +24,5 @@ module.exports.policies = {
   },
   ContactController: {
     'invitation':['noSession'],
-  },
-  UserController:{
-    'retrievePassword':['noSession'],
   }
 };

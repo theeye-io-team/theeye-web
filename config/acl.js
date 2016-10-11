@@ -3,12 +3,13 @@
 var extend = require('lodash/assign');
 
 var user = {
-  "api" : ['*'],
-  "events" : ['*'],
-  "hoststats" : ['*'],
-  "palanca" : ['*'],
-  "auth" : ['login', 'activate', 'google', 'connect', 'unlink', 'logout'],
-  "user" : ['profile','setcustomer'],
+  "api": ['*'],
+  "events": ['*'],
+  "hoststats": ['*'],
+  "palanca": ['*'],
+  "password": ['*'],
+  "auth": ['login', 'activate', 'google', 'connect', 'unlink', 'logout'],
+  "user": ['profile','setcustomer'],
 };
 
 var admin = extend({},user,{

@@ -101,38 +101,6 @@ exports.createUser = function(req, res, next) {
 };
 
 /**
- * Restore user password
- *
- * This method create a reset password link for the user
- *
- * @param {Object}   req
- * @param {Object}   res
- * @param {Function} next
- */
-exports.retrievePassword = function (req, res, next) {
-  var email = req.param('email');
-
-  if (!email) {
-    req.flash('error', 'Error.Passport.Email.Missing');
-    return next(new Error('No email was entered.'));
-  }
-
-  var token = crypto.createHmac("sha1", email).digest("hex");
-
-  User.update({email: email},{invitation_token : token},function (err, user) {
-    if (err)
-      return next(err);
-
-    var queryToken = querystring.stringify({token: token});
-    var data = {
-      activationLink: sails.config.passport.local.activateUrl + queryToken,
-      username: email
-    };
-    return next(null, email, data);
-  });
-};
-
-/**
  * Reset activation link & token for a user
  *
  * @param {Function} next
@@ -362,6 +330,31 @@ exports.update = function (req, res, next) {
 
     Passport.update( {protocol : 'local', user: user.id},
     {password: newPassword},
+    function (err, passport) {
+      if(err) {
+        if (err.code === 'E_VALIDATION')
+          return next(new Error("Invalid password"));
+        else
+          return next(err);
+      } else
+        return next(null);
+    });
+  });
+}
+
+exports.reset = function (options, next) {
+  var email = options.email,
+    password = options.password;
+
+  User.findOne({email: email},function (err, user) {
+    if (err)
+      return next(err);
+
+    if(!user)
+      return next(new Error('User not found.'));
+
+    Passport.update( {protocol : 'local', user: user.id},
+    {password: password},
     function (err, passport) {
       if(err) {
         if (err.code === 'E_VALIDATION')

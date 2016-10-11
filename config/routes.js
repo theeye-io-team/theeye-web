@@ -7,9 +7,7 @@ module.exports.routes = {
   '/' : function(req, res, next){
     res.sendfile(sails.config.appPath + '/assets/theeye-landpage/index.html');
   },
-  '/mantenimiento': {
-    view: 'mantenimiento'
-  },
+  '/mantenimiento': { view: 'mantenimiento' },
   //AuthController routes
   //'get /register' : 'AuthController.register',
   'get    /login' : 'AuthController.login',
@@ -23,18 +21,25 @@ module.exports.routes = {
   'post   /auth/local/update' : 'AuthController.updateLocalPassport',
   'post   /auth/local' : 'AuthController.callback',
   'post   /auth/local/:action' : 'AuthController.callback',
-  //UserController routes
+  // UserController routes
   'post   /setcustomer/:customer' : 'UserController.setcustomer',
   'get    /admin/user' : 'UserController.index',
   'get    /profile' : 'UserController.profile',
   'put    /user/:id/reinvite' : 'UserController.sendActivationLink',
-  'put    /user/resetpass' : 'UserController.retrievePassword',
   'get    /user'  : 'UserController.fetch',
   'get    /user/:id' : 'UserController.get',
   'put    /user/:id' : 'UserController.edit',
   'post   /user'  : 'UserController.create',
   'delete /user/:id' : 'UserController.remove',
-  //CustomerController routes
+  /**
+   * Password Recovery
+   */
+  'post   /password/resetmail':'PasswordController.sendResetMail',
+  'get    /password/resetform/:token':'PasswordController.resetForm',
+  'put    /password/reset':'PasswordController.reset',
+  /**
+   * CustomerController routes
+   */
   'get    /admin/customer' : 'CustomerController.index',
   'get    /customer' : 'CustomerController.fetch',
   'get    /customer/:id' : 'CustomerController.get',
