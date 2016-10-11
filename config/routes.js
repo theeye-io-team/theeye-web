@@ -84,6 +84,9 @@ module.exports.routes = {
   'put    /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.update',
   'post   /admin/hostgroup/:groupid/monitortemplate' : 'HostGroupMonitorTemplateController.create',
   'delete /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.destroy',
+
+  // Scheduler section
+  'get    /admin/scheduler' : 'ScheduleController.index',
   /**
    *
    * generic api endpoints
@@ -95,5 +98,5 @@ module.exports.routes = {
   'get /api/:resource':'ApiController.fetch',
   'get /api/:resource/:id':'ApiController.get',
   // template only render
-  'get /admin/webhook':'WebhookController.index',
+  'get /admin/webhook':'WebhookController.index'
 };
