@@ -18,7 +18,8 @@ code, pre {
     margin: 0 2px;
     padding: 0px 5px;
     border: 1px solid #EAEAEA;
-    background-color: #F8F8F8;
+    color: rgba(0,255,0,1);
+    background-color: rgba(0,0,0,1);
     border-radius: 3px;
     font-size: 12px;
     font-family: Consolas, "Liberation Mono", Courier, monospace;
@@ -619,7 +620,8 @@ input[type=checkbox].form-control {
 /*
  * JSON Viewer custom style
  */
-.json-literal { color : #d4b209 }
+.json-literal { color:#d4b209; }
+.json-string { color:rgba(0,255,0,1); }
 
 .blurry-text { color: transparent; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
 .cursor-pointer { cursor: pointer; }
