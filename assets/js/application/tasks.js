@@ -1,52 +1,7 @@
-/* global bootbox, $searchbox, humanInterval, Select2Data, Tags, lodash, ScraperModal */
-/* NOTE
-Lists are made up with:
-  class="itemRow panel panel-default js-searchable-item"
-so to treat them as items represented in a "row".
-With this in mind, every button in them can reference
-the item they are representing (and its data)
-by calling:
-$(this).closest('.itemRow')
-Ex:
-$('button.edit-task').on('click', function(event){
-  $(this) // the button jQuerized
-    .closest('.itemRow') // the row the button is in
-    .data(); // returns {itemName, itemData, ...}
-});
-This way we can save a lot of markup such as data-id or data-whatever
-usually repeated in every button
-*/
-
 $(function(){
 
   window.scriptState = window.scriptState ? window.scriptState : $({});
   var $state = window.scriptState;
-
-  /**
-  function extractFormData ($el) {
-    var data = $el.find(':input').toArray();
-    return data.reduce(function(obj, input) {
-      if(!input.name) return obj;
-
-      if(input.name=='hosts_id'||input.name=='tags'){
-        var val = $(input).val();
-        obj[input.name] = val;
-      } else if(input.name=='public') {
-        if(input.checked===true){
-          if(input.value=='true'){
-            obj[input.name] = true;
-          }
-          else if(input.value=='false'){
-            obj[input.name] = false;
-          }
-        }
-      } else {
-        obj[input.name] = input.value;
-      }
-      return obj;
-    },{});
-  }
-  */
 
   $('#script-modal').on('hidden.bs.modal', function(){
     $('body').addClass('modal-open');
@@ -93,20 +48,6 @@ $(function(){
 
         $('#name',$taskForm).focus();
 
-        // if(!$('[data-hook=script_id]',$taskForm).val()) {
-        //   $('a.editScript', $taskForm)
-        //     .text('Create script')
-        //     .removeClass('editScript')
-        //     .addClass('createScript')
-        //     .data('script-id', null);
-        // }else{
-        //   $('a.createScript', $taskForm)
-        //     .text('Update script')
-        //     .removeClass('createScript')
-        //     .addClass('editScript')
-        //     .data('script-id', $('[data-hook=script_id]',$taskForm).val());
-        // }
-
         var form = new FormElement( $taskForm[0] );
         form.set( task );
         $('.modal#edit-task').on('shown.bs.modal', function(){
@@ -128,6 +69,8 @@ $(function(){
       var form = new FormElement($taskForm);
       var vals = form.get();
       vals.type = 'script';
+
+      vals.script_arguments = vals.script_arguments.split(',');
 
       jQuery.ajax({
         type:'PUT',
@@ -315,7 +258,6 @@ $(function(){
           )
         };
       });
-
     }
 
     function showDeleteModal(eventObject) {
@@ -536,36 +478,12 @@ $(function(){
               );
             }
 
-            $.when.apply($, deleteRequests).then(
-              function(){
-                console.log('then success');
-                console.log(arguments);
-                alert(taskRows + successFooter, successTitle);
-              },
-              function(){
-                console.log('then fail');
-                console.log(arguments);
-                alert(taskRows + failFooter, failTitle);
-              },
-              // then progress nunca se llama ... ?
-              function() {
-                console.log('then progress');
-                console.log(arguments);
-              }
-            // when progress nunca se llama tampoco ... ?
-            ).progress(function(){
-              console.log('when progress');
-              console.log(arguments);
-            }).always(function(){
-              $.unblockUI();
-            }).done(function(){
-              // done deberia volver con array de results
-              // no se si no funciona o es porque el req.DELETE
-              // no devuelve nada, habria que probar de cambiar la API
-              console.log('when done');
-              console.log(arguments);
-              console.log('ok, they are gone');
-            });
+            // que es esto chris? borre todos los console.logs
+            $.when.apply($, deleteRequests)
+            .then()
+            .progress(function(){})
+            .always(function(){ $.unblockUI(); })
+            .done(function(){});
           });
         });
       }
@@ -605,7 +523,6 @@ $(function(){
     // a itemchanged event on massChecker. On itemchanged MASS CHECKER
     // checks for an unchecked item. If any, MASS CHECKER unchecks itself
     $('.massChecker').on('itemchanged', function(evt){
-      console.log('checking items state');
       var $this = $(this);
       var $spanIcon = $this.children('span').first();
       $('.rowSelector:visible').each(function(i,e){
@@ -655,8 +572,7 @@ $(function(){
   $('.modal#scriptUpload div#scriptTemplateDescription').hide();
 
   $(".modal").on("click","[data-hook=advanced-section-toggler]", function(event){
-    event.preventDefault();
-    event.stopPropagation();
+    event.preventDefault(); event.stopPropagation();
     $(".modal section[data-hook=advanced]").slideToggle();
     $("i", this).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
   });
@@ -665,21 +581,18 @@ $(function(){
   //
   // START SCRAPER
   //
-  // ATTACH SCRAPER MODAL & FORM TO THIS VIEW ELEMENTS
+  // ATTACH SCRAPER MODAL & FORM TO THE PAGE ELEMENTS
   //
   var scraperCRUD = new ScraperModal.TaskCRUD();
   $('[data-hook=create-scraper-task]').on('click',function(event){
-    event.preventDefault();
-    event.stopPropagation();
+    event.preventDefault(); event.stopPropagation();
     scraperCRUD.create();
   });
   $('[data-hook=edit-scraper-task]').on('click',function(event){
-    event.preventDefault();
-    event.stopPropagation();
+    event.preventDefault(); event.stopPropagation();
     var id = $( event.currentTarget ).data('task');
     scraperCRUD.edit(id);
   });
-  window.scraper = scraperCRUD;
   //
   // END SCRAPER
   //
