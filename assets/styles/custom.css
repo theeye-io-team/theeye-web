@@ -636,3 +636,5 @@ input[type=checkbox].form-control {
     display: block;
   }
 }
+
+.loginBox section.license a:hover { color:#ee8e40; }
