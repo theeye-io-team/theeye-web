@@ -216,10 +216,11 @@
         <div><b> It seems that like you don't have tasks configured yet, lets create a hello world task and run it remotely following this steps: </b></div>
         <div style="color:#555;">
           <span class="list-group-item">1. Click on <strong><i><button class="tooltiped" title="Top right navigation button" style="border:none;background:none;color:#144e77;"><span class="glyphicon glyphicon-cog"></span></button>> Tasks</i></strong> , to open <a class="tooltiped" title="or click me!" href="/admin/task/" target="_blank">Tasks Administration<span class="glyphicon glyphicon-link"></span></a> panel</span>
-          <span class="list-group-item">2. Click on <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>New Task</button> and select Script (second option).</span>
-          <span class="list-group-item">3. Select bash as interpreter, then copy and paste <a href="https://gist.github.com/jailbirt/12343dc435f0cc686ac4" target="_blank">this Hello World Gist script<span class="glyphicon glyphicon-link"></span></a></span>
+          <span class="list-group-item">2. Click on <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>New Task</button> and select <code>Script (second option)</code>.</span>
+          <span class="list-group-item">3. Click on <button class="btn btn-primary">Create script</button> a new popup window will appear</span>
+          <span class="list-group-item">4. Select <code>bash (.sh)</code> as interpreter, then in <code>Live editor</code> mode copy and paste this <a href="https://gist.github.com/jailbirt/12343dc435f0cc686ac4" target="_blank">helloWorld Gist<span class="glyphicon glyphicon-link"></span></a> script, and save the script</span>
           <span class="list-group-item">
-            4. Copy and paste the following arguments in the <strong><i>`Advanced` > `Script Arguments`</i></strong> input : 
+            5. Copy and paste the following arguments in the <strong><i>`Advanced` > `Script Arguments`</i></strong> input : 
             <br><strong id="script-arguments"><i><%= user.username %>, user</i></strong>
             <button class="clipboard-btn" data-clipboard-target="#script-arguments">
               <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>

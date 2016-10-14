@@ -14,7 +14,7 @@ a:-webkit-any-link {
 
 p { text-align: justify; max-width: 700px; }
 
-code, pre {
+pre {
     margin: 0 2px;
     padding: 0px 5px;
     border: 1px solid #EAEAEA;
@@ -23,9 +23,10 @@ code, pre {
     border-radius: 3px;
     font-size: 12px;
     font-family: Consolas, "Liberation Mono", Courier, monospace;
+    max-width: 100%;
+    padding: 10px;
+    margin: 20px 0; 
 }
-
-pre { max-width: 100%; padding: 10px; margin: 20px 0; }
 
 .demo::before{
     content: "result";
