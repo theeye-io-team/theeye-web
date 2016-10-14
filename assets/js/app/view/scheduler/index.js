@@ -129,13 +129,13 @@ var SchedulerPageView = (function(){
     events: {},
     render:function(){
       BaseView.prototype.render.apply(this, arguments);
-      let scheduleData = [];
-      let self = this;
+      var scheduleData = [];
+      var self = this;
       //TODO cambiar $.get por un polyfill/xhr
       $.get("/api/schedule")
         .done(function(data){
           scheduleData = getEventSources(data);
-          let calendar = self.queryByHook('schedule-container').fullCalendar({
+          var calendar = self.queryByHook('schedule-container').fullCalendar({
             header: {
               left: 'prev,next today',
               center: 'title',
