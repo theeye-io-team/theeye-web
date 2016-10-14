@@ -404,3 +404,5 @@ function triggers(io){
 $(document).on('keypress',function(){
   $('.js-searchable-box input').focus();
 });
+
+new Clipboard('.clipboard-btn');

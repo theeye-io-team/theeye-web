@@ -88,6 +88,7 @@ ol.list-group li.red-border { border-color: red; }
 .hidden-container { display: none; }
 
 .events-container .row { color:white; }
+.events-container .video { text-align: center; }
 
 
 /* common */

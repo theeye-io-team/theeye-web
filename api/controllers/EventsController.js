@@ -12,21 +12,11 @@ module.exports = {
         success: (body) => callback(null, body),
         failure: (err) => callback(err)
       }),
-      tasks: function(callback) {
-        supervisor.tasks(callback);
-      },
-      scripts: function(callback) {
-        supervisor.scripts(callback);
-      },
-      hosts: function(callback) {
-        supervisor.hosts(callback);
-      },
-      resourceTypes: function(callback) {
-        supervisor.resourceTypes(callback);
-      },
-      scraperHosts: function(callback) {
-        supervisor.scraperHosts(callback);
-      }
+      tasks: function(callback) { supervisor.tasks(callback); },
+      scripts: function(callback) { supervisor.scripts(callback); },
+      hosts: function(callback) { supervisor.hosts(callback); },
+      resourceTypes: function(callback) { supervisor.resourceTypes(callback); },
+      scraperHosts: function(callback) { supervisor.scraperHosts(callback); }
     }, function(err, data) {
       if (err) {
         debug(err);
@@ -39,11 +29,8 @@ module.exports = {
         req.session.customer,
         supervisor,
         function(error, userAgent) {
-          if(error) {
-            debug(error);
-          }
-          data.agentCurl = userAgent&&userAgent.curl||'ERROR: Agent-User not found';
-          data.moment = moment;
+          if(error) debug(error);
+          data.agent = userAgent;
 
           var subs = _.chain(data.resources)
             .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
