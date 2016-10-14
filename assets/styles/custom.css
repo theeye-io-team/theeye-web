@@ -229,6 +229,7 @@ footer {
   bottom:0;
   width:100%;
   text-align:center;
+  z-index:5000;
 }
 footer a.image {padding:6px;display:inline-block}
 footer a.image img {margin-top:-4px}
@@ -609,6 +610,7 @@ h4.panel-title-content::after {
 
 .calendarEvent { cursor: pointer; }
 .calendarEvent:hover { border-color: red; }
+
 /*
 no puedo recordar para que estaba esto, pero rompe los input
 input[type=checkbox], input[type=radio] { margin:0; width:16px;height:16px; margin-top:8px;}

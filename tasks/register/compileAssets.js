@@ -2,8 +2,8 @@ module.exports = function (grunt) {
   grunt.registerTask('compileAssets', [
     'clean:dev',
     'handlebars:dev',       // changed jst task to handlebars task
-    'less:dev',
+    // 'less:dev',
     'copy:dev',
-    'coffee:dev'
+    // 'coffee:dev'
   ]);
 };
