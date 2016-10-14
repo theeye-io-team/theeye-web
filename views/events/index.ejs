@@ -129,20 +129,16 @@
         </div> <!-- end panel -->
       </div> <!-- /resources-panel-list -->
       <% } else { %><!-- no resources -->
-      <div>
-       <b>
-          Seems like you don't have any resources yet, lets install your first agent, steps are pretty easy:
-       </b>
-      </div>
-      <div class="list-group">
-        <a class="list-group-item">1.: Become root and then copy the following curl on a linux terminal. Right now only ubuntu:12.04/14.04/15.04/15.10 Centos/Redhat: 6.+/7.+ are supported <pre> <%= agentCurl %> </pre></a>
-        <a href="#" class="list-group-item">2.: Wait until Spock appears at your terminal claiming you did it. Press f5 here, now your server should be listed.</a>
-        <a href="#" class="list-group-item">Please, if something goes wrong, send us an email to support@theeye.io indicating:
-          Operative System / Version and attaching your /tmp/*.theEyeInstallation.log.gz <br>
+      <div> <b> It seems that you don't have monitors configured yet, lets install your first agent, steps are pretty easy: </b> </div>
+      <div class="list-group" style="color:#555;">
+        <span class="list-group-item">1.: Become root and then copy the following curl on a linux terminal. Right now only ubuntu:12.04/14.04/15.04/15.10 Centos/Redhat: 6.+/7.+ and Windows server 2008+ are supported</span>
+        <span class="list-group-item"> <%- partial ('../partials/agent-installer.ejs') %> </span>
+        <span class="list-group-item">2.: Wait until Spock appears at your terminal claiming you did it. Press f5 here, now your server should be listed.</span>
+        <span class="list-group-item">NOTE: Please, if something goes wrong, send us an email to <a>support@theeye.io</a> indicating: Operating System name and version (kernel,release,distribution,service pack) and attaching your /tmp/*.theEyeInstallation.log.gz</span>
+        <span class="list-group-item video">
           <iframe width="560" height="315" src="https://www.youtube.com/embed/L0sOPrG-Dog" frameborder="0" allowfullscreen></iframe>
-        </a>
+        </span>
       </div>
-
       <% } %>
     </div>
     <!-- Tasks -->
@@ -217,15 +213,24 @@
         </div>
       </div>
       <% } else { %>
-        <div>
-          Seems like you don't have any tasks yet, lets do a hello world task and run it remotely, please follow this steps:
-          <a href="https://theeye.io/admin/task/" target="_blank" class="list-group-item">1.: click for go to tasks Tasks Administration </a>
-          <a href="#" class="list-group-item">2.: Create a new task, give it a name, create a new script.</a>
-          <a href="https://gist.github.com/jailbirt/12343dc435f0cc686ac4" target="_blank" class="list-group-item">3.: select bash as interpreter, then copy and Paste this gist for a hello world with arguments script and later submit it. </a>
-          <a href="#" target="_blank" class="list-group-item">4.: Optional add some params Add an argument at 'Script Arguments' and later select the host/s where that task would run <br>
-          need more Help, please watch the following video:  <br>
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/cRlteE5bSAM" frameborder="0" allowfullscreen></iframe>
-          </a>
+        <div><b> It seems that like you don't have tasks configured yet, lets create a hello world task and run it remotely following this steps: </b></div>
+        <div style="color:#555;">
+          <span class="list-group-item">1. Click on <strong><i><button class="tooltiped" title="Top right navigation button" style="border:none;background:none;color:#144e77;"><span class="glyphicon glyphicon-cog"></span></button>> Tasks</i></strong> , to open <a class="tooltiped" title="or click me!" href="/admin/task/" target="_blank">Tasks Administration<span class="glyphicon glyphicon-link"></span></a> panel</span>
+          <span class="list-group-item">2. Click on <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>New Task</button> and select Script (second option).</span>
+          <span class="list-group-item">3. Select bash as interpreter, then copy and paste <a href="https://gist.github.com/jailbirt/12343dc435f0cc686ac4" target="_blank">this Hello World Gist script<span class="glyphicon glyphicon-link"></span></a></span>
+          <span class="list-group-item">
+            4. Copy and paste the following arguments in the <strong><i>`Advanced` > `Script Arguments`</i></strong> input : 
+            <br><strong id="script-arguments"><i><%= user.username %>, user</i></strong>
+            <button class="clipboard-btn" data-clipboard-target="#script-arguments">
+              <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+            </button>
+          </span>
+          <span class="list-group-item">
+            If you need more help, please watch the following video :<br><br>
+            <div class="video">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/cRlteE5bSAM" frameborder="0" allowfullscreen></iframe>
+            </div>
+          </span>
         </div>
       <% } %>
 
