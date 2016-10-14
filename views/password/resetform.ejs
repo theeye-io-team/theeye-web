@@ -1,0 +1,36 @@
+<%- include ../partials/header.ejs %>
+
+<!-- menu -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#"><img src="/images/logo-hor.png" alt="The eye"></a>
+    <div id="navbar">
+      <ul class="navbar-right">
+        <li><a href="/login">Login</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Main  -->
+<div class="mainContainer">
+  <div class="loginBox">
+    <form data-hook="password">
+      <div class="form-group">
+        <input type="password" class="form-control" name="password" placeholder="Password">
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" name="confirmation" placeholder="Password Again">
+      </div>
+      <button data-hook="submit" type="submit">Save</button>
+    </form>
+  </div>
+</div>
+
+<% block('scripts','<script>$(document).ready(function(){ new PasswordResetPage({ token: ' + JSON.stringify(token) + ' }); });</script>') %>

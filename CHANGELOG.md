@@ -1,5 +1,51 @@
 # CHANGELOG
 
+### 0.6.2 - 2016-10-13
+
+> change modals behaviour            
+
+> remove public check from task and script form            
+
+> fix task form script arguments selection             
+
+> theeye-client build-in         
+
+> remove port validation           
+
+> tmp workflow controller/view/js source            
+
+> password reset        
+
+> acl improve legibility          
+
+> fix when agent user is not present                   
+
+### 0.6.1 - 2016-10-07
+
+> set is_regexp and raw_search (pattern replacement) for the search .   
+
+### 0.6.0 - 2016-10-06
+
+> create proxy api controler - redirect authenticated requests to the supervisor     
+
+> minor fix when agent user does not exists      
+
+> hide admin menu to user credential      
+
+> improve acl's legibility      
+
+> added webhook page     
+
+> remove unused scripts and extra requires      
+
+> added webhook UI functions CRUD      
+
+> added cookies lib     
+
+> improved script edit/create change handler. Added class to edit/create script button. Fixed some tweaky values on css
+
+
+
 ### 0.5.2 - 2016-09-26
 
 > moved several js files to grunt build directory. files are added automatically to the site and production bundle      

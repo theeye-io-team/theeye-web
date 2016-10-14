@@ -21,11 +21,9 @@ var HostStats = function (io, specs) {
     }
   };
 
-  var socket = io.socket;
-
-  function subscribeSocketNotifications(socket, resource) {
+  function subscribeSocketNotifications(resource) {
     var host = window.location.pathname.split('/')[2];
-    socket.post('/hoststats/subscribe/' + host, {
+    io.socket.post('/hoststats/subscribe/' + host, {
       resource: resource
     }, function serviceSocketSubscription(data, jwres) {
       log(data);
@@ -61,8 +59,8 @@ var HostStats = function (io, specs) {
         })
       });
       // subscribe psaux notifications
-      socket.on("psaux_update", Psaux.update);
-      subscribeSocketNotifications(socket, 'psaux');
+      io.socket.on("psaux_update", Psaux.update);
+      subscribeSocketNotifications('psaux');
     }
 
     function initDstat(){
@@ -71,19 +69,17 @@ var HostStats = function (io, specs) {
       Dstat.update(dstat);
 
       // subscribe dstat notifications
-      socket.on('host-stats_update', Dstat.update);
-      subscribeSocketNotifications(socket, 'host-stats');
+      io.socket.on('host-stats_update', Dstat.update);
+      subscribeSocketNotifications('host-stats');
     }
 
-    $(function(){
-      initPsaux();
-      initDstat();
-    });
+    initPsaux();
+    initDstat();
   }
 
-  log('listening sockets connect');
-  if( socket.socket && socket.socket.connected ) onSocketIoConnect();
-  socket.on("connect", onSocketIoConnect);
+  log('listening sockets connection');
+  if( io.socket.socket && io.socket.socket.connected ) onSocketIoConnect();
+  io.socket.on("connect", onSocketIoConnect);
 
   var Psaux = (function() {
     /** PS aux table */

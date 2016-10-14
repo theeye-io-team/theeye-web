@@ -3,12 +3,13 @@
 var extend = require('lodash/assign');
 
 var user = {
-  "api" : ['*'],
-  "events" : ['*'],
-  "hoststats" : ['*'],
-  "palanca" : ['*'],
-  "auth" : ['login', 'activate', 'google', 'connect', 'unlink', 'logout'],
-  "user" : ['profile','setcustomer']
+  "api": ['*'],
+  "events": ['*'],
+  "hoststats": ['*'],
+  "palanca": ['*'],
+  "password": ['*'],
+  "auth": ['login', 'activate', 'google', 'connect', 'unlink', 'logout'],
+  "user": ['profile','setcustomer']
 };
 
 var admin = extend({},user,{
@@ -24,12 +25,12 @@ var admin = extend({},user,{
 
 var owner = extend({},admin,{
   "auth" : ['*'],
-  "user" : ['profile','setcustomer'],
+  "user" : ['profile','setcustomer']
 });
 
 var root = extend({},admin,{
   "user"     : ['*'],
-  "customer" : ['*'],
+  "customer" : ['*']
 });
 
 module.exports.acl = {
