@@ -102,5 +102,6 @@ module.exports.routes = {
   'get /api/:resource/:id':'ApiController.get',
   // template only render
   'get /admin/webhook':'WebhookController.index',
-  'get /admin/scheduler':'SchedulerController.index'
+  'get /admin/workflow':'WorkflowController.index',
+  'get /admin/scheduler':'SchedulerController.index',
 };

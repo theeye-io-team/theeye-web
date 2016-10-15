@@ -3,6 +3,6 @@
  * @author Facugon
  *
  */
-var Workflow = function(){
+var WorkflowPage = function(){
 
 }

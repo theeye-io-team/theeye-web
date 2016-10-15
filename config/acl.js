@@ -13,6 +13,7 @@ var user = {
 };
 
 var admin = extend({},user,{
+  "workflow" : ['index'],
   "webhook" : ['index'],
   "scheduler" : ['index'],
   "tasks" : ['*'],
