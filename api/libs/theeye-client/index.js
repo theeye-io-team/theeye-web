@@ -154,14 +154,15 @@ var prototype = {
     }
     else // error condition detected
     {
+      error.statusCode = httpResponse ? httpResponse.statusCode : 504;
+
       logger.error('error detected on %s %s', request.method, request.url);
       logger.error(request);
       if(error)
       {
         // could not send data to server
         logger.error('request failed : %s', JSON.stringify(request) );
-        logger.error(error.message);
-        error.statusCode = httpResponse ? httpResponse.statusCode : null;
+        logger.error('message %s ' , error.message);
         logger.error(body);
         callNext(error, body);
       }
@@ -173,8 +174,6 @@ var prototype = {
           if(error) {
             logger.error('client could not be authenticated');
             logger.error(error.message);
-            error.statusCode = httpResponse.statusCode;
-            //throw new Error('agent could not be authenticated');
           }
           callNext(error, body);
         });
@@ -187,22 +186,18 @@ var prototype = {
         logger.error( JSON.stringify(body) );
         var error = new Error(body.message||'client error');
         error.data = body;
-        error.statusCode = httpResponse.statusCode ;
         callNext(error,body);
       }
       else
       {
+        if( ! error ) error = new Error( JSON.stringify(body) );
+
         logger.error('>>>>>>>>>>>> unhandled error! <<<<<<<<<<<<');
         logger.error('request %s' , JSON.stringify(request) );
         logger.error('status  %s' , httpResponse.statusCode );
-        logger.error('error   %s' , error && error.message  );
+        logger.error('error   %s' , (error&&error.message)  );
         logger.error('body    %s' , JSON.stringify(body)    );
         logger.error('>>>>>>>>>>>>>>>>>>>> * <<<<<<<<<<<<<<<<<<<');
-
-        if(!error) {
-          error = new Error(JSON.stringify(body));
-          error.statusCode = httpResponse.statusCode;
-        }
 
         callNext(error, body);
       }
