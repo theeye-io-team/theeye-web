@@ -15,9 +15,10 @@ WORKDIR ${destDir}
 # Bundle app source
 COPY . ${destDir}
 # Move back packages
-RUN mv /tmp/node_modules ${destDir}
+RUN mv /tmp/node_modules/* ${destDir}/node_modules/
 # Install app dependencies
 RUN cd ${destDir};npm install --production
+RUN cd ${destDir};npm install
 # Fix something weird related to sails dependencies.
 RUN cd ${destDir}/node_modules/sails/ && npm install --production && cd ${destDir}
 #Fix Permissions.
