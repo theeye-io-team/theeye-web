@@ -3,7 +3,7 @@ FROM interactar/theeye-web:15_09_16
 MAINTAINER Javier Ailbirt <jailbirt@interactar.com>
 ENV destDir /src/theeye/web
 # Create app directory
-RUN mkdir -p ${destDir}
+RUN mkdir -p ${destDir}/node_modules
 # Temporary Move node_modules for avoiding packages reinstallation
 RUN mv ${destDir}/node_modules/ /tmp/
 # And remove that directory
