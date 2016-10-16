@@ -3,42 +3,35 @@
   <%- partial('partials/header')%>
   <body>
     <tooltipHolder style="position:absolute;width:100%"></tooltipHolder>
-    <div>
-      <script src="/js/dependencies/socket.io.min.js"></script>
-      <script src="/js/dependencies/sails.io.js"></script>
-      <script>
-        io.sails={
-          autoConnect:true,
-          useCORSRouteToGetCookie:true,
-          environment:'<%- process.env.NODE_ENV %>',
-          url:'<%- process.env.SOCKET_AUTH_URL || '' %>'
-        };
-        SailsIOClient();
-      </script>
 
-      <% if ( typeof (req.user) !== "undefined") { %>
-      <%- partial('partials/menu') %>
-      <% } %>
+    <% if ( typeof (req.user) !== "undefined") { %>
+    <%- partial('partials/menu') %>
+    <% } %>
+
+    <div class="main-container">
       <%- body %>
-      <div class="modal fade" id="alert" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              <h4 class="modal-title" id="myModalLabel">Alert</h4>
-            </div>
-            <div class="modal-body">
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            </div><!--.modal-foooter-->
-          </div><!--.modal-content-->
-        </div><!--.modal-dialog-->
-      </div><!--.modal-->
-      <footer>
-        <a href="/">theeye.io</a> - Beta Release - Copyright © 2014-2016 Theeye Inc
-      </footer>
     </div>
+
+    <div class="modal fade" id="alert" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Alert</h4>
+          </div>
+          <div class="modal-body">
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div><!--.modal-foooter-->
+        </div><!--.modal-content-->
+      </div><!--.modal-dialog-->
+    </div><!--.modal-->
+
+    <footer>
+      <a href="/">theeye.io</a> - Beta Release - Copyright © 2014-2016 Theeye Inc
+    </footer>
+
     <!--SCRIPTS-->
     <script src="/js/00_cookie.js"></script>
     <script src="/js/00_jquery.min.js"></script>
@@ -49,6 +42,9 @@
     <script src="/js/11_moment.min.js"></script>
     <script src="/js/49_spin.min.js"></script>
     <script src="/js/50_ladda.min.js"></script>
+    <script src="/js/51_cytoscape.min.js"></script>
+    <script src="/js/51_dagre.min.js"></script>
+    <script src="/js/53_cytoscape-dagre.js"></script>
     <script src="/js/bootbox.js"></script>
     <script src="/js/bootstrap-facugon-tagsinput.js"></script>
     <script src="/js/bootstrap.min.js"></script>
