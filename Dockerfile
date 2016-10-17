@@ -5,7 +5,7 @@ ENV destDir /src/theeye/web
 # Create app directory
 RUN mkdir -p ${destDir}
 # Temporary Move node_modules for avoiding packages reinstallation
-RUN mv ${destDir}/node_modules/ /tmp/
+RUN mv ${destDir}/node_modules /tmp/
 # And remove that directory
 RUN rm -rf ${destDir}
 # Install Supervisor
@@ -18,6 +18,7 @@ COPY . ${destDir}
 RUN mv /tmp/node_modules ${destDir}
 # Install app dependencies
 RUN cd ${destDir};npm install --production
+RUN cd ${destDir};npm install
 # Fix something weird related to sails dependencies.
 RUN cd ${destDir}/node_modules/sails/ && npm install --production && cd ${destDir}
 #Fix Permissions.
