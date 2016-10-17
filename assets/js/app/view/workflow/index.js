@@ -5,10 +5,13 @@
  */
 var WorkflowPage = function(){
 
+  var uri = URI(document.location);
+  var query = uri.search(true);
 
   $.ajax({
     method:'get',
-    url:'/api/workflow'
+    url:'/api/workflow',
+    data: query
   })
   .done(function(data){
 
