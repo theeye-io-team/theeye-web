@@ -147,64 +147,51 @@ var prototype = {
       if(next) next(error, body, httpResponse);
     }
 
-    if( ! error && /20./.test( httpResponse.statusCode ) )
-    {
-      logger.debug('%s %s request success', request.method, request.url);
-      callNext(null,body);
-    }
-    else // error condition detected
-    {
-      logger.error('error detected on %s %s', request.method, request.url);
-      logger.error(request);
-      if(error)
-      {
-        // could not send data to server
-        logger.error('request failed : %s', JSON.stringify(request) );
-        logger.error(error.message);
-        error.statusCode = httpResponse ? httpResponse.statusCode : null;
-        logger.error(body);
-        callNext(error, body);
-      }
-      else if( httpResponse.statusCode == 401 )
-      {
-        // unauthorized
-        logger.error('access denied');
+    if( !error && /20./.test(httpResponse.statusCode) ) {
+      return callNext(null,body);
+    } else if( error ){
+      return callNext(error);
+    } else if( httpResponse ) {
+      if( httpResponse.statusCode == 401 ) {
+
+        // AuthError Unauthorized
+        var msg = 'request authentication error. access denied.';
+        var err = new Error(msg);
+        logger.error(err);
+
         connection.refreshToken(function(error, token) {
-          if(error) {
-            logger.error('client could not be authenticated');
-            logger.error(error.message);
-            error.statusCode = httpResponse.statusCode;
-            //throw new Error('agent could not be authenticated');
-          }
+          if(error) logger.error(error.message);
           callNext(error, body);
         });
-      }
-      else if(
-        (body && body.status == 'error')
-        || /40./.test( httpResponse.statusCode )
-      ) {
-        body||(body={});
-        logger.error( JSON.stringify(body) );
-        var error = new Error(body.message||'client error');
-        error.data = body;
-        error.statusCode = httpResponse.statusCode ;
-        callNext(error,body);
-      }
-      else
-      {
-        logger.error('>>>>>>>>>>>> unhandled error! <<<<<<<<<<<<');
-        logger.error('request %s' , JSON.stringify(request) );
-        logger.error('status  %s' , httpResponse.statusCode );
-        logger.error('error   %s' , error && error.message  );
-        logger.error('body    %s' , JSON.stringify(body)    );
-        logger.error('>>>>>>>>>>>>>>>>>>>> * <<<<<<<<<<<<<<<<<<<');
 
-        if(!error) {
-          error = new Error(JSON.stringify(body));
-          error.statusCode = httpResponse.statusCode;
+      } else {
+        var message ;
+
+        if( /40./.test(httpResponse.statusCode) ) {
+
+          message='client error';
+
+        } else if( /50./.test(httpResponse.statusCode) ){
+
+          message='server error';
+
+        } else {
+
+          message='unknown request error';
+
+          logger.error('############ UNKNOWN ERROR ############');
+          logger.error('REQUEST > %s' , JSON.stringify(request) );
+          logger.error('STATUS  > %s' , httpResponse.statusCode );
+          logger.error('ERROR   > %j' , error );
+          logger.error('BODY    > %j' , JSON.stringify(body) );
+          logger.error('#######################################');
+
         }
 
-        callNext(error, body);
+        var error = new Error(!body?message:(body.message||body));
+        error.body = body;
+        error.statusCode = httpResponse.statusCode||504;
+        return callNext(error, body);
       }
     }
   },

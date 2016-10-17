@@ -9,27 +9,29 @@ var user = {
   "palanca": ['*'],
   "password": ['*'],
   "auth": ['login', 'activate', 'google', 'connect', 'unlink', 'logout'],
-  "user": ['profile','setcustomer'],
+  "user": ['profile','setcustomer']
 };
 
 var admin = extend({},user,{
+  "workflow" : ['index'],
   "webhook" : ['index'],
+  "scheduler" : ['index'],
   "tasks" : ['*'],
   "script" : ['*'],
   "resource" : ['*'],
   "hostgroup" : ['*'],
   "hostgrouptasktemplate" : ['*'],
-  "hostgroupmonitortemplate" : ['*'],
+  "hostgroupmonitortemplate" : ['*']
 });
 
 var owner = extend({},admin,{
   "auth" : ['*'],
-  "user" : ['profile','setcustomer'],
+  "user" : ['profile','setcustomer']
 });
 
 var root = extend({},admin,{
   "user"     : ['*'],
-  "customer" : ['*'],
+  "customer" : ['*']
 });
 
 module.exports.acl = {

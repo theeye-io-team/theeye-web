@@ -14,7 +14,7 @@ a:-webkit-any-link {
 
 p { text-align: justify; max-width: 700px; }
 
-code, pre {
+pre {
     margin: 0 2px;
     padding: 0px 5px;
     border: 1px solid #EAEAEA;
@@ -23,9 +23,10 @@ code, pre {
     border-radius: 3px;
     font-size: 12px;
     font-family: Consolas, "Liberation Mono", Courier, monospace;
+    max-width: 100%;
+    padding: 10px;
+    margin: 20px 0; 
 }
-
-pre { max-width: 100%; padding: 10px; margin: 20px 0; }
 
 .demo::before{
     content: "result";
@@ -88,6 +89,7 @@ ol.list-group li.red-border { border-color: red; }
 .hidden-container { display: none; }
 
 .events-container .row { color:white; }
+.events-container .video { text-align: center; }
 
 
 /* common */
@@ -144,6 +146,7 @@ body {
   padding-bottom:80px; /* compensa footer */
   position:absolute;
   width:100%;
+  height:100%;
 }
 body { background:#304269;font-family: 'Lato', sans-serif; }
 /* Background image doesn t support transparencies so I ride out
@@ -229,6 +232,7 @@ footer {
   bottom:0;
   width:100%;
   text-align:center;
+  z-index:5000;
 }
 footer a.image {padding:6px;display:inline-block}
 footer a.image img {margin-top:-4px}
@@ -609,6 +613,7 @@ h4.panel-title-content::after {
 
 .calendarEvent { cursor: pointer; }
 .calendarEvent:hover { border-color: red; }
+
 /*
 no puedo recordar para que estaba esto, pero rompe los input
 input[type=checkbox], input[type=radio] { margin:0; width:16px;height:16px; margin-top:8px;}
@@ -636,3 +641,5 @@ input[type=checkbox].form-control {
     display: block;
   }
 }
+
+.loginBox section.license a:hover { color:#ee8e40; }
