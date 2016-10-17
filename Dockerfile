@@ -3,9 +3,9 @@ FROM interactar/theeye-web:15_09_16
 MAINTAINER Javier Ailbirt <jailbirt@interactar.com>
 ENV destDir /src/theeye/web
 # Create app directory
-RUN mkdir -p ${destDir}/node_modules
+RUN mkdir -p ${destDir}
 # Temporary Move node_modules for avoiding packages reinstallation
-RUN mv ${destDir}/node_modules/ /tmp/
+RUN mv ${destDir}/node_modules /tmp/
 # And remove that directory
 RUN rm -rf ${destDir}
 # Install Supervisor
@@ -15,7 +15,7 @@ WORKDIR ${destDir}
 # Bundle app source
 COPY . ${destDir}
 # Move back packages
-RUN mv /tmp/node_modules/* ${destDir}/node_modules/
+RUN mv /tmp/node_modules ${destDir}
 # Install app dependencies
 RUN cd ${destDir};npm install --production
 RUN cd ${destDir};npm install
