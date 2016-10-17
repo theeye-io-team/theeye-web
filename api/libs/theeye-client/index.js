@@ -148,48 +148,51 @@ var prototype = {
     }
 
     if( !error && /20./.test(httpResponse.statusCode) ) {
-      callNext(null,body);
-    }
-    else if( httpResponse.statusCode == 401 ) {
+      return callNext(null,body);
+    } else if( error ){
+      return callNext(error);
+    } else if( httpResponse ) {
+      if( httpResponse.statusCode == 401 ) {
 
-      // AuthError Unauthorized
-      var msg = 'request authentication error. access denied.';
-      var err = new Error(msg);
-      logger.error(err);
+        // AuthError Unauthorized
+        var msg = 'request authentication error. access denied.';
+        var err = new Error(msg);
+        logger.error(err);
 
-      connection.refreshToken(function(error, token) {
-        if(error) logger.error(error.message);
-        callNext(error, body);
-      });
-
-    } else {
-      var message ;
-
-      if( /40./.test(httpResponse.statusCode) ) {
-
-        message='client error';
-
-      } else if( /50./.test(httpResponse.statusCode) ){
-
-        message='server error';
+        connection.refreshToken(function(error, token) {
+          if(error) logger.error(error.message);
+          callNext(error, body);
+        });
 
       } else {
+        var message ;
 
-        message='unknown request error';
+        if( /40./.test(httpResponse.statusCode) ) {
 
-        logger.error('############ UNKNOWN ERROR ############');
-        logger.error('REQUEST > %s' , JSON.stringify(request) );
-        logger.error('STATUS  > %s' , httpResponse.statusCode );
-        logger.error('ERROR   > %j' , error );
-        logger.error('BODY    > %j' , JSON.stringify(body) );
-        logger.error('#######################################');
+          message='client error';
 
+        } else if( /50./.test(httpResponse.statusCode) ){
+
+          message='server error';
+
+        } else {
+
+          message='unknown request error';
+
+          logger.error('############ UNKNOWN ERROR ############');
+          logger.error('REQUEST > %s' , JSON.stringify(request) );
+          logger.error('STATUS  > %s' , httpResponse.statusCode );
+          logger.error('ERROR   > %j' , error );
+          logger.error('BODY    > %j' , JSON.stringify(body) );
+          logger.error('#######################################');
+
+        }
+
+        var error = new Error(!body?message:(body.message||body));
+        error.body = body;
+        error.statusCode = httpResponse.statusCode||504;
+        return callNext(error, body);
       }
-
-      var error = new Error(!body?message:(body.message||body));
-      error.body = body;
-      error.statusCode = httpResponse.statusCode||504;
-      return callNext(error, body);
     }
   },
   /**
