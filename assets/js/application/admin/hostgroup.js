@@ -1,22 +1,6 @@
-/* global debug, _, bootbox, tasks */
 /**
  *
- * IMPORTANTE. README before start.
- *
- * when the data is being get from the server
- * the monitor object has a object property named config
- * from where part of the displayed data is taken.
- *
- * after the edition, all the properties are set in one
- * object with no special structure, and then the data is sent
- * to the server in that way (with no config property)
- *
- * have this in mind whenever you make changes to the code,
- * config property could be included as well, and will be treated as expected.
- *
  * @author Facundo
- *
- * NOTE. please, improve the code if you feel you can.
  *
  */
 var group ;
@@ -40,7 +24,6 @@ $(function(){
   var scraperModal = new ScraperModal.TemplateMonitorCRUD({
     container:'[data-hook=scraper-form-container]'
   });
-  window.scraper = scraperModal;
 
   $('#group-form .buttons.dropdown [data-hook=create-scraper-monitor]')
   .on('click',function(event){
@@ -683,9 +666,9 @@ $(function(){
     event.preventDefault();
     var item = $(event.target).closest('.tag').data('item');
 
-    if( item._type == 'task' ){
+    if( /task/i.test(item._type) ){
       updateTaskItem(item);
-    } else if( item._type == 'monitor' ){
+    } else {
       if( item.type == 'scraper' ){
         scraperModal.openEditForm(group.id, item);
       } else {
@@ -699,7 +682,7 @@ $(function(){
     event.stopPropagation();
     event.preventDefault();
     var item = $(event.target).closest('.tag').data('item');
-    if( item._type == 'task' ){
+    if( /task/i.test(item._type) ){
       bootbox.confirm('The task '+item.name+' will be removed. Continue?',
         function(confirmed){
           if(confirmed){
@@ -707,8 +690,7 @@ $(function(){
           }
         }
       );
-    } else
-    if( item._type == 'monitor' ){
+    } else {
       bootbox.confirm('The Monitor will be removed. Continue?',
         function(confirmed){
           if(confirmed){
