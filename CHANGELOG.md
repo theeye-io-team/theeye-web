@@ -1,5 +1,24 @@
 # CHANGELOG
 
+### 0.6.3 - 2016-10-18
+
+> workflow page         
+
+> added workflow link into task and monitors , in events page        
+
+> schedule page            
+
+> fixed minors bugs and styles      
+
+> improved main welcome documentation (how to create monitors and tasks)         
+
+> added footer with Copyright       
+
+> added powershell syntax and extensions to combo      
+
+> remove ugly code and console.logs      
+
+
 ### 0.6.2 - 2016-10-13
 
 > change modals behaviour            
