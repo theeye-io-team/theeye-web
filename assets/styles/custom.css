@@ -643,3 +643,36 @@ input[type=checkbox].form-control {
 }
 
 .loginBox section.license a:hover { color:#ee8e40; }
+
+.events-panel .panel-item.icons .flowchart-icon { 
+  background-image: url('/images/flowchart-white.png');
+  background-repeat: no-repeat;
+  background-size: 26px;
+  background-position: center center;
+  color: #FFF;
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100%;
+  width: 31px;
+  height: 31px;
+  background-position-y: 1px;
+}
+
+a.flowchart-icon { 
+  margin-left:10px;
+  float:right;
+}
+
+@media (max-width: 500px) {
+  .events-panel .panel-item.icons .flowchart-icon { 
+    background-size: 18px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .events-panel .panel-item.icons a.flowchart-icon,
+  .events-panel .panel-item.icons .btn-icon-image,
+  .admin-container .panel-heading .panel-item.icons .state-resource-container,
+  .admin-container .panel-heading .panel-item.icons .resource-search {
+    margin-left:5px;
+  }
+}
