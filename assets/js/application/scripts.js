@@ -14,6 +14,7 @@ $(function() {
   var aceEditor = ace.edit("ace-editor");
   aceEditor.setTheme("ace/theme/twilight");
   aceEditor.session.setMode("ace/mode/javascript");
+  aceEditor.setOptions({ maxLines: 20 });
 
   var ext = "js";
 
