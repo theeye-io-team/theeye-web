@@ -29,7 +29,11 @@ var Modal = function (specs) {
     this.el = div.firstChild;
 
     this.$el = $(this.el);
-    this.$el.modal({ show: false, keyboard: true });
+    this.$el.modal({
+      show: false,
+      keyboard: false,
+      backdrop: 'static'
+    });
 
     this.bindEvents();
     this.parent = div;

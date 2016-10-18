@@ -1,0 +1,29 @@
+<section>
+  <% if(agent) { %>
+  <h4>Linux Agent Installer</h4>
+  Run this cURL command from a bash console to install
+  the agent on the client<br /><br />
+  <div class="input-group">
+    <input readonly type="text"
+    id="agentCurl"
+    class="form-control"
+    data-hook="curl-agent"
+    value="<%= agent.curl %>">
+    <span class="input-group-btn">
+      <button class="btn btn-primary clipboard-btn" type="button"
+        data-clipboard-target="#agentCurl">
+        <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+      </button>
+    </span>
+  </div><!-- /input-group -->
+
+  <h4>Window Agent Installer</h4>
+  <p>
+    Windows Users, please download the installer 
+    <a href="https://s3.amazonaws.com/theeye.agent/theEyeInstaller-x64.exe" class="btn btn-primary">
+      theEyeInstaller-x64.exe <span class="glyphicon glyphicon-download"></span></a>
+  </p>
+  <% } else { %>
+  <div>ERROR: Agent-User not found!</div>
+  <% } %>
+</section>

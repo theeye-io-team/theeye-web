@@ -78,6 +78,11 @@ $(function(){
     var hostId = $(this).closest('.itemRow').data('item-host-id');
     window.location = "/hoststats/"+hostId;
   });
+  $('a[data-hook=workflow-button]').on('click',function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    window.open(event.currentTarget.href, '_blank');
+  });
   checkAllUpAndRuning();
 });
 
@@ -138,8 +143,9 @@ function triggers(io){
 
     if( data._type == 'ScriptJob' ){
       $tpl = $('div.resultTemplate div').first().clone().remove();
-      $tpl.find('.scriptStdout').html(data.result.stdout);
-      $tpl.find('.scriptStderr').html(data.result.stderr);
+      var script_result = (data.result.script_result||data.result); // temporal fix
+      $tpl.find('.scriptStdout').html(script_result.stdout);
+      $tpl.find('.scriptStderr').html(script_result.stderr);
       // $tpl.addClass('col-md-12');
     }
 
@@ -205,7 +211,6 @@ function triggers(io){
       };
 
       io.socket.on('palancas-update', handleTaskResult);
-
 
       $.post("/palanca/trigger", {
         task_id: taskData.taskid,
@@ -273,7 +278,6 @@ function triggers(io){
           alert('All tasks processed. You\'re most welcome.');
         }
       };
-
       io.socket.on('palancas-update', handleTaskResult);
 
       $tasks.each(function(i,e){
@@ -378,7 +382,7 @@ function triggers(io){
 
   function subscribeToTriggers(){
     log('initializing task triggers');
-    io.socket.post('/palanca/subscribe', {}, function (data, jwres){
+    io.socket.post('/palanca/subscribe', { customer: Cookies.getJSON('theeye').customer }, function (data, jwres){
       log('subscribed to trigger updates');
     });
   }
@@ -406,3 +410,5 @@ function triggers(io){
 $(document).on('keypress',function(){
   $('.js-searchable-box input').focus();
 });
+
+new Clipboard('.clipboard-btn');

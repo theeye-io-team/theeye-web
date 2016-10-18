@@ -14,6 +14,7 @@ $(function() {
   var aceEditor = ace.edit("ace-editor");
   aceEditor.setTheme("ace/theme/twilight");
   aceEditor.session.setMode("ace/mode/javascript");
+  aceEditor.setOptions({ maxLines: 20 });
 
   var ext = "js";
 
@@ -26,32 +27,24 @@ $(function() {
     }
     var mode = "";
     switch(extension) {
-      case "js": mode = "javascript";
-        break;
-      case "bat": mode = "batchfile";
-        break;
-      case "sh": mode = "sh";
-        break;
-      case "py": mode = "python";
-        break;
-      case "php": mode = "php";
-        break;
+      case "ps1": mode = "powershell"; break;
+      case "js": mode = "javascript"; break;
+      case "bat": mode = "batchfile"; break;
+      case "sh": mode = "sh"; break;
+      case "py": mode = "python"; break;
+      case "php": mode = "php"; break;
     }
     return mode;
   }
   function mode2extension(mode) {
     var extension = "";
     switch(mode) {
-      case "javascript": extension = "js";
-        break;
-      case "batchfile": extension = "bat";
-        break;
-      case "sh": extension = "sh";
-        break;
-      case "python": extension = "py";
-        break;
-      case "php": extension = "php";
-        break;
+      case "powershell": extension = "ps1"; break;
+      case "javascript": extension = "js"; break;
+      case "batchfile": extension = "bat"; break;
+      case "sh": extension = "sh"; break;
+      case "python": extension = "py"; break;
+      case "php": extension = "php"; break;
     }
     return extension;
   }
@@ -337,31 +330,12 @@ $(function() {
 
   //**Handle script upload success**//
   $state.on('script_uploaded', function(ev, data) {
-    //WRONG! you should listen to this event on the layout of your
-    //choice, not eval every possible pathname here.
-    //Ported this functionality to assets/js/application/admin/hostgroups.js
-
     if(location.pathname != '/admin/script') {
-      //restrict the event function to the /admin/script layout
       return;
-
-      // alert("Script succesfully uploaded","Script upload", function() {
-      //   $('[data-hook=script_id]').each(function(index, element){
-      //     console.log(element);
-      //     $(element).append($('<option>', {
-      //       value: data.script.id,
-      //       text: data.script.filename
-      //     }));
-      //     $(element).val(data.script.id);
-      //   });
-      //
-      //   $('#script-modal').modal('hide');
-      // });
     } else {
       alert("Script succesfully uploaded", "Script upload", function() {
         if(self.scriptId) {
           $('#script-modal').modal('hide');
-          // $('[data-hook=scriptTitle'+data.script.id+']').html(data.script.filename);
           $('span.name','div.itemRow[data-item-id='+data.script.id+']').text(data.script.filename);
         } else {
           location.reload();
@@ -370,7 +344,7 @@ $(function() {
     }
   });
 
-//**Public script upload**//
+  //**Public script upload**//
   $('.example-code').click(function(e) {
     var mode = $("[data-hook=editor-mode]").val();
     var url = "";
@@ -389,7 +363,6 @@ $(function() {
       aceEditor.setValue(data);
     }).fail(function(xhr, err, xhrStatus)
     {
-      console.log(err);
     });
   });
 
@@ -449,17 +422,12 @@ $(function() {
         .addClass('glyphicon-ban-circle')
         .data('loading', true);
       $.getJSON("https://api.github.com/gists/"+gistId, function(){
-        console.log(arguments);
       })
       .fail(function(xhr, status, error){
-        console.log('fail');
-        console.log(arguments);
         $downloadButtonIcon
           .addClass('glyphicon-remove');
       })
       .success(function(res, status, xhr){
-        console.log('success');
-        // console.log(res);
 
         var files = Object.keys(res.files);
         if(!files.length) {
@@ -469,7 +437,6 @@ $(function() {
 
         //right now, we only accept a single (first) file
         var file = res.files[files[0]];
-        console.log(file);
 
         var source = file.content.replace(/^#!\/.*\n/,'');
 
@@ -501,8 +468,6 @@ $(function() {
           .addClass('glyphicon-ok');
       })
       .always(function(res, status, xhr){
-        console.log('always');
-        console.log(arguments);
         $downloadButtonIcon
           .removeClass('glyphicon-ban-circle')
           .data('loading', false);
@@ -590,8 +555,6 @@ $(function() {
             $.blockUI();
             var deleteRequests = [];
             var removeOnSuccess = function(id) {
-              console.log('request success');
-              // console.log('would remove '+'div.itemRow[data-item-id='+id+']');
               $('div.itemRow[data-item-id='+id+']').remove();
             };
             for(var ii = 0; ii < taskIds.length; ii++) {
@@ -608,39 +571,11 @@ $(function() {
               );
             }
 
-            $.when.apply($, deleteRequests).then(
-              function(){
-                console.log('then success');
-                console.log(arguments);
-                alert(taskRows + successFooter, successTitle);
-              },
-              function(){
-                console.log('then fail');
-                console.log(arguments);
-                alert(taskRows + failFooter, failTitle);
-              },
-              // then progress nunca se llama ... ?
-              function() {
-                console.log('then progress');
-                console.log(arguments);
-              }
-            // when progress nunca se llama tampoco ... ?
-            ).progress(function(){
-              console.log('when progress');
-              console.log(arguments);
-            }
-            ).always(function(){
-              console.log('always');
-              $.unblockUI();
-            }
-            ).done(function(){
-              // done deberia volver con array de results
-              // no se si no funciona o es porque el req.DELETE
-              // no devuelve nada, habria que probar de cambiar la API
-              console.log('when done');
-              console.log(arguments);
-              console.log('ok, they are gone');
-            });
+            $.when.apply($, deleteRequests)
+            .then(function(){ }, function(){ }, function() { })
+            .progress(function(){ })
+            .always(function(){ $.unblockUI(); })
+            .done(function(){ });
           });
         });
       }
@@ -680,7 +615,6 @@ $(function() {
     // a itemchanged event on massChecker. On itemchanged MASS CHECKER
     // checks for an unchecked item. If any, MASS CHECKER unchecks itself
     $('.massChecker').on('itemchanged', function(evt){
-      console.log('checking items state');
       var $this = $(this);
       var $spanIcon = $this.children('span').first();
       $('.rowSelector:visible').each(function(i,e){

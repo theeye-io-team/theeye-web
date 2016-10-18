@@ -12,7 +12,7 @@
 
         <h3>Agent Credentials</h3>
         <div class="row">
-          <div class="col-xs-3"><label>Customer :</label></div>
+          <div class="col-xs-3"><label>Customer</label></div>
           <div class="input-group col-xs-9">
             <input
               readonly type="text"
@@ -28,7 +28,7 @@
           </div><!-- /input-group -->
         </div>
         <div class="row">
-          <div class="col-xs-3"><label>Client ID :</label></div>
+          <div class="col-xs-3"><label>Client ID</label></div>
           <div class="input-group col-xs-9">
             <input
               readonly type="text"
@@ -44,7 +44,7 @@
           </div><!-- /input-group -->
         </div>
         <div class="row">
-          <div class="col-xs-3"><label>Client Secret :</label></div>
+          <div class="col-xs-3"><label>Client Secret</label></div>
           <div class="input-group col-xs-9">
             <input data-hook="blurry"
               readonly type="text"
@@ -60,7 +60,7 @@
           </div><!-- /input-group -->
         </div>
         <div class="row">
-          <div class="col-xs-3"><label>Current Access Token :</label></div>
+          <div class="col-xs-3"><label>Access Token</label></div>
           <!-- <div class="col-xs-9" data-hook="agent-token"> <i data-hook="blurry" class="hidden"> <%= agent.token %> </i> </div> -->
           <div class="input-group col-xs-9">
             <input data-hook="blurry"
@@ -77,35 +77,7 @@
           </div><!-- /input-group -->
         </div>
 
-        <h3>Linux Agent Installer</h3>
-        <% if(agent) { %>
-          Run this cURL command from a bash console to install
-          the agent on the client<br /><br />
-          <div class="input-group">
-            <input readonly type="text"
-              id="agentCurl"
-              class="form-control"
-              data-hook="curl-agent"
-              value="<%= agent.curl %>">
-            <span class="input-group-btn">
-              <button class="btn btn-primary clipboard-btn" type="button"
-                data-clipboard-target="#agentCurl">
-                <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
-              </button>
-            </span>
-          </div><!-- /input-group -->
-        <% } else { %>
-          <div>
-            <pre>ERROR: Agent-User not found!</pre>
-          </div>
-        <% } %>
-
-        <h3>Window Agent Installer</h3>
-        <p>
-          <strong>Windows Users, please download the installer:</strong>
-          <a href="https://s3.amazonaws.com/theeye.agent/theEyeInstaller-x64.exe" class="btn btn-default">
-            theEyeInstaller-x64.exe <span class="glyphicon glyphicon-download"></span></a>
-        </p>
+        <%- partial ('../partials/agent-installer.ejs') %>
 
         <% } %>
       </div>

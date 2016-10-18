@@ -89,6 +89,7 @@ module.exports.routes = {
   'put    /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.update',
   'post   /admin/hostgroup/:groupid/monitortemplate' : 'HostGroupMonitorTemplateController.create',
   'delete /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.destroy',
+
   /**
    *
    * generic api endpoints
@@ -101,4 +102,6 @@ module.exports.routes = {
   'get /api/:resource/:id':'ApiController.get',
   // template only render
   'get /admin/webhook':'WebhookController.index',
+  'get /admin/workflow':'WorkflowController.index',
+  'get /admin/scheduler':'SchedulerController.index',
 };

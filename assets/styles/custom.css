@@ -14,17 +14,19 @@ a:-webkit-any-link {
 
 p { text-align: justify; max-width: 700px; }
 
-code, pre {
+pre {
     margin: 0 2px;
     padding: 0px 5px;
     border: 1px solid #EAEAEA;
-    background-color: #F8F8F8;
+    color: rgba(0,255,0,1);
+    background-color: rgba(0,0,0,1);
     border-radius: 3px;
     font-size: 12px;
     font-family: Consolas, "Liberation Mono", Courier, monospace;
+    max-width: 100%;
+    padding: 10px;
+    margin: 20px 0; 
 }
-
-pre { max-width: 100%; padding: 10px; margin: 20px 0; }
 
 .demo::before{
     content: "result";
@@ -87,6 +89,7 @@ ol.list-group li.red-border { border-color: red; }
 .hidden-container { display: none; }
 
 .events-container .row { color:white; }
+.events-container .video { text-align: center; }
 
 
 /* common */
@@ -143,6 +146,7 @@ body {
   padding-bottom:80px; /* compensa footer */
   position:absolute;
   width:100%;
+  height:100%;
 }
 body { background:#304269;font-family: 'Lato', sans-serif; }
 /* Background image doesn t support transparencies so I ride out
@@ -228,6 +232,7 @@ footer {
   bottom:0;
   width:100%;
   text-align:center;
+  z-index:5000;
 }
 footer a.image {padding:6px;display:inline-block}
 footer a.image img {margin-top:-4px}
@@ -608,6 +613,7 @@ h4.panel-title-content::after {
 
 .calendarEvent { cursor: pointer; }
 .calendarEvent:hover { border-color: red; }
+
 /*
 no puedo recordar para que estaba esto, pero rompe los input
 input[type=checkbox], input[type=radio] { margin:0; width:16px;height:16px; margin-top:8px;}
@@ -619,7 +625,8 @@ input[type=checkbox].form-control {
 /*
  * JSON Viewer custom style
  */
-.json-literal { color : #d4b209 }
+.json-literal { color:#d4b209; }
+.json-string { color:rgba(0,255,0,1); }
 
 .blurry-text { color: transparent; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
 .cursor-pointer { cursor: pointer; }
@@ -632,5 +639,40 @@ input[type=checkbox].form-control {
 
   nav.navbar ul.navbar-right div.dropdown:hover > ul.dropdown-menu {
     display: block;
+  }
+}
+
+.loginBox section.license a:hover { color:#ee8e40; }
+
+.events-panel .panel-item.icons .flowchart-icon { 
+  background-image: url('/images/flowchart-white.png');
+  background-repeat: no-repeat;
+  background-size: 26px;
+  background-position: center center;
+  color: #FFF;
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100%;
+  width: 31px;
+  height: 31px;
+  background-position-y: 1px;
+}
+
+a.flowchart-icon { 
+  margin-left:10px;
+  float:right;
+}
+
+@media (max-width: 500px) {
+  .events-panel .panel-item.icons .flowchart-icon { 
+    background-size: 18px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .events-panel .panel-item.icons a.flowchart-icon,
+  .events-panel .panel-item.icons .btn-icon-image,
+  .admin-container .panel-heading .panel-item.icons .state-resource-container,
+  .admin-container .panel-heading .panel-item.icons .resource-search {
+    margin-left:5px;
   }
 }

@@ -1,6 +1,7 @@
+/* global async */
 var debug = require('debug')('eye:web:controller:resource');
 var moment = require('moment');
-var extend = require('util')._extend
+var extend = require('util')._extend;
 
 var toBoolean = function(value){
   if(value==='true'||value===true)
@@ -8,7 +9,7 @@ var toBoolean = function(value){
   if(value==='false'||value===false)
     return false;
   return null;
-}
+};
 
 module.exports = {
   //////////////////////////////////MVC ACTIONS//////////////////////////////////
@@ -36,7 +37,7 @@ module.exports = {
       data.timeouts = [
         {'id':5000, 'value':5},
         {'id':10000, 'value':10},
-        {'id':15000, 'value':15},
+        {'id':15000, 'value':15}
       ];
       data.moment = moment;
       res.view(data);
