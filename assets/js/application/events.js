@@ -78,6 +78,11 @@ $(function(){
     var hostId = $(this).closest('.itemRow').data('item-host-id');
     window.location = "/hoststats/"+hostId;
   });
+  $('a[data-hook=workflow-button]').on('click',function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    window.open(event.currentTarget.href, '_blank');
+  });
   checkAllUpAndRuning();
 });
 
