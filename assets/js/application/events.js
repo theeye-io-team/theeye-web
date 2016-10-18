@@ -143,8 +143,9 @@ function triggers(io){
 
     if( data._type == 'ScriptJob' ){
       $tpl = $('div.resultTemplate div').first().clone().remove();
-      $tpl.find('.scriptStdout').html(data.result.script_result.stdout);
-      $tpl.find('.scriptStderr').html(data.result.script_result.stderr);
+      var script_result = (data.result.script_result||data.result); // temporal fix
+      $tpl.find('.scriptStdout').html(script_result.stdout);
+      $tpl.find('.scriptStderr').html(script_result.stderr);
       // $tpl.addClass('col-md-12');
     }
 
