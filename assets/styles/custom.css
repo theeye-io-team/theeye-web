@@ -662,3 +662,17 @@ a.flowchart-icon {
   float:right;
 }
 
+@media (max-width: 500px) {
+  .events-panel .panel-item.icons .flowchart-icon { 
+    background-size: 18px;
+    width: 22px;
+    height: 22px;
+  }
+
+  .events-panel .panel-item.icons a.flowchart-icon,
+  .events-panel .panel-item.icons .btn-icon-image,
+  .admin-container .panel-heading .panel-item.icons .state-resource-container,
+  .admin-container .panel-heading .panel-item.icons .resource-search {
+    margin-left:5px;
+  }
+}
