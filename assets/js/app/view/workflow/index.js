@@ -43,7 +43,8 @@ var WorkflowPage = function(){
       layout: {
         fit:false,
         name: 'dagre',
-        center: true
+        center: true,
+        rankDir: 'LR'
       },
       style: [{
         selector: 'node',
@@ -51,13 +52,13 @@ var WorkflowPage = function(){
           'height': 50,
           'width': 50,
           'background-fit': 'cover',
-          'border-color': '#000',
-          'border-width': 3,
-          'border-opacity': 0.5,
+          'border-color': '#FFF',
+          'border-width': 1,
+          'border-opacity': 1,
           'content': 'data(label)',
           'text-opacity': 0.8,
-          'text-valign': 'center',
-          'text-halign': 'right',
+          'text-valign': 'top',
+          'text-halign': 'center',
           'background-color': '#ee8e40',
           'background-image': function( ele ){
             var val = ele.data('value')||{ type: 'undefined' };
@@ -73,7 +74,7 @@ var WorkflowPage = function(){
       }, {
         selector: 'edge',
         style: {
-          'width': 4,
+          'width': 5,
           'target-arrow-shape': 'triangle',
           'line-color': '#9dbaea',
           'target-arrow-color': '#9dbaea',
