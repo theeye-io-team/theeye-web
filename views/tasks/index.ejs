@@ -97,7 +97,12 @@
             data-tags="<%= tags %>">
             <div class="panel-heading" role="tab" id="heading<%= task.id %>">
               <h4 class="panel-title">
-                <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= task.id %>" aria-expanded="false" aria-controls="collapse<%= task.id %>">
+                <span class="collapsed"
+                  data-toggle="collapse"
+                  data-parent="#accordion"
+                  href="#collapse<%= task.id %>"
+                  aria-expanded="false"
+                  aria-controls="collapse<%= task.id %>">
                   <div class="panel-title-content">
                     <button class="rowSelector btn btn-primary simple-btn tooltiped"
                       title="Select task"
@@ -109,7 +114,7 @@
 
                       <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
                       &nbsp; <%= task.name %>
-                      <small class="remark-alert">> undefined . host or script are missing </small>
+                      <small class="remark-alert">> host or script are missing </small>
 
                       <% } else if( task.type=='scraper' && !task.host_id ) { %>
 
@@ -119,7 +124,16 @@
 
                       <% } else { %>
 
-                      <%= task.name %> <small><%= task.type %> > <%= task.hostname %></small>
+                      <% if( task.template ) { %>
+                      <small>
+                        <a href="/admin/hostgroup">
+                          <span title="This task was created from a template" class="glyphicon glyphicon-duplicate remark-success tooltiped">
+                          </span>
+                        </a>
+                      </small>
+                      <% } %>
+
+                      &nbsp; <%= task.name %> <small><%= task.type %> > <%= task.hostname %></small>
 
                       <% } %>
                     </span>
@@ -143,7 +157,7 @@
                       </button>
                     </div>
                   </div>
-                </a>
+                </span>
               </h4>
             </div>
             <div id="collapse<%= task.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= task.id %>">

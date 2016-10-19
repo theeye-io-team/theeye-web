@@ -26,13 +26,19 @@ module.exports = {
       if (err) return res.serverError("Error getting data from supervisor: " + err.toString());
 
       // milliseconds
+      function minutesToMillisecondsString(mins){
+        return String( mins * 60 * 1000 );
+      }
       data.looptimes = [
-        {'id':'15000','value':'0.25'},
-        {'id':'30000','value':'0.5'},
-        {'id':'60000','value':'1'},
-        {'id':'300000','value':'5'},
-        {'id':'900000','value':'15'}
+        {'id':minutesToMillisecondsString(0.25),'value':'0.25'},
+        {'id':minutesToMillisecondsString(0.5),'value':'0.5'},
+        {'id':minutesToMillisecondsString(1),'value':'1'},
+        {'id':minutesToMillisecondsString(5),'value':'5'},
+        {'id':minutesToMillisecondsString(15),'value':'15'},
+        {'id':minutesToMillisecondsString(30),'value':'30'},
+        {'id':minutesToMillisecondsString(60),'value':'60'}
       ];
+
       // milliseconds
       data.timeouts = [
         {'id':5000, 'value':5},

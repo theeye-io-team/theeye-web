@@ -5,6 +5,62 @@
  */
 var WorkflowPage = function(){
 
+  function Node( value ){
+    value||(value={});
+
+    this.getFeatureType = function(){
+      var type = (value.type||value._type);
+      var features = [
+        'event','script','scraper','process',
+        'webhook','host','dstat','psaux'
+      ];
+
+      var found = features.find(function(f){
+        var regexp = new RegExp(f,'i');
+        if( regexp.test( type ) ) return true;
+      });
+
+      return (found||'node');
+    }
+
+    this.getModelType = function(){
+      var type = value._type;
+      if( /event/i.test(type) ) return undefined;
+      if( /task/i.test(type) ) return 'task';
+      if( /monitor/i.test(type) ) return 'monitor';
+      if( /webhook/i.test(type) ) return 'webhook';
+      return undefined;
+    }
+
+    this.getImgUrl = function(){
+      return '/images/' + ( this.getFeatureType() ) + '.png';
+    }
+
+    this.getResourceUrl = function(){
+      var type = this.getModelType();
+      if( !type ) return undefined;
+
+      var search = { id: value.id };
+      var uri = URI('/admin/' + type + '#search=' + value.name);
+      uri.addSearch(search);
+      return uri.toString();
+    }
+
+    Object.defineProperty(this,'data',{
+      get: function(){
+        var url = this.getResourceUrl();
+        return {
+          id: value.id,
+          label: value.name,
+          value: value,
+          href: url
+        }
+      }
+    });
+  }
+
+
+
   var uri = URI(document.location);
   var query = uri.search(true);
 
@@ -17,14 +73,13 @@ var WorkflowPage = function(){
 
     var elems = [];
 
+    //data.nodes.forEach(d => console.log(d.value&&d.value._type) );
+
     data.nodes.forEach( function(n) {
+      var node = new Node(n.value);
       elems.push({
         group: "nodes",
-        data: {
-          id: n.v,
-          label: (n.value && n.value.name),
-          value: n.value
-        }
+        data: node.data
       });
     });
 
@@ -61,14 +116,8 @@ var WorkflowPage = function(){
           'text-halign': 'center',
           'background-color': '#ee8e40',
           'background-image': function( ele ){
-            var val = ele.data('value')||{ type: 'undefined' };
-
-            function type () {
-              var type = (val.type||val._type);
-              return ( /event/i.test(type) ? 'event' : type ).toLowerCase();
-            }
-
-            return '/images/' + type() + '.png';
+            var node = new Node( ele.data('value') );
+            return node.getImgUrl();
           },
         }
       }, {
@@ -84,6 +133,18 @@ var WorkflowPage = function(){
     });
 
     cy.center();
+
+    cy.on('tap','node',function(){
+      var node = this;
+      var href = node.data('href');
+      if( ! href ) return;
+
+      try { // your browser may block popups
+        window.open( href, '_blank' );
+      } catch(e) { // fall back on url change
+        window.location.href = href; 
+      } 
+    });
 
   })
   .fail(function(xhr,status){
