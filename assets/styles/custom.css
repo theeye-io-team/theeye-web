@@ -25,7 +25,7 @@ pre {
     font-family: Consolas, "Liberation Mono", Courier, monospace;
     max-width: 100%;
     padding: 10px;
-    margin: 20px 0; 
+    margin: 20px 0;
 }
 
 .demo::before{
@@ -307,7 +307,7 @@ div.js-searchable-box button.clean {right:39px;color:#999;background:#ccc;}
 div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 
 .admin-container .admin-panel {top:36px; position:relative;}
-.admin-container { margin-top:81px; width:100%; color:white;}
+.admin-container { margin-top:76px; width:100%; color:white;}
 .admin-container h3 {background-color: #23324C;margin: 0;padding: 6px;color: #fff;font-size: 14px;text-align: center;}
 .admin-container .ladda-button {border: none;text-shadow: none;box-shadow: none}
 .admin-container .panel-heading {padding:0;}
@@ -408,7 +408,7 @@ ol.list-group.tasks { color:#34495E }
 
 @media (max-width:767px) {
   .admin-container{
-    margin-top:61px;
+    margin-top:56px;
   }
 }
 
@@ -644,7 +644,7 @@ input[type=checkbox].form-control {
 
 .loginBox section.license a:hover { color:#ee8e40; }
 
-.events-panel .panel-item.icons .flowchart-icon { 
+.events-panel .panel-item.icons .flowchart-icon {
   background-image: url('/images/flowchart-white.png');
   background-repeat: no-repeat;
   background-size: 26px;
@@ -657,13 +657,13 @@ input[type=checkbox].form-control {
   background-position-y: 1px;
 }
 
-a.flowchart-icon { 
+a.flowchart-icon {
   margin-left:10px;
   float:right;
 }
 
 @media (max-width: 500px) {
-  .events-panel .panel-item.icons .flowchart-icon { 
+  .events-panel .panel-item.icons .flowchart-icon {
     background-size: 18px;
     width: 22px;
     height: 22px;
