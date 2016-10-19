@@ -10,19 +10,22 @@ var SchedulerPageView = (function(){
 
   function buildEventSeries(title, startingDate, interval) {
     var events = [];
+    var halfHourInMiliseconds = 30 * 60 * 1000;
     interval = interval ? humanInterval(interval) : false;
     //60 iterations / dates
     if(interval) {
       for(var ii = 0; ii < 60; ii++) {
         events.push({
           title: title,
-          start: new Date(startingDate + (interval * ii))
+          start: new Date(startingDate + (interval * ii)),
+          end: new Date(startingDate + (interval * ii) + halfHourInMiliseconds)
         });
       }
     }else{
       events.push({
         title: title,
-        start: new Date(startingDate)
+        start: new Date(startingDate),
+        end: new Date(startingDate + halfHourInMiliseconds)
       });
     }
     return events;
