@@ -4,6 +4,10 @@ var HostStats = function (io, specs) {
   var agent = specs.agent ;
   var host = specs.host ;
 
+  var $loadAvg1 = $(".loadAverage#lavg1");
+  var $loadAvg5 = $(".loadAverage#lavg5");
+  var $loadAvg15 = $(".loadAverage#lavg15");
+
   function log() {
     var deb = debug('eye:web:events');
     deb.apply(deb, arguments);
@@ -20,66 +24,6 @@ var HostStats = function (io, specs) {
       }
     }
   };
-
-  function subscribeSocketNotifications(resource) {
-    var host = window.location.pathname.split('/')[2];
-    io.socket.post('/hoststats/subscribe/' + host, {
-      resource: resource
-    }, function serviceSocketSubscription(data, jwres) {
-      log(data);
-      log(jwres);
-    });
-  }
-
-  function onSocketIoConnect() {
-    log('socket connected');
-
-    function initPsaux(){
-      var psaux = _.findWhere(cachedStats, { type: "psaux" });
-      if(!psaux) return;
-
-      Psaux.createControl();
-      Psaux.update({
-        // Hago el map porque las properties llegan en diferente
-        // orden desde sns y desde mongo local
-        stat: psaux.stats.map(function mapMongoPsauxToEventPsAux(s) {
-          return [
-            s.user,
-            s.pid,
-            s["%cpu"],
-            s["%mem"],
-            s["vsz"],
-            s["rss"],
-            s["tty"],
-            s["state"],
-            s["started"],
-            s["time"],
-            s["command"]
-          ]
-        })
-      });
-      // subscribe psaux notifications
-      io.socket.on("psaux_update", Psaux.update);
-      subscribeSocketNotifications('psaux');
-    }
-
-    function initDstat(){
-      var dstat = _.findWhere(cachedStats, { type: "dstat" });
-      Dstat.initialize({ disks: Object.keys(dstat.stats.disk) });
-      Dstat.update(dstat);
-
-      // subscribe dstat notifications
-      io.socket.on('host-stats_update', Dstat.update);
-      subscribeSocketNotifications('host-stats');
-    }
-
-    initPsaux();
-    initDstat();
-  }
-
-  log('listening sockets connection');
-  if( io.socket.socket && io.socket.socket.connected ) onSocketIoConnect();
-  io.socket.on("connect", onSocketIoConnect);
 
   var Psaux = (function() {
     /** PS aux table */
@@ -176,6 +120,7 @@ var HostStats = function (io, specs) {
     }
   })();
 
+
   var Dstat = (function(){
     function updateGauges(dstat) {
       var memoryValue = (dstat.stat.mem_used * 100 / dstat.stat.mem_total);
@@ -228,10 +173,6 @@ var HostStats = function (io, specs) {
         }
       });
     }
-
-    var $loadAvg1 = $(".loadAverage#lavg1");
-    var $loadAvg5 = $(".loadAverage#lavg5");
-    var $loadAvg15 = $(".loadAverage#lavg15");
 
     function updateLoadAverage(dstat) {
       var lavg1 = dstat.stat.load_1_minute.toFixed(2);
@@ -352,5 +293,66 @@ var HostStats = function (io, specs) {
     $container.html( html );
 
   })();
+
+
+  function subscribeSocketNotifications(resource) {
+    var host = window.location.pathname.split('/')[2];
+    io.socket.post('/hoststats/subscribe/' + host, {
+      resource: resource
+    }, function serviceSocketSubscription(data, jwres) {
+      log(data);
+      log(jwres);
+    });
+  }
+
+  function onSocketIoConnect() {
+    log('socket connected');
+
+    function initPsaux(){
+      var psaux = _.findWhere(cachedStats, { type: "psaux" });
+      if(!psaux) return;
+
+      Psaux.createControl();
+      Psaux.update({
+        // Hago el map porque las properties llegan en diferente
+        // orden desde sns y desde mongo local
+        stat: psaux.stats.map(function mapMongoPsauxToEventPsAux(s) {
+          return [
+            s.user,
+            s.pid,
+            s["%cpu"],
+            s["%mem"],
+            s["vsz"],
+            s["rss"],
+            s["tty"],
+            s["state"],
+            s["started"],
+            s["time"],
+            s["command"]
+          ]
+        })
+      });
+      // subscribe psaux notifications
+      io.socket.on("psaux_update", Psaux.update);
+      subscribeSocketNotifications('psaux');
+    }
+
+    function initDstat(){
+      var dstat = _.findWhere(cachedStats, { type: "dstat" });
+      Dstat.initialize({ disks: Object.keys(dstat.stats.disk) });
+      Dstat.update(dstat);
+
+      // subscribe dstat notifications
+      io.socket.on('host-stats_update', Dstat.update);
+      subscribeSocketNotifications('host-stats');
+    }
+
+    initPsaux();
+    initDstat();
+  }
+
+  log('listening sockets connection');
+  if( io.socket.socket && io.socket.socket.connected ) onSocketIoConnect();
+  io.socket.on("connect", onSocketIoConnect);
 
 };
