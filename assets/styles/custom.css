@@ -209,7 +209,7 @@ hr {border:none;border-bottom:1px dotted #fff}
 .load {cursor:pointer; text-align:center;color:#fff;padding:20px 0 0 0;font-size:20px}
 
 /* footer */
-.footer {
+footer {
   width:100%;
   position:fixed;
   height:40px;
@@ -217,16 +217,10 @@ hr {border:none;border-bottom:1px dotted #fff}
   bottom:0;
   left:0;
   right:0;
-  background-color:#154E79;
-  color: #FFFEFB;
-  z-index:5000;
-}
-footer {
+  background:#EEE;
+  color: #555;
   padding:8px 15px;
-  background:#eee;
   position:fixed;
-  bottom:0;
-  width:100%;
   text-align:center;
   z-index:5000;
 }
