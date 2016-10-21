@@ -101,7 +101,7 @@ button {outline:none}
 /* header */
 /*.navbar {max-height:100px;}*/
 .navbar {margin-bottom:0px;}
-.navbar-header {width:100%;}
+.navbar-header {width:100%;height:73px;}
 .navbar-brand>img {height:32px;/*max-height:78px;*/}
 .navbar-inverse a {color:#38688a;text-shadow:0 1px 0 rgba(255,255,255,0.8)}
 .navbar-inverse .navbar-toggle .icon-bar {background-color:#144e77}
@@ -141,17 +141,13 @@ body {
   padding: 0;
   font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
   font-size: 14px;
-  color: #333;
   background-color: #EFEFEF;
-  padding-bottom:80px; /* compensa footer */
+  background:#304269;font-family: 'Lato', sans-serif;
   position:absolute;
   width:100%;
   height:100%;
+  color:#304269;
 }
-body { background:#304269;font-family: 'Lato', sans-serif; }
-/* Background image doesn t support transparencies so I ride out
-body.login { background:#304269 url(../images/bg.png) center 0 no-repeat }
- */
 .white {color:#fff}
 hr {border:none;border-bottom:1px dotted #fff}
 
@@ -247,11 +243,9 @@ footer a.image img {margin-top:-4px}
 .switchOn:after{left: 33px !important;background:#4c9689 !important}
 
 
-/* Agregada javi... */
-.container, .container-fluid { padding:65px 15px 0px; }
+.container, .container-fluid { padding:15px 15px 0px; }
 .table-responsive { background-color:#EEE;}
 
-body{ color:#304269;}
 .modal-header{ color:#304269;}
 .modal-body{ color:#304269;}
 
@@ -300,15 +294,15 @@ h3.light { color: #EEE}
 .list-group.tasks h3 { color:#304269; }
 .panel-group .panel+.panel { margin-top:0; }
 
-div.js-searchable-box {width:100%;font-weight:700;font-size:14px;position:fixed;z-index: 1000;}
+div.js-searchable-box {width:100%;font-weight:700;font-size:14px;z-index: 1000;}
 div.js-searchable-box input {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
 div.js-searchable-box button {color:#fff;background:#d88e47;border:none;padding:8px 12px;position:absolute;top:0;right:0;width:39px;}
 div.js-searchable-box button.clean {right:39px;color:#999;background:#ccc;}
 div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 
-.admin-container .admin-panel {top:36px; position:relative;}
-.admin-container { margin-top:76px; width:100%; color:white;}
+.admin-container { width:100%; color:white; }
 .admin-container h3 {background-color: #23324C;margin: 0;padding: 6px;color: #fff;font-size: 14px;text-align: center;}
+.admin-container .admin-panel { position:relative;}
 .admin-container .ladda-button {border: none;text-shadow: none;box-shadow: none}
 .admin-container .panel-heading {padding:0;}
 .admin-container .panel-group {margin-bottom:0;}
@@ -384,7 +378,6 @@ ol.list-group.tasks { color:#34495E }
 }
 
 @media (min-width: 768px) {
-  .container, .container-fluid {padding-top:85px;}
   .mainStatus {font-size:40px;width:60%;padding:60px 0}
   .switch{margin:0 auto}
   .loginBox {width:50%}
@@ -404,12 +397,6 @@ ol.list-group.tasks { color:#34495E }
     top: 68px;
   }
   .client.dropdown .dropdown-menu {position:absolute;float:left}
-}
-
-@media (max-width:767px) {
-  .admin-container{
-    margin-top:56px;
-  }
 }
 
 @media (min-width: 1024px) {
@@ -677,3 +664,27 @@ a.flowchart-icon {
     margin-left:5px;
   }
 }
+
+.main-container {
+  position:absolute;
+  width: 100%;
+  margin-bottom:36px;
+  margin-top:76px;
+}
+
+@media (max-width:767px) {
+  .main-container{
+    margin-top:55px;
+  }
+}
+
+#workflow {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  float: left;
+  left: 0;
+  top: 0;
+  z-index: 999;
+}
+
