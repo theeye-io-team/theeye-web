@@ -5,7 +5,11 @@
 module.exports.routes = {
   //Home
   '/' : function(req, res, next){
-    res.sendfile(sails.config.appPath + '/assets/theeye-landpage/index.html');
+    if( sails.config.application.landingPage ){
+      res.sendfile(sails.config.appPath + '/assets/theeye-landpage/index.html');
+    } else {
+      res.redirect('/login');
+    }
   },
   '/mantenimiento': { view: 'mantenimiento' },
   //AuthController routes
