@@ -66,6 +66,7 @@ var UserController = module.exports = {
               }
               //this here so, err or not, userAgent or not, view doesn't fail
               res.view({
+                agentBinary : sails.config.application.agentBinary,
                 agent : userAgent || null,
                 user : user,
                 passports : passports,

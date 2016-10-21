@@ -20,8 +20,8 @@
   <h4>Window Agent Installer</h4>
   <p>
     Windows Users, please download the installer 
-    <a href="https://s3.amazonaws.com/theeye.agent/theEyeInstaller-x64.exe" class="btn btn-primary">
-      theEyeInstaller-x64.exe <span class="glyphicon glyphicon-download"></span></a>
+    <a href="<%= agentBinary.url + agentBinary.name %>" class="btn btn-primary">
+      <%= agentBinary.name %> <span class="glyphicon glyphicon-download"></span></a>
   </p>
   <% } else { %>
   <div>ERROR: Agent-User not found!</div>

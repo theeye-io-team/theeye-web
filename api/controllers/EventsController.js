@@ -32,6 +32,7 @@ module.exports = {
           if(error) debug(error);
           data.agent = userAgent;
           data.moment = moment;
+          data.agentBinary = sails.config.application.agentBinary;
 
           var subs = _.chain(data.resources)
             .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
