@@ -307,7 +307,7 @@ div.js-searchable-box button.clean {right:39px;color:#999;background:#ccc;}
 div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 
 .admin-container .admin-panel {top:36px; position:relative;}
-.admin-container { margin-top:76px; width:100%; color:white;}
+.admin-container { margin-top:75px; width:100%; color:white;}
 .admin-container h3 {background-color: #23324C;margin: 0;padding: 6px;color: #fff;font-size: 14px;text-align: center;}
 .admin-container .ladda-button {border: none;text-shadow: none;box-shadow: none}
 .admin-container .panel-heading {padding:0;}
