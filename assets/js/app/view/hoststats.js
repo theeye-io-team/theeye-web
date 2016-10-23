@@ -1,3 +1,4 @@
+/* global _, debug, JustGage, Templates, moment */
 var HostStats = function (io, specs) {
 
   var cachedStats = specs.cachedStats ;
@@ -85,7 +86,7 @@ var HostStats = function (io, specs) {
         if (!Stats.psaux.sort.column) {
           return;
         }
-        stat = _.sortByOrder($psauxTable.data("data"), [Stats.psaux.sort.column], [Stats.psaux.sort.direction]);
+        var stat = _.sortByOrder($psauxTable.data("data"), [Stats.psaux.sort.column], [Stats.psaux.sort.direction]);
         $psauxTable.data("data", stat);
       },
       filterProcesses : function () {
@@ -117,9 +118,8 @@ var HostStats = function (io, specs) {
           $psauxTbody.append('<tr class="search-sf"><td class="text-muted" colspan="6">No entries found.</td></tr>');
         }
       }
-    }
+    };
   })();
-
 
   var Dstat = (function(){
     function updateGauges(dstat) {
@@ -269,22 +269,23 @@ var HostStats = function (io, specs) {
 
   (function HostState(){
 
-    var template = Templates['assets/templates/host-stats.hbs'];
+    var hostStatTemplate = Templates['assets/templates/host-stats.hbs'];
     var agentFailure = _.template('<span>Agent <span style="color:rgb(255, 255, 0);"><b>is failing.</b></span></span>');
     var agentSuccess = _.template('<span>Agent <span style="color:#5cb85c;"><b>is reporting.</b></span></span>');
     var agentStopped = _.template('<span>Agent <span style="color:rgb(255, 0, 0);"><b>is not reporting.</b></span></span>');
     var $container = $('[data-hook=host-container]');
 
+    var message;
     if( agent.state === 'normal' ) {
-      var message = agentSuccess() ;
+      message = agentSuccess() ;
     } else if( agent.state === 'updates_stopped' ) {
-      var message = agentStopped() ;
+      message = agentStopped() ;
     } else {
-      var message = agentFailure() ;
+      message = agentFailure() ;
     }
 
     var last_update = moment( new Date(host.last_update) );
-    var html = template({
+    var html = hostStatTemplate({
       host: host,
       agentState: message,
       lastUpdateCalendar: last_update.calendar()
@@ -329,7 +330,7 @@ var HostStats = function (io, specs) {
             s["started"],
             s["time"],
             s["command"]
-          ]
+          ];
         })
       });
       // subscribe psaux notifications
