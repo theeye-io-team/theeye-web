@@ -24,8 +24,6 @@ window.App.Models.ScraperTemplate = Backbone.Model.extend({
 			tags : monitor.tags,
       // config
 			body : config.body,
-			external : config.external,
-			external_host_id : config.external_host_id,
 			gzip : config.gzip,
 			json : config.json,
 			method : config.method,

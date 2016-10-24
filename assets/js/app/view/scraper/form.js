@@ -7,7 +7,6 @@
  * global select2
  * global Templates , compiled handlebars namespace
  *
- * FormElement = require(./form-element) 
  *
  */
 var Scraper = (function Scraper(){
@@ -71,17 +70,6 @@ var Scraper = (function Scraper(){
         else $bodyContainer.slideUp(80);
       });
 
-      /**
-      $parent.on('change','input[name=external]',function(event){
-        var $container = self.queryByHook('external-hosts-container');
-        if( this.checked === true ) {
-          $container.slideDown(80);
-        } else {
-          $container.slideUp(80);
-          $container.find("option:eq(0)").prop('selected', true);
-        }
-      });
-      */
 
       this.find('span.tooltiped').tooltip();
 
@@ -124,10 +112,6 @@ var Scraper = (function Scraper(){
       this.queryByHook('hosts').select2({
         placeholder: 'Monitor Host',
         data: Select2Data.PrepareHosts( this.hosts )
-      });
-      this.queryByHook('external_hosts').select2({
-        placeholder: 'External Host',
-        data: Select2Data.PrepareHosts( this.scraperHosts )
       });
     },
     remove : function(){

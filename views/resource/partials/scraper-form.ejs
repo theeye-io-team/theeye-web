@@ -111,32 +111,8 @@
         <input data-hook=json type=checkbox name=json class="form-control" style="width:16px;">
       </div>
     </div>
-    <div class="form-group">
-      <label for="external" class="col-sm-3 control-label">
-        Run from external source? [optional]
-        <span title="This monitor need to be executed from outside of the host"
-          style="cursor:help" class="tooltiped glyphicon glyphicon-question-sign">
-        </span>
-      </label>
-      <div class="col-sm-9">
-        <input data-hook="external" type="checkbox" name="external" class="form-control" style="width:16px;">
-      </div>
-    </div>
-    <div id="externalScraperHost" class="form-group" style="display:none">
-      <label for="url" class="col-sm-3 control-label">Run check from</label>
-      <div class="col-sm-9">
-        <select data-hook="external_host_id" name="external_host_id" class="form-control" style="width:100%;">
-          <option value="" selected><strong>select a host</strong></option>
-          <% hosts.forEach(function(h) { %>
-          <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
-          <% }); %>
-          <% scraperHosts.forEach(function(h) { %>
-          <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
-          <% }); %>
-        </select>
-      </div>
-    </div>
   </section>
+
   <div class="scraper-section-title" data-hook="response-section-toggle">
     <label>Response</label>
     <i class="glyphicon glyphicon-chevron-down"></i>
