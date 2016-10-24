@@ -49,6 +49,7 @@ var prototype = {
   RESOURCE: '/:customer/resource',
   EVENTS: '/:customer/event',
   JOB: '/:customer/job',
+  SCRIPT: '/:customer/script',
   /**
    *
    * @author Facundo
@@ -324,6 +325,7 @@ var prototype = {
     var request = this.performRequest({
       method: 'POST',
       url: options.route,
+      formData: options.formData||undefined,
       body: options.body||undefined,
       qs: options.query||undefined
     },function(error, body){
@@ -331,6 +333,13 @@ var prototype = {
       else options.success(body,request);
     });
     return request;
+  },
+  /**
+   *
+   * in progress
+   *
+   */
+  uploadMultiparted: function(options){
   },
   /**
    * put request wrapper
@@ -341,6 +350,7 @@ var prototype = {
     var request = this.performRequest({
       method: 'PUT',
       url: options.route + '/' + options.id,
+      formData: options.formData||undefined,
       body: options.body||undefined,
       qs: options.query||undefined
     },function(error, body){
@@ -588,28 +598,25 @@ var prototype = {
   /**
    * Creates a Script
    *
-   * @param {Object} script - A descriptor for the file that is going to be uploaded.
-   *   - param {String} fd - Local filepath .
-   *   - param {String} filename - Script filename .
+   * @param {Object} readStream - A script readable stream
    * @param {Object} options - script properties.
-   *   - param {String} description - Script description.
-   * @param {Function} callback - Called with the task as second parameter.
-   *   - param {Error} error - Null if nothing bad happened.
-   *   - param {Array} script - The new script object.
+   *   - param {String} description
+   *   - param {String} filename
+   * @param {Function} callback
    */
-  createScript: function(script, options, callback) {
-    this.performRequest({
+  createScript: function(readStream, options, callback){
+    return this.performRequest({
       method: 'post',
       url: '/:customer/script',
       formData: {
-        description : options.description || '',
+        public: (options.public||false),
+        description: (options.description||''),
         script: {
-          value: fs.createReadStream(script.fd),
+          value: readStream,
           options: {
-            filename: options.filename || script.filename
+            filename: options.filename
           }
-        },
-        public: options.public || false
+        }
       }
     }, function(error, body) {
       if (error) return callback(error);
@@ -631,19 +638,19 @@ var prototype = {
   /**
    * Patch a Script
    */
-  patchScript: function(id, script, options, callback) {
+  patchScript: function(id, stream, options, callback) {
     this.performRequest({
       method: 'patch',
       uri: '/:customer/script/' + id,
       formData: {
-        description : options.description,
+        public: (options.public||false),
+        description: options.description,
         script: {
-          value: fs.createReadStream(script.fd),
+          value: stream,
           options: {
-            filename: options.filename || script.filename
+            filename: options.filename
           }
         },
-        public: options.public || false
       }
     }, function(error, body) {
       if (error) return callback(error);

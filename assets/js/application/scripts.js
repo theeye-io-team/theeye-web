@@ -36,6 +36,7 @@ $(function() {
     }
     return mode;
   }
+
   function mode2extension(mode) {
     var extension = "";
     switch(mode) {
@@ -254,78 +255,54 @@ $(function() {
       return;
     }
 
-    var source = aceEditor.getSession().getValue();
-    if(!source.trim()) {
-      bootbox.alert("Script should not be empty!");
-      return;
-    }
+    var description = $('form[data-hook=script-form] textarea#description').val();
+    var uploadMethod = $('input:radio[name=live-edit]:checked').val();
     var extension = ext;
-
-    self.scriptId = $("[data-hook=script-id]").val();
-
     var url  = '/script';
     var type = 'POST';
-    if(self.scriptId) {
-      url  = '/script/' + self.scriptId;
+
+    var scriptId = self.scriptId = $('[data-hook=script-id]').val();
+    if(scriptId) {
+      url  = '/script/' + scriptId;
       type = 'PUT';
     }
 
     var uploadMethod = $('input:radio[name=live-edit]:checked').val();
-    if(uploadMethod === 'fileupload') {
+    if( uploadMethod == 'fileupload' ) {
+
       scriptDropZone.processQueue();
+
     } else {
-      if(!/^#!\/.*/.test(source) && 1 == 2) { //remove this part, makes no sense
-        bootbox.confirm('No interpreter found, want to continue?',function(confirmed) {
-          if(confirmed) {
-            var formData = new FormData();
-            formData.append("filename", $("input#filename").val());
-            formData.append("description", $("form[data-hook=script-form] textarea#description").val());
-            formData.append("uploadMethod", $('input:radio[name=live-edit]:checked').val());
-            formData.append('scriptSource', btoa(source));
-            formData.append('extension', extension);
-            formData.append('public', isPublic);
-            $.ajax({
-              url: url,
-              type: type,
-              data: formData,
-              processData: false,
-              contentType: false,
-              dataType: 'json'
-            })
-            .done(function(data) {
-              $state.trigger('script_uploaded', data);
-            })
-            .fail(function(error) {
-              alert("Error processing the script!", "Scripts");
-            });
-          } else {
-            return;
-          }
-        });
-      } else {
-        var formData = new FormData();
-        formData.append("filename", filename + "." + extension);
-        formData.append("description", $("form[data-hook=script-form] textarea#description").val());
-        formData.append("uploadMethod", $('input:radio[name=live-edit]:checked').val());
-        formData.append('scriptSource', btoa(source));
-        formData.append('extension', extension);
-        formData.append('public', isPublic);
-        $.ajax({
-          url: url,
-          type: type,
-          data: formData,
-          processData: false,
-          contentType: false,
-          dataType: 'json'
-        })
-        .done(function(data) {
-          $state.trigger('script_uploaded', data);
-        })
-        .fail(function(error) {
-          alert("Error processing the script!", "Scripts");
-        });
+
+      var source = aceEditor.getSession().getValue();
+      if( !source.trim() ) {
+        return bootbox.alert('Script should not be empty!');
       }
+
+      var formData = new FormData();
+      formData.append('filename', filename + '.' + extension);
+      formData.append('description', description);
+      formData.append('uploadMethod', uploadMethod);
+      formData.append('script', btoa(unescape(encodeURIComponent(source))));
+      formData.append('extension', extension);
+      formData.append('public', isPublic);
+
+      $.ajax({
+        url: url,
+        type: type,
+        data: formData,
+        processData: false,
+        contentType: false,
+        dataType: 'json'
+      })
+      .done(function(data) {
+        $state.trigger('script_uploaded', data);
+      })
+      .fail(function(error) {
+        alert('Error processing the script!', 'Scripts');
+      });
     }
+
   });
 
   //**Handle script upload success**//

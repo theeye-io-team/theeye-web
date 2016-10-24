@@ -1,6 +1,7 @@
 var debug = require("debug")("eye:controller:scripts");
-var fs = require("fs");
+var fs = require('fs');
 var format = require('util').format;
+var stream = require('stream');
 
 module.exports = {
   /**
@@ -61,56 +62,42 @@ module.exports = {
     if(!params.id) return res.badRequest('invalid id');
     params.description = params.description || '' ;
 
-    if(params.uploadMethod === 'fileupload')
-    {
+    if(params.uploadMethod === 'fileupload') {
+
       //upload the attached file
       req.file("script").upload({}, function (err, uploadedFiles) {
         if(err) return res.negotiate(err);
 
-        if (uploadedFiles.length === 0) // If no files were uploaded, respond with an error.
+        if (uploadedFiles.length === 0){
           return res.badRequest('No file was uploaded');
+        }
 
         supervisor.patchScript(
           params.id,
-          uploadedFiles[0],
+          fs.createReadStream( uploadedFiles[0] ),
           params,
           function(err, response) {
             if(err) return res.send(500, err);
             res.send(200,response);
           });
       });
-    }
-    else
-    {
-      //save the source code to a tmp file, then upload it
-      var tmpPath = '/tmp/';
-      var fileName = format(
-        '%s_%s.%s',
-        req.user.id,
-        Date.now(),
-        params.extension
-      );
-      var source = Buffer(params.scriptSource, 'base64').toString('ascii');
 
-      fs.writeFile(
-        tmpPath + fileName,
-        source,
-        'ascii',
-        function(err) {
-          var scriptFile = {
-            fd: tmpPath + fileName,
-            filename: fileName
-          };
-          supervisor.patchScript(
-            params.id,
-            scriptFile,
-            params,
-            function(err, response) {
-              if(err) return res.send(500, err);
-              res.send(200,response);
-            });
-        }
-      );
+    } else {
+
+      var str = new Buffer(params.script, 'base64').toString('ascii') ;
+      var source = decodeURIComponent(escape(str));
+
+      var fname = '/tmp/' + req.user.id + '_' + Date.now();
+      fs.writeFile(fname,source,'ascii',err => {
+        supervisor.patchScript(
+          params.id,
+          fs.createReadStream(fname),
+          params,
+          function(err, response) {
+            if(err) return res.send(500, err);
+            res.send(200,response);
+          });
+      });
     }
   },
   /**
@@ -150,43 +137,39 @@ module.exports = {
           return res.badRequest('No file was uploaded');
 
         supervisor.createScript(
-          uploadedFiles[0],
+          fs.createReadStream( uploadedFiles[0] ),
           params,
           function(err, response) {
             if(err) return res.send(500, err);
             res.send(200, response);
           });
       });
-    }
-    else
-    {
-      //save the source code to a tmp file, then upload it
-      var tmpPath  = '/tmp/';
-      var fileName = req.user.id + '_' + Date.now() + '.' + params.extension;
-      var source   = Buffer(params.scriptSource, 'base64').toString('ascii');
 
-      fs.writeFile(
-        tmpPath + fileName,
-        source,
-        'utf-8',
-        function(writeErr){
-          if(writeErr) {
-            return res.send(500, writeErr);
+    } else {
+
+      var str = new Buffer(params.script, 'base64').toString('ascii') ;
+      var source = decodeURIComponent(escape(str));
+
+      // create a readable stream out of the source.
+      /**
+       * this doesn't work . why ????? wtf...
+      var readable = new stream.Readable();
+      readable.setEncoding('utf8');
+      readable.push(source);
+      readable.push(null);
+      */
+
+      var fname = '/tmp/' + req.user.id + '_' + Date.now();
+      fs.writeFile(fname,source,'ascii',err => {
+        supervisor.createScript(
+          fs.createReadStream(fname),
+          params,
+          function(err, response) {
+            if(err) return res.send(500, err);
+            res.send(200, response);
           }
-          var scriptFile = {
-            fd: tmpPath+fileName,
-            filename: fileName
-          };
-
-          supervisor.createScript(
-            scriptFile,
-            params,
-            function(err, response) {
-              if(err) return res.send(500, err);
-              res.send(200, response);
-            });
-        }
-      );
+        );
+      });
     }
   },
   /**
