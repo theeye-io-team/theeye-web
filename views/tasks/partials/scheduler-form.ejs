@@ -1,33 +1,4 @@
 <form id="scheduleTaskForm" action="#" class="form-horizontal">
-  <!--
-  <div class="form-group">
-    <label for="target" class="col-sm-3 control-label">Human or robot</label>
-    <div class="col-sm-9">
-      <label class="radio-inline">
-        <input type="radio" name="mode" value="human" checked
-        class="tooltiped"
-        title="I like colorful ponies and rainbows :)"
-        > I'll use a date picker
-      </label>
-      <label class="radio-inline">
-        <input type="radio" name="mode" value="cron"
-        class="tooltiped"
-        title="allows you to use a cron expression like * * * 30 *"
-        > I'm a CRON man
-      </label>
-    </div>
-  </div>
-  <div class="hidden cron">
-    <div class="form-group">
-      <label for="frequency" class="col-sm-3 control-label">CRON:</label>
-      <div class="col-sm-9">
-        <input type="text" name="frequency"
-        class="form-control"
-        placeholder="* * * 30 *">
-      </div>
-    </div>
-  </div>
-  -->
   <div class="human">
     <div class="form-group">
       <label for="datetime" class="col-sm-3 control-label">When shall I run?</label>
@@ -47,33 +18,4 @@
       </div>
     </div>
   </div>
-  <!--
-  <div class="hidden-container" id="resource-selection" style="display:block;">
-    <div class="form-group">
-      <label for="hostname" class="col-sm-3 control-label">Host</label>
-      <div class="col-sm-9">
-        <select data-hook="hosts_id" ids="hosts_id" name="hosts_id" class="form-control hosts_id">
-          <option disabled selected value></option>
-        </select>
-      </div>
-    </div>
-    <div class="form-group">
-      <label for="resource_id" class="col-sm-3 control-label">Attach to a Resource<br/><small>[optional]</small></label>
-      <div class="col-sm-9">
-        <select data-hook="resource_id" id="resource_id" name="resource_id" title="jump directly to the task from a resource" class="form-control tooltiped">
-          <option disabled selected value></option>
-        </select>
-      </div>
-    </div>
-  </div>
-  <div class="hidden-container" id="hosts-selection">
-    <div class="form-group">
-      <label for="hostname" class="col-sm-3 control-label">Hosts</label>
-      <div class="col-sm-9">
-        <select multiple data-hook="hosts_id" ids="hosts_id" name="hosts_id" class="form-control hosts_id">
-        </select>
-      </div>
-    </div>
-  </div>
-  -->
 </form>

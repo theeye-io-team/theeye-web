@@ -68,14 +68,12 @@ module.exports = {
       }
     });
   },
+  // sns updates received
   update: function(req, res) {
-    // sns updates received
     var body = req.body;
-
     debug('host stat update received');
 
-    snsreceiver.handleSubscription(body, function(error, action) {
-
+    snsreceiver.handleSubscription(body, function(error,action){
       if (action == 'continue') {
         var message = JSON.parse(body.Message);
 
@@ -92,10 +90,7 @@ module.exports = {
 
         debug('sending "%s" via socket to room "%s"', eventName, room);
 
-        io.sockets
-          .in(room)
-        //.emit('charts-update', message)
-        .emit(eventName, message);
+        io.sockets.in(room).emit(eventName, message);
 
         res.json({ message: 'host stats updates sent' });
       }
