@@ -139,27 +139,47 @@
     <!-- LOCAL INFORMATION -->
     <div class="col-md-6">
       <div class="well">
-        <h3>Local</h3>
-        <% var session=req.user; %>
-        <p>
-          <strong>id</strong>: <%= session.id %><br>
-          <strong>email</strong>: <%= session.email %><br>
-          <strong>username</strong>: <%=user.username %><br>
-        </p>
         <% if ( typeof (passports.local) !== "undefined") { %>
-        <a data-toggle="modal" data-target="#changePass" class="btn btn-default">Change password</a>
-        <a href="/disconnect/local" class="btn btn-default">Unlink</a>
-        <% } else { %>
-        <a href="/connect" class="btn btn-default">Connect Local</a>
-        <% } %>
-        <!-- GOOGLE INFORMATION -->
-        <h3 class="text-danger"><span class="fa fa-google-plus"></span> Google</h3>
-        <% if(passports.oauth2){ %>
+
+        <h3>Local</h3>
+        <% var session = req.user; %>
         <p>
-          <strong>id</strong>: <%= passports.oauth2.id %><br>
-          <strong>user</strong>: <%= passports.oauth2.user  %>
+          <div class="row">
+            <strong class="col-sm-3">id</strong>
+            <span class="col-sm-9"><%= session.id %></span>
+          </div>
+          <div class="row">
+            <strong class="col-sm-3">email</strong>
+            <span class="col-sm-9"> <%= session.email %></span>
+          </div>
+          <div class="row">
+            <strong class="col-sm-3">username</strong>
+            <span class="col-sm-9"> <%= user.username %></span>
+          </div>
         </p>
+        <a data-toggle="modal" data-target="#changePass" class="btn btn-default">Change password</a>
+        <!-- <a href="/disconnect/local" class="btn btn-default">Unlink</a> -->
+
+        <% } %>
+
+        <!-- GOOGLE INFORMATION -->
+        <h3 class="text-danger"><span class="fa fa-google-plus"></span>Google</h3>
+        <% if( passports.oauth2 ) { %>
+        <p>
+          <div class="row">
+            <strong class="col-sm-3">id</strong>
+            <span class="col-sm-9"> <%= passports.oauth2.id %></span>
+          </div>
+          <div class="row">
+            <strong class="col-sm-3">username</strong>
+            <span class="col-sm-9"> <%= passports.oauth2.user %></span>
+          </div>
+        </p>
+
+        <% if ( typeof passports.local != "undefined" ) { %>
         <a href="/disconnect/google" class="btn btn-danger">Unlink</a>
+        <% } %>
+
         <% } else { %>
         <a href="/connect/google" class="btn btn-danger">Connect Google</a>
         <% } %>
