@@ -549,7 +549,12 @@ $(function() {
             }
 
             $.when.apply($, deleteRequests)
-            .then(function(){ }, function(){ }, function() { })
+            .then(
+              function(){
+                alert(taskRows + successFooter, successTitle);
+              }, function(){
+                alert(taskRows + failFooter, failTitle);
+              }, function() { })
             .progress(function(){ })
             .always(function(){ $.unblockUI(); })
             .done(function(){ });
