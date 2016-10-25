@@ -1,3 +1,4 @@
+/* global Select2Data, Tags, FormElement, bootbox, humanInterval, lodash, $searchbox, ScraperModal */
 $(function(){
 
   window.scriptState = window.scriptState ? window.scriptState : $({});
@@ -89,8 +90,6 @@ $(function(){
     return $taskForm;
   })("form#editTaskForm");
 
-
-
   (function create(el){
     var $taskForm = $(el);
     var $multihostContainer = $taskForm.find('.hidden-container.multiple-hosts-selection');
@@ -181,8 +180,6 @@ $(function(){
       return false;
     });
   })('form#createTaskForm');
-
-
 
   (function remove(){
     $('.deleteTask').on('click',function(ev){
@@ -464,22 +461,34 @@ $(function(){
               $('div.itemRow[data-item-id='+id+']').remove();
             };
             for(var ii = 0; ii < taskIds.length; ii++) {
-              var t = taskIds[ii];
+              var taskId = taskIds[ii];
               deleteRequests.push(
                 $.ajax({
-                  url: apiUrlEndpoint + t,
+                  url: apiUrlEndpoint + taskId,
                   type: apiRequestType,
                   // on success remove div[data-item-id=itemId]
-                  success: (function(aa){
-                    return removeOnSuccess(aa);
-                  })(t)
+                  success: (function(id){
+                    return removeOnSuccess(id);
+                  })(taskId)
                 })
               );
             }
 
             // que es esto chris? borre todos los console.logs
+            // esto agarra el array deleteRequests y ejecuta todos los requests
+            // es similar a lo que haces vos con lodash.after --
+            // restaure las funciones de success/fail que habias sacado
             $.when.apply($, deleteRequests)
-            .then()
+            .then(
+              // success
+              function(){
+                alert(taskRows + successFooter, successTitle);
+              },
+              // fail
+              function(){
+                alert(taskRows + failFooter, failTitle);
+              }
+            )
             .progress(function(){})
             .always(function(){ $.unblockUI(); })
             .done(function(){});

@@ -1,3 +1,4 @@
+/* global Modal, Clipboard, App, bootbox, BaseView, Templates, _, FormElement, ListView*/
 /**
  *
  * kind of modular structure
@@ -50,7 +51,7 @@ var WebhookPage = (function(){
         bootbox.alert('Webhook trigger error');
       });
     }
-  }
+  };
 
   var WebhookFormView = BaseView.extend({
     template: Templates['assets/templates/webhook/form.hbs'],
@@ -123,16 +124,16 @@ var WebhookPage = (function(){
     },
     edit:function(){
       var form = this.form,
-      model = this.model;
+        model = this.model;
 
       modal.$el.one('shown.bs.modal', function(){
         form.focus();
-      }); 
+      });
 
       modal.$el.one('hidden.bs.modal', function(){
-        form.remove(); 
+        form.remove();
         modal.$el.off('click','button[data-hook=save]');
-      }); 
+      });
 
       modal.$el.on('click','button[data-hook=save]',function(){
         model.set(form.data);
@@ -150,14 +151,25 @@ var WebhookPage = (function(){
   });
 
 
-
-  var WebhookPage = BaseView.extend({
+  // Extend ListView for massChecker/massDeleter functionality
+  var WebhookPage = ListView.extend({
     autoRender: true,
     template: Templates['assets/templates/webhook/page.hbs'],
     container: $('div[data-hook=webhook-page-container]')[0],
-    events: {
-      "click [data-hook=create]":"onClickCreate",
+    events: function(){
+      var evts = {
+        "click [data-hook=create]":"onClickCreate",
+      };
+      //extend the listView default events (massDelete/check/uncheck)
+      return _.extend({}, ListView.prototype.defaultEvents, evts);
     },
+    //Extended setup for massDeleter
+    itemTitle: 'Webhook',
+    itemTitlePlural: 'Webhooks',
+    itemNoun: 'webhook',
+    itemNounPlural: 'webhooks',
+    apiUrlEndpoint: '/api/webhook/',
+
     create:function(){
       var webhook = new App.Models.Webhook();
       var form = new WebhookFormView({ model: webhook });
@@ -206,6 +218,6 @@ var WebhookPage = (function(){
     webhooks.fetch({
       success:function(){ }
     });
-  }
+  };
 
 })();

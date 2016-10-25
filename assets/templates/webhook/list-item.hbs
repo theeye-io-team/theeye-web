@@ -1,4 +1,8 @@
-<div class="itemRow panel panel-default js-searchable-item" data-tags="{{ tags }}">
+<div
+  class="itemRow panel panel-default js-searchable-item"
+  data-tags="{{ tags }}"
+  data-item-id="{{attributes.id}}"
+  data-item-name="{{attributes.name}}">
   <div class="panel-heading" role="tab">
     <h4 class="panel-title">
       <a class="collapsed" data-toggle="collapse"
@@ -63,7 +67,7 @@
       <div class="row">
         <span class="col-xs-3">How to Trigger</span>
         <span class="col-xs-9">
-          To Trigger push 
+          To Trigger push
           <button data-hook="trigger" class="btn btn-primary simple-btn">
             This Button
           </button> ! Also, you can trigger this hook running this command via CLI (you required curl)
