@@ -5,10 +5,10 @@
 module.exports.routes = {
   //Home
   '/' : function(req, res, next){
-    if( sails.config.application.landingPage ){
-      res.sendfile(sails.config.appPath + '/assets/theeye-landpage/index.html');
-    } else {
+    if( sails.config.application.landingPage === false ){
       res.redirect('/login');
+    } else {
+      res.sendfile(sails.config.appPath + '/assets/theeye-landpage/index.html');
     }
   },
   '/mantenimiento': { view: 'mantenimiento' },
