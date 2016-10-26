@@ -111,31 +111,32 @@ $(function(){
   });
 
   function MonitorFormData (monitor) {
-    var type = monitor.monitor_type || monitor.type;
-
+    var type = monitor.type;
     this.monitor = monitor;
-    /** its comes from the api **/
+    /** the data comes from the api **/
     if( monitor.config ) {
       this.monitor_type = type;
-      this.description = monitor.description||monitor.name;
+      this.description = (monitor.description||monitor.name);
       this.looptime = monitor.looptime;
 
       switch(type) {
-        case 'scraper':
-          break;
         case 'script':
-          this.script_id = monitor.script_id || monitor.config.script_id;
-          this.script_arguments = monitor.script_arguments || monitor.config.script_arguments;
+          this.script_id = monitor.config.script_id;
+          this.script_arguments = monitor.config.script_arguments;
+          this.script_runas = monitor.config.script_runas;
           break;
         case 'process':
-          this.pattern = monitor.pattern || monitor.config.ps.pattern;
+          this.raw_search = monitor.config.ps.raw_search;
+          this.is_regexp = monitor.config.ps.is_regexp;
           break;
+        case 'scraper':
         case 'dstat':
         case 'psaux':
           break;
         default: throw new Error('invalid monitor type ' + type);
       }
-    } else lodash.assign(this, monitor);
+    }
+    else lodash.assign(this, monitor);
   }
 
   /**
@@ -321,6 +322,7 @@ $(function(){
     });
   }
 
+  /**
   function fillMonitorForm(monitor, $selector) {
     $selector.find('form :input').each(function(i, e){
       if( e.hasAttributes() ){
@@ -332,6 +334,7 @@ $(function(){
       }
     });
   }
+  */
 
   function fillGroupForm(data) {
     var monitors = data.monitors;
@@ -479,7 +482,9 @@ $(function(){
     var monitorType = (item.type||item.monitor_type);
     var $modalSelector = $('div.modal#' + monitorType + '-monitor-modal');
     var formData = new MonitorFormData(item);
-    fillMonitorForm(formData, $modalSelector);
+    var form = new FormElement( $modalSelector.find('form') );
+    form.set( formData );
+    //fillMonitorForm(formData, $modalSelector);
 
     var $saveButton = $modalSelector.find('.modal-footer button.monitor-save');
 

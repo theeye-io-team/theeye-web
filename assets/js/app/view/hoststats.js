@@ -340,6 +340,7 @@ var HostStats = function (io, specs) {
 
     function initDstat(){
       var dstat = _.findWhere(cachedStats, { type: "dstat" });
+      if(!dstat) return;
       Dstat.initialize({ disks: Object.keys(dstat.stats.disk) });
       Dstat.update(dstat);
 
