@@ -1,4 +1,4 @@
-<% block("styles" ,'<link href="/styles/dropzone.css" rel="stylesheet" type="text/css">') %>
+<% block("scripts", '<script src="/js/ace-editor/ext-modelist.js"></script>') %>
 <% block('scripts','<script src="/js/application/scripts.js"></script>')%>
 <% block('scripts','<script src="/js/application/resources.js"></script>') %>
 
@@ -159,7 +159,7 @@
                     </span>
                     <div class="panel-item icons">
 
-                      <% 
+                      <%
                       var type = monitor.type || monitor.monitor_type;
                       if( type != 'host' && type != 'psaux' ) { %>
 
