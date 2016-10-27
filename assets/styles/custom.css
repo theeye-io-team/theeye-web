@@ -101,7 +101,7 @@ button {outline:none}
 /* header */
 /*.navbar {max-height:100px;}*/
 .navbar {margin-bottom:0px;}
-.navbar-header {width:100%;height:73px;}
+.navbar-header {width:100%;/*height:73px;*/}/* el height estaba rompiendo el layout */
 .navbar-brand>img {height:32px;/*max-height:78px;*/}
 .navbar-inverse a {color:#38688a;text-shadow:0 1px 0 rgba(255,255,255,0.8)}
 .navbar-inverse .navbar-toggle .icon-bar {background-color:#144e77}
@@ -222,7 +222,7 @@ footer {
   padding:8px 15px;
   position:fixed;
   text-align:center;
-  z-index:5000;
+  z-index: 999;
 }
 footer a.image {padding:6px;display:inline-block}
 footer a.image img {margin-top:-4px}
@@ -678,4 +678,3 @@ a.flowchart-icon {
   top: 0;
   z-index: 999;
 }
-
