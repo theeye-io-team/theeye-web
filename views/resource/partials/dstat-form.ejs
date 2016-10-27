@@ -1,5 +1,6 @@
 <!-- modal body -->
 <form id="dstatResourceForm" action="/resource" class="form-horizontal">
+  <input type="hidden" data-hook="type" name="type" value="dstat"/>
   <input type="hidden" data-hook="resource_id" name="resource_id"/>
   <input type="hidden" data-hook="hosts_id" name="hosts_id"/>
   <input type="hidden" data-hook="monitor_type" name="monitor_type"/>
@@ -7,6 +8,12 @@
   <div class="form-group">
     <div class="col-sm-12">
       <h4>Thresholds Check Limits</h4>
+    </div>
+  </div>
+  <div class="form-group" data-hook="hosts-container" style="display:none">
+    <label for="hosts" class="col-sm-3 control-label">Hosts</label>
+    <div class="col-sm-9">
+      <select multiple data-hook="hosts" name="hosts" class="form-control" style="width:100%"> </select>
     </div>
   </div>
   <div class="form-group">

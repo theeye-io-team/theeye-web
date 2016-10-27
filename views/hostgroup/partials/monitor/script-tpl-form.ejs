@@ -44,4 +44,29 @@
       </div>
     </div>
   </div>
+  <div class="form-group">
+    <label for="script_runas" class="col-sm-3 control-label">
+      RunAs<br/><small>[optional]</small>
+      <span style="cursor:help" class="glyphicon glyphicon-question-sign"></span>
+    </label>
+    <div class="col-sm-9">
+      <div>
+        <input class="form-control tooltiped"
+          title="Surround the script with something else, eg. sudo. Use '%script%' to include the script. Before execution will be replaced with the script path"
+          type="text"
+          name="script_runas"
+          data-hook="script_runas"
+          placeholder="sudo -u facugon $(%script%)"
+        >
+      </div>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="tags" class="col-sm-3 control-label">Tags<br/><small>[optional]</small></label>
+    <div class="col-sm-9">
+      <div>
+        <select class="form-control tooltiped select" title="" name="tags" data-hook="tags" multiple style="width:100%"> </select>
+      </div>
+    </div>
+  </div>
 </form>

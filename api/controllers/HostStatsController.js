@@ -9,7 +9,13 @@ module.exports = {
     var supervisor = req.supervisor;
     async.parallel({
       host: (callback) => supervisor.host(req.params.host, callback) ,
-      hostStats: (callback) => supervisor.hostStats(req.params.host, callback) ,
+      hostStats: (callback) => {
+        supervisor.get({
+          route:'/:customer/host/' + req.params.host + '/stats',
+          success: (stats) => callback(null,stats),
+          failure: (err) => callback(err)
+        });
+      },
       hostResource: (callback) => {
         supervisor.fetch({
           route: supervisor.RESOURCE,
