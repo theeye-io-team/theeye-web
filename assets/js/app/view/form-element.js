@@ -38,20 +38,35 @@ FormElement.prototype.set = function(values){
   for(var name in values){
     var value = values[name];
     var $input = $form.find('[name=' + name + ']');
-    
+
     var input = $input[0];
     if( input ){
-      if( input.type == 'text' || input.type == 'textarea' ) input.value = value;
-      if( input.type == 'checkbox' ) input.checked = value;
-      if( input.type == 'radio' ){
-        var selector = '[name=' + name + '][type=radio][value=' + String(value) + ']';
-        $form.find(selector).attr('checked', true);
+      switch( input.type ){
+        case 'text'||'textarea':
+          input.value = value;
+          break;
+        case 'checkbox' :
+          if( typeof value == "boolean" ){
+            input.checked = value;
+          } else {
+            input.checked = true;
+          }
+          break;
+        case 'radio' :
+          var selector = '[name=' + name + '][type=radio][value=' + String(value) + ']';
+          $form.find(selector).attr('checked', true);
+          break;
+        case 'select-one' :
+          input.value = value;
+          break;
+        case 'select-multiple' :
+          $input.val( value );
+          break;
+        default: break;
       }
-      if( input.type == 'select-one' ) input.value = value;
-      if( input.type == 'select-multiple' ) $input.val( value );
       $input.trigger('change');
     } else {
-      //console.log('not found input named ' + name );
+      //console.warn('not found input named ' + name );
     }
   }
 }

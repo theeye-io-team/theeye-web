@@ -864,19 +864,6 @@ var prototype = {
    *
    *
    */
-  hostStats: function(id, callback){
-    this.performRequest({
-      method: 'get',
-      url: '/host/'+ id + '/stats'
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.stats);
-    });
-  },
-  /**
-   *
-   *
-   */
   scraperHosts: function(callback) {
     this.performRequest({
       method: 'get',

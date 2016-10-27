@@ -4,32 +4,6 @@ $(function(){
   var log = debug('eye:web:admin:resources');
 
   /**
-  function extractFormData($el){
-    var inputs = $el.find(":input");
-    var values = {};
-    inputs.each(function(){
-      var input = this;
-      if(!input.value) return;
-      if(input.name=='disabled' && input.type=='checkbox'){
-        values.enable = !input.checked;
-      } else if(input.type=='checkbox') {
-        if(input.value && input.value != 'on'){
-          if(input.checked) values[input.name] = input.value;
-        } else {
-          values[input.name] = input.checked;
-        }
-      } else if(input.type=='radio') {
-        if( input.checked )
-          values[input.name] = input.value;
-      } else {
-        values[input.name] = $(input).val();
-      }
-    });
-    return values;
-  }
-  */
-
-  /**
   *  MUTE
   */
   (function(){
@@ -150,88 +124,112 @@ $(function(){
           break;
         case 'script':
           var $script = $form.find('select[name=script_id]');
-          // var $disable = $form.find('input[name=disabled]');
-
-          // if( $disable.is(':checked') )
-          // {
-          //   $disable.on('change',function(event){
-          //     if(!this.checked){
-          //       if(!$script.val()){
-          //         this.checked=true;
-          //         bootbox.alert('Please, select a script first to enable the monitor.');
-          //       }
-          //     }
-          //   });
-          //   $script.on('change', function(event){
-          //     if( $disable.is(':checked') ){
-          //       var msg = 'You have just added a script. Enable the monitor again?';
-          //       bootbox.confirm(msg, function(confirmed){
-          //         if(confirmed) $disable.prop('checked', false);
-          //       });
-          //     }
-          //   });
-          //   $('.modal#scriptResourceModal').on('hidden.bs.modal', function(e) {
-          //     $script.off('change');
-          //     $disable.off('change');
-          //   });
-          // }
-
           //esto adosa el script_id al boton de editar/crear script
           $('a.scripter', $form).data('script-id', monitor.config.script_id);
 
           $script.val(monitor.config.script_id);
-          $form.find('[data-hook=script_arguments]')
-            .val(monitor.config.script_arguments);
-          $form.find('[data-hook=script_runas]')
-            .val(monitor.config.script_runas);
+          $form.find('[data-hook=script_arguments]').val(monitor.config.script_arguments);
+          $form.find('[data-hook=script_runas]').val(monitor.config.script_runas);
           break;
       }
     }
 
     function setupEditResourceForm($form, options){
-      log('setting up for "edit"');
-
-      var $select = $form.find('.resource-host select');
-      $select.prop('multiple', false);
-      $select.show();
+      var type = options.type;
 
       jQuery.ajax({
         url: "/resource/" + options.id,
         method: 'GET',
-        data: { 'monitor_type': options.type }
+        data: { 'monitor_type': type }
       })
       .done(function(data){
         fillForm(data);
-        $('#' + options.type + 'ResourceModal')
-        .one('shown.bs.modal', function(){
-          //one time AUTOCOMPLETE COMBOBOX setup
-          $select.select2();
-          $form.find('select#script_id')
-            .select2({allowClear:true, placeholder: 'Select a script...'})
-            .on('change', function(event){
-              if($(this).val()) {
-                $('a.scripter', '#' + options.type + 'ResourceModal')
-                  .text('Update script')
-                  .removeClass('createScript')
-                  .addClass('editScript')
-                  .data('script-id', $(this).val() );
-              }else{
-                $('a.scripter', '#' + options.type + 'ResourceModal')
-                  .text('Create script')
-                  .removeClass('editScript')
-                  .addClass('createScript')
-                  .data('script-id', null);
-              }
-            })
-            .trigger('change');
+        var $modal = $('#'+type+'ResourceModal');
 
-          $form.find('select[name=tags]').select2({ placeholder:"Tags", data: Select2Data.PrepareTags(Tags), tags:true });
-          var $firstInput = $(this).find('input[type!=hidden]').first().focus();
-          $(this).on('shown.bs.modal', function(){
-            $firstInput.focus();
+        function bindModalElementsEvents(){
+          //one time AUTOCOMPLETE COMBOBOX setup
+          var $hostSelect = $form.find('.resource-host select');
+          $hostSelect.prop('multiple', false);
+          $hostSelect.show();
+          $hostSelect.select2();
+
+          var $tagsSelect = $form.find('select[name=tags]');
+          $tagsSelect.select2({
+            placeholder:"Tags",
+            data:Select2Data.PrepareTags(Tags),
+            tags:true
           });
-        })
-        .modal('show');
+
+          // only script monitor has scripts selection
+          if(type=='script'){
+            var $scriptSelect = $form.find('select#script_id');
+            $scriptSelect.select2({
+              allowClear:true,
+              placeholder:'Select a script...'
+            });
+            $scriptSelect.on('change',function(event){
+              var val = $(this).val();
+              if(val) {
+                $('a.scripter', '#'+type+'ResourceModal')
+                .text('Update script')
+                .removeClass('createScript')
+                .addClass('editScript')
+                .data('script-id', val);
+              } else {
+                $('a.scripter', '#'+type+'ResourceModal')
+                .text('Create script')
+                .removeClass('editScript')
+                .addClass('createScript')
+                .data('script-id', null);
+              }
+            });
+            $scriptSelect.trigger('change');
+          }
+
+          var $firstInput = $modal.find('input[type!=hidden]').first().focus();
+          $modal.one('shown.bs.modal', function(){ $firstInput.focus(); });
+        }
+
+        $modal.one('shown.bs.modal',bindModalElementsEvents);
+
+        if(type=='dstat'){
+          (function bindSubmitButton(){
+            // ^ limit the scope
+            var $submitBtn = $modal.find('button[type=submit]');
+
+            $modal.one('hidden.bs.modal',function(){
+              // remove click event bindings
+              $submitBtn.off('click');
+            });
+
+            $modal.one('show.bs.modal',function(){
+              // bind click event
+              $submitBtn.on('click', function(event){
+                event.preventDefault();
+                event.stopPropagation();
+                log('saving host config');
+
+                var data = (new FormElement($form)).get();
+
+                log('saving values %o', data);
+                jQuery.ajax({
+                  url: '/resource/' + data.resource_id,
+                  type: 'PUT',
+                  data: JSON.stringify(data),
+                  contentType: "application/json; charset=utf-8"
+                }).done(function(data) {
+                  bootbox.alert('Limits updated',function(){
+                  });
+                }).fail(function(xhr, err, xhrStatus) {
+                  bootbox.alert(xhr.responseText);
+                });
+              });
+            });
+          })();
+        }
+
+        $modal.modal('show');
+
         $.unblockUI();
       })
       .fail(function(xhr, err, xhrStatus){
@@ -266,7 +264,7 @@ $(function(){
                 .removeClass('createScript')
                 .addClass('editScript')
                 .data('script-id', $(this).val());
-            }else{
+            } else {
               $('a.scripter', $modal)
                 .text('Create script')
                 .removeClass('editScript')
@@ -288,22 +286,56 @@ $(function(){
       $modal.modal('show');
     }
 
-    function createDstat (options) {
-      // var host = options.host;
-      var $form = $('[data-hook=dstat-modal] form');
-
-      var $hosts = $('<select name="hosts_id"></select>');
-      $hosts.select2({
+    (function(){
+      var $dstatHosts = $('[data-hook=dstat-modal] form select[data-hook=hosts]');
+      $dstatHosts.select2({
         placeholder: 'Hosts',
         data: Select2Data.PrepareHosts(window.Hosts)
       });
-      $form.find('[data-hook=hosts_id]').html();
+    })();
+
+    function createStatMonitor (options) {
+      var $modal = $('[data-hook=dstat-modal]');
+      var $submitBtn = $modal.find('button[type=submit]');
+      var $hosts = $modal.find('[data-hook=hosts-container]');
+      var $form = $modal.find('form');
+      $modal.one('hidden.bs.modal',function(){
+        $submitBtn.off('click');
+        $hosts.hide();
+      });
+      $modal.one('show.bs.modal',function(){
+        $hosts.show();
+
+        $submitBtn.on('click', function(event){
+          event.preventDefault();
+          event.stopPropagation();
+          log('saving host config');
+
+          var data = (new FormElement($form)).get();
+
+          log('saving values %o', data);
+          jQuery.ajax({
+            url: '/resource',
+            type: 'POST',
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8"
+          }).done(function(data) {
+            bootbox.alert('Host Stats monitor created',function(){
+              window.location.reload();
+            });
+          }).fail(function(xhr, err, xhrStatus) {
+            bootbox.alert(xhr.responseText);
+          });
+        });
+      });
+      $modal.modal('show');
+      $.unblockUI();
     }
 
     function setupResourceAction (options) {
       if(options.action=='create' && options.type=='dstat'){
 
-        createDstat(options);
+        createStatMonitor(options);
 
       } else {
         var formSelector = 'form#' + options.type + 'ResourceForm';
@@ -403,33 +435,6 @@ $(function(){
               });
           });
         });
-    });
-
-    /**
-    * ON HOST RESOURCE UPDATES SUBMIT
-    * @author Facundo
-    */
-    $('.modal#dstatResourceModal button[type=submit]').on('click', function(event){
-      event.preventDefault();
-      event.stopPropagation();
-      log('saving host config');
-
-      var $form = $('#dstatResourceModal form');
-      //var data = extractFormData($form);
-      var data = (new FormElement($form)).get();
-
-      log('saving values %o', data);
-      jQuery.ajax({
-        url: '/resource/' + data.resource_id,
-        type: 'PUT',
-        data: JSON.stringify(data),
-        contentType: "application/json; charset=utf-8"
-      }).done(function(data) {
-        bootbox.alert('Limits updated',function(){
-        });
-      }).fail(function(xhr, err, xhrStatus) {
-        bootbox.alert(xhr.responseText);
-      });
     });
 
     function fillHostResourceForm($form, data, doneFn){
@@ -543,13 +548,9 @@ $(function(){
         });
         if(taskRows) {
           bootbox.confirm(firstConfirmHeader + taskRows + firstConfirmFooter, function(result1){
-            if(!result1) {
-              return;
-            }
+            if(!result1) return;
             bootbox.confirm(secondConfirmHeader + taskRows + secondConfirmFooter, function(result2){
-              if(!result2) {
-                return;
-              }
+              if(!result2) return;
               $.blockUI();
               var deleteRequests = [];
               var removeOnSuccess = function(id) {
@@ -571,39 +572,12 @@ $(function(){
                 );
               }
 
-              $.when.apply($, deleteRequests).then(
-                function(){
-                  console.log('then success');
-                  console.log(arguments);
-                  alert(taskRows + successFooter, successTitle);
-                },
-                function(){
-                  console.log('then fail');
-                  console.log(arguments);
-                  alert(taskRows + failFooter, failTitle);
-                },
-                // then progress nunca se llama ... ?
-                function() {
-                  console.log('then progress');
-                  console.log(arguments);
-                }
-                // when progress nunca se llama tampoco ... ?
-              ).progress(function(){
-                console.log('when progress');
-                console.log(arguments);
-              }
-              ).always(function(){
-                console.log('always');
-                $.unblockUI();
-              }
-              ).done(function(){
-                // done deberia volver con array de results
-                // no se si no funciona o es porque el req.DELETE
-                // no devuelve nada, habria que probar de cambiar la API
-                console.log('when done');
-                console.log(arguments);
-                console.log('ok, they are gone');
-              });
+              $.when
+              .apply($, deleteRequests)
+              .then()
+              .progress(function(){ })
+              .always(function(){ $.unblockUI(); })
+              .done(function(){ });
             });
           });
         }
@@ -721,25 +695,5 @@ $(function(){
     $('[data-hook=edit-scraper-monitor]').on('click',onClickEdit);
 
   })();
-
-  /**
-   * no funca
-   * @author facugon
-  var BeautyCheckboxView = function($el){
-    var $checkbox = $el.find('input[name=is_regexp]');
-    var $fakeCheckbox = $el.find('span[data-hook=is_regexp]');
-
-    $checkbox.on('change',function() {
-      // toggle
-      $fakeCheckbox.toggleClass('glyphicon-unchecked glyphicon-check');
-    });
-
-    $fakeCheckbox.on('click',function(event){
-      $checkbox.trigger('click');
-    });
-  }
-  new BeautyCheckboxView( $('form[data-hook=process-monitor-form] [data-hook=pattern-section]') );
-  */
-
 
 });
