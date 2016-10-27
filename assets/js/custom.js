@@ -44,19 +44,20 @@ $(document).ready(function() {
     window.setCustomer($(this).val());
   });
 
+  $.blockUI.defaults.baseZ = 1050;
   $.blockUI.defaults.message = '<div><img src="/images/orange-loading.gif"><h1>LOADING...</h1></div>';
   $.blockUI.defaults.css = {
-    padding:        0, 
-    margin:         0, 
-    width:          '30%', 
-    top:            '40%', 
-    left:           '35%', 
-    textAlign:      'center', 
-    color:          '#FFF', 
-    border:         'none', 
-    backgroundColor:'', 
-    cursor:         'wait' 
-  }; 
+    padding:        0,
+    margin:         0,
+    width:          '30%',
+    top:            '40%',
+    left:           '35%',
+    textAlign:      'center',
+    color:          '#FFF',
+    border:         'none',
+    backgroundColor:'',
+    cursor:         'wait'
+  };
 
   (function () {
     var links = $('.nav li a');

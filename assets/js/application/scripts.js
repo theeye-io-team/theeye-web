@@ -1,5 +1,5 @@
-/* global Dropzone, ace, bootbox, $searchbox */
-Dropzone.autoDiscover = false;
+/* global ace, bootbox, $searchbox */
+// Dropzone.autoDiscover = false;
 
 $(function() {
   var self = this; // dafuk? why not {}?
@@ -51,36 +51,36 @@ $(function() {
   }
 
   //**initialize dropzone**//
-  var scriptDropZone = new Dropzone(".dropzone", {
-    url: "/script",
-    paramName: "script",
-    maxFiles: 1,
-    addRemoveLinks: true,
-    uploadMultiple: false,
-    autoProcessQueue: false
-  });
-
-  scriptDropZone.on("sending", function(file, xhr, formData) {
-    formData.append("filename", $("input#filename").val());
-    formData.append("description", $("form[data-hook=script-form] textarea#description").val());
-    formData.append("uploadMethod", $('input:radio[name=live-edit]:checked').val());
-  });
-
-  scriptDropZone.on("addedfile", function(file){
-    if($("input#filename").val() === '')
-      $("input#filename").val(file.name);
-  });
-
-  scriptDropZone.on("success", function(file, responseText){
-    $state.trigger("script_uploaded", responseText);
-  });
-
-  scriptDropZone.on("error", errorOnUpload);
-
-  function errorOnUpload(file, uploadError, xhr) {
-    alert(uploadError);
-    scriptDropZone.removeAllFiles();
-  }
+  // var scriptDropZone = new Dropzone(".dropzone", {
+  //   url: "/script",
+  //   paramName: "script",
+  //   maxFiles: 1,
+  //   addRemoveLinks: true,
+  //   uploadMultiple: false,
+  //   autoProcessQueue: false
+  // });
+  //
+  // scriptDropZone.on("sending", function(file, xhr, formData) {
+  //   formData.append("filename", $("input#filename").val());
+  //   formData.append("description", $("form[data-hook=script-form] textarea#description").val());
+  //   formData.append("uploadMethod", $('input:radio[name=live-edit]:checked').val());
+  // });
+  //
+  // scriptDropZone.on("addedfile", function(file){
+  //   if($("input#filename").val() === '')
+  //     $("input#filename").val(file.name);
+  // });
+  //
+  // scriptDropZone.on("success", function(file, responseText){
+  //   $state.trigger("script_uploaded", responseText);
+  // });
+  //
+  // scriptDropZone.on("error", errorOnUpload);
+  //
+  // function errorOnUpload(file, uploadError, xhr) {
+  //   alert(uploadError);
+  //   scriptDropZone.removeAllFiles();
+  // }
 
   $filenameInput.on('input', function(event){
     $('#filenamePreview').text( ($filenameInput.val() || "[auto]") + "." + ext);
@@ -154,8 +154,8 @@ $(function() {
     }
     var $scriptModal = $("#script-modal");
     self.scriptId = null; // ????????????
-    scriptDropZone.options.method = 'POST';
-    scriptDropZone.removeAllFiles();
+    // scriptDropZone.options.method = 'POST';
+    // scriptDropZone.removeAllFiles();
 
     ext = "js";
     $('#filenamePreview').text("[auto]." + ext);
@@ -164,12 +164,16 @@ $(function() {
     $("[data-hook=editor-mode]",$scriptModal).val('javascript');
     $("form[data-hook=script-form] textarea#description",$scriptModal).val("");
     $("input#filename",$scriptModal).val("");
+    $("input#gist-url",$scriptModal).val("");
     $("input[data-hook=public]",$scriptModal).removeAttr('checked');
     $("input[data-hook=public][value=false]",$scriptModal)[0].checked = true;
 
     aceEditor.getSession().setValue("");
     aceEditor.session.setMode("ace/mode/javascript");
 
+    $("input:radio[name=live-edit]",$scriptModal).first().prop('checked',true);
+    $("[data-hook=live-edit][value=editor]",$scriptModal).trigger('click');
+    $("[data-hook=editor-mode]",$scriptModal).trigger('change');
     $("#script-modal").modal();
   });
 
@@ -181,8 +185,8 @@ $(function() {
     var id = $(e.currentTarget).data('script-id');
 
     //set the dropzone url for script edition
-    scriptDropZone.options.method = 'PUT';
-    scriptDropZone.options.url = '/script/' + id;
+    // scriptDropZone.options.method = 'PUT';
+    // scriptDropZone.options.url = '/script/' + id;
     //set the hidden input with the current id
     $("[data-hook=script-id]", $form).val(id);
 
@@ -267,10 +271,10 @@ $(function() {
       type = 'PUT';
     }
 
-    var uploadMethod = $('input:radio[name=live-edit]:checked').val();
+    // var uploadMethod = $('input:radio[name=live-edit]:checked').val();
     if( uploadMethod == 'fileupload' ) {
 
-      scriptDropZone.processQueue();
+      // scriptDropZone.processQueue();
 
     } else {
 
@@ -343,6 +347,92 @@ $(function() {
     });
   });
 
+  // Drop me something
+  (function(){
+    var fillForm = function(filename, content){
+
+      var nameonly = !!~filename.indexOf('.')
+        ? filename.substr(0, filename.lastIndexOf('.'))
+        : filename;
+
+      $('input[name=filename]', '#script-modal').val(nameonly);
+      var modelist = ace.require('ace/ext/modelist');
+      var modeMeta = modelist.getModeForPath(filename);
+      aceEditor.session.setMode(modeMeta.mode);
+      aceEditor.getSession().setValue(content);
+
+      $("input:radio[name=live-edit]", '#script-modal').first().prop('checked',true);
+      $("[data-hook=live-edit][value=editor]", '#script-modal').trigger('click');
+
+      $('textarea[name=description]', '#script-modal').val("");
+      $('select#editor-mode', '#script-modal').val(mode2extension(modeMeta.name));
+      $("[data-hook=editor-mode]", '#script-modal').trigger('change');
+
+    };
+    var fileSelectHandler = function(evt){
+      var file = evt.type == "change"
+        ? evt.originalEvent.target.files[0] // comes from input#fileChooser
+        : evt.originalEvent.dataTransfer.files[0]; // comes from drag'n drop
+
+      evt.preventDefault();
+      $ddOverlay.hide();
+      // var file = evt.originalEvent.dataTransfer.files[0],
+      var reader = new FileReader();
+      try {
+        reader.onload = function(event) {
+
+          if($('#script-modal').is(':visible')) {
+            fillForm(file.name, event.target.result);
+          }else{
+            $("#script-modal").one('shown.bs.modal', function(){
+              fillForm(file.name, event.target.result);
+            });
+            $('.createScript').trigger('click');
+          }
+        };
+        reader.readAsText(file);
+
+      }catch(err){
+        alert('Could not read your file, sorry. Try with a script (simple text) file');
+      }
+    };
+    var $megaContainer = $('.droptarget');
+    var $ddOverlay = $('<div />')
+      .width('100%')
+      .height($('body').innerHeight() - $('nav.navbar').outerHeight() - 2)
+      .css({
+        'z-index':10100,
+        // display: 'none',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        "background-color": "rgba(0,0,0,0.5)",
+        "background-image": "url(/images/upload.png)",
+        "background-repeat": "no-repeat",
+        "background-position": "center",
+        "background-size": "50%"
+      })
+      .hide()
+      .appendTo($megaContainer.first());
+
+    $('input#fileChooser').on('change', fileSelectHandler);
+    $megaContainer.on('drop dragdrop', fileSelectHandler);
+    $megaContainer.on('dragenter',function(event){
+      event.preventDefault();
+      $ddOverlay.show();
+    });
+    // $megaContainer.on('dragleave',function(){
+    //   $(this).html('drop here').css('background','red');
+    // });
+    $megaContainer.on('dragover',function(event){
+      event.preventDefault();
+    });
+    $ddOverlay.on('dragleave', function() {
+      $ddOverlay.hide();
+      return false;
+    });
+  })();
+
   // GIST LOADER INPUT + BUTTON BEHAVIOR
   (function(){
 
@@ -359,6 +449,10 @@ $(function() {
         'starting with "https://gist.github.com")';
       alert(msg);
     };
+
+    // trate de implementar aca combokeys en gistInput pero no anduvo
+    // probablemente por el on('input') que hay mas abajo
+    // estaria bueno que con enter dispare el click este
     $downloadButton.on('click', function(evt){
       var urlish = $gistInput.val();
       //if we are working or no value on input, ignore
@@ -368,9 +462,9 @@ $(function() {
 
       var gistId = "";
 
-      if(urlish.split('/').length === 1) {
-        //this is a simple gist id (single string)
-        gistId = urlish;
+      if(urlish.split('/').length === 2) {
+        //this is a gist path (user/pqi3jdpq23jdq23d)
+        gistId = urlish.split('/')[1];
       }else{
         //we'll treat this case as a url
         if(/https:\/\/gist\.github\.com/.test(urlish) !== true) {
@@ -401,8 +495,6 @@ $(function() {
       $.getJSON("https://api.github.com/gists/"+gistId, function(){
       })
       .fail(function(xhr, status, error){
-        $downloadButtonIcon
-          .addClass('glyphicon-remove');
       })
       .success(function(res, status, xhr){
 
@@ -424,28 +516,27 @@ $(function() {
         var modelist = ace.require('ace/ext/modelist');
         var mode = modelist.getModeForPath(file.filename).mode;
         aceEditor.session.setMode(mode);
-        switch(file.language) {
-          case "Shell": //horribly, gist calls .sh like this
-            // aceEditor.session.setMode("ace/mode/sh");
-            aceEditor.getSession().setValue('#!/usr/bin/env bash \n' + source);
-            break;
-          case "JavaScript":
-            // aceEditor.session.setMode("ace/mode/javascript");
-            aceEditor.getSession().setValue('#!/usr/bin/env nodejs \n' + source);
-            break;
-          default:
-            aceEditor.getSession().setValue(source);
-            // failAlert('Sadly, we are only accepting JavaScript (.js) and Shell (.sh) gists. Sorry. Please try another');
-        }
+        // switch(file.language) {
+        //   case "Shell": //horribly, gist calls .sh like this
+        //     // aceEditor.session.setMode("ace/mode/sh");
+        //     aceEditor.getSession().setValue('#!/usr/bin/env bash \n' + source);
+        //     break;
+        //   case "JavaScript":
+        //     // aceEditor.session.setMode("ace/mode/javascript");
+        //     aceEditor.getSession().setValue('#!/usr/bin/env nodejs \n' + source);
+        //     break;
+        //   default:
+        //     aceEditor.getSession().setValue(source);
+        //     // failAlert('Sadly, we are only accepting JavaScript (.js) and Shell (.sh) gists. Sorry. Please try another');
+        // }
+        aceEditor.getSession().setValue(source);
         if(!$descriptionField.val()) {
           $descriptionField.val(res.description);
         }
-
-        $downloadButtonIcon
-          .addClass('glyphicon-ok');
       })
       .always(function(res, status, xhr){
         $downloadButtonIcon
+          .addClass('glyphicon-download')
           .removeClass('glyphicon-ban-circle')
           .data('loading', false);
       });
@@ -549,7 +640,12 @@ $(function() {
             }
 
             $.when.apply($, deleteRequests)
-            .then(function(){ }, function(){ }, function() { })
+            .then(
+              function(){
+                alert(taskRows + successFooter, successTitle);
+              }, function(){
+                alert(taskRows + failFooter, failTitle);
+              }, function() { })
             .progress(function(){ })
             .always(function(){ $.unblockUI(); })
             .done(function(){ });
