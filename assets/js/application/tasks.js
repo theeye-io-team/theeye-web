@@ -162,6 +162,7 @@ $(function(){
       var form = new FormElement($taskForm);
       var vals = form.get();
       vals.type = 'script';
+      vals.script_arguments = vals.script_arguments.split(',');
 
       $.ajax({
         method:'POST',
