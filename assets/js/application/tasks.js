@@ -66,11 +66,14 @@ $(function(){
 
     $taskForm.on("submit", function(event){
       event.preventDefault();
+
       var form = new FormElement($taskForm);
       var vals = form.get();
       vals.type = 'script';
 
-      vals.script_arguments = vals.script_arguments.split(',');
+      // parse arguments
+      var args = vals.script_arguments.split(',');
+      vals.script_arguments = args.map(function(str){ return str.trim(); });
 
       jQuery.ajax({
         type:'PUT',
@@ -84,7 +87,7 @@ $(function(){
         alert( xhr.responseText );
       });
 
-      return false;
+      return false; // stopPropagation from within the flow
     });
 
     return $taskForm;
@@ -159,10 +162,14 @@ $(function(){
 
     $taskForm.on('submit', function(event) {
       event.preventDefault();
+
       var form = new FormElement($taskForm);
       var vals = form.get();
       vals.type = 'script';
-      vals.script_arguments = vals.script_arguments.split(',');
+
+      // parse arguments
+      var args = vals.script_arguments.split(',');
+      vals.script_arguments = args.map(function(str){ return str.trim(); });
 
       $.ajax({
         method:'POST',
@@ -178,7 +185,7 @@ $(function(){
         alert(err);
       });
 
-      return false;
+      return false; // stopPropagation from within the flow
     });
   })('form#createTaskForm');
 
