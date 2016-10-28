@@ -1,5 +1,4 @@
 /* global ace, bootbox, $searchbox */
-// Dropzone.autoDiscover = false;
 
 $(function() {
   var self = this; // dafuk? why not {}?
@@ -50,38 +49,6 @@ $(function() {
     return extension;
   }
 
-  //**initialize dropzone**//
-  // var scriptDropZone = new Dropzone(".dropzone", {
-  //   url: "/script",
-  //   paramName: "script",
-  //   maxFiles: 1,
-  //   addRemoveLinks: true,
-  //   uploadMultiple: false,
-  //   autoProcessQueue: false
-  // });
-  //
-  // scriptDropZone.on("sending", function(file, xhr, formData) {
-  //   formData.append("filename", $("input#filename").val());
-  //   formData.append("description", $("form[data-hook=script-form] textarea#description").val());
-  //   formData.append("uploadMethod", $('input:radio[name=live-edit]:checked').val());
-  // });
-  //
-  // scriptDropZone.on("addedfile", function(file){
-  //   if($("input#filename").val() === '')
-  //     $("input#filename").val(file.name);
-  // });
-  //
-  // scriptDropZone.on("success", function(file, responseText){
-  //   $state.trigger("script_uploaded", responseText);
-  // });
-  //
-  // scriptDropZone.on("error", errorOnUpload);
-  //
-  // function errorOnUpload(file, uploadError, xhr) {
-  //   alert(uploadError);
-  //   scriptDropZone.removeAllFiles();
-  // }
-
   $filenameInput.on('input', function(event){
     $('#filenamePreview').text( ($filenameInput.val() || "[auto]") + "." + ext);
   });
@@ -104,9 +71,9 @@ $(function() {
   //**live-editor mode setter**//
   $("[data-hook=editor-mode]").change(function() {
     var mode = $("[data-hook=editor-mode]").val();
-    aceEditor.session.setMode("ace/mode/"+mode);
+    aceEditor.session.setMode("ace/mode/" + mode);
     ext = mode2extension(mode);
-    $('#filenamePreview').text( ($filenameInput.val() || "[auto]") + "." +ext);
+    $('#filenamePreview').text( ($filenameInput.val() || "[auto]") + "." + ext);
   });
 
   //**Delete script**//
@@ -154,8 +121,6 @@ $(function() {
     }
     var $scriptModal = $("#script-modal");
     self.scriptId = null; // ????????????
-    // scriptDropZone.options.method = 'POST';
-    // scriptDropZone.removeAllFiles();
 
     ext = "js";
     $('#filenamePreview').text("[auto]." + ext);
@@ -184,9 +149,6 @@ $(function() {
     var $form = $('form[data-hook=script-form]');
     var id = $(e.currentTarget).data('script-id');
 
-    //set the dropzone url for script edition
-    // scriptDropZone.options.method = 'PUT';
-    // scriptDropZone.options.url = '/script/' + id;
     //set the hidden input with the current id
     $("[data-hook=script-id]", $form).val(id);
 
@@ -271,10 +233,9 @@ $(function() {
       type = 'PUT';
     }
 
-    // var uploadMethod = $('input:radio[name=live-edit]:checked').val();
     if( uploadMethod == 'fileupload' ) {
 
-      // scriptDropZone.processQueue();
+      // this should not happen anymore
 
     } else {
 
@@ -358,6 +319,7 @@ $(function() {
       $('input[name=filename]', '#script-modal').val(nameonly);
       var modelist = ace.require('ace/ext/modelist');
       var modeMeta = modelist.getModeForPath(filename);
+
       aceEditor.session.setMode(modeMeta.mode);
       aceEditor.getSession().setValue(content);
 
@@ -365,7 +327,8 @@ $(function() {
       $("[data-hook=live-edit][value=editor]", '#script-modal').trigger('click');
 
       $('textarea[name=description]', '#script-modal').val("");
-      $('select#editor-mode', '#script-modal').val(mode2extension(modeMeta.name));
+
+      $("[data-hook=editor-mode]", '#script-modal').val(modeMeta.name);
       $("[data-hook=editor-mode]", '#script-modal').trigger('change');
 
     };
