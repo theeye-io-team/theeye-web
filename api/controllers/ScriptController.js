@@ -62,43 +62,22 @@ module.exports = {
     if(!params.id) return res.badRequest('invalid id');
     params.description = params.description || '' ;
 
-    if(params.uploadMethod === 'fileupload') {
 
-      //upload the attached file
-      req.file("script").upload({}, function (err, uploadedFiles) {
-        if(err) return res.negotiate(err);
+    var str = new Buffer(params.script, 'base64').toString('ascii') ;
+    var source = decodeURIComponent(escape(str));
 
-        if (uploadedFiles.length === 0){
-          return res.badRequest('No file was uploaded');
-        }
+    var fname = '/tmp/' + req.user.id + '_' + Date.now();
+    fs.writeFile(fname,source,'ascii',err => {
+      supervisor.patchScript(
+        params.id,
+        fs.createReadStream(fname),
+        params,
+        function(err, response) {
+          if(err) return res.send(500, err);
+          res.send(200,response);
+        });
+    });
 
-        supervisor.patchScript(
-          params.id,
-          fs.createReadStream( uploadedFiles[0] ),
-          params,
-          function(err, response) {
-            if(err) return res.send(500, err);
-            res.send(200,response);
-          });
-      });
-
-    } else {
-
-      var str = new Buffer(params.script, 'base64').toString('ascii') ;
-      var source = decodeURIComponent(escape(str));
-
-      var fname = '/tmp/' + req.user.id + '_' + Date.now();
-      fs.writeFile(fname,source,'ascii',err => {
-        supervisor.patchScript(
-          params.id,
-          fs.createReadStream(fname),
-          params,
-          function(err, response) {
-            if(err) return res.send(500, err);
-            res.send(200,response);
-          });
-      });
-    }
   },
   /**
    * Delete script
@@ -127,50 +106,23 @@ module.exports = {
   {
     var params = req.params.all();
     var supervisor = req.supervisor;
-    if(params.uploadMethod === 'fileupload') {
-      //upload the attached file
-      req.file("script").upload({}, function (err, uploadedFiles) {
-        if(err) return res.negotiate(err);
 
-        // If no files were uploaded, respond with an error.
-        if (uploadedFiles.length === 0)
-          return res.badRequest('No file was uploaded');
 
-        supervisor.createScript(
-          fs.createReadStream( uploadedFiles[0] ),
-          params,
-          function(err, response) {
-            if(err) return res.send(500, err);
-            res.send(200, response);
-          });
-      });
+    var str = new Buffer(params.script, 'base64').toString('ascii') ;
+    var source = decodeURIComponent(escape(str));
 
-    } else {
+    var fname = '/tmp/' + req.user.id + '_' + Date.now();
+    fs.writeFile(fname,source,'ascii',err => {
+      supervisor.createScript(
+        fs.createReadStream(fname),
+        params,
+        function(err, response) {
+          if(err) return res.send(500, err);
+          res.send(200, response);
+        }
+      );
+    });
 
-      var str = new Buffer(params.script, 'base64').toString('ascii') ;
-      var source = decodeURIComponent(escape(str));
-
-      // create a readable stream out of the source.
-      /**
-       * this doesn't work . why ????? wtf...
-      var readable = new stream.Readable();
-      readable.setEncoding('utf8');
-      readable.push(source);
-      readable.push(null);
-      */
-
-      var fname = '/tmp/' + req.user.id + '_' + Date.now();
-      fs.writeFile(fname,source,'ascii',err => {
-        supervisor.createScript(
-          fs.createReadStream(fname),
-          params,
-          function(err, response) {
-            if(err) return res.send(500, err);
-            res.send(200, response);
-          }
-        );
-      });
-    }
   },
   /**
    * Action blueprints:
