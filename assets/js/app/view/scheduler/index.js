@@ -1,4 +1,4 @@
-/* global BaseView, Modal, Templates, _, humanInterval */
+/* global BaseView, Templates, _, humanInterval */
 
 /**
  *
@@ -57,14 +57,15 @@ var SchedulerPageView = (function(){
   }
 
   // use only one modal for the page.
-  var modal = new Modal({ title: 'Incoming Webhook' });
-  modal.render();
+  // var modal = new Modal({ title: 'Incoming Webhook' });
+  // modal.render();
 
   var SchedulerPage = BaseView.extend({
     autoRender: true,
     template: Templates['assets/js/app/view/scheduler/page.hbs'],
     container: $('div[data-hook=scheduler-page-container]')[0],
     events: {},
+    taskTemplate: Templates['assets/js/app/view/scheduler/task-modal-body.hbs'],
     render:function(){
       BaseView.prototype.render.apply(this, arguments);
       var scheduleData = [];
@@ -80,6 +81,14 @@ var SchedulerPageView = (function(){
               right: 'month,agendaWeek,agendaDay,listWeek'
             },
             defaultTimedEventDuration: '00:30:00',
+            eventClick: function(scheduleEvent, mouseEvent, fullcalendar){
+              var alertTitle = "Scheduled task: " + scheduleEvent.title;
+              var alertBody = self.taskTemplate({
+                taskText: scheduleEvent.start.calendar(),
+                taskId: scheduleEvent.source.scheduleData.data.task_id
+              });
+              alert(alertBody, alertTitle, function(){});
+            },
             aspectRatio: 1.618 //golden
           });
           scheduleData.forEach(function(item){
