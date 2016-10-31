@@ -16,6 +16,10 @@ var ListView = BaseView.extend({
     "itemchanged .massChecker": "onItemChanged",
     "click .massDelete": "massDelete"
   },
+  remove: function(){
+    BaseView.prototype.remove.apply(this, arguments);
+  },
+
   rowSelectorCheck: function(evt){
     var $this = $(evt.currentTarget);
     var $spanIcon = $this.children('span').first();
