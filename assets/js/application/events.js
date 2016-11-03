@@ -377,3 +377,5 @@ $(document).on('keypress',function(){
 });
 
 new Clipboard('.clipboard-btn');
+
+$('.allUpNrunning').on('click',function(){ $('.allUpNrunning').slideUp(); $('.resources-panel-list').slideDown(); });
