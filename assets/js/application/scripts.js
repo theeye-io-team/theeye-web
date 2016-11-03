@@ -697,9 +697,13 @@ $(function() {
     });
   })();
 
+  /**
+
   window.gist = new Github.Gist.SaveToGistButton({
     autoRender: true,
     container: $('#script-modal .modal-footer')[0]
   });
+
+  */
 
 });
