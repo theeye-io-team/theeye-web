@@ -1,41 +1,6 @@
 /* global debug, $searchbox, log, Ladda, bootbox */
 
 
-function updateStateTag (state, $resource) {
-  var tags = $resource.data('tags').split(',');
-
-  for(var i=0; i<tags.length; i++){
-    var tag = tags[i];
-    var newState = 'state=' + state;
-    if( /state=/.test(tag) === true ){
-      tags[i] = newState ;
-    }
-  }
-
-  $resource.data('tags', tags.join(','));
-}
-
-function switchStateIcon (state, elSpan) {
-
-  elSpan.className = 'status';
-  elSpan.title = state;
-
-  switch(state) {
-    case 'normal':
-      elSpan.className += ' glyphicon glyphicon-ok-sign';
-      break;
-    case 'failure':
-      elSpan.className += ' glyphicon glyphicon-exclamation-sign';
-      break;
-    case 'updates_stopped':
-      elSpan.className += ' glyphicon glyphicon-remove-sign';
-      break;
-    default:
-      log('invalid state reported by resource');
-      break;
-  }
-}
-
 var $upNrunning = $(".resources-panel .allUpNrunning");
 var $resourcesList = $(".resources-panel .resources-panel-list");
 
@@ -50,7 +15,7 @@ $searchbox.on('search:empty', function() {
   checkAllUpAndRuning();
 });
 
-function checkAllUpAndRuning() {
+function checkAllUpAndRuning () {
   var sadStates = $('.state-icon.icon-warn').length +
     $('.state-icon.icon-error').length;
 
@@ -86,7 +51,7 @@ $(function(){
   checkAllUpAndRuning();
 });
 
-function triggers(io){
+function triggers (io){
   var log = debug('eye:web:triggers');
 
   /////////////////////////////////////////////
@@ -325,11 +290,11 @@ function triggers(io){
   });
 }
 
-(function (io){
-  function subscribeToEvents(){
-    log('initializing task events');
+(function (io) {
+  function subscribeToEvents () {
+    log('initializing monitor events');
     io.socket.on('events-update', function(resource) {
-      log('resource event update received');
+      log('monitor event update received');
       log(resource);
 
       if( resource.event == "host_registered" ){
@@ -380,7 +345,7 @@ function triggers(io){
     });
   }
 
-  function subscribeToTriggers(){
+  function subscribeToTriggers () {
     log('initializing task triggers');
     io.socket.post('/palanca/subscribe', { customer: Cookies.getJSON('theeye').customer }, function (data, jwres){
       log('subscribed to trigger updates');

@@ -8,9 +8,7 @@ function CollectionRenderer (options) {
   function renderItem (item) {
     var view = new View({ model: item });
     view.render();
-
     views.push( view );
-
     container.appendChild( view.el );
   }
 
@@ -37,7 +35,9 @@ function CollectionRenderer (options) {
 
 
 var BaseView = Backbone.View.extend({
-  initialize:function(){
+  initialize:function(options){
+    _.extend(this,options);
+
     if( this.autoRender ) this.render();
   },
   renderTemplate: function(){

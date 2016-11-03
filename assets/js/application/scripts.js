@@ -1,13 +1,10 @@
 /* global ace, bootbox, $searchbox */
 // Dropzone.autoDiscover = false;
-
 $(function() {
-  var self = this; // dafuk? why not {}?
+  var self = this;
   window.scriptState = window.scriptState ? window.scriptState : $({});
   var $state = window.scriptState;
-  //what is the advantage of storing the scriptId on
-  //a pseudo class function, its value always come from [data-hook=script-id]
-  //and is re-set every time a script is created/loaded for editing
+
   self.scriptId = null;
 
   //**initialize ace editor**//
@@ -49,38 +46,6 @@ $(function() {
     }
     return extension;
   }
-
-  //**initialize dropzone**//
-  // var scriptDropZone = new Dropzone(".dropzone", {
-  //   url: "/script",
-  //   paramName: "script",
-  //   maxFiles: 1,
-  //   addRemoveLinks: true,
-  //   uploadMultiple: false,
-  //   autoProcessQueue: false
-  // });
-  //
-  // scriptDropZone.on("sending", function(file, xhr, formData) {
-  //   formData.append("filename", $("input#filename").val());
-  //   formData.append("description", $("form[data-hook=script-form] textarea#description").val());
-  //   formData.append("uploadMethod", $('input:radio[name=live-edit]:checked').val());
-  // });
-  //
-  // scriptDropZone.on("addedfile", function(file){
-  //   if($("input#filename").val() === '')
-  //     $("input#filename").val(file.name);
-  // });
-  //
-  // scriptDropZone.on("success", function(file, responseText){
-  //   $state.trigger("script_uploaded", responseText);
-  // });
-  //
-  // scriptDropZone.on("error", errorOnUpload);
-  //
-  // function errorOnUpload(file, uploadError, xhr) {
-  //   alert(uploadError);
-  //   scriptDropZone.removeAllFiles();
-  // }
 
   $filenameInput.on('input', function(event){
     $('#filenamePreview').text( ($filenameInput.val() || "[auto]") + "." + ext);
@@ -153,9 +118,7 @@ $(function() {
       return;
     }
     var $scriptModal = $("#script-modal");
-    self.scriptId = null; // ????????????
-    // scriptDropZone.options.method = 'POST';
-    // scriptDropZone.removeAllFiles();
+    self.scriptId = null;
 
     ext = "js";
     $('#filenamePreview').text("[auto]." + ext);
@@ -733,5 +696,10 @@ $(function() {
       $this.blur();
     });
   })();
+
+  window.gist = new Github.Gist.SaveToGistButton({
+    autoRender: true,
+    container: $('#script-modal .modal-footer')[0]
+  });
 
 });

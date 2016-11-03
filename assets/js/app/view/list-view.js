@@ -176,5 +176,4 @@ var ListView = BaseView.extend({
     $this.blur();
     return false;
   }
-
 });

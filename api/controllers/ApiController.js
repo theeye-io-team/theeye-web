@@ -41,7 +41,6 @@ module.exports = {
    * @param {String} id
    */
   update (req, res, next){
-    console.log(req.params);
     req.supervisor.update({
       query: req.query,
       route: `/${req.session.customer}/${req.params.resource}`,
