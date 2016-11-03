@@ -1,5 +1,4 @@
 /* global ace, bootbox, $searchbox */
-// Dropzone.autoDiscover = false;
 $(function() {
   var self = this;
   window.scriptState = window.scriptState ? window.scriptState : $({});
@@ -69,9 +68,9 @@ $(function() {
   //**live-editor mode setter**//
   $("[data-hook=editor-mode]").change(function() {
     var mode = $("[data-hook=editor-mode]").val();
-    aceEditor.session.setMode("ace/mode/"+mode);
+    aceEditor.session.setMode("ace/mode/" + mode);
     ext = mode2extension(mode);
-    $('#filenamePreview').text( ($filenameInput.val() || "[auto]") + "." +ext);
+    $('#filenamePreview').text( ($filenameInput.val() || "[auto]") + "." + ext);
   });
 
   //**Delete script**//
@@ -147,9 +146,6 @@ $(function() {
     var $form = $('form[data-hook=script-form]');
     var id = $(e.currentTarget).data('script-id');
 
-    //set the dropzone url for script edition
-    // scriptDropZone.options.method = 'PUT';
-    // scriptDropZone.options.url = '/script/' + id;
     //set the hidden input with the current id
     $("[data-hook=script-id]", $form).val(id);
 
@@ -234,10 +230,9 @@ $(function() {
       type = 'PUT';
     }
 
-    // var uploadMethod = $('input:radio[name=live-edit]:checked').val();
     if( uploadMethod == 'fileupload' ) {
 
-      // scriptDropZone.processQueue();
+      // this should not happen anymore
 
     } else {
 
@@ -321,6 +316,7 @@ $(function() {
       $('input[name=filename]', '#script-modal').val(nameonly);
       var modelist = ace.require('ace/ext/modelist');
       var modeMeta = modelist.getModeForPath(filename);
+
       aceEditor.session.setMode(modeMeta.mode);
       aceEditor.getSession().setValue(content);
 
@@ -328,7 +324,8 @@ $(function() {
       $("[data-hook=live-edit][value=editor]", '#script-modal').trigger('click');
 
       $('textarea[name=description]', '#script-modal').val("");
-      $('select#editor-mode', '#script-modal').val(mode2extension(modeMeta.name));
+
+      $("[data-hook=editor-mode]", '#script-modal').val(modeMeta.name);
       $("[data-hook=editor-mode]", '#script-modal').trigger('change');
 
     };

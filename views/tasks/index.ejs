@@ -114,7 +114,7 @@
 
                       <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
                       &nbsp; <%= task.name %>
-                      <small class="remark-alert">> host or script are missing </small>
+                      <small class="remark-alert">> host and/or script is missing </small>
 
                       <% } else if( task.type=='scraper' && !task.host_id ) { %>
 
@@ -149,7 +149,8 @@
                       <% } %>
                         <span class="glyphicon glyphicon-edit"></span>
                       </button>
-                      <button class="scheduleTask btn btn-primary simple-btn tooltiped" title="Schedule task" aria-label="Center Align">
+                      <% var btnClass = tags.indexOf("scheduled") >= 0 ? 'btn-warning' : 'btn-primary'; %>
+                      <button class="scheduleTask btn <%= btnClass %> simple-btn tooltiped" title="Schedule task" aria-label="Center Align">
                         <span class="glyphicon glyphicon-time"></span>
                       </button>
                       <button class="deleteTask btn btn-primary simple-btn tooltiped" title="Delete task" aria-label="Center Align">
