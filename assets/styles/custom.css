@@ -294,21 +294,25 @@ div.js-searchable-box button {color:#fff;background:#d88e47;border:none;padding:
 div.js-searchable-box button.clean {right:39px;color:#999;background:#ccc;}
 div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 
-.admin-container .admin-panel { position:relative;}
 .admin-container { width:100%; color:white;}
 .admin-container h3 {background-color: #23324C;margin: 0;padding: 6px;color: #fff;font-size: 14px;text-align: center;}
 .admin-container .admin-panel { position:relative;}
 .admin-container .ladda-button {border: none;text-shadow: none;box-shadow: none}
+.admin-container .panel {
+  background-color: transparent;
+}
 .admin-container .panel-heading {padding:0;}
 .admin-container .panel-group {margin-bottom:0;}
 .admin-container .panel-heading a {text-decoration:none; border:none;}
 .admin-container .panel-heading a div.panel-title-content { width:100%;}
 .admin-container .panel-default {border:none}
 .admin-container .panel-default>.panel-heading {
-  background:#304269;
+  background-image: none;
+  background: transparent; /* #304269; */
   color:#fff;
   border-bottom:1px solid #212F48;
-  border-radius:0}
+  border-radius:0
+}
 .admin-container .panel-default>.panel-heading:hover {
   background-color: #212F48;
   -webkit-transition: background-color 500ms linear;
@@ -677,4 +681,10 @@ a.flowchart-icon {
   left: 0;
   top: 0;
   z-index: 999;
+}
+
+.tag-grouper {
+  border-radius: 10px;
+  margin: 3px 5px;
+  transition: transform .25s ease-in-out;
 }

@@ -96,6 +96,8 @@ module.exports.routes = {
   'post   /admin/hostgroup/:groupid/monitortemplate' : 'HostGroupMonitorTemplateController.create',
   'delete /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.destroy',
 
+  // temporary just for testing grouped monitors
+  'get    /events/test' : 'EventsController.index',
   /**
    *
    * generic api endpoints
