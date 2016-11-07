@@ -5,7 +5,7 @@
   data-item-name="{{attributes.name}}">
   <div class="panel-heading" role="tab">
     <h4 class="panel-title">
-      <a class="collapsed" data-toggle="collapse"
+      <span class="collapsed" data-toggle="collapse"
         data-parent="#accordion"
         href="#collapse{{ attributes.id }}"
         aria-expanded="false"
@@ -19,6 +19,11 @@
           </button>
           <span class="panel-item name">{{ attributes.name }}</span>
           <div class="panel-item icons">
+            <a title="Workflow"
+              data-hook="workflow-button"
+              href="#workflow"
+              class="tooltiped btn-icon-image flowchart-icon btn btn-primary">
+            </a>
             <button class="btn btn-primary simple-btn tooltiped"
               data-hook="edit"
               title="Edit"
@@ -33,7 +38,7 @@
             </button>
           </div>
         </div>
-      </a>
+      </span>
     </h4>
   </div>
   <div id="collapse{{ attributes.id }}"

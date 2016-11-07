@@ -14,9 +14,14 @@ var UserController = module.exports = {
       users: function(next){
         User.find({ username : { $ne: null } }, next);
       },
-      customers: function(next){
-        supervisor.customerFetch({}, next);
-      }
+      customers: (next) => supervisor.fetch({
+        route: '/customer',
+        success: customers => next(null,customers),
+        failure: err => {
+          sails.log.error(err);
+          next(err)
+        }
+      })
     }, function(error, data){
       if(error) {
         return res.view({

@@ -1,6 +1,12 @@
 <!-- views/menu.ejs -->
 <nav class="navbar navbar-inverse navbar-fixed-top">
   <div class="navbar-header">
+
+    <span class="user-profile">
+      <small><strong><%= (req.user.username||req.user.email).toUpperCase() + ' (' + req.user.credential + ')' %></strong></small>
+      <span class="glyphicon glyphicon-user"></span>
+    </span>
+
     <a class="navbar-brand" href="/events"><img src="/images/logo-hor.png" alt="The eye"></a>
     <div class="navData">
       <a href="/profile"><span class="clientName"><%= req.session.customer %></span></a>
@@ -16,7 +22,7 @@
         <a href="#" data-toggle="dropdown" class="switcher"><img src="/images/switcher.png" /></a>
         <ul class="dropdown-menu" role="menu">
           <span class="glyphicon glyphicon-triangle-top"></span>
-          <% req.user.customers.forEach( function(customer, key){ %>
+          <% req.user.customers.forEach( function (customer, key) { %>
           <li><a onClick="javascript:setCustomer('<%= customer %>')" ><%= customer %></a></li>
           <% }); %>
         </ul>
@@ -36,15 +42,16 @@
             <li><a href="/admin/webhook"> Webhooks </a></li>
             <li><a href="/admin/script"> Scripts </a></li>
             <li><a href="/admin/hostgroup"> Templates </a></li>
-            <% if(req.user.credential == 'root'){ %>
+
+            <% if (req.user.credential == 'root') { %>
             <li><a href="/admin/user"> Users </a></li>
             <li><a href="/admin/customer"> Organizations </a></li>
             <% } %>
+
             <li><a href="/profile"> Profile </a></li>
             <li>
-              <a href="/logout" style="padding-bottom: 14px;">
-                <i class="glyphicon glyphicon-log-out"></i>
-                Logout
+              <a href="/logout">
+                <i class="glyphicon glyphicon-log-out"></i> Logout
               </a>
             </li>
           </ul>
@@ -52,10 +59,10 @@
       </li>
       <% } else { %>
       <li>
-        <a href="/profile" style="padding-bottom: 14px;"> Profile </a>
+        <a href="/profile"> Profile </a>
       </li>
       <li>
-        <a href="/logout" style="padding-bottom: 14px;">
+        <a href="/logout">
           <i class="glyphicon glyphicon-log-out"></i>
           Logout
         </a>

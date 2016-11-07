@@ -28,6 +28,7 @@ module.exports = {
       function minutesToMillisecondsString(mins){
         return String( mins * 60 * 1000 );
       }
+
       data.looptimes = [
         {'id':minutesToMillisecondsString(0.25),'value':'0.25'},
         {'id':minutesToMillisecondsString(0.5),'value':'0.5'},

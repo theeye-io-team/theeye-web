@@ -12,7 +12,6 @@ var path = require('path');
 var util = require('util');
 var request = require('request');
 var debug = require('debug');
-var EventEmitter = require('events').EventEmitter;
 
 var logger = {
   'debug': debug('eye:client:debug'),
@@ -32,18 +31,15 @@ function TheEyeClient (options)
 
   this.configure(options);
 
-  EventEmitter.call(this);
-
   return this;
 }
 
-util.inherits(TheEyeClient, EventEmitter);
 
 /**
  *
  *
  */
-var prototype = {
+TheEyeClient.prototype = {
   TASK: '/:customer/task',
   TAG: '/:customer/tag',
   RESOURCE: '/:customer/resource',
@@ -321,7 +317,7 @@ var prototype = {
    * @author Facundo
    * @return Request connection.request
    */
-  create: function(options) {
+  create : function(options) {
     var request = this.performRequest({
       method: 'POST',
       url: options.route,
@@ -880,89 +876,6 @@ var prototype = {
    *
    *
    */
-  customerFetch : function(filters, callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/customer'
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.customers);
-    });
-  },
-  /**
-   *
-   *
-   */
-  customerGet : function(customerId, callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/customer/' + customerId
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.customer);
-    });
-  },
-  /**
-   *
-   *
-   */
-  customerCreate : function(data, callback) {
-    this.performRequest({
-      method: 'post',
-      url: '/customer',
-      body: data
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.customer);
-    });
-  },
-  /**
-   * Replace customer data
-   * @method PUT
-   * @route /customer/:customer
-   */
-  customerReplace : function(customerId, data, callback) {
-    this.performRequest({
-      method: 'put',
-      url: '/customer/' + customerId,
-      body: data
-    }, function(error, body){
-      if (error) return callback(error);
-      callback(null, body.customer);
-    });
-  },
-  /**
-   * Update customer data
-   * @method PATCH
-   * @route /customer/:customer
-   */
-  customerUpdate : function(customerId, data, callback) {
-    this.performRequest({
-      method: 'patch',
-      url: '/customer/' + customerId,
-      body: data
-    }, function(error, body){
-      if (error) return callback(error);
-      callback(null, body.customer);
-    });
-  },
-  /**
-   *
-   *
-   */
-  customerRemove : function(customerId, callback) {
-    this.performRequest({
-      method: 'delete',
-      url: '/customer/' + customerId
-    }, function(error, body){
-      if (error) return callback(error);
-      callback(null);
-    });
-  },
-  /**
-   *
-   *
-   */
   userGet : function(id, callback) {
     this.performRequest({
       method: 'get',
@@ -1194,8 +1107,4 @@ var prototype = {
       callback(null);
     });
   },
-}
-
-for(var p in prototype) {
-  TheEyeClient.prototype[p] = prototype[p];
 }

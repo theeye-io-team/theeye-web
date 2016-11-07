@@ -12,11 +12,19 @@ module.exports = {
         success: (body) => callback(null, body),
         failure: (err) => callback(err)
       }),
-      tasks: function(callback) { supervisor.tasks(callback); },
-      scripts: function(callback) { supervisor.scripts(callback); },
-      hosts: function(callback) { supervisor.hosts(callback); },
-      resourceTypes: function(callback) { supervisor.resourceTypes(callback); },
-      scraperHosts: function(callback) { supervisor.scraperHosts(callback); }
+      tasks: function(callback) {
+        supervisor.tasks((err,data) => {
+          if (err) {
+            if (err.statusCode=='403') {
+              callback();
+            } else {
+              callback(err);
+            }
+          } else {
+            callback(null,data);
+          }
+        });
+      }
     }, function(err, data) {
       if (err) {
         debug(err);
@@ -59,13 +67,13 @@ module.exports = {
             .value();
 
           data.indexedResources = indexed;
-          console.log(req.route.path.indexOf('test'));
+
           if(req.route.path.indexOf('test') > -1) {
             //testing, remove when done
-            console.log('rendering grouptest');
+
             res.view('events/grouptest', data);
-          }else{
-            console.log('rendering index');
+          } else {
+
             res.view('events/index', data);
           }
         }
@@ -79,9 +87,7 @@ module.exports = {
       socket.join(customer + '_events');
     }
 
-    res.json({
-      message: 'subscribed to customers events'
-    });
+    res.json({ message: 'subscribed to customers events' });
   },
   update: function(req, res) {
     // sns updates received
@@ -89,8 +95,7 @@ module.exports = {
     debug('event update received');
     debug(body);
     snsreceiver.handleSubscription(body, function(error, action) {
-      if( error || ! body.Message )
-      {
+      if( error || ! body.Message ) {
         debug.error('Error Invalid request');
         debug.error(body);
         res.json({

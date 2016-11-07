@@ -1,57 +1,62 @@
 
 var CustomerController = module.exports = {
   /**
-   *
-   *
+   * @route GET /admin/customer
    */
-  index : function(req, res) {
+  index (req, res) {
     var supervisor = req.supervisor;
-    supervisor.customerFetch({}, function(error, customers) {
-      res.view({
-        customers: customers ? customers : [],
-        errors: error ? req.flash('error') : null
-      });
+    supervisor.fetch({
+      route:'/customer',
+      success: customers => {
+        res.view({ customers: customers, errors: null });
+      },
+      failure: err => {
+        sails.log.error(err);
+        res.view({ customers: [], errors: err });
+      }
     });
   },
   /**
-   * Fetch customers
    * @route GET /admin/customer
+   */
+  fetch (req, res) {
+    var supervisor = req.supervisor;
+    supervisor.fetch({
+      route:'/customer',
+      success: customers => {
+        res.send(200, { customer: customers });
+      },
+      failure: err => {
+        sails.log.error(err);
+        res.send(err.statusCode,err);
+      }
+    });
+  },
+  /**
    *
+   * GET  /admin/customer/:id 
    *
    */
-  fetch : function(req, res)
-  {
-    var supervisor = req.supervisor;
-    var customerId = req.query.customerId;
-    supervisor.customerFetch({}, function(err, customers) {
-      if(err) return res.send(500);
-      else return res.send(200, { customer: customers });
-    });
-  },        
-  //GET  /admin/customer/:id 
-  get : function(req, res)
-  {
-    var supervisor = req.supervisor;
-    var params     = req.params.all();
-    var customerId = params.id;
-
-    supervisor.customerGet(customerId, function(err, customer) {
-      if(err) return res.send(500);
-      else return res.send(200, {customer: customer});
+  get (req, res) {
+    req.supervisor.get({
+      route:'/customer',
+      id:req.params.id,
+      success: customer => res.send(200, {customer: customer}),
+      failure: err => res.send(err.statusCode, err)
     });
   },        
   //POST  /admin/customer/:id
-  create : function(req, res)
-  {
-    var supervisor = req.supervisor;
+  create (req, res) {
     var params = req.params.all();
 
     if(!params.name) return res.send(400, "Name can't be empty");
     if(!params.email) return res.send(400, "Email can't be empty");
 
-    supervisor.customerCreate(params, function(err, customer) {
-      if(err) return res.send(err.statusCode, err);
-      else return res.send(200, {customer: customer});
+    req.supervisor.create({
+      route:'/customer',
+      body: params,
+      success: customer => res.send(200, customer),
+      failure: err => res.send(err.statusCode, err)
     });
   },
   /**
@@ -59,66 +64,52 @@ var CustomerController = module.exports = {
    * @route /admin/customer/:id
    * @param {String} id
    */
-  edit : function(req, res)
-  {
-    var supervisor = req.supervisor;
-    var params = req.params.all();
-    var customerId = params.id;
-
-    var toUpdate = {
-      description : params.description,
-      emails : params.emails
-    };
-
-    supervisor.customerReplace(
-      customerId, 
-      toUpdate, 
-      function(err, customer) {
-        if(err) return res.send(500, 'server error');
-        else return res.json(customer);
-      });
+  edit (req, res) {
+    var body = req.body;
+    req.supervisor.patch({
+      route:'/customer',
+      id: req.params.id,
+      body: req.allParams(),
+      success: customer => res.json(200,customer),
+      failure: err => res.send(err.statusCode,err)
+    });
   },
   /**
    * @method DELETE
    * @route /admin/customer/:id 
    * @param {String} id
    */
-  remove: function(req, res)
-  {
-    var supervisor = req.supervisor;
-    var params = req.params.all();
-    var customerId = req.params.id;
-    var customerName = req.body.name;
-
-    supervisor.customerRemove(customerId, function(err) {
-      if(!err) {
-
-        sails.log.debug('supervisor customer removed');
-
+  remove (req, res) {
+    req.supervisor.remove({
+      route: '/customer',
+      id: req.params.id,
+      success: customer => {
         User.find({}, function(error, users){
-          for(var i=0; i<users.length; i++){
+          for (var i=0; i<users.length; i++) {
             var user = users[i];
-            var idx=user.customers.indexOf(customerName);
-            if( idx !== -1 ){
+            var idx = user.customers.indexOf(customer.name);
+            if (idx !== -1) {
               var removed = user.customers.splice(idx, 1);
-              user.save(function(error){
-                if(error)
-                  sails.log.error('unable to update user "%s" customers', user.username);
+              user.save(function (error) {
+                if(error) sails.log.error('unable to update user "%s" customers', user.username);
               });
             }
           }
         });
 
         return res.send(204);
-      } else return res.send(500);
-    });        
+      },
+      failure: err => {
+        sails.log.error(err);
+        return res.json(err.statusCode, err);
+      }
+    });
   },
   /**
    * @method GET
    * @route /admin/customer/:name/agent
    */
-  getUserAgent : function(req, res)
-  {
+  getUserAgent (req, res) {
     var supervisor = req.supervisor;
     var customer_name = req.params.name;
 

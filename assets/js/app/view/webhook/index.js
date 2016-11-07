@@ -92,6 +92,11 @@ var WebhookPage = (function(){
       "click [data-hook=edit]":"onClickEdit",
       "click [data-hook=remove]":"onClickRemove",
       "click [data-hook=trigger]":"onClickTrigger",
+      "click [data-hook=workflow-button]":"onClickWorkflow",
+    },
+    onClickWorkflow:function(event){
+      window.open('/admin/workflow?node=' + this.model.id, '_blank');
+      return false;
     },
     onClickEdit:function(event){
       event.preventDefault();

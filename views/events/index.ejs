@@ -11,7 +11,7 @@
   </div>
 
   <div class="admin-panel"><!-- PANEL ROW -->
-    <div class="col-md-6 resources-panel events-panel">
+    <div class="<%= Array.isArray(tasks)?'col-md-6':'col-md-12' %> resources-panel events-panel">
       <h3>Monitors</h3>
       <% if(resources.length > 0) {%>
       <div class="allUpNrunning main-status hidden-container">
@@ -75,7 +75,10 @@
                         <button data-search="<%= resource.description %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
                           <span class="glyphicon glyphicon-search"></span>
                         </button>
-                        <a title="Workflow" data-hook="workflow-button" href="/admin/workflow?node=<%= resource.monitor.id %>" class="tooltiped btn-icon-image flowchart-icon"></a>
+                        <a title="Workflow"
+                          data-hook="workflow-button"
+                          href="/admin/workflow?node=<%= resource.monitor.id %>"
+                          class="tooltiped btn-icon-image flowchart-icon"></a>
                         <button class="monitorStats btn btn-icon-image icon-image-stats tooltiped" title="Stats">
                         </button>
                         <button class="editMonitors btn btn-icon-image icon-image-edit tooltiped" title="Edit monitors">
@@ -142,6 +145,8 @@
       </div>
       <% } %>
     </div>
+
+    <% if (Array.isArray(tasks)) { %>
     <!-- Tasks -->
     <div class="col-md-6 tasks-panel events-panel">
       <h3 class="white">Tasks</h3>
@@ -270,5 +275,6 @@
       </div>
 
     </div>
+    <% } %>
   </div> <!-- END PANEL ROW -->
 </div> <!-- END MAIN -->

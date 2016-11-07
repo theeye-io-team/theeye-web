@@ -82,23 +82,22 @@ $(function() {
 
     function fillForm($viewElement, data){
       $viewElement[0].reset();
-      Object.keys(data).forEach(function(k)
-      {
+      Object.keys(data).forEach(function(k) {
 
-        if(k == 'emails')
-        {
+        if(k == 'emails') {
           var emails = data[k];
           $('[data-hook=emails-edit]').tagsinput('removeAll');
-          emails.forEach(function(email)
-          {
+          emails.forEach(function(email) {
             $('[data-hook=emails-edit]').tagsinput('add', email);
-
           });
-        }
-        else
-        {
+        } else {
           var $el = $viewElement.find("[data-hook="+ k + "]");
-          $el.val(data[k]);
+          if (k == 'config') {
+            var config = JSON.stringify(data[k]);
+            $el.val(config);
+          } else {
+            $el.val(data[k]);
+          }
         }
       });
     }
@@ -109,8 +108,7 @@ $(function() {
       var customerId = event.relatedTarget.getAttribute('data-customer-id');
       $customerForm.data('customer-id',customerId);
       $customerForm.data('action','edit');
-      jQuery.get("/customer/" + customerId).done(function(data)
-      {
+      jQuery.get("/customer/" + customerId).done(function(data) {
         fillForm($customerForm, data.customer);
       }).fail(function(xhr, err) {
         $state.trigger("customer_fetch_error", xhr.responseText, err);
@@ -130,14 +128,23 @@ $(function() {
       event.preventDefault();
       var vals = extractFormData('edit', $customerForm);
 
+      try {
+        vals.config = JSON.parse(vals.config);
+      } catch (e) {
+        bootbox.alert('The Configuration provided is not a valid JSON object. Please, check again');
+        return;
+      }
+
       jQuery.ajax({
-        url:"/customer/" + $customerForm.data('customer-id'),
-        data:vals,
-        type:'put'
+        url: '/customer/' + $customerForm.data('customer-id'),
+        data: JSON.stringify(vals),
+        contentType: 'application/json; charset=utf-8',
+        dataType: 'json',
+        type: 'PUT'
       }).done(function() {
-        $state.trigger("customer_updated");
+        $state.trigger('customer_updated');
       }).fail(function(xhr, err) {
-        $state.trigger("customer_update_error", xhr.responseText, err);
+        $state.trigger('customer_update_error', xhr.responseText, err);
       });
 
       return false;
