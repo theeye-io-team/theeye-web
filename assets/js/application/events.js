@@ -1,40 +1,4 @@
-/* global debug, $searchbox, log, Ladda, bootbox */
-
-
-function updateStateTag (state, $resource) {
-  var tags = $resource.data('tags').split(',');
-
-  for(var i=0; i<tags.length; i++){
-    var tag = tags[i];
-    var newState = 'state=' + state;
-    if( /state=/.test(tag) === true ){
-      tags[i] = newState ;
-    }
-  }
-
-  $resource.data('tags', tags.join(','));
-}
-
-function switchStateIcon (state, elSpan) {
-
-  elSpan.className = 'status';
-  elSpan.title = state;
-
-  switch(state) {
-    case 'normal':
-      elSpan.className += ' glyphicon glyphicon-ok-sign';
-      break;
-    case 'failure':
-      elSpan.className += ' glyphicon glyphicon-exclamation-sign';
-      break;
-    case 'updates_stopped':
-      elSpan.className += ' glyphicon glyphicon-remove-sign';
-      break;
-    default:
-      log('invalid state reported by resource');
-      break;
-  }
-}
+/* global getHashParams, debug, $searchbox, log, Ladda, bootbox, Cookies, Clipboard, _ */
 
 var $upNrunning = $(".resources-panel .allUpNrunning");
 var $resourcesList = $(".resources-panel .resources-panel-list");
@@ -51,6 +15,7 @@ $searchbox.on('search:empty', function() {
 });
 
 function checkAllUpAndRuning() {
+  return;
   var sadStates = $('.state-icon.icon-warn').length +
     $('.state-icon.icon-error').length;
 
@@ -127,6 +92,8 @@ function triggers(io){
    * @chris mira como cambio tu lastRunToCollapsible duplicado villero jeje
    *
    * belleza
+   *
+   * biutiful!
    */
   var JobResultView = function (options) {
 
@@ -326,6 +293,11 @@ function triggers(io){
 }
 
 (function (io){
+  //fuck debugger hack
+  // var log = function(){
+  //   console.log.apply(console, arguments);
+  // };
+
   function subscribeToEvents(){
     log('initializing task events');
     io.socket.on('events-update', function(resource) {
@@ -383,18 +355,21 @@ function triggers(io){
   function subscribeToTriggers(){
     log('initializing task triggers');
     io.socket.post('/palanca/subscribe', { customer: Cookies.getJSON('theeye').customer }, function (data, jwres){
+      // log(data);
+      // log(jwres);
       log('subscribed to trigger updates');
     });
   }
 
-  var log = debug('eye:web:events');
-  log('listening sockets connect');
+  // var log = debug('eye:web:events');
   if( io.socket.socket && io.socket.socket.connected ) {
+    log('socket already connected, subscribing...');
     subscribeToEvents();
     subscribeToTriggers();
   }
 
   io.socket.on("connect",function(){
+    log('socket connected! subcribing...');
     subscribeToEvents();
     subscribeToTriggers();
   });
@@ -403,6 +378,140 @@ function triggers(io){
 
 })(window.io);
 
+(function setupGroupables(){
+  //skip if not in test route / path
+  if (!/events\/test/.test(window.location.pathname)) return;
+  //setup
+  var $monitorsAccordion = $('#accordion');
+  var $monitorsContainer = $('#monitorsContainer');
+  var $groupAccordion = $('#groupaccordion');
+  var $groupBody = $('#group-body', $groupAccordion);
+  var $groupTitle = $('#group-title', $groupAccordion);
+  var $tagContainer = $('.tagger');
+
+  /* takes the hash from url. Hash must be in the form of groupby=TAG
+   * Can be called from button handler and/or page load
+   */
+  var groupBasedOnHash = function(){
+    var hashParams = getHashParams();
+    // should we remove any search here?
+    //first, any .itemRow in the groups container must be returned to #accordion
+    $('.itemRow', $groupAccordion).appendTo($monitorsAccordion);
+    if(!hashParams.groupby) {
+      $groupAccordion.slideUp(200);
+      $monitorsContainer.slideDown(200);
+      return;
+    }
+    //then, search for .itemRow in #accordion that matches tag
+    //and move it into groupaccordion body
+    $('.itemRow', $monitorsAccordion).each(function(i,e){
+      var $row = $(e);
+      var itemTags = $row.data('tagArray');
+      // !!~ bitwise indexOf to boolean
+      // si, puedo usar !== -1, pero los bitwise operands son mucho mas rapidos y consumen menos
+      if(!!~itemTags.indexOf(hashParams.groupby)) {
+        $row.appendTo($groupBody);
+      }
+      $groupTitle.text(hashParams.groupby);
+      $groupAccordion.slideDown(200);
+      $monitorsContainer.slideUp(200);
+    });
+    //get the button matched by tag
+    var $tagButton = $('.tag-grouper', $tagContainer)
+      .filter(function(i,e){
+        return $(e).text() == hashParams.groupby;
+      }).first();
+    // this means the groupBasedOnHash came from page load, not button click
+    // call toggleTagButtonState so the button reflects tag selection
+    if($tagButton.length > 0 && !$tagButton.hasClass('active')) {
+      //no tag button for specified tag, weird
+      toggleTagButtonState($tagButton);
+    }
+  };
+  /* get tags from all .itemRow
+   * @returns array with unique values and empty/falsy tags removed
+   */
+  var getAllTags = function(){
+    var tagString = "";
+    $('.itemRow').each(function(i,e){
+      var itemTags = $(e).data('tags');
+      tagString += "," + itemTags;
+      //since we are here, turn tags into array and store in element
+      $(e).data('tagArray', itemTags.split(','));
+    });
+    var allTags = _.chain(tagString.split(','))
+      .uniq()
+      .compact()
+      .value();
+    return allTags;
+  };
+  /* handles toggle button state, must be called with a jQueried object (the button to handle)
+   * Reverts buttons.tag-grouper to btn-info, removes btn-warning and active class, resets rotateX.
+   * Adds classes active & btn-warning and rotateX(360) to passed button
+   * @returns true/false based on whether the button ends active or not
+   */
+  var toggleTagButtonState = function($el) {
+    //all tag buttons
+    var $buttons = $('.tag-grouper', $tagContainer)
+      .removeClass('btn-warning')
+      .addClass('btn-info');
+    $buttons.filter('.active')
+      .css('transform','rotateX(-360deg)');
+
+    if($el.hasClass('active')){
+      $el.removeClass('active');
+      return false;
+    }else{
+      // reset rotate for previous active button
+      // remove active class from all buttons
+      $buttons.removeClass('active');
+      $el.addClass('active')
+        .css('transform','rotateX(360deg)')
+        .removeClass('btn-info')
+        .addClass('btn-warning');
+      return true;
+    }
+  };
+  /*
+   * Handles click on tag-grouper buttons
+   * Determines if button should enable/disable group by tag
+   * Sets window.location.hash on empty||button.text
+   * Fires groupBasedOnHash
+   */
+  var tagButtonHandler = function(event){
+    event.preventDefault();
+
+    var $button = $(event.target);
+    var active = toggleTagButtonState($button);
+    var tag = $button.text();
+    if(!active) {
+      window.location.hash = '';
+    }else{
+      window.location.hash = 'groupby=' + encodeURIComponent(tag);
+    }
+    groupBasedOnHash();
+  };
+  // creates & returns a button.btn.btn-xs.[btn-info||btn-warning]
+  var createTagButton = function(text){
+    var hashParams = getHashParams();
+    var buttonClass= hashParams.groupby && hashParams.groupby == text ? 'btn-warning' : 'btn-info';
+    return $('<button />')
+      .addClass('btn btn-xs tag-grouper')
+      .addClass(buttonClass)
+      .on('click', tagButtonHandler)
+      .text(text);
+  };
+
+  var collectTagsAndBuildButtons = function(){
+    getAllTags().forEach(function(e,i){
+      $tagContainer.append(createTagButton(e));
+    });
+  };
+  collectTagsAndBuildButtons();
+  groupBasedOnHash();
+  //una vez agrupados hay que "heredar" los events de los monitors
+  //tiene que tener un icono heredado del peor estado de los monitors que haya dentro
+})();
 
 //
 // auto focus search input on keypress

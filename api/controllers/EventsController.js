@@ -59,7 +59,15 @@ module.exports = {
             .value();
 
           data.indexedResources = indexed;
-          res.view(data);
+          console.log(req.route.path.indexOf('test'));
+          if(req.route.path.indexOf('test') > -1) {
+            //testing, remove when done
+            console.log('rendering grouptest');
+            res.view('events/grouptest', data);
+          }else{
+            console.log('rendering index');
+            res.view('events/index', data);
+          }
         }
       );
     });
