@@ -387,7 +387,7 @@ TheEyeClient.prototype = {
    */
   getNextPendingJob : function(options,doneFn) {
 
-    var hostname = (options && options.hostname) ? options.hostname : this.hostname;
+    var hostname = (options&&options.hostname) ? options.hostname : this.hostname;
 
     this.performRequest({
       method: 'GET',
@@ -442,39 +442,6 @@ TheEyeClient.prototype = {
         if(next) next(null,response);
       }
     });
-  },
-  /**
-   *
-   *
-   */
-  submitDstat : function(dstat,next) {
-    this.performRequest({
-      url: '/:customer/dstat/:hostname',
-      method: 'post',
-      body: dstat
-    }, next);
-  },
-  /**
-   *
-   *
-   */
-  submitPsaux : function(psaux,next) {
-    this.performRequest({
-      method: 'post',
-      body: psaux,
-      url: '/psaux/:hostname'
-    }, next);
-  },
-  /**
-   *
-   *
-   */
-  registerAgent : function(data,next) {
-    this.performRequest({
-      url:'/host/:hostname',
-      body:data,
-      method:'post'
-    }, next);
   },
   /**
    *
@@ -837,7 +804,7 @@ TheEyeClient.prototype = {
   host: function(id, callback){
     this.performRequest({
       method: 'get',
-      url: '/host/' + id
+      url: '/:customer/host/' + id
     }, function(error, body) {
       if (error) return callback(error);
       callback(null, body.host);
@@ -850,23 +817,7 @@ TheEyeClient.prototype = {
   hosts: function(callback) {
     this.performRequest({
       method: 'get',
-      url: '/host'
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.hosts);
-    });
-  },
-  /**
-   *
-   *
-   */
-  scraperHosts: function(callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/host',
-      qs: {
-        scraper: true
-      }
+      url: '/:customer/host'
     }, function(error, body) {
       if (error) return callback(error);
       callback(null, body.hosts);

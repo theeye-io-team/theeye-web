@@ -14,7 +14,6 @@ module.exports = {
         success: (body) => callback(null, body),
         failure: (err) => callback(err)
       }),
-      scraperHosts: (callback) => supervisor.scraperHosts(callback),
       tags: (callback) => supervisor.tags(callback),
       events: (callback) => supervisor.fetch({
         route: supervisor.EVENTS,

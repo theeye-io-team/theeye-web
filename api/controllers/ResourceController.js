@@ -20,7 +20,6 @@ module.exports = {
       scripts: (callback) => supervisor.scripts(callback),
       hosts: (callback) => supervisor.hosts(callback),
       resourceTypes: (callback) => supervisor.resourceTypes(callback),
-      scraperHosts: (callback) => supervisor.scraperHosts(callback),
       tags: (callback) => supervisor.tags(callback)
     }, function(err, data) {
       if (err) return res.serverError("Error getting data from supervisor: " + err.toString());

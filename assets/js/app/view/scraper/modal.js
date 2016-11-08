@@ -6,7 +6,6 @@ var ScraperModal = new (function ScraperModal(){
       looptimes: window.Looptimes,
       timeouts: window.Timeouts,
       hosts: window.Hosts,
-      scraperHosts: window.ScraperHosts,
       tags: window.Tags,
     });
     view.container = container;
@@ -104,7 +103,6 @@ var ScraperModal = new (function ScraperModal(){
       looptimes: window.Looptimes,
       timeouts: window.Timeouts,
       hosts: window.Hosts,
-      scraperHosts: window.ScraperHosts,
       tags: window.Tags,
       events: window.Events
     });
