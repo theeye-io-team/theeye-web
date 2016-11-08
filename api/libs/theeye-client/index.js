@@ -680,20 +680,6 @@ TheEyeClient.prototype = {
     });
   },
   /**
-   * Task schedule POST
-   */
-  scheduleTask: function(data, callback){
-    this.performRequest({
-      method: 'POST',
-      uri: '/:customer/task/schedule',
-      body: data,
-      json: true
-    }, function(error, body){
-      if (error) return callback(error);
-      callback(null, body);
-    });
-  },
-  /**
    * Task schedule GET
    */
   getTaskSchedule: function(task_id, callback){
@@ -715,7 +701,7 @@ TheEyeClient.prototype = {
   monitorFetch: function(options, callback) {
     this.performRequest({
       method: 'get',
-      url: '/monitor',
+      url: '/:customer/monitor',
       qs: {
         type: options.type,
         resource: options.resource
@@ -732,7 +718,7 @@ TheEyeClient.prototype = {
   monitorGet : function(id, callback) {
     this.performRequest({
       method: 'get',
-      uri: '/monitor/' + id
+      uri: '/:customer/monitor/' + id
     }, function(error, body) {
       if (error) return callback(error);
       callback(null, body.monitor);
