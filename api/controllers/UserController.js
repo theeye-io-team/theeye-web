@@ -1,7 +1,6 @@
 /* global async, Passport, sails, User */
 var passport = require('../services/passport');
 var mailer = require('../services/mailer');
-var debug = require('debug')('eye:web:controller:user');
 var underscore = require('underscore');
 
 var UserController = module.exports = {
@@ -82,7 +81,7 @@ var UserController = module.exports = {
         }
       });
     } else {
-      debug("cant find user session for %s", req.user.username);
+      sails.log.debug("cant find user session for %s", req.user.username);
       res.redirect ("/");
     }
   },
@@ -154,7 +153,7 @@ var UserController = module.exports = {
         if (params.sendInvitation) {
           passport.inviteUser(req, res, function(err, user) {
             if(err) {
-              debug(err);
+              sails.log.error(err);
               return res.send(400, err);
             } else return res.json(user);
           });
@@ -185,42 +184,39 @@ var UserController = module.exports = {
    * PUT  /admin/user/:id
    *
    */
-  edit: function(req, res) {
+  edit: function (req, res) {
     var params = req.params.all();
     var userId = params.id;
 
-    if(!params.customers) return res.send(400, 'select at least one customer');
+    if (!params.customers) return res.send(400, 'select at least one customer');
 
-    var updates = {};
-    updates.customers = params.customers;
-    updates.enabled = params.enabled;
-    if(params.credential) updates.credential = params.credential;
+    User.findOne({ id: userId },(error,user) => {
+      if (!user) return res.send(404,'user not found');
 
-    User.findOne({id: userId},(error, user) => {
-      if( !user ) return res.send(404,'user not found');
-
-      if(
-        underscore.difference(user.customers, updates.customers).length !== 0 &&
-        user.enabled
-      ){
+      var customersChanged = underscore.difference(user.customers,params.customers).length !== 0;
+      if (customersChanged && user.enabled) {
         // notify the user customers permissions changed
-        mailer.sendCustomerPermissionsChanged(user, error => debug(error));
+        mailer.sendCustomerPermissionsChanged(user, error => sails.log.error(error));
       }
 
-      User.update({id: userId}, updates).exec((error,user) => {
+      User.update({id: userId}, params).exec((error,user) => {
         if(error){
-          debug(error);
+          sails.log.error(error);
           return res.send(500, 'internal server error');
         }
 
-        res.json(user);
-
-        var theeye = passport.protocols.theeye;
-        theeye.updateUser(
+        passport.protocols.theeye.updateUser(
           userId,
-          updates,
+          params,
           req.supervisor,
-          error => debug(error)
+          error => {
+            if (error) {
+              sails.log.error(error);
+              res.json(500,'the user was updated but with errors. ' + error.message);
+            } else {
+              res.json(user);
+            }
+          }
         );
       });
     });
@@ -244,8 +240,8 @@ var UserController = module.exports = {
         user: userId
       }, function(error2, passports){
         if(error2) {
-          debug('//////////////// ERROR.DB ////////////////');
-          debug(error2);
+          sails.log.error('//////////////// ERROR.DB ////////////////');
+          sails.log.error(error2);
           return res.send(500, 'Internal passport error');
         }
         for(var i=0; i<passports.length; i++) {
@@ -255,8 +251,8 @@ var UserController = module.exports = {
             sails.log.debug('destroying supervisor user %s', passport.profile.id);
             supervisor.userDelete( passport.profile.id, function(error3){
               if(error3) {
-                debug('//////////////// WARN.DB ////////////////');
-                debug(arguments);
+                sails.log.error('//////////////// WARN.DB ////////////////');
+                sails.log.error(arguments);
                 sails.log.error(
                   'error removing supervisor user %s error %s',
                   passport.profile.id,
@@ -269,8 +265,8 @@ var UserController = module.exports = {
           sails.log.debug('destroying passport %s', passport.protocol);
           passport.destroy(function(error4){
             if(error4) {
-              debug('//////////////// WARN.PASSPORT ////////////////');
-              debug(error4);
+              sails.log.error('//////////////// WARN.PASSPORT ////////////////');
+              sails.log.error(error4);
               sails.log.error(
                 'error removing user %s passport %s',
                 user.id,
@@ -283,8 +279,8 @@ var UserController = module.exports = {
         sails.log.debug('destroying user %s', user.id);
         user.destroy(function(error5) {
           if(error5) {
-            debug('//////////////// ERROR.DB ////////////////');
-            debug(error5);
+            sails.log.error('//////////////// ERROR.DB ////////////////');
+            sails.log.error(error5);
             sails.log.error('error removing user %s', user.id);
             return res.send(500, 'internal error');
           }

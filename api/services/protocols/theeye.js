@@ -13,33 +13,29 @@ var debug = require('debug')('eye:web:service:protocol:theeye');
  * @param {Object} params new user data
  * @param {Function} next callback
  */
-exports.createUser = function(localUser, params, supervisor, next)
-{
+exports.createUser = function (localUser, params, supervisor, next) {
   params.enabled = true;
   supervisor.userCreate(params, function (err, profile) {
-    if (err || !profile ) return next(err, profile);
+    if (err||!profile) {
+      return next(err, profile);
+    }
 
-    var customers = profile
-    .customers
-    .map(function(customer){
-      return {
-        _id: customer.id,
-        name: customer.name
-      };
-    });
+    var customers = profile.customers.map(
+      customer => {
+        return {
+          _id: customer.id,
+          name: customer.name
+        }
+      }
+    );
 
     Passport.create({
-      'protocol': 'theeye',
+      'protocol': 'bearer',
       'provider': 'theeye',
       'user': localUser.id ,
       'token': profile.token,
       'api_user': profile.id,
-      'profile': {
-        'id': profile.id,
-        'client_id': profile.client_id,
-        'client_secret': profile.client_secret,
-        'customers': customers,
-      }
+      'profile': profile
     }, function (err, passport) {
       if (err) return next(err);
       return next(null, profile);
@@ -59,32 +55,38 @@ exports.refreshToken = function(user, supervisor, doneFn)
 
 /**
  * @author Facundo
- * @param {Object} localUser
+ * @param {Object} userId , local user id
  * @param {Array} updates
  * @param {Object} supervisor , autenticated supervisor client
  * @param {Function} doneFn
  */
-exports.updateUser = function(localUser, updates, supervisor, doneFn)
-{
+exports.updateUser = function (userId, updates, supervisor, doneFn) {
   Passport.findOne({
-    user: localUser,
+    user: userId,
     protocol: 'theeye'
   }, function(error, passport) {
 
-    supervisor.userUpdate(
-      passport.profile.id,
-      updates,
-      function(error, profile){
-        if(error) return doneFn(error);
+    if (error) {
+      sails.log.error(error);
+      return doneFn(error);
+    }
 
-        passport.profile = profile;
-        passport.save(function(err){
-          /** ... **/
-        });
+    if (!passport) {
+      sails.log.error('passport not found. ' + passport);
+      return doneFn(new Error('theeye passport not found'));
+    }
 
-        doneFn(null, profile);
-      }
-    );
+    supervisor.patch({
+      route: '/user',
+      id: passport.profile.id,
+      body: updates,
+      success: (res) => {
+        passport.profile = res.user;
+        passport.save( (err) => doneFn(err) );
+      },
+      failure: (err) => doneFn(err) 
+    });
+
   });
 }
 

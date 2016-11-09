@@ -3,77 +3,47 @@ $(function() {
 
   var $state = $({});
 
-  function extractFormData ($el) {
-    return $el.serializeArray().reduce(function(obj, input) {
-
-      if(input.name=='customers') {
-        if(!obj[input.name]) obj[input.name]=[];
-        obj[input.name].push(input.value);
-      } else if(input.name === 'enabled') {
-        obj[input.name] = $('[name=enabled]').prop('checked');
-      } else {
-        obj[input.name] = input.value;
-      }
-      return obj;
-
-    }, {});
-  }
-
   //CREATE USER FORM
   (function create(el){
 
     var $userForm = $(el);
 
-    $(".modal#create-user").on('shown.bs.modal', function() {
-      $userForm.find(".hidden-container").hide();
+    $('.modal#create-user').on('shown.bs.modal', function() {
+      $userForm.find('.hidden-container').hide();
       $userForm.data('action','create');
       $userForm[0].reset();
       $('#name',this).focus();
       $('#customers',$userForm).select2({placeholder: 'Select customers...'});
     });
 
-    $state.on("user_created", function() {
-      $(".modal#create-user").modal("hide");
+    $state.on('user_created', function() {
+      $('.modal#create-user').modal('hide');
       alert('user created','User', function(){
         window.location.reload();
       });
     });
 
-    $state.on("user_create_error", function(ev, error) {
+    $state.on('user_create_error', function(ev, error) {
       alert(error,'Oops...');
     });
 
-    // what is this shit?
-    // $userForm.find("input[type=radio][name=target]").on("change", function(){
-    //   var val = $(this).val();
-    //   var $multihost = $userForm.find('.hidden-container#hosts-selection');
-    //   var $singleresource = $userForm.find('.hidden-container#resource-selection');
-    //   if( val == 'single-resource' ) {
-    //     $multihost.hide(50);
-    //     $multihost.find("option:selected").removeAttr("selected");
-    //     $singleresource.show(50);
-    //   } else if( val == 'multi-hosts' ){
-    //     $singleresource.hide(50);
-    //     $singleresource.find("select").val(0);
-    //     $multihost.show(50);
-    //   }
-    // });
-
-    $userForm.on("submit", function(event) {
+    $userForm.on('submit', function(event) {
       event.preventDefault();
-      var vals = extractFormData($userForm);
+      var form = new FormElement($userForm);
 
-      jQuery.post("/user", vals).done(function(data) {
-        console.log(data);
-        $state.trigger("user_created");
-      }).fail(function(xhr, status, xhrStatus) {
-        $state.trigger("user_create_error", xhr.responseText, status);
+      jQuery
+      .post('/user',form.get())
+      .done(function(data) {
+        $state.trigger('user_created');
+      })
+      .fail(function(xhr, status, xhrStatus) {
+        $state.trigger('user_create_error', xhr.responseText, status);
       });
 
       return false;
     });
 
-  })("form#createUserForm");
+  })('form#createUserForm');
 
   //EDIT USER FORM
   (function update (el){
@@ -111,49 +81,45 @@ $(function() {
       var item = $(this).closest('.itemRow');
       $userForm.data('user-id',item.data().itemId);
       $userForm.data('action','edit');
-      $.get("/user/" + item.data().itemId).done(function(data){
+      $.get('/user/' + item.data().itemId).done(function(data){
         fillForm($userForm, data.user);
         $('#edit-user').modal('show');
       }).fail(function(xhr, err/*, xhrStatus*/) {
-        $state.trigger("user_fetch_error", xhr.responseText, err);
+        $state.trigger('user_fetch_error', xhr.responseText, err);
       });
     });
 
-    $state.on("user_updated",function() {
-      $(".modal#edit-user").modal("hide");
-      window.location.reload();
-    });
-
-    $state.on("user_update_error",function(error) {
-      alert(error);
-    });
-
-    $userForm.on("submit", function(event) {
+    $userForm.on('submit', function(event) {
       event.preventDefault();
-      var vals = extractFormData($userForm);
+      var form = new FormElement($userForm);
 
       jQuery.ajax({
-        url:"/user/" + $userForm.data('user-id'),
-        data:vals,
+        url:'/user/' + $userForm.data('user-id'),
+        data:form.get(),
         type:'put'
-      }).done(function(/*data*/) {
-        $state.trigger("user_updated");
-      }).fail(function(xhr, err/*, xhrStatus*/) {
-        $state.trigger("user_update_error", xhr.responseText, err);
+      }).done(function(data) {
+        $('.modal#edit-user').modal('hide');
+        bootbox.alert('user updated',function(){
+          window.location.reload();
+        });
+      }).fail(function(xhr, err) {
+        bootbox.alert(xhr.responseText,function(){
+          window.location.reload();
+        });
       });
 
       return false;
     });
 
     return $userForm;
-  })("form#editUserForm");
+  })('form#editUserForm');
 
   (function remove(){
-    $state.on("user_deleted", function() {
+    $state.on('user_deleted', function() {
       //$el.remove();
       location.reload();
     });
-    $state.on("user_delete_error", function(ev, resp) {
+    $state.on('user_delete_error', function(ev, resp) {
       alert(resp);
     });
 

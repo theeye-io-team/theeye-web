@@ -2,6 +2,7 @@
 var debug = require('debug')('eye:web:events');
 var moment = require('moment');
 var snsreceiver = require('../services/snshandler');
+var ACL = require('../services/acl');
 
 module.exports = {
   index: function(req, res) {
@@ -31,53 +32,59 @@ module.exports = {
         return res.serverError("Error getting data from supervisor: " + err);
       }
 
-      // get agent cURL
-      var theeye = require('../services/passport').protocols.theeye;
-      theeye.getCustomerAgentCredentials(
-        req.session.customer,
-        supervisor,
-        function(error, userAgent) {
-          if(error) debug(error);
-          data.agent = userAgent;
-          data.moment = moment;
-          data.agentBinary = sails.config.application.agentBinary;
+      var isAdmin = ACL.isAdmin(req.user);
 
-          var subs = _.chain(data.resources)
-            .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
-            .filter(function(r){
-              return r.type != 'host' && r.type != 'scraper' && r.type != 'script' && r.type != 'process';
-            })
-            .groupBy('host_id')
-            .value();
+      data.moment = moment;
 
-          var indexed = _.chain(data.resources)
-            .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
-            .filter(function(r){
-              return r.type == 'host' || r.type == 'scraper' || r.type == 'script' || r.type == 'process';
-            })
-            .map(function(i){
-              if(i.type == 'host' && subs[i.host_id]) {
-                i.subs = subs[i.host_id];
-              }else{
-                i.subs = []; //consistency on view iterator
-              }
-              return i;
-            })
-            .sortBy('name')
-            .value();
+      function sendResponse () {
+        var subs = _.chain(data.resources)
+        .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
+        .filter(function(r){
+          return r.type != 'host' && r.type != 'scraper' && r.type != 'script' && r.type != 'process';
+        })
+        .groupBy('host_id')
+        .value();
 
-          data.indexedResources = indexed;
-
-          if(req.route.path.indexOf('test') > -1) {
-            //testing, remove when done
-
-            res.view('events/grouptest', data);
-          } else {
-
-            res.view('events/index', data);
+        var indexed = _.chain(data.resources)
+        .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
+        .filter(function(r){
+          return r.type == 'host' || r.type == 'scraper' || r.type == 'script' || r.type == 'process';
+        })
+        .map(function(i){
+          if(i.type == 'host' && subs[i.host_id]) {
+            i.subs = subs[i.host_id];
+          }else{
+            i.subs = []; //consistency on view iterator
           }
+          return i;
+        })
+        .sortBy('name')
+        .value();
+
+        data.indexedResources = indexed;
+        data.ACL = ACL;
+
+        if(req.route.path.indexOf('test') > -1) {
+          res.view('events/grouptest', data);
+        } else {
+          res.view('events/index', data);
         }
-      );
+      }
+
+      if (isAdmin) {
+        // get agent cURL
+        var theeye = require('../services/passport').protocols.theeye;
+        theeye.getCustomerAgentCredentials(
+          req.session.customer,
+          supervisor,
+          function(error, userAgent) {
+            if(error) debug(error);
+            data.agent = userAgent;
+            data.agentBinary = sails.config.application.agentBinary;
+            sendResponse();
+          }
+        );
+      } else sendResponse();
     });
   },
   subscribe: function(req, res) {

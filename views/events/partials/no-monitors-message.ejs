@@ -1,0 +1,14 @@
+<% if ( ACL.isAdmin(req.user) ) { %>
+<div> <b> It seems that you don't have monitors configured yet, lets install your first agent, steps are pretty easy: </b> </div>
+<div class="list-group" style="color:#555;">
+  <span class="list-group-item">1.: Become root and then copy the following curl on a linux terminal. Right now only ubuntu:12.04/14.04/15.04/15.10 Centos/Redhat: 6.+/7.+ and Windows server 2008+ are supported</span>
+  <span class="list-group-item"> <%- partial ('../partials/agent-installer.ejs') %> </span>
+  <span class="list-group-item">2.: Wait until Spock appears at your terminal claiming you did it. Press f5 here, now your server should be listed.</span>
+  <span class="list-group-item">NOTE: Please, if something goes wrong, send us an email to <a>support@theeye.io</a> indicating: Operating System name and version (kernel,release,distribution,service pack) and attaching your /tmp/*.theEyeInstallation.log.gz</span>
+  <span class="list-group-item video">
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/L0sOPrG-Dog" frameborder="0" allowfullscreen></iframe>
+  </span>
+</div>
+<% } else { %>
+<div class="main-status" style="cursor:default;">You don't have any monitor.</div>
+<% } %>

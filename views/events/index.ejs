@@ -133,16 +133,7 @@
         </div> <!-- end panel -->
       </div> <!-- /resources-panel-list -->
       <% } else { %><!-- no resources -->
-      <div> <b> It seems that you don't have monitors configured yet, lets install your first agent, steps are pretty easy: </b> </div>
-      <div class="list-group" style="color:#555;">
-        <span class="list-group-item">1.: Become root and then copy the following curl on a linux terminal. Right now only ubuntu:12.04/14.04/15.04/15.10 Centos/Redhat: 6.+/7.+ and Windows server 2008+ are supported</span>
-        <span class="list-group-item"> <%- partial ('../partials/agent-installer.ejs') %> </span>
-        <span class="list-group-item">2.: Wait until Spock appears at your terminal claiming you did it. Press f5 here, now your server should be listed.</span>
-        <span class="list-group-item">NOTE: Please, if something goes wrong, send us an email to <a>support@theeye.io</a> indicating: Operating System name and version (kernel,release,distribution,service pack) and attaching your /tmp/*.theEyeInstallation.log.gz</span>
-        <span class="list-group-item video">
-          <iframe width="560" height="315" src="https://www.youtube.com/embed/L0sOPrG-Dog" frameborder="0" allowfullscreen></iframe>
-        </span>
-      </div>
+        <%- include ./partials/no-monitors-message.ejs %>
       <% } %>
     </div>
 
@@ -222,26 +213,7 @@
         </div>
       </div>
       <% } else { %>
-        <div><b> It seems that like you don't have tasks configured yet, lets create a hello world task and run it remotely following this steps: </b></div>
-        <div style="color:#555;">
-          <span class="list-group-item">1. Click on <strong><i><button class="tooltiped" title="Top right navigation button" style="border:none;background:none;color:#144e77;"><span class="glyphicon glyphicon-cog"></span></button>> Tasks</i></strong> , to open <a class="tooltiped" title="or click me!" href="/admin/task/" target="_blank">Tasks Administration<span class="glyphicon glyphicon-link"></span></a> panel</span>
-          <span class="list-group-item">2. Click on <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>New Task</button> and select <code>Script (second option)</code>.</span>
-          <span class="list-group-item">3. Click on <button class="btn btn-primary">Create script</button> a new popup window will appear</span>
-          <span class="list-group-item">4. Select <code>bash (.sh)</code> as interpreter, then in <code>Live editor</code> mode copy and paste this <a href="https://gist.github.com/jailbirt/12343dc435f0cc686ac4" target="_blank">helloWorld Gist<span class="glyphicon glyphicon-link"></span></a> script, and save the script</span>
-          <span class="list-group-item">
-            5. Copy and paste the following arguments in the <strong><i>`Advanced` > `Script Arguments`</i></strong> input : 
-            <br><strong id="script-arguments"><i><%= user.username %>, user</i></strong>
-            <button class="clipboard-btn" data-clipboard-target="#script-arguments">
-              <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
-            </button>
-          </span>
-          <span class="list-group-item">
-            If you need more help, please watch the following video :<br><br>
-            <div class="video">
-            <iframe width="560" height="315" src="https://www.youtube.com/embed/cRlteE5bSAM" frameborder="0" allowfullscreen></iframe>
-            </div>
-          </span>
-        </div>
+        <%- include ./partials/no-tasks-message.ejs %>
       <% } %>
 
       <!-- Results Div

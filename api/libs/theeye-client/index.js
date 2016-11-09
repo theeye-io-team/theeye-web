@@ -870,26 +870,6 @@ TheEyeClient.prototype = {
     });
   },
   /**
-   *
-   *
-   */
-  userUpdate : function (id, updates, callback) {
-    var body = {
-      'customers' : updates.customers ,
-      'credential': updates.credential ,
-      'enabled' : updates.enabled
-    };
-
-    this.performRequest({
-      method: 'patch',
-      uri: '/user/' + id,
-      body: body
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.user);
-    });
-  },
-  /**
    * @author Facundo
    */
   userDelete : function (id, callback) {
