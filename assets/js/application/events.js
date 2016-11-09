@@ -509,6 +509,45 @@ function triggers (io){
   //tiene que tener un icono heredado del peor estado de los monitors que haya dentro
 })();
 
+var createItemRows = function(resources) {
+
+};
+
+var ItemRowView = function(options){
+  var resource = options.data;
+  var $container = $('<div />')
+    .addClass('itemRow resource-container panel panel-default js-searchable-item')
+    .attr('id', resource.id)
+    .data('item', resource)
+    .data('tags', resource.tags);
+  var overallState = resource.state;
+  var tags = [
+    resource.id,
+    resource.description,
+    resource.name,
+    "hostname=" + resource.hostname,
+    "type=" + resource.type,
+    "state=" + resource.state
+  ];
+
+  // resource.subs.forEach(function(subresource){
+  //   if(statesDicc[subresource.state] > statesDicc[overallState]) {
+  //     overallState = subresource.state;
+  //   }
+  //   tags.push(subresource.id);
+  //   tags.push(subresource.description);
+  //   tags.push(subresource.name);
+  //   tags.push(subresource.hostname);
+  //   tags.push(subresource.type);
+  //   tags.push("state=" + subresource.state);
+  //   tags.concat(subresource.tags);
+  // });
+
+  var monitorTags = resource.monitor && resource.monitor.tags ? resource.monitor.tags: [];
+  tags = tags.concat(monitorTags).join(',');
+
+};
+
 //
 // auto focus search input on keypress
 //
