@@ -57,7 +57,7 @@ var Scraper = (function Scraper(){
 
       $parent.on('click change','[data-hook=pattern]',function(event){
         self.find('[data-hook=match-pattern-selection]')
-        .prop('checked', Boolean(this.value)); /// <<<< 'this' is the evented element
+          .prop('checked', Boolean(this.value)); /// <<<< 'this' is the evented element
       });
 
       $parent.on('change','select[name=method]',function(event){
@@ -80,6 +80,11 @@ var Scraper = (function Scraper(){
       this.renderTemplate();
       this.bindFormEvents();
       this.setupSelect();
+
+      var usersSelect = new UsersSelect({ collection: this.users });
+      usersSelect.render();
+      this.queryByHook('advanced').append( usersSelect.el );
+
       this.setFormData(options.model);
     },
     setFormData : function(model) {
@@ -131,8 +136,15 @@ var Scraper = (function Scraper(){
       this.bindFormEvents();
       this.setupSelect();
 
+      var advancedSection = this.queryByHook('advanced');
+
       var triggerInputsHTML = Templates['assets/templates/trigger-inputs.hbs']();
-      this.queryByHook('advanced').append( triggerInputsHTML );
+      advancedSection.append( triggerInputsHTML );
+
+      var usersSelect = new UsersSelect({ collection: this.users });
+      usersSelect.render();
+      advancedSection.append( usersSelect.el );
+
       this.queryByHook('events-container').select2({
         placeholder: 'Events',
         data: Select2Data.PrepareEvents( this.events )

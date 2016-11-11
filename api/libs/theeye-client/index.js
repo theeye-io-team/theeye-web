@@ -826,39 +826,6 @@ TheEyeClient.prototype = {
    *
    *
    */
-  userFetch : function(query, callback) {
-    var filters = {};
-
-    if(query.customer) filters.customer = query.customer;
-    if(query.credential) filters.credential = query.credential;
-
-    this.performRequest({
-      method: 'get',
-      url: '/user',
-      qs: filters
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.users);
-    });
-  },
-  /**
-   *
-   *
-   */
-  userCreate : function(data, callback) {
-    this.performRequest({
-      method: 'post',
-      url: '/user',
-      body: data
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.user);
-    });
-  },
-  /**
-   *
-   *
-   */
   userReplace : function (id, updates, callback) {
     this.performRequest({
       method: 'put',

@@ -679,7 +679,8 @@ a.flowchart-icon {
   .main-container{
     margin-top:55px;
   }
-  .navbar-right li a {height:36px;}
+  .navbar-right li a {height:36px;padding:2px 5px;}
+  .navbar-brand {padding:0px 5px;}
 }
 
 #workflow {

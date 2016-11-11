@@ -18,6 +18,7 @@ window.App.Models.ScraperMonitor = Backbone.Model.extend({
 		var config = monitor.config;
 		return {
       // monitor
+      acl : response.resource.acl,
 			name : monitor.name,
 			hosts : [ monitor.host_id ],
 			looptime : monitor.looptime,

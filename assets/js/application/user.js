@@ -147,6 +147,16 @@ $(function() {
     });
   })();
 
+  (function activateUser() {
+    $('[data-hook=activate]').on('click',function (event) {
+      event.preventDefault();
+      var link = '/activate?token=' + this.dataset.activation_token;
+      bootbox.alert(link,function(){
+      });
+      return false;
+    })
+  })();
+
   (function reSendInvitation() {
     $(".reSendInvitation").on("click",function(ev){
       ev.stopPropagation();
@@ -158,7 +168,9 @@ $(function() {
         url: '/user/' + idUser + '/reinvite',
         type: 'PUT'
       }).done(function() {
-        alert("Invitation sent","Done!");
+        alert("Invitation sent","Done!",function(){
+          window.location.reload();
+        });
       }).fail(function(xhr, err) {
         alert("Error sending the invitation. " + xhr.responseText, "Oops...");
       });
@@ -166,8 +178,7 @@ $(function() {
   })();
 
   (function toogleSendInvitation() {
-    $("[data-hook=sendInvitation]").change(function()
-    {
+    $("[data-hook=sendInvitation]").change(function() {
       if( $("[data-hook=sendInvitation]").prop("checked") === true)
         $(".set-password").hide();
       else

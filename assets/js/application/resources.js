@@ -3,6 +3,19 @@ $(function(){
 
   var log = debug('eye:web:admin:resources');
 
+  var _users = new App.Collections.Users();
+  _users.fetch({
+    data: {
+      where: {
+        credential: {
+          $ne:'agent'
+        }
+      }
+    },
+  });
+
+  window.Users = _users;
+
   /**
   *  MUTE
   */
@@ -90,19 +103,23 @@ $(function(){
     $('.modal#scriptResourceModal button[type=submit]').on('click', setCallback('script'));
     $('.modal#psauxResourceModal button[type=submit]').on('click', setCallback('psaux'));
 
-    function fillForm(data){
+    function fillForm ($form,data) {
       var resource = data.resource;
       var monitor = data.monitors[0];
       var type = monitor.type;
 
-      var $form = $('form#' + type + 'ResourceForm');
-
+      //var $form = $('form#' + type + 'ResourceForm');
       $form.find('[data-hook=resource_id]').val(resource.id);
       $form.find('[data-hook=monitor_type]').val(type);
       $form.find('[data-hook=description]').val(resource.description);
       $form.find('[data-hook=hosts_id]').val(resource.host_id);
-      if( monitor.looptime ) $form.find('[data-hook=looptime]').val(monitor.looptime);
       $form.find('[data-hook=disabled]').prop('checked', !monitor.enable);
+      var acls = $form.find('select[data-hook=acl]');
+      acls.val(resource.acl).trigger('change');
+
+      if (monitor.looptime) {
+        $form.find('[data-hook=looptime]').val(monitor.looptime);
+      }
 
       var $tags = $form.find('select[name=tags]');
 
@@ -143,8 +160,16 @@ $(function(){
         data: { 'monitor_type': type }
       })
       .done(function(data){
-        fillForm(data);
+
+        var usersSelect = new UsersSelect({ collection: _users });
+        usersSelect.render();
+        $form.append( usersSelect.$el );
+        fillForm($form,data);
+
         var $modal = $('#'+type+'ResourceModal');
+        $modal.one('hidden.bs.modal',function(){
+          usersSelect.remove();
+        });
 
         function bindModalElementsEvents(){
           //one time AUTOCOMPLETE COMBOBOX setup
@@ -187,7 +212,7 @@ $(function(){
           }
 
           var $firstInput = $modal.find('input[type!=hidden]').first().focus();
-          $modal.one('shown.bs.modal', function(){ $firstInput.focus(); });
+          $modal.one('shown.bs.modal',function(){ $firstInput.focus(); });
         }
 
         $modal.one('shown.bs.modal',bindModalElementsEvents);
@@ -227,9 +252,7 @@ $(function(){
             });
           })();
         }
-
         $modal.modal('show');
-
         $.unblockUI();
       })
       .fail(function(xhr, err, xhrStatus){
@@ -674,8 +697,6 @@ $(function(){
     var formContainer = '[data-hook=scraper-form-container]';
     var scraperModal = new ScraperModal.MonitorCRUD(formContainer);
 
-    window.scraper = scraperModal;
-
     // on click create , render form
     function onClickCreate(event){
       event.preventDefault();
@@ -693,7 +714,6 @@ $(function(){
     $('.dropdown.resource [data-hook=create-scraper-monitor]').on('click',onClickCreate);
     $('.panel-group [data-hook=create-scraper-monitor]').on('click',onClickCreate);
     $('[data-hook=edit-scraper-monitor]').on('click',onClickEdit);
-
   })();
 
 });

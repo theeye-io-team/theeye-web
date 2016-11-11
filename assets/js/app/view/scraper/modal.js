@@ -1,3 +1,5 @@
+'use strict';
+
 var ScraperModal = new (function ScraperModal(){
 
   function initializeForm(container){
@@ -7,6 +9,7 @@ var ScraperModal = new (function ScraperModal(){
       timeouts: window.Timeouts,
       hosts: window.Hosts,
       tags: window.Tags,
+      users: window.Users
     });
     view.container = container;
     return view ;
@@ -97,14 +100,14 @@ var ScraperModal = new (function ScraperModal(){
     modal.render();
 
     var _scraper = new App.Models.ScraperTask();
-
     var _form = new Scraper.TaskFormView({
       model: _scraper,
       looptimes: window.Looptimes,
       timeouts: window.Timeouts,
       hosts: window.Hosts,
       tags: window.Tags,
-      events: window.Events
+      events: window.Events,
+      users: window.Users
     });
     _form.container = modal.queryByHook('container')[0];
 
@@ -222,9 +225,7 @@ var ScraperModal = new (function ScraperModal(){
     // start create
     this.openCreateForm = function(group){
       _tag = null ;
-      _model = new App.Models.ScraperTemplate({
-        group: group
-      });
+      _model = new App.Models.ScraperTemplate({ group: group });
       _form.render({ model: _model });
       $scraperModal.modal('show');
       return this;

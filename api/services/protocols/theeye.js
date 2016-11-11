@@ -15,32 +15,45 @@ var debug = require('debug')('eye:web:service:protocol:theeye');
  */
 exports.createUser = function (localUser, params, supervisor, next) {
   params.enabled = true;
-  supervisor.userCreate(params, function (err, profile) {
-    if (err||!profile) {
-      return next(err, profile);
-    }
-
-    var customers = profile.customers.map(
-      customer => {
-        return {
-          _id: customer.id,
-          name: customer.name
-        }
+  supervisor.create({
+    route:'/user',
+    body:params,
+    success:(body) => {
+      if (!body) {
+        return next(null);
       }
-    );
 
-    Passport.create({
-      'protocol': 'bearer',
-      'provider': 'theeye',
-      'user': localUser.id ,
-      'token': profile.token,
-      'api_user': profile.id,
-      'profile': profile
-    }, function (err, passport) {
-      if (err) return next(err);
-      return next(null, profile);
-    });
-  });
+      var profile = body.user;
+
+      var customers = profile.customers.map(
+        customer => {
+          return {
+            _id: customer.id,
+            name: customer.name
+          }
+        }
+      );
+
+      Passport.create({
+        protocol: 'theeye',
+        provider: 'theeye',
+        user: localUser.id ,
+        token: profile.token,
+        api_user: profile.id,
+        profile: profile
+      }, function (err, passport) {
+        if (err) {
+          sails.log.error(err);
+          return next(err);
+        }
+        return next(null, profile);
+      });
+    },
+    failure:(err) => {
+      sails.log.error(err);
+      return next(err);
+    }
+  })
 }
 
 /**
@@ -92,20 +105,21 @@ exports.updateUser = function (userId, updates, supervisor, doneFn) {
 
 var AGENT_INSTALLER_URL = 'http://interactar.com/public/install/041fc48819b171530c47c0d598bf75ad08188836/setup_generic.sh' ;
 
-exports.getCustomerAgentCredentials = function(
-  customer,
-  supervisor,
-  nextFn
-){
-  supervisor.userFetch({
-    'customer': customer,
-    'credential': 'agent'
-  },function(error,users){
-    if(error) return nextFn(error);
-    if(!users) return nextFn(null);
-
-    var user = users ? users[0] : null;
-    if(user) {
+exports.getCustomerAgentCredentials = function (customer,supervisor,done) {
+  supervisor.fetch({
+    route:'/:customer/user',
+    query: {
+      where: {
+        credential:'agent',
+        'customers.name':customer
+      },
+      limit:1
+    },
+    success: users => {
+      if (!users||users.length===0) {
+        return done(null,[]);
+      }
+      var user = users[0];
       user.curl = format(
         'curl -s "%s" | bash -s "%s" "%s" "%s" ',
         AGENT_INSTALLER_URL,
@@ -113,9 +127,8 @@ exports.getCustomerAgentCredentials = function(
         user.client_secret,
         user.customers[0].name // agents MUST have only one customer
       );
-      return nextFn(null, user);
-    }
-
-    return nextFn();
+      return done(null, user);
+    },
+    failure: err => done(err)
   });
 }
