@@ -1,0 +1,37 @@
+<div class="admin-container events-container">
+  <!-- SEARCH INPUT -->
+  <div class="js-searchable-box">
+    <form>
+      <input type="text" placeholder="Find a resource">
+      <button class="clean"><i class="glyphicon glyphicon-remove"></i></button>
+      <button class="search"><i class="glyphicon glyphicon-search"></i></button>
+    </form>
+  </div>
+  <!-- /SEARCH INPUT -->
+  <div class="admin-panel">
+    <div class="col-md-6 resources-panel events-panel">
+      <h3>Monitors</h3>
+      <div>
+        <div class="resources-panel-list">
+          <div class="panel-group"
+            data-hook="monitors-container"
+            id="monitor-accordion"
+            role="tablist"
+            aria-multiselectable="true">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6 tasks-panel events-panel">
+      <h3>Tasks</h3>
+      <div>
+        <div class="panel-group"
+          data-hook="tasks-container"
+          id="task-accordion"
+          role="tablist"
+          aria-multiselectable="true">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

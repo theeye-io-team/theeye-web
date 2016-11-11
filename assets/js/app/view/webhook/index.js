@@ -7,7 +7,7 @@
  */
 var WebhookPage = (function(){
 
-  // use only one modal for the page.
+  // use only one main modal for the page.
   var modal = new Modal({ title: 'Incoming Webhook' });
   modal.render();
 
@@ -84,8 +84,6 @@ var WebhookPage = (function(){
     },
   });
 
-
-
   var WebhookView = BaseView.extend({
     template: Templates['assets/templates/webhook/list-item.hbs'],
     events: {
@@ -154,7 +152,6 @@ var WebhookPage = (function(){
       this.form.remove();
     }
   });
-
 
   // Extend ListView for massChecker/massDeleter functionality
   var WebhookPage = ListView.extend({

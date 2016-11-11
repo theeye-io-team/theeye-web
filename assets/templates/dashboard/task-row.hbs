@@ -1,0 +1,56 @@
+<div class="panel panel-default js-searchable-item">
+  <div class="panel-heading" role="tab">
+    <h4 class="panel-title task">
+      <span class="collapsed"
+        data-toggle="collapse"
+        data-parent="#task-accordion"
+        href="#collapse{{ attributes.id }}"
+        aria-expanded="false"
+        aria-controls="collapse{{ attributes.id }}">
+        <div class="panel-title-content">
+          <span class="panel-item name">
+            {{ attributes.name }}
+            <small> > task ({{ attributes.hostname }})</small>
+          </span>
+          <div class="panel-item icons">
+            <span style="float:right; margin-left: 10px;">
+              <button class="btn btn-primary btn-sm ladda-button trigger-task tooltiped"
+                title="Run task"
+                data-style="zoom-in">
+                <span class="playIcon">
+                  <i class="status glyphicon glyphicon-triangle-right"></i>
+                </span>
+              </button>
+            </span>
+            <a title="Workflow"
+              data-hook="workflow-button"
+              href="/admin/workflow?node={{ attributes.id }}"
+              class="tooltiped btn-icon-image flowchart-icon">
+            </a>
+          </div>
+        </div>
+      </span>
+    </h4>
+  </div>
+  <!-- COLLAPSE -->
+  <div id="collapse{{ attributes.id }}"
+    class="panel-collapse collapse"
+    role="tabpanel"
+    aria-labelledby="heading{{ attributes.id }}">
+    <div class="panel-body">
+      <div class="fields">
+        <div class="field"><p>Name</p></div>
+        <div class="field">{{ attributes.name }}</div>
+      </div>
+      <div class="fields">
+        <div class="field"><p>Description</p></div>
+        <div class="field">{{ attributes.description }}</div>
+      </div>
+      <div class="fields">
+        <div class="field"><p>Hostname</p></div>
+        <div class="field">{{ attributes.hostname }}</div>
+      </div>
+      <div class="fields" data-hook="job-result-container"></div>
+    </div>
+  </div>
+</div>
