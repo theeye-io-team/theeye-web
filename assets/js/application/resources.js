@@ -134,7 +134,7 @@ $(function(){
       $tags.find('option').remove().end();
       setSelectedTags( monitor.tags );
 
-      switch(type) {
+      switch (type) {
         case 'process':
           $form.find('[name=raw_search]').val(monitor.config.ps.raw_search);
           $form.find('[name=is_regexp]').prop('checked',monitor.config.ps.is_regexp);
@@ -158,8 +158,7 @@ $(function(){
         url: "/resource/" + options.id,
         method: 'GET',
         data: { 'monitor_type': type }
-      })
-      .done(function(data){
+      }).done(function(data){
 
         var usersSelect = new UsersSelect({ collection: _users });
         usersSelect.render();
@@ -243,8 +242,8 @@ $(function(){
                   data: JSON.stringify(data),
                   contentType: "application/json; charset=utf-8"
                 }).done(function(data) {
-                  bootbox.alert('Limits updated',function(){
-                  });
+                  bootbox.alert('Limits updated');
+                  $modal.modal('hide');
                 }).fail(function(xhr, err, xhrStatus) {
                   bootbox.alert(xhr.responseText);
                 });
@@ -254,8 +253,7 @@ $(function(){
         }
         $modal.modal('show');
         $.unblockUI();
-      })
-      .fail(function(xhr, err, xhrStatus){
+      }).fail(function(xhr, err, xhrStatus){
         bootbox.alert(err);
         $.unblockUI();
       });
@@ -270,6 +268,10 @@ $(function(){
 
       $select.prop('multiple', true);
       $input.attr('value','');
+
+      var usersSelect = new UsersSelect({ collection: _users });
+      usersSelect.render();
+      $form.append( usersSelect.$el );
 
       $form[0].reset();
       $.unblockUI();
@@ -321,10 +323,16 @@ $(function(){
       var $modal = $('[data-hook=dstat-modal]');
       var $submitBtn = $modal.find('button[type=submit]');
       var $hosts = $modal.find('[data-hook=hosts-container]');
+
       var $form = $modal.find('form');
+      var usersSelect = new UsersSelect({ collection: _users });
+      usersSelect.render();
+      $form.append( usersSelect.$el );
+
       $modal.one('hidden.bs.modal',function(){
         $submitBtn.off('click');
         $hosts.hide();
+        usersSelect.remove();
       });
       $modal.one('show.bs.modal',function(){
         $hosts.show();
@@ -714,6 +722,61 @@ $(function(){
     $('.dropdown.resource [data-hook=create-scraper-monitor]').on('click',onClickCreate);
     $('.panel-group [data-hook=create-scraper-monitor]').on('click',onClickCreate);
     $('[data-hook=edit-scraper-monitor]').on('click',onClickEdit);
+  })();
+
+
+  (function editHost(){
+    $('[data-hook=edit-host-monitor]').on('click',function(event){
+      var id = this.dataset.resource_id;
+      var host = new App.Models.Monitor({id:id});
+      host.fetch({
+        success:function(){
+
+          var modal = new Modal({ title: host.attributes.hostname });
+          modal.render();
+
+          var users = new UsersSelect({ collection: _users });
+          users.render();
+          users.values = host.attributes.acl;
+
+          modal.content = users;
+          modal.content = { el: $('<span class="clear" style="clear: left;display: block;"></span>')[0] };
+          modal.$el.on('hidden.bs.modal',function(){
+            users.remove();
+            modal.remove();
+          });
+
+          modal.$el
+            .find('[data-hook=save]')
+            .on('click',function(){
+              var values = users.values;
+              host.attributes.acl = values;
+              //if (!host.attributes.looptime)
+
+              // dont use this! :
+              //host.save();
+              // use this instead :
+              // ask @facugon
+              var data = JSON.stringify(host.attributes);
+              $.ajax({
+                method:'PATCH',
+                url:'/api/resource/' + id,
+                data: data,
+                contentType: "application/json; charset=utf-8"
+              }).done(function(){
+                bootbox.alert('acl\'s updated');
+                modal.hide();
+              }).fail(function(res){
+                bootbox.alert(res);
+              });
+            });
+
+          modal.show();
+        },
+        failure:function(){
+        }
+      });
+    });
   })();
 
 });

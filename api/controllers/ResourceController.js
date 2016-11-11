@@ -99,8 +99,7 @@ module.exports = {
    * Edit resource
    * PUT /resource
    */
-  update : function(req,res,next)
-  {
+  update : function(req,res,next) {
     var supervisor = req.supervisor;
     var params = req.params.all();
 
@@ -130,8 +129,7 @@ module.exports = {
    * Get resource
    * GET /resource
    */
-  get: function(req,res)
-  {
+  get: function(req,res) {
     var supervisor = req.supervisor;
     var id = req.param("id", null);
 

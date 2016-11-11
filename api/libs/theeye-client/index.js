@@ -343,9 +343,13 @@ TheEyeClient.prototype = {
    * @return Request connection.request
    */
   update : function(options) {
+    var url = options.route;
+    if( options.id ) url += '/' + options.id;
+    if( options.child ) url += '/' + options.child;
+
     var request = this.performRequest({
       method: 'PUT',
-      url: options.route + '/' + options.id,
+      url: url,
       formData: options.formData||undefined,
       body: options.body||undefined,
       qs: options.query||undefined
@@ -368,6 +372,7 @@ TheEyeClient.prototype = {
     var request = this.performRequest({
       method: 'PATCH',
       url: url,
+      formData: options.formData||undefined,
       body: options.body||undefined,
       qs: options.query||undefined
     },function(error, body){
@@ -709,19 +714,6 @@ TheEyeClient.prototype = {
     }, function(error, body) {
       if (error) return callback(error);
       callback(null, body.monitors);
-    });
-  },
-  /**
-   *
-   *
-   */
-  monitorGet : function(id, callback) {
-    this.performRequest({
-      method: 'get',
-      uri: '/:customer/monitor/' + id
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.monitor);
     });
   },
   /**

@@ -10,6 +10,16 @@ var UsersSelect = (function(){
       this.model.title = 'ACL';
       this.model.name = 'acl';
       BaseView.prototype.initialize.apply(this,arguments);
+
+      Object.defineProperty(this,'values',{
+        get: function(){ return this.find('select').val(); },
+        set: function(values){
+          var select = this.find('select');
+          select.val( values );
+          select.trigger('change');
+          return this;
+        }
+      });
     },
     render:function(){
       this.renderTemplate();
@@ -29,7 +39,6 @@ var UsersSelect = (function(){
         ),
         tags: true
       });
-
     },
   });
 

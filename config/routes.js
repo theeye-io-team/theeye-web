@@ -105,6 +105,7 @@ module.exports.routes = {
    */
   'post /api/:resource':'ApiController.create',
   'put /api/:resource/:id':'ApiController.update',
+  'patch /api/:resource/:id':'ApiController.patch',
   'delete /api/:resource/:id':'ApiController.remove',
   'get /api/:resource':'ApiController.fetch',
   'get /api/:resource/:id':'ApiController.get',
