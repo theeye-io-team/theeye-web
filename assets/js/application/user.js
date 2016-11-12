@@ -46,28 +46,9 @@ $(function() {
   })('form#createUserForm');
 
   //EDIT USER FORM
-  (function update (el){
+  (function update(el){
 
     var $userForm = $(el);
-
-    function fillForm($viewElement, data) {
-      $viewElement[0].reset();
-      Object.keys(data).forEach(function(k) {
-        if(k === 'customers') {
-          var customers = data[k];
-          customers.forEach(function(customer) {
-            $('option[value="'+customer+'"]', $('#customers-edit')).prop('selected', true);
-          });
-        }
-
-        if(k === 'enabled' && data[k]) {
-          $("#enabled").prop("checked", true);
-        }
-
-        var $el = $viewElement.find("[data-hook="+ k + "]");
-        $el.val(data[k]);
-      });
-    }
 
     $(".modal#edit-user").on('shown.bs.modal', function() {
       //nice-guy first input auto focus
@@ -81,12 +62,15 @@ $(function() {
       var item = $(this).closest('.itemRow');
       $userForm.data('user-id',item.data().itemId);
       $userForm.data('action','edit');
-      $.get('/user/' + item.data().itemId).done(function(data){
-        fillForm($userForm, data.user);
-        $('#edit-user').modal('show');
-      }).fail(function(xhr, err/*, xhrStatus*/) {
-        $state.trigger('user_fetch_error', xhr.responseText, err);
-      });
+      $.get('/user/' + item.data().itemId)
+        .done(function(data){
+          var form = new FormElement($userForm);
+          form.set(data.user);
+          $('#edit-user').modal('show');
+        })
+        .fail(function(xhr, err/*, xhrStatus*/) {
+          $state.trigger('user_fetch_error', xhr.responseText, err);
+        });
     });
 
     $userForm.on('submit', function(event) {

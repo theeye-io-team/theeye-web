@@ -7,7 +7,7 @@
  *
  */
 function FormElement (el){
-  this.$el = $(el);
+  this.$el = (el instanceof jQuery) ? el : $(el);
 }
 
 FormElement.prototype.get = function(){

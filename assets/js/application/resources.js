@@ -2,7 +2,6 @@
 $(function(){
 
   var log = debug('eye:web:admin:resources');
-
   var _users = new App.Collections.Users();
   _users.fetch({
     data: {
@@ -13,7 +12,6 @@ $(function(){
       }
     },
   });
-
   window.Users = _users;
 
   /**
