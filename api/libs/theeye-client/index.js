@@ -12,7 +12,6 @@ var path = require('path');
 var util = require('util');
 var request = require('request');
 var debug = require('debug');
-var EventEmitter = require('events').EventEmitter;
 
 var logger = {
   'debug': debug('eye:client:debug'),
@@ -32,21 +31,19 @@ function TheEyeClient (options)
 
   this.configure(options);
 
-  EventEmitter.call(this);
-
   return this;
 }
 
-util.inherits(TheEyeClient, EventEmitter);
 
 /**
  *
  *
  */
-var prototype = {
+TheEyeClient.prototype = {
   TASK: '/:customer/task',
   TAG: '/:customer/tag',
   RESOURCE: '/:customer/resource',
+  MONITORS: '/:customer/monitor',
   EVENTS: '/:customer/event',
   JOB: '/:customer/job',
   SCRIPT: '/:customer/script',
@@ -321,7 +318,7 @@ var prototype = {
    * @author Facundo
    * @return Request connection.request
    */
-  create: function(options) {
+  create : function(options) {
     var request = this.performRequest({
       method: 'POST',
       url: options.route,
@@ -347,9 +344,13 @@ var prototype = {
    * @return Request connection.request
    */
   update : function(options) {
+    var url = options.route;
+    if( options.id ) url += '/' + options.id;
+    if( options.child ) url += '/' + options.child;
+
     var request = this.performRequest({
       method: 'PUT',
-      url: options.route + '/' + options.id,
+      url: url,
       formData: options.formData||undefined,
       body: options.body||undefined,
       qs: options.query||undefined
@@ -372,6 +373,7 @@ var prototype = {
     var request = this.performRequest({
       method: 'PATCH',
       url: url,
+      formData: options.formData||undefined,
       body: options.body||undefined,
       qs: options.query||undefined
     },function(error, body){
@@ -391,7 +393,7 @@ var prototype = {
    */
   getNextPendingJob : function(options,doneFn) {
 
-    var hostname = (options && options.hostname) ? options.hostname : this.hostname;
+    var hostname = (options&&options.hostname) ? options.hostname : this.hostname;
 
     this.performRequest({
       method: 'GET',
@@ -446,39 +448,6 @@ var prototype = {
         if(next) next(null,response);
       }
     });
-  },
-  /**
-   *
-   *
-   */
-  submitDstat : function(dstat,next) {
-    this.performRequest({
-      url: '/:customer/dstat/:hostname',
-      method: 'post',
-      body: dstat
-    }, next);
-  },
-  /**
-   *
-   *
-   */
-  submitPsaux : function(psaux,next) {
-    this.performRequest({
-      method: 'post',
-      body: psaux,
-      url: '/psaux/:hostname'
-    }, next);
-  },
-  /**
-   *
-   *
-   */
-  registerAgent : function(data,next) {
-    this.performRequest({
-      url:'/host/:hostname',
-      body:data,
-      method:'post'
-    }, next);
   },
   /**
    *
@@ -717,20 +686,6 @@ var prototype = {
     });
   },
   /**
-   * Task schedule POST
-   */
-  scheduleTask: function(data, callback){
-    this.performRequest({
-      method: 'POST',
-      uri: '/:customer/task/schedule',
-      body: data,
-      json: true
-    }, function(error, body){
-      if (error) return callback(error);
-      callback(null, body);
-    });
-  },
-  /**
    * Task schedule GET
    */
   getTaskSchedule: function(task_id, callback){
@@ -740,52 +695,6 @@ var prototype = {
     }, function(error, body){
       if (error) return callback(error);
       callback(null, body);
-    });
-  },
-  /**
-   *
-   * @param {Object} query
-   *    @property {String} resource , resource id
-   *    @property {String} type
-   *
-   */
-  monitorFetch: function(options, callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/monitor',
-      qs: {
-        type: options.type,
-        resource: options.resource
-      }
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.monitors);
-    });
-  },
-  /**
-   *
-   *
-   */
-  monitorGet : function(id, callback) {
-    this.performRequest({
-      method: 'get',
-      uri: '/monitor/' + id
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.monitor);
-    });
-  },
-  /**
-   *
-   *
-   */
-  resource: function(id, callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/:customer/resource/' + id
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.resource);
     });
   },
   /**
@@ -841,7 +750,7 @@ var prototype = {
   host: function(id, callback){
     this.performRequest({
       method: 'get',
-      url: '/host/' + id
+      url: '/:customer/host/' + id
     }, function(error, body) {
       if (error) return callback(error);
       callback(null, body.host);
@@ -854,109 +763,10 @@ var prototype = {
   hosts: function(callback) {
     this.performRequest({
       method: 'get',
-      url: '/host'
+      url: '/:customer/host'
     }, function(error, body) {
       if (error) return callback(error);
       callback(null, body.hosts);
-    });
-  },
-  /**
-   *
-   *
-   */
-  scraperHosts: function(callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/host',
-      qs: {
-        scraper: true
-      }
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.hosts);
-    });
-  },
-  /**
-   *
-   *
-   */
-  customerFetch : function(filters, callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/customer'
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.customers);
-    });
-  },
-  /**
-   *
-   *
-   */
-  customerGet : function(customerId, callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/customer/' + customerId
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.customer);
-    });
-  },
-  /**
-   *
-   *
-   */
-  customerCreate : function(data, callback) {
-    this.performRequest({
-      method: 'post',
-      url: '/customer',
-      body: data
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.customer);
-    });
-  },
-  /**
-   * Replace customer data
-   * @method PUT
-   * @route /customer/:customer
-   */
-  customerReplace : function(customerId, data, callback) {
-    this.performRequest({
-      method: 'put',
-      url: '/customer/' + customerId,
-      body: data
-    }, function(error, body){
-      if (error) return callback(error);
-      callback(null, body.customer);
-    });
-  },
-  /**
-   * Update customer data
-   * @method PATCH
-   * @route /customer/:customer
-   */
-  customerUpdate : function(customerId, data, callback) {
-    this.performRequest({
-      method: 'patch',
-      url: '/customer/' + customerId,
-      body: data
-    }, function(error, body){
-      if (error) return callback(error);
-      callback(null, body.customer);
-    });
-  },
-  /**
-   *
-   *
-   */
-  customerRemove : function(customerId, callback) {
-    this.performRequest({
-      method: 'delete',
-      url: '/customer/' + customerId
-    }, function(error, body){
-      if (error) return callback(error);
-      callback(null);
     });
   },
   /**
@@ -976,65 +786,12 @@ var prototype = {
    *
    *
    */
-  userFetch : function(query, callback) {
-    var filters = {};
-
-    if(query.customer) filters.customer = query.customer;
-    if(query.credential) filters.credential = query.credential;
-
-    this.performRequest({
-      method: 'get',
-      url: '/user',
-      qs: filters
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.users);
-    });
-  },
-  /**
-   *
-   *
-   */
-  userCreate : function(data, callback) {
-    this.performRequest({
-      method: 'post',
-      url: '/user',
-      body: data
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.user);
-    });
-  },
-  /**
-   *
-   *
-   */
   userReplace : function (id, updates, callback) {
     this.performRequest({
       method: 'put',
       url: '/user/' + id,
       body:  updates
     }, function(error, body){
-      if (error) return callback(error);
-      callback(null, body.user);
-    });
-  },
-  /**
-   *
-   *
-   */
-  userUpdate : function (id, updates, callback) {
-    var body = {
-      'customers' : updates.customers ,
-      'credential': updates.credential ,
-      'enabled' : updates.enabled
-    };
-
-    this.performRequest({
-      method: 'patch',
-      uri: '/user/' + id,
-      body: body
-    }, function(error, body) {
       if (error) return callback(error);
       callback(null, body.user);
     });
@@ -1194,8 +951,4 @@ var prototype = {
       callback(null);
     });
   },
-}
-
-for(var p in prototype) {
-  TheEyeClient.prototype[p] = prototype[p];
 }

@@ -14,7 +14,6 @@ module.exports = {
         success: (body) => callback(null, body),
         failure: (err) => callback(err)
       }),
-      scraperHosts: (callback) => supervisor.scraperHosts(callback),
       tags: (callback) => supervisor.tags(callback),
       events: (callback) => supervisor.fetch({
         route: supervisor.EVENTS,
@@ -28,6 +27,7 @@ module.exports = {
       function minutesToMillisecondsString(mins){
         return String( mins * 60 * 1000 );
       }
+
       data.looptimes = [
         {'id':minutesToMillisecondsString(0.25),'value':'0.25'},
         {'id':minutesToMillisecondsString(0.5),'value':'0.5'},
@@ -125,21 +125,20 @@ module.exports = {
   // POST
   schedule: function(req,res) {
     var supervisor = req.supervisor;
-
     supervisor.create({
-      route: supervisor.TASK + '/schedule',
+      route: supervisor.TASK + '/' + req.body.task + '/schedule',
       body: req.body,
       failure: error => res.send(500, error),
-      success: task => res.json(task)
+      success: schedule => res.json(schedule)
     });
   },
   // GET
   getSchedule: function(req, res) {
     var supervisor = req.supervisor;
     var id = req.param("id", null);
-    if( ! id || ! id.match(/^[a-fA-F0-9]{24}$/) )
+    if (!id||!id.match(/^[a-fA-F0-9]{24}$/)) {
       return res.send(400,'invalid id');
-    else {
+    } else {
       supervisor.getTaskSchedule(id, function(err, scheduleData){
         if (err) return res.send(500, err);
         res.send(200, scheduleData);
@@ -147,8 +146,6 @@ module.exports = {
     }
   },
   cancelSchedule: function(req, res) {
-    console.log('CANCEL SCHEDULE');
-    console.log(req.params);
     var supervisor = req.supervisor;
     var taskId = req.param("id", null);
     var scheduleId = req.param("scheduleId", null);
@@ -164,10 +161,6 @@ module.exports = {
         failure: error => res.send(500, error),
         success: task => res.json(task)
       });
-      // supervisor.getTaskSchedule(id, function(err, scheduleData){
-      //   if (err) return res.send(500, err);
-      //   res.send(200, scheduleData);
-      // });
     }
 
   }

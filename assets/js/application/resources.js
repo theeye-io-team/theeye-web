@@ -2,6 +2,17 @@
 $(function(){
 
   var log = debug('eye:web:admin:resources');
+  var _users = new App.Collections.Users();
+  _users.fetch({
+    data: {
+      where: {
+        credential: {
+          $ne:'agent'
+        }
+      }
+    },
+  });
+  window.Users = _users;
 
   /**
   *  MUTE
@@ -90,19 +101,22 @@ $(function(){
     $('.modal#scriptResourceModal button[type=submit]').on('click', setCallback('script'));
     $('.modal#psauxResourceModal button[type=submit]').on('click', setCallback('psaux'));
 
-    function fillForm(data){
-      var resource = data.resource;
-      var monitor = data.monitors[0];
+    function fillForm ($form,resource) {
+      var monitor = resource.monitor;
       var type = monitor.type;
 
-      var $form = $('form#' + type + 'ResourceForm');
-
+      //var $form = $('form#' + type + 'ResourceForm');
       $form.find('[data-hook=resource_id]').val(resource.id);
       $form.find('[data-hook=monitor_type]').val(type);
       $form.find('[data-hook=description]').val(resource.description);
       $form.find('[data-hook=hosts_id]').val(resource.host_id);
-      if( monitor.looptime ) $form.find('[data-hook=looptime]').val(monitor.looptime);
       $form.find('[data-hook=disabled]').prop('checked', !monitor.enable);
+      var acls = $form.find('select[data-hook=acl]');
+      acls.val(resource.acl).trigger('change');
+
+      if (monitor.looptime) {
+        $form.find('[data-hook=looptime]').val(monitor.looptime);
+      }
 
       var $tags = $form.find('select[name=tags]');
 
@@ -115,9 +129,9 @@ $(function(){
       }
 
       $tags.find('option').remove().end();
-      setSelectedTags( monitor.tags );
+      setSelectedTags(monitor.tags);
 
-      switch(type) {
+      switch (type) {
         case 'process':
           $form.find('[name=raw_search]').val(monitor.config.ps.raw_search);
           $form.find('[name=is_regexp]').prop('checked',monitor.config.ps.is_regexp);
@@ -138,13 +152,19 @@ $(function(){
       var type = options.type;
 
       jQuery.ajax({
-        url: "/resource/" + options.id,
-        method: 'GET',
-        data: { 'monitor_type': type }
-      })
-      .done(function(data){
-        fillForm(data);
+        url: "/api/resource/" + options.id,
+        method: 'GET'
+      }).done(function(resource){
+
+        var usersSelect = new UsersSelect({ collection: _users });
+        usersSelect.render();
+        $form.append( usersSelect.$el );
+        fillForm($form,resource);
+
         var $modal = $('#'+type+'ResourceModal');
+        $modal.one('hidden.bs.modal',function(){
+          usersSelect.remove();
+        });
 
         function bindModalElementsEvents(){
           //one time AUTOCOMPLETE COMBOBOX setup
@@ -187,7 +207,7 @@ $(function(){
           }
 
           var $firstInput = $modal.find('input[type!=hidden]').first().focus();
-          $modal.one('shown.bs.modal', function(){ $firstInput.focus(); });
+          $modal.one('shown.bs.modal',function(){ $firstInput.focus(); });
         }
 
         $modal.one('shown.bs.modal',bindModalElementsEvents);
@@ -218,8 +238,8 @@ $(function(){
                   data: JSON.stringify(data),
                   contentType: "application/json; charset=utf-8"
                 }).done(function(data) {
-                  bootbox.alert('Limits updated',function(){
-                  });
+                  bootbox.alert('Limits updated');
+                  $modal.modal('hide');
                 }).fail(function(xhr, err, xhrStatus) {
                   bootbox.alert(xhr.responseText);
                 });
@@ -227,12 +247,9 @@ $(function(){
             });
           })();
         }
-
         $modal.modal('show');
-
         $.unblockUI();
-      })
-      .fail(function(xhr, err, xhrStatus){
+      }).fail(function(xhr, err, xhrStatus){
         bootbox.alert(err);
         $.unblockUI();
       });
@@ -247,6 +264,10 @@ $(function(){
 
       $select.prop('multiple', true);
       $input.attr('value','');
+
+      var usersSelect = new UsersSelect({ collection: _users });
+      usersSelect.render();
+      $form.append( usersSelect.$el );
 
       $form[0].reset();
       $.unblockUI();
@@ -298,10 +319,16 @@ $(function(){
       var $modal = $('[data-hook=dstat-modal]');
       var $submitBtn = $modal.find('button[type=submit]');
       var $hosts = $modal.find('[data-hook=hosts-container]');
+
       var $form = $modal.find('form');
+      var usersSelect = new UsersSelect({ collection: _users });
+      usersSelect.render();
+      $form.append( usersSelect.$el );
+
       $modal.one('hidden.bs.modal',function(){
         $submitBtn.off('click');
         $hosts.hide();
+        usersSelect.remove();
       });
       $modal.one('show.bs.modal',function(){
         $hosts.show();
@@ -437,15 +464,15 @@ $(function(){
         });
     });
 
-    function fillHostResourceForm($form, data, doneFn){
-      var limits = data.monitors[0].config.limit;
+    function fillHostResourceForm ($form,resource,doneFn) {
+      var limits = resource.monitor.config.limit;
       $form.find('[data-hook=cpu]').val(limits.cpu);
       $form.find('[data-hook=mem]').val(limits.mem);
       $form.find('[data-hook=cache]').val(limits.cache);
       $form.find('[data-hook=disk]').val(limits.disk);
-      $form.find('[data-hook=resource_id]').val(data.resource.id);
-      $form.find('[data-hook=hosts_id]').val(data.resource.host_id);
-
+      $form.find('[data-hook=looptime]').val(resource.monitor.looptime);
+      $form.find('[data-hook=resource_id]').val(resource.id);
+      $form.find('[data-hook=hosts_id]').val(resource.host_id);
       if(doneFn) doneFn();
     }
 
@@ -467,17 +494,14 @@ $(function(){
 
       $.blockUI();
       jQuery.ajax({
-        url: "/resource/" + idResource,
-        method: 'GET',
-        data: { 'monitor_type': 'dstat' }
-      })
-      .done(function(data){
-        fillHostResourceForm($form, data, function(){
+        url: '/api/resource/' + idResource,
+        method: 'GET'
+      }).done(function(resource){
+        fillHostResourceForm($form, resource, function(){
           $('#dstatResourceModal').modal('show');
           $.unblockUI();
         });
-      })
-      .fail(function(xhr, err, xhrStatus){
+      }).fail(function(xhr, err, xhrStatus){
         bootbox.alert(err);
         $.unblockUI();
       });
@@ -674,8 +698,6 @@ $(function(){
     var formContainer = '[data-hook=scraper-form-container]';
     var scraperModal = new ScraperModal.MonitorCRUD(formContainer);
 
-    window.scraper = scraperModal;
-
     // on click create , render form
     function onClickCreate(event){
       event.preventDefault();
@@ -693,7 +715,63 @@ $(function(){
     $('.dropdown.resource [data-hook=create-scraper-monitor]').on('click',onClickCreate);
     $('.panel-group [data-hook=create-scraper-monitor]').on('click',onClickCreate);
     $('[data-hook=edit-scraper-monitor]').on('click',onClickEdit);
+  })();
 
+
+  (function editHost(){
+    $('[data-hook=edit-host-monitor]').on('click',function(event){
+      event.preventDefault();
+      var id = this.dataset.resource_id;
+      var host = new App.Models.Monitor({id:id});
+      host.fetch({
+        success:function(){
+
+          var modal = new Modal({ title: host.attributes.hostname });
+          modal.render();
+
+          var users = new UsersSelect({ collection: _users });
+          users.render();
+          users.values = host.attributes.acl;
+
+          modal.content = users;
+          modal.content = { el: $('<span class="clear" style="clear: left;display: block;"></span>')[0] };
+          modal.$el.on('hidden.bs.modal',function(){
+            users.remove();
+            modal.remove();
+          });
+
+          modal.$el
+            .find('[data-hook=save]')
+            .on('click',function(){
+              var values = users.values;
+              host.attributes.acl = values;
+              //if (!host.attributes.looptime)
+
+              // dont use this! :
+              //host.save();
+              // use this instead :
+              // ask @facugon
+              var data = JSON.stringify(host.attributes);
+              $.ajax({
+                method:'PATCH',
+                url:'/api/resource/' + id,
+                data: data,
+                contentType: "application/json; charset=utf-8"
+              }).done(function(){
+                bootbox.alert('acl\'s updated');
+                modal.hide();
+              }).fail(function(res){
+                bootbox.alert(res);
+              });
+            });
+
+          modal.show();
+        },
+        failure:function(){
+        }
+      });
+      return false;
+    });
   })();
 
 });

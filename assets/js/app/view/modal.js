@@ -63,7 +63,7 @@ var Modal = function (specs) {
     get: function(){ return _content; },
     set: function(view){
       var container = this.queryByHook('container');
-      container.appendChild( view.el );
+      container.append( view.el );
     },
   });
 

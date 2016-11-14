@@ -37,14 +37,13 @@ function CollectionRenderer (options) {
 var BaseView = Backbone.View.extend({
   initialize:function(options){
     _.extend(this,options);
-
-    if( this.autoRender ) this.render();
+    if (this.autoRender) this.render();
   },
   renderTemplate: function(){
     var html = this.template(this.model||{});
     this.$el.html( html );
 
-    if( this.container ) {
+    if (this.container) {
       this.container.appendChild( this.el );
     }
 

@@ -2,6 +2,7 @@
 var debug = require('debug')('eye:web:events');
 var moment = require('moment');
 var snsreceiver = require('../services/snshandler');
+var ACL = require('../services/acl');
 
 module.exports = {
   index: function(req, res) {
@@ -12,64 +13,78 @@ module.exports = {
         success: (body) => callback(null, body),
         failure: (err) => callback(err)
       }),
-      tasks: function(callback) { supervisor.tasks(callback); },
-      scripts: function(callback) { supervisor.scripts(callback); },
-      hosts: function(callback) { supervisor.hosts(callback); },
-      resourceTypes: function(callback) { supervisor.resourceTypes(callback); },
-      scraperHosts: function(callback) { supervisor.scraperHosts(callback); }
+      tasks: function(callback) {
+        supervisor.tasks((err,data) => {
+          if (err) {
+            if (err.statusCode=='403') {
+              callback();
+            } else {
+              callback(err);
+            }
+          } else {
+            callback(null,data);
+          }
+        });
+      }
     }, function(err, data) {
       if (err) {
         debug(err);
         return res.serverError("Error getting data from supervisor: " + err);
       }
 
-      // get agent cURL
-      var theeye = require('../services/passport').protocols.theeye;
-      theeye.getCustomerAgentCredentials(
-        req.session.customer,
-        supervisor,
-        function(error, userAgent) {
-          if(error) debug(error);
-          data.agent = userAgent;
-          data.moment = moment;
-          data.agentBinary = sails.config.application.agentBinary;
+      var isAdmin = ACL.isAdmin(req.user);
 
-          var subs = _.chain(data.resources)
-            .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
-            .filter(function(r){
-              return r.type != 'host' && r.type != 'scraper' && r.type != 'script' && r.type != 'process';
-            })
-            .groupBy('host_id')
-            .value();
+      data.moment = moment;
 
-          var indexed = _.chain(data.resources)
-            .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
-            .filter(function(r){
-              return r.type == 'host' || r.type == 'scraper' || r.type == 'script' || r.type == 'process';
-            })
-            .map(function(i){
-              if(i.type == 'host' && subs[i.host_id]) {
-                i.subs = subs[i.host_id];
-              }else{
-                i.subs = []; //consistency on view iterator
-              }
-              return i;
-            })
-            .sortBy('name')
-            .value();
+      function sendResponse () {
+        var subs = _.chain(data.resources)
+        .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
+        .filter(function(r){
+          return r.type != 'host' && r.type != 'scraper' && r.type != 'script' && r.type != 'process';
+        })
+        .groupBy('host_id')
+        .value();
 
-          data.indexedResources = indexed;
-          console.log(req.route.path.indexOf('test'));
-          if(req.route.path.indexOf('test') > -1) {
-            //testing, remove when done
-            console.log('rendering grouptest');
-            res.view('events/grouptest', data);
+        var indexed = _.chain(data.resources)
+        .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
+        .filter(function(r){
+          return r.type == 'host' || r.type == 'scraper' || r.type == 'script' || r.type == 'process';
+        })
+        .map(function(i){
+          if(i.type == 'host' && subs[i.host_id]) {
+            i.subs = subs[i.host_id];
           }else{
-            console.log('rendering index');
-            res.view('events/index', data);
+            i.subs = []; //consistency on view iterator
           }
+          return i;
+        })
+        .sortBy('name')
+        .value();
+
+        data.indexedResources = indexed;
+        data.ACL = ACL;
+
+        if(req.route.path.indexOf('test') > -1) {
+          res.view('events/grouptest', data);
+        } else {
+          res.view('events/index', data);
         }
-      );
+      }
+
+      if (isAdmin) {
+        // get agent cURL
+        var theeye = require('../services/passport').protocols.theeye;
+        theeye.getCustomerAgentCredentials(
+          req.session.customer,
+          supervisor,
+          function(error, userAgent) {
+            if(error) debug(error);
+            data.agent = userAgent;
+            data.agentBinary = sails.config.application.agentBinary;
+            sendResponse();
+          }
+        );
+      } else sendResponse();
     });
   },
   subscribe: function(req, res) {
@@ -79,9 +94,7 @@ module.exports = {
       socket.join(customer + '_events');
     }
 
-    res.json({
-      message: 'subscribed to customers events'
-    });
+    res.json({ message: 'subscribed to customers events' });
   },
   update: function(req, res) {
     // sns updates received
@@ -89,8 +102,7 @@ module.exports = {
     debug('event update received');
     debug(body);
     snsreceiver.handleSubscription(body, function(error, action) {
-      if( error || ! body.Message )
-      {
+      if( error || ! body.Message ) {
         debug.error('Error Invalid request');
         debug.error(body);
         res.json({

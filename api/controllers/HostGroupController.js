@@ -9,7 +9,6 @@ module.exports = {
       scripts: (callback) => supervisor.scripts(callback),
       tasks: (callback) => supervisor.tasks(callback),
       tags: (callback) => supervisor.tags(callback),
-      scraperHosts: (callback) => supervisor.scraperHosts(callback),
     }, function(err, data) {
       if (err) {
         console.log(err.toString());

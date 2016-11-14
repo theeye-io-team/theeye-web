@@ -13,38 +13,47 @@ var debug = require('debug')('eye:web:service:protocol:theeye');
  * @param {Object} params new user data
  * @param {Function} next callback
  */
-exports.createUser = function(localUser, params, supervisor, next)
-{
+exports.createUser = function (localUser, params, supervisor, next) {
   params.enabled = true;
-  supervisor.userCreate(params, function (err, profile) {
-    if (err || !profile ) return next(err, profile);
-
-    var customers = profile
-    .customers
-    .map(function(customer){
-      return {
-        _id: customer.id,
-        name: customer.name
-      };
-    });
-
-    Passport.create({
-      'protocol': 'theeye',
-      'provider': 'theeye',
-      'user': localUser.id ,
-      'token': profile.token,
-      'api_user': profile.id,
-      'profile': {
-        'id': profile.id,
-        'client_id': profile.client_id,
-        'client_secret': profile.client_secret,
-        'customers': customers,
+  supervisor.create({
+    route:'/user',
+    body:params,
+    success:(body) => {
+      if (!body) {
+        return next(null);
       }
-    }, function (err, passport) {
-      if (err) return next(err);
-      return next(null, profile);
-    });
-  });
+
+      var profile = body.user;
+
+      var customers = profile.customers.map(
+        customer => {
+          return {
+            _id: customer.id,
+            name: customer.name
+          }
+        }
+      );
+
+      Passport.create({
+        protocol: 'theeye',
+        provider: 'theeye',
+        user: localUser.id ,
+        token: profile.token,
+        api_user: profile.id,
+        profile: profile
+      }, function (err, passport) {
+        if (err) {
+          sails.log.error(err);
+          return next(err);
+        }
+        return next(null, profile);
+      });
+    },
+    failure:(err) => {
+      sails.log.error(err);
+      return next(err);
+    }
+  })
 }
 
 /**
@@ -59,51 +68,58 @@ exports.refreshToken = function(user, supervisor, doneFn)
 
 /**
  * @author Facundo
- * @param {Object} localUser
+ * @param {Object} userId , local user id
  * @param {Array} updates
  * @param {Object} supervisor , autenticated supervisor client
  * @param {Function} doneFn
  */
-exports.updateUser = function(localUser, updates, supervisor, doneFn)
-{
+exports.updateUser = function (userId, updates, supervisor, doneFn) {
   Passport.findOne({
-    user: localUser,
+    user: userId,
     protocol: 'theeye'
   }, function(error, passport) {
 
-    supervisor.userUpdate(
-      passport.profile.id,
-      updates,
-      function(error, profile){
-        if(error) return doneFn(error);
+    if (error) {
+      sails.log.error(error);
+      return doneFn(error);
+    }
 
-        passport.profile = profile;
-        passport.save(function(err){
-          /** ... **/
-        });
+    if (!passport) {
+      sails.log.error('passport not found. ' + passport);
+      return doneFn(new Error('theeye passport not found'));
+    }
 
-        doneFn(null, profile);
-      }
-    );
+    supervisor.patch({
+      route: '/user',
+      id: passport.profile.id,
+      body: updates,
+      success: (res) => {
+        passport.profile = res.user;
+        passport.save( (err) => doneFn(err) );
+      },
+      failure: (err) => doneFn(err) 
+    });
+
   });
 }
 
 var AGENT_INSTALLER_URL = 'http://interactar.com/public/install/041fc48819b171530c47c0d598bf75ad08188836/setup_generic.sh' ;
 
-exports.getCustomerAgentCredentials = function(
-  customer,
-  supervisor,
-  nextFn
-){
-  supervisor.userFetch({
-    'customer': customer,
-    'credential': 'agent'
-  },function(error,users){
-    if(error) return nextFn(error);
-    if(!users) return nextFn(null);
-
-    var user = users ? users[0] : null;
-    if(user) {
+exports.getCustomerAgentCredentials = function (customer,supervisor,done) {
+  supervisor.fetch({
+    route:'/:customer/user',
+    query: {
+      where: {
+        credential:'agent',
+        'customers.name':customer
+      },
+      limit:1
+    },
+    success: users => {
+      if (!users||users.length===0) {
+        return done(null,[]);
+      }
+      var user = users[0];
       user.curl = format(
         'curl -s "%s" | bash -s "%s" "%s" "%s" ',
         AGENT_INSTALLER_URL,
@@ -111,9 +127,8 @@ exports.getCustomerAgentCredentials = function(
         user.client_secret,
         user.customers[0].name // agents MUST have only one customer
       );
-      return nextFn(null, user);
-    }
-
-    return nextFn();
+      return done(null, user);
+    },
+    failure: err => done(err)
   });
 }

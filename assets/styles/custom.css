@@ -114,7 +114,7 @@ button {outline:none}
 .login .navbar-brand {border:none}
 .navbar-right, .navbar-right li {margin:0;padding:0}
 .navbar-right li {list-style-type:none;border-bottom:1px solid #ccc}
-.navbar-right li a {display:block;font-weight:700;color:#144e77;padding:8px 12px}
+.navbar-right li a {display:block;font-weight:700;color:#144e77;padding:8px 12px;height:42px;}
 .navbar-right li a:hover {background:#144e77;color:#fff}
 
 
@@ -340,6 +340,7 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
   width: 38px;
   height: 32px;
 }
+.admin-container .panel-heading .panel-item.icons,
 .admin-container .panel-heading .panel-item.icons .resource-search,
 .admin-container .panel-heading .panel-item.icons .state-resource-container {
   float:right;
@@ -552,13 +553,13 @@ span.selectorIcon.glyphicon-check {
     -ms-user-select: none;
     user-select: none;
     background-image: none;
-    border: 0px solid transparent;
-    border-radius: 16px;
     background-size: 31px;
-    width: 31px;
-    height: 31px;
     background-repeat: no-repeat;
     background-color: #304269;
+    border: 0px solid transparent;
+    border-radius: 16px;
+    width: 31px;
+    height: 31px;
 }
 .events-panel .panel-item.icons .btn-icon-image.icon-image-edit {
   background-image: url(/images/The-eye-icons-23.png);
@@ -627,6 +628,7 @@ input[type=checkbox].form-control {
 
 .loginBox section.license a:hover { color:#ee8e40; }
 
+.panel-item.icons .flowchart-icon ,
 .events-panel .panel-item.icons .flowchart-icon {
   background-image: url('/images/flowchart-white.png');
   background-repeat: no-repeat;
@@ -638,6 +640,12 @@ input[type=checkbox].form-control {
   width: 31px;
   height: 31px;
   background-position-y: 1px;
+}
+.panel-item.icons .btn-icon-image.btn.btn-primary.flowchart-icon {
+  margin-left: 4px;
+  width: 38px;
+  height: 32px;
+  background-size: 26px;
 }
 
 a.flowchart-icon {
@@ -671,6 +679,8 @@ a.flowchart-icon {
   .main-container{
     margin-top:55px;
   }
+  .navbar-right li a {height:36px;padding:2px 5px;}
+  .navbar-brand {padding:0px 5px;}
 }
 
 #workflow {
@@ -688,3 +698,6 @@ a.flowchart-icon {
   margin: 3px 5px;
   transition: transform .25s ease-in-out;
 }
+
+.navbar-header .user-profile { color:#80a1b8; position:absolute; right:5px; top:5px; float:right; }
+

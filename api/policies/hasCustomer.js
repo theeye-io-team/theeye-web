@@ -3,7 +3,7 @@ module.exports = function hasCustomer (req, res, next)
 {  
   sails.log.debug("hasCustomer policy for the current customer %s", req.session.customer);
 
-  if(!req.user)	return next();
+  if(!req.user) return next();
 
   if(req.user.customers.length === 0) {
     sails.log.error("the current user has no customer");

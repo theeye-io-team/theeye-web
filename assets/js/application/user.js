@@ -1,201 +1,172 @@
-/* global bootbox, $searchbox, console, Clipboard */
-
+/* global bootbox, $searchbox, console */
 $(function() {
 
   var $state = $({});
 
-  function extractFormData (action, $el) {
-    return $el.serializeArray().reduce(function(obj, input) {
-
-      if(input.name=='customers'){
-        if(!obj[input.name]) obj[input.name]=[];
-        obj[input.name].push(input.value);
-      }
-      else if(input.name=='emails')
-      {
-        obj[input.name] = $("[data-hook=emails-"+action+"]").val();
-      }
-      else obj[input.name] = input.value;
-      return obj;
-
-    }, {});
-  }
-
-  //CREATE CUSTOMER FORM
+  //CREATE USER FORM
   (function create(el){
 
-    var $customerForm = $(el);
+    var $userForm = $(el);
 
-    $(".modal#create-customer").on('shown.bs.modal', function() {
-      $customerForm.find(".hidden-container").hide();
-      $customerForm.data('action','create');
-      $customerForm[0].reset();
-      $('[data-hook=emails-create]').tagsinput('removeAll');
-      $('input[type!=hidden]',$customerForm).first().focus();
+    $('.modal#create-user').on('shown.bs.modal', function() {
+      $userForm.find('.hidden-container').hide();
+      $userForm.data('action','create');
+      $userForm[0].reset();
+      $('#name',this).focus();
+      $('#customers',$userForm).select2({placeholder: 'Select customers...'});
     });
 
-    $state.on("customer_created", function() {
-      bootbox.alert('Customer created', function(){
-        $("create-customer").modal("hide");
+    $state.on('user_created', function() {
+      $('.modal#create-user').modal('hide');
+      alert('user created','User', function(){
         window.location.reload();
       });
     });
 
-    $state.on("customer_create_error", function(ev, response) {
-      bootbox.alert(response);
+    $state.on('user_create_error', function(ev, error) {
+      alert(error,'Oops...');
     });
 
-    $customerForm.find("input[type=radio][name=target]").on("change", function(){
-      var val = $(this).val();
-      var $multihost = $customerForm.find('.hidden-container#hosts-selection');
-      var $singleresource = $customerForm.find('.hidden-container#resource-selection');
-      if( val == 'single-resource' ) {
-        $multihost.hide(50);
-        $multihost.find("option:selected").removeAttr("selected");
-        $singleresource.show(50);
-      } else if( val == 'multi-hosts' ){
-        $singleresource.hide(50);
-        $singleresource.find("select").val(0);
-        $multihost.show(50);
-      }
-    });
-
-    $customerForm.on("submit", function(event) {
+    $userForm.on('submit', function(event) {
       event.preventDefault();
-      var vals = extractFormData('create', $customerForm);
+      var form = new FormElement($userForm);
 
-      jQuery.post("/customer", vals).done(function() {
-        $state.trigger("customer_created");
-      }).fail(function(xhr, err) {
-        $state.trigger("customer_create_error", xhr.responseText, err);
+      jQuery
+      .post('/user',form.get())
+      .done(function(data) {
+        $state.trigger('user_created');
+      })
+      .fail(function(xhr, status, xhrStatus) {
+        $state.trigger('user_create_error', xhr.responseText, status);
       });
 
       return false;
     });
 
-  })("form#createCustomerForm");
+  })('form#createUserForm');
 
   //EDIT USER FORM
-  (function update (el){
+  (function update(el){
 
-    var $customerForm = $(el);
+    var $userForm = $(el);
 
-    function fillForm($viewElement, data){
-      $viewElement[0].reset();
-      Object.keys(data).forEach(function(k)
-      {
+    $(".modal#edit-user").on('shown.bs.modal', function() {
+      //nice-guy first input auto focus
+      $('#name',this).focus();
+      $('#customers-edit', this).select2();
+    });
 
-        if(k == 'emails')
-        {
-          var emails = data[k];
-          $('[data-hook=emails-edit]').tagsinput('removeAll');
-          emails.forEach(function(email)
-          {
-            $('[data-hook=emails-edit]').tagsinput('add', email);
+    $('button.editUser').on('click', function(evt){
+      evt.stopPropagation();
+      evt.preventDefault();
+      var item = $(this).closest('.itemRow');
+      $userForm.data('user-id',item.data().itemId);
+      $userForm.data('action','edit');
+      $.get('/user/' + item.data().itemId)
+        .done(function(data){
+          var form = new FormElement($userForm);
+          form.set(data.user);
+          $('#edit-user').modal('show');
+        })
+        .fail(function(xhr, err/*, xhrStatus*/) {
+          $state.trigger('user_fetch_error', xhr.responseText, err);
+        });
+    });
 
-          });
-        }
-        else
-        {
-          var $el = $viewElement.find("[data-hook="+ k + "]");
-          $el.val(data[k]);
-        }
-      });
-    }
-
-    $(".modal#edit-customer").on('shown.bs.modal', function(event) {
+    $userForm.on('submit', function(event) {
       event.preventDefault();
-      event.stopPropagation();
-      var customerId = event.relatedTarget.getAttribute('data-customer-id');
-      $customerForm.data('customer-id',customerId);
-      $customerForm.data('action','edit');
-      jQuery.get("/customer/" + customerId).done(function(data)
-      {
-        fillForm($customerForm, data.customer);
-      }).fail(function(xhr, err) {
-        $state.trigger("customer_fetch_error", xhr.responseText, err);
-      });
-    });
-
-    $state.on("customer_updated",function() {
-      $(".modal#edit-customer").modal("hide");
-      window.location.reload();
-    });
-
-    $state.on("customer_update_error",function(ev, resp) {
-      bootbox.alert(resp);
-    });
-
-    $customerForm.on("submit", function(event) {
-      event.preventDefault();
-      var vals = extractFormData('edit', $customerForm);
+      var form = new FormElement($userForm);
 
       jQuery.ajax({
-        url:"/customer/" + $customerForm.data('customer-id'),
-        data:vals,
+        url:'/user/' + $userForm.data('user-id'),
+        data:form.get(),
         type:'put'
-      }).done(function() {
-        $state.trigger("customer_updated");
+      }).done(function(data) {
+        $('.modal#edit-user').modal('hide');
+        bootbox.alert('user updated',function(){
+          window.location.reload();
+        });
       }).fail(function(xhr, err) {
-        $state.trigger("customer_update_error", xhr.responseText, err);
+        bootbox.alert(xhr.responseText,function(){
+          window.location.reload();
+        });
       });
 
       return false;
     });
 
-    return $customerForm;
-  })("form#editCustomerForm");
+    return $userForm;
+  })('form#editUserForm');
 
   (function remove(){
-    $ (".deleteCustomer").on("click",function(ev){
+    $state.on('user_deleted', function() {
+      //$el.remove();
+      location.reload();
+    });
+    $state.on('user_delete_error', function(ev, resp) {
+      alert(resp);
+    });
+
+    $(".deleteUser").on("click",function(ev){
       ev.preventDefault();
       ev.stopPropagation();
 
-      bootbox.confirm('The customer will be removed from users (resources and checks will be disabled).<br/>Want to continue?',
-      function(confirmed)
-      {
-        if(!confirmed) return;
+      bootbox.confirm('The resource will be removed. Want to continue?',
+      function(confirmed) {
+        if(!confirmed)
+          return;
 
         var $delTrigger = $(ev.currentTarget);
-        var customerId = $delTrigger.data("customer-id");
-        var customerName = $delTrigger.data("customer-name");
+        var idUser = $delTrigger.data("user-id");
 
         $.ajax({
-          url: '/customer/' + customerId,
-          type: 'DELETE',
-          data: { 'name': customerName }
-        }).done(function() {
-          location.reload();
-        }).fail(function(jqxhr) {
-          bootbox.alert('an error has ocurred : ' + jqxhr.status,
-            function(){
-              location.reload();
-            });
+          url: '/user/' + idUser,
+          type: 'DELETE'
+        }).done(function(/*data*/) {
+          $state.trigger("user_deleted", $delTrigger.closest('tr')[0]);
+        }).fail(function(xhr, err) {
+          $state.trigger("user_delete_error", xhr.responseText, err);
         });
       });
     });
   })();
 
-  (function getAgentCurl() {
-    $(".seeAgentCurl").click(function(ev) {
-      ev.preventDefault();
+  (function activateUser() {
+    $('[data-hook=activate]').on('click',function (event) {
+      event.preventDefault();
+      var link = '/activate?token=' + this.dataset.activation_token;
+      bootbox.alert(link,function(){
+      });
+      return false;
+    })
+  })();
+
+  (function reSendInvitation() {
+    $(".reSendInvitation").on("click",function(ev){
       ev.stopPropagation();
-      var $curlTrigger = $(ev.currentTarget);
-      var customerName = $curlTrigger.attr("data-customer-name");
-      $("#user-agent").modal('show');
+      ev.preventDefault();
+      var $delTrigger = $(ev.currentTarget);
+      var idUser = $delTrigger.data("user-id");
 
       $.ajax({
-        url: '/customer/' + customerName + '/agent',
-        type: 'GET'
-      }).done(function(data){
-        new Clipboard('.clipboard-btn');
-        if(data.user.curl)
-          $("[data-hook=curl-agent]").val(data.user.curl);
-        else
-          $("[data-hook=curl-agent]").val("No agent detected!");
-      }).fail(function() {
-        $("[data-hook=curl-agent]").val("No agent detected!");
+        url: '/user/' + idUser + '/reinvite',
+        type: 'PUT'
+      }).done(function() {
+        alert("Invitation sent","Done!",function(){
+          window.location.reload();
+        });
+      }).fail(function(xhr, err) {
+        alert("Error sending the invitation. " + xhr.responseText, "Oops...");
       });
+    });
+  })();
+
+  (function toogleSendInvitation() {
+    $("[data-hook=sendInvitation]").change(function() {
+      if( $("[data-hook=sendInvitation]").prop("checked") === true)
+        $(".set-password").hide();
+      else
+        $(".set-password").show();
     });
   })();
 
@@ -210,28 +181,27 @@ $(function() {
     });
 
     // SETUP
-    var firstConfirmHeader = '<h1>Massive customer delete</h1>Heads up!<br /><br />';
+    var firstConfirmHeader = '<h1>Massive user delete</h1>Heads up!<br /><br />';
     var firstConfirmFooter = '<br />will be deleted.<h2>Are you sure?</h2>';
     var secondConfirmHeader = '<h1>Hey mister!</h1>' +
-      'Those are customers you are deleting, are you completely sure?<br /><br />';
+      'Those are users you are deleting, are you completely sure?<br /><br />';
     var secondConfirmFooter = '<br />WILL BE DELETED<h2>Confirm wisely</h2>';
-    var successTitle = '<h1>Customers deleted</h1>';
+    var successTitle = 'Users deleted';
     var successFooter = '<br/>...you will be missed :(';
-    var failTitle = '<h1>Customers deleted (some)</h1>';
-    var failFooter = '<br/>...I tried to delete these customers' +
+    var failTitle = 'Users deleted (some)';
+    var failFooter = '<br/>...I tried to delete these users' +
       ' yet some of them came back with errors.' +
       '<br /><br />Please refresh now';
     var dataId = "itemId"; // the data-something where we get the id of the item
     var dataDescriptor = "itemName"; // the data-something where we get the name of the item
     var listTemplate = "{descriptor} ({id})<br />";
     var itemSelector = 'div.itemRow.selectedItem:visible';
-    var apiUrlEndpoint = '/customer/';
+    var apiUrlEndpoint = '/user/';
     var apiRequestType = 'DELETE';
 
     // MASS DELETE - OJO
     $('.massDelete').on('click', function(evt){
       evt.preventDefault();
-      $(this).blur();
       var taskRows = "";
       var taskIds = [];
       //collect selected rows.data (dataId & dataDescriptor)
@@ -260,7 +230,6 @@ $(function() {
             var deleteRequests = [];
             var removeOnSuccess = function(id) {
               console.log('request success');
-              // console.log('would remove '+'div.itemRow[data-item-id='+id+']');
               $('div.itemRow[data-item-id='+id+']').remove();
             };
             for(var ii = 0; ii < taskIds.length; ii++) {
@@ -293,10 +262,17 @@ $(function() {
                 console.log('then progress');
                 console.log(arguments);
               }
+            // when progress nunca se llama tampoco ... ?
+            ).progress(function(){
+              console.log('when progress');
+              console.log(arguments);
+            }
             ).always(function(){
               console.log('always');
+              console.log(arguments);
               $.unblockUI();
-            } ).done(function(){
+            }
+            ).done(function(){
               // done deberia volver con array de results
               // no se si no funciona o es porque el req.DELETE
               // no devuelve nada, habria que probar de cambiar la API
@@ -307,6 +283,8 @@ $(function() {
           });
         });
       }
+      $(this).blur();
+      return false;
     });
 
     // MASS CHECKER

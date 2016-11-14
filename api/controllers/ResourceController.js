@@ -16,11 +16,14 @@ module.exports = {
   index: function(req, res) {
     var supervisor = req.supervisor;
     async.parallel({
-      monitors: (callback) => supervisor.monitorFetch({},callback),
+      monitors: (callback) => supervisor.fetch({
+        route: supervisor.MONITORS,
+        success: (monitors) => callback(null,monitors),
+        failure: (error) => callback(error)
+      }),
       scripts: (callback) => supervisor.scripts(callback),
       hosts: (callback) => supervisor.hosts(callback),
-      resourceTypes: (callback) => supervisor.resourceTypes(callback),
-      scraperHosts: (callback) => supervisor.scraperHosts(callback),
+      //resourceTypes: (callback) => supervisor.resourceTypes(callback),
       tags: (callback) => supervisor.tags(callback)
     }, function(err, data) {
       if (err) return res.serverError("Error getting data from supervisor: " + err.toString());
@@ -30,6 +33,7 @@ module.exports = {
         return String( mins * 60 * 1000 );
       }
       data.looptimes = [
+        {'id':10000,'value':'10 seconds'},
         {'id':minutesToMillisecondsString(0.25),'value':'0.25'},
         {'id':minutesToMillisecondsString(0.5),'value':'0.5'},
         {'id':minutesToMillisecondsString(1),'value':'1'},
@@ -100,8 +104,7 @@ module.exports = {
    * Edit resource
    * PUT /resource
    */
-  update : function(req,res,next)
-  {
+  update : function(req,res,next) {
     var supervisor = req.supervisor;
     var params = req.params.all();
 
@@ -131,25 +134,13 @@ module.exports = {
    * Get resource
    * GET /resource
    */
-  get: function(req,res)
-  {
-    var supervisor = req.supervisor;
-    var id = req.param("id", null);
-
-    if( ! id || ! id.match(/^[a-fA-F0-9]{24}$/) ) return res.send(400,'invalid id');
-
-    async.parallel({
-      resource: function(callback){
-        debug('fetching resource');
-        supervisor.resource( id, callback )
-      },
-      monitor: function(callback){
-        debug('fetching monitors');
-        supervisor.monitorFetch({ 'resource': id }, callback);
-      }
-    },function(err, data){
-      if(err) return res.send(500, err);
-      res.send(200,{ resource: data.resource, monitors: data.monitor });
+  get (req,res) {
+    req.supervisor.get({
+      query: req.query,
+      route: req.supervisor.RESOURCE,
+      id: req.params.id,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
     });
   },
   updateAlerts: function(req,res) {

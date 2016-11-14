@@ -51,6 +51,23 @@ module.exports = {
     });
   },
   /**
+   * @method PATCH
+   * @route /api/:resource/:id
+   *
+   * @param {String} resource
+   * @param {String} id
+   */
+  patch (req, res, next) {
+    req.supervisor.patch({
+      query: req.query,
+      route: `/${req.session.customer}/${req.params.resource}`,
+      id: req.params.id,
+      body: req.body,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
+    });
+  },
+  /**
    * @method GET
    * @route /api/:resource/:id
    *

@@ -6,7 +6,6 @@
 <% block('scripts','<script> window.Looptimes = ' + JSON.stringify(looptimes) + '; </script>') %>
 <% block('scripts','<script> window.Timeouts = ' + JSON.stringify(timeouts) + '; </script>') %>
 <% block('scripts','<script> window.Hosts = ' + JSON.stringify(hosts) + '; </script>') %>
-<% block('scripts','<script> window.ScraperHosts = ' + JSON.stringify(scraperHosts) + '; </script>') %>
 <% block('scripts','<script> window.Scripts = ' + JSON.stringify(scripts) + '; </script>') %>
 
 <!-- Main  -->
@@ -104,16 +103,14 @@
 
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-        <% monitors.forEach( function(monitor, key) { %>
-          <%
+        <% monitors.forEach( function(monitor, key) {
           var tags = [
-            "id="          + monitor.resource.id,
             "description=" + monitor.resource.description,
             "hostname="    + monitor.resource.hostname,
             "type="        + monitor.type,
             "state="       + monitor.resource.state,
-          ].concat(monitor.tags).join(',')
-          %>
+          ].concat(monitor.tags).join(',') %>
+
           <div class="itemRow panel panel-default js-searchable-item"
             data-item-id="<%= monitor.resource.id %>"
             data-item-name="<%= monitor.resource.description %>"
@@ -129,161 +126,171 @@
                   <div class="panel-title-content">
 
                     <% if(monitor.type == 'host') { %>
-                    <button class="rowSelector-not btn btn-primary simple-btn tooltiped"
-                      title="Beware: I'm a Host!!"
-                      aria-label="Center Align">
-                      <span class="selectorIcon glyphicon glyphicon-home"></span>
-                    </button>
+                      <button class="rowSelector-not btn btn-primary simple-btn tooltiped"
+                        title="I'm a Host!"
+                        aria-label="Center Align">
+                        <span class="selectorIcon glyphicon glyphicon-home"></span>
+                      </button>
                     <% } else { %>
-                    <button class="rowSelector btn btn-primary simple-btn tooltiped"
-                      title="Select monitor"
-                      aria-label="Center Align">
-                      <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
-                    </button>
+                      <button class="rowSelector btn btn-primary simple-btn tooltiped"
+                        title="Select monitor"
+                        aria-label="Center Align">
+                        <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
+                      </button>
                     <% } %>
 
                     <span class="panel-item name" id="<%= monitor.id %>">
                       <% if( monitor.template ) { %>
-                      <small>
-                        <a href="/admin/hostgroup">
-                          <span title="This monitor was created from a template" class="glyphicon glyphicon-duplicate remark-success tooltiped">
-                          </span>
-                        </a>
-                      </small>&nbsp;
+                        <small>
+                          <a href="/admin/hostgroup">
+                            <span title="This monitor was created from a template" class="glyphicon glyphicon-duplicate remark-success tooltiped">
+                            </span>
+                          </a>
+                        </small>&nbsp;
                       <% } %>
+
                       <%= monitor.resource.description %>
                       <span class="monitor-<%= monitor.enable?'enabled':'disabled' %>">
-                        <small><% if(monitor.resource.type != 'host'){ %>(<%=monitor.resource.hostname%>)<% } %><%= ! monitor.enable ? ' > disabled' :'' %> > <%= monitor.type %></small>
+                        <small>
+                          <% if(monitor.resource.type != 'host'){ %>
+                            (<%=monitor.resource.hostname%>)
+                          <% } %>
+                          <%= !monitor.enable? ' > disabled' :'' %> > <%= monitor.type %>
+                        </small>
                       </span>
                       <small class="<%= monitor.resource.state === 'normal' ? '' : 'remark-alert' %>"> > host status :: <%= monitor.resource.state %></small>
                     </span>
                     <div class="panel-item icons">
-
-                      <%
-                      var type = monitor.type || monitor.monitor_type;
-                      if( type != 'host' && type != 'psaux' ) { %>
-
-                      <button class="editResourceMonitor editResource <%= monitor.type %>ResourceEditAction btn btn-primary simple-btn tooltiped"
-                        aria-label="Center Align"
-                        title="Edit monitor"
-                        data-hook="edit-<%= monitor.type %>-monitor"
-                        data-host_id="<%= monitor.host_id %>"
-                        data-hostname="<%= monitor.resource.hostname %>"
-                        data-resource_id="<%= monitor.resource.id %>"
-                        data-action="edit"
-                        data-toggle="modal"
-                        data-resource-type="<%= monitor.type %>"
-                        data-target="#<%= monitor.type %>ResourceModal">
-                        <span class="glyphicon glyphicon-edit"></span>
-                      </button>
-
-                      <%
-                      if( monitor.resource.alerts === false ) {
-                        var muteClass='resource-enable-alerts';
-                        var muteIcon='glyphicon-volume-up';
-                        var muteTitle='Activate monitor alerts';
-                      } else {
-                        var muteClass='resource-disable-alerts';
-                        var muteIcon='glyphicon-volume-off';
-                        var muteTitle='Deactivate monitor alerts';
-                      }
-                      %>
-
-                      <button class="<%= muteClass %> btn btn-primary simple-btn tooltiped"
-                        title="<%= muteTitle %>"
-                        aria-label="Center Align"
-                        data-resource_id="<%= monitor.resource.id %>">
-                        <span class="glyphicon <%= muteIcon %>"></span>
-                      </button>
-
-                      <button class="deleteResource btn btn-primary simple-btn tooltiped"
-                        title="Delete monitor"
-                        aria-label="Center Align"
-                        data-resource_id="<%= monitor.resource.id %>">
-                        <span class="glyphicon glyphicon-trash"></span>
-                      </button>
-
-                      <% } else { %>
-
-                      <%  if( type == 'host' ) { %>
-                      <div class="dropdown host-menu">
-                        <button id="dropdownMenu1"
-                          data-toggle="dropdown"
-                          aria-expanded="true"
-                          class="btn btn-primary simple-btn dropdown-toggle"
-                          aria-label="Center Align">
-                          <span class="glyphicon glyphicon-plus"></span>
+                      <% var type = (monitor.type||monitor.monitor_type); %>
+                      <% if (type != 'host' && type != 'psaux') { %>
+                        <button class="editResourceMonitor editResource <%= monitor.type %>ResourceEditAction btn btn-primary simple-btn tooltiped"
+                          aria-label="Center Align"
+                          title="Edit monitor"
+                          data-hook="edit-<%= monitor.type %>-monitor"
+                          data-host_id="<%= monitor.host_id %>"
+                          data-hostname="<%= monitor.resource.hostname %>"
+                          data-resource_id="<%= monitor.resource.id %>"
+                          data-action="edit"
+                          data-toggle="modal"
+                          data-resource-type="<%= monitor.type %>"
+                          data-target="#<%= monitor.type %>ResourceModal">
+                          <span class="glyphicon glyphicon-edit"></span>
                         </button>
 
-                        <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1" style="min-width: 120px">
-                          <li role="presentation">
-                            <span role="menuitem" tabindex="-1"
-                              class="create-monitor"
-                              data-hook="create-scraper-monitor"
-                              data-host_id="<%= monitor.host_id %>"
-                              data-hostname="<%= monitor.resource.hostname %>"
-                              data-resource-type="scraper"
-                              data-action="create">WEB/API Check</span>
-                          </li>
-                          <li role="presentation">
-                            <span role="menuitem" tabindex="-1"
-                              class="create-monitor createResourceMonitor"
-                              data-host_id="<%= monitor.host_id %>"
-                              data-hostname="<%= monitor.resource.hostname %>"
-                              data-toggle="modal"
-                              data-hook="create-monitor"
-                              data-target="#processResourceModal"
-                              data-resource-type="process"
-                              data-action="create">Process</span>
-                          </li>
-                          <li role="presentation">
-                            <span role="menuitem" tabindex="-1"
-                              class="create-monitor createResourceMonitor"
-                              data-host_id="<%= monitor.host_id %>"
-                              data-hostname="<%= monitor.resource.hostname %>"
-                              data-toggle="modal"
-                              data-hook="create-monitor"
-                              data-target="#scriptResourceModal"
-                              data-resource-type="script"
-                              data-action="create">Script</span>
-                          </li>
-                          <li role="presentation">
-                            <span role="menuitem" tabindex="-1"
-                              class="create-monitor createResourceMonitor"
-                              data-host_id="<%= monitor.host_id %>"
-                              data-hostname="<%= monitor.resource.hostname %>"
-                              data-toggle="modal"
-                              data-hook="create-monitor"
-                              data-target="#dstat-resource-modal"
-                              data-resource-type="dstat"
-                              data-action="create">Host Stats</span>
-                          </li>
-                          <!--
-                          <li role="presentation">
-                            <span role="menuitem" tabindex="-1"
-                              class="create-monitor createResourceMonitor"
-                              data-host_id="<%= monitor.host_id %>"
-                              data-hostname="<%= monitor.resource.hostname %>"
-                              data-toggle="modal"
-                              data-hook="create-monitor"
-                              data-target="#psauxResourceModal"
-                              data-resource-type="psaux"
-                              data-action="create">Process List</span>
-                          </li>
-                          -->
-                        </ul>
-                      </div>
+                        <%
+                            if( monitor.resource.alerts === false ) {
+                              var muteClass='resource-enable-alerts';
+                              var muteIcon='glyphicon-volume-up';
+                              var muteTitle='Activate monitor alerts';
+                            } else {
+                              var muteClass='resource-disable-alerts';
+                              var muteIcon='glyphicon-volume-off';
+                              var muteTitle='Deactivate monitor alerts';
+                            }
+                          %>
+
+                        <button class="<%= muteClass %> btn btn-primary simple-btn tooltiped"
+                          title="<%= muteTitle %>"
+                          aria-label="Center Align"
+                          data-resource_id="<%= monitor.resource.id %>">
+                          <span class="glyphicon <%= muteIcon %>"></span>
+                        </button>
+
+                        <button class="deleteResource btn btn-primary simple-btn tooltiped"
+                          title="Delete monitor"
+                          aria-label="Center Align"
+                          data-resource_id="<%= monitor.resource.id %>">
+                          <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                      <% } else { %>
+                        <% if (type == 'host') { %>
+
+                          <button class="btn btn-primary simple-btn tooltiped"
+                            aria-label="Center Align"
+                            title="Edit Host"
+                            data-hook="edit-host-monitor"
+                            data-host_id="<%= monitor.host_id %>"
+                            data-hostname="<%= monitor.resource.hostname %>"
+                            data-resource_id="<%= monitor.resource.id %>"
+                            >
+                            <span class="glyphicon glyphicon-edit"></span>
+                          </button>
+
+                          <div class="dropdown host-menu">
+                            <button id="dropdownMenu1"
+                              data-toggle="dropdown"
+                              aria-expanded="true"
+                              class="btn btn-primary simple-btn dropdown-toggle"
+                              aria-label="Center Align">
+                              <span class="glyphicon glyphicon-plus"></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1" style="min-width: 120px">
+                              <li role="presentation">
+                                <span role="menuitem" tabindex="-1"
+                                  class="create-monitor"
+                                  data-hook="create-scraper-monitor"
+                                  data-host_id="<%= monitor.host_id %>"
+                                  data-hostname="<%= monitor.resource.hostname %>"
+                                  data-resource-type="scraper"
+                                  data-action="create">WEB/API Check</span>
+                              </li>
+                              <li role="presentation">
+                                <span role="menuitem" tabindex="-1"
+                                  class="create-monitor createResourceMonitor"
+                                  data-host_id="<%= monitor.host_id %>"
+                                  data-hostname="<%= monitor.resource.hostname %>"
+                                  data-toggle="modal"
+                                  data-hook="create-monitor"
+                                  data-target="#processResourceModal"
+                                  data-resource-type="process"
+                                  data-action="create">Process</span>
+                              </li>
+                              <li role="presentation">
+                                <span role="menuitem" tabindex="-1"
+                                  class="create-monitor createResourceMonitor"
+                                  data-host_id="<%= monitor.host_id %>"
+                                  data-hostname="<%= monitor.resource.hostname %>"
+                                  data-toggle="modal"
+                                  data-hook="create-monitor"
+                                  data-target="#scriptResourceModal"
+                                  data-resource-type="script"
+                                  data-action="create">Script</span>
+                              </li>
+                              <li role="presentation">
+                                <span role="menuitem" tabindex="-1"
+                                  class="create-monitor createResourceMonitor"
+                                  data-host_id="<%= monitor.host_id %>"
+                                  data-hostname="<%= monitor.resource.hostname %>"
+                                  data-toggle="modal"
+                                  data-hook="create-monitor"
+                                  data-target="#dstat-resource-modal"
+                                  data-resource-type="dstat"
+                                  data-action="create">Host Stats</span>
+                              </li>
+                              <!--
+                              <li role="presentation">
+                                <span role="menuitem" tabindex="-1"
+                                  class="create-monitor createResourceMonitor"
+                                  data-host_id="<%= monitor.host_id %>"
+                                  data-hostname="<%= monitor.resource.hostname %>"
+                                  data-toggle="modal"
+                                  data-hook="create-monitor"
+                                  data-target="#psauxResourceModal"
+                                  data-resource-type="psaux"
+                                  data-action="create">Process List</span>
+                              </li>
+                              -->
+                            </ul>
+                          </div>
+                        <% } %>
+
+                        <button class="deleteHostResource btn btn-primary simple-btn tooltiped"
+                          title="Delete monitor"
+                          aria-label="Center Align"
+                          data-resource_id="<%= monitor.resource.id %>">
+                          <span class="glyphicon glyphicon-trash"></span>
+                        </button>
                       <% } %>
-
-                      <button class="deleteHostResource btn btn-primary simple-btn tooltiped"
-                        title="Delete monitor"
-                        aria-label="Center Align"
-                        data-resource_id="<%= monitor.resource.id %>">
-                        <span class="glyphicon glyphicon-trash"></span>
-                      </button>
-
-                      <% } %>
-
                     </div>
                   </div>
                 </span>

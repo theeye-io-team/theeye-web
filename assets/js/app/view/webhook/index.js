@@ -7,7 +7,7 @@
  */
 var WebhookPage = (function(){
 
-  // use only one modal for the page.
+  // use only one main modal for the page.
   var modal = new Modal({ title: 'Incoming Webhook' });
   modal.render();
 
@@ -84,14 +84,17 @@ var WebhookPage = (function(){
     },
   });
 
-
-
   var WebhookView = BaseView.extend({
     template: Templates['assets/templates/webhook/list-item.hbs'],
     events: {
       "click [data-hook=edit]":"onClickEdit",
       "click [data-hook=remove]":"onClickRemove",
       "click [data-hook=trigger]":"onClickTrigger",
+      "click [data-hook=workflow-button]":"onClickWorkflow",
+    },
+    onClickWorkflow:function(event){
+      window.open('/admin/workflow?node=' + this.model.id, '_blank');
+      return false;
     },
     onClickEdit:function(event){
       event.preventDefault();
@@ -149,7 +152,6 @@ var WebhookPage = (function(){
       this.form.remove();
     }
   });
-
 
   // Extend ListView for massChecker/massDeleter functionality
   var WebhookPage = ListView.extend({

@@ -20,10 +20,17 @@ var Select2Data = new (function Select2Data(){
     });
   }
 
-  this.PrepareIdValueData = function (data){
+  this.PrepareIdValueData = function (data,options){
+    options||(options={});
+    var id = options.id||'id';
+    var text = options.text||'value';
+
     if(!Array.isArray(data)||data.length==0) return [];
     return data.map(function(item){
-      return { id: item.id, text: item.value };
+      return {
+        id: item[id],
+        text: item[text]
+      };
     });
   }
 

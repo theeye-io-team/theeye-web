@@ -3,21 +3,22 @@ window.App.Models = window.App.Models || {};
 
 window.App.Models.ScraperMonitor = Backbone.Model.extend({
   urlRoot:'/resource',
-  parse:function(response){
-    if(Array.isArray(response)){
-      if(response.length>1){
+  parse:function(resource){
+    if(Array.isArray(resource)){
+      if(resource.length>1){
         console.log('multiple responses');
         return {};
       } else {
-        var monitor = response[0].monitor;
+        var monitor = resource.monitor;
       }
     } else {
-      var monitor = response.monitor || response.monitors[0];
+      var monitor = (resource.monitor||resource.monitors[0]);
     }
 
 		var config = monitor.config;
 		return {
       // monitor
+      acl : resource.acl,
 			name : monitor.name,
 			hosts : [ monitor.host_id ],
 			looptime : monitor.looptime,
