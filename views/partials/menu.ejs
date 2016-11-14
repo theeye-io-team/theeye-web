@@ -30,7 +30,7 @@
     </div>
     <ul class="navbar-right">
       <li><a href="/events">Dashboard</a></li>
-      <% if ( req.user.credential != 'user' ) { %>
+      <% if ( req.user.credential != 'user' && req.user.credential != 'viewer' ) { %>
       <li class="tooltiped" data-placement="left" title="Resource manager">
         <div class="dropdown" >
           <button type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
