@@ -129,7 +129,7 @@ $(function(){
       }
 
       $tags.find('option').remove().end();
-      setSelectedTags( monitor.tags );
+      setSelectedTags(monitor.tags);
 
       switch (type) {
         case 'process':
@@ -464,15 +464,15 @@ $(function(){
         });
     });
 
-    function fillHostResourceForm($form, resource, doneFn){
+    function fillHostResourceForm ($form,resource,doneFn) {
       var limits = resource.monitor.config.limit;
       $form.find('[data-hook=cpu]').val(limits.cpu);
       $form.find('[data-hook=mem]').val(limits.mem);
       $form.find('[data-hook=cache]').val(limits.cache);
       $form.find('[data-hook=disk]').val(limits.disk);
+      $form.find('[data-hook=looptime]').val(resource.monitor.looptime);
       $form.find('[data-hook=resource_id]').val(resource.id);
       $form.find('[data-hook=hosts_id]').val(resource.host_id);
-
       if(doneFn) doneFn();
     }
 
@@ -720,6 +720,7 @@ $(function(){
 
   (function editHost(){
     $('[data-hook=edit-host-monitor]').on('click',function(event){
+      event.preventDefault();
       var id = this.dataset.resource_id;
       var host = new App.Models.Monitor({id:id});
       host.fetch({
@@ -769,6 +770,7 @@ $(function(){
         failure:function(){
         }
       });
+      return false;
     });
   })();
 
