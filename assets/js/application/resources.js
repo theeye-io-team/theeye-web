@@ -101,9 +101,8 @@ $(function(){
     $('.modal#scriptResourceModal button[type=submit]').on('click', setCallback('script'));
     $('.modal#psauxResourceModal button[type=submit]').on('click', setCallback('psaux'));
 
-    function fillForm ($form,data) {
-      var resource = data.resource;
-      var monitor = data.monitors[0];
+    function fillForm ($form,resource) {
+      var monitor = resource.monitor;
       var type = monitor.type;
 
       //var $form = $('form#' + type + 'ResourceForm');
@@ -153,15 +152,14 @@ $(function(){
       var type = options.type;
 
       jQuery.ajax({
-        url: "/resource/" + options.id,
-        method: 'GET',
-        data: { 'monitor_type': type }
-      }).done(function(data){
+        url: "/api/resource/" + options.id,
+        method: 'GET'
+      }).done(function(resource){
 
         var usersSelect = new UsersSelect({ collection: _users });
         usersSelect.render();
         $form.append( usersSelect.$el );
-        fillForm($form,data);
+        fillForm($form,resource);
 
         var $modal = $('#'+type+'ResourceModal');
         $modal.one('hidden.bs.modal',function(){
@@ -466,14 +464,14 @@ $(function(){
         });
     });
 
-    function fillHostResourceForm($form, data, doneFn){
-      var limits = data.monitors[0].config.limit;
+    function fillHostResourceForm($form, resource, doneFn){
+      var limits = resource.monitor.config.limit;
       $form.find('[data-hook=cpu]').val(limits.cpu);
       $form.find('[data-hook=mem]').val(limits.mem);
       $form.find('[data-hook=cache]').val(limits.cache);
       $form.find('[data-hook=disk]').val(limits.disk);
-      $form.find('[data-hook=resource_id]').val(data.resource.id);
-      $form.find('[data-hook=hosts_id]').val(data.resource.host_id);
+      $form.find('[data-hook=resource_id]').val(resource.id);
+      $form.find('[data-hook=hosts_id]').val(resource.host_id);
 
       if(doneFn) doneFn();
     }
@@ -496,17 +494,14 @@ $(function(){
 
       $.blockUI();
       jQuery.ajax({
-        url: "/resource/" + idResource,
-        method: 'GET',
-        data: { 'monitor_type': 'dstat' }
-      })
-      .done(function(data){
-        fillHostResourceForm($form, data, function(){
+        url: '/api/resource/' + idResource,
+        method: 'GET'
+      }).done(function(resource){
+        fillHostResourceForm($form, resource, function(){
           $('#dstatResourceModal').modal('show');
           $.unblockUI();
         });
-      })
-      .fail(function(xhr, err, xhrStatus){
+      }).fail(function(xhr, err, xhrStatus){
         bootbox.alert(err);
         $.unblockUI();
       });

@@ -129,24 +129,13 @@ module.exports = {
    * Get resource
    * GET /resource
    */
-  get: function(req,res) {
-    var supervisor = req.supervisor;
-    var id = req.param("id", null);
-
-    if( ! id || ! id.match(/^[a-fA-F0-9]{24}$/) ) return res.send(400,'invalid id');
-
-    async.parallel({
-      resource: function(callback){
-        debug('fetching resource');
-        supervisor.resource( id, callback )
-      },
-      monitor: function(callback){
-        debug('fetching monitors');
-        supervisor.monitorFetch({ 'resource': id }, callback);
-      }
-    },function(err, data){
-      if(err) return res.send(500, err);
-      res.send(200,{ resource: data.resource, monitors: data.monitor });
+  get (req,res) {
+    req.supervisor.get({
+      query: req.query,
+      route: req.supervisor.RESOURCE,
+      id: req.params.id,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
     });
   },
   updateAlerts: function(req,res) {
