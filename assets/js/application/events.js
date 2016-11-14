@@ -3,6 +3,26 @@
 var $upNrunning = $(".resources-panel .allUpNrunning");
 var $resourcesList = $(".resources-panel .resources-panel-list");
 
+// these went global, used on view and some functions, go replacing
+var statesDicc = {
+  normal: 0,
+  failure: 1,
+  updates_stopped: 2,
+  unknown: 3
+};
+var iconsDicc = {
+  normal: "icon-check",
+  failure: "icon-warn",
+  updates_stopped: "icon-error",
+  unknown: "icon-nonsense"
+};
+var classToState = {
+  "icon-check": "normal",
+  "icon-warn": "failure",
+  "icon-error": "updates_stopped",
+  "icon-nonsense": "unknown"
+};
+
 $searchbox.on('search:start', function() {
   log('searching');
   $upNrunning.slideUp();
@@ -22,6 +42,29 @@ function checkAllUpAndRuning () {
   var showResources = sadStates > 0;
 
   if(showResources) {
+
+    // sort! only if any has some failure/warning
+    $('.itemRow').sort(function(a, b){
+      //get state icon element
+      var stateIconA = $('.state-icon', a).first()[0];
+      //get element classes that matches 'icon-*'
+      var iconClassA = stateIconA.classList.value.split(" ").find(function(cls){
+        return cls.indexOf('icon-') === 0;
+      });
+      //get state from class
+      var stateValueA = classToState[iconClassA];
+
+      var stateIconB = $('.state-icon', b).first()[0];
+      var iconClassB = stateIconB.classList.value.split(" ").find(function(cls){
+        return cls.indexOf('icon-') === 0;
+      });
+      var stateValueB = classToState[iconClassB];
+
+      console.log(iconClassA, iconClassB);
+      return statesDicc[stateValueA] < statesDicc[stateValueB];
+
+    }).prependTo('#accordion');
+
     $upNrunning.slideUp();
     $resourcesList.slideDown();
   } else {
