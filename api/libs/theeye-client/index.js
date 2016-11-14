@@ -43,6 +43,7 @@ TheEyeClient.prototype = {
   TASK: '/:customer/task',
   TAG: '/:customer/tag',
   RESOURCE: '/:customer/resource',
+  MONITORS: '/:customer/monitor',
   EVENTS: '/:customer/event',
   JOB: '/:customer/job',
   SCRIPT: '/:customer/script',
@@ -694,39 +695,6 @@ TheEyeClient.prototype = {
     }, function(error, body){
       if (error) return callback(error);
       callback(null, body);
-    });
-  },
-  /**
-   *
-   * @param {Object} query
-   *    @property {String} resource , resource id
-   *    @property {String} type
-   *
-   */
-  monitorFetch: function(options, callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/:customer/monitor',
-      qs: {
-        type: options.type,
-        resource: options.resource
-      }
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.monitors);
-    });
-  },
-  /**
-   *
-   *
-   */
-  resource: function(id, callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/:customer/resource/' + id
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.resource);
     });
   },
   /**

@@ -1,6 +1,20 @@
 'use strict';
 var DashboardPage = (function(){
 
+  var statesDicc = {
+    normal: 0,
+    failure: 1,
+    updates_stopped: 2,
+    unknown: 3
+  }
+
+  var iconsDicc = {
+    normal: "icon-check",
+    failure: "icon-warn",
+    updates_stopped: "icon-error",
+    unknown: "icon-nonsense"
+  }
+
   var monitors = new App.Collections.Monitors();
   var tasks = new App.Collections.Tasks();
 
@@ -23,9 +37,6 @@ var DashboardPage = (function(){
     render:function(){
       BaseView.prototype.render.apply(this, arguments);
 
-      // bind searchbox input
-      $.searchbox();
-
       this.renderCollection(
         monitors,
         MonitorView,
@@ -37,6 +48,9 @@ var DashboardPage = (function(){
         TaskView,
         this.queryByHook('tasks-container')[0]
       );
+
+      // bind searchbox input
+      $.searchbox();
     }
   });
 

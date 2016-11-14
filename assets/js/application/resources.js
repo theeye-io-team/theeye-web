@@ -101,9 +101,8 @@ $(function(){
     $('.modal#scriptResourceModal button[type=submit]').on('click', setCallback('script'));
     $('.modal#psauxResourceModal button[type=submit]').on('click', setCallback('psaux'));
 
-    function fillForm ($form,data) {
-      var resource = data.resource;
-      var monitor = data.monitors[0];
+    function fillForm ($form,resource) {
+      var monitor = resource.monitor;
       var type = monitor.type;
 
       //var $form = $('form#' + type + 'ResourceForm');
@@ -130,7 +129,7 @@ $(function(){
       }
 
       $tags.find('option').remove().end();
-      setSelectedTags( monitor.tags );
+      setSelectedTags(monitor.tags);
 
       switch (type) {
         case 'process':
@@ -466,15 +465,15 @@ $(function(){
         });
     });
 
-    function fillHostResourceForm($form, data, doneFn){
-      var limits = data.monitors[0].config.limit;
+    function fillHostResourceForm ($form,resource,doneFn) {
+      var limits = resource.monitor.config.limit;
       $form.find('[data-hook=cpu]').val(limits.cpu);
       $form.find('[data-hook=mem]').val(limits.mem);
       $form.find('[data-hook=cache]').val(limits.cache);
       $form.find('[data-hook=disk]').val(limits.disk);
-      $form.find('[data-hook=resource_id]').val(data.resource.id);
-      $form.find('[data-hook=hosts_id]').val(data.resource.host_id);
-
+      $form.find('[data-hook=looptime]').val(resource.monitor.looptime);
+      $form.find('[data-hook=resource_id]').val(resource.id);
+      $form.find('[data-hook=hosts_id]').val(resource.host_id);
       if(doneFn) doneFn();
     }
 
@@ -500,8 +499,8 @@ $(function(){
         method: 'GET',
         data: { 'monitor_type': 'dstat' }
       })
-      .done(function(data){
-        fillHostResourceForm($form, data, function(){
+      .done(function(resource){
+        fillHostResourceForm($form,resource,function(){
           $('#dstatResourceModal').modal('show');
           $.unblockUI();
         });
@@ -725,6 +724,7 @@ $(function(){
 
   (function editHost(){
     $('[data-hook=edit-host-monitor]').on('click',function(event){
+      event.preventDefault();
       var id = this.dataset.resource_id;
       var host = new App.Models.Monitor({id:id});
       host.fetch({
@@ -774,6 +774,7 @@ $(function(){
         failure:function(){
         }
       });
+      return false;
     });
   })();
 
