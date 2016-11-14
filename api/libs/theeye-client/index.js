@@ -713,7 +713,7 @@ TheEyeClient.prototype = {
       }
     }, function(error, body) {
       if (error) return callback(error);
-      callback(null, body.monitors);
+      callback(null, body);
     });
   },
   /**
