@@ -184,14 +184,20 @@ var UserController = module.exports = {
    * PUT  /admin/user/:id
    *
    */
-  edit: function (req, res) {
+  edit (req, res) {
     var params = req.params.all();
     var userId = params.id;
 
-    if (!params.customers) return res.send(400, 'select at least one customer');
+    if (!params.customers) {
+      return res.send(400, 'select at least one customer');
+    }
 
     User.findOne({ id: userId },(error,user) => {
       if (!user) return res.send(404,'user not found');
+
+      if (params.email!=user.email) {
+        return res.send(403, 'user email can\'t be changed');
+      }
 
       var customersChanged = underscore.difference(user.customers,params.customers).length !== 0;
       if (customersChanged && user.enabled) {

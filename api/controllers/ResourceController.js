@@ -134,20 +134,13 @@ module.exports = {
    * Get resource
    * GET /resource
    */
-  get: function(req,res) {
-    var supervisor = req.supervisor;
-    var id = req.param("id", null);
-
-    async.parallel({
-      resource: (callback) => supervisor.get({
-        route: supervisor.RESOURCE,
-        id: id,
-        success: (resource) => callback(null,resource),
-        failure: (error) => callback(error)
-      })
-    },function(err, data){
-      if(err) return res.send(500, err);
-      res.send(200, data.resource);
+  get (req,res) {
+    req.supervisor.get({
+      query: req.query,
+      route: req.supervisor.RESOURCE,
+      id: req.params.id,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
     });
   },
   updateAlerts: function(req,res) {

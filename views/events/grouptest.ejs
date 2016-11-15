@@ -111,7 +111,9 @@
                 <h4 class="panel-title <%= resource.type %>">
                   <span class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= resource.id %>" aria-expanded="false" aria-controls="collapse<%= resource.id %>">
                     <div class="panel-title-content">
-                      <span class="panel-item name" id="<%= resource.id %>"><%= resource.description %><small> > <%= resource.type %></small></span>
+                      <span class="panel-item name" id="<%= resource.id %>">
+                        <%= resource.description %><small> > <%= resource.type %></small>
+                      </span>
                       <span class="panel-item icons">
                         <button data-search="<%= resource.description %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
                           <span class="glyphicon glyphicon-search"></span>

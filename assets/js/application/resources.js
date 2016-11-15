@@ -55,7 +55,9 @@ $(function(){
         type: 'PUT',
         data: values
       }).done(function(data) {
-        window.location.reload();
+        bootbox.alert('monitor updated',function(){
+          window.location.reload();
+        });
       }).fail(function(xhr, err, xhrStatus) {
         bootbox.alert(err);
       });
@@ -152,15 +154,14 @@ $(function(){
       var type = options.type;
 
       jQuery.ajax({
-        url: "/resource/" + options.id,
-        method: 'GET',
-        data: { 'monitor_type': type }
-      }).done(function(data){
+        url: "/api/resource/" + options.id,
+        method: 'GET'
+      }).done(function(resource){
 
         var usersSelect = new UsersSelect({ collection: _users });
         usersSelect.render();
         $form.append( usersSelect.$el );
-        fillForm($form,data);
+        fillForm($form,resource);
 
         var $modal = $('#'+type+'ResourceModal');
         $modal.one('hidden.bs.modal',function(){
@@ -495,17 +496,14 @@ $(function(){
 
       $.blockUI();
       jQuery.ajax({
-        url: "/resource/" + idResource,
-        method: 'GET',
-        data: { 'monitor_type': 'dstat' }
-      })
-      .done(function(resource){
-        fillHostResourceForm($form,resource,function(){
+        url: '/api/resource/' + idResource,
+        method: 'GET'
+      }).done(function(resource){
+        fillHostResourceForm($form, resource, function(){
           $('#dstatResourceModal').modal('show');
           $.unblockUI();
         });
-      })
-      .fail(function(xhr, err, xhrStatus){
+      }).fail(function(xhr, err, xhrStatus){
         bootbox.alert(err);
         $.unblockUI();
       });
