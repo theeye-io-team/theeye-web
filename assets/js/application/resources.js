@@ -55,7 +55,9 @@ $(function(){
         type: 'PUT',
         data: values
       }).done(function(data) {
-        window.location.reload();
+        bootbox.alert('monitor updated',function(){
+          window.location.reload();
+        });
       }).fail(function(xhr, err, xhrStatus) {
         bootbox.alert(err);
       });
