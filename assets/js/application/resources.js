@@ -15,8 +15,8 @@ $(function(){
   window.Users = _users;
 
   /**
-  *  MUTE
-  */
+   *  MUTE
+   */
   (function(){
     function setAlerts (resource_id,enable) {
       if(typeof enable === 'boolean'){

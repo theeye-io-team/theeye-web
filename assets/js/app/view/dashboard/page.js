@@ -56,6 +56,7 @@ var DashboardPage = (function(){
 
   return function () {
     var page = new Index({});
+    SocketsConnector({io: window.io});
 
     monitors.fetch();
     tasks.fetch();
