@@ -29,18 +29,24 @@ module.exports = {
           },
           success: (body) => {
             var err;
-            if( Array.isArray(body) ){
-              var resource = (body.length > 0) ? body[0] : null;
+            if (Array.isArray(body)) {
+              if (body.length===0) { // not found
+                return callback(null,null);
+              } else {
+                return callback(null,body[0]);
+              }
+            } else {
+              err = new Error('server response error');
+              callback(err,null);
             }
-            else err = new Error('server response error');
-            callback(err, resource||null);
           },
           failure: (err) => callback(err)
         });
       }
     },function(err, data){
-      if(err) {
-        debug('supervisor request error');
+      if (err) {
+        sails.log.error('supervisor request error');
+        sails.log.error(err);
         res.view({ error: 'cannot connect server' });
       } else {
         res.view({
