@@ -3,6 +3,26 @@
 var $upNrunning = $(".resources-panel .allUpNrunning");
 var $resourcesList = $(".resources-panel .resources-panel-list");
 
+// these went global, used on view and some functions, go replacing
+var statesDicc = {
+  normal: 0,
+  failure: 1,
+  updates_stopped: 2,
+  unknown: 3
+};
+var iconsDicc = {
+  normal: "icon-check",
+  failure: "icon-warn",
+  updates_stopped: "icon-error",
+  unknown: "icon-nonsense"
+};
+var classToState = {
+  "icon-check": "normal",
+  "icon-warn": "failure",
+  "icon-error": "updates_stopped",
+  "icon-nonsense": "unknown"
+};
+
 $searchbox.on('search:start', function() {
   log('searching');
   $upNrunning.slideUp();
@@ -22,6 +42,29 @@ function checkAllUpAndRuning () {
   var showResources = sadStates > 0;
 
   if(showResources) {
+
+    // sort! only if any has some failure/warning
+    $('.itemRow').sort(function(a, b){
+      //get state icon element
+      var stateIconA = $('.state-icon', a).first()[0];
+      //get element classes that matches 'icon-*'
+      var iconClassA = stateIconA.classList.value.split(" ").find(function(cls){
+        return cls.indexOf('icon-') === 0;
+      });
+      //get state from class
+      var stateValueA = classToState[iconClassA];
+
+      var stateIconB = $('.state-icon', b).first()[0];
+      var iconClassB = stateIconB.classList.value.split(" ").find(function(cls){
+        return cls.indexOf('icon-') === 0;
+      });
+      var stateValueB = classToState[iconClassB];
+
+      console.log(iconClassA, iconClassB);
+      return statesDicc[stateValueA] < statesDicc[stateValueB];
+
+    }).prependTo('#accordion');
+
     $upNrunning.slideUp();
     $resourcesList.slideDown();
   } else {
@@ -508,6 +551,45 @@ function triggers (io){
   //una vez agrupados hay que "heredar" los events de los monitors
   //tiene que tener un icono heredado del peor estado de los monitors que haya dentro
 })();
+
+var createItemRows = function(resources) {
+
+};
+
+var ItemRowView = function(options){
+  var resource = options.data;
+  var $container = $('<div />')
+    .addClass('itemRow resource-container panel panel-default js-searchable-item')
+    .attr('id', resource.id)
+    .data('item', resource)
+    .data('tags', resource.tags);
+  var overallState = resource.state;
+  var tags = [
+    resource.id,
+    resource.description,
+    resource.name,
+    "hostname=" + resource.hostname,
+    "type=" + resource.type,
+    "state=" + resource.state
+  ];
+
+  // resource.subs.forEach(function(subresource){
+  //   if(statesDicc[subresource.state] > statesDicc[overallState]) {
+  //     overallState = subresource.state;
+  //   }
+  //   tags.push(subresource.id);
+  //   tags.push(subresource.description);
+  //   tags.push(subresource.name);
+  //   tags.push(subresource.hostname);
+  //   tags.push(subresource.type);
+  //   tags.push("state=" + subresource.state);
+  //   tags.concat(subresource.tags);
+  // });
+
+  var monitorTags = resource.monitor && resource.monitor.tags ? resource.monitor.tags: [];
+  tags = tags.concat(monitorTags).join(',');
+
+};
 
 //
 // auto focus search input on keypress
