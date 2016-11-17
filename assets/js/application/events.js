@@ -207,11 +207,8 @@ function triggers (io){
    * biutiful!
    */
   var JobResultView = function (options) {
-
     var container = options.container;
-    var data = options.data;
-
-    var $tpl ;
+    var data = options.data, $tpl;
 
     if( data._type == 'ScraperJob' ){
       var t = document.querySelector('div[data-hook=scraper-job-result-template]');
@@ -233,7 +230,6 @@ function triggers (io){
 
     $tpl.one('close.bs.alert', function(){
       $title.removeClass('task-done');
-
       options.onClose && options.onClose();
     });
 
@@ -462,8 +458,6 @@ function triggers (io){
   function subscribeToTriggers () {
     log('initializing task triggers');
     io.socket.post('/palanca/subscribe', { customer: Cookies.getJSON('theeye').customer }, function (data, jwres){
-      // log(data);
-      // log(jwres);
       log('subscribed to trigger updates');
     });
   }

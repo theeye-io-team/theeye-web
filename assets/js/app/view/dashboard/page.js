@@ -56,6 +56,25 @@ var DashboardPage = (function(){
 
   return function () {
     var page = new Index({});
+    SocketsConnector({
+      io: window.io,
+      channel:'/events/subscribe',
+      query: {
+        customer: Cookies.getJSON('theeye').customer 
+      },
+      onSubscribed:function(data,jwres){
+        log('subscribed to event updates');
+      },
+      events: [
+        {
+          name:'events-update',
+          handler:function(message){
+            log('new event');
+            log(message);
+          }
+        },
+      ]
+    });
 
     monitors.fetch();
     tasks.fetch();
