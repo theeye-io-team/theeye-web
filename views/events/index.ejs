@@ -13,26 +13,26 @@
   <div class="admin-panel"><!-- PANEL ROW -->
     <div class="<%= Array.isArray(tasks)?'col-md-6':'col-md-12' %> resources-panel events-panel">
       <h3>Monitors</h3>
-      <% if(resources.length > 0) {%>
+      <% if (resources.length > 0) { %>
       <div class="allUpNrunning main-status hidden-container">
         <i class="glyphicon glyphicon-ok-sign big-icon"></i>
         <h4>All up and running</h4>
       </div>
       <div class="resources-panel-list">
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-          <%
-          var statesDicc = {
+
+          <% var statesDicc = {
             normal: 0,
             failure: 1,
             updates_stopped: 2,
             unknown: 3
-          }
+          };
           var iconsDicc = {
             normal: "icon-check",
             failure: "icon-warn",
             updates_stopped: "icon-error",
             unknown: "icon-nonsense"
-          }
+          };
           indexedResources.forEach(function(resource){
             var overallState = resource.state;
             var tags = [
@@ -57,8 +57,8 @@
             });
 
             var monitorTags = resource.monitor && resource.monitor.tags;
-            tags = tags.concat(monitorTags).join(',');
-          %>
+            tags = tags.concat(monitorTags).join(','); %>
+
             <div class="itemRow resource-container panel panel-default js-searchable-item"
               id="resource-<%= resource.id %>"
               data-item-id="<%= resource.id %>"
@@ -79,9 +79,11 @@
                           data-hook="workflow-button"
                           href="/admin/workflow?node=<%= resource.monitor.id %>"
                           class="tooltiped btn-icon-image flowchart-icon"></a>
-                        <button class="monitorStats btn btn-icon-image icon-image-stats tooltiped" title="Stats">
+                        <button class="monitorStats btn btn-icon-image tooltiped" title="Stats">
+                          <span class="glyphicon glyphicon-stats"></span>
                         </button>
-                        <button class="editMonitors btn btn-icon-image icon-image-edit tooltiped" title="Edit monitors">
+                        <button class="editMonitors btn btn-icon-image tooltiped" title="Edit monitors">
+                          <span class="glyphicon glyphicon-edit"></span>
                         </button>
                         <div class="state-resource-container">
                           <span class="tooltiped state-icon <%= iconsDicc[overallState] %>" title="<%=overallState%>"></span>
@@ -130,10 +132,22 @@
               </div>
             </div> <!-- end item -->
           <% }); %>
+
+          <section>
+            <div data-hook="hidden-resources" class="hidden-container">
+              <div data-hook="hidden-resources-container">
+              </div>
+            </div>
+            <div data-hook="toggle-hidden-resources" style="padding:5px 0px 5px 0px; margin: auto; width:100%; color:#fff; text-align:center; cursor:pointer;">
+              <span class="btn btn-primary tooltiped glyphicon glyphicon-menu-down" title="show/hide"></span>
+            </div>
+          </section>
         </div> <!-- end panel -->
       </div> <!-- /resources-panel-list -->
       <% } else { %><!-- no resources -->
+
         <%- include ./partials/no-monitors-message.ejs %>
+
       <% } %>
     </div>
 
@@ -141,9 +155,9 @@
     <!-- Tasks -->
     <div class="col-md-6 tasks-panel events-panel">
       <h3 class="white">Tasks</h3>
-      <% if(tasks.length > 0) { %>
+      <% if (tasks.length > 0) { %>
       <div>
-        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="tasks panel-group" id="accordion" role="tablist" aria-multiselectable="true">
           <button class="bulkRunner collapse btn btn-danger btn-block ladda-button" data-style="zoom-in">
             Run all these tasks <span class="playIcon"><i class="status glyphicon glyphicon-forward"></i></span>
           </button>
@@ -156,8 +170,14 @@
               'task='+ task.id,
               'host='+ task.hostname,
               'script='+ task.script_id
-            ].concat(task.tags).join(','); %>
-            <div class="panel panel-default js-searchable-item" data-tags="<%= tags %>" data-taskid="<%=task.id%>" data-taskresourceid="<%=task.resource_id%>" data-username="<%= req.user.username %>">
+            ].concat(task.tags).join(',');
+            var badSpecs = !task.host_id || (task.type=='script' && !task.script_id) ;%>
+            <div class="task-item-row panel panel-default js-searchable-item"
+              data-badspecs="<%= badSpecs %>"
+              data-tags="<%= tags %>"
+              data-taskid="<%=task.id%>"
+              data-taskresourceid="<%=task.resource_id%>"
+              data-username="<%= req.user.username %>">
               <div class="panel-heading" role="tab" id="heading<%=task.id%>">
                 <h4 class="panel-title task">
                   <span class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse<%=task.id%>" aria-expanded="false" aria-controls="collapse<%=task.id%>">
@@ -165,7 +185,8 @@
                       <span class="panel-item name"><%=task.name%><small> > task (<%=task.hostname%>)</small></span>
                       <div class="panel-item icons">
                         <span style="float:right; margin-left: 10px;">
-                        <% if( !task.host_id || (task.type=='script' && !task.script_id) ) { %>
+
+                        <% if( badSpecs ) { %>
                           <button class="btn btn-primary btn-sm ladda-button">
                             <span class="disabledIcon"><i class="glyphicon glyphicon-ban-circle"></i></span>
                           </button>
@@ -174,8 +195,12 @@
                             <span class="playIcon"><i class="status glyphicon glyphicon-triangle-right"></i></span>
                           </button>
                         <% } %>
+
                         </span>
                         <a title="Workflow" data-hook="workflow-button" href="/admin/workflow?node=<%= task.id %>" class="tooltiped btn-icon-image flowchart-icon"></a>
+                        <button class="btn btn-icon-image tooltiped" title="edit task">
+                          <span class="glyphicon glyphicon-edit"></span>
+                        </button>
                       </div>
                     </div>
                   </span>
@@ -210,10 +235,21 @@
               </div>
             </div>
           <% }) %>
+          <section>
+            <div data-hook="hidden-tasks" class="hidden-container">
+              <div data-hook="hidden-tasks-container">
+              </div>
+            </div>
+            <div data-hook="toggle-hidden-tasks" style="padding:5px 0px 5px 0px; margin: auto; width:100%; color:#fff; text-align:center; cursor:pointer;">
+              <span class="btn btn-primary tooltiped glyphicon glyphicon-menu-down" title="show/hide"></span>
+            </div>
+          </section>
         </div>
       </div>
       <% } else { %>
+
         <%- include ./partials/no-tasks-message.ejs %>
+
       <% } %>
 
       <!-- Results Div

@@ -534,33 +534,37 @@ span.selectorIcon.glyphicon-check {
 }
 
 .events-panel .panel-item.icons .btn-icon-image {
-    color: #192435;
-    display: inline-block;
-    padding: 0px 0px;
-    margin-bottom: 0;
-    margin-left: 8px;
-    font-size: 14px;
-    font-weight: 400;
-    line-height: 1.42857143;
-    text-align: center;
-    white-space: nowrap;
-    vertical-align: middle;
-    -ms-touch-action: manipulation;
-    touch-action: manipulation;
-    cursor: pointer;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    background-image: none;
-    background-size: 31px;
-    background-repeat: no-repeat;
-    background-color: #304269;
-    border: 0px solid transparent;
-    border-radius: 16px;
-    width: 31px;
-    height: 31px;
+  float:right;
+  display: inline-block;
+  padding: 0px 0px;
+  margin-bottom: 0;
+  margin-left: 8px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.42857143;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: middle;
+  -ms-touch-action: manipulation;
+  touch-action: manipulation;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background-image: none;
+  background-size: 31px;
+  background-repeat: no-repeat;
+  background-color: #304269;
+  border: 0px solid transparent;
+  border-radius: 16px;
+  width: 31px;
+  height: 31px;
 }
+.events-panel .panel-item.icons .btn-icon-image:hover {
+  color:#fff;
+}
+
 .events-panel .panel-item.icons .btn-icon-image.icon-image-edit {
   background-image: url(/images/The-eye-icons-23.png);
 }
@@ -632,7 +636,7 @@ input[type=checkbox].form-control {
 .events-panel .panel-item.icons .flowchart-icon {
   background-image: url('/images/flowchart-white.png');
   background-repeat: no-repeat;
-  background-size: 26px;
+  background-size: 23px;
   background-position: center center;
   color: #FFF;
   font-family: Arial, Helvetica, sans-serif;
@@ -651,6 +655,7 @@ input[type=checkbox].form-control {
 a.flowchart-icon {
   margin-left:10px;
   float:right;
+  background-position: center center;
 }
 
 @media (max-width: 500px) {
@@ -701,3 +706,5 @@ a.flowchart-icon {
 
 .navbar-header .user-profile { color:#80a1b8; position:absolute; right:5px; top:5px; float:right; }
 
+.scraper-section-title { text-align:center; margin-bottom:15px; }
+.scraper-section-title label { display:none }

@@ -118,7 +118,7 @@ module.exports = {
     supervisor.create({
       route: supervisor.TASK,
       body: data,
-      failure: error => res.send(500, error),
+      failure: error => res.send(error.statusCode, error),
       success: task => res.json(task)
     });
   },

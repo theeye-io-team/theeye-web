@@ -11,9 +11,11 @@ module.exports = {
    * @param {String} resource
    */
   fetch (req, res, next) {
+    sails.log.debug('fetch api url ' + req.originalUrl);
+    var route = req.originalUrl.replace('/api/',`/${req.session.customer}/`);
     req.supervisor.fetch({
+      route: route,
       query: req.query,
-      route: `/${req.session.customer}/${req.params.resource}`,
       failure: (error, apiRes) => res.send(error.statusCode, error),
       success: (body, apiRes) => res.json(body),
     })
@@ -25,8 +27,10 @@ module.exports = {
    * @param {String} resource
    */
   create (req, res, next){
+    sails.log.debug('post api url ' + req.originalUrl);
+    var route = req.originalUrl.replace('/api/',`/${req.session.customer}/`);
     req.supervisor.create({
-      route: `/${req.session.customer}/${req.params.resource}`,
+      route: route,
       body: req.body,
       query: req.query,
       failure: (error, apiRes) => res.send(error.statusCode, error),
@@ -41,10 +45,11 @@ module.exports = {
    * @param {String} id
    */
   update (req, res, next){
+    sails.log.debug('put api url ' + req.originalUrl);
+    var route = req.originalUrl.replace('/api/',`/${req.session.customer}/`);
     req.supervisor.update({
+      route: route,
       query: req.query,
-      route: `/${req.session.customer}/${req.params.resource}`,
-      id: req.params.id,
       body: req.body,
       failure: (error, apiRes) => res.send(error.statusCode, error),
       success: (body, apiRes) => res.json(body),
@@ -58,10 +63,11 @@ module.exports = {
    * @param {String} id
    */
   patch (req, res, next) {
+    sails.log.debug('patch api url ' + req.originalUrl);
+    var route = req.originalUrl.replace('/api/',`/${req.session.customer}/`);
     req.supervisor.patch({
+      route: route,
       query: req.query,
-      route: `/${req.session.customer}/${req.params.resource}`,
-      id: req.params.id,
       body: req.body,
       failure: (error, apiRes) => res.send(error.statusCode, error),
       success: (body, apiRes) => res.json(body),
@@ -75,10 +81,11 @@ module.exports = {
    * @param {String} id
    */
   get (req, res, next) {
+    sails.log.debug('get api url ' + req.originalUrl);
+    var route = req.originalUrl.replace('/api/',`/${req.session.customer}/`);
     req.supervisor.get({
+      route: route,
       query: req.query,
-      route: `/${req.session.customer}/${req.params.resource}`,
-      id: req.params.id,
       failure: (error, apiRes) => res.send(error.statusCode, error),
       success: (body, apiRes) => res.json(body),
     });
@@ -91,10 +98,11 @@ module.exports = {
    * @param {String} id
    */
   remove (req, res, next){
+    sails.log.debug('remove api url ' + req.originalUrl);
+    var route = req.originalUrl.replace('/api/',`/${req.session.customer}/`);
     req.supervisor.remove({
+      route: route,
       query: req.query,
-      route: `/${req.session.customer}/${req.params.resource}`,
-      id: req.params.id,
       failure: (error, apiRes) => res.send(error.statusCode, error),
       success: (body, apiRes) => res.json(body),
     });

@@ -1,5 +1,13 @@
 # CHANGELOG
 
+### 
+
+> improve proxy /api/ endpoint       
+
+> added resources and task folding (hide/show) in dashboard page       
+
+> 
+
 ### 0.6.3 - 2016-10-18
 
 > workflow page         

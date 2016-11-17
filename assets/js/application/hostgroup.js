@@ -1,10 +1,8 @@
 /**
- *
  * @author Facundo
- *
  */
-var group ;
 $(function(){
+  var group ;
   var $tasksTags = $('#group-form input#tasks-container');
   var $monitorsTags = $('#group-form input#monitors-container');
   var $taskForm = $('#task-modal form');
@@ -26,54 +24,55 @@ $(function(){
   });
 
   $('#group-form .buttons.dropdown [data-hook=create-scraper-monitor]')
-  .on('click',function(event){
-    event.preventDefault();
-    event.stopPropagation();
-    scraperModal.openCreateForm(group.id);
-  });
+    .on('click',function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      scraperModal.openCreateForm(group.id);
+    });
 
   $('.modal[data-hook=scraper-monitor-modal] .modal-footer [data-hook=save]')
-  .on('click',function(event){
+    .on('click',function(event){
 
-    event.preventDefault();
-    event.stopPropagation();
+      event.preventDefault();
+      event.stopPropagation();
 
-    var onSuccess = function(){
-      var item = scraperModal.tag;
-      if( ! group.id ){ // new group, not persisted to server yet
-        var data = new Values(scraperModal.form.data).toArray();
-      } else {
-        var data = scraperModal.model.serializeArray(); // the model has an id attribute
-      }
-
-      if( ! item ){ // it is a creation
-        Monitor.add(data);
-      } else { // it is a edition
-        Monitor.update(item,data);
-      }
-
-      scraperModal.close();
-    }
-    bootbox.confirm('Save Monitor?',function(confirmed){
-      if(confirmed){
-        //
-        // this is only already created groups
-        //
-        if( ! group.id ){
-          onSuccess();
+      var onSuccess = function(){
+        var item = scraperModal.tag;
+        if( ! group.id ){ // new group, not persisted to server yet
+          var data = new Values(scraperModal.form.data).toArray();
         } else {
-          scraperModal.persist(function(error,success){
-            if(error){
-              bootbox.alert(error);
-            } else {
-              bootbox.alert('Monitor Saved');
-              onSuccess();
-            }
-          });
+          var data = scraperModal.model.serializeArray(); // the model has an id attribute
         }
+
+        if( ! item ){ // it is a creation
+          Monitor.add(data);
+        } else { // it is a edition
+          Monitor.update(item,data);
+        }
+
+        scraperModal.close();
       }
+      bootbox.confirm('Save Monitor?',function(confirmed){
+        if(confirmed){
+          //
+          // this is only already created groups
+          //
+          if( ! group.id ){
+            onSuccess();
+          } else {
+            scraperModal.persist(function(error,success){
+              if(error){
+                bootbox.alert(error);
+              } else {
+                bootbox.alert('Monitor Saved');
+                onSuccess();
+              }
+            });
+          }
+        }
+      });
+      return false;
     });
-  });
 
   function Group () {
     this.id = null;
@@ -206,10 +205,8 @@ $(function(){
           if(err) logger(err);
         };
 
-        var url = '/admin/hostgroup/' + group.id +
-          '/tasktemplate/' + item.id;
         $.ajax({
-          url: url,
+          url: '/api/hostgroup/' + group.id + '/tasktemplate/' + item.id,
           method: 'DELETE'
         }).done(function(data){
           nextFn(null, data);
@@ -268,10 +265,8 @@ $(function(){
           if(err) logger(err);
         };
 
-        var url = '/admin/hostgroup/' + group.id +
-          '/monitortemplate/' + item.id;
         $.ajax({
-          url: url,
+          url: '/api/hostgroup/' + group.id + '/monitortemplate/' + item.id,
           method: 'DELETE'
         }).done(function(data){
           nextFn(null, data);
@@ -406,11 +401,9 @@ $(function(){
             // send changes to the server
             if(item.id){
               $.blockUI();
-              var url = '/admin/hostgroup/' + group.id +
-                '/tasktemplate/' + item.id;
 
               $.ajax({
-                'url': url,
+                'url': '/api/hostgroup/' + group.id + '/tasktemplate/' + item.id,
                 'method': 'PUT',
                 'contentType': 'application/json',
                 'dataType': 'json',
@@ -451,8 +444,6 @@ $(function(){
 
           if(group.id !== null) {
             $.blockUI();
-            var url = '/admin/hostgroup/' + group.id +
-              '/tasktemplate';
 
             var nextFn = function(err, data){
               // what next?
@@ -461,7 +452,7 @@ $(function(){
             };
 
             $.ajax({
-              'url': url,
+              'url': '/api/hostgroup/' + group.id + '/tasktemplate',
               'method': 'POST',
               'contentType': 'application/json',
               'dataType': 'json',
@@ -510,11 +501,9 @@ $(function(){
             // send changes to the server
             if(item.id && group.id !== null) {
               $.blockUI();
-              var url = '/admin/hostgroup/' + group.id +
-                '/monitortemplate/' + item.id;
 
               $.ajax({
-                'url': url,
+                'url': '/admin/hostgroup/' + group.id + '/monitortemplate/' + item.id,
                 'method': 'PUT',
                 'contentType': 'application/json',
                 'dataType': 'json',
@@ -556,11 +545,9 @@ $(function(){
 
           if(group.id !== null) {
             $.blockUI();
-            var url = '/admin/hostgroup/' + group.id +
-              '/monitortemplate';
 
             $.ajax({
-              'url': url,
+              'url': '/api/hostgroup/' + group.id + '/monitortemplate',
               'method': 'POST',
               'contentType': 'application/json',
               'dataType': 'json',
@@ -580,7 +567,7 @@ $(function(){
     $.blockUI();
 
     var method = (group.action=='change'?'PUT':'POST');
-    var url = '/admin/hostgroup/';
+    var url = '/api/hostgroup/';
     if(method=='PUT') url += group.id;
 
     $.ajax({
@@ -610,8 +597,8 @@ $(function(){
       if(!confirmed) return;
       var groupId = $item.data('group-id');
       $.ajax({
-        method:'delete',
-        url:'/admin/hostgroup/' + groupId
+        method:'DELETE',
+        url:'/api/hostgroup/' + groupId
       }).done(function(){
         window.location.reload();
       });
@@ -624,8 +611,8 @@ $(function(){
     group.id = $target.data('group-id');
     $submitGroupButton.hide();
     $.ajax({
-      url:'/admin/hostgroup/' + group.id,
-      method:'get',
+      url:'/api/hostgroup/' + group.id,
+      method:'GET',
       contentType:'application/json',
       dataType:'json'
     }).done(function(data){

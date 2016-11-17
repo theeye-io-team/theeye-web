@@ -1,8 +1,5 @@
 /* global getHashParams, debug, $searchbox, log, Ladda, bootbox, Cookies, Clipboard, _ */
 
-var $upNrunning = $(".resources-panel .allUpNrunning");
-var $resourcesList = $(".resources-panel .resources-panel-list");
-
 // these went global, used on view and some functions, go replacing
 var statesDicc = {
   normal: 0,
@@ -23,28 +20,71 @@ var classToState = {
   "icon-nonsense": "unknown"
 };
 
-$searchbox.on('search:start', function() {
+
+function ResourcesFolding () {
+  var $items = $('[data-hook=hidden-resources]');
+  var $button = $('[data-hook=toggle-hidden-resources]');
+  var $icon = $button.find('span');
+
+  function toggle () {
+    $items.slideToggle();
+    $icon.toggleClass('glyphicon-menu-down glyphicon-menu-up');
+  }
+
+  $button.on('click',toggle);
+  this.toggle = toggle;
+
+  this.fold = function(){
+    $items.slideUp();
+    if ($icon.hasClass('glyphicon-menu-up')) {
+      $icon
+        .removeClass('glyphicon-menu-up')
+        .addClass('glyphicon-menu-down');
+    }
+  };
+
+  this.unfold = function(){
+    $items.slideDown();
+    if ($icon.hasClass('glyphicon-menu-down')) {
+      $icon
+        .removeClass('glyphicon-menu-down')
+        .addClass('glyphicon-menu-up');
+    }
+  };
+
+  this.hideButton = function(){
+    $button.hide();
+  }
+
+  this.showButton = function(){
+    $button.show();
+  }
+}
+
+var resourcesFolding = new ResourcesFolding();
+
+var $upNrunning = $(".resources-panel .allUpNrunning");
+var $resourcesList = $(".resources-panel .resources-panel-list");
+
+$searchbox.on('search:start',function(){
   log('searching');
   $upNrunning.slideUp();
   $resourcesList.slideDown();
+  resourcesFolding.unfold();
 });
 
-$searchbox.on('search:empty', function() {
+$searchbox.on('search:empty',function(){
   log('stop searching');
   checkAllUpAndRuning();
+  resourcesFolding.fold();
 });
 
 function checkAllUpAndRuning () {
-
-  var sadStates = $('.state-icon.icon-warn').length +
-    $('.state-icon.icon-error').length;
-
+  var sadStates = $('.state-icon.icon-warn').length + $('.state-icon.icon-error').length;
   var showResources = sadStates > 0;
-
   if(showResources) {
-
     // sort! only if any has some failure/warning
-    $('.itemRow').sort(function(a, b){
+    $('.itemRow').sort(function(a,b){
       //get state icon element
       var stateIconA = $('.state-icon', a).first()[0];
       //get element classes that matches 'icon-*'
@@ -60,18 +100,46 @@ function checkAllUpAndRuning () {
       });
       var stateValueB = classToState[iconClassB];
 
-      console.log(iconClassA, iconClassB);
       return statesDicc[stateValueA] < statesDicc[stateValueB];
-
     }).prependTo('#accordion');
 
     $upNrunning.slideUp();
     $resourcesList.slideDown();
+
+    $('.itemRow').each(function(){
+      var $row = $(this);
+      var stateIcon = $row.find('.panel-heading .state-icon')[0];
+      if ( !/warn|error/.test(stateIcon.className) ) {
+        $row.appendTo( $('[data-hook=hidden-resources-container]') );
+      }
+    });
+
+    resourcesFolding.showButton();
   } else {
     $upNrunning.slideDown();
     $resourcesList.slideUp();
+    $('.itemRow').appendTo('.resources-panel-list #accordion');
+
+    resourcesFolding.hideButton();
   }
 }
+
+$(function(){
+  //
+  // tasks hide
+  //
+  $('.task-item-row').each(function(){
+    var $row = $(this);
+    if ($row.data('badspecs')) {
+      $row.appendTo( $('[data-hook=hidden-tasks-container]') );
+    }
+  });
+  $('[data-hook=toggle-hidden-tasks]').on('click',function(event){
+    $('[data-hook=hidden-tasks]').slideToggle();
+    var $toggle = $(this).find('span');
+    $toggle.toggleClass('glyphicon-menu-down glyphicon-menu-up');
+  })
+});
 
 $(function(){
   $('.editMonitors').on('click', function(evt){

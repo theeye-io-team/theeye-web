@@ -1,5 +1,5 @@
 /* global log, getHashParams */
-(function ( $ ){
+(function($){
   $.searchbox = function(){
     var $emitter = $({});
     var lastTimer;
@@ -108,14 +108,3 @@
 }( jQuery ));
 
 window.$searchbox = $.searchbox();
-
-/*
-var $input = $('.js-searchable-box input');
-(function(){
-  var params = getHashParams();
-  if(params.search) {
-    $input.val(params.search);
-    $('.js-searchable-box button.search').click();
-  }
-});
-*/
