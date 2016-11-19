@@ -1,6 +1,6 @@
 window.App || ( window.App = {} );
 window.App.Models || ( window.App.Models = {} );
-window.App.Models.Webhook = Backbone.Model.extend({
+window.App.Models.Webhook = BaseModel.extend({
   urlRoot:'/api/webhook',
   parse:function(response){
     response.hosts = [ response.host_id ];

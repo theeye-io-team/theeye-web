@@ -2,37 +2,47 @@ function CollectionRenderer (options) {
   var View = options.View;
   var container = options.container;
   var collection = options.collection;
+  var views = new Backbone.Collection(); 
 
-  var views = [];
-
-  function renderItem (item) {
-    var view = new View({ model: item });
+  function renderItemView (item) {
+    var view = new View({model:item});
     view.render();
-    views.push( view );
-    container.appendChild( view.el );
+    views.add({
+      id:item.get('id'),
+      view:view 
+    });
+    container.appendChild(view.el);
+    return view;
   }
 
-  collection.forEach(renderItem);
-
-  function reRenderCollection(){
-    views.forEach(function(view){ view.remove(); });
-    if( collection.length > 0 ){
-      collection.forEach(renderItem);
-    }
+  function removeItemView (item) {
+    console.warn('remove item not implemented');
   }
 
+  function changeItemView (item) {
+    //var id = item.get('id');
+    //var view = views.get(id).get('view');
+    //view.remove();
+    //view.model;
+    //view.render();
+  }
+
+  collection.forEach(renderItemView);
   //
   // keep the collection-view updated
   //
-  collection.on('add',renderItem,this);
-  collection.on('remove',function(){ console.log('item removed'); },this);
-  collection.on('change',function(){ console.log('item updated'); },this);
-  collection.on('sync',reRenderCollection);
-  collection.on('reset',reRenderCollection);
+  collection.on('add',renderItemView,this);
+  collection.on('remove',removeItemView,this);
+  collection.on('change',changeItemView,this);
+  collection.on('sync',function(){},this);
+  collection.on('reset',function(){},this);
+
+  this.collection = collection;
+  this.views = views;
+  this.container = container;
+
+  return this;
 }
-
-
-
 
 var BaseView = Backbone.View.extend({
   initialize:function(options){
@@ -40,7 +50,7 @@ var BaseView = Backbone.View.extend({
     if (this.autoRender) this.render();
   },
   renderTemplate: function(){
-    var html = this.template(this.model||{});
+    var html = this.template(this||{});
     this.$el.html( html );
 
     if (this.container) {
@@ -59,10 +69,13 @@ var BaseView = Backbone.View.extend({
     this.renderTemplate();
   },
   renderCollection: function(collection, View, container) {
-    new CollectionRenderer({
+    return new CollectionRenderer({
       collection: collection,
       View: View,
       container: container
     });
+  },
+  remove:function(){
+    Backbone.View.prototype.remove.apply(this,arguments);
   }
 });

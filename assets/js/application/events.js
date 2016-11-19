@@ -20,7 +20,6 @@ var classToState = {
   "icon-nonsense": "unknown"
 };
 
-
 function ResourcesFolding () {
   var $items = $('[data-hook=hidden-resources]');
   var $button = $('[data-hook=toggle-hidden-resources]');
@@ -62,7 +61,6 @@ function ResourcesFolding () {
 }
 
 var resourcesFolding = new ResourcesFolding();
-
 var $upNrunning = $(".resources-panel .allUpNrunning");
 var $resourcesList = $(".resources-panel .resources-panel-list");
 
@@ -119,7 +117,6 @@ function checkAllUpAndRuning () {
     $upNrunning.slideDown();
     $resourcesList.slideUp();
     $('.itemRow').appendTo('.resources-panel-list #accordion');
-
     resourcesFolding.hideButton();
   }
 }
@@ -162,7 +159,7 @@ $(function(){
   checkAllUpAndRuning();
 });
 
-function triggers (io){
+function triggers (io) {
   var log = debug('eye:web:triggers');
 
   /////////////////////////////////////////////
@@ -662,4 +659,7 @@ $(document).on('keypress',function(){
 
 new Clipboard('.clipboard-btn');
 
-$('.allUpNrunning').on('click',function(){ $('.allUpNrunning').slideUp(); $('.resources-panel-list').slideDown(); });
+$('.allUpNrunning').on('click',function(){
+  $('.allUpNrunning').slideUp(); 
+  $('.resources-panel-list').slideDown(); 
+});

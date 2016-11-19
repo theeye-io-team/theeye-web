@@ -4,51 +4,48 @@
       <span class="collapsed"
         data-toggle="collapse"
         data-parent="#task-accordion"
-        href="#collapse{{ attributes.id }}"
+        href="#collapse{{ model.attributes.id }}"
         aria-expanded="false"
-        aria-controls="collapse{{ attributes.id }}">
+        aria-controls="collapse{{ model.attributes.id }}">
         <div class="panel-title-content">
           <span class="panel-item name">
-            {{ attributes.name }}
-            <small> > task ({{ attributes.hostname }})</small>
+            {{ model.attributes.name }}
+            <small> > task ({{ model.attributes.hostname }})</small>
           </span>
           <div class="panel-item icons">
-            <span style="float:right; margin-left: 10px;">
-              <button class="btn btn-primary btn-sm ladda-button trigger-task tooltiped"
-                title="Run task"
-                data-style="zoom-in">
-                <span class="playIcon">
-                  <i class="status glyphicon glyphicon-triangle-right"></i>
-                </span>
-              </button>
-            </span>
-            <a title="Workflow"
+            <button class="btn btn-primary"
+              style="float:right;margin-left:10px;margin-top:-2px;">
+              <span class="glyphicon glyphicon-play"></span>
+            </button>
+            <button title="Workflow"
               data-hook="workflow-button"
-              href="/admin/workflow?node={{ attributes.id }}"
               class="tooltiped btn-icon-image flowchart-icon">
-            </a>
+            </button>
+            <button class="btn btn-icon-image tooltiped" title="edit task">
+              <span class="glyphicon glyphicon-edit"></span>
+            </button>
           </div>
         </div>
       </span>
     </h4>
   </div>
   <!-- COLLAPSE -->
-  <div id="collapse{{ attributes.id }}"
+  <div id="collapse{{ model.attributes.id }}"
     class="panel-collapse collapse"
     role="tabpanel"
-    aria-labelledby="heading{{ attributes.id }}">
+    aria-labelledby="heading{{ model.attributes.id }}">
     <div class="panel-body">
       <div class="fields">
         <div class="field"><p>Name</p></div>
-        <div class="field">{{ attributes.name }}</div>
+        <div class="field">{{ model.attributes.name }}</div>
       </div>
       <div class="fields">
         <div class="field"><p>Description</p></div>
-        <div class="field">{{ attributes.description }}</div>
+        <div class="field">{{ model.attributes.description }}</div>
       </div>
       <div class="fields">
         <div class="field"><p>Hostname</p></div>
-        <div class="field">{{ attributes.hostname }}</div>
+        <div class="field">{{ model.attributes.hostname }}</div>
       </div>
       <div class="fields" data-hook="job-result-container"></div>
     </div>

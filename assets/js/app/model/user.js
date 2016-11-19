@@ -1,6 +1,6 @@
 window.App || ( window.App = {} );
 window.App.Models || ( window.App.Models = {} );
-window.App.Models.User = Backbone.Model.extend({
+window.App.Models.User = BaseModel.extend({
   urlRoot:'/api/user',
   parse: function (response) {
     return response;

@@ -522,16 +522,9 @@ span.selectorIcon.glyphicon-check {
   font-size: 30px;
 }
 
-
-.state-icon.icon-error {
-  color: #FF3300;
-}
-.state-icon.icon-warn {
-  color: yellow;
-}
-.state-icon.icon-check {
-  color: green;
-}
+.icon-error { color: #FF3300; }
+.icon-warn { color: yellow; }
+.icon-check { color: green; }
 
 .events-panel .panel-item.icons .btn-icon-image {
   float:right;

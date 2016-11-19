@@ -17,11 +17,16 @@
         $emitter.trigger('search:start');
         $emitter.searching = true;
       } else {
-        $searchCleanBtn.removeClass('active');
-        $emitter.trigger('search:empty');
-        $emitter.searching = false;
+        resetSearch();
       }
     });
+
+    function resetSearch () {
+      $searchCleanBtn.removeClass('active');
+      $emitter.trigger('search:empty');
+      $emitter.searching = false;
+      window.location.hash = '';
+    }
 
     $searchInput.on('keypress', function(event){
       if ( event.which == 13 ) { // Enter key = keycode 13
@@ -30,17 +35,24 @@
       }
     });
 
-    $searchInput.on('keyup', function(event){
-      var chars = $searchInput.val().length;
-      if( chars >= 3 ) {
+    $searchInput.on('keyup',function(event){
+      if (event.keyCode===27) {
+        $searchInput.val('');
         $searchBtn.trigger('click');
-      }
-      else if( chars == 0 ) {
-        $searchBtn.trigger('click');
+        //resetSearch();
+      } else {
+        var input = $searchInput.val();
+        var chars = input.length;
+        if( chars >= 3 ) {
+          $searchBtn.trigger('click');
+        } else if( chars == 0 ) {
+          $searchBtn.trigger('click');
+        }
+        window.location.hash = 'search='+input;
       }
     });
 
-    $searchCleanBtn.on('click', function(event){
+    $searchCleanBtn.on('click',function(event){
       event.preventDefault();
       event.stopPropagation();
       log('clean search');
@@ -68,19 +80,21 @@
       var search = $searchInput.val().toLowerCase();
       var pattern = new RegExp(search);
 
-      for(var i=0; i<$searchItems.length; i++){
+      for (var i=0; i<$searchItems.length; i++) {
         var $item = $( $searchItems[i] );
-        var tags = $item.data('tags').toLowerCase();
+        var tags = $item.data('tags');
+        if (!tags) return;
 
-        if( ! pattern.test(tags) ){
-          if( $item.is(':visible') ) {
+        tags = tags.toLowerCase();
+
+        if (!pattern.test(tags)) {
+          if ($item.is(':visible')) {
             $item.slideUp(200);
             waitForIt = true;
           }
-        }
-        else {
+        } else {
           log('pattern matches on tags %s', tags);
-          if( ! $item.is(':visible') ) {
+          if (!$item.is(':visible')) {
             $item.slideDown(200);
             waitForIt = true;
           }
@@ -89,7 +103,7 @@
       // kludge!
       // if there's been any slide up/down, wait 10ms extra (200ms slide)
       // and trigger search:done
-      if(waitForIt) {
+      if (waitForIt) {
         lastTimer = setTimeout(function(){
           $emitter.trigger({type:'search:done', matches:$(searchItemSelector+':visible').length});
         },210);

@@ -1,7 +1,7 @@
 window.App = window.App || {};
 window.App.Models = window.App.Models || {};
 
-window.App.Models.ScraperMonitor = Backbone.Model.extend({
+window.App.Models.ScraperMonitor = BaseModel.extend({
   urlRoot:'/resource',
   parse:function(resource){
     if (Array.isArray(resource)) {

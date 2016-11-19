@@ -2,7 +2,7 @@
 
 window.App || ( window.App = {} );
 window.App.Models || ( window.App.Models = {} );
-window.App.Models.Monitor = Backbone.Model.extend({
+window.App.Models.Monitor = BaseModel.extend({
   urlRoot:'/api/resource',
   parse:function(response){
     var resource = response;
@@ -20,14 +20,14 @@ window.App.Models.Monitor = Backbone.Model.extend({
       resource.state,
     ].concat( monitor.tags );
 
-		return lodash.merge(resource,{
+    return lodash.merge(resource,{
       // monitor
-			hosts: [ resource.host_id ],
-			looptime: monitor.looptime,
-			tags: monitor.tags,
+      hosts: [ resource.host_id ],
+      looptime: monitor.looptime,
+      tags: monitor.tags,
       formatted_tags: tags,
       last_update_formated: last_update_formated
-		});
+    });
   },
   initialize:function(){
   }
@@ -36,5 +36,5 @@ window.App.Models.Monitor = Backbone.Model.extend({
 window.App.Collections || ( window.App.Collections = {} );
 window.App.Collections.Monitors = Backbone.Collection.extend({
   model: window.App.Models.Monitor,
-  url:'/api/resource'
+  url:'/api/resource',
 });

@@ -1,7 +1,7 @@
 window.App = window.App || {};
 window.App.Models = window.App.Models || {};
 
-window.App.Models.ScraperTemplate = Backbone.Model.extend({
+window.App.Models.ScraperTemplate = BaseModel.extend({
   initialize:function(options){
     this.group = options.group;
     this.isTemplate = true;
