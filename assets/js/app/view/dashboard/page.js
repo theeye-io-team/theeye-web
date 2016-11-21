@@ -79,6 +79,10 @@ function DashboardPage () {
     },
   });
 
+  var SubmonitorGroupView = SubmonitorView.extend({
+    template:Templates['assets/templates/dashboard/submonitor-group-row.hbs'],
+  });
+
   var MonitorView = BaseView.extend({
     template: Templates['assets/templates/dashboard/monitor-row.hbs'],
     className:'monitorRow',
@@ -104,18 +108,38 @@ function DashboardPage () {
     },
     render:function(){
       BaseView.prototype.render.apply(this, arguments);
-
       this.renderCollection(
         this.model.get('submonitors'),
         SubmonitorView,
         this.queryByHook('submonitors-container')[0]
       );
-
       this.updateStateIcon();
     }
   });
 
   var MonitorGroupView = MonitorView.extend({
+    render:function(){
+      BaseView.prototype.render.apply(this, arguments);
+
+      var columns =
+        '<th></th>' + 
+        '<th>Name</th>' +
+        '<th>Hostname</th>' +
+        '<th>Type</th>' +
+        '<th>Last Update</th>' +
+        '<th><span class=""></span></th>' ;
+
+      this.queryByHook('title-cols').html(columns);
+
+      this.queryByHook('collapse-container').find('h4').remove();
+
+      this.renderCollection(
+        this.model.get('submonitors'),
+        SubmonitorGroupView,
+        this.queryByHook('submonitors-container')[0],
+      );
+      this.updateStateIcon();
+    }
   });
 
 
@@ -148,7 +172,14 @@ function DashboardPage () {
 
       this.monitorRows = this.renderCollection(
         this.monitorGroups,
-        MonitorView,
+        function(options){
+          var model = options.model;
+          if (model.get('type')=='group') {
+            return new MonitorGroupView(options);
+          } else {
+            return new MonitorView(options);
+          }
+        },
         this.queryByHook('monitors-container')[0]
       );
 
@@ -315,10 +346,12 @@ function DashboardPage () {
     var tags, query = URI().search(true);
 
     if (Array.isArray(query.tags)) {
-      tags = query.tags;
+      tags = query.tags.map(function(t){
+        return t.toLowerCase() 
+      });
     } else {
       if (typeof query.tags == 'string') {
-        tags = [query.tags];
+        tags = [query.tags.toLowerCase()];
       }
     }
 

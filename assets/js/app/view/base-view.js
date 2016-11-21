@@ -25,9 +25,7 @@ function CollectionRenderer (specs) {
     collection.forEach(renderItemView);
   }
 
-  //
   // keep the collection-view updated
-  //
   collection.on('add',function(item){
     renderItemView(item);
   },this);
@@ -40,8 +38,8 @@ function CollectionRenderer (specs) {
     itemChange(item);
   },this);
 
-  collection.on('sync',function(){},this);
-  collection.on('reset',function(){},this);
+  //collection.on('sync',function(){},this);
+  //collection.on('reset',function(){},this);
 
   this.collection = collection;
   this.views = views;
