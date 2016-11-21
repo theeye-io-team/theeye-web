@@ -136,7 +136,7 @@ function DashboardPage () {
       this.renderCollection(
         this.model.get('submonitors'),
         SubmonitorGroupView,
-        this.queryByHook('submonitors-container')[0],
+        this.queryByHook('submonitors-container')[0]
       );
       this.updateStateIcon();
     }

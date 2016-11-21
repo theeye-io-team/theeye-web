@@ -407,7 +407,8 @@ $(function(){
     $('[data-hook=create-monitor').on('click', handleResourceAction);
 
     // hook to scripts.js event script_uploaded
-    window.scriptState.on('script_uploaded', function(evt,script){
+    window.scriptState.on('script_uploaded', function(evt,result){
+      var script = result.script;
       alert("Script succesfully uploaded", "Script upload",function(){
         var $scriptIdSelect = $('select[data-hook=script_id]');
         $scriptIdSelect.append('<option value="'+script.id+'">'+script.filename+'</option>');
