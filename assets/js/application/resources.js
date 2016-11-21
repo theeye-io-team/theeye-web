@@ -411,6 +411,7 @@ $(function(){
       var script = result.script;
       alert("Script succesfully uploaded", "Script upload",function(){
         var $scriptIdSelect = $('select[data-hook=script_id]');
+        //remove previous script option
         $('option[value='+script.id+']').remove();
         $scriptIdSelect.append('<option value="'+script.id+'">'+script.filename+'</option>');
         $scriptIdSelect.val(script.id);
