@@ -33,8 +33,18 @@ window.App.Models.Monitor = BaseModel.extend({
   }
 });
 
+var monitorStatePriority = {
+  normal: 0,
+  failure: 1,
+  updates_stopped: 2,
+  unknown: 3
+}
+
 window.App.Collections || ( window.App.Collections = {} );
 window.App.Collections.Monitors = Backbone.Collection.extend({
   model: window.App.Models.Monitor,
   url:'/api/resource',
+  comparator:function(model){
+    return monitorStatePriority[model.get('state')];
+  }
 });

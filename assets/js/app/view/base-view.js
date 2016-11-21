@@ -1,39 +1,45 @@
-function CollectionRenderer (options) {
-  var View = options.View;
-  var container = options.container;
-  var collection = options.collection;
-  var views = new Backbone.Collection(); 
+function CollectionRenderer (specs) {
+  var View = specs.View;
+  var container = specs.container;
+  var collection = specs.collection;
+  var views = []; 
+  var options = (specs.options||{});
 
   function renderItemView (item) {
     var view = new View({model:item});
     view.render();
-    views.add({
-      id:item.get('id'),
-      view:view 
-    });
+    views.push(view);
     container.appendChild(view.el);
     return view;
   }
 
-  function removeItemView (item) {
+  function itemRemoved (item) {
     console.warn('remove item not implemented');
   }
 
-  function changeItemView (item) {
-    //var id = item.get('id');
-    //var view = views.get(id).get('view');
-    //view.remove();
-    //view.model;
-    //view.render();
+  function itemChange (item) {
+    console.log('item changed');
   }
 
-  collection.forEach(renderItemView);
+  if (collection.length>0) {
+    collection.forEach(renderItemView);
+  }
+
   //
   // keep the collection-view updated
   //
-  collection.on('add',renderItemView,this);
-  collection.on('remove',removeItemView,this);
-  collection.on('change',changeItemView,this);
+  collection.on('add',function(item){
+    renderItemView(item);
+  },this);
+
+  collection.on('remove',function(item){
+    itemRemoved(item);
+  },this);
+
+  collection.on('change',function(item){
+    itemChange(item);
+  },this);
+
   collection.on('sync',function(){},this);
   collection.on('reset',function(){},this);
 
@@ -68,11 +74,12 @@ var BaseView = Backbone.View.extend({
   render: function(){
     this.renderTemplate();
   },
-  renderCollection: function(collection, View, container) {
+  renderCollection: function(collection, View, container, options) {
     return new CollectionRenderer({
       collection: collection,
       View: View,
-      container: container
+      container: container,
+      options: options||{}
     });
   },
   remove:function(){

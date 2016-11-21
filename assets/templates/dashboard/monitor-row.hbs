@@ -55,27 +55,7 @@
               <th>Last updated</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <td class="text-center">
-                <span class="state-icon "></span>
-              </td>
-              <td>{{ model.attributes.type }}</td>
-              <td><span class="state_text">{{ model.attributes.state }}</span></td>
-              <td><span class="state_last_update">
-                  {{ model.attributes.last_update_formated }}
-              </span></td>
-            </tr>
-            <!--
-            <tr class="resource<%=subresource.id%>">
-              <td class="text-center">
-                <span class="state-icon <%=iconsDicc[subresource.state]%>"></span>
-              </td>
-              <td><%= subresource.type %></td>
-              <td><span class="state_text"><%= subresource.state %></span></td>
-              <td><span class="state_last_update"><%= moment(subresource.last_update).startOf('second').fromNow() %></span></td>
-            </tr>
-            -->
+          <tbody data-hook="submonitors-container">
           </tbody>
         </table>
       </div>

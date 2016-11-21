@@ -1,37 +1,6 @@
-'use strict';
+'uuid(),se strict';
 
 function DashboardPage () {
-
-  var MonitorsEvents = {
-    update : function(event){
-      var id = event.id;
-      var state = event.state;
-
-      var monitor = monitors.get(id);
-      monitor.set("state",state);
-    }
-  };
-
-  var socketsConnector = SocketsConnector({
-    io: window.io,
-    channel:'/events/subscribe',
-    query: {
-      customer: Cookies.getJSON('theeye').customer 
-    },
-    onSubscribed:function(data,jwres){
-      log('subscribed to event updates');
-    },
-    events: {
-      'events-update': MonitorsEvents.update
-    }
-  });
-
-  var statesDicc = {
-    normal: 0,
-    failure: 1,
-    updates_stopped: 2,
-    unknown: 3
-  }
 
   var stateIcons = {
     normal: "icon-check",
@@ -46,29 +15,6 @@ function DashboardPage () {
     "icon-error": "updates_stopped",
     "icon-nonsense": "unknown"
   };
-
-  var monitors = window.monitors = new App.Collections.Monitors();
-  var tasks = window.tasks = new App.Collections.Tasks();
-
-  var MonitorView = BaseView.extend({
-    template: Templates['assets/templates/dashboard/monitor-row.hbs'],
-    className:'monitorRow',
-    events:{ },
-    initialize:function(){
-      this.stateIcon = stateIcons[this.model.get('state')];
-      this.listenTo(this.model,'change:state',this.updateStateIcon);
-    },
-    updateStateIcon:function(){
-      this.stateIcon = stateIcons[this.model.get('state')];
-      this.queryByHook('state-icon')[0].className = this.stateIcon;
-    }
-  });
-
-  var TaskView = BaseView.extend({
-    className:'taskRow',
-    template: Templates['assets/templates/dashboard/task-row.hbs'],
-    events:{ },
-  });
 
   var ItemsFolding = function (el) {
     var $el = $(el);
@@ -113,12 +59,85 @@ function DashboardPage () {
     }
   }
 
+  /**
+   *
+   * Backbone Views
+   *
+   */
+  var SubmonitorView = BaseView.extend({
+    tagName:'tr',
+    className:'submonitoRow',
+    template:Templates['assets/templates/dashboard/submonitor-row.hbs'],
+    events:{},
+    initialize:function(){
+      this.stateIcon = stateIcons[this.model.get('state')];
+      this.listenTo(this.model,'change:state',this.updateStateIcon);
+    },
+    updateStateIcon:function(){
+      this.stateIcon = stateIcons[this.model.get('state')];
+      this.queryByHook('state-icon')[0].className = this.stateIcon;
+    },
+  });
+
+  var MonitorView = BaseView.extend({
+    template: Templates['assets/templates/dashboard/monitor-row.hbs'],
+    className:'monitorRow',
+    events:{ },
+    initialize:function(){
+      this.listenTo(this.model.get('submonitors'),'change',this.updateStateIcon);
+    },
+    updateStateIcon:function(){
+      var highState = this.model
+        .get('submonitors').reduce(function(highState,monitor){
+          var state = monitor.get('state');
+          if (!highState) return state;
+          var p1=monitorStatePriority[state],
+            p2=monitorStatePriority[highState];
+          return (p1>p2) ? state : highState;
+        },null);
+
+      this.stateIcon = stateIcons[highState];
+      this.state = highState;
+      this.queryByHook('state-icon')[0].className = this.stateIcon;
+
+      this.trigger('change:stateIcon',this);
+    },
+    render:function(){
+      BaseView.prototype.render.apply(this, arguments);
+
+      this.renderCollection(
+        this.model.get('submonitors'),
+        SubmonitorView,
+        this.queryByHook('submonitors-container')[0]
+      );
+
+      this.updateStateIcon();
+    }
+  });
+
+  var MonitorGroupView = MonitorView.extend({
+  });
+
+
+  var TaskView = BaseView.extend({
+    className:'taskRow',
+    template: Templates['assets/templates/dashboard/task-row.hbs'],
+    events:{ },
+  });
+
   var Index = BaseView.extend({
     autoRender: true,
     template: Templates['assets/templates/dashboard/page.hbs'],
     container: $('[data-hook=page-container]')[0],
     events:{
       'click [data-hook=up-and-running] i':'hideUpAndRunning'
+    },
+    initialize:function(options){
+      BaseView.prototype.initialize.apply(this,arguments);
+
+      this.monitors = options.monitors;
+      this.monitorGroups = options.monitorGroups;
+      this.tasks = options.tasks;
     },
     hideUpAndRunning:function(){
       this.$upandrunning.slideUp();
@@ -127,14 +146,14 @@ function DashboardPage () {
     render:function(){
       BaseView.prototype.render.apply(this, arguments);
 
-      this.monitorsViews = this.renderCollection(
-        monitors,
+      this.monitorRows = this.renderCollection(
+        this.monitorGroups,
         MonitorView,
         this.queryByHook('monitors-container')[0]
       );
 
-      this.tasksViews = this.renderCollection(
-        tasks,
+      this.renderCollection(
+        this.tasks,
         TaskView,
         this.queryByHook('tasks-container')[0]
       );
@@ -144,36 +163,37 @@ function DashboardPage () {
       this.$upandrunning = this.queryByHook('up-and-running');
       this.$monitorsPanel = this.find('[data-hook=monitors-panel] .panel-group');
 
-      this.listenTo(monitors,'sync',this.checkMonitors);
-      this.listenTo(monitors,'change',this.checkMonitors);
+      this.listenTo(this.monitors,'sync',this.checkMonitors);
+      //this.listenTo(this.monitors,'change',this.checkMonitors);
+      for (var i=0;i<this.monitorRows.views.length;i++) {
+        var view = this.monitorRows.views[i];
+        view.on('change:stateIcon',this.checkMonitors,this);
+      }
+
+      this.checkMonitors();
 
       // bind searchbox events
       var self = this;
-      var synced = lodash.after(2,function(){
-        var searchbox = $.searchbox(); 
-        searchbox.on('search:start',function(){
-          log('searching');
-          self.$upandrunning.slideUp();
-          self.$monitorsPanel.slideDown();
-          self.monitorsFolding.unfold();
-        });
-        searchbox.on('search:empty',function(){
-          log('stop searching');
-          self.checkMonitors();
-          self.monitorsFolding.fold();
-        });
+      var searchbox = $.searchbox(); 
+      searchbox.on('search:start',function(){
+        log('searching');
+        self.$upandrunning.slideUp();
+        self.$monitorsPanel.slideDown();
+        self.monitorsFolding.unfold();
       });
-      monitors.once('sync',synced);
-      tasks.once('sync',synced);
+      searchbox.on('search:empty',function(){
+        log('stop searching');
+        self.checkMonitors();
+        self.monitorsFolding.fold();
+      });
     },
     checkMonitors:function(){
-      var failing = monitors.filter(function(monitor){
+      var failing = this.monitors.filter(function(monitor){
         var state = monitor.get('state');
-        return state == 'failure' || state == 'updates_stopped';
+        return state=='failure' || state=='updates_stopped';
       });
 
       if (failing.length>0) {
-        this.sortMonitors();
         this.foldMonitors();
         this.$upandrunning.slideUp();
         this.$monitorsPanel.slideDown();
@@ -185,29 +205,8 @@ function DashboardPage () {
         this.monitorsFolding.hideButton();
       }
     },
-    sortMonitors:function(){
-      // visual sort
-      this.find('.monitorRow').sort(function(a,b){
-        //get state icon element
-        var stateIconA = $('.state-icon span', a).first()[0];
-        //get element classes that matches 'icon-*'
-        var iconClassA = stateIconA.classList.value.split(" ").find(function(cls){
-          return cls.indexOf('icon-') === 0;
-        });
-        //get state from class
-        var stateValueA = classToState[iconClassA];
-
-        var stateIconB = $('.state-icon span', b).first()[0];
-        var iconClassB = stateIconB.classList.value.split(" ").find(function(cls){
-          return cls.indexOf('icon-') === 0;
-        });
-        var stateValueB = classToState[iconClassB];
-
-        return statesDicc[stateValueA] < statesDicc[stateValueB];
-      }).prependTo('[data-hook=monitors-container]');
-    },
     /**
-     * move normal monitors to fold
+     * move ok monitors to fold
      */
     foldMonitors: function(){
       var self = this;
@@ -216,6 +215,8 @@ function DashboardPage () {
         var stateIcon = $row.find('.panel-heading .state-icon span')[0];
         if ( !/warn|error/.test(stateIcon.className) ) {
           $row.appendTo(self.monitorsFolding.$container);
+        } else {
+          $row.prependTo(self.$monitorsPanel);
         }
       });
     },
@@ -231,13 +232,133 @@ function DashboardPage () {
     }
   });
 
+
   $(document).on('keypress',function(event){
     $('.js-searchable-box input').focus();
   });
 
-  var page = new Index({});
 
-  monitors.fetch();
-  tasks.fetch();
+  function attachToHost(monitors){
+    var typesToGroup=['host','dstat','psaux'],
+      groups={},
+      groupedMonitors = new Backbone.Collection();
 
+    monitors.forEach(function(monitor){
+      if (typesToGroup.indexOf(monitor.get('type')) !== -1) {
+        if (!groups[monitor.get('hostname')]) {
+          groups[monitor.get('hostname')] = {};
+        }
+
+        groups[monitor.get('hostname')][monitor.get('type')] = monitor;
+      } else {
+        monitor.set('submonitors', new Backbone.Collection());
+        monitor.get('submonitors').add(monitor);
+        groupedMonitors.add(monitor);
+      }
+    });
+
+    for (var hostname in groups) {
+      var group = groups[hostname];
+      var host = group['host'];
+
+      host.set('submonitors', new Backbone.Collection());
+      host.get('submonitors').add([
+        group['host'],
+        group['dstat']
+      ]);
+      groupedMonitors.add(host);
+    }
+
+    return groupedMonitors;
+  }
+
+  function groupByTags (monitors,tags) {
+    if (!Array.isArray(tags)||tags.length===0) {
+      return monitors;
+    }
+
+    var groups = [];
+    tags.forEach(function(t){
+      groups.push({
+        id: uid(),
+        tags: [t,'group'],
+        type: 'group',
+        name: t.toLowerCase(),
+        description: t,
+        submonitors: new Backbone.Collection()
+      });
+    });
+
+    monitors.forEach(function(monitor){
+      var ctags = monitor.get('tags');
+      if (!Array.isArray(ctags)||ctags.length===0) {
+        return;
+      }
+
+      ctags.forEach(function(tag){
+        var ltag = tag.toLowerCase();
+        if (tags.indexOf(ltag) !== -1) {
+          lodash.find(groups,function(g){
+            return g.name == ltag 
+          }).submonitors.add(monitor);
+        } else {
+          // do not group nor show. ignore
+        }
+      });
+    });
+
+    return new Backbone.Collection(groups);
+  }
+
+  (function index () {
+    var monitors, tasks, synced;
+    var query = URI().search(true);
+
+    synced = lodash.after(2,function(){
+      var groups = groupByTags(attachToHost(monitors),query.tags);
+
+      new Index({
+        monitorGroups: groups,
+        monitors: monitors,
+        tasks: tasks
+      });
+    });
+
+    monitors = new App.Collections.Monitors();
+    monitors.once('sync',synced);
+
+    tasks = new App.Collections.Tasks();
+    tasks.once('sync',synced);
+
+
+    var MonitorsEvents = {
+      update : function(event){
+        var id = event.id;
+        var state = event.state;
+
+        var monitor = monitors.get(id);
+        monitor.set("state",state);
+        monitors.sort();
+      }
+    };
+
+    // connect sockets and start listening to events
+    SocketsConnector({
+      io: window.io,
+      channel:'/events/subscribe',
+      query: {
+        customer: Cookies.getJSON('theeye').customer 
+      },
+      onSubscribed:function(data,jwres){
+        log('subscribed to event updates');
+      },
+      events: {
+        'events-update': MonitorsEvents.update
+      }
+    });
+
+    // fetch monitors and start page.
+    monitors.fetch();
+    tasks.fetch();
+  })();
 }
