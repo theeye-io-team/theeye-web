@@ -496,6 +496,9 @@ span.selectorIcon.glyphicon-check {
 .events-panel .panel-default .panel-title-content {
   padding-left:0;
 }
+.events-panel h4.panel-title.group {
+  background-image: url('/images/group.png');
+}
 .events-panel h4.panel-title.host {
   background-image: url('/images/The-eye-icons-28.png');
 }

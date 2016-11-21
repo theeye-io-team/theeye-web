@@ -161,7 +161,7 @@ function DashboardPage () {
       this.monitorsFolding = new ItemsFolding( this.queryByHook('monitors-fold-container') );
       this.tasksFolding = new ItemsFolding( this.queryByHook('tasks-fold-container') );
       this.$upandrunning = this.queryByHook('up-and-running');
-      this.$monitorsPanel = this.find('[data-hook=monitors-panel] .panel-group');
+      this.$monitorsPanel = this.find('[data-hook=monitors-container]');
 
       this.listenTo(this.monitors,'sync',this.checkMonitors);
       //this.listenTo(this.monitors,'change',this.checkMonitors);
@@ -312,10 +312,18 @@ function DashboardPage () {
 
   (function index () {
     var monitors, tasks, synced;
-    var query = URI().search(true);
+    var tags, query = URI().search(true);
+
+    if (Array.isArray(query.tags)) {
+      tags = query.tags;
+    } else {
+      if (typeof query.tags == 'string') {
+        tags = [query.tags];
+      }
+    }
 
     synced = lodash.after(2,function(){
-      var groups = groupByTags(attachToHost(monitors),query.tags);
+      var groups = groupByTags(attachToHost(monitors),tags);
 
       new Index({
         monitorGroups: groups,
@@ -330,12 +338,9 @@ function DashboardPage () {
     tasks = new App.Collections.Tasks();
     tasks.once('sync',synced);
 
-
     var MonitorsEvents = {
       update : function(event){
-        var id = event.id;
-        var state = event.state;
-
+        var id = event.id, state = event.state;
         var monitor = monitors.get(id);
         monitor.set("state",state);
         monitors.sort();
