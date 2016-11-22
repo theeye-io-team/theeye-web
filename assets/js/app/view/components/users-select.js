@@ -6,9 +6,8 @@ var UsersSelect = (function(){
     className:'form-group',
     template: Templates['assets/templates/components/users-select.hbs'],
     initialize:function(){
-      this.model||(this.model={});
-      this.model.title = 'ACL';
-      this.model.name = 'acl';
+      this.title = 'ACL';
+      this.name = 'acl';
       BaseView.prototype.initialize.apply(this,arguments);
 
       Object.defineProperty(this,'values',{
