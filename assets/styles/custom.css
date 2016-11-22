@@ -91,7 +91,6 @@ ol.list-group li.red-border { border-color: red; }
 .events-container .row { color:white; }
 .events-container .video { text-align: center; }
 
-
 /* common */
 a:hover {text-decoration:none}
 h1 {font-weight:700}
@@ -483,9 +482,7 @@ span.selectorIcon.glyphicon-check {
 .events-panel.resources-panel { border-right:2px solid #23324C; }
 .events-panel.tasks-panel { border-left:2px solid #23324C; }
 
-/*.events-panel.tasks-panel {
-  float: right;
-}*/
+/*.events-panel.tasks-panel { float: right; }*/
 .events-panel h4.panel-title {
   padding-left: 50px;
   background-repeat: no-repeat;
@@ -493,31 +490,14 @@ span.selectorIcon.glyphicon-check {
   background-position: 7px 7px;
 }
 
-.events-panel .panel-default .panel-title-content {
-  padding-left:0;
-}
-.events-panel h4.panel-title.group {
-  background-image: url('/images/group.png');
-}
-.events-panel h4.panel-title.host {
-  background-image: url('/images/The-eye-icons-28.png');
-}
-.events-panel h4.panel-title.scraper {
-  background-image: url('/images/The-eye-icons-17.png');
-}
-.events-panel h4.panel-title.process {
-  background-image: url('/images/The-eye-icons-30.png');
-}
-.events-panel h4.panel-title.script {
-  background-image: url('/images/The-eye-icons-18.png');
-}
-.events-panel h4.panel-title.task {
-  background-image: url('/images/The-eye-icons-27.png');
-}
-.events-panel h3 {
-  height: 40px;
-  line-height: 28px;/* h3 inherits a top/bottom padding of 6 */
-}
+.events-panel .panel-default .panel-title-content { padding-left:0; }
+.events-panel h4.panel-title.group { background-image: url('/images/group.png'); }
+.events-panel h4.panel-title.host { background-image: url('/images/The-eye-icons-28.png'); }
+.events-panel h4.panel-title.scraper { background-image: url('/images/The-eye-icons-17.png'); }
+.events-panel h4.panel-title.process { background-image: url('/images/The-eye-icons-30.png'); }
+.events-panel h4.panel-title.script { background-image: url('/images/The-eye-icons-18.png'); }
+.events-panel h4.panel-title.task { background-image: url('/images/The-eye-icons-27.png'); }
+.events-panel h3 { height: 40px; line-height: 28px;/* h3 inherits a top/bottom padding of 6 */ }
 
 .events-panel .panel-item.icons .icon-edit,
 .events-panel .panel-item.icons .state-icon {

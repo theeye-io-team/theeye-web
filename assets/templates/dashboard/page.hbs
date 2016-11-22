@@ -1,4 +1,4 @@
-<div class="admin-container events-container">
+<div class="admin-container dashboard">
   <!-- SEARCH INPUT -->
   <div class="js-searchable-box">
     <form>
@@ -11,7 +11,7 @@
 
   <!-- MONITORS -->
   <div data-hook="monitors-panel" class="admin-panel">
-    <div class="col-md-6 resources-panel events-panel">
+    <section class="col-md-6 resources-panel events-panel">
       <h3>Monitors</h3>
       <div data-hook="up-and-running" class="main-status hidden-container">
         <i class="glyphicon glyphicon-ok-sign big-icon"></i>
@@ -36,32 +36,34 @@
           </section>
         </div>
       </div>
-    </div>
+    </section>
   </div>
   <!-- /MONITORS -->
 
   <!-- TASKS -->
-  <div data-hook="tasks-panel" class="col-md-6 tasks-panel events-panel">
-    <h3>Tasks</h3>
-    <div>
-      <div class="panel-group"
-        id="task-accordion"
-        role="tablist"
-        aria-multiselectable="true">
-        <section data-hook="tasks-container">
-          <!-- TASKS CONTAINER -->
-        </section>
-        <section data-hook="tasks-fold-container">
-          <div data-hook="hidden-items" class="hidden-container">
-            <div data-hook="hidden-items-container">
+  <div data-hook="tasks-panel">
+    <section class="col-md-6 tasks-panel events-panel">
+      <h3>Tasks</h3>
+      <div>
+        <div class="panel-group"
+          id="task-accordion"
+          role="tablist"
+          aria-multiselectable="true">
+          <section data-hook="tasks-container">
+            <!-- TASKS CONTAINER -->
+          </section>
+          <section data-hook="tasks-fold-container">
+            <div data-hook="hidden-items" class="hidden-container">
+              <div data-hook="hidden-items-container">
+              </div>
             </div>
-          </div>
-          <div data-hook="toggle-hidden-items" style="padding:5px 0px 5px 0px; margin: auto; width:100%; color:#fff; text-align:center; cursor:pointer;">
-            <span class="btn btn-primary tooltiped glyphicon glyphicon-menu-down" title="show/hide"></span>
-          </div>
-        </section>
+            <div data-hook="toggle-hidden-items" style="padding:5px 0px 5px 0px; margin: auto; width:100%; color:#fff; text-align:center; cursor:pointer;">
+              <span class="btn btn-primary tooltiped glyphicon glyphicon-menu-down" title="show/hide"></span>
+            </div>
+          </section>
+        </div>
       </div>
-    </div>
+    </section>
   </div>
   <!-- /TASKS -->
 </div>

@@ -14,21 +14,23 @@
             <small> > {{ model.attributes.type }}</small>
           </span>
           <span class="panel-item icons">
-            <button data-search="{{ model.attributes.description }}"
-              class="btn btn-primary resource-search">
-              <span class="glyphicon glyphicon-search"></span>
-            </button>
-            <a title="Workflow"
-              data-hook="workflow-button"
-              href="/admin/workflow?node={{ model.attributes.monitor.id }}"
-              class="tooltiped btn-icon-image flowchart-icon">
-            </a>
-            <button class="btn btn-icon-image tooltiped" title="Stats">
-              <span class="glyphicon glyphicon-stats"></span>
-            </button>
-            <button class="btn btn-icon-image tooltiped" title="Edit monitors">
-              <span class="glyphicon glyphicon-edit"></span>
-            </button>
+            <section data-hook="monitor-icons-block" style="float:right;">
+              <button data-search="{{ model.attributes.description }}"
+                class="btn btn-primary resource-search">
+                <span class="glyphicon glyphicon-search"></span>
+              </button>
+              <a title="Workflow"
+                data-hook="workflow-button"
+                href="/admin/workflow?node={{ model.attributes.monitor.id }}"
+                class="tooltiped btn-icon-image flowchart-icon">
+              </a>
+              <button class="btn btn-icon-image tooltiped" title="Stats">
+                <span class="glyphicon glyphicon-stats"></span>
+              </button>
+              <button class="btn btn-icon-image tooltiped" title="Edit monitors">
+                <span class="glyphicon glyphicon-edit"></span>
+              </button>
+            </section>
             <div class="tooltiped state-icon state-resource-container">
               <span data-hook="state-icon" class="{{ stateIcon }}" title="{{ model.attributes.state }}">
               </span>

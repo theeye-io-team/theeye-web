@@ -64,12 +64,20 @@ function DashboardPage () {
    * Backbone Views
    *
    */
+  var PanelView = BaseView.extend({
+    tagName:'section',
+    className:'dashboard-panel',
+    template:Templates['assets/templates/dashboard/panel.hbs'],
+    title:'Stats',
+    name:'stats'
+  });
+
   var SubmonitorView = BaseView.extend({
     tagName:'tr',
     className:'submonitoRow',
     template:Templates['assets/templates/dashboard/submonitor-row.hbs'],
     events:{
-      'click [data-hook=last_event]': 'onClickLastEvent'
+      'click [data-hook=last_event]':'onClickLastEvent'
     },
     onClickLastEvent:function(event){
       event.preventDefault();
@@ -152,7 +160,7 @@ function DashboardPage () {
     }
   });
 
-  var MonitorGroupView = MonitorView.extend({
+  var MonitorsGroupView = MonitorView.extend({
     render:function(){
       BaseView.prototype.render.apply(this, arguments);
 
@@ -166,6 +174,7 @@ function DashboardPage () {
 
       this.queryByHook('title-cols').html(columns);
       this.queryByHook('collapse-container').find('h4').remove();
+      this.queryByHook('monitor-icons-block').remove();
 
       this.renderCollection(
         this.model.get('submonitors'),
@@ -209,7 +218,7 @@ function DashboardPage () {
         function(options){
           var model = options.model;
           if (model.get('type')=='group') {
-            return new MonitorGroupView(options);
+            return new MonitorsGroupView(options);
           } else {
             return new MonitorView(options);
           }
@@ -217,14 +226,30 @@ function DashboardPage () {
         this.queryByHook('monitors-container')[0]
       );
 
-      this.renderCollection(
-        this.tasks,
-        TaskView,
-        this.queryByHook('tasks-container')[0]
-      );
+      if (this.tasks!==null) {
+        this.renderCollection(
+          this.tasks,
+          TaskView,
+          this.queryByHook('tasks-container')[0]
+        );
+        this.tasksFolding = new ItemsFolding(
+          this.queryByHook('tasks-fold-container')
+        );
+      } else {
+        /**
+        this.queryByHook('monitors-panel')
+          .find('section.events-panel')
+          .removeClass('col-md-6')
+          .addClass('col-md-12') ;
+          */
+        this.queryByHook('tasks-panel').remove();
+
+        var stats = new PanelView({ col_class: 'col-md-6' });
+        stats.render();
+        stats.$el.appendTo( $('.dashboard') );
+      }
 
       this.monitorsFolding = new ItemsFolding( this.queryByHook('monitors-fold-container') );
-      this.tasksFolding = new ItemsFolding( this.queryByHook('tasks-fold-container') );
       this.$upandrunning = this.queryByHook('up-and-running');
       this.$monitorsPanel = this.find('[data-hook=monitors-container]');
 
@@ -255,7 +280,7 @@ function DashboardPage () {
     checkMonitors:function(){
       var failing = this.monitors.filter(function(monitor){
         var state = monitor.get('state');
-        return state=='failure' || state=='updates_stopped';
+        return state=='failure'||state=='updates_stopped';
       });
 
       if (failing.length>0) {
@@ -389,22 +414,6 @@ function DashboardPage () {
       }
     }
 
-    synced = lodash.after(2,function(){
-      var groups = groupByTags(attachToHost(monitors),tags);
-
-      new Index({
-        monitorGroups: groups,
-        monitors: monitors,
-        tasks: tasks
-      });
-    });
-
-    monitors = new App.Collections.Monitors();
-    monitors.once('sync',synced);
-
-    tasks = new App.Collections.Tasks();
-    tasks.once('sync',synced);
-
     var MonitorsEvents = {
       update: function(resource){
         var monitor = monitors.get(resource.id);
@@ -428,8 +437,38 @@ function DashboardPage () {
       }
     });
 
-    // fetch monitors and start page.
-    monitors.fetch();
-    tasks.fetch();
+    var cookie = Cookies.get('theeye');
+    if (query.tasks=='hide'||cookie.credential=='viewer') {
+      // show only monitors
+      monitors = new App.Collections.Monitors();
+      monitors.once('sync',function(){
+        var groups = groupByTags(attachToHost(monitors),tags);
+        new Index({
+          monitorGroups: groups,
+          monitors: monitors,
+          tasks: null
+        });
+      });
+      monitors.fetch();
+    } else {
+      synced = lodash.after(2,function(){
+        var groups = groupByTags(attachToHost(monitors),tags);
+        new Index({
+          monitorGroups: groups,
+          monitors: monitors,
+          tasks: tasks
+        });
+      });
+
+      monitors = new App.Collections.Monitors();
+      monitors.once('sync',synced);
+
+      tasks = new App.Collections.Tasks();
+      tasks.once('sync',synced);
+
+      // fetch monitors and start page.
+      monitors.fetch();
+      tasks.fetch();
+    }
   })();
 }
