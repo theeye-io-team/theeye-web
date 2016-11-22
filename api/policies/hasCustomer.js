@@ -15,7 +15,8 @@ module.exports = function hasCustomer (req, res, next)
       'theeye', JSON.stringify({
         customer: req.session.customer,
         base_url: sails.config.application.baseUrl + '/api',
-        supervisor_url: sails.config.supervisor.url
+        supervisor_url: sails.config.supervisor.url,
+        credential: req.user.credential
       })
     );
 

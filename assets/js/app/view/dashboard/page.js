@@ -236,17 +236,17 @@ function DashboardPage () {
           this.queryByHook('tasks-fold-container')
         );
       } else {
-        /**
         this.queryByHook('monitors-panel')
           .find('section.events-panel')
           .removeClass('col-md-6')
           .addClass('col-md-12') ;
-          */
         this.queryByHook('tasks-panel').remove();
 
+        /**
         var stats = new PanelView({ col_class: 'col-md-6' });
         stats.render();
         stats.$el.appendTo( $('.dashboard') );
+        */
       }
 
       this.monitorsFolding = new ItemsFolding( this.queryByHook('monitors-fold-container') );
@@ -437,8 +437,8 @@ function DashboardPage () {
       }
     });
 
-    var cookie = Cookies.get('theeye');
-    if (query.tasks=='hide'||cookie.credential=='viewer') {
+    var credential = Cookies.getJSON('theeye').credential;
+    if (query.tasks=='hide'||credential=='viewer') {
       // show only monitors
       monitors = new App.Collections.Monitors();
       monitors.once('sync',function(){
