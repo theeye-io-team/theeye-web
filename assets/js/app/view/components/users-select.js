@@ -38,6 +38,8 @@ var UsersSelect = (function(){
         ),
         tags: true
       });
+
+      this.find('.tooltiped').tooltip();
     },
   });
 

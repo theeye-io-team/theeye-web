@@ -48,8 +48,15 @@ $(function(){
   (function(){
     function updateResourceMonitor($el){
       var idResource = $el.find("[data-hook=resource_id]").val();
-      //var values = extractFormData($el);
       var values = (new FormElement($el)).get();
+
+      if (values.script_runas) {
+        if ( /%script%/.test(values.script_runas) === false ) {
+          bootbox.alert('The script runas must include the "%script%" keyword');
+          return;
+        }
+      }
+
       $.ajax({
         url: '/resource/' + idResource,
         type: 'PUT',
@@ -64,8 +71,8 @@ $(function(){
     }
 
     function createResourceMonitor($el){
-      //var values = extractFormData($el);
       var values = (new FormElement($el)).get();
+
       $.ajax({
         method:'POST',
         url:'/resource/' + values.monitor_type,
@@ -162,7 +169,6 @@ $(function(){
         usersSelect.render();
         $form.append( usersSelect.$el );
         fillForm($form,resource);
-
         var $modal = $('#'+type+'ResourceModal');
         $modal.one('hidden.bs.modal',function(){
           usersSelect.remove();
@@ -270,6 +276,9 @@ $(function(){
       var usersSelect = new UsersSelect({ collection: _users });
       usersSelect.render();
       $form.append( usersSelect.$el );
+      $modal.one('hidden.bs.modal',function(){
+        usersSelect.remove();
+      });
 
       $form[0].reset();
       $.unblockUI();
@@ -425,7 +434,6 @@ $(function(){
   $('.modal#scriptUpload div#scriptTemplateDescription').hide();
 
   (function(){
-
     function deleteResourceRequest (idResource,done) {
       jQuery.ajax({
         url: '/resource/' + idResource,
