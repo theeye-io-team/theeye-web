@@ -104,6 +104,7 @@
                           <th>Type</th>
                           <th>Status</th>
                           <th>Last updated</th>
+                          <th></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -113,7 +114,9 @@
                           </td>
                           <td><%= resource.type %></td>
                           <td><span class="state_text"><%= resource.state %></span></td>
-                          <td><span class="state_last_update"><%= moment(resource.last_update).startOf('second').fromNow() %></span></td>
+                          <td><span class="state_last_update"><%= moment(resource.last_update).startOf('second').fromNow() %></span>
+                          </td>
+                          <td> <i data-hook="last_event" data-id="<%= resource.id %>" class="btn btn-primary btn-sm glyphicon glyphicon-plus"></i> </td>
                         </tr>
                         <% resource.subs.forEach(function(subresource){ %>
                           <tr class="resource<%=subresource.id%>">
@@ -122,7 +125,10 @@
                             </td>
                             <td><%= subresource.type %></td>
                             <td><span class="state_text"><%= subresource.state %></span></td>
-                            <td><span class="state_last_update"><%= moment(subresource.last_update).startOf('second').fromNow() %></span></td>
+                            <td><span class="state_last_update">
+                              <%= moment(subresource.last_update).startOf('second').fromNow() %>
+                              </span>
+                              </td>
                           </tr>
                         <% }); %>
                       </tbody>

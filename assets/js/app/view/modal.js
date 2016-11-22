@@ -28,11 +28,13 @@ var Modal = function (specs) {
     });
     this.el = div.firstChild;
 
+    var backdrop = (typeof this.specs.backdrop == 'boolean') ? this.specs.backdrop : 'static';
+
     this.$el = $(this.el);
     this.$el.modal({
       show: false,
       keyboard: false,
-      backdrop: 'static'
+      backdrop: backdrop
     });
 
     this.bindEvents();
@@ -43,6 +45,10 @@ var Modal = function (specs) {
 
   this.render = function () {
     this.renderTemplate();
+
+    if (this.specs.save_button===false) {
+      this.queryByHook('save').remove();
+    }
   }
 
   this.remove = function(){

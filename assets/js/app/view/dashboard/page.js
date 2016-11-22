@@ -1,4 +1,4 @@
-'uuid(),se strict';
+'use strict';
 
 function DashboardPage () {
 
@@ -68,7 +68,31 @@ function DashboardPage () {
     tagName:'tr',
     className:'submonitoRow',
     template:Templates['assets/templates/dashboard/submonitor-row.hbs'],
-    events:{},
+    events:{
+      'click [data-hook=last_event]': 'onClickLastEvent'
+    },
+    onClickLastEvent:function(event){
+      event.preventDefault();
+      event.stopPropagation();
+
+      var content = new LastEventView({ model: this.model });
+      content.render();
+
+      var modal = new Modal({
+        backdrop: false,
+        save_button: false,
+        'title': 'Last Event'
+      });
+      modal.render();
+      modal.content = content;
+      modal.$el.on('hidden.bs.modal',function(){
+        modal.remove();
+        content.remove();
+      });
+      modal.show();
+
+      return false;
+    },
     initialize:function(){
       this.stateIcon = stateIcons[this.model.get('state')];
       this.listenTo(this.model,'change:state',this.updateStateIcon);
@@ -83,10 +107,21 @@ function DashboardPage () {
     template:Templates['assets/templates/dashboard/submonitor-group-row.hbs'],
   });
 
+  var LastEventView = BaseView.extend({
+    template: Templates['assets/templates/dashboard/monitor-last-event.hbs'],
+    render:function(){
+      BaseView.prototype.render.apply(this, arguments);
+      this
+        .queryByHook('container')
+        .jsonViewer( this.model.get('last_event') );
+    }
+  });
+
   var MonitorView = BaseView.extend({
     template: Templates['assets/templates/dashboard/monitor-row.hbs'],
     className:'monitorRow',
-    events:{ },
+    events:{
+    },
     initialize:function(){
       this.listenTo(this.model.get('submonitors'),'change',this.updateStateIcon);
     },
@@ -127,10 +162,9 @@ function DashboardPage () {
         '<th>Hostname</th>' +
         '<th>Type</th>' +
         '<th>Last Update</th>' +
-        '<th><span class=""></span></th>' ;
+        '<th></th>' ;
 
       this.queryByHook('title-cols').html(columns);
-
       this.queryByHook('collapse-container').find('h4').remove();
 
       this.renderCollection(
@@ -372,10 +406,9 @@ function DashboardPage () {
     tasks.once('sync',synced);
 
     var MonitorsEvents = {
-      update : function(event){
-        var id = event.id, state = event.state;
-        var monitor = monitors.get(id);
-        monitor.set("state",state);
+      update: function(resource){
+        var monitor = monitors.get(resource.id);
+        monitor.set(resource);
         monitors.sort();
       }
     };

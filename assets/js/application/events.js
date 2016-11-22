@@ -139,6 +139,47 @@ $(function(){
 });
 
 $(function(){
+  // copy paste de dashboard/page
+  var LastEventView = BaseView.extend({
+    template: Templates['assets/templates/dashboard/monitor-last-event.hbs'],
+    render:function(){
+      BaseView.prototype.render.apply(this, arguments);
+      this
+        .queryByHook('container')
+        .jsonViewer( this.model.get('last_event') );
+    }
+  });
+  $('[data-hook=last_event]').on('click',function(event){
+    event.preventDefault();
+    event.stopPropagation();
+
+    $.ajax({
+      method:'get',
+      url:'/api/resource/' + event.currentTarget.dataset.id
+    }).done(function(resource){
+
+      var content = new LastEventView({
+        model: new Backbone.Model(resource)
+      });
+      content.render();
+
+      var modal = new Modal({
+        backdrop: false,
+        save_button: false,
+        'title': 'Last Event'
+      });
+      modal.render();
+      modal.content = content;
+      modal.$el.on('hidden.bs.modal',function(){
+        modal.remove();
+        content.remove();
+      });
+      modal.show();
+
+    });
+    return false;
+  });
+
   $('.editMonitors').on('click', function(evt){
     evt.preventDefault();
     evt.stopPropagation();
@@ -408,14 +449,7 @@ function triggers (io) {
         return document.location.reload();
       }
 
-      if( !resource.type || resource.type!='agent' ) {
-        var iconsDicc = {
-          normal: "icon-check",
-          failure: "icon-warn",
-          updates_stopped: "icon-error",
-          unknown: "icon-nonsense"
-        };
-
+      if (!resource.type||resource.type!='agent') {
         //row of the host
         var $rowItem = $('tr.resource'+resource.id).closest('.itemRow');
 
@@ -443,7 +477,7 @@ function triggers (io) {
           .removeClass("icon-check icon-warn icon-error")
           .addClass(iconsDicc[worstState]);
 
-        if( ! $searchbox.searching ) checkAllUpAndRuning() ;
+        if (!$searchbox.searching) checkAllUpAndRuning();
       }
     });
 
@@ -475,180 +509,6 @@ function triggers (io) {
   triggers(io);
 
 })(window.io);
-
-(function setupGroupables(){
-  //skip if not in test route / path
-  if (!/events\/test/.test(window.location.pathname)) return;
-  //setup
-  var $monitorsAccordion = $('#accordion');
-  var $monitorsContainer = $('#monitorsContainer');
-  var $groupAccordion = $('#groupaccordion');
-  var $groupBody = $('#group-body', $groupAccordion);
-  var $groupTitle = $('#group-title', $groupAccordion);
-  var $tagContainer = $('.tagger');
-
-  /* takes the hash from url. Hash must be in the form of groupby=TAG
-   * Can be called from button handler and/or page load
-   */
-  var groupBasedOnHash = function(){
-    var hashParams = getHashParams();
-    // should we remove any search here?
-    //first, any .itemRow in the groups container must be returned to #accordion
-    $('.itemRow', $groupAccordion).appendTo($monitorsAccordion);
-    if(!hashParams.groupby) {
-      $groupAccordion.slideUp(200);
-      $monitorsContainer.slideDown(200);
-      return;
-    }
-    //then, search for .itemRow in #accordion that matches tag
-    //and move it into groupaccordion body
-    $('.itemRow', $monitorsAccordion).each(function(i,e){
-      var $row = $(e);
-      var itemTags = $row.data('tagArray');
-      // !!~ bitwise indexOf to boolean
-      // si, puedo usar !== -1, pero los bitwise operands son mucho mas rapidos y consumen menos
-      if(!!~itemTags.indexOf(hashParams.groupby)) {
-        $row.appendTo($groupBody);
-      }
-      $groupTitle.text(hashParams.groupby);
-      $groupAccordion.slideDown(200);
-      $monitorsContainer.slideUp(200);
-    });
-    //get the button matched by tag
-    var $tagButton = $('.tag-grouper', $tagContainer)
-      .filter(function(i,e){
-        return $(e).text() == hashParams.groupby;
-      }).first();
-    // this means the groupBasedOnHash came from page load, not button click
-    // call toggleTagButtonState so the button reflects tag selection
-    if($tagButton.length > 0 && !$tagButton.hasClass('active')) {
-      //no tag button for specified tag, weird
-      toggleTagButtonState($tagButton);
-    }
-  };
-  /* get tags from all .itemRow
-   * @returns array with unique values and empty/falsy tags removed
-   */
-  var getAllTags = function(){
-    var tagString = "";
-    $('.itemRow').each(function(i,e){
-      var itemTags = $(e).data('tags');
-      tagString += "," + itemTags;
-      //since we are here, turn tags into array and store in element
-      $(e).data('tagArray', itemTags.split(','));
-    });
-    var allTags = _.chain(tagString.split(','))
-      .uniq()
-      .compact()
-      .value();
-    return allTags;
-  };
-  /* handles toggle button state, must be called with a jQueried object (the button to handle)
-   * Reverts buttons.tag-grouper to btn-info, removes btn-warning and active class, resets rotateX.
-   * Adds classes active & btn-warning and rotateX(360) to passed button
-   * @returns true/false based on whether the button ends active or not
-   */
-  var toggleTagButtonState = function($el) {
-    //all tag buttons
-    var $buttons = $('.tag-grouper', $tagContainer)
-      .removeClass('btn-warning')
-      .addClass('btn-info');
-    $buttons.filter('.active')
-      .css('transform','rotateX(-360deg)');
-
-    if($el.hasClass('active')){
-      $el.removeClass('active');
-      return false;
-    }else{
-      // reset rotate for previous active button
-      // remove active class from all buttons
-      $buttons.removeClass('active');
-      $el.addClass('active')
-        .css('transform','rotateX(360deg)')
-        .removeClass('btn-info')
-        .addClass('btn-warning');
-      return true;
-    }
-  };
-  /*
-   * Handles click on tag-grouper buttons
-   * Determines if button should enable/disable group by tag
-   * Sets window.location.hash on empty||button.text
-   * Calls groupBasedOnHash
-   */
-  var tagButtonHandler = function(event){
-    event.preventDefault();
-
-    var $button = $(event.target);
-    var active = toggleTagButtonState($button);
-    var tag = $button.text();
-    if(!active) {
-      window.location.hash = '';
-    }else{
-      window.location.hash = 'groupby=' + encodeURIComponent(tag);
-    }
-    groupBasedOnHash();
-  };
-  // creates & returns a button.btn.btn-xs.[btn-info||btn-warning]
-  var createTagButton = function(text){
-    var hashParams = getHashParams();
-    var buttonClass= hashParams.groupby && hashParams.groupby == text ? 'btn-warning' : 'btn-info';
-    return $('<button />')
-      .addClass('btn btn-xs tag-grouper')
-      .addClass(buttonClass)
-      .on('click', tagButtonHandler)
-      .text(text);
-  };
-
-  var collectTagsAndBuildButtons = function(){
-    getAllTags().forEach(function(e,i){
-      $tagContainer.append(createTagButton(e));
-    });
-  };
-  collectTagsAndBuildButtons();
-  groupBasedOnHash();
-  //una vez agrupados hay que "heredar" los events de los monitors
-  //tiene que tener un icono heredado del peor estado de los monitors que haya dentro
-})();
-
-var createItemRows = function(resources) {
-
-};
-
-var ItemRowView = function(options){
-  var resource = options.data;
-  var $container = $('<div />')
-    .addClass('itemRow resource-container panel panel-default js-searchable-item')
-    .attr('id', resource.id)
-    .data('item', resource)
-    .data('tags', resource.tags);
-  var overallState = resource.state;
-  var tags = [
-    resource.id,
-    resource.description,
-    resource.name,
-    "hostname=" + resource.hostname,
-    "type=" + resource.type,
-    "state=" + resource.state
-  ];
-
-  // resource.subs.forEach(function(subresource){
-  //   if(statesDicc[subresource.state] > statesDicc[overallState]) {
-  //     overallState = subresource.state;
-  //   }
-  //   tags.push(subresource.id);
-  //   tags.push(subresource.description);
-  //   tags.push(subresource.name);
-  //   tags.push(subresource.hostname);
-  //   tags.push(subresource.type);
-  //   tags.push("state=" + subresource.state);
-  //   tags.concat(subresource.tags);
-  // });
-
-  var monitorTags = resource.monitor && resource.monitor.tags ? resource.monitor.tags: [];
-  tags = tags.concat(monitorTags).join(',');
-
-};
 
 //
 // auto focus search input on keypress

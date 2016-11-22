@@ -1,14 +1,11 @@
 <td class="text-center" class="state-icon">
   <span data-hook="state-icon" class="{{ stateIcon }}"></span>
 </td>
-<td>
-  <span>{{ model.attributes.type }}</span>
-</td>
-<td>
-  <span class="state_text">{{ model.attributes.state }}</span>
-</td>
+<td> <span>{{ model.attributes.type }}</span> </td>
+<td> <span class="state_text">{{ model.attributes.state }}</span> </td>
 <td>
   <span data-hook="last_update" class="state_last_update">
     {{ model.attributes.last_update_formated }}
   </span>
 </td>
+<td> <a href="#" data-hook="last_event" class="btn btn-primary btn-sm glyphicon glyphicon-plus"></a> </td>
