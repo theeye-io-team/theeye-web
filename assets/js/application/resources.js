@@ -73,6 +73,13 @@ $(function(){
     function createResourceMonitor($el){
       var values = (new FormElement($el)).get();
 
+      if (values.script_runas) {
+        if ( /%script%/.test(values.script_runas) === false ) {
+          bootbox.alert('The script runas must include the "%script%" keyword');
+          return;
+        }
+      }
+
       $.ajax({
         method:'POST',
         url:'/resource/' + values.monitor_type,
