@@ -42,7 +42,8 @@ FormElement.prototype.set = function(values){
     var input = $input[0];
     if( input ){
       switch( input.type ){
-        case 'text'||'textarea':
+        case 'text':
+        case 'textarea':
           input.value = value;
           break;
         case 'checkbox' :

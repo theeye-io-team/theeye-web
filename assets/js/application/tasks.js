@@ -73,6 +73,7 @@ $(function(){
 
           var form = new FormElement( $taskForm[0] );
           form.set( task );
+
           $('.modal#edit-task').on('shown.bs.modal', function(){
             $('select[data-hook=script_id]').trigger('change');
           });
@@ -255,15 +256,15 @@ $(function(){
         if(interval) {
           for(var ii = 0; ii < 60; ii++) {
             events.push({
-              title: title,
-start: new Date(startingDate + (interval * ii))
-          });
+              'title': title,
+              start: new Date(startingDate + (interval * ii))
+            });
           }
         }else{
           events.push({
-            title: title,
-start: new Date(startingDate)
-        });
+            'title': title,
+            start: new Date(startingDate)
+          });
         }
         return events;
       }
