@@ -1,3 +1,31 @@
+/**
+ *
+ * Simple socket connector.
+ * how to use
+ *
+ *  // connect sockets and start listening to events
+ *  SocketsConnector({
+ *    io: window.io,
+ *    channel:'/socket/subscribe',
+ *    query: {
+ *      param: 'a custom param', 
+ *    },
+ *    onSubscribed:function(data,jwres){
+ *      log('subscribed to event updates');
+ *    },
+ *    events: {
+ *      'event-name': function eventHandler(data) {
+ *      },
+ *      'another-event': function ... (data) {
+ *      }
+ *    }
+ *  });
+ *
+ */
+
+//var Backbone = require('backbone');
+//var _ = require('underscore');
+//var debug = require('debug');
 
 function SocketsConnector (options) {
   if ( ! this instanceof SocketsConnector ) {
@@ -48,3 +76,5 @@ function SocketsConnector (options) {
 
   return this;
 }
+
+//module.exports = SocketsConnector;

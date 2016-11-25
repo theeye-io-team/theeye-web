@@ -68,8 +68,8 @@ function DashboardPage () {
     tagName:'section',
     className:'dashboard-panel',
     template:Templates['assets/templates/dashboard/panel.hbs'],
-    title:'Stats',
-    name:'stats'
+    title:'no title',
+    name:'noname'
   });
 
   var SubmonitorView = BaseView.extend({
@@ -236,17 +236,28 @@ function DashboardPage () {
           this.queryByHook('tasks-fold-container')
         );
       } else {
-        this.queryByHook('monitors-panel')
-          .find('section.events-panel')
-          .removeClass('col-md-6')
-          .addClass('col-md-12') ;
+        //this.queryByHook('monitors-panel')
+        //  .find('section.events-panel')
+        //  .removeClass('col-md-6')
+        //  .addClass('col-md-12') ;
         this.queryByHook('tasks-panel').remove();
 
-        /**
-        var stats = new PanelView({ col_class: 'col-md-6' });
-        stats.render();
-        stats.$el.appendTo( $('.dashboard') );
-        */
+        if (this.showStats===true) {
+          $.get('/api/customer').done(function(customer){
+            var stats = new PanelView({
+              col_class:'col-md-6',
+              title:'Stats',
+              name:'stats',
+              render:function(){
+                PanelView.prototype.render.apply(this);
+                var $container = this.queryByHook('panel-container');
+                $container.append( $(customer.config.kibana) );
+              }
+            });
+            stats.render();
+            stats.$el.appendTo( $('.admin-container.dashboard') );
+          });
+        }
       }
 
       this.monitorsFolding = new ItemsFolding( this.queryByHook('monitors-fold-container') );
@@ -322,13 +333,11 @@ function DashboardPage () {
     }
   });
 
-
   $(document).on('keypress',function(event){
     $('.js-searchable-box input').focus();
   });
 
-
-  function attachToHost(monitors){
+  function attachToHost (monitors) {
     var typesToGroup=['host','dstat','psaux'],
       groups={},
       groupedMonitors = new Backbone.Collection();
@@ -446,7 +455,8 @@ function DashboardPage () {
         new Index({
           monitorGroups: groups,
           monitors: monitors,
-          tasks: null
+          tasks: null,
+          showStats: (query.stats=='show')
         });
       });
       monitors.fetch();
@@ -456,7 +466,8 @@ function DashboardPage () {
         new Index({
           monitorGroups: groups,
           monitors: monitors,
-          tasks: tasks
+          tasks: tasks,
+          showStats: (query.stats=='show')
         });
       });
 
