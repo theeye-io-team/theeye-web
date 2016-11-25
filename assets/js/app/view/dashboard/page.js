@@ -181,6 +181,44 @@ function DashboardPage () {
     template: Templates['assets/templates/dashboard/monitor-row.hbs'],
     className:'monitorRow',
     events:{
+      'click button[data-hook=search]':'onClickSearch',
+      'click button[data-hook=workflow]':'onClickWorkflow',
+      'click button[data-hook=stats]':'onClickStats',
+      'click button[data-hook=edit]':'onClickEdit',
+    },
+    onClickSearch:function(event){
+      event.stopPropagation();
+      event.preventDefault();
+
+      var $search = $('.js-searchable-box');
+      $search.find('input').val( this.model.get('name') );
+      $search.find('button.search').trigger('click');
+
+      return false;
+    },
+    onClickWorkflow:function(event){
+      event.stopPropagation();
+      event.preventDefault();
+
+      window.location = '/admin/workflow?node=' + this.model.get('monitor').id ;
+
+      return false;
+    },
+    onClickStats:function(event){
+      event.stopPropagation();
+      event.preventDefault();
+
+      window.location = "/hoststats/" + this.model.get('host_id');
+
+      return false;
+    },
+    onClickEdit:function(event){
+      event.stopPropagation();
+      event.preventDefault();
+
+      window.location = "/admin/monitor#search=" + this.model.attributes.id;
+
+      return false;
     },
     initialize:function(){
       this.listenTo(this.model.get('submonitors'),'change',this.updateStateIcon);
@@ -247,7 +285,26 @@ function DashboardPage () {
   var TaskView = BaseView.extend({
     className:'taskRow',
     template: Templates['assets/templates/dashboard/task-row.hbs'],
-    events:{ },
+    events:{
+      'click button[data-hook=workflow]':'onClickWorkflow',
+      'click button[data-hook=edit]':'onClickEdit',
+    },
+    onClickWorkflow:function(event){
+      event.stopPropagation();
+      event.preventDefault();
+
+      window.location = '/admin/workflow?node=' + this.model.attributes.id ;
+
+      return false;
+    },
+    onClickEdit:function(event){
+      event.stopPropagation();
+      event.preventDefault();
+
+      window.location = "/admin/task#search=" + this.model.attributes.id;
+
+      return false;
+    },
   });
 
   /**
@@ -353,9 +410,22 @@ function DashboardPage () {
       this.queryByHook('more-options').slideToggle();
       this.queryByHook('show-more-options').toggleClass('glyphicon-plus glyphicon-minus');
     },
+    waitUntilStopInteraction:function(){
+      var self = this;
+      var timeout = setTimeout(function(){
+        self.checkMonitors();
+        self.monitorsFolding.fold();
+      },10000); // wait 10 secs , and hide again
+
+      $(document).one('click',function(){
+        clearTimeout(timeout);
+        self.waitUntilStopInteraction();
+      });
+    },
     hideUpAndRunning:function(event){
       this.$upandrunning.slideUp();
       this.$monitorsPanel.slideDown(); 
+      this.waitUntilStopInteraction();
     },
     render:function(){
       BaseView.prototype.render.apply(this, arguments);
@@ -421,9 +491,7 @@ function DashboardPage () {
         self.monitorsFolding.unfold();
       });
       searchbox.on('search:empty',function(){
-        log('stop searching');
-        self.checkMonitors();
-        self.monitorsFolding.fold();
+        self.waitUntilStopInteraction();
       });
 
       this.find('.tooltiped').tooltip();

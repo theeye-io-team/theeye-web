@@ -105,6 +105,7 @@
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <% monitors.forEach( function(monitor, key) {
           var tags = [
+            "id=" + monitor.resource.id,
             "description=" + monitor.resource.description,
             "hostname="    + monitor.resource.hostname,
             "type="        + monitor.type,
