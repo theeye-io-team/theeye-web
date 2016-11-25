@@ -10,13 +10,27 @@
   <!-- /SEARCH INPUT -->
 
   <!-- MONITORS -->
-  <div data-hook="monitors-panel" class="admin-panel">
+  <div data-hook="monitors-panel" class="monitors admin-panel">
     <section class="col-md-6 resources-panel events-panel">
-      <h3>Monitors</h3>
+      <h3>Monitors
+        <span data-hook="show-more-options"
+          title="group options"
+          class="tooltiped glyphicon glyphicon-plus">
+        </span>
+      </h3>
+
+      <!-- HIDDEN CONTAINER WITH EXTRA OPTIONS -->
+      <div data-hook="more-options" class="group hidden-container">
+        <div data-hook="grouping-select"></div>
+      </div>
+
+      <!-- ALL UP AND RUNNING -->
       <div data-hook="up-and-running" class="main-status hidden-container">
         <i class="glyphicon glyphicon-ok-sign big-icon"></i>
         <h4>All up and running</h4>
       </div>
+
+      <!-- MONITORS LIST -->
       <div>
         <div class="panel-group"
           id="monitor-accordion"

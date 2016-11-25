@@ -46,5 +46,25 @@ window.App.Collections.Monitors = Backbone.Collection.extend({
   url:'/api/resource',
   comparator:function(model){
     return monitorStatePriority[model.get('state')];
+  },
+  /**
+   * obtein a collection of every single tag.
+   * @return {Backbone.Collection}
+   */
+  tagsUnique:function(){
+    var tags = this.reduce(function(tags,monitor){
+      monitor.get('tags').forEach(function(tag){
+        if (tags.indexOf(tag)==-1) {
+          tags.push(tag);
+        }
+      });
+      return tags;
+    },[]);
+
+    return new Backbone.Collection(
+      tags.map(function(t){
+        return { name: t } ;
+      })
+    );
   }
 });

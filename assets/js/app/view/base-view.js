@@ -54,7 +54,13 @@ var BaseView = Backbone.View.extend({
     if (this.autoRender) this.render();
   },
   renderTemplate: function(){
-    var html = this.template(this||{});
+    var html;
+    if (typeof this.template == 'function') {
+      html = this.template(this||{});
+    } else {
+      html = this.template;
+    }
+
     this.$el.html( html );
 
     if (this.container) {

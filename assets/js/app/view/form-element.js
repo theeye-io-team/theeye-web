@@ -5,6 +5,23 @@
  *
  * global jquery
  *
+ * how to use :
+ *
+ * 1. include.
+ * 2. just instantiate with the element as argument
+ * 3. you can then set values from an object to the form
+ * 4. and you can get the values as an object
+ *
+ * code : 
+ *
+ * var form = new FormElement( $('form') );
+ *
+ * // set the form using object key as input name
+ * form.set({ name:'Facugon', class:'spartan', profession:'AHOO! AHOO! AHOO!' }); // asuming there is inputs with that names
+ *
+ * // get an object with the form data. use input names as key
+ * var data = form.get();
+ *
  */
 function FormElement (el){
   this.$el = (el instanceof jQuery) ? el : $(el);

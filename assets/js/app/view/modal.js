@@ -1,3 +1,21 @@
+/**
+ *
+ * @autho Facugon
+ *
+ * how to use.
+ * 1. include
+ * 2. instantiate
+ * 3. render
+ * 4. show
+ * 5. tada!
+ *
+ * code :
+ *
+ * var modal = new Modal();
+ * modal.render();
+ * modal.show();
+ *
+ */
 var Modal = function (specs) {
   var _template = Templates['assets/templates/modal.hbs'];
 
