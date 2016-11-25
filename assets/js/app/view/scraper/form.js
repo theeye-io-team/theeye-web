@@ -1,14 +1,15 @@
 /** 
  *
  * @author Facugon
+ * @namespace Views
  * @module Scraper
  *
- * global jquery
- * global select2
- * global Templates , compiled handlebars namespace
- *
- *
  */
+
+// var jQuery = require('jquery');
+// var Select2 = require('select2');
+// var Templates = require('templates'); // compiled handlebars templates, dont know where will be put exactly
+
 var Scraper = (function Scraper(){
 
   function methodHasBody (method) {
@@ -160,3 +161,5 @@ var Scraper = (function Scraper(){
   }
 
 })();
+
+//module.exports = Scraper;

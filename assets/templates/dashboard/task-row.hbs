@@ -1,4 +1,5 @@
-<div class="panel panel-default js-searchable-item">
+<div class="tasks-container panel panel-default js-searchable-item"
+  data-tags="{{ model.attributes.formatted_tags }}">
   <div class="panel-heading" role="tab">
     <h4 class="panel-title task">
       <span class="collapsed"
@@ -18,10 +19,12 @@
               <span class="glyphicon glyphicon-play"></span>
             </button>
             <button title="Workflow"
-              data-hook="workflow-button"
+              data-hook="workflow"
               class="tooltiped btn-icon-image flowchart-icon">
             </button>
-            <button class="btn btn-icon-image tooltiped" title="edit task">
+            <button title="Edit"
+              data-hook="edit"
+              class="btn btn-icon-image tooltiped">
               <span class="glyphicon glyphicon-edit"></span>
             </button>
           </div>

@@ -15,19 +15,19 @@
           </span>
           <span class="panel-item icons">
             <section data-hook="monitor-icons-block" style="float:right;">
-              <button data-search="{{ model.attributes.description }}"
-                class="btn btn-primary resource-search">
+              <button data-hook="search"
+                data-search="{{ model.attributes.description }}"
+                class="btn btn-icon-image resource-search">
                 <span class="glyphicon glyphicon-search"></span>
               </button>
-              <a title="Workflow"
-                data-hook="workflow-button"
-                href="/admin/workflow?node={{ model.attributes.monitor.id }}"
+              <button title="Workflow"
+                data-hook="workflow"
                 class="tooltiped btn-icon-image flowchart-icon">
-              </a>
-              <button class="btn btn-icon-image tooltiped" title="Stats">
+              </button>
+              <button data-hook="stats" class="btn btn-icon-image tooltiped" title="Stats">
                 <span class="glyphicon glyphicon-stats"></span>
               </button>
-              <button class="btn btn-icon-image tooltiped" title="Edit monitors">
+              <button data-hook="edit" class="btn btn-icon-image tooltiped" title="Edit monitors">
                 <span class="glyphicon glyphicon-edit"></span>
               </button>
             </section>

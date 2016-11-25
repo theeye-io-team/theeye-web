@@ -473,6 +473,9 @@ span.selectorIcon.glyphicon-check {
 .select2-container--default .select2-selection--single .select2-selection__rendered { line-height: 34px; }
 .select2-container--default .select2-selection--single .select2-selection__arrow { height: 34px; }
 
+.dashboard .select2-container { color: #FFF; }
+.dashboard .select2-selection__choice { color:#444; }
+
 
 /*
  * EVENTS PANEL
@@ -563,7 +566,7 @@ span.selectorIcon.glyphicon-check {
     font-size: 22px;
   }
   .events-panel .panel-item.icons .state-resource-container {
-    margin-top:6px;
+    margin-top:4px;
   }
 }
 /*
@@ -684,3 +687,8 @@ a.flowchart-icon {
 
 .scraper-section-title { text-align:center; margin-bottom:15px; }
 .scraper-section-title label { display:none }
+
+
+.dashboard .group select {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
+.dashboard .group .select2-container--default .select2-selection--multiple { border-radius: 0; background-color:#44567d; border:none; }
+.dashboard .monitors.admin-panel h3 span { float:right;top:6px;rigth:5px;cursor:pointer;color:#44567d;}

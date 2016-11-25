@@ -1,7 +1,23 @@
 'use strict';
 
-function DashboardPage () {
+/**
+ *
+ * @author Facugon
+ * @module DashboardPage
+ * @namespace Components
+ *
+ */
 
+//var jQuery = require('jquery');
+//var Modal = require('../modal');
+//var BaseView = require('../base-view');
+//var Templates = require('templates'); // global object
+//var Backbone = require('backbone');
+//var App = require('../../app'); // this one does not exist
+//var Select2 = require('select2');
+//var Select2Data = require('../../lib/select2data');
+
+function DashboardPage () {
   var stateIcons = {
     normal: "icon-check",
     failure: "icon-warn",
@@ -16,6 +32,15 @@ function DashboardPage () {
     "icon-nonsense": "unknown"
   };
 
+  /**
+   *
+   * view to fold items using a hidden container.
+   * folded items are moved from it's base container to this one.
+   * to unfold slide the container to show/hide content
+   *
+   * this is a custom view to attach events to the elements.
+   *
+   */
   var ItemsFolding = function (el) {
     var $el = $(el);
     var $items = $el.find('[data-hook=hidden-items]');
@@ -63,6 +88,11 @@ function DashboardPage () {
    *
    * Backbone Views
    *
+   *
+   * add custome panels on the fly.
+   * by default there are two panels, one for monitors and the other for tasks previuosly created and redered in the template.
+   * with this , we can add another one
+   *
    */
   var PanelView = BaseView.extend({
     tagName:'section',
@@ -72,6 +102,11 @@ function DashboardPage () {
     name:'noname'
   });
 
+  /**
+   *
+   * table row items for the collapsed content of the monitor rows.
+   *
+   */
   var SubmonitorView = BaseView.extend({
     tagName:'tr',
     className:'submonitoRow',
@@ -83,21 +118,7 @@ function DashboardPage () {
       event.preventDefault();
       event.stopPropagation();
 
-      var content = new LastEventView({ model: this.model });
-      content.render();
-
-      var modal = new Modal({
-        backdrop: false,
-        save_button: false,
-        'title': 'Last Event'
-      });
-      modal.render();
-      modal.content = content;
-      modal.$el.on('hidden.bs.modal',function(){
-        modal.remove();
-        content.remove();
-      });
-      modal.show();
+      new LastEventView({ model: this.model });
 
       return false;
     },
@@ -111,24 +132,93 @@ function DashboardPage () {
     },
   });
 
+  /**
+   *
+   * extend submonitors view , change the table format and data.
+   *
+   */
   var SubmonitorGroupView = SubmonitorView.extend({
     template:Templates['assets/templates/dashboard/submonitor-group-row.hbs'],
   });
 
+  /**
+   *
+   * modal to display last event reported by the monitor
+   *
+   */
   var LastEventView = BaseView.extend({
+    autoRender: true,
     template: Templates['assets/templates/dashboard/monitor-last-event.hbs'],
-    render:function(){
+    render: function(){
+      var self = this;
       BaseView.prototype.render.apply(this, arguments);
       this
         .queryByHook('container')
         .jsonViewer( this.model.get('last_event') );
+
+      var modal = new Modal({
+        backdrop: false,
+        save_button: false,
+        'title': 'Last Event'
+      });
+      modal.render();
+      modal.content = this;
+      modal.$el.on('hidden.bs.modal',function(){
+        modal.remove();
+        self.remove();
+      });
+      modal.show();
     }
   });
 
+  /**
+   *
+   * single monitor row view.
+   * trigger events when the monitor state changes
+   *
+   */
   var MonitorView = BaseView.extend({
     template: Templates['assets/templates/dashboard/monitor-row.hbs'],
     className:'monitorRow',
     events:{
+      'click button[data-hook=search]':'onClickSearch',
+      'click button[data-hook=workflow]':'onClickWorkflow',
+      'click button[data-hook=stats]':'onClickStats',
+      'click button[data-hook=edit]':'onClickEdit',
+    },
+    onClickSearch:function(event){
+      event.stopPropagation();
+      event.preventDefault();
+
+      var $search = $('.js-searchable-box');
+      $search.find('input').val( this.model.get('name') );
+      $search.find('button.search').trigger('click');
+
+      return false;
+    },
+    onClickWorkflow:function(event){
+      event.stopPropagation();
+      event.preventDefault();
+
+      window.location = '/admin/workflow?node=' + this.model.get('monitor').id ;
+
+      return false;
+    },
+    onClickStats:function(event){
+      event.stopPropagation();
+      event.preventDefault();
+
+      window.location = "/hoststats/" + this.model.get('host_id');
+
+      return false;
+    },
+    onClickEdit:function(event){
+      event.stopPropagation();
+      event.preventDefault();
+
+      window.location = "/admin/monitor#search=" + this.model.attributes.id;
+
+      return false;
     },
     initialize:function(){
       this.listenTo(this.model.get('submonitors'),'change',this.updateStateIcon);
@@ -160,10 +250,14 @@ function DashboardPage () {
     }
   });
 
+  /**
+   * monitors grouped rows. this works when grouping is applied only
+   */
   var MonitorsGroupView = MonitorView.extend({
     render:function(){
       BaseView.prototype.render.apply(this, arguments);
 
+      // change collapsed content table headers
       var columns =
         '<th></th>' + 
         '<th>Name</th>' +
@@ -185,19 +279,125 @@ function DashboardPage () {
     }
   });
 
-
+  /**
+   * tasks rows
+   */
   var TaskView = BaseView.extend({
     className:'taskRow',
     template: Templates['assets/templates/dashboard/task-row.hbs'],
-    events:{ },
+    events:{
+      'click button[data-hook=workflow]':'onClickWorkflow',
+      'click button[data-hook=edit]':'onClickEdit',
+    },
+    onClickWorkflow:function(event){
+      event.stopPropagation();
+      event.preventDefault();
+
+      window.location = '/admin/workflow?node=' + this.model.attributes.id ;
+
+      return false;
+    },
+    onClickEdit:function(event){
+      event.stopPropagation();
+      event.preventDefault();
+
+      window.location = "/admin/task#search=" + this.model.attributes.id;
+
+      return false;
+    },
   });
 
+  /**
+   *
+   * selection element for grouping of monitors
+   *
+   */
+  var ApplyGroupButton = Backbone.View.extend({
+    initialize: function(){
+      this.$el.html('<button style="position:absolute;top:0;right:0;" ' +
+        ' class="btn btn-default" title="apply grouping">' +
+        '<span class="glyphicon glyphicon-ok"></span></button>');
+      this.$el.find('button').tooltip();
+    },
+    events:{
+      'click button':function(event){
+        this.trigger('click');
+      }
+    }
+  });
+
+  var GroupingSelectionView = BaseView.extend({
+    initialize:function(options){
+      BaseView.prototype.initialize.apply(this,arguments);
+      this.selected = options.selected;
+      this.confirmButton = new ApplyGroupButton();
+      this.listenTo(this.confirmButton,'click',this.applyGrouping);
+      this.changed = false;
+    },
+    applyGrouping:function(){
+      var tags = this.find('select').val();
+      var uri = URI();
+      uri.removeSearch(/.*/);
+
+      if (Array.isArray(tags)&&tags.length!==0) {
+        tags.forEach(function(tag){
+          uri.addQuery('tags',tag);
+        });
+      }
+
+      window.location = uri.toString();
+    },
+    template:'<select name="tags" class="tags" ' +
+      ' style="width:100%;" multiple></select>',
+    events:{
+      'change select':'onChangeSelect'
+    },
+    onChangeSelect:function(event){
+      if (!this.changed) {
+        this.changed = true;
+        var $button = this.confirmButton;
+        this.find('.select2.select2-container').append( $button.$el )
+      }
+    },
+    render:function(){
+      BaseView.prototype.render.apply(this);
+
+      var data = this.collection.map(function(m){
+        return {
+          id: m.get('name'),
+          text: m.get('name')
+        }
+      });
+
+      var $select = this.find('select');
+      // set initial values
+      if (Array.isArray(this.selected)&&this.selected!==0) {
+        this.selected.forEach(function(item){
+          $select.append('<option value="'+item+'" selected>'+item+'</option>');
+        });
+      }
+      $select.select2({
+        //tags: true,
+        multiple: true,
+        placeholder: 'Grouping Tags',
+        data: data
+      });
+    }
+  });
+
+  /**
+   *
+   * page index, main view.
+   * all the other views render inside this
+   *
+   */
   var Index = BaseView.extend({
     autoRender: true,
     template: Templates['assets/templates/dashboard/page.hbs'],
     container: $('[data-hook=page-container]')[0],
     events:{
-      'click [data-hook=up-and-running] i':'hideUpAndRunning'
+      'click [data-hook=up-and-running] i':'hideUpAndRunning',
+      'click [data-hook=show-more-options]':'showMoreOptions',
     },
     initialize:function(options){
       BaseView.prototype.initialize.apply(this,arguments);
@@ -206,9 +406,26 @@ function DashboardPage () {
       this.monitorGroups = options.monitorGroups;
       this.tasks = options.tasks;
     },
-    hideUpAndRunning:function(){
+    showMoreOptions:function(event){
+      this.queryByHook('more-options').slideToggle();
+      this.queryByHook('show-more-options').toggleClass('glyphicon-plus glyphicon-minus');
+    },
+    waitUntilStopInteraction:function(){
+      var self = this;
+      var timeout = setTimeout(function(){
+        self.checkMonitors();
+        self.monitorsFolding.fold();
+      },10000); // wait 10 secs , and hide again
+
+      $(document).one('click',function(){
+        clearTimeout(timeout);
+        self.waitUntilStopInteraction();
+      });
+    },
+    hideUpAndRunning:function(event){
       this.$upandrunning.slideUp();
       this.$monitorsPanel.slideDown(); 
+      this.waitUntilStopInteraction();
     },
     render:function(){
       BaseView.prototype.render.apply(this, arguments);
@@ -260,17 +477,19 @@ function DashboardPage () {
         }
       }
 
-      this.monitorsFolding = new ItemsFolding( this.queryByHook('monitors-fold-container') );
+      this.monitorsFolding = new ItemsFolding(
+        this.queryByHook('monitors-fold-container')
+      );
       this.$upandrunning = this.queryByHook('up-and-running');
       this.$monitorsPanel = this.find('[data-hook=monitors-container]');
 
+      // events that can change monitors states
+      // check state every time and reorganize view
       this.listenTo(this.monitors,'sync',this.checkMonitors);
-      //this.listenTo(this.monitors,'change',this.checkMonitors);
       for (var i=0;i<this.monitorRows.views.length;i++) {
         var view = this.monitorRows.views[i];
         view.on('change:stateIcon',this.checkMonitors,this);
       }
-
       this.checkMonitors();
 
       // bind searchbox events
@@ -283,9 +502,16 @@ function DashboardPage () {
         self.monitorsFolding.unfold();
       });
       searchbox.on('search:empty',function(){
-        log('stop searching');
-        self.checkMonitors();
-        self.monitorsFolding.fold();
+        self.waitUntilStopInteraction();
+      });
+
+      this.find('.tooltiped').tooltip();
+
+      this.grouping = new GroupingSelectionView({
+        autoRender:true,
+        selected: this.tagsSelected,
+        el: this.queryByHook('grouping-select')[0],
+        collection: this.monitors.tagsUnique()
       });
     },
     checkMonitors:function(){
@@ -333,8 +559,11 @@ function DashboardPage () {
     }
   });
 
+  // anywere keypress event focus on search
   $(document).on('keypress',function(event){
-    $('.js-searchable-box input').focus();
+    if (document.activeElement.tagName.toLowerCase()!='input') {
+      $('.js-searchable-box input').focus();
+    }
   });
 
   function attachToHost (monitors) {
@@ -409,19 +638,25 @@ function DashboardPage () {
     return new Backbone.Collection(groups);
   }
 
-  (function index () {
+  //
+  // The page starts here (if the method name did not say enough...)
+  // fetch data, regroup, format, order and render page
+  //
+  (function start () {
     var monitors, tasks, synced;
-    var tags, query = URI().search(true);
+    var tagsToGroup, query = URI().search(true);
+    var credential = Cookies.getJSON('theeye').credential;
 
     if (Array.isArray(query.tags)) {
-      tags = query.tags.map(function(t){
+      tagsToGroup = query.tags.map(function(t){
         return t.toLowerCase() 
       });
     } else {
       if (typeof query.tags == 'string') {
-        tags = [query.tags.toLowerCase()];
+        tagsToGroup = [query.tags.toLowerCase()];
       }
     }
+    tagsToGroup = lodash.uniq(tagsToGroup);
 
     var MonitorsEvents = {
       update: function(resource){
@@ -438,7 +673,7 @@ function DashboardPage () {
       query: {
         customer: Cookies.getJSON('theeye').customer 
       },
-      onSubscribed:function(data,jwres){
+      onSubscribed: function(data,jwres){
         log('subscribed to event updates');
       },
       events: {
@@ -446,28 +681,29 @@ function DashboardPage () {
       }
     });
 
-    var credential = Cookies.getJSON('theeye').credential;
     if (query.tasks=='hide'||credential=='viewer') {
       // show only monitors
       monitors = new App.Collections.Monitors();
       monitors.once('sync',function(){
-        var groups = groupByTags(attachToHost(monitors),tags);
+        var groups = groupByTags(attachToHost(monitors),tagsToGroup);
         new Index({
           monitorGroups: groups,
           monitors: monitors,
           tasks: null,
-          showStats: (query.stats=='show')
+          showStats: (query.stats=='show'),
+          tagsSelected: tagsToGroup
         });
       });
       monitors.fetch();
     } else {
       synced = lodash.after(2,function(){
-        var groups = groupByTags(attachToHost(monitors),tags);
+        var groups = groupByTags(attachToHost(monitors),tagsToGroup);
         new Index({
           monitorGroups: groups,
           monitors: monitors,
           tasks: tasks,
-          showStats: (query.stats=='show')
+          showStats: (query.stats=='show'),
+          tagsSelected: tagsToGroup
         });
       });
 
@@ -483,3 +719,5 @@ function DashboardPage () {
     }
   })();
 }
+
+// module.exports = DashboardPage;

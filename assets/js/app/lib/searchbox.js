@@ -12,6 +12,7 @@
     var $searchInput = $searchBox.find('input');
 
     $searchInput.on('input', function(event){
+      lastTimer && clearTimeout(lastTimer);
       if( $searchInput.val() != '' ) {
         $searchCleanBtn.addClass('active');
         $emitter.trigger('search:start');
@@ -23,6 +24,7 @@
 
     function resetSearch () {
       $searchCleanBtn.removeClass('active');
+      $emitter.trigger('search:done');
       $emitter.trigger('search:empty');
       $emitter.searching = false;
       window.location.hash = '';
@@ -69,7 +71,7 @@
       lastTimer && clearTimeout(lastTimer);
 
       // early cut if no value to match
-      if(!$searchInput.val()) {
+      if (!$searchInput.val()) {
         $searchInput.trigger('input');
         $searchItems.slideDown(200);
         return;
@@ -100,12 +102,16 @@
           }
         }
       }
+
       // kludge!
       // if there's been any slide up/down, wait 10ms extra (200ms slide)
       // and trigger search:done
       if (waitForIt) {
         lastTimer = setTimeout(function(){
-          $emitter.trigger({type:'search:done', matches:$(searchItemSelector+':visible').length});
+          $emitter.trigger({
+            type:'search:done',
+            matches: $(searchItemSelector + ':visible').length
+          });
         },210);
       }
     });
