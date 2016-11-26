@@ -34,17 +34,6 @@ $(function() {
       $('input[type!=hidden]',$customerForm).first().focus();
     });
 
-    $state.on("customer_created", function() {
-      bootbox.alert('Customer created', function(){
-        $("create-customer").modal("hide");
-        window.location.reload();
-      });
-    });
-
-    $state.on("customer_create_error", function(ev, response) {
-      bootbox.alert(response);
-    });
-
     $customerForm.find("input[type=radio][name=target]").on("change", function(){
       var val = $(this).val();
       var $multihost = $customerForm.find('.hidden-container#hosts-selection');
@@ -60,14 +49,23 @@ $(function() {
       }
     });
 
-    $customerForm.on("submit", function(event) {
+    $customerForm.on('submit',function(event){
       event.preventDefault();
-      var vals = extractFormData('create', $customerForm);
 
-      jQuery.post("/customer", vals).done(function() {
-        $state.trigger("customer_created");
+      var form = new FormElement( $customerForm );
+      var data = form.get();
+
+      $.ajax({
+        url:'/customer',
+        method:'POST',
+        data: data
+      }).done(function() {
+        bootbox.alert('Customer created', function(){
+          $("create-customer").modal("hide");
+          window.location.reload();
+        });
       }).fail(function(xhr, err) {
-        $state.trigger("customer_create_error", xhr.responseText, err);
+        bootbox.alert(response);
       });
 
       return false;
@@ -102,49 +100,72 @@ $(function() {
       });
     }
 
-    $(".modal#edit-customer").on('shown.bs.modal', function(event) {
+    $(".modal#edit-customer").on('shown.bs.modal', function(event){
       event.preventDefault();
       event.stopPropagation();
+
       var customerId = event.relatedTarget.getAttribute('data-customer-id');
       $customerForm.data('customer-id',customerId);
       $customerForm.data('action','edit');
+
       jQuery.get("/customer/" + customerId).done(function(data) {
-        fillForm($customerForm, data.customer);
+        var form = new FormElement($customerForm);
+
+        var customer = data.customer;
+        customer.elasticsearch = JSON.stringify(customer.config.elasticsearch);
+        customer.kibana = customer.config.kibana||'';
+
+        form.set(customer);
       }).fail(function(xhr, err) {
-        $state.trigger("customer_fetch_error", xhr.responseText, err);
       });
+
+      return false;
     });
 
-    $state.on("customer_updated",function() {
-      $(".modal#edit-customer").modal("hide");
-      window.location.reload();
-    });
+    function setConfiguration (data) {
+      var elasticsearch = data.elasticsearch;
+      var kibana = data.kibana;
 
-    $state.on("customer_update_error",function(ev, resp) {
-      bootbox.alert(resp);
-    });
+      var updates = { config: {} };
+
+      // convert config into an object
+
+      try {
+        updates.config.elasticsearch = JSON.parse(elasticsearch);
+      } catch (e) {
+        bootbox.alert('The Elastic Search configuration is not a valid JSON object. Please, try again');
+        return null;
+      }
+
+      updates.config.kibana = kibana;
+      return updates;
+    }
 
     $customerForm.on("submit", function(event) {
       event.preventDefault();
-      var vals = extractFormData('edit', $customerForm);
 
-      try {
-        vals.config = JSON.parse(vals.config);
-      } catch (e) {
-        bootbox.alert('The Configuration provided is not a valid JSON object. Please, check again');
-        return;
-      }
+      var form = new FormElement( $customerForm );
+      var data = form.get();
+
+      var updates = setConfiguration(data);
+      if (!updates) return;
+
+      updates.description = data.description;
+      updates.emails = data.emails;
 
       jQuery.ajax({
         url: '/customer/' + $customerForm.data('customer-id'),
-        data: JSON.stringify(vals),
+        data: JSON.stringify(updates),
         contentType: 'application/json; charset=utf-8',
         dataType: 'json',
         type: 'PUT'
       }).done(function() {
-        $state.trigger('customer_updated');
+        bootbox.alert('customer updated',function(){
+          $(".modal#edit-customer").modal("hide");
+          window.location.reload();
+        });
       }).fail(function(xhr, err) {
-        $state.trigger('customer_update_error', xhr.responseText, err);
+        bootbox.alert(resp);
       });
 
       return false;
