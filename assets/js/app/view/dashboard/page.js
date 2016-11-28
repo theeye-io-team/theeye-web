@@ -458,23 +458,24 @@ function DashboardPage () {
         //  .removeClass('col-md-6')
         //  .addClass('col-md-12') ;
         this.queryByHook('tasks-panel').remove();
+      }
 
-        if (this.showStats===true) {
-          $.get('/api/customer').done(function(customer){
-            var stats = new PanelView({
-              col_class:'col-md-6',
-              title:'Stats',
-              name:'stats',
-              render:function(){
-                PanelView.prototype.render.apply(this);
-                var $container = this.queryByHook('panel-container');
-                $container.append( $(customer.config.kibana) );
-              }
-            });
-            stats.render();
-            stats.$el.appendTo( $('.admin-container.dashboard') );
+
+      if (this.showStats===true) {
+        $.get('/api/customer').done(function(customer){
+          var stats = new PanelView({
+            col_class:'col-md-6',
+            'title':'Stats',
+            name:'stats',
+            render:function(){
+              PanelView.prototype.render.apply(this);
+              var $container = this.queryByHook('panel-container');
+              $container.append( $(customer.config.kibana) );
+            }
           });
-        }
+          stats.render();
+          stats.$el.appendTo( $('.admin-container.dashboard') );
+        });
       }
 
       this.monitorsFolding = new ItemsFolding(
