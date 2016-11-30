@@ -10,7 +10,7 @@ var MonitorCopy = (function(){
     autoRender:true,
     tagName:'div',
     className:'form-group form-horizontal',
-    template: Templates['assets/templates/components/monitor-copy.hbs'],
+    template: Templates['assets/templates/components/monitor-copy-to.hbs'],
     initialize:function(){
       BaseView.prototype.initialize.apply(this,arguments);
 

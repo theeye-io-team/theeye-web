@@ -52,8 +52,33 @@ var ScraperModal = new (function ScraperModal(){
     })(_$modal);
 
     this.create = function () {
-      var scraper = new App.Models.ScraperMonitor({});
+
+      var _monitorCopy = new MonitorCopyFrom({
+        collection : monitors.filter(function(m){
+          return m.get('type') == 'scraper';
+        })
+      });
       _form.render();
+      _form.find('form').prepend( _monitorCopy.$el );
+
+      _monitorCopy.on('change',function(id){
+        if (!id) {
+          _form.reset();
+        } else {
+          var monitor = monitors.get(id);
+
+          var attrs = monitor.attributes;
+          var values = _.extend({
+            description: monitor.get('name')
+          },attrs.resource,attrs,(attrs.config.ps||attrs.config));
+
+          _form.data = values;
+        }
+      });
+
+
+      var scraper = new App.Models.ScraperMonitor({});
+
       _$modal.on('click','button[data-hook=save]',function(){
         var data = _form.data;
         scraper.set(data);

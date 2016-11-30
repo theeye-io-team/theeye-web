@@ -127,6 +127,9 @@ var Scraper = (function Scraper(){
     },
     focus : function(){
       this.find('input[name=description]').focus();
+    },
+    reset: function(){
+      this.find('form')[0].reset();
     }
   });
 

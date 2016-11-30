@@ -52,19 +52,19 @@ FormElement.prototype.get = function(){
 
 FormElement.prototype.set = function(values){
   var $form = this.$el;
-  for(var name in values){
+  for (var name in values) {
     var value = values[name];
     var $input = $form.find('[name=' + name + ']');
 
     var input = $input[0];
-    if( input ){
-      switch( input.type ){
+    if (input) {
+      switch (input.type) {
         case 'text':
         case 'textarea':
           input.value = value;
           break;
         case 'checkbox' :
-          if( typeof value == "boolean" ){
+          if (typeof value == "boolean") {
             input.checked = value;
           } else {
             input.checked = true;

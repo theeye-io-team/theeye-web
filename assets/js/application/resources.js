@@ -242,6 +242,7 @@ $(function(){
 
         var usersSelect = new UsersSelect({ collection: _users });
         usersSelect.render();
+
         $form.append( usersSelect.$el );
         fillForm($form,resource);
         var $modal = $('#'+type+'ResourceModal');
@@ -348,11 +349,36 @@ $(function(){
       $select.prop('multiple', true);
       $input.attr('value','');
 
+
+      var monitorCopy = new MonitorCopyFrom({
+        collection:  monitors.filter(function(m){
+          return m.get('type') == options.type;
+        })
+      });
+      $form.prepend( monitorCopy.$el );
+
+      monitorCopy.on('change',function(id){
+        if (!id) {
+          $form[0].reset();
+        } else {
+          var monitor = monitors.get(id),
+            form = new FormElement($form);
+
+          var attrs = monitor.attributes;
+          var values = _.extend({
+            description: monitor.get('name')
+          },attrs.resource,attrs,(attrs.config.ps||attrs.config));
+          form.set(values);
+        }
+      });
+
       var usersSelect = new UsersSelect({ collection: _users });
       usersSelect.render();
       $form.append( usersSelect.$el );
+
       $modal.one('hidden.bs.modal',function(){
         usersSelect.remove();
+        monitorCopy.remove();
       });
 
       $form[0].reset();
@@ -446,7 +472,7 @@ $(function(){
     }
 
     function setupResourceAction (options) {
-      if(options.action=='create' && options.type=='dstat'){
+      if (options.action=='create' && options.type=='dstat') {
 
         createStatMonitor(options);
 
@@ -454,10 +480,10 @@ $(function(){
         var formSelector = 'form#' + options.type + 'ResourceForm';
         var $form = $(formSelector);
         var $next = $form.find('.resource-host').next('.host-after');
-        if($next.length > 0) $next.remove();
-        if(options.action == 'edit') {
+        if ($next.length > 0) $next.remove();
+        if (options.action == 'edit') {
           setupEditResourceForm($form, options);
-        } else if(options.action == 'create') {
+        } else if (options.action == 'create') {
           setupCreateResourceForm($form, options);
         }
       }
