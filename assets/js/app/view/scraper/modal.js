@@ -23,8 +23,8 @@ var ScraperModal = new (function ScraperModal(){
         done(null,scraper);
       },
       error:function(model, response, options){
-        bootbox.alert('Error');
-        done(new Error());
+        bootbox.alert(response.responseText);
+        done(new Error(response.responseText));
       }
     });
   }
@@ -89,7 +89,7 @@ var ScraperModal = new (function ScraperModal(){
             });
           },
           error:function(model, response, options){
-            bootbox.alert(new Error('error'));
+            bootbox.alert(response.responseText);
           }
         });
       });
@@ -109,7 +109,7 @@ var ScraperModal = new (function ScraperModal(){
               });
             },
             error:function(model, response, options){
-              bootbox.alert('Error');
+              bootbox.alert(response.responseText);
             }
           });
         });
@@ -171,7 +171,7 @@ var ScraperModal = new (function ScraperModal(){
             });
           },
           error:function(model, response, options){
-            bootbox.alert(new Error('error'));
+            bootbox.alert(response.responseText);
           }
         });
       });
@@ -199,7 +199,7 @@ var ScraperModal = new (function ScraperModal(){
                 });
               },
               error:function(model, response, options){
-                bootbox.alert('Error');
+                bootbox.alert(response.responseText);
               }
             });
           });
@@ -207,7 +207,7 @@ var ScraperModal = new (function ScraperModal(){
           modal.show();
         },
         error:function(model, response, options){
-          bootbox.alert(arguments);
+          bootbox.alert(response.responseText);
         }
       });
     }
@@ -283,7 +283,8 @@ var ScraperModal = new (function ScraperModal(){
           done(null, {}, _tag);
         },
         error:function(model, response, options){
-          done(new Error('error'), {}, _tag);
+          bootbox.alert(response.responseText);
+          //done(new Error('error'), {}, _tag);
         }
       });
     }

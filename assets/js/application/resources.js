@@ -53,16 +53,6 @@ $(function(){
 
           hosts.forEach(function(id){
             var instance = monitor.clone();
-            instance.unset('resource');
-            instance.unset('resource_id');
-            instance.unset('id');
-            instance.unset('creation_date');
-            instance.unset('last_update');
-
-            var config = instance.attributes.config;
-            lodash.assign(instance.attributes, (config.ps||config));
-            instance.unset('config');
-
             instance.save({ host: id, host_id: id },{
               success:function(model, response, options){
                 bootbox.alert('monitors created',function(){
@@ -154,7 +144,9 @@ $(function(){
         data: JSON.stringify(values),
         contentType: "application/json; charset=utf-8"
       }).done(function(data){
-        window.location.reload();
+        bootbox.alert('Monitor created',function(){
+          window.location.reload();
+        });
       }).fail(function(xhr, err, xhrStatus){
         bootbox.alert(xhr.responseText);
       });
@@ -349,7 +341,6 @@ $(function(){
       $select.prop('multiple', true);
       $input.attr('value','');
 
-
       var monitorCopy = new MonitorCopyFrom({
         collection:  monitors.filter(function(m){
           return m.get('type') == options.type;
@@ -368,6 +359,8 @@ $(function(){
           var values = _.extend({
             description: monitor.get('name')
           },attrs.resource,attrs,(attrs.config.ps||attrs.config));
+
+          delete values.host, delete values.host_id;
           form.set(values);
         }
       });

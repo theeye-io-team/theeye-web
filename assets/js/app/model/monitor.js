@@ -31,6 +31,27 @@ window.App.Models.Monitor = BaseModel.extend({
       formatted_tags: tags,
       last_update_formated: last_update_formated
     });
+  },
+  save: function() {
+    //flatten into instance attributes
+    var config = this.get('config');
+    if (config) {
+      this.set(config.ps||config);
+    }
+
+    var resource = this.get('resource');
+    if (resource) {
+      this.set({'acl': resource.acl});
+    }
+
+    this.unset('resource');
+    this.unset('config');
+    this.unset('resource_id');
+    this.unset('id');
+    this.unset('creation_date');
+    this.unset('last_update');
+
+    return Backbone.Model.prototype.save.apply(this,arguments);
   }
 });
 
