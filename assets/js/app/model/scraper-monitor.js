@@ -1,6 +1,7 @@
+'use strict';
+
 window.App = window.App || {};
 window.App.Models = window.App.Models || {};
-
 window.App.Models.ScraperMonitor = BaseModel.extend({
   urlRoot:'/resource',
   parse:function(resource){

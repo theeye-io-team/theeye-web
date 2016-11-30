@@ -1,4 +1,12 @@
-/* global bootbox, Tags, $searchbox, debug, ScraperModal, Select2Data */
+/* global bootbox, Tags, $searchbox, debug */
+
+// var bootbox = require('bootbox');
+// var debug = require('debug');
+// var MonitorCopy = require('../app/view/components/monitor-copy.js');
+// var Modal = require('../app/view/modal');
+// var ScraperModal = require('../app/view/scraper/modal');
+// var Select2Data = require('../app/lib/select2data');
+
 $(function(){
 
   var log = debug('eye:web:admin:resources');
@@ -13,6 +21,66 @@ $(function(){
     },
   });
   window.Users = _users;
+
+  (function(){
+    $('button[data-hook=copy]').on('click',function(event){
+      event.preventDefault();
+      event.stopPropagation();
+
+      var id = $(this).data('monitor');
+      var monitor = monitors.get(id);
+
+      var modal = new Modal({ title: 'Copy monitor ' + monitor.get('name') });
+      modal.render();
+
+      var hosts = new Backbone.Collection(window.Hosts);
+      hosts.remove( monitor.get('host_id') );
+      var view = new MonitorCopy({
+        collection: hosts,
+        model: monitor, 
+      });
+
+      modal.content = view;
+      modal.$el.on('hidden.bs.modal',function(){
+        view.remove();
+        modal.remove();
+      });
+
+      modal
+        .find('button[data-hook=save]')
+        .on('click',function(event){
+          var hosts = view.values;
+
+          hosts.forEach(function(id){
+            var instance = monitor.clone();
+            instance.unset('resource');
+            instance.unset('resource_id');
+            instance.unset('id');
+            instance.unset('creation_date');
+            instance.unset('last_update');
+
+            var config = instance.attributes.config;
+            lodash.assign(instance.attributes, (config.ps||config));
+            instance.unset('config');
+
+            instance.save({ host: id, host_id: id },{
+              success:function(model, response, options){
+                bootbox.alert('monitors created',function(){
+                  window.location.reload();
+                });
+              },
+              error:function(model, response, options){
+                bootbox.alert(JSON.stringify(response));
+              }
+            });
+          });
+        });
+
+      modal.show();
+
+      return false;
+    });
+  })();
 
   /**
    *  MUTE
@@ -457,6 +525,7 @@ $(function(){
     * DELETE RESEOURCE FUNCTION
     */
     $(".deleteResource").on("click",function (event) {
+      event.preventDefault();
       bootbox.confirm('The resource will be removed. Want to continue?',
         function(confirmed){
           if(!confirmed) return;
@@ -464,6 +533,7 @@ $(function(){
           var idResource = $delTrigger.attr("data-resource_id");
           deleteResourceRequest(idResource);
         });
+      return false;
     });
 
     /**
@@ -753,14 +823,15 @@ $(function(){
           users.render();
           users.values = host.attributes.acl;
 
+          // append content
           modal.content = users;
-          modal.content = { el: $('<span class="clear" style="clear: left;display: block;"></span>')[0] };
+
           modal.$el.on('hidden.bs.modal',function(){
             users.remove();
             modal.remove();
           });
 
-          modal.$el
+          modal
             .find('[data-hook=save]')
             .on('click',function(){
               var values = users.values;

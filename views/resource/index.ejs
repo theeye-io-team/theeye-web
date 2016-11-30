@@ -7,6 +7,7 @@
 <% block('scripts','<script> window.Timeouts = ' + JSON.stringify(timeouts) + '; </script>') %>
 <% block('scripts','<script> window.Hosts = ' + JSON.stringify(hosts) + '; </script>') %>
 <% block('scripts','<script> window.Scripts = ' + JSON.stringify(scripts) + '; </script>') %>
+<% block('scripts','<script> window.monitors = new App.Collections.Monitors(' + JSON.stringify(monitors) + '); </script>') %>
 
 <!-- Main  -->
 <div class="admin-container monitorContainer">
@@ -107,9 +108,9 @@
           var tags = [
             "id=" + monitor.resource.id,
             "description=" + monitor.resource.description,
-            "hostname="    + monitor.resource.hostname,
-            "type="        + monitor.type,
-            "state="       + monitor.resource.state,
+            "hostname=" + monitor.resource.hostname,
+            "type=" + monitor.type,
+            "state=" + monitor.resource.state,
           ].concat(monitor.tags).join(',') %>
 
           <div class="itemRow panel panel-default js-searchable-item"
@@ -144,7 +145,8 @@
                       <% if( monitor.template ) { %>
                         <small>
                           <a href="/admin/hostgroup">
-                            <span title="This monitor was created from a template" class="glyphicon glyphicon-duplicate remark-success tooltiped">
+                            <span title="This monitor was created from a template"
+                              class="glyphicon glyphicon-list-alt remark-success tooltiped">
                             </span>
                           </a>
                         </small>&nbsp;
@@ -153,7 +155,7 @@
                       <%= monitor.resource.description %>
                       <span class="monitor-<%= monitor.enable?'enabled':'disabled' %>">
                         <small>
-                          <% if(monitor.resource.type != 'host'){ %>
+                          <% if (monitor.resource.type != 'host') { %>
                             (<%=monitor.resource.hostname%>)
                           <% } %>
                           <%= !monitor.enable? ' > disabled' :'' %> > <%= monitor.type %>
@@ -163,7 +165,7 @@
                     </span>
                     <div class="panel-item icons">
                       <% var type = (monitor.type||monitor.monitor_type); %>
-                      <% if (type != 'host' && type != 'psaux') { %>
+                      <% if (type != 'host' && type != 'psaux') { %><!-- TYPE SCRIPT, PROCESS OR SCRAPER -->
                         <button class="editResourceMonitor editResource <%= monitor.type %>ResourceEditAction btn btn-primary simple-btn tooltiped"
                           aria-label="Center Align"
                           title="Edit monitor"
@@ -178,8 +180,15 @@
                           <span class="glyphicon glyphicon-edit"></span>
                         </button>
 
+                        <button
+                          class="btn btn-primary tooltiped simple-btn"
+                          data-hook="copy"
+                          data-monitor="<%= monitor.id %>">
+                          <span class="glyphicon glyphicon-duplicate"></span>
+                        </button>
+
                         <%
-                            if( monitor.resource.alerts === false ) {
+                            if (monitor.resource.alerts===false) {
                               var muteClass='resource-enable-alerts';
                               var muteIcon='glyphicon-volume-up';
                               var muteTitle='Activate monitor alerts';

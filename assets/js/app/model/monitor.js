@@ -5,8 +5,11 @@ window.App.Models || ( window.App.Models = {} );
 window.App.Models.Monitor = BaseModel.extend({
   urlRoot:'/api/resource',
   parse:function(response){
-    var resource = response;
-    var monitor = resource.monitor;
+    if (Array.isArray(response)) {
+      response = response[0];
+    }
+    var resource = response.resource||response;
+    var monitor = resource.monitor||response.monitor;
 
     var last_update_formated = moment(resource.last_update)
       .startOf('second')
@@ -28,8 +31,6 @@ window.App.Models.Monitor = BaseModel.extend({
       formatted_tags: tags,
       last_update_formated: last_update_formated
     });
-  },
-  initialize:function(){
   }
 });
 
