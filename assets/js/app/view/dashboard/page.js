@@ -515,9 +515,15 @@ function DashboardPage () {
         collection: this.monitors.tagsUnique()
       });
     },
-    checkMonitors:function(){
+    checkMonitors: function(){
+      var self = this;
       var failing = this.monitors.filter(function(monitor){
         var state = monitor.get('state');
+        
+        // check if monitor is in the group
+        var model = self.monitorGroups.get( monitor );
+        if (!model) return false;
+
         return state=='failure'||state=='updates_stopped';
       });
 
