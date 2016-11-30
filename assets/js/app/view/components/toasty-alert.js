@@ -1,5 +1,10 @@
+/**
+ *
+ * @author Facugon
+ *
+ */
 
-//var Backbone = require('backbone');
+//var jquery = require('jquery');
 
 
 var ToastyAlert = function (options) {
