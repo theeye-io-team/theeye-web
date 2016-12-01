@@ -50,6 +50,7 @@ window.App.Models.Monitor = BaseModel.extend({
     this.unset('id');
     this.unset('creation_date');
     this.unset('last_update');
+    this.unset('_type');
 
     return Backbone.Model.prototype.save.apply(this,arguments);
   }

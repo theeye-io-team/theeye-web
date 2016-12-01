@@ -9,7 +9,7 @@
 
 var ToastyAlert = function (options) {
 
-  var $template = $('<div style="position:absolute;bottom:0px;right:-200px;z-index:1000;"><img src=/toasty/avatar_1.png></div>');
+  var $template = $('<div style="position:fixed;bottom:0px;right:-200px;z-index:1000;"><img src=/toasty/avatar_1.png></div>');
 
   $template.appendTo(document.body);
 
