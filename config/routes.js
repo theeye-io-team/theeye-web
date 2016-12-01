@@ -11,7 +11,7 @@ module.exports.routes = {
     if (sails.config.application.landingPage === false) {
       return res.redirect('/login');
     }
-    res.sendfile(sails.config.appPath + '/assets/theeye-landpage/index.html');
+    res.sendfile(sails.config.appPath + '/assets/landpage/index.html');
   },
   '/mantenimiento': { view: 'mantenimiento' },
   //AuthController routes
