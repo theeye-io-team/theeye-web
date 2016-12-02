@@ -11,7 +11,6 @@ $(function(){
    */
   function eventsTotal (events) {
     events=parseInt(events);
-    if ( (events/5) <= 5 ) return 0;
     var eventsCost = 4 ;
     return (events/5) * eventsCost ;
   }
@@ -72,7 +71,7 @@ $(function(){
     for (var prop in selections) {
       switch (prop) {
         case 'events' :
-          budget += eventsTotal(selections[prop]);
+          budget += ( eventsTotal(selections[prop]) - (eventsTotal(5)) );// one server/5 events free
           break;
         case 'support' :
           budget += supportTotal(selections[prop]);
