@@ -25,11 +25,15 @@ var MarioWalk = function (options) {
     var $audio = $('<audio src="/mario/short.mp3" preload="auto"></audio>');
   }
   $audio[0].play();
+  $audio.on('ended',function(){
+    $audio.remove();
+  });
 
   function animate ($el,next) {
     $el.animate({
       left: $(window).width() 
     },3600,'swing',function complete(){
+      $el.remove(); // remove when animation ends
     });
     
     setTimeout(next,500);

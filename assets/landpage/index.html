@@ -108,7 +108,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a class="navbar-brand" href="index.html"><img src="images/logo.png" alt=""></a>
+              <a class="navbar-brand" href="index.html"><img src="landpage/images/logo.png" alt=""></a>
             </div>  <!-- /navbar-header -->
 
             <!-- NAVIGATION LINKS -->
@@ -133,7 +133,7 @@
             YOUR LOGO
             ============================== -->
             <div class="logo">
-              <a href="#section-1"><img src="images/logo.png" alt="TheEye" title="TheEye" class=""></a>
+              <a href="#section-1"><img src="landpage/images/logo.png" alt="TheEye" title="TheEye" class=""></a>
             </div>
             <!-- /END YOUR LOGO -->
 
@@ -175,7 +175,7 @@
     ============================== -->
     <section id="section-1" class="way-we-work">
       <div class="container">
-        <div class="videoWrapper"><iframe width="1280" height="720" src="https://www.youtube.com/embed/9VkkkRO5RqU?rel=0&amp;controls=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe></div>
+        <div class="videoWrapper"><iframe width="1280" height="720" src="https://www.youtube.com/embed/0waKw6TTem0?rel=0&amp;controls=0&amp;showinfo=0" frameborder="0" allowfullscreen></iframe></div>
         <!-- /.features -->
       </div> <!-- /.container -->
     </section>
@@ -295,7 +295,8 @@
           <div class="tab-content responsive">
             <div role="tabpanel" class="devs-tab tab-pane active" id="devs">
               <form action="#">
-                <div class="row">
+                <input type="hidden" name="profile" value="individual"/>
+                <div data-hook="events" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 text-left">
                       <span class="pricing-title">EVENTS</span>
@@ -303,107 +304,112 @@
                     <div class="col-md-7 border">
                       <div class="button-slider">
                         <div class="btn-group">
-                          <input class="bootstrap-slider" id="bootstrap-slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="10"/>
-                          <div class="valueLabelzero">0</div>
-                          <div class="valueLabel">+100</div>
+                          <input class="bootstrap-slider" type="text" name="events"/>
+                          <div class="valueLabelzero">5</div>
+                          <div class="valueLabel">+400</div>
                         </div>
                       </div>                 
                     </div>
                     <div class="col-md-2 text-right border mobile-border mobile-center-pad">
-                      <span class="text-bold">Servers average: <span data-hook="servers-average">5</span></span>
+                      <span class="text-bold">Servers average: <span data-hook="servers-average"></span></span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>
-                <div class="row">
+                <div data-hook="support" class="row">
                   <div class="settings-content">
                     <div class="col-md-2">
                       <span class="pricing-title">SUPPORT</span>
                     </div>
                     <div class="col-md-7 border">
-                      <input type="radio" id="small-radio01" name="radio-small" value="5 business day support" checked />
-                      <label for="dev-radio01"><span></span>5 business day support</label>    
-                      <input type="radio" id="dev-radio02" name="radio-dev" value="1 business day support" />
-                      <label for="dev-radio02"><span></span>1 business day support</label>  
-                      <input type="radio" id="dev-radio03" name="radio-dev" value="24/7" />
+                      <input type="radio" id="dev-radio01" name="support" value="5 business day" checked />
+                      <label for="dev-radio01"><span></span>5 business day</label>    
+                      <input type="radio" id="dev-radio02" name="support" value="1 business day" />
+                      <label for="dev-radio02"><span></span>1 business day</label>  
+                      <input type="radio" id="dev-radio03" name="support" value="24/7" />
                       <label for="dev-radio03"><span></span>24/7</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold dev-support">5 business day support</span>
+                      <span data-hook="support-selected" class="text-bold">5 business day</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>  
-                <div class="row">
+                <div data-hook="retention" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">RETENTION HISTORICAL INFO</span>
                     </div>
                     <div class="col-md-7 border num-radio">
-                      <input type="radio" id="dev-1week" name="radio-num-dev" value="1 week" />
+                      <input type="radio" id="dev-1week" name="retention" value="1 week" />
                       <label for="dev-1week"><span><i>1</i></span>week</label>    
-                      <input type="radio" id="dev-1month" name="radio-num-dev" value="1 month" />
+                      <input type="radio" id="dev-1month" name="retention" value="1 month" />
                       <label for="dev-1month"><span><i>1</i></span>month</label>    
-                      <input type="radio" id="dev-6months" name="radio-num-dev" value="6 months" />
+                      <input type="radio" id="dev-6months" name="retention" value="6 months" />
                       <label for="dev-6months"><span><i>6</i></span>months</label>                            
-                      <input type="radio" id="dev-1year" name="radio-num-dev" value="1 year" />
+                      <input type="radio" id="dev-1year" name="retention" value="1 year" />
                       <label for="dev-1year"><span><i>1</i></span>year</label>                                                    
-                      <input type="radio" id="dev-3years" name="radio-num-dev" value="3 years" />
+                      <input type="radio" id="dev-3years" name="retention" value="3 years" />
                       <label for="dev-3years"><span><i>3</i></span>years</label> 
-                      <input type="radio" id="dev-0none" name="radio-num-dev" value="0 none" checked/>
+                      <input type="radio" id="dev-0none" name="retention" value="0 none" checked/>
                       <label for="dev-0none"><span><i>0</i></span>none<small>Talk to the Security IT guy about this desition ;)</small></label>                                                                                                    
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold dev-hinfo">0, No retention</span>
+                      <span data-hook="retention-selected" class="text-bold">0 none</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
-                </div>     
-                <div class="row">
+                </div>
+                <div data-hook="implementation" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">IMPLEMENTATION</span>
                     </div>
                     <div class="col-md-7 border implementation">
-                      <input type="radio" id="dev-self" name="radio-imp-dev" value="Self implementation" checked />
-                      <label for="dev-self" class="dev-self-icon"><span></span>Self<br>implementation</label>    
-
-                      <input type="radio" id="dev-remote" name="radio-imp-dev" value="Remote guide" />
-                      <label for="dev-remote" class="dev-remote-icon"><span></span>Remote<br>guide</label>  
-
-                      <input type="radio" id="dev-staff" name="radio-imp-dev" value="Consulting implementation &amp; training staff" />
-                      <label for="dev-staff" class="dev-staff-icon"><span></span>Consulting imp.<br>&amp; training staff</label>  
-
-                      <input type="radio" id="dev-training" name="radio-imp-dev" value="Consulting implementation &amp; remote training" checked />
-                      <label for="dev-training" class="dev-training-icon"><span></span>Consulting imp.<br>&amp; remote training</label>                          
+                      <input type="radio" id="dev-self" name="implementation" value="Self implementation" checked />
+                      <label for="dev-self" class="dev-self-icon">
+                        <span></span>Self<br>implementation
+                      </label>
+                      <input type="radio" id="dev-remote" name="implementation" value="Remotely assisted" />
+                      <label for="dev-remote" class="dev-remote-icon">
+                        <span></span>Remotely<br>assisted
+                      </label>
+                      <input type="radio" id="dev-training" name="implementation" value="Consulting imp. remote training" />
+                      <label for="dev-training" class="dev-training-icon">
+                        <span></span>Consulting imp.<br>&amp; remote training
+                      </label>
+                      <input type="radio" id="dev-staff" name="implementation" value="Consulting imp. training staff" />
+                      <label for="dev-staff" class="dev-staff-icon">
+                        <span></span>Consulting imp.<br>&amp; training staff
+                      </label>
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold dev-impl">Self Implementation</span>
+                      <span data-hook="implementation-selected" class="text-bold">Self Implementation</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div> 
-                <div class="row">
+                <div data-hook="reports" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">TRENDS AND REPORTS</span>
                     </div>
                     <div class="col-md-7 border trends">
-                      <input type="radio" id="dev-send" name="radio-dev-trends" value="Send" checked />
+                      <input type="radio" id="dev-send" name="reports" value="Send" />
                       <label for="dev-send" class="dev-send-icon"><span></span>Send</label>    
-                      <input type="radio" id="dev-dontsend" name="radio-dev-trends" value="Don't send" checked />
+                      <input type="radio" id="dev-dontsend" name="reports" value="Don't send" checked />
                       <label for="dev-dontsend" class="dev-dontsend-icon"><span></span>Don't send</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold dev-trends">Don't send</span>
+                      <span data-hook="reports-selected" class="text-bold dev-trends">Don't send</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
@@ -412,14 +418,15 @@
                 </div>                
                 <div class="pull-left full-width total-content">
                   <div class="col-xs-2">Total</div>
-                  <div class="col-xs-7 text-right">USD 0</div>
+                  <div class="col-xs-7 text-right">USD <span data-hook="total-anual">0</span></div>
                   <div class="col-xs-3 text-right"><button type="submit" class="submit-pricing">Buy now</button></div>
                 </div>
               </form>
             </div>
             <div role="tabpanel" class="small-tab tab-pane" id="small">
               <form action="#">
-                <div class="row">
+                <input type="hidden" name="profile" value="small"/>
+                <div data-hook="events" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 text-left">
                       <span class="pricing-title">EVENTS</span>
@@ -427,104 +434,104 @@
                     <div class="col-md-7 border">
                       <div class="button-slider">
                         <div class="btn-group">
-                          <input class="bootstrap-slider" id="bootstrap-slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="35"/>
-                          <div class="valueLabelzero">0</div>
-                          <div class="valueLabel">+100</div>
+                          <input class="bootstrap-slider" type="text" name="events"/>
+                          <div class="valueLabelzero">5</div>
+                          <div class="valueLabel">+400</div>
                         </div>
                       </div>                 
                     </div>
                     <div class="col-md-2 text-right border mobile-border mobile-center-pad">
-                      <span class="text-bold">Servers average: <span data-hook="servers-average">20</span></span>
+                      <span class="text-bold">Servers average: <span data-hook="servers-average"></span></span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>
-                <div class="row">
+                <div data-hook="support" class="row">
                   <div class="settings-content">
                     <div class="col-md-2">
                       <span class="pricing-title">SUPPORT</span>
                     </div>
                     <div class="col-md-7 border">
-                      <input type="radio" id="small-radio01" name="radio-small" value="5 business day support" checked />
-                      <label for="small-radio01"><span></span>5 business day support</label>    
-                      <input type="radio" id="small-radio02" name="radio-small" value="1 business day support" />
-                      <label for="small-radio02"><span></span>1 business day support</label>  
-                      <input type="radio" id="small-radio03" name="radio-small" value="24/7" />
+                      <input type="radio" id="small-radio01" name="support" value="5 business day" checked />
+                      <label for="small-radio01"><span></span>5 business day</label>    
+                      <input type="radio" id="small-radio02" name="support" value="1 business day" />
+                      <label for="small-radio02"><span></span>1 business day</label>  
+                      <input type="radio" id="small-radio03" name="support" value="24/7" />
                       <label for="small-radio03"><span></span>24/7</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold small-support">5 business day support</span>
+                      <span data-hook="support-selected" class="text-bold">5 business day</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>  
-                <div class="row">
+                <div data-hook="retention" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">RETENTION HISTORICAL INFO</span>
                     </div>
                     <div class="col-md-7 border num-radio">
-                      <input type="radio" id="small-1week" name="radio-num-small" value="1 week" checked />
+                      <input type="radio" id="small-1week" name="retention" value="1 week" checked />
                       <label for="small-1week"><span><i>1</i></span>week</label>    
-                      <input type="radio" id="small-1month" name="radio-num-small" value="1 month" />
+                      <input type="radio" id="small-1month" name="retention" value="1 month" />
                       <label for="small-1month"><span><i>1</i></span>month</label>    
-                      <input type="radio" id="small-6months" name="radio-num-small" value="6 months" />
+                      <input type="radio" id="small-6months" name="retention" value="6 months" />
                       <label for="small-6months"><span><i>6</i></span>months</label>                            
-                      <input type="radio" id="small-1year" name="radio-num-small" value="1 year" />
+                      <input type="radio" id="small-1year" name="retention" value="1 year" />
                       <label for="small-1year"><span><i>1</i></span>year</label>                                                    
-                      <input type="radio" id="small-3years" name="radio-num-small" value="3 years" />
+                      <input type="radio" id="small-3years" name="retention" value="3 years" />
                       <label for="small-3years"><span><i>3</i></span>years</label> 
-                      <input type="radio" id="small-0none" name="radio-num-small" value="0 none" />
+                      <input type="radio" id="small-0none" name="retention" value="0 none" />
                       <label for="small-0none"><span><i>0</i></span>none<small>(I'll use my own ELK implementation)</small></label>                                                                                                    
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold small-hinfo">1 Week</span>
+                      <span data-hook="retention-selected" class="text-bold">1 week</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>     
-                <div class="row">
+                <div data-hook="implementation" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">IMPLEMENTATION</span>
                     </div>
                     <div class="col-md-7 border implementation">
-                      <input type="radio" id="small-self" name="radio-imp-small" value="Self implementation" checked />
+                      <input type="radio" id="small-self" name="implementation" value="Self implementation" checked />
                       <label for="small-self" class="dev-self-icon"><span></span>Self<br>implementation</label>    
-                      <input type="radio" id="small-remote" name="radio-imp-small" value="Remote guide" />
-                      <label for="small-remote" class="dev-remote-icon"><span></span>Remote<br>guide</label>  
-                      <input type="radio" id="small-staff" name="radio-imp-small" value="Consulting implementation &amp; training staff" />
-                      <label for="small-staff" class="dev-staff-icon"><span></span>Consulting imp.<br>&amp; training staff</label>  
-                      <input type="radio" id="small-training" name="radio-imp-small" value="Consulting implementation &amp; remote training" />
+                      <input type="radio" id="small-remote" name="implementation" value="Remotely assisted" />
+                      <label for="small-remote" class="dev-remote-icon"><span></span>Remotely<br>assisted</label>  
+                      <input type="radio" id="small-training" name="implementation" value="Consulting imp. remote training" />
                       <label for="small-training" class="dev-training-icon"><span></span>Consulting imp.<br>&amp; remote training</label>                          
+                      <input type="radio" id="small-staff" name="implementation" value="Consulting imp. training staff" />
+                      <label for="small-staff" class="dev-staff-icon"><span></span>Consulting imp.<br>&amp; training staff</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold small-impl">Self Implementation</span>
+                      <span data-hook="implementation-selected" class="text-bold">Self Implementation</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div> 
-                <div class="row">
+                <div data-hook="reports" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">TRENDS AND REPORTS</span>
                     </div>
                     <div class="col-md-7 border trends">
-                      <input type="radio" id="small-send" name="radio-small-trends" value="Send" />
+                      <input type="radio" id="small-send" name="reports" value="Send" />
                       <label for="small-send" class="dev-send-icon"><span></span>Send</label>    
-                      <input type="radio" id="small-dontsend" name="radio-small-trends" value="Don't send" checked />
+                      <input type="radio" id="small-dontsend" name="reports" value="Don't send" checked />
                       <label for="small-dontsend" class="dev-dontsend-icon"><span></span>Don't send</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold small-support">Don't send</span>
+                      <span data-hook="reports-selected" class="text-bold dev-trends">Don't send</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
@@ -533,14 +540,15 @@
                 </div>                
                 <div class="pull-left full-width total-content">
                   <div class="col-xs-2">Total</div>
-                  <div class="col-xs-7 text-right">USD 80</div>
+                  <div class="col-xs-7 text-right">USD <span data-hook="total-anual">0</span></div>
                   <div class="col-xs-3 text-right"><button type="submit" class="submit-pricing">Buy now</button></div>
                 </div>
               </form>  
             </div>
             <div role="tabpanel" class="medium-tab tab-pane" id="medium">
               <form action="#">
-                <div class="row">
+                <input type="hidden" name="profile" value="medium"/>
+                <div data-hook="events" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 text-left">
                       <span class="pricing-title">EVENTS</span>
@@ -548,104 +556,104 @@
                     <div class="col-md-7 border">
                       <div class="button-slider">
                         <div class="btn-group">
-                          <input class="bootstrap-slider" id="bootstrap-slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="80"/>
-                          <div class="valueLabelzero">0</div>
-                          <div class="valueLabel">+100</div>
+                          <input class="bootstrap-slider" type="text" name="events"/>
+                          <div class="valueLabelzero">5</div>
+                          <div class="valueLabel">+400</div>
                         </div>
                       </div>                 
                     </div>
                     <div class="col-md-2 text-right border mobile-border mobile-center-pad">
-                      <span class="text-bold">Servers average: <span data-hook="servers-average">99</span></span>
+                      <span class="text-bold">Servers average: <span data-hook="servers-average"></span></span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>
-                <div class="row">
+                <div data-hook="support" class="row">
                   <div class="settings-content">
                     <div class="col-md-2">
                       <span class="pricing-title">SUPPORT</span>
                     </div>
                     <div class="col-md-7 border">
-                      <input type="radio" id="medium-radio01" name="radio-medium" value="5 business day support" />
-                      <label for="medium-radio01"><span></span>5 business day support</label>    
-                      <input type="radio" id="medium-radio02" name="radio-medium" value="1 business day support" checked />
-                      <label for="medium-radio02"><span></span>1 business day support</label>  
-                      <input type="radio" id="medium-radio03" name="radio-medium" value="24/7" />
+                      <input type="radio" id="medium-radio01" name="support" value="5 business day" />
+                      <label for="medium-radio01"><span></span>5 business day</label>    
+                      <input type="radio" id="medium-radio02" name="support" value="1 business day" checked />
+                      <label for="medium-radio02"><span></span>1 business day</label>  
+                      <input type="radio" id="medium-radio03" name="support" value="24/7" />
                       <label for="medium-radio03"><span></span>24/7</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold medium-support">5 business day support</span>
+                      <span data-hook="support-selected" class="text-bold">1 business day</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>  
-                <div class="row">
+                <div data-hook="retention" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">RETENTION HISTORICAL INFO</span>
                     </div>
                     <div class="col-md-7 border num-radio">
-                      <input type="radio" id="medium-1week" name="radio-num-medium" value="1 week" />
+                      <input type="radio" id="medium-1week" name="retention" value="1 week" />
                       <label for="medium-1week"><span><i>1</i></span>week</label>    
-                      <input type="radio" id="medium-1month" name="radio-num-medium" value="1 month" />
+                      <input type="radio" id="medium-1month" name="retention" value="1 month" />
                       <label for="medium-1month"><span><i>1</i></span>month</label>    
-                      <input type="radio" id="medium-6months" name="radio-num-medium" value="6 months" />
+                      <input type="radio" id="medium-6months" name="retention" value="6 months" />
                       <label for="medium-6months"><span><i>6</i></span>months</label>                            
-                      <input type="radio" id="medium-1year" name="radio-num-medium" value="1 year" checked />
+                      <input type="radio" id="medium-1year" name="retention" value="1 year" checked />
                       <label for="medium-1year"><span><i>1</i></span>year</label>                                                    
-                      <input type="radio" id="medium-3years" name="radio-num-medium" value="3 years" />
+                      <input type="radio" id="medium-3years" name="retention" value="3 years" />
                       <label for="medium-3years"><span><i>3</i></span>years</label> 
-                      <input type="radio" id="medium-0none" name="radio-num-medium" value="0 none" />
+                      <input type="radio" id="medium-0none" name="retention" value="0 none" />
                       <label for="medium-0none"><span><i>0</i></span>none<small>(I'll use my own ELK implementation)</small></label>                                                                                                    
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold medium-hinfo">5 years</span>
+                      <span data-hook="retention-selected" class="text-bold">1 year</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>     
-                <div class="row">
+                <div data-hook="implementation" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">IMPLEMENTATION</span>
                     </div>
                     <div class="col-md-7 border implementation">
-                      <input type="radio" id="medium-self" name="radio-imp-medium" value="Self implementation" />
+                      <input type="radio" id="medium-self" name="implementation" value="Self implementation" />
                       <label for="medium-self" class="dev-self-icon"><span></span>Self<br>implementation</label>    
-                      <input type="radio" id="medium-remote" name="radio-imp-medium" value="Remote guide" checked />
-                      <label for="medium-remote" class="dev-remote-icon"><span></span>Remote<br>guide</label>  
-                      <input type="radio" id="medium-staff" name="radio-imp-medium" value="Consulting implementation &amp; training staff" />
-                      <label for="medium-staff" class="dev-staff-icon"><span></span>Consulting imp.<br>&amp; training staff</label>  
-                      <input type="radio" id="medium-training" name="radio-imp-medium" value="Consulting implementation &amp; remote training" />
+                      <input type="radio" id="medium-remote" name="implementation" value="Remotely assisted" checked />
+                      <label for="medium-remote" class="dev-remote-icon"><span></span>Remotely<br>assisted</label>  
+                      <input type="radio" id="medium-training" name="implementation" value="Consulting imp. remote training" />
                       <label for="medium-training" class="dev-training-icon"><span></span>Consulting imp.<br>&amp; remote training</label>                          
+                      <input type="radio" id="medium-staff" name="implementation" value="Consulting imp. training staff" />
+                      <label for="medium-staff" class="dev-staff-icon"><span></span>Consulting imp.<br>&amp; training staff</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold medium-impl">5 business day support</span>
+                      <span data-hook="implementation-selected" class="text-bold">Remotely assisted</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div> 
-                <div class="row">
+                <div data-hook="reports" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">TRENDS AND REPORTS</span>
                     </div>
                     <div class="col-md-7 border trends">
-                      <input type="radio" id="medium-send" name="radio-medium-trends" value="Send" checked />
+                      <input type="radio" id="medium-send" name="reports" value="Send" checked />
                       <label for="medium-send" class="dev-send-icon"><span></span>Send</label>    
-                      <input type="radio" id="medium-dontsend" name="radio-medium-trends" value="Don't send" />
+                      <input type="radio" id="medium-dontsend" name="reports" value="Don't send" />
                       <label for="medium-dontsend" class="dev-dontsend-icon"><span></span>Don't send</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold medium-trends">5 business day support</span>
+                      <span data-hook="reports-selected" class="text-bold dev-trends">Send</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
@@ -654,14 +662,15 @@
                 </div>                
                 <div class="pull-left full-width total-content">
                   <div class="col-xs-2">Total</div>
-                  <div class="col-xs-7 text-right">USD 4.000</div>
+                  <div class="col-xs-7 text-right">USD <span data-hook="total-anual">0</span></div>
                   <div class="col-xs-3 text-right"><button type="submit" class="submit-pricing">Buy now</button></div>
                 </div>
               </form>    
             </div>
             <div role="tabpanel" class="saas-tab tab-pane" id="saas">
               <form action="#">
-                <div class="row">
+                <input type="hidden" name="profile" value="saas"/>
+                <div data-hook="events" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 text-left">
                       <span class="pricing-title">EVENTS</span>
@@ -669,104 +678,102 @@
                     <div class="col-md-7 border">
                       <div class="button-slider">
                         <div class="btn-group">
-                          <input class="bootstrap-slider" id="bootstrap-slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="100"/>
-                          <div class="valueLabelzero">0</div>
-                          <div class="valueLabel">+100</div>
+                          <input class="bootstrap-slider" type="text" name="events"/>
+                          <div class="valueLabelzero">5</div>
+                          <div class="valueLabel">+400</div>
                         </div>
                       </div>                 
                     </div>
                     <div class="col-md-2 text-right border mobile-border mobile-center-pad">
-                      <span class="text-bold">Servers average: <span data-hook="servers-average">200</span></span>
+                      <span class="text-bold">Servers average: <span data-hook="servers-average"></span></span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>
-                <div class="row">
+                <div data-hook="support" class="row">
                   <div class="settings-content">
                     <div class="col-md-2">
                       <span class="pricing-title">SUPPORT</span>
                     </div>
                     <div class="col-md-7 border">
-                      <input type="radio" id="saas-radio01" name="radio-saas" value="5 business day support" />
-                      <label for="saas-radio01"><span></span>5 business day support</label>    
-                      <input type="radio" id="saas-radio02" name="radio-saas" value="1 business day support" checked />
-                      <label for="saas-radio02"><span></span>1 business day support</label>  
-                      <input type="radio" id="saas-radio03" name="radio-saas" value="24/7" />
+                      <input type="radio" id="saas-radio02" name="support" value="1 business day" checked />
+                      <label for="saas-radio02"><span></span>1 business day</label>  
+                      <input type="radio" id="saas-radio03" name="support" value="24/7" />
                       <label for="saas-radio03"><span></span>24/7</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold saas-support">5 business day support</span>
+                      <span data-hook="support-selected" class="text-bold">1 business day</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>  
-                <div class="row">
+                <div data-hook="retention" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">RETENTION HISTORICAL INFO</span>
                     </div>
                     <div class="col-md-7 border num-radio">
-                      <input type="radio" id="saas-1week" name="radio-num-saas" value="1 week" />
+                      <input type="radio" id="saas-1week" name="retention" value="1 week" />
                       <label for="saas-1week"><span><i>1</i></span>week</label>    
-                      <input type="radio" id="saas-1month" name="radio-num-saas" value="1 month" />
+                      <input type="radio" id="saas-1month" name="retention" value="1 month" />
                       <label for="saas-1month"><span><i>1</i></span>month</label>    
-                      <input type="radio" id="saas-6months" name="radio-num-saas" value="6 months" />
+                      <input type="radio" id="saas-6months" name="retention" value="6 months" />
                       <label for="saas-6months"><span><i>6</i></span>months</label>                            
-                      <input type="radio" id="saas-1year" name="radio-num-saas" value="1 year" checked/>
+                      <input type="radio" id="saas-1year" name="retention" value="1 year" checked/>
                       <label for="saas-1year"><span><i>1</i></span>year</label>                                                    
-                      <input type="radio" id="saas-3years" name="radio-num-saas" value="3 years" />
+                      <input type="radio" id="saas-3years" name="retention" value="3 years" />
                       <label for="saas-3years"><span><i>3</i></span>years</label> 
-                      <input type="radio" id="saas-0none" name="radio-num-saas" value="0 none" />
+                      <input type="radio" id="saas-0none" name="retention" value="0 none" />
                       <label for="saas-0none"><span><i>0</i></span>none<small>(I'll use my own ELK implementation)</small></label>                                                                                                    
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold saas-hinfo">0 No retention</span>
+                      <span data-hook="retention-selected" class="text-bold">1 year</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>     
-                <div class="row">
+                <div data-hook="implementation" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">IMPLEMENTATION</span>
                     </div>
                     <div class="col-md-7 border implementation">
-                      <input type="radio" id="saas-self" name="radio-imp-saas" value="Self implementation" />
+                      <input type="radio" id="saas-self" name="implementation" value="Self implementation" />
                       <label for="saas-self" class="dev-self-icon"><span></span>Self<br>implementation</label>    
-                      <input type="radio" id="saas-remote" name="radio-imp-saas" value="Remote guide" />
-                      <label for="saas-remote" class="dev-remote-icon"><span></span>Remote<br>guide</label>  
-                      <input type="radio" id="saas-staff" name="radio-imp-saas" value="Consulting implementation &amp; training staff" checked/>
-                      <label for="saas-staff" class="dev-staff-icon"><span></span>Consulting imp.<br>&amp; training staff</label>  
-                      <input type="radio" id="saas-training" name="radio-imp-saas" value="Consulting implementation &amp; remote training" />
+                      <input type="radio" id="saas-remote" name="implementation" value="Remotely assisted" />
+                      <label for="saas-remote" class="dev-remote-icon"><span></span>Remotely<br>assisted</label>  
+                      <input type="radio" id="saas-training" name="implementation" value="Consulting imp. remote training" checked/>
                       <label for="saas-training" class="dev-training-icon"><span></span>Consulting imp.<br>&amp; remote training</label>                          
+                      <input type="radio" id="saas-staff" name="implementation" value="Consulting imp. training staff"/>
+                      <label for="saas-staff" class="dev-staff-icon"><span></span>Consulting imp.<br>&amp; training staff</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold saas-impl">5 business day support</span>
+                      <span data-hook="implementation-selected" class="text-bold">Consulting imp. remote training</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div> 
-                <div class="row">
+                <div data-hook="reports" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">TRENDS AND REPORTS</span>
                     </div>
                     <div class="col-md-7 border trends">
-                      <input type="radio" id="saas-send" name="radio-saas-trends" value="Send" checked/>
+                      <input type="radio" id="saas-send" name="reports" value="Send" checked/>
                       <label for="saas-send" class="dev-send-icon"><span></span>Send</label>    
-                      <input type="radio" id="saas-dontsend" name="radio-saas-trends" value="Don't send" />
+                      <input type="radio" id="saas-dontsend" name="reports" value="Don't send" />
                       <label for="saas-dontsend" class="dev-dontsend-icon"><span></span>Don't send</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold saas-trends">5 business day support</span>
+                      <span data-hook="reports-selected" class="text-bold dev-trends">Send</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
@@ -775,14 +782,15 @@
                 </div>                
                 <div class="pull-left full-width total-content">
                   <div class="col-xs-2">Total</div>
-                  <div class="col-xs-7 text-right">USD 18.000</div>
+                  <div class="col-xs-7 text-right">USD <span data-hook="total-anual">0</span></div>
                   <div class="col-xs-3 text-right"><button type="submit" class="submit-pricing">Buy now</button></div>
                 </div>
               </form>   
             </div>
             <div role="tabpanel" class="premise-tab tab-pane" id="premise">
               <form action="#">
-                <div class="row">
+                <input type="hidden" name="profile" value="premise"/>
+                <div data-hook="events" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 text-left">
                       <span class="pricing-title">EVENTS</span>
@@ -790,96 +798,92 @@
                     <div class="col-md-7 border">
                       <div class="button-slider">
                         <div class="btn-group">
-                          <input class="bootstrap-slider" id="bootstrap-slider" type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="100"/>
-                          <div class="valueLabelzero">0</div>
-                          <div class="valueLabel">+100</div>
+                          <input class="bootstrap-slider" type="text" name="events"/>
+                          <div class="valueLabelzero">5</div>
+                          <div class="valueLabel">+400</div>
                         </div>
                       </div>                 
                     </div>
                     <div class="col-md-2 text-right border mobile-border mobile-center-pad">
-                      <span class="text-bold">Servers average: <span data-hook="servers-average">400</span></span>
+                      <span class="text-bold">Servers average: <span data-hook="servers-average"></span></span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>
-                <div class="row">
+                <div data-hook="support" class="row">
                   <div class="settings-content">
                     <div class="col-md-2">
                       <span class="pricing-title">SUPPORT</span>
                     </div>
                     <div class="col-md-7 border">
-                      <input type="radio" id="premise-radio01" name="radio-dev" value="5 business day support" />
-                      <label for="premise-radio01"><span></span>5 business day support</label>    
-                      <input type="radio" id="premise-radio02" name="radio-dev" value="1 business day support" />
-                      <label for="premise-radio02"><span></span>1 business day support</label>  
-                      <input type="radio" id="premise-radio03" name="radio-dev" value="24/7" checked />
+                      <input type="radio" id="premise-radio02" name="support" value="1 business day" checked />
+                      <label for="premise-radio02"><span></span>1 business day</label>  
+                      <input type="radio" id="premise-radio03" name="support" value="24/7" />
                       <label for="premise-radio03"><span></span>24/7</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold premise-support">5 business day support</span>
+                      <span data-hook="support-selected" class="text-bold">1 business day</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>  
-                <div class="row">
+                <div data-hook="license" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
-                      <span class="pricing-title">RETENTION HISTORICAL INFO</span>
+                      <span class="pricing-title">LICENSE</span>
                     </div>
                     <div class="col-md-7 border num-radio">
-                      <input type="radio" id="premise-1year" name="radio-num-premise" value="1 year" />
-                      <label for="premise-1year"><span><i>1</i></span>year</label>                                                    
-                      <input type="radio" id="premise-3years" name="radio-num-premise" value="3 years" checked />
-                      <label for="premise-3years"><span><i>3</i></span>years</label> 
+                      <input type="radio" id="premise-1year" name="license" value="1 year" checked/>
+                      <label for="premise-1year"><span><i>1</i></span>year</label>
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold premise-hinfo">5 years</span>
+                      <span data-hook="license-selected" class="text-bold">1 year</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div>     
-                <div class="row">
+                <div data-hook="implementation" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">IMPLEMENTATION</span>
                     </div>
                     <div class="col-md-7 border implementation">
-                      <input type="radio" id="premise-self" name="radio-imp-premise" value="Self implementation" />
-                      <label for="premise-self" class="dev-self-icon"><span></span>Self<br>implementation</label>    
-                      <input type="radio" id="premise-remote" name="radio-imp-premise" value="Remote guide" />
-                      <label for="premise-remote" class="dev-remote-icon"><span></span>Remote<br>guide</label>  
-                      <input type="radio" id="premise-staff" name="radio-imp-premise" value="Consulting implementation &amp; training staff" />
-                      <label for="premise-staff" class="dev-staff-icon"><span></span>Consulting imp.<br>&amp; training staff</label>  
-                      <input type="radio" id="premise-training" name="radio-imp-premise" value="Consulting implementation &amp; remote training" />
-                      <label for="premise-training" class="dev-training-icon"><span></span>Consulting imp.<br>&amp; remote training</label>                          
+                      <input type="radio" id="premise-self" name="implementation" value="Self implementation" />
+                      <label for="premise-self" class="dev-self-icon"><span></span>Self<br>implementation</label>
+                      <input type="radio" id="premise-remote" name="implementation" value="Remotely assisted" />
+                      <label for="premise-remote" class="dev-remote-icon"><span></span>Remotely<br>assisted</label>
+                      <input type="radio" id="premise-training" name="implementation" value="Consulting imp. remote training" checked/>
+                      <label for="premise-training" class="dev-training-icon"><span></span>Consulting imp.<br>&amp; remote training</label>
+                      <input type="radio" id="premise-staff" name="implementation" value="Consulting imp. training staff" />
+                      <label for="premise-staff" class="dev-staff-icon"><span></span>Consulting imp.<br>&amp; training staff</label>
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold premise-impl">5 business day support</span>
+                      <span data-hook="implementation-selected" class="text-bold">Consulting imp. remote training</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
                     </div>
                   </div>
                 </div> 
-                <div class="row">
+                <div data-hook="reports" class="row">
                   <div class="settings-content">
                     <div class="col-md-2 mobile-border-top">
                       <span class="pricing-title">TRENDS AND REPORTS</span>
                     </div>
                     <div class="col-md-7 border trends">
-                      <input type="radio" id="premise-send" name="radio-premise-trends" value="Send" />
+                      <input type="radio" id="premise-send" name="reports" value="Send" checked />
                       <label for="premise-send" class="dev-send-icon"><span></span>Send</label>    
-                      <input type="radio" id="premise-dontsend" name="radio-premise-trends" value="Don't send" />
+                      <input type="radio" id="premise-dontsend" name="reports" value="Don't send" />
                       <label for="premise-dontsend" class="dev-dontsend-icon"><span></span>Don't send</label>  
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
-                      <span class="text-bold premise-trends">5 business day support</span>
+                      <span data-hook="reports-selected" class="text-bold dev-trends">Send</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="Lorem Ipsum amet"></span>
@@ -888,7 +892,7 @@
                 </div>                
                 <div class="pull-left full-width total-content">
                   <div class="col-xs-2">Total</div>
-                  <div class="col-xs-7 text-right">USD 36.000</div>
+                  <div class="col-xs-7 text-right">USD <span data-hook="total-anual">0</span></div>
                   <div class="col-xs-3 text-right"><button type="submit" class="submit-pricing">Buy now</button></div>
                 </div>
               </form>   
@@ -918,15 +922,12 @@
 
                     <p class="email-success"><i class="ef icon_check_alt2"></i> Your quote has successfully been sent.</p>
                     <p class="email-failed"><i class="ef icon_close_alt2"></i> Something went wrong!</p>
-
                     <div class="form-group">
                       <input type="text" class="form-control input-lg" name="name" id="name" placeholder="Your Name">
                     </div>
-
                     <div class="form-group">
                       <input type="email" class="form-control input-lg" name="email" id="email" placeholder="Email">
                     </div>
-
                     <div class="form-group">
                       <textarea name="message" class="form-control input-lg" id="message" cols="30" rows="8" placeholder="Message"></textarea>
                     </div>
@@ -989,6 +990,7 @@
     <script src="landpage/js/jquery.backgroundvideo.js"></script>
     <script src="landpage/js/responsive-tabs.js"></script>
     <script src="landpage/js/slider.js"></script>
+    <script src="landpage/js/form-element.js"></script>
     <script src="landpage/js/calc.js"></script>
     <script src="landpage/js/custom-scripts.js"></script>
 
