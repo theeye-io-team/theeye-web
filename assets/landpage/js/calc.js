@@ -105,7 +105,7 @@ $(function(){
     var self = this;
     options = $.extend({},{
       min: 5,
-      max: 400,
+      max: 500,
       step: 5,
       value: 5
     },options);
@@ -181,6 +181,6 @@ $(function(){
   new Calc($('#small'), { events:{ value: 10 * 5 } });
   new Calc($('#medium'), { events:{ value: 50 * 5 } });
   new Calc($('#saas'), { events:{ value: 200 * 5 } });
-  new Calc($('#premise'), { events:{ value: 400 * 5 } });
+  new Calc($('#premise'), { events:{ value: 500 * 5 } });
 
 });
