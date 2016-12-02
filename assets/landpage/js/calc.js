@@ -2,17 +2,10 @@
 
 $(function(){
 
+  var ANUAL_LICENSE_COST = 8000 ;
+
   function getServersAverage (events) {
     return parseInt(events) / 5 ;
-  }
-
-  /**
-   * for each 5 events => +4usd
-   */
-  function eventsTotal (events) {
-    events=parseInt(events);
-    var eventsCost = 4 ;
-    return (events/5) * eventsCost ;
   }
 
   function supportTotal (option) {
@@ -52,10 +45,19 @@ $(function(){
   }
 
   function Calc ($el, options) {
+    this.agentCost = isNaN(options.agentCost) ? 4 : options.agentCost;
     this.$el = $el;
     this.$form = this.$el.find('form');
     this.initialize(options);
     this.recalc();
+  }
+
+  /**
+   * for each 5 events => +4usd
+   */
+  Calc.prototype.eventsCost = function (events) {
+    events = parseInt(events);
+    return (events/5) * this.agentCost;
   }
 
   Calc.prototype.recalc = function () {
@@ -70,8 +72,11 @@ $(function(){
     // per year
     for (var prop in selections) {
       switch (prop) {
+        case 'license' :
+          budget += ANUAL_LICENSE_COST ;
+          break;
         case 'events' :
-          budget += ( eventsTotal(selections[prop]) - (eventsTotal(5)) );// one server/5 events free
+          budget += ( this.eventsCost(selections[prop]) - (this.eventsCost(5)) );// one server/5 events free
           break;
         case 'support' :
           budget += supportTotal(selections[prop]);
@@ -178,8 +183,22 @@ $(function(){
 
   new Calc($('#devs'), { events:{ value: 3 * 5 } });
   new Calc($('#small'), { events:{ value: 10 * 5 } });
-  new Calc($('#medium'), { events:{ value: 50 * 5 } });
-  new Calc($('#saas'), { events:{ value: 200 * 5 } });
-  new Calc($('#premise'), { events:{ value: 500 * 5 } });
+  new Calc($('#medium'), { events:{ value: 43 * 5 } });
+  new Calc($('#saas'), {
+    events:{
+      value: 500 , // events
+      min: 400,
+      max: 4000
+    }
+  });
+
+  new Calc($('#premise'), {
+    agentCost: 0,
+    events:{
+      value: 500 * 5,
+      min: 400,
+      max: 4000
+    }
+  });
 
 });
