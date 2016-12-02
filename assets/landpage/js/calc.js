@@ -181,7 +181,7 @@ $(function(){
     });
   }
 
-  new Calc($('#devs'), { events:{ value: 3 * 5 } });
+  new Calc($('#devs'), { events:{ value: 1 * 5 } });
   new Calc($('#small'), { events:{ value: 10 * 5 } });
   new Calc($('#medium'), { events:{ value: 43 * 5 } });
   new Calc($('#saas'), {
