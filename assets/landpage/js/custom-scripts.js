@@ -401,3 +401,11 @@ $('#accordion2').on('shown.bs.collapse', toggleChevron);
 $(function () {
   $('[data-toggle="tooltip"]').tooltip()
 })
+
+/* Collapse Calculator if Its mobile
+ */
+$(window).on("load resize scroll",function(e){
+	if ($(window).width() < 992) {
+		$( "#collapse-devs" ).removeClass( "in" )
+	}
+});
