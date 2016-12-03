@@ -77,16 +77,16 @@ $('a.scrollto').bind('click.smoothscroll', function (event) {
   /***************************************************************************/
   /* VIDEO BACKGROUND */
   /***************************************************************************/
-  if(matchMedia('(min-width: 640px)').matches) {
-    var videobackground = new $.backgroundVideo($('body'), {
-      "align": "centerXY",
-      "width": 1280,
-      "height": 720,
-      "path": "video/",
-      "filename": "video",
-      "types": ["mp4","ogv","webm"]
-    });
-  }
+//Facu esto y lo de mailchimp va?  if(matchMedia('(min-width: 640px)').matches) {
+//    var videobackground = new $.backgroundVideo($('body'), {
+//      "align": "centerXY",
+//      "width": 1280,
+//      "height": 720,
+//      "path": "video/",
+//      "filename": "video",
+//      "types": ["mp4","ogv","webm"]
+//    });
+//  }
 
 
 
