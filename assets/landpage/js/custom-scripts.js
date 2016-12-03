@@ -404,7 +404,7 @@ $(function () {
 
 /* Collapse Calculator if Its mobile
  */
-$(window).on("load resize scroll",function(e){
+$(window).on("load resize",function(e){
 	if ($(window).width() < 992) {
 		$( "#collapse-devs" ).removeClass( "in" )
 	}

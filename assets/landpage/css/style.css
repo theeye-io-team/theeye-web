@@ -1009,3 +1009,8 @@ border-radius:300px
 .medium-tab .slider-track:after, .medium-tab .slider-selection, .medium-tab .slider-handle {background:#527fff}
 .saas-tab .slider-track:after, .saas-tab .slider-selection, .saas-tab .slider-handle {background:#cda2bc}
 .premise-tab .slider-track:after, .premise-tab .slider-selection, .premise-tab .slider-handle {background:#797979}
+
+@media only screen and (max-width: 479px) {
+	.btn-learn {font-size:18px}
+	.btn-standard.btn-learn {min-width:140px}
+}
