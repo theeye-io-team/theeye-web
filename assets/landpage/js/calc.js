@@ -76,7 +76,7 @@ $(function(){
           budget += ANUAL_LICENSE_COST ;
           break;
         case 'events' :
-          budget += ( this.eventsCost(selections[prop]) - (this.eventsCost(5)) );// one server/5 events free
+          budget += ( this.eventsCost(selections[prop]) - (this.eventsCost(5)) ) * 12; // one server/5 events free
           break;
         case 'support' :
           budget += supportTotal(selections[prop]);
