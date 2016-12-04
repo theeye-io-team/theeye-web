@@ -400,7 +400,8 @@
                 <div class="pull-left full-width total-content">
                   <div class="col-xs-2">Total</div>
                   <div class="col-xs-7 text-right">USD <span data-hook="total-anual">0</span></div>
-                  <div class="col-xs-3 text-right"><button type="submit" class="submit-pricing">Buy now</button></div>
+                  <input name="total" value="0" type="hidden">
+                  <div class="col-xs-3 text-right"><button data-hook="submit-pricing" type="submit" class="submit-pricing">Buy now</button></div>
                 </div>
               </form>
             </div>
@@ -503,7 +504,8 @@
                 <div class="pull-left full-width total-content">
                   <div class="col-xs-2">Total Anual</div>
                   <div class="col-xs-7 text-right">USD <span data-hook="total-anual">0</span></div>
-                  <div class="col-xs-3 text-right"><button type="submit" class="submit-pricing">Buy now</button></div>
+                  <input name="total" value="0" type="hidden">
+                  <div class="col-xs-3 text-right"><button data-hook="submit-pricing" type="submit" class="submit-pricing">Buy now</button></div>
                 </div>
               </form>  
             </div>
@@ -606,7 +608,8 @@
                 <div class="pull-left full-width total-content">
                   <div class="col-xs-2">Total</div>
                   <div class="col-xs-7 text-right">USD <span data-hook="total-anual">0</span></div>
-                  <div class="col-xs-3 text-right"><button type="submit" class="submit-pricing">Buy now</button></div>
+                  <input name="total" value="0" type="hidden">
+                  <div class="col-xs-3 text-right"><button data-hook="submit-pricing" type="submit" class="submit-pricing">Buy now</button></div>
                 </div>
               </form>    
             </div>
@@ -707,7 +710,8 @@
                 <div class="pull-left full-width total-content">
                   <div class="col-xs-2">Total</div>
                   <div class="col-xs-7 text-right">USD <span data-hook="total-anual">0</span></div>
-                  <div class="col-xs-3 text-right"><button type="submit" class="submit-pricing">Buy now</button></div>
+                  <input name="total" value="0" type="hidden">
+                  <div class="col-xs-3 text-right"><button data-hook="submit-pricing" type="submit" class="submit-pricing">Buy now</button></div>
                 </div>
               </form>   
             </div>
@@ -798,7 +802,8 @@
                 <div class="pull-left full-width total-content">
                   <div class="col-xs-2">Total Anual</div>
                   <div class="col-xs-7 text-right">USD <span data-hook="total-anual">0</span></div>
-                  <div class="col-xs-3 text-right"><button type="submit" class="submit-pricing">Buy now</button></div>
+                  <input name="total" value="0" type="hidden">
+                  <div class="col-xs-3 text-right"><button data-hook="submit-pricing" type="submit" class="submit-pricing">Buy now</button></div>
                 </div>
               </form>   
             </div>
@@ -813,9 +818,7 @@
     CONTACT US * EXPENDS IN DOWNLOAD SECTION
     ============================== -->
     <section class="contact-us" id="section-10">
-
       <div id="section10">
-
         <!-- COLOR OVERLAY -->
         <div class="color-overlay">
           <div class="container wow fadeInUp">
@@ -824,21 +827,12 @@
               <div class="col-md-6 col-md-offset-3">
                 <div class="contact-form">
                   <form id="contact" role="form">
-
                     <p class="email-success"><i class="ef icon_check_alt2"></i> Your quote has successfully been sent.</p>
                     <p class="email-failed"><i class="ef icon_close_alt2"></i> Something went wrong!</p>
-                    <div class="form-group">
-                      <input type="text" class="form-control input-lg" name="name" id="name" placeholder="Your Name">
-                    </div>
-                    <div class="form-group">
-                      <input type="email" class="form-control input-lg" name="email" id="email" placeholder="Email">
-                    </div>
-                    <div class="form-group">
-                      <textarea name="message" class="form-control input-lg" id="message" cols="30" rows="8" placeholder="Message"></textarea>
-                    </div>
-                    <div class="text-right btn-container">
-                      <button class="btn">SEND <i class="fa fa-angle-right" aria-hidden="true"></i></button>
-                    </div>
+                    <div class="form-group"> <input name="name" type="text" class="form-control input-lg" placeholder="Your Name"> </div>
+                    <div class="form-group"> <input name="email" type="email" class="form-control input-lg" placeholder="Email"> </div>
+                    <div class="form-group"> <textarea name="message" class="form-control input-lg" cols="30" rows="8" placeholder="Message"></textarea> </div>
+                    <div class="text-right btn-container"> <button class="btn">SEND <i class="fa fa-angle-right" aria-hidden="true"></i></button> </div>
                   </form>
                   <div class="text-center social-icons">
                     <ul>
@@ -892,36 +886,34 @@
     <script src="landpage/js/jquery.nicescroll.min.js"></script>
     <script src="landpage/js/lightbox.min.js"></script>
     <!-- video del tipito con el cel y mailchimp hacen falta? -->
-    <script src="landpage/js/jquery.backgroundvideo.js"></script>
+    <!-- <script src="landpage/js/jquery.backgroundvideo.js"></script> -->
     <script src="landpage/js/jquery.ajaxchimp.min.js"></script>
     <!-- video del tipito con el cel y mailchimp hacen falta? -->
     <script src="landpage/js/responsive-tabs.js"></script>
     <script src="landpage/js/slider.js"></script>
     <script src="landpage/js/form-element.js"></script>
-    <script src="landpage/js/calc.js"></script>
     <script src="landpage/js/custom-scripts.js"></script>
+    <script src="landpage/js/calc.js"></script>
 
 
     <!-- Start of Google Analytics Code -->
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-      	(i[r].q=i[r].q||[]).push(arguments)
+        (i[r].q=i[r].q||[]).push(arguments)
       },i[r].l=1*new Date();a=s.createElement(o),
-      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-      
       ga('create', 'UA-72130107-1', 'auto');
       ga('send', 'pageview');
-      
-      
-          </script>
-          <!-- Start of Async HubSpot Analytics Code -->
-          <script type="text/javascript">
+    </script>
+
+    <!-- Start of Async HubSpot Analytics Code -->
+    <script type="text/javascript">
       (function(d,s,i,r) {
-      	if (d.getElementById(i)){return;}
-      	var n=d.createElement(s),e=d.getElementsByTagName(s)[0];
-      	n.id=i;n.src='//js.hs-analytics.net/analytics/'+(Math.ceil(new Date()/r)*r)+'/2361929.js';
-      	e.parentNode.insertBefore(n, e);
+        if (d.getElementById(i)){return;}
+        var n=d.createElement(s),e=d.getElementsByTagName(s)[0];
+        n.id=i;n.src='//js.hs-analytics.net/analytics/'+(Math.ceil(new Date()/r)*r)+'/2361929.js';
+        e.parentNode.insertBefore(n, e);
       })(document,"script","hs-analytics",300000);
     </script>
     <!-- End of Async HubSpot Analytics Code -->

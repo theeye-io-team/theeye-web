@@ -80,7 +80,7 @@ module.exports.routes = {
   'patch  /resource/:id/alerts' : 'ResourceController.updateAlerts',
   'delete /resource/:id' : 'ResourceController.destroy',
   //ContactController routes
-  'post   /invitation' : 'ContactController.invitation',
+  'post   /contact' : 'ContactController.contact',
   // Template-HostGroups routes
   'get    /admin/hostgroup' : 'HostGroupController.index',
   'post   /admin/hostgroup' : 'HostGroupController.create',

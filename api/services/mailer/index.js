@@ -43,33 +43,31 @@ module.exports = {
       });
     });
   },
-  sendRequestInvitationMail: function(email, data, next) {
-    ejs.renderFile("views/email/invitation.ejs", {locals: data}, function(error, html
-    ) {
+  sendContactMail (email, data, next) {
+    ejs.renderFile("views/email/contact.ejs", { locals: data }, function(error, html) {
       var options = {
         to: config.invitation,
-        subject:'The Eye Invitation',
-        html:html 
+        subject: 'TheEye Contact',
+        html: html
       };
 
-      sails.log.debug('sending invite notification email...');
+      sails.log.debug('sending contact notification email...');
       mailer.sendMail(options, function(error, info) {
-        if(error) {
-          sails.log.error("Error sending email to " + config.invitation);
+        if (error) {
           return next(error);
         } else {
-          sails.log.debug('Invitation message sent');
-          ejs.renderFile("views/email/invitation-confirmation.ejs", {locals: data}, function(error, html) {
+          sails.log.debug('Contact message sent');
+          ejs.renderFile("views/email/contact-confirmation.ejs", { locals: data }, function(error, html) {
             var options = {
               to: email,
-              subject:'The Eye Invitation Confirmation',
-              html:html 
+              subject: 'TheEye Contact',
+              html: html 
             };
 
-            sails.log.debug('sending invite confirmation email...');
             mailer.sendMail(options, function(error, info) {
-              if(error) sails.log.error("Error sending email to " + email);
-              else sails.log.debug('Invitation confirmation message sent');
+              if (error) {
+                sails.log.error("Error sending email to " + email);
+              }
               return next(error);
             });
           });

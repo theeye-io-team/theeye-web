@@ -13,6 +13,9 @@ module.exports.policies = {
   AuthController: {
     '*':'passport',
   },
+  ContactController: {
+    '*':['noSession'],
+  },
   EventsController: {
     'update':['noSession'],
   },
@@ -21,8 +24,5 @@ module.exports.policies = {
   },
   HostStatsController: {
     'update':['noSession'],
-  },
-  ContactController: {
-    'invitation':['noSession'],
   }
 };

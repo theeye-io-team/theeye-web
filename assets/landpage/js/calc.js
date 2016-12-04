@@ -4,6 +4,59 @@ $(function(){
 
   var ANUAL_LICENSE_COST = 8000 ;
 
+  /***************************************************************************/
+  /* CONTACT FORM */
+  /***************************************************************************/
+  var contactForm = new (function ContactForm ($el) {
+    this.$el = $el;
+    var form = this.form = new FormElement($el) ;
+
+    function isValid (values) {
+      return isValidEmail(values.email) && 
+        (values.message.length > 1) &&
+        (values.name.length > 1);
+    }
+
+    function submit () {
+      var values = form.get();
+      if (isValid(values)) {
+        $.ajax({
+          type: "POST",
+          url: "contact",
+          data: values,
+          success: function() {
+            $el.find('.email-success').delay(500).fadeIn(1000);
+            $el.find('.email-failed').fadeOut(500);
+          }
+        });
+      } else {
+        $el.find('.email-failed').delay(500).fadeIn(1000);
+        $el.find('.email-success').fadeOut(500);
+      }
+    }
+
+    this.submit = submit;
+
+
+    this.focus = function () {
+      $el.find('input[name=name]').focus();
+    }
+
+
+    $el.submit(function(event){
+      event.preventDefault();
+      event.stopPropagation();
+
+      submit();
+
+      return false;
+    });
+
+    return this;
+  })( $('form#contact') );
+
+
+
   function getServersAverage (events) {
     return parseInt(events) / 5 ;
   }
@@ -48,6 +101,7 @@ $(function(){
     this.agentCost = isNaN(options.agentCost) ? 4 : options.agentCost;
     this.$el = $el;
     this.$form = this.$el.find('form');
+    this.formElement = new FormElement( this.$form );
     this.initialize(options);
     this.recalc();
   }
@@ -61,8 +115,7 @@ $(function(){
   }
 
   Calc.prototype.recalc = function () {
-    var form = new FormElement( this.$form );
-    var selections = form.get();
+    var selections = this.formElement.get();
 
     // calculated average servers/agents number based on amount of selected events.
     var servers = getServersAverage(selections['events']);
@@ -95,6 +148,7 @@ $(function(){
     }
 
     this.$form.find('[data-hook=total-anual]').html( budget );
+    this.$form.find('input[name=total]').val( budget );
   }
 
   Calc.prototype.initialize = function (options) {
@@ -103,6 +157,33 @@ $(function(){
     this.retentionSection(options.retention);
     this.implementationSection(options.implementation);
     this.reportsSection(options.reports);
+    this.bindSubmitButton();
+  }
+
+  Calc.prototype.bindSubmitButton = function (options) {
+    var self = this;
+    options||(options={});
+    var $button = this.$el.find('button[data-hook=submit-pricing]');
+
+    $button.on('click',function(event){
+      event.preventDefault();
+      event.stopPropagation();
+
+      var selections = self.formElement.get();
+
+      var txt = '';
+      for (var p in selections) {
+        txt += p + ' : ' + selections[p] + ' ; ' + "\n";
+      }
+
+      contactForm.$el.find('textarea[name=message]').val(txt);
+
+      $('a[href=#section-10]').click();
+
+      contactForm.focus();
+
+      return false;
+    });
   }
 
   Calc.prototype.eventsSection = function (options) {

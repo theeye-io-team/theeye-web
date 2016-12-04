@@ -1,3 +1,12 @@
+// Function for email address validation
+function isValidEmail(emailAddress) {
+
+  var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
+
+  return pattern.test(emailAddress);
+
+};
+
 $(document).ready(function() {
 
   "use strict";
@@ -119,15 +128,6 @@ $('a.scrollto').bind('click.smoothscroll', function (event) {
 
 
 
-  // Function for email address validation
-  function isValidEmail(emailAddress) {
-
-    var pattern = new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);
-
-    return pattern.test(emailAddress);
-
-  };
-
 
 
   /***************************************************************************/
@@ -159,43 +159,12 @@ $('a.scrollto').bind('click.smoothscroll', function (event) {
 
 
 
-  /***************************************************************************/
-  /* CONTACT FORM */
-  /***************************************************************************/
-  $("#contact").submit(function(e) {
-    e.preventDefault();
-    var data = {
-      name: $("#name").val(),
-      email: $("#email").val(),
-      message: $("#message").val()
-    };
-
-    if ( isValidEmail(data['email']) && (data['message'].length > 1) && (data['name'].length > 1) ) {
-      $.ajax({
-        type: "POST",
-        url: "sendmail.php",
-        data: data,
-        success: function() {
-          $('.email-success').delay(500).fadeIn(1000);
-          $('.email-failed').fadeOut(500);
-        }
-      });
-    } else {
-      $('.email-failed').delay(500).fadeIn(1000);
-      $('.email-success').fadeOut(500);
-    }
-
-    return false;
-  });
-
-
 
   /***************************************************************************/
   /* WOW ANIMATION */
   /***************************************************************************/
-  var wow = new WOW({ mobile: false });
-
-  wow.init();
+  //var wow = new WOW({ mobile: false });
+  //wow.init();
 
 
 
