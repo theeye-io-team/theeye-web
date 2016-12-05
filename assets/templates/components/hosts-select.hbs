@@ -1,21 +1,22 @@
 <div>
   <label for="users" class="col-sm-3 control-label">
-    Copy from
+    {{ label }} 
     <span style="cursor:help"
-      title="Select the monitor you want to copy"
+      title="Select the host where to copy"
       class="tooltiped glyphicon glyphicon-question-sign">
     </span>
   </label>
   <div class="col-sm-9">
     <div>
-      <select data-hook="monitors"
+      <select data-hook="hosts"
         class="form-control select"
-        title="monitors"
-        name="monitors"
+        title="hosts"
+        name="hosts"
+        multiple
         style="width:100%">
         <option></option>
       </select>
     </div>
   </div>
-  <!-- <span class="clear" style="clear: left;display: block;"></span> ONLY REQUIRED WHEN THIS IS THE ONLY INPUT WITHIN A MODAL -->
+  <span class="clear" style="clear: left;display: block;"></span>
 </div>

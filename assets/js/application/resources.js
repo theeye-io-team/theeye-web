@@ -2,7 +2,8 @@
 
 // var bootbox = require('bootbox');
 // var debug = require('debug');
-// var MonitorCopy = require('../app/view/components/monitor-copy.js');
+// var HostsSelect = require('../app/view/components/hosts-select.js');
+// var MonitorSelect = require('../app/view/components/monitor-select.js');
 // var Modal = require('../app/view/modal');
 // var ScraperModal = require('../app/view/scraper/modal');
 // var Select2Data = require('../app/lib/select2data');
@@ -35,10 +36,7 @@ $(function(){
 
       var hosts = new Backbone.Collection(window.Hosts);
       hosts.remove( monitor.get('host_id') );
-      var view = new MonitorCopy({
-        collection: hosts,
-        model: monitor, 
-      });
+      var view = new HostsSelect({ collection: hosts });
 
       modal.content = view;
       modal.$el.on('hidden.bs.modal',function(){
@@ -341,8 +339,9 @@ $(function(){
       $select.prop('multiple', true);
       $input.attr('value','');
 
-      var monitorCopy = new MonitorCopyFrom({
-        collection:  monitors.filter(function(m){
+      var monitorCopy = new MonitorSelect({
+        label: 'Copy monitor',
+        collection: monitors.filter(function(m){
           return m.get('type') == options.type;
         })
       });

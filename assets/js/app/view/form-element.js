@@ -27,6 +27,10 @@ function FormElement (el){
   this.$el = (el instanceof jQuery) ? el : $(el);
 }
 
+FormElement.prototype.reset = function(){
+  this.$el[0].reset();
+}
+
 FormElement.prototype.get = function(){
   var $el = this.$el;
   var inputs = $el.find(":input");
