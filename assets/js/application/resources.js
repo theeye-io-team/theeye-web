@@ -346,6 +346,7 @@ $(function(){
           return m.get('type') == options.type;
         })
       });
+
       $form.prepend( monitorCopy.$el );
 
       monitorCopy.on('change',function(id){
@@ -840,21 +841,28 @@ $(function(){
 
           var users = new UsersSelect({ collection: _users });
           users.render();
-          users.values = host.attributes.acl;
+          users.values = host.get('acl');
+
+          var tags = new TagsSelect({ collection: Tags });
+          tags.render();
+          tags.values = host.get('tags');
 
           // append content
           modal.content = users;
+          modal.content = tags;
 
           modal.$el.on('hidden.bs.modal',function(){
             users.remove();
+            tags.remove();
             modal.remove();
           });
 
           modal
             .find('[data-hook=save]')
             .on('click',function(){
-              var values = users.values;
-              host.attributes.acl = values;
+              host.set('acl',users.values);
+              host.set('tags',tags.values);
+
               //if (!host.attributes.looptime)
 
               // dont use this! :
