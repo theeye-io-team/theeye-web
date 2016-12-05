@@ -724,6 +724,7 @@ function DashboardPage () {
       monitors.fetch();
       tasks.fetch();
     }
+
   })();
 }
 

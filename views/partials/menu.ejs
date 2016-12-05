@@ -29,7 +29,7 @@
       </div>
     </div>
     <ul class="navbar-right">
-      <li><a href="/events">Dashboard</a></li>
+      <li><a data-hook="dashboard" href="/events">Dashboard</a></li>
       <% if ( req.user.credential != 'user' && req.user.credential != 'viewer' ) { %>
       <li class="tooltiped" data-placement="left" title="Resource manager">
         <div class="dropdown" >
