@@ -41,6 +41,52 @@ $(function(){
       $('body').addClass('modal-open');
     });
 
+    (function copyButton (){
+      $('button[data-hook=copy]').on('click',function(event){
+        event.preventDefault();
+        event.stopPropagation();
+
+        var id = $(this).data('task');
+        var task = _tasks.get(id);
+
+        var modal = new Modal({
+          'title': 'Copy task ' + task.get('name') 
+        });
+        modal.render();
+
+        var hosts = new Backbone.Collection(window.Hosts);
+        hosts.remove( task.get('host_id') );
+        var view = new HostsSelect({ collection: hosts });
+
+        modal.content = view;
+        modal.$el.on('hidden.bs.modal',function(){
+          view.remove();
+          modal.remove();
+        });
+
+        modal
+          .find('button[data-hook=save]')
+          .on('click',function(event){
+            var hosts = view.values;
+
+            hosts.forEach(function(id){
+              task.createClone({ host: id, host_id: id },{
+                success:function(model, response, options){
+                  bootbox.alert('task created',function(){
+                    window.location.reload();
+                  });
+                },
+                error:function(model, response, options){
+                  bootbox.alert(JSON.stringify(response));
+                }
+              });
+            });
+          });
+
+        modal.show();
+      });
+    })();
+
     (function update (el){
       var $taskForm = $(el);
 

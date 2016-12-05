@@ -50,8 +50,7 @@ $(function(){
           var hosts = view.values;
 
           hosts.forEach(function(id){
-            var instance = monitor.clone();
-            instance.save({ host: id, host_id: id },{
+            monitor.createClone({ host: id, host_id: id },{
               success:function(model, response, options){
                 bootbox.alert('monitors created',function(){
                   window.location.reload();

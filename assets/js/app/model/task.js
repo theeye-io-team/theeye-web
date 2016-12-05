@@ -13,6 +13,19 @@ window.App.Models.Task = BaseModel.extend({
     return lodash.merge(task,{
       formatted_tags: tags
     });
+  },
+  createClone:function(){
+    var clone = this.clone();
+
+    clone.unset('id');
+    clone.unset('creation_date');
+    clone.unset('last_update');
+    clone.unset('_type');
+    clone.unset('host');
+    clone.unset('host_id');
+
+    clone.save.apply(clone,arguments);
+    return clone;
   }
 });
 
