@@ -73,11 +73,11 @@ $(function(){
 
   function retentionTotal (option,agents) {
     var costs = {
-      '1 week' : 1 * agents * 12,
-      '1 month' : 2 * agents * 12,
-      '6 months' : 2 * 6 * agents * 12,
-      '1 year' : 2 * 12 * agents * 12,
-      '3 years' : 2 * 36 * agents * 12,
+      '1 week' : 1 * agents ,
+      '1 month' : 2 * agents ,
+      '6 months' : 2 * 6 * agents ,
+      '1 year' : 2 * 12 * agents ,
+      '3 years' : 2 * 36 * agents ,
       '0 none' : 0
     };
     return costs[option]||0;
