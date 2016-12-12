@@ -1,12 +1,52 @@
 # CHANGELOG
 
-### 
+### v0.7.0 - 2016-12-04
 
 > improve proxy /api/ endpoint       
 
 > added resources and task folding (hide/show) in dashboard page       
 
-> 
+> agent binary path and named via configuration file 
+
+> improve site style
+
+> added new landing page with calculator
+
+> removed run external logic
+
+> mass selector on webhooks
+
+> improve scripts upload feature (remove dropzone)
+
+> cleanup scheduler and task controllers      
+
+> improve navigability
+
+> some improvements in customer and credentials
+
+| remove proxy methods to the api in customer page
+| added login user in top right corner
+| added input to display and set customers configuration (json-only)
+| added link to display webhooks workflow from webhook page
+| remove unused fetchs from events/dashboard page
+| in dashboard page, if it is a viewer hide tasks part, only display
+| monitors
+| fix and improve css
+
+> allow to edit customer and users extra data
+
+> new dashboard with backbone , group by tags and filtering. (missing tasks execution)    
+
+> added acl's selection 
+
+> allow to hide tasks and show stats from kibana
+
+> allow to edit customers configuration (elasticsearch and kibana panel)
+
+> added feature to clone and copy monitors (directly from rows and within forms)
+
+> easter eggs - ToastyAlert & MarioWalk     
+
 
 ### 0.6.3 - 2016-10-18
 

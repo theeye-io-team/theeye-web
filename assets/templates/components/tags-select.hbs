@@ -1,17 +1,17 @@
 <div>
-  <label for="users" class="col-sm-3 control-label">
-    Copy to Hosts
+  <label for="tags" class="col-sm-3 control-label">
+    {{title}}
     <span style="cursor:help"
-      title="Select the host where to copy"
+      title="Select tags. New tags are allowed"
       class="tooltiped glyphicon glyphicon-question-sign">
     </span>
   </label>
   <div class="col-sm-9">
     <div>
-      <select data-hook="hosts"
+      <select data-hook="{{ name }}"
         class="form-control select"
-        title="hosts"
-        name="hosts"
+        title="{{ title }}"
+        name="{{ name }}"
         multiple
         style="width:100%">
         <option></option>

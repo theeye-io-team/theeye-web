@@ -53,15 +53,15 @@ var ScraperModal = new (function ScraperModal(){
 
     this.create = function () {
 
-      var _monitorCopy = new MonitorCopyFrom({
+      var _monitors = new MonitorSelect({
         collection : monitors.filter(function(m){
           return m.get('type') == 'scraper';
         })
       });
       _form.render();
-      _form.find('form').prepend( _monitorCopy.$el );
+      _form.find('form').prepend( _monitors.$el );
 
-      _monitorCopy.on('change',function(id){
+      _monitors.on('change',function(id){
         if (!id) {
           _form.reset();
         } else {
@@ -120,8 +120,11 @@ var ScraperModal = new (function ScraperModal(){
     return this;
   }
 
-  this.TaskCRUD = function(){
-    var modal = new Modal({ title: 'API Request Task' });
+  this.TaskCRUD = function(options){
+    var tasks = options.tasks,
+      users = options.users,
+      modal = new Modal({ title: 'API Request Task' });
+
     modal.render();
 
     var _scraper = new App.Models.ScraperTask();
@@ -132,7 +135,7 @@ var ScraperModal = new (function ScraperModal(){
       hosts: window.Hosts,
       tags: window.Tags,
       events: window.Events,
-      users: window.Users
+      users: users
     });
     _form.container = modal.queryByHook('container')[0];
 
@@ -156,7 +159,24 @@ var ScraperModal = new (function ScraperModal(){
     this.create = function () {
       _scraper.clear();
       // this is done every time , because the template is re-rendered every time
+      var _tasks = new TaskSelect({
+        collection : tasks.filter(function(m){
+          return m.get('type') == 'scraper';
+        })
+      });
       _form.render();
+      _form.find('form').prepend( _tasks.$el );
+
+      _tasks.on('change',function(id){
+        if (!id) {
+          _form.reset();
+        } else {
+          var task = tasks.get(id);
+          var attrs = task.attributes;
+          _form.data = attrs;
+        }
+      });
+
       _form.find('[data-hook=name-container] label').html('Give it a name');
       _form.find('[data-hook=hosts-container] label').html('Where it has to run?');
       _form.find('[data-hook=looptime-container]').remove();

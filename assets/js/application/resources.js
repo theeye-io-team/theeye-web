@@ -2,7 +2,8 @@
 
 // var bootbox = require('bootbox');
 // var debug = require('debug');
-// var MonitorCopy = require('../app/view/components/monitor-copy.js');
+// var HostsSelect = require('../app/view/components/hosts-select.js');
+// var MonitorSelect = require('../app/view/components/monitor-select.js');
 // var Modal = require('../app/view/modal');
 // var ScraperModal = require('../app/view/scraper/modal');
 // var Select2Data = require('../app/lib/select2data');
@@ -35,10 +36,7 @@ $(function(){
 
       var hosts = new Backbone.Collection(window.Hosts);
       hosts.remove( monitor.get('host_id') );
-      var view = new MonitorCopy({
-        collection: hosts,
-        model: monitor, 
-      });
+      var view = new HostsSelect({ collection: hosts });
 
       modal.content = view;
       modal.$el.on('hidden.bs.modal',function(){
@@ -52,8 +50,7 @@ $(function(){
           var hosts = view.values;
 
           hosts.forEach(function(id){
-            var instance = monitor.clone();
-            instance.save({ host: id, host_id: id },{
+            monitor.createClone({ host: id, host_id: id },{
               success:function(model, response, options){
                 bootbox.alert('monitors created',function(){
                   window.location.reload();
@@ -341,11 +338,13 @@ $(function(){
       $select.prop('multiple', true);
       $input.attr('value','');
 
-      var monitorCopy = new MonitorCopyFrom({
-        collection:  monitors.filter(function(m){
+      var monitorCopy = new MonitorSelect({
+        label: 'Copy monitor',
+        collection: monitors.filter(function(m){
           return m.get('type') == options.type;
         })
       });
+
       $form.prepend( monitorCopy.$el );
 
       monitorCopy.on('change',function(id){
@@ -840,21 +839,28 @@ $(function(){
 
           var users = new UsersSelect({ collection: _users });
           users.render();
-          users.values = host.attributes.acl;
+          users.values = host.get('acl');
+
+          var tags = new TagsSelect({ collection: Tags });
+          tags.render();
+          tags.values = host.get('tags');
 
           // append content
           modal.content = users;
+          modal.content = tags;
 
           modal.$el.on('hidden.bs.modal',function(){
             users.remove();
+            tags.remove();
             modal.remove();
           });
 
           modal
             .find('[data-hook=save]')
             .on('click',function(){
-              var values = users.values;
-              host.attributes.acl = values;
+              host.set('acl',users.values);
+              host.set('tags',tags.values);
+
               //if (!host.attributes.looptime)
 
               // dont use this! :

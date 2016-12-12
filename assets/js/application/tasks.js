@@ -4,6 +4,8 @@ $(function(){
   window.scriptState = window.scriptState ? window.scriptState : $({});
   var $state = window.scriptState;
 
+  var fetchSuccess = lodash.after(2,initialize);
+
   var _users = new App.Collections.Users();
   _users.fetch({
     data:{ where:{
@@ -12,19 +14,78 @@ $(function(){
         {credential: { $ne:'viewer' }},
       ]
     } },
-    success:initialize,
+    success:fetchSuccess,
     failure:failure
   });
-  window.Users = _users;
+  //window.users = _users;
+
+  var _tasks = new App.Collections.Tasks();
+  _tasks.fetch({
+    data:{ populate:'host' },
+    success:fetchSuccess,
+    failure:failure
+  });
+  //window.tasks = _tasks;
 
   function failure () {
     bootbox.alert('an error has ocurred.');
   }
 
+  /**
+   *
+   * initialize the page after data fetch done
+   *
+   */
   function initialize () {
     $('#script-modal').on('hidden.bs.modal', function(){
       $('body').addClass('modal-open');
     });
+
+    (function copyButton (){
+      $('button[data-hook=copy]').on('click',function(event){
+        event.preventDefault();
+        event.stopPropagation();
+
+        var id = $(this).data('task');
+        var task = _tasks.get(id);
+
+        var modal = new Modal({
+          'title': 'Copy task ' + task.get('name') 
+        });
+        modal.render();
+
+        var hosts = new Backbone.Collection(window.Hosts);
+        hosts.remove( task.get('host_id') );
+        var view = new HostsSelect({ collection: hosts });
+
+        modal.content = view;
+        modal.$el.on('hidden.bs.modal',function(){
+          view.remove();
+          modal.remove();
+        });
+
+        modal
+          .find('button[data-hook=save]')
+          .on('click',function(event){
+            var hosts = view.values;
+
+            hosts.forEach(function(id){
+              task.createClone({ host: id, host_id: id },{
+                success:function(model, response, options){
+                  bootbox.alert('task created',function(){
+                    window.location.reload();
+                  });
+                },
+                error:function(model, response, options){
+                  bootbox.alert(JSON.stringify(response));
+                }
+              });
+            });
+          });
+
+        modal.show();
+      });
+    })();
 
     (function update (el){
       var $taskForm = $(el);
@@ -117,6 +178,7 @@ $(function(){
       return $taskForm;
     })("form#editTaskForm");
 
+
     (function create(el){
       var $taskForm = $(el);
       var $multihostContainer = $taskForm.find('.hidden-container.multiple-hosts-selection');
@@ -145,6 +207,24 @@ $(function(){
       var usersSelect = new UsersSelect({ collection: _users });
       usersSelect.render();
 
+      var taskSelect = new TaskSelect({
+        collection: _tasks.filter(function(t){
+          return t.get('type') == 'script';
+        })
+      });
+      taskSelect.render();
+      taskSelect.on('change',function(id){
+        form = new FormElement($taskForm);
+        if (!id) {
+          form.reset();
+        } else {
+          var task = _tasks.get(id);
+          form.set(task.attributes);
+        }
+      });
+
+
+      $taskForm.prepend( taskSelect.$el );
       $taskForm.find('[data-hook=advanced]').append( usersSelect.$el );
 
       $(".modal#create-task").on('shown.bs.modal', function(event) {
@@ -218,6 +298,7 @@ $(function(){
       });
     })('form#createTaskForm');
 
+
     (function remove(){
       $('.deleteTask').on('click',function(ev){
         ev.preventDefault();
@@ -283,12 +364,12 @@ $(function(){
             backgroundColor: 'hsl('+wheelDegree+', 80%, 48%)',
             textColor: 'white',
             className: ["calendarEvent"],
-scheduleData: scheduleEvent,
-  events: buildEventSeries(
-    name,
-    ms.valueOf(),
-    scheduleEvent.data.scheduleData.repeatEvery
-  )
+            scheduleData: scheduleEvent,
+            events: buildEventSeries(
+              name,
+              ms.valueOf(),
+              scheduleEvent.data.scheduleData.repeatEvery
+            )
           };
         });
       }
@@ -433,6 +514,7 @@ scheduleData: scheduleEvent,
         closeOnDateSelect:false
       });
     })();
+
 
     // MASS DELETE
     (function massDelete(){
@@ -628,7 +710,11 @@ scheduleData: scheduleEvent,
     //
     // ATTACH SCRAPER MODAL & FORM TO THE PAGE ELEMENTS
     //
-    var scraperCRUD = new ScraperModal.TaskCRUD();
+    var scraperCRUD = new ScraperModal.TaskCRUD({
+      tasks: _tasks,
+      users: _users,
+    });
+
     $('[data-hook=create-scraper-task]').on('click',function(event){
       event.preventDefault(); event.stopPropagation();
       scraperCRUD.create();

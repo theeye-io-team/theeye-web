@@ -71,4 +71,22 @@ $(document).ready(function() {
       }
     });
   })();
+
+  /**
+   *
+   * when click with CTRL go to new /dashboard page with stats and hidden tasks
+   *
+   * this is temporal.
+   *
+   */
+  $('a[data-hook=dashboard]').click(function(event){
+    if (event.ctrlKey===true) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      window.location = '/dashboard?tasks=hide&stats=show';
+
+      return false;
+    }
+  });
 });
