@@ -65,7 +65,7 @@ $(function(){
     // a year
     var costs = {
       '5 business day' : 0 ,
-      '1 business day' : 1600 ,
+      '1 business day' : 1400 ,
       '24/7' : 4200
     }
     return costs[option]||0;
