@@ -65,8 +65,8 @@ $(function(){
     // a year
     var costs = {
       '5 business day' : 0 ,
-      '1 business day' : 600 ,
-      '24/7' : 2400
+      '1 business day' : 1600 ,
+      '24/7' : 4200
     }
     return costs[option]||0;
   }
@@ -86,8 +86,8 @@ $(function(){
   function implementationTotal (option) {
     var costs = {
       'Self implementation': 0,
-      'Remotely assisted' : 1000,
-      'Consulting imp. remote training': 2000,
+      'Remotely assisted' : 200,
+      'Consulting imp. remote training': 4000,
       'Consulting imp. training staff': 25000
     };
     return costs[option]||0;
