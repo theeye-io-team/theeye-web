@@ -65,19 +65,19 @@ $(function(){
     // a year
     var costs = {
       '5 business day' : 0 ,
-      '1 business day' : 600 ,
-      '24/7' : 2400
+      '1 business day' : 1400 ,
+      '24/7' : 4200
     }
     return costs[option]||0;
   }
 
   function retentionTotal (option,agents) {
     var costs = {
-      '1 week' : 1 * agents * 12,
-      '1 month' : 2 * agents * 12,
-      '6 months' : 2 * 6 * agents * 12,
-      '1 year' : 2 * 12 * agents * 12,
-      '3 years' : 2 * 36 * agents * 12,
+      '1 week' : 1 * agents ,
+      '1 month' : 2 * agents ,
+      '6 months' : 2 * 6 * agents ,
+      '1 year' : 2 * 12 * agents ,
+      '3 years' : 2 * 36 * agents ,
       '0 none' : 0
     };
     return costs[option]||0;
@@ -86,8 +86,8 @@ $(function(){
   function implementationTotal (option) {
     var costs = {
       'Self implementation': 0,
-      'Remotely assisted' : 1000,
-      'Consulting imp. remote training': 2000,
+      'Remotely assisted' : 200,
+      'Consulting imp. remote training': 4000,
       'Consulting imp. training staff': 25000
     };
     return costs[option]||0;
