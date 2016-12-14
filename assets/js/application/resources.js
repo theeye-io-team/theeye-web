@@ -23,13 +23,17 @@ $(function(){
   });
   window.Users = _users;
 
+  var _monitors = new App.Collections.Monitors();
+  _monitors.fetch({ });
+  //window.monitors = _monitors;
+
   (function(){
     $('button[data-hook=copy]').on('click',function(event){
       event.preventDefault();
       event.stopPropagation();
 
       var id = $(this).data('monitor');
-      var monitor = monitors.get(id);
+      var monitor = _monitors.get(id);
 
       var modal = new Modal({ title: 'Copy monitor ' + monitor.get('name') });
       modal.render();
@@ -340,7 +344,7 @@ $(function(){
 
       var monitorCopy = new MonitorSelect({
         label: 'Copy monitor',
-        collection: monitors.filter(function(m){
+        collection: _monitors.filter(function(m){
           return m.get('type') == options.type;
         })
       });
@@ -351,7 +355,7 @@ $(function(){
         if (!id) {
           $form[0].reset();
         } else {
-          var monitor = monitors.get(id),
+          var monitor = _monitors.get(id),
             form = new FormElement($form);
 
           var attrs = monitor.attributes;
