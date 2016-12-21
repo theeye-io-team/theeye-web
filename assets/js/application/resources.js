@@ -814,7 +814,7 @@ $(function(){
     function onClickCreate(event){
       event.preventDefault();
       event.stopPropagation();
-      scraperModal.create();
+      scraperModal.create(_monitors);
     }
     // on click edit , fetch scraper and render form
     function onClickEdit(event){
