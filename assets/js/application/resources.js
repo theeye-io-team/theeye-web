@@ -1,4 +1,5 @@
-/* global bootbox, Tags, $searchbox, debug */
+/* global App, Modal, Backbone, HostsSelect, FormElement, UsersSelect, Select2Data,
+MonitorSelect, _, ScraperModal, TagsSelect, bootbox, Tags, $searchbox, debug */
 
 // var bootbox = require('bootbox');
 // var debug = require('debug');
@@ -360,8 +361,8 @@ $(function(){
 
           var attrs = monitor.attributes;
           var values = _.extend({
-            description: monitor.get('name')
-          },attrs.resource,attrs,(attrs.config.ps||attrs.config));
+            description: attrs.name
+          },attrs); //attrs.resource,attrs,(attrs.config.ps||attrs.config));
 
           delete values.host, delete values.host_id;
           form.set(values);
@@ -651,12 +652,12 @@ $(function(){
       var secondConfirmHeader = '<h1>Wait, really sure?</h1>' +
         'Please review the list, just in case:<br /><br />';
       var secondConfirmFooter = '<br />WILL BE DELETED<h2>Confirm wisely</h2>';
-      var successTitle = 'Monitors deleted';
-      var successFooter = '<br/>...you will be missed';
-      var failTitle = 'Monitors deleted (some)';
-      var failFooter = '<br/>...I tried to delete these monitors' +
-        ' yet some of them came back with errors.' +
-        '<br /><br />Please refresh now';
+      // var successTitle = 'Monitors deleted';
+      // var successFooter = '<br/>...you will be missed';
+      // var failTitle = 'Monitors deleted (some)';
+      // var failFooter = '<br/>...I tried to delete these monitors' +
+      //   ' yet some of them came back with errors.' +
+      //   '<br /><br />Please refresh now';
       var dataId = "itemId"; // the data-something where we get the id of the item
       var dataDescriptor = "itemName"; // the data-something where we get the name of the item
       var listTemplate = "{descriptor} ({id})<br />";
@@ -814,7 +815,7 @@ $(function(){
     function onClickCreate(event){
       event.preventDefault();
       event.stopPropagation();
-      scraperModal.create();
+      scraperModal.create(_monitors);
     }
     // on click edit , fetch scraper and render form
     function onClickEdit(event){

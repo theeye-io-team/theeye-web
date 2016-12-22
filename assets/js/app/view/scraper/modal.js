@@ -1,3 +1,4 @@
+/* global Scraper, App, bootbox, MonitorSelect, Modal, TaskSelect, _ */
 'use strict';
 
 var ScraperModal = new (function ScraperModal(){
@@ -46,12 +47,12 @@ var ScraperModal = new (function ScraperModal(){
       });
       // once hide modal remove scraper form
       $modal.on('hidden.bs.modal', function(){
-        _form.remove(); 
+        _form.remove();
         $modal.off('click','button[data-hook=save]');
       });
     })(_$modal);
 
-    this.create = function () {
+    this.create = function (monitors) {
 
       var _monitors = new MonitorSelect({
         collection : monitors.filter(function(m){
@@ -94,7 +95,7 @@ var ScraperModal = new (function ScraperModal(){
         });
       });
       _$modal.modal('show');
-    }
+    };
 
     this.edit = function (scraper_id) {
       getScraper(scraper_id,function(error,scraper){
@@ -115,10 +116,10 @@ var ScraperModal = new (function ScraperModal(){
         });
         _$modal.modal('show');
       });
-    }
+    };
 
     return this;
-  }
+  };
 
   this.TaskCRUD = function(options){
     var tasks = options.tasks,
@@ -151,7 +152,7 @@ var ScraperModal = new (function ScraperModal(){
       });
       // once hide modal remove scraper form
       $modal.on('hidden.bs.modal', function(){
-        _form.remove(); 
+        _form.remove();
         $modal.off('click','button[data-hook=save]');
       });
     })( modal.$el );
@@ -196,7 +197,7 @@ var ScraperModal = new (function ScraperModal(){
         });
       });
       modal.show();
-    }
+    };
 
     this.edit = function (scraper_id) {
       _scraper.clear();
@@ -230,10 +231,10 @@ var ScraperModal = new (function ScraperModal(){
           bootbox.alert(response.responseText);
         }
       });
-    }
+    };
 
     return this;
-  }
+  };
 
   this.TemplateMonitorCRUD = function(options){
 
@@ -262,7 +263,7 @@ var ScraperModal = new (function ScraperModal(){
       $scraperModal.on('shown.bs.modal', function(){ _form.focus(); });
       // once hide modal remove scraper form
       $scraperModal.on('hidden.bs.modal', function(){
-        _form.remove(); 
+        _form.remove();
         $scraperModal.off('click','button[data-hook=save]');
       });
     })($scraperModal);
@@ -274,7 +275,7 @@ var ScraperModal = new (function ScraperModal(){
       _form.render({ model: _model });
       $scraperModal.modal('show');
       return this;
-    }
+    };
 
     // start edit
     this.openEditForm = function(group, tag){
@@ -288,14 +289,14 @@ var ScraperModal = new (function ScraperModal(){
       _form.render({ model: _model });
       $scraperModal.modal('show');
       return this;
-    }
+    };
 
     this.close = function(){
       $scraperModal.modal('hide');
-    }
+    };
 
     this.persist = function(done){
-      var tag = _tag;
+      // var tag = _tag;
       var values = _form.data;
       _model.set(values);
       _model.save({},{
@@ -307,8 +308,8 @@ var ScraperModal = new (function ScraperModal(){
           //done(new Error('error'), {}, _tag);
         }
       });
-    }
+    };
 
     return this;
-  }
+  };
 })();
