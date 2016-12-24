@@ -41,6 +41,7 @@ $(function(){
 
       var hosts = new Backbone.Collection(window.Hosts);
       hosts.remove( monitor.get('host_id') );
+
       var view = new HostsSelect({ collection: hosts });
 
       modal.content = view;
@@ -356,13 +357,16 @@ $(function(){
         if (!id) {
           $form[0].reset();
         } else {
-          var monitor = _monitors.get(id),
-            form = new FormElement($form);
+          var monitor = _monitors.get(id).get('monitor');
+          var form = new FormElement($form);
 
-          var attrs = monitor.attributes;
-          var values = _.extend({
-            description: attrs.name
-          },attrs); //attrs.resource,attrs,(attrs.config.ps||attrs.config));
+          var config = (monitor.config||{});
+          var values = _.extend(
+            {description: monitor.name},
+            monitor,
+            (config.ps||config),
+            _monitors.get(id).attributes
+          );
 
           delete values.host, delete values.host_id;
           form.set(values);
