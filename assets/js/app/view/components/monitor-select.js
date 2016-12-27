@@ -12,6 +12,7 @@ var MonitorSelect = BaseView.extend({
   template: Templates['assets/templates/components/monitor-select.hbs'],
   initialize: function(options){
     this.label = options.label||'Monitor';
+
     BaseView.prototype.initialize.apply(this,arguments);
 
     Object.defineProperty(this,'values',{

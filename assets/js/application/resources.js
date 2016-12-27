@@ -105,6 +105,17 @@ $(function(){
     });
   })();
 
+
+  var $scriptModal = $('.modal#scriptResourceModal');
+  $scriptModal.on("click","[data-hook=advanced-section-toggler]", function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    $scriptModal
+      .find("section[data-hook=advanced]")
+      .slideToggle();
+    $("i", this).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
+  });
+
   //CREATE RESOURCE FUNCTION
   (function(){
     function updateResourceMonitor($el){
@@ -238,7 +249,7 @@ $(function(){
         var usersSelect = new UsersSelect({ collection: _users });
         usersSelect.render();
 
-        $form.append( usersSelect.$el );
+        $form.find('[data-hook=advanced]').append( usersSelect.$el );
         fillForm($form,resource);
         var $modal = $('#'+type+'ResourceModal');
         $modal.one('hidden.bs.modal',function(){
@@ -345,7 +356,7 @@ $(function(){
       $input.attr('value','');
 
       var monitorCopy = new MonitorSelect({
-        label: 'Copy monitor',
+        label: 'Copy from monitor',
         collection: _monitors.filter(function(m){
           return m.get('type') == options.type;
         })
@@ -375,7 +386,7 @@ $(function(){
 
       var usersSelect = new UsersSelect({ collection: _users });
       usersSelect.render();
-      $form.append( usersSelect.$el );
+      $form.find('[data-hook=advanced]').append( usersSelect.$el );
 
       $modal.one('hidden.bs.modal',function(){
         usersSelect.remove();
@@ -389,8 +400,10 @@ $(function(){
         $select.select2();
         if(host) $select.val(host).trigger('change');
 
+        $form.find('select[data-hook=looptime]').val(60000);
+
         $form.find('select#script_id')
-          .select2({allowClear:true, placeholder:"Select a script..." })
+          .select2({allowClear:true, placeholder:"Select a script" })
           .on('change', function(event){
             if($(this).val()) {
               $('a.scripter', $modal)
