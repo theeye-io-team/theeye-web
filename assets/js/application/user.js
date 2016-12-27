@@ -1,5 +1,5 @@
 /* global bootbox, $searchbox, console */
-$(function() {
+$(function(){
 
   var $state = $({});
 
@@ -48,12 +48,18 @@ $(function() {
   //EDIT USER FORM
   (function update(el){
 
+    var $root = $('<option value="root">Root</option>');
+    var $modal = $(".modal#edit-user");
     var $userForm = $(el);
 
-    $(".modal#edit-user").on('shown.bs.modal', function() {
-      //nice-guy first input auto focus
+    $modal.on('hidden.bs.modal', function(){
+      $root.remove();
+    });
+
+    $modal.on('shown.bs.modal', function(){
+      // nice-guy first input auto focus
       $('#name',this).focus();
-      $('#customers-edit', this).select2();
+      $('#customers-edit',this).select2();
     });
 
     $('button.editUser').on('click', function(evt){
@@ -64,9 +70,15 @@ $(function() {
       $userForm.data('action','edit');
       $.get('/user/' + item.data().itemId)
         .done(function(data){
+          var user = data.user;
+
+          if (user.credential === 'root') {
+            $('#editUserForm select#credential').append($root);
+          }
+
           var form = new FormElement($userForm);
           form.set(data.user);
-          $('#edit-user').modal('show');
+          $modal.modal('show');
         })
         .fail(function(xhr, err/*, xhrStatus*/) {
           $state.trigger('user_fetch_error', xhr.responseText, err);
@@ -82,7 +94,7 @@ $(function() {
         data:form.get(),
         type:'put'
       }).done(function(data) {
-        $('.modal#edit-user').modal('hide');
+        $modal.modal('hide');
         bootbox.alert('user updated',function(){
           window.location.reload();
         });
