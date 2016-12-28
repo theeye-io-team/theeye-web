@@ -13,6 +13,9 @@ module.exports = {
       database:'theeye'
     }
   },
+  //
+  // MONGO
+  //
   session: {
     secret:'692fc164a0c06a9fd02575cf17688c9e',
     collection:'web_session',
@@ -21,6 +24,16 @@ module.exports = {
     port:27017,
     db:'theeye'
   },
+  //
+  // REDIS 
+  //
+  //session: {
+  //  adapter: 'connect-redis',
+  //  host: 'localhost',
+  //  port: 6379,
+  //  db: 0, //(process.env.DATABASE||'theeye')
+  //  prefix: 'sess:',
+  //},
   mailer: {
     from: 'TheEye.io <jailbirt@interactar.com>',
     replyTo: 'Support <jailbirt@interactar.com>',
