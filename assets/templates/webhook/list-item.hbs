@@ -58,7 +58,7 @@
         <span class="col-xs-3">Trigger URL</span>
         <span class="col-xs-9">
           <div class="input-group">
-            <input data-hook="trigger-url" id="webhookTriggerUrl" type=text class=form-control readonly value="{{ triggerUrl }}" />
+            <input data-hook="trigger-url" id="webhookTriggerUrl" type=text class=form-control readonly value="{{ model.triggerUrl }}" />
             <span class="input-group-btn">
               <button class="btn btn-primary clipboard-token-btn clip" type="button"
                 data-clipboard-target="#webhookTriggerUrl">
@@ -77,7 +77,7 @@
             This Button
           </button> ! Also, you can trigger this hook running this command via CLI (you required curl)
           <div class="input-group">
-            <input id=webhookTriggerCurl type=text class=form-control readonly value="curl -X POST '{{ triggerUrl }}'" />
+            <input id=webhookTriggerCurl type=text class=form-control readonly value="curl -X POST '{{ model.triggerUrl }}'" />
             <span class="input-group-btn">
               <button class="btn btn-primary clipboard-token-btn clip" type="button"
                 data-clipboard-target="#webhookTriggerCurl">

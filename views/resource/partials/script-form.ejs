@@ -2,13 +2,13 @@
   <input data-hook="monitor_type" type="hidden" name="monitor_type" value="script"></input>
   <input data-hook="resource_id" type="hidden" name="resource_id" value=""></input>
   <div class="form-group">
-    <label for="description" class="col-sm-3 control-label">Give me a name</label>
+    <label for="description" class="col-sm-3 control-label">Give it a name</label>
     <div class="col-sm-9">
       <input data-hook="description" type="text" name="description" class="form-control" placeholder="eg: My Web Site"></input>
     </div>
   </div>
   <div class="form-group">
-    <label for="hosts_id" class="col-sm-3 control-label">Where should I run?</label>
+    <label for="hosts_id" class="col-sm-3 control-label">Where should it run?</label>
     <div class="col-sm-9 resource-host">
       <select multiple data-hook="hosts_id" name="hosts_id" class="form-control">
         <% hosts.forEach(function(h) { %>
@@ -16,6 +16,20 @@
         <% }); %>
       </select>
       <input name="host_id" value="" class="hiddenHostInput">
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="script_id" class="col-sm-3 control-label">What script should it run?</label>
+    <div class="col-sm-5">
+      <select data-hook="script_id" id="script_id" name="script_id" class="form-control">
+        <option value disabled selected></option>
+        <% scripts.forEach(function(s) { %>
+        <option value="<%=s.id%>"><strong><%= s.filename %></strong></option>
+        <% }); %>
+      </select>
+    </div>
+    <div class="col-sm-4">
+      <a class="createScript scripter btn btn-block btn-primary">Create a new script</a>
     </div>
   </div>
   <div class="form-group">
@@ -30,56 +44,6 @@
     </div>
   </div>
   <div class="form-group">
-    <label for="script_id" class="col-sm-3 control-label">What should I run?</label>
-    <div class="col-sm-5">
-      <select data-hook="script_id" id="script_id" name="script_id" class="form-control">
-        <option value disabled selected></option>
-        <% scripts.forEach(function(s) { %>
-        <option value="<%=s.id%>"><strong><%= s.filename %></strong></option>
-        <% }); %>
-      </select>
-    </div>
-    <div class="col-sm-4">
-      <a class="createScript scripter btn btn-block btn-primary">Create a new script</a>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="script_arguments" class="col-sm-3 control-label">
-      Script Arguments<br/><small>[optional]</small>
-    </label>
-    <div class="col-sm-9">
-      <div id="script-arguments-input">
-        <input class="form-control tooltiped"
-        type="text" name="script_arguments" 
-        title="Write a comma separated list of arguments or leave empty" 
-        data-hook="script_arguments" placeholder="eg: --exclude-dir='node_modules'">
-      </div>
-    </div>
-  </div>
-  <div class="form-group">
-    <label for="script_runas" class="col-sm-3 control-label">
-      RunAs<br/><small>[optional]</small>
-      <span style="cursor:help" class="glyphicon glyphicon-question-sign"></span>
-    </label>
-    <div class="col-sm-9">
-      <div>
-        <input class="form-control tooltiped"
-          title="Surround the script with something else, eg. sudo. Use '%script%' to include the script. Before execution will be replaced with the script path"
-          type="text"
-          name="script_runas"
-          data-hook="script_runas"
-          placeholder="sudo -u facugon $(%script%)"
-        >
-      </div>
-    </div>
-  </div>
-  <div class="form-group" style="display:none;">
-    <label for="disabled" class="col-sm-3 control-label">Disabled</label>
-    <div class="col-sm-9">
-      <input data-hook="disabled" type="checkbox" name="disabled" class="form-control" style="width:16px;">
-    </div>
-  </div>
-  <div class="form-group">
     <label for="tags" class="col-sm-3 control-label">Tags<br/><small>[optional]</small></label>
     <div class="col-sm-9">
       <div>
@@ -88,4 +52,48 @@
       </div>
     </div>
   </div>
+  <!-- ADVANCED -->
+  <div class="scraper-section-title" data-hook="advanced-section-toggler">
+    <label>Advanced</label>
+    <i class="tooltiped glyphicon glyphicon-chevron-down" title="advanced"></i>
+  </div>
+  <section data-hook="advanced" style="display:none">
+
+    <div class="form-group">
+      <label for="script_runas" class="col-sm-3 control-label">
+        RunAs<br/><small>[optional]</small>
+        <span style="cursor:help" class="glyphicon glyphicon-question-sign"></span>
+      </label>
+      <div class="col-sm-9">
+        <div>
+          <input class="form-control tooltiped"
+          title="Surround the script with something else, eg. sudo. Use '%script%' to include the script. Before execution will be replaced with the script path"
+          type="text"
+          name="script_runas"
+          data-hook="script_runas"
+          placeholder="sudo -u facugon $(%script%)"
+          >
+        </div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="script_arguments" class="col-sm-3 control-label">
+        Script Arguments<br/><small>[optional]</small>
+      </label>
+      <div class="col-sm-9">
+        <div id="script-arguments-input">
+          <input class="form-control tooltiped"
+          type="text" name="script_arguments" 
+          title="Write a comma separated list of arguments or leave empty" 
+          data-hook="script_arguments" placeholder="eg: --exclude-dir='node_modules'">
+        </div>
+      </div>
+    </div>
+    <div class="form-group" style="display:none;">
+      <label for="disabled" class="col-sm-3 control-label">Disabled</label>
+      <div class="col-sm-9">
+        <input data-hook="disabled" type="checkbox" name="disabled" class="form-control" style="width:16px;">
+      </div>
+    </div>
+  </section>
 </form>

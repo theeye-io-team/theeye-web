@@ -32,29 +32,32 @@ window.App.Models.Monitor = BaseModel.extend({
       last_update_formated: last_update_formated
     });
   },
-  createClone: function() {
-    var clone = this.clone();
+  createClone: function(props,options){
+    var resource = this,
+      monitor = this.attributes.monitor;
+    var clone = new window.App.Models.Monitor();
 
-    //flatten into clone attributes
-    var config = clone.get('config');
+    // flatten into clone attributes
+    var config = monitor.config;
     if (config) {
       clone.set(config.ps||config);
     }
 
-    var resource = clone.get('resource');
-    if (resource) {
+    if (resource.acl) {
       clone.set({'acl': resource.acl});
     }
 
-    clone.unset('resource');
-    clone.unset('config');
-    clone.unset('resource_id');
-    clone.unset('id');
-    clone.unset('creation_date');
-    clone.unset('last_update');
-    clone.unset('_type');
+    var properties = _.extend({},monitor,props,{
+      _type:null,
+      config:null,
+      creation_date:null,
+      id:null,
+      last_update:null,
+      resource:null,
+      resource_id:null
+    });
 
-    clone.save.apply(clone,arguments);
+    clone.save(properties, options);
     return clone;
   }
 });

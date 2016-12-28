@@ -41,6 +41,7 @@ $(function(){
 
       var hosts = new Backbone.Collection(window.Hosts);
       hosts.remove( monitor.get('host_id') );
+
       var view = new HostsSelect({ collection: hosts });
 
       modal.content = view;
@@ -103,6 +104,17 @@ $(function(){
       setAlerts(resource_id,enable=true);
     });
   })();
+
+
+  var $scriptModal = $('.modal#scriptResourceModal');
+  $scriptModal.on("click","[data-hook=advanced-section-toggler]", function(event){
+    event.preventDefault();
+    event.stopPropagation();
+    $scriptModal
+      .find("section[data-hook=advanced]")
+      .slideToggle();
+    $("i", this).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
+  });
 
   //CREATE RESOURCE FUNCTION
   (function(){
@@ -237,7 +249,7 @@ $(function(){
         var usersSelect = new UsersSelect({ collection: _users });
         usersSelect.render();
 
-        $form.append( usersSelect.$el );
+        $form.find('[data-hook=advanced]').append( usersSelect.$el );
         fillForm($form,resource);
         var $modal = $('#'+type+'ResourceModal');
         $modal.one('hidden.bs.modal',function(){
@@ -344,7 +356,7 @@ $(function(){
       $input.attr('value','');
 
       var monitorCopy = new MonitorSelect({
-        label: 'Copy monitor',
+        label: 'Copy from monitor',
         collection: _monitors.filter(function(m){
           return m.get('type') == options.type;
         })
@@ -356,13 +368,16 @@ $(function(){
         if (!id) {
           $form[0].reset();
         } else {
-          var monitor = _monitors.get(id),
-            form = new FormElement($form);
+          var monitor = _monitors.get(id).get('monitor');
+          var form = new FormElement($form);
 
-          var attrs = monitor.attributes;
-          var values = _.extend({
-            description: attrs.name
-          },attrs); //attrs.resource,attrs,(attrs.config.ps||attrs.config));
+          var config = (monitor.config||{});
+          var values = _.extend(
+            {description: monitor.name},
+            monitor,
+            (config.ps||config),
+            _monitors.get(id).attributes
+          );
 
           delete values.host, delete values.host_id;
           form.set(values);
@@ -371,7 +386,7 @@ $(function(){
 
       var usersSelect = new UsersSelect({ collection: _users });
       usersSelect.render();
-      $form.append( usersSelect.$el );
+      $form.find('[data-hook=advanced]').append( usersSelect.$el );
 
       $modal.one('hidden.bs.modal',function(){
         usersSelect.remove();
@@ -385,8 +400,10 @@ $(function(){
         $select.select2();
         if(host) $select.val(host).trigger('change');
 
+        $form.find('select[data-hook=looptime]').val(60000);
+
         $form.find('select#script_id')
-          .select2({allowClear:true, placeholder:"Select a script..." })
+          .select2({allowClear:true, placeholder:"Select a script" })
           .on('change', function(event){
             if($(this).val()) {
               $('a.scripter', $modal)

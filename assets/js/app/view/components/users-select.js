@@ -7,12 +7,15 @@
 var UsersSelect = (function(){
 
   var View = BaseView.extend({
-    tagName:'div',
-    className:'form-group form-horizontal',
+    tagName: 'div',
+    className: 'form-group form-horizontal',
     template: Templates['assets/templates/components/users-select.hbs'],
-    initialize:function(){
-      this.title = 'ACL';
-      this.name = 'acl';
+    initialize: function(options){
+      this.title = (options.title||'ACL');
+      this.name = (options.name||'acl');
+
+      this.optional = (options.optional||true);
+
       BaseView.prototype.initialize.apply(this,arguments);
 
       Object.defineProperty(this,'values',{
@@ -25,7 +28,7 @@ var UsersSelect = (function(){
         }
       });
     },
-    render:function(){
+    render: function(){
       this.renderTemplate();
 
       this.find('select').select2({

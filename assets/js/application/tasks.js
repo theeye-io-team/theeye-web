@@ -208,6 +208,7 @@ $(function(){
       usersSelect.render();
 
       var taskSelect = new TaskSelect({
+        label: 'Copy from task',
         collection: _tasks.filter(function(t){
           return t.get('type') == 'script';
         })

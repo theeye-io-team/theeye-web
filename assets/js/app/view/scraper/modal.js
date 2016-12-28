@@ -66,12 +66,15 @@ var ScraperModal = new (function ScraperModal(){
         if (!id) {
           _form.reset();
         } else {
-          var monitor = monitors.get(id);
+          var monitor = monitors.get(id).get('monitor');
 
-          var attrs = monitor.attributes;
-          var values = _.extend({
-            description: monitor.get('name')
-          },attrs.resource,attrs,(attrs.config.ps||attrs.config));
+          var config = (monitor.config||{});
+          var values = _.extend(
+            { description: monitor.name },
+            monitor,
+            (config.ps||config),
+            monitors.get(id).attributes
+          );
 
           _form.data = values;
         }
