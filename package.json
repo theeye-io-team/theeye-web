@@ -9,6 +9,7 @@
     "bcryptjs": "~2.3.0",
     "bower": "~1.7.9",
     "connect-mongo": "~0.7.0",
+    "connect-redis": "1.4.5",
     "crypt": "~0.0.1",
     "css-loader": "~0.23.1",
     "debug": "~1.0.4",
