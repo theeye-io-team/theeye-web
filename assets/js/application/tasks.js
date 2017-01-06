@@ -201,8 +201,15 @@ $(function(){
               .data('script-id', null);
           }
         });
-      $taskForm.find('select[name=tags]').select2({ placeholder:'Tags', tags:true, data: Select2Data.PrepareTags(Tags) });
-      $taskForm.find('select[name=triggers]').select2({ placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
+      $taskForm.find('select[name=tags]').select2({
+        placeholder: 'Tags',
+        tags: true,
+        data: Select2Data.PrepareTags(Tags)
+      });
+      $taskForm.find('select[name=triggers]').select2({
+        placeholder: 'Events',
+        data: Select2Data.PrepareEvents( window.Events )
+      });
 
       var usersSelect = new UsersSelect({ collection: _users });
       usersSelect.render();

@@ -23,6 +23,7 @@ window.App.Models.ScraperMonitor = BaseModel.extend({
 			looptime: monitor.looptime,
 			type: monitor.type,
 			tags: monitor.tags,
+      failure_severity: resource.failure_severity,
       // config
 			body: config.body,
 			gzip: config.gzip,

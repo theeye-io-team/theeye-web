@@ -8,8 +8,8 @@ window.App.Models.Monitor = BaseModel.extend({
     if (Array.isArray(response)) {
       response = response[0];
     }
-    var resource = response.resource||response;
-    var monitor = resource.monitor||response.monitor;
+    var resource = (response.resource||response);
+    var monitor = (resource.monitor||response.monitor);
 
     var last_update_formated = moment(resource.last_update)
       .startOf('second')

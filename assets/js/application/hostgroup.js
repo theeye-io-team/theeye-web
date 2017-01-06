@@ -18,6 +18,13 @@ $(function(){
 
   var logger = debug('eye:hostgroup');
 
+  $('select[name=tags]').select2({
+    placeholder: 'Tags',
+    tags: true,
+    data: Select2Data.PrepareTags(Tags)
+  });
+
+
   // scraper monitor form handler
   var scraperModal = new ScraperModal.TemplateMonitorCRUD({
     container:'[data-hook=scraper-form-container]'

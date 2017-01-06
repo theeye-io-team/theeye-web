@@ -31,7 +31,6 @@ var ScraperModal = new (function ScraperModal(){
   }
 
   this.MonitorCRUD = function(formContainer){
-
     var _form = initializeForm( $(formContainer)[0] );
 
     Object.defineProperty(this, 'form', {
@@ -54,13 +53,17 @@ var ScraperModal = new (function ScraperModal(){
 
     this.create = function (monitors) {
 
+      var _severity = new SeveritySelect({ selected:'HIGH' });
+
       var _monitors = new MonitorSelect({
         collection : monitors.filter(function(m){
           return m.get('type') == 'scraper';
         })
       });
       _form.render();
+
       _form.find('form').prepend( _monitors.$el );
+      _form.find('form [data-hook=advanced]').append( _severity.$el );
 
       _monitors.on('change',function(id){
         if (!id) {
@@ -102,7 +105,14 @@ var ScraperModal = new (function ScraperModal(){
 
     this.edit = function (scraper_id) {
       getScraper(scraper_id,function(error,scraper){
+
         _form.render({ model: scraper });
+
+        var _severity = new SeveritySelect({
+          selected: (scraper.get('failure_severity')||'HIGH').toUpperCase()
+        });
+        _form.find('form [data-hook=advanced]').append( _severity.$el );
+
         _$modal.on('click','button[data-hook=save]',function(){
           var values = _form.data;
           scraper.set(values);
