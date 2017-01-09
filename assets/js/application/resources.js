@@ -532,7 +532,8 @@ $(function(){
 
     // hook to scripts.js event script_uploaded
     window.scriptState.on('script_uploaded', function(evt,result){
-      var script = result.script;
+      // seems like the result is now the script and not a prop of it
+      var script = result
       alert("Script succesfully uploaded", "Script upload",function(){
         var $scriptIdSelect = $('select[data-hook=script_id]');
         //remove previous script option
