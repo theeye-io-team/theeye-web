@@ -1,24 +1,30 @@
 /* global getHashParams, debug, $searchbox, log, Ladda, bootbox, Cookies, Clipboard, _ */
 
-// these went global, used on view and some functions, go replacing
-var statesDicc = {
-  normal: 0,
-  failure: 1,
-  updates_stopped: 2,
-  unknown: 3
-};
 var iconsDicc = {
-  normal: "icon-check",
-  failure: "icon-warn",
-  updates_stopped: "icon-error",
-  unknown: "icon-nonsense"
+  unknown         : "icon-nonsense",
+  normal          : "icon-check",
+  low             : "icon-info", /* failure state */
+  high            : "icon-warn", /* failure state */
+  critical        : "icon-fatal", /* failure state */
+  updates_stopped : "icon-error",
+  indexOf: function (value) {
+    // keep the indexes in order !
+    return [
+      "unknown",
+      "normal",
+      "low",
+      "high",
+      "critical",
+      "updates_stopped"
+    ].indexOf(value);
+  }
 };
-var classToState = {
-  "icon-check": "normal",
-  "icon-warn": "failure",
-  "icon-error": "updates_stopped",
-  "icon-nonsense": "unknown"
-};
+
+function classToState (iconClass) {
+  return Object.keys(iconsDicc).filter(function(state){
+    if (iconsDicc[state]==iconClass) return state;
+  });
+}
 
 function ResourcesFolding () {
   var $items = $('[data-hook=hidden-resources]');
@@ -81,24 +87,21 @@ function checkAllUpAndRuning () {
   var sadStates = $('.state-icon.icon-warn').length + $('.state-icon.icon-error').length;
   var showResources = sadStates > 0;
   if(showResources) {
-    // sort! only if any has some failure/warning
+
     $('.itemRow').sort(function(a,b){
-      //get state icon element
-      var stateIconA = $('.state-icon', a).first()[0];
-      //get element classes that matches 'icon-*'
-      var iconClassA = stateIconA.classList.value.split(" ").find(function(cls){
-        return cls.indexOf('icon-') === 0;
-      });
-      //get state from class
-      var stateValueA = classToState[iconClassA];
+      // sort! only if any has some failure/warning
+      function getSortOrder (el) {
+        var stateIcon = $('.state-icon',el).first()[0];
+        var iconClass = stateIcon.classList.value.split(" ")
+          .find(function(cls){
+            return cls.indexOf('icon-') === 0;
+          });
 
-      var stateIconB = $('.state-icon', b).first()[0];
-      var iconClassB = stateIconB.classList.value.split(" ").find(function(cls){
-        return cls.indexOf('icon-') === 0;
-      });
-      var stateValueB = classToState[iconClassB];
-
-      return statesDicc[stateValueA] < statesDicc[stateValueB];
+        return iconsDicc.indexOf(classToState(iconClass));
+      }
+      var orderA = getSortOrder(a);
+      var orderB = getSortOrder(b);
+      return orderA < orderB;
     }).prependTo('#accordion');
 
     $upNrunning.slideUp();
@@ -457,25 +460,28 @@ function triggers (io) {
         var $tr = $('tr.resource'+resource.id, $rowItem);
         $('span.state_text', $tr).text(resource.state);
         $('span.state_last_update', $tr).text(resource.last_update_moment);
-        $('.state-icon', $tr).removeClass("icon-check icon-warn icon-error");
-        $('.state-icon', $tr).addClass(iconsDicc[resource.state]);
+        $('.state-icon', $tr).removeClass().addClass('state-icon');
 
-        var worstState = "normal";
-        //determine row icon based on worst status on table
-        if(resource.state == "updates_stopped") {
-          worstState = resource.state;
-        }else if( $('tr span.state-icon.icon-error', $rowItem).length ) {
-          worstState = "updates_stopped";
-        }else if ( $('tr span.state-icon.icon-warn', $rowItem).length ) {
-          worstState = "failure";
-        }
+        // if state is failure use the failure_severity property for the icon
+        var stateIcon = resource[(resource.state==='failure')?'failure_severity':'state'];
+        $('.state-icon', $tr).addClass(iconsDicc[stateIcon]);
+
+        var worstState = $('tr td span.state-icon', $rowItem)
+          .map(function(i,el){
+            return $(el).attr('class').split(' ')[1];
+          })
+          .sort(function(a,b){
+            var orderA = iconsDicc.indexOf(classToState(a));
+            var orderB = iconsDicc.indexOf(classToState(b));
+            return orderA < orderB;
+          })[0];
 
         $('.state-icon',$rowItem)
           .first()
           .attr('data-original-title', worstState)
           .tooltip('fixTitle')
-          .removeClass("icon-check icon-warn icon-error")
-          .addClass(iconsDicc[worstState]);
+          .removeClass()
+          .addClass('state-icon ' + iconsDicc[worstState]);
 
         if (!$searchbox.searching) checkAllUpAndRuning();
       }
