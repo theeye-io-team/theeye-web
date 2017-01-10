@@ -305,7 +305,7 @@ $(function(){
                 }
               });
               $scriptSelect.trigger('change');
-            });
+            })();
           }
 
           if(type=='dstat'){

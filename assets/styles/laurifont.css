@@ -78,7 +78,9 @@
 .icon-script:before {
     content: "\e911";
 }
-.icon-warn:before {
+.icon-info:before,
+.icon-warn:before,
+.icon-fatal:before {
     content: "\e912";
 }
 .icon-error:before {

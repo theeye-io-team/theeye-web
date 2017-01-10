@@ -25,13 +25,6 @@ function DashboardPage () {
     unknown: "icon-nonsense"
   }
 
-  var classToState = {
-    "icon-check": "normal",
-    "icon-warn": "failure",
-    "icon-error": "updates_stopped",
-    "icon-nonsense": "unknown"
-  };
-
   /**
    *
    * view to fold items using a hidden container.
@@ -596,12 +589,14 @@ function DashboardPage () {
       var group = groups[hostname];
       var host = group['host'];
 
-      host.set('submonitors', new Backbone.Collection());
-      host.get('submonitors').add([
-        group['host'],
-        group['dstat']
-      ]);
-      groupedMonitors.add(host);
+      if (host) { // data error ??
+        host.set('submonitors', new Backbone.Collection());
+        host.get('submonitors').add([
+          group['host'],
+          group['dstat']
+        ]);
+        groupedMonitors.add(host);
+      }
     }
 
     return groupedMonitors;
