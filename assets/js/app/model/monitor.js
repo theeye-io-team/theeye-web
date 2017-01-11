@@ -1,8 +1,62 @@
 'use strict';
 
-window.App || ( window.App = {} );
-window.App.Models || ( window.App.Models = {} );
+// please do not use global
+var stateIcons = {
+  unknown         : "icon-nonsense",
+  normal          : "icon-check",
+  low             : "icon-info", /* failure state */
+  high            : "icon-warn", /* failure state */
+  critical        : "icon-fatal", /* failure state */
+  updates_stopped : "icon-error",
+  getIcon: function (state) {
+    var icon = (this[state.toLowerCase()]||this.unknown);
+    return icon;
+  },
+  indexOf: function (value) {
+    // keep the indexes in order !
+    return [
+      "unknown",
+      "normal",
+      "low",
+      "high",
+      "critical",
+      "updates_stopped"
+    ].indexOf(value);
+  },
+  classToState: function (iconClass) {
+    var self = this;
+    var elems = Object.keys(self).filter(function(state){
+      if (self[state]==iconClass) return state;
+    });
+    return elems[0];
+  },
+  filterAlertIconClasses: function(iconClasses) {
+    var failureClasses = ['icon-info','icon-warn','icon-fatal'],
+      filtered = iconClasses.filter(function(idx,icon){
+        return failureClasses.indexOf(icon) != -1
+      });
+    return filtered;
+  }
+};
+
+window.App||(window.App={});
+window.App.Models||(window.App.Models={});
 window.App.Models.Monitor = BaseModel.extend({
+  stateSeverity: function(){
+    var state = this.get('state') ,
+      severity = this.get('failure_severity').toLowerCase();
+    return (state==='failure')?severity:state;
+  },
+  stateOrder: function(){
+    return stateIcons.indexOf(this.stateSeverity());
+  },
+  stateIcon: function(){
+    return stateIcons[this.stateSeverity()];
+  },
+  isFailing: function(){
+    var state = this.get('state');
+    return state === 'failure' || state === 'updates_stopped';
+  },
   urlRoot:'/api/resource',
   parse:function(response){
     if (Array.isArray(response)) {
@@ -62,19 +116,12 @@ window.App.Models.Monitor = BaseModel.extend({
   }
 });
 
-var monitorStatePriority = {
-  normal: 0,
-  failure: 1,
-  updates_stopped: 2,
-  unknown: 3
-}
-
-window.App.Collections || ( window.App.Collections = {} );
+window.App.Collections||(window.App.Collections={});
 window.App.Collections.Monitors = Backbone.Collection.extend({
   model: window.App.Models.Monitor,
   url:'/api/resource',
   comparator:function(model){
-    return monitorStatePriority[model.get('state')];
+    return model.stateOrder();
   },
   /**
    * obtein a collection of every single tag.
