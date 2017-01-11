@@ -486,7 +486,7 @@ $(function(){
     }
 
     function setupResourceAction (options) {
-      if (options.action=='create' && options.type=='dstat') {
+      if (options.action=='create' & options.type=='dstat') {
 
         createStatMonitor(options);
 
@@ -688,7 +688,7 @@ $(function(){
         evt.preventDefault();
         var taskRows = "";
         var taskIds = [];
-        //collect selected rows.data (dataId & dataDescriptor)
+        //collect selected rows.data (dataId  dataDescriptor)
         $(itemSelector).each(function(i,e){
           var itemId = $(e).data(dataId);
           var itemName = $(e).data(dataDescriptor);
