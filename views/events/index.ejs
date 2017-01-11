@@ -22,13 +22,6 @@
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
           <%
-            var statesDicc = {
-              normal: 0,
-              failure: 1,
-              updates_stopped: 2,
-              unknown: 3
-            };
-
             var iconsDicc = {
               unknown         : "icon-nonsense",
               normal          : "icon-check",
@@ -66,10 +59,11 @@
             var tags = [
               resource.id,
               resource.description,
+              resource.failure_severity,
               resource.name,
               "hostname=" + resource.hostname,
               "type=" + resource.type,
-              "state=" + resource.state
+              "state=" + resource.state,
             ];
             resource.subs.forEach(function(subresource){
               var resourceSeverity = resourceStateSeverity(subresource.state);

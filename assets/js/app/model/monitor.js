@@ -42,21 +42,6 @@ var stateIcons = {
 window.App||(window.App={});
 window.App.Models||(window.App.Models={});
 window.App.Models.Monitor = BaseModel.extend({
-  stateSeverity: function(){
-    var state = this.get('state') ,
-      severity = this.get('failure_severity').toLowerCase();
-    return (state==='failure')?severity:state;
-  },
-  stateOrder: function(){
-    return stateIcons.indexOf(this.stateSeverity());
-  },
-  stateIcon: function(){
-    return stateIcons[this.stateSeverity()];
-  },
-  isFailing: function(){
-    var state = this.get('state');
-    return state === 'failure' || state === 'updates_stopped';
-  },
   urlRoot:'/api/resource',
   parse:function(response){
     if (Array.isArray(response)) {
@@ -75,6 +60,7 @@ window.App.Models.Monitor = BaseModel.extend({
       resource.hostname,
       resource.type,
       resource.state,
+      resource.failure_severity,
     ].concat( monitor.tags );
 
     return lodash.merge(resource,{
@@ -85,6 +71,21 @@ window.App.Models.Monitor = BaseModel.extend({
       formatted_tags: tags,
       last_update_formated: last_update_formated
     });
+  },
+  stateSeverity: function(){
+    var state = this.get('state') ,
+      severity = this.get('failure_severity').toLowerCase();
+    return (state==='failure')?severity:state;
+  },
+  stateOrder: function(){
+    return stateIcons.indexOf(this.stateSeverity());
+  },
+  stateIcon: function(){
+    return stateIcons[this.stateSeverity()];
+  },
+  isFailing: function(){
+    var state = this.get('state');
+    return state === 'failure' || state === 'updates_stopped';
   },
   createClone: function(props,options){
     var resource = this,
