@@ -854,8 +854,7 @@ $(function(){
    *
    */
   (function setupScraperModal(){
-    var formContainer = '[data-hook=scraper-form-container]';
-    var scraperModal = new ScraperModal.MonitorCRUD(formContainer);
+    var scraperModal = new ScraperModal.MonitorCRUD();
 
     // on click create , render form
     function onClickCreate(event){
@@ -871,6 +870,7 @@ $(function(){
       scraperModal.edit(scraper_id);
     }
 
+    // create and edit triggers
     $('.dropdown.resource [data-hook=create-scraper-monitor]').on('click',onClickCreate);
     $('.panel-group [data-hook=create-scraper-monitor]').on('click',onClickCreate);
     $('[data-hook=edit-scraper-monitor]').on('click',onClickEdit);
