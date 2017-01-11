@@ -97,13 +97,14 @@ $(function(){
   });
 
   function checkAllUpAndRuning () {
+    var $items = $('.itemRow');
     var iconClasses = $('tr td span.state-icon').map(function(i,el){
       return $(el).attr('class').split(' ')[1];
     });
     var showAlerts = iconsDicc.filterAlertIconClasses(iconClasses).length > 0;
-    if (showAlerts) {
 
-      $('.itemRow').sort(function(a,b){
+    if (showAlerts) {
+      $items.sort(function(a,b){
         // sort! only if any has some failure/warning
         function getSortOrder (el) {
           var stateIcon = $('.state-icon',el).first()[0];
@@ -122,19 +123,20 @@ $(function(){
       $upNrunning.slideUp();
       $resourcesList.slideDown();
 
-      $('.itemRow').each(function(){
-        var $row = $(this);
-        var stateIcon = $row.find('.panel-heading .state-icon')[0];
-        if ( !/warn|error/.test(stateIcon.className) ) {
+      $items.each(function(){
+        var $row = $(this),
+          stateIcon = $row.find('.panel-heading .state-icon')[0],
+          iconClass = stateIcon.className.match(/icon-[a-z]*[ ]?/)[0].trim();
+        
+        if (iconsDicc.filterAlertIconClasses( $([iconClass]) ).length === 0) {
           $row.appendTo( $('[data-hook=hidden-resources-container]') );
         }
       });
-
       resourcesFolding.showButton();
     } else {
       $upNrunning.slideDown();
       $resourcesList.slideUp();
-      $('.itemRow').appendTo('.resources-panel-list #accordion');
+      $items.appendTo('.resources-panel-list #accordion');
       resourcesFolding.hideButton();
     }
   }

@@ -509,8 +509,8 @@ span.selectorIcon.glyphicon-check {
 }
 
 .icon-check { color: green; }
-.icon-info { color: blue; }
-.icon-warn { color: yellow; }
+.icon-info { color: #00dcff; }
+.icon-warn { color: #ffff00; }
 .icon-fatal { color: #FF3300; }
 .icon-error { color: #FF3300; }
 
