@@ -853,7 +853,7 @@ $(function(){
    * scraper modal CRUD
    *
    */
-  (function setupScraperModal(){
+  (function setupScraperMonitorModal(){
     var scraperModal = new ScraperModal.MonitorCRUD();
 
     // on click create , render form
@@ -876,6 +876,34 @@ $(function(){
     $('[data-hook=edit-scraper-monitor]').on('click',onClickEdit);
   })();
 
+  (function setupFileMonitorModal(){
+    var file = new PermanentFile.MonitorCRUD({
+      monitors: _monitors,
+      users: _users,
+      looptimes: window.Looptimes,                                                        
+      hosts: window.Hosts,                                                                
+      tags: window.Tags
+    });
+
+    // on click create , render form
+    function onClickCreate(event){
+      event.preventDefault();
+      event.stopPropagation();
+      file.create();
+    }
+    // on click edit , fetch scraper and render form
+    function onClickEdit(event){
+      event.preventDefault();
+      event.stopPropagation();
+      var _id = event.currentTarget.getAttribute('data-resource_id');
+      file.edit(_id);
+    }
+
+    // create and edit triggers
+    $('.dropdown.resource [data-hook=create-file-monitor]').on('click',onClickCreate);
+    $('.panel-group [data-hook=create-file-monitor]').on('click',onClickCreate);
+    $('[data-hook=edit-file-monitor]').on('click',onClickEdit);
+  })();
 
   (function editHost(){
     $('[data-hook=edit-host-monitor]').on('click',function(event){

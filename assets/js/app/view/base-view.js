@@ -50,6 +50,7 @@ function CollectionRenderer (specs) {
 
 var BaseView = Backbone.View.extend({
   initialize:function(options){
+    Backbone.View.prototype.initialize.apply(this,arguments);
     _.extend(this,options);
     if (this.autoRender) this.render();
   },

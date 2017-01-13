@@ -687,7 +687,9 @@ a.flowchart-icon {
 
 .navbar-header .user-profile { color:#80a1b8; position:absolute; right:5px; top:5px; float:right; }
 
+.advanced-section-title,
 .scraper-section-title { text-align:center; margin-bottom:15px; }
+.advanced-section-title label,
 .scraper-section-title label { display:none }
 
 

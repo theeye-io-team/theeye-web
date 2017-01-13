@@ -1,5 +1,10 @@
-/* global Scraper, App, bootbox, MonitorSelect, Modal, TaskSelect, _ */
+/* global Scraper, App, bootbox */
 'use strict';
+
+//var _ = require('underscore');
+//var MonitorSelect = require('../components/monitor-select');
+//var TaskSelect = require('../components/task-select');
+//var Modal = require('../modal');
 
 var ScraperModal = new (function ScraperModal(){
 
@@ -31,15 +36,15 @@ var ScraperModal = new (function ScraperModal(){
   }
 
   this.MonitorCRUD = function(){
+    var _modal = new Modal({ title: 'Website Monitor' });
+    _modal.render();
+
+    var _form = initializeForm( _modal.queryByHook('container')[0] );
     Object.defineProperty(this, 'form', {
       get: function(){ return _form; },
       enumerable: true
     });
 
-    var _modal = new Modal({ title: 'Website Monitor' });
-    _modal.render();
-
-    var _form = initializeForm( _modal.queryByHook('container')[0] );
 
     (function initializeModal($modal){
       $modal.on('shown.bs.modal', function(){
@@ -55,14 +60,13 @@ var ScraperModal = new (function ScraperModal(){
     this.create = function (monitors) {
 
       var _severity = new SeveritySelect({ selected:'HIGH' });
-
       var _monitors = new MonitorSelect({
         collection : monitors.filter(function(m){
           return m.get('type') == 'scraper';
         })
       });
-      _form.render();
 
+      _form.render();
       _form.find('form').prepend( _monitors.$el );
       _form.find('form [data-hook=advanced]').append( _severity.$el );
 
@@ -158,7 +162,6 @@ var ScraperModal = new (function ScraperModal(){
       get: function(){ return _form; },
       enumerable: true
     });
-
 
     (function initializeModal($modal){
       $modal.on('shown.bs.modal', function(){
@@ -326,4 +329,5 @@ var ScraperModal = new (function ScraperModal(){
 
     return this;
   };
+
 })();

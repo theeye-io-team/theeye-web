@@ -50,6 +50,8 @@ window.App.Models.Monitor = BaseModel.extend({
     var resource = (response.resource||response);
     var monitor = (resource.monitor||response.monitor);
 
+    if (!monitor) return resource;
+
     var last_update_formated = moment(resource.last_update)
       .startOf('second')
       .fromNow();
@@ -61,7 +63,7 @@ window.App.Models.Monitor = BaseModel.extend({
       resource.type,
       resource.state,
       resource.failure_severity,
-    ].concat( monitor.tags );
+    ].concat(monitor.tags);
 
     return lodash.merge(resource,{
       // monitor
@@ -114,6 +116,14 @@ window.App.Models.Monitor = BaseModel.extend({
 
     clone.save(properties, options);
     return clone;
+  }
+});
+
+window.App.Models.FileMonitor = window.App.Models.Monitor.extend({
+  parse:function(response){
+    var parsed = window.App.Models.Monitor.prototype.parse.apply(this,arguments);
+    if (!response.monitor) return;
+    return lodash.merge(parsed,response.monitor.config);
   }
 });
 
