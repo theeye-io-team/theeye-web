@@ -335,7 +335,6 @@ $(function(){
         'Would you care to refresh the page?';
 
       function updateAttention($itemRow, numSchedules) {
-        console.log($itemRow);
         // if numSchedules is specified, don't search the DOM for hasSchedule
         var hasSchedule = numSchedules !== undefined
           ? Boolean(numSchedules)
@@ -358,7 +357,6 @@ $(function(){
           var itemData = $itemRow.data();
           //esto tiene que apuntar a /task/:id/schedule
           $.get("/task/" + itemData.itemId + "/schedule").done(function(data){
-            console.log(data);
             // only if we have some data
             if(data.scheduleData.length > 0) {
               data.scheduleData.forEach(function(schedule){
@@ -387,7 +385,7 @@ $(function(){
                         updateAttention($itemRow);
                       }).fail(function(xhr, err, xhrStatus) {
                         $scheduleItem.removeClass('hidden');
-                        alert(xhr.responseText);
+                        alert(kindlyApologyze);
                       });
                     }
                   );
@@ -396,7 +394,7 @@ $(function(){
               });
             }
           }).fail(function(xhr, err, xhrStatus) {
-            alert(xhr.responseText);
+            alert(kindlyApologyze);
           });
         });
       });
@@ -494,7 +492,6 @@ $(function(){
         var itemData = $(this).closest('.itemRow').data();
         //esto tiene que apuntar a /task/:id/schedule
         $.get("/task/" + itemData.itemId + "/schedule").done(function(data){
-          console.log(data);
           eventSources = getEventSources(data.scheduleData, itemData.itemName);
           //prepare form
           $form.data('task-id',itemData.itemId);
@@ -507,7 +504,7 @@ $(function(){
           $mainModal.modal('show');
 
         }).fail(function(xhr, err, xhrStatus) {
-          alert(xhr.responseText);
+          alert(kindlyApologyze);
         });
         return;
       });
@@ -548,7 +545,7 @@ $(function(){
             updateAttention($('.itemRow[data-item-id=' + taskId + ']'), true);
           });
         }).fail(function(xhr, status, message) {
-          console.log('fail');
+          alert(kindlyApologyze);
         });
       });
 
@@ -557,8 +554,7 @@ $(function(){
 
         var eventData = $(this).data('schedule');
         if(!eventData.source.id) {
-          console.log('Error, schedule ID not set');
-          console.log($(this).data());
+          alert(kindlyApologyze);
           return;
         }
         //confirm and request DELETE
@@ -578,7 +574,7 @@ $(function(){
                 $calendarElement.data().fullCalendar.clientEvents().length
               );
             }).fail(function(xhr, err, xhrStatus) {
-              alert(xhr.responseText);
+              alert(kindlyApologyze);
             });
           }
         );
@@ -658,8 +654,6 @@ $(function(){
               $.blockUI();
               var deleteRequests = [];
               var removeOnSuccess = function(id) {
-                console.log('request success');
-                // console.log('would remove '+'div.itemRow[data-item-id='+id+']');
                 $('div.itemRow[data-item-id='+id+']').remove();
               };
               for(var ii = 0; ii < taskIds.length; ii++) {
@@ -676,10 +670,12 @@ $(function(){
                 );
               }
 
-              // que es esto chris? borre todos los console.logs
-              // esto agarra el array deleteRequests y ejecuta todos los requests
-              // es similar a lo que haces vos con lodash.after --
-              // restaure las funciones de success/fail que habias sacado
+              // que es esto chris?
+              // deleteRequests es un array de jqXHR:
+              // http://api.jquery.com/jQuery.ajax/#jqXHR
+              // que devuelven una suerte de deferred/promise.
+              // Cuando todos resuelven se ejecuta .then(success, fail)
+              // Es similar a lodash.after -- cg
               $.when.apply($, deleteRequests)
                 .then(
                   // success
