@@ -692,3 +692,14 @@ a.flowchart-icon {
 .dashboard .group select {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
 .dashboard .group .select2-container--default .select2-selection--multiple { border-radius: 0; background-color:#44567d; border:none; }
 .dashboard .monitors.admin-panel h3 span { float:right;top:6px;rigth:5px;cursor:pointer;color:#44567d;}
+
+.attention:after {
+  content: ' ';
+  background-color: #d88e47;
+  width: 7px;
+  height: 7px;
+  position: absolute;
+  top: -4px;
+  right: -9px;
+  border-radius: 7px;
+}
