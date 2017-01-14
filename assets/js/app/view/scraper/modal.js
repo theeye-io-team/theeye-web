@@ -30,16 +30,16 @@ var ScraperModal = new (function ScraperModal(){
     });
   }
 
-  this.MonitorCRUD = function(formContainer){
-
-    var _form = initializeForm( $(formContainer)[0] );
-
+  this.MonitorCRUD = function(){
     Object.defineProperty(this, 'form', {
       get: function(){ return _form; },
       enumerable: true
     });
 
-    var _$modal = $('[data-hook=scraper-monitor-modal]');
+    var _modal = new Modal({ title: 'Website Monitor' });
+    _modal.render();
+
+    var _form = initializeForm( _modal.queryByHook('container')[0] );
 
     (function initializeModal($modal){
       $modal.on('shown.bs.modal', function(){
@@ -50,9 +50,11 @@ var ScraperModal = new (function ScraperModal(){
         _form.remove();
         $modal.off('click','button[data-hook=save]');
       });
-    })(_$modal);
+    })(_modal.$el);
 
     this.create = function (monitors) {
+
+      var _severity = new SeveritySelect({ selected:'HIGH' });
 
       var _monitors = new MonitorSelect({
         collection : monitors.filter(function(m){
@@ -60,7 +62,9 @@ var ScraperModal = new (function ScraperModal(){
         })
       });
       _form.render();
+
       _form.find('form').prepend( _monitors.$el );
+      _form.find('form [data-hook=advanced]').append( _severity.$el );
 
       _monitors.on('change',function(id){
         if (!id) {
@@ -83,7 +87,7 @@ var ScraperModal = new (function ScraperModal(){
 
       var scraper = new App.Models.ScraperMonitor({});
 
-      _$modal.on('click','button[data-hook=save]',function(){
+      _modal.$el.on('click','button[data-hook=save]',function(){
         var data = _form.data;
         scraper.set(data);
         scraper.save({},{
@@ -97,13 +101,20 @@ var ScraperModal = new (function ScraperModal(){
           }
         });
       });
-      _$modal.modal('show');
+      _modal.show();
     };
 
     this.edit = function (scraper_id) {
       getScraper(scraper_id,function(error,scraper){
+
         _form.render({ model: scraper });
-        _$modal.on('click','button[data-hook=save]',function(){
+
+        var _severity = new SeveritySelect({
+          selected: (scraper.get('failure_severity')||'HIGH').toUpperCase()
+        });
+        _form.find('form [data-hook=advanced]').append( _severity.$el );
+
+        _modal.$el.on('click','button[data-hook=save]',function(){
           var values = _form.data;
           scraper.set(values);
           scraper.save({},{
@@ -117,7 +128,7 @@ var ScraperModal = new (function ScraperModal(){
             }
           });
         });
-        _$modal.modal('show');
+        _modal.show();
       });
     };
 

@@ -21,31 +21,56 @@
       <div class="resources-panel-list">
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
 
-          <% var statesDicc = {
-            normal: 0,
-            failure: 1,
-            updates_stopped: 2,
-            unknown: 3
-          };
-          var iconsDicc = {
-            normal: "icon-check",
-            failure: "icon-warn",
-            updates_stopped: "icon-error",
-            unknown: "icon-nonsense"
-          };
+          <%
+            var iconsDicc = {
+              unknown         : "icon-nonsense",
+              normal          : "icon-check",
+              low             : "icon-info", /* failure state */
+              high            : "icon-warn", /* failure state */
+              critical        : "icon-fatal", /* failure state */
+              updates_stopped : "icon-error",
+              getIcon: function (state) {
+                return (this[state.toLowerCase()]||this.unknown);
+              },
+              indexOf: function (value) {
+                // keep the indexes in order !
+                return [
+                  "unknown",
+                  "normal",
+                  "low",
+                  "high",
+                  "critical",
+                  "updates_stopped"
+                ].indexOf(value);
+              },
+              classToState: function (iconClass) {
+                var self = this;
+                return Object.keys(self).filter(function(state){
+                  if (self[state]==iconClass) return state;
+                });
+              }
+            };
+            function resourceStateSeverity (resource) {
+              return resource[(resource.state==='failure')?'failure_severity':'state'];
+            }
+
           indexedResources.forEach(function(resource){
-            var overallState = resource.state;
+            var overallStateSeverity = resourceStateSeverity(resource);
             var tags = [
               resource.id,
               resource.description,
+              resource.failure_severity,
               resource.name,
               "hostname=" + resource.hostname,
               "type=" + resource.type,
-              "state=" + resource.state
+              "state=" + resource.state,
             ];
             resource.subs.forEach(function(subresource){
-              if(statesDicc[subresource.state] > statesDicc[overallState]) {
-                overallState = subresource.state;
+              var resourceSeverity = resourceStateSeverity(subresource.state);
+              var orderA = iconsDicc.indexOf(resourceSeverity);
+              var orderB = iconsDicc.indexOf(overallStateSeverity);
+              if ( orderA > orderB ) {
+                overallStateSeverity = resourceSeverity;
               }
               tags.push(subresource.id);
               tags.push(subresource.description);
@@ -53,6 +78,7 @@
               tags.push(subresource.hostname);
               tags.push(subresource.type);
               tags.push("state=" + subresource.state);
+              tags.push("severity=" + resourceSeverity);
               tags.concat(subresource.tags);
             });
 
@@ -64,7 +90,7 @@
               data-item-id="<%= resource.id %>"
               data-item-host-id="<%= resource.host_id %>"
               data-item-name="<%= resource.hostname %>"
-              data-item-state="<%= overallState %>"
+              data-item-state="<%= overallStateSeverity %>"
               data-tags="<%= tags %>">
               <div class="panel-heading" role="tab" id="heading<%= resource.id %>">
                 <h4 class="panel-title <%= resource.type %>">
@@ -86,7 +112,7 @@
                           <span class="glyphicon glyphicon-edit"></span>
                         </button>
                         <div class="state-resource-container">
-                          <span class="tooltiped state-icon <%= iconsDicc[overallState] %>" title="<%=overallState%>"></span>
+                          <span class="tooltiped state-icon <%= iconsDicc.getIcon(overallStateSeverity) %>" title="<%= overallStateSeverity %>"></span>
                         </div>
                       </span>
                     </div>
@@ -104,16 +130,16 @@
                           <th>Type</th>
                           <th>Status</th>
                           <th>Last updated</th>
-                          <th></th>
+                          <th>More</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr class="resource<%=resource.id%>">
+                        <tr class="resource<%= resource.id %>">
                           <td class="text-center">
-                            <span class="state-icon <%=iconsDicc[resource.state]%>"></span>
+                            <span class="state-icon <%= iconsDicc.getIcon(resourceStateSeverity(resource)) %>"></span>
                           </td>
                           <td><%= resource.type %></td>
-                          <td><span class="state_text"><%= resource.state %></span></td>
+                          <td><span class="state_text"><%= resourceStateSeverity(resource) %></span></td>
                           <td><span class="state_last_update"><%= moment(resource.last_update).startOf('second').fromNow() %></span>
                           </td>
                           <td> <i data-hook="last_event" data-id="<%= resource.id %>" class="btn btn-primary btn-sm glyphicon glyphicon-plus"></i> </td>
@@ -121,10 +147,10 @@
                         <% resource.subs.forEach(function(subresource){ %>
                           <tr class="resource<%=subresource.id%>">
                             <td class="text-center">
-                              <span class="state-icon <%=iconsDicc[subresource.state]%>"></span>
+                              <span class="state-icon <%= iconsDicc.getIcon(resourceStateSeverity(subresource)) %>"></span>
                             </td>
                             <td><%= subresource.type %></td>
-                            <td><span class="state_text"><%= subresource.state %></span></td>
+                            <td><span class="state_text"><%= resourceStateSeverity(subresource) %></span></td>
                             <td><span class="state_last_update">
                               <%= moment(subresource.last_update).startOf('second').fromNow() %>
                               </span>

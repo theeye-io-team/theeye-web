@@ -18,20 +18,6 @@
 //var Select2Data = require('../../lib/select2data');
 
 function DashboardPage () {
-  var stateIcons = {
-    normal: "icon-check",
-    failure: "icon-warn",
-    updates_stopped: "icon-error",
-    unknown: "icon-nonsense"
-  }
-
-  var classToState = {
-    "icon-check": "normal",
-    "icon-warn": "failure",
-    "icon-error": "updates_stopped",
-    "icon-nonsense": "unknown"
-  };
-
   /**
    *
    * view to fold items using a hidden container.
@@ -123,11 +109,11 @@ function DashboardPage () {
       return false;
     },
     initialize:function(){
-      this.stateIcon = stateIcons[this.model.get('state')];
+      this.stateIcon = this.model.stateIcon();
       this.listenTo(this.model,'change:state',this.updateStateIcon);
     },
     updateStateIcon:function(){
-      this.stateIcon = stateIcons[this.model.get('state')];
+      this.stateIcon = this.model.stateIcon();
       this.queryByHook('state-icon')[0].className = this.stateIcon;
     },
   });
@@ -224,17 +210,17 @@ function DashboardPage () {
       this.listenTo(this.model.get('submonitors'),'change',this.updateStateIcon);
     },
     updateStateIcon:function(){
-      var highState = this.model
-        .get('submonitors').reduce(function(highState,monitor){
-          var state = monitor.get('state');
-          if (!highState) return state;
-          var p1=monitorStatePriority[state],
-            p2=monitorStatePriority[highState];
-          return (p1>p2) ? state : highState;
+      var highSeverityMonitor = this.model
+        .get('submonitors')
+        .reduce(function(worstMonitor,monitor){
+          if (!worstMonitor) return monitor;
+          var m1 = monitor.stateOrder();
+          var m2 = worstMonitor.stateOrder();
+          return (m1>m2)?monitor:worstMonitor;
         },null);
 
-      this.stateIcon = stateIcons[highState];
-      this.state = highState;
+      this.stateIcon = highSeverityMonitor.stateIcon();
+      this.state = highSeverityMonitor.get('state');
       this.queryByHook('state-icon')[0].className = this.stateIcon;
 
       this.trigger('change:stateIcon',this);
@@ -449,17 +435,10 @@ function DashboardPage () {
           TaskView,
           this.queryByHook('tasks-container')[0]
         );
-        this.tasksFolding = new ItemsFolding(
-          this.queryByHook('tasks-fold-container')
-        );
+        this.tasksFolding = new ItemsFolding(this.queryByHook('tasks-fold-container'));
       } else {
-        //this.queryByHook('monitors-panel')
-        //  .find('section.events-panel')
-        //  .removeClass('col-md-6')
-        //  .addClass('col-md-12') ;
         this.queryByHook('tasks-panel').remove();
       }
-
 
       if (this.showStats===true) {
         $.get('/api/customer').done(function(customer){
@@ -478,11 +457,9 @@ function DashboardPage () {
         });
       }
 
-      this.monitorsFolding = new ItemsFolding(
-        this.queryByHook('monitors-fold-container')
-      );
+      this.monitorsFolding = new ItemsFolding(this.queryByHook('monitors-fold-container'));
       this.$upandrunning = this.queryByHook('up-and-running');
-      this.$monitorsPanel = this.find('[data-hook=monitors-container]');
+      this.$monitorsPanel = this.queryByHook('monitors-container');
 
       // events that can change monitors states
       // check state every time and reorganize view
@@ -518,13 +495,10 @@ function DashboardPage () {
     checkMonitors: function(){
       var self = this;
       var failing = this.monitors.filter(function(monitor){
-        var state = monitor.get('state');
-        
         // check if monitor is in the group
         var model = self.monitorGroups.get( monitor );
         if (!model) return false;
-
-        return state=='failure'||state=='updates_stopped';
+        return monitor.isFailing();
       });
 
       if (failing.length>0) {
@@ -544,13 +518,12 @@ function DashboardPage () {
      */
     foldMonitors: function(){
       var self = this;
-      this.find('.monitorRow').each(function(){
-        var $row = $(this);
-        var stateIcon = $row.find('.panel-heading .state-icon span')[0];
-        if ( !/warn|error/.test(stateIcon.className) ) {
-          $row.appendTo(self.monitorsFolding.$container);
+      this.monitorRows.views.forEach(function(view){
+        var monitor = view.model;
+        if (!monitor.isFailing()) {
+          view.$el.appendTo(self.monitorsFolding.$container);
         } else {
-          $row.prependTo(self.$monitorsPanel);
+          view.$el.prependTo(self.$monitorsPanel);
         }
       });
     },
@@ -559,9 +532,8 @@ function DashboardPage () {
      */
     unfoldMonitors: function(){
       var self = this;
-      this.find('.monitorRow').each(function(){
-        var $row = $(this);
-        $row.appendTo(self.$monitorsPanel);
+      this.monitorRows.views.forEach(function(view){
+        view.$el.appendTo(self.$monitorsPanel);
       });
     }
   });
@@ -596,12 +568,14 @@ function DashboardPage () {
       var group = groups[hostname];
       var host = group['host'];
 
-      host.set('submonitors', new Backbone.Collection());
-      host.get('submonitors').add([
-        group['host'],
-        group['dstat']
-      ]);
-      groupedMonitors.add(host);
+      if (host) { // data error ??
+        host.set('submonitors', new Backbone.Collection());
+        host.get('submonitors').add([
+          group['host'],
+          group['dstat']
+        ]);
+        groupedMonitors.add(host);
+      }
     }
 
     return groupedMonitors;
