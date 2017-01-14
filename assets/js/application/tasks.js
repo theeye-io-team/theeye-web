@@ -50,7 +50,7 @@ $(function(){
         var task = _tasks.get(id);
 
         var modal = new Modal({
-          'title': 'Copy task ' + task.get('name') 
+          'title': 'Copy task ' + task.get('name')
         });
         modal.render();
 
