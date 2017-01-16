@@ -334,6 +334,30 @@ $(function(){
       var kindlyApologyze = 'Ooops, something went wrong. Sorry ¯\\_(ツ)_/¯ ' +
         'Would you care to refresh the page?';
 
+      // starts the deletion process by showing a delete-confirmation-modal
+      function showDeleteModal(eventObject) {
+        var schedule = eventObject.source.scheduleData;
+        $deleteModal.modal('show');
+
+        // TODO potential bug here
+        // If agenda has been stopped for any period of time, when it's
+        // started again it will check for scheduled jobs that SHOULD HAVE RAN
+        // while it was stopped. Any job that fits this situation will be run
+        // when agenda is started. Hence this problem occurs: lastRun is set to
+        // the re-start moment and nextRun RE-CALCULATED based on schedule
+        // repeat interval. In an ideal world the agenda would never be stopped,
+        // but if it happens, then the event series estimation (UI) will differ from
+        // what's really gonna happen with the schedule (DB). --cg
+        $('.startsOn', $deleteModal).text(new Date(schedule.data.scheduleData.runDate));
+        $('.repeatEvery', $deleteModal).text(schedule.data.scheduleData.repeatEvery || "Never");
+
+        // this two are hidden till we figure out how last/next Run is really set
+        $('.lastRun', $deleteModal).text(schedule.lastRunAt);
+        $('.nextRun', $deleteModal).text(schedule.nextRunAt);
+
+        $scheduleDeleter.data('schedule', eventObject);
+      }
+
       function updateAttention($itemRow, numSchedules) {
         // if numSchedules is specified, don't search the DOM for hasSchedule
         var hasSchedule = numSchedules !== undefined
@@ -399,29 +423,35 @@ $(function(){
         });
       });
 
-      function buildEventSeries(title, startingDate, interval) {
+      function buildEventSeries(title, scheduleDate, interval, rangeStart, rangeEnd) {
         var events = [];
         interval = interval ? humanInterval(interval) : false;
-        //60 iterations / dates
+        var start = scheduleDate < rangeStart
+          ? rangeStart.valueOf()
+          : scheduleDate.valueOf();
+        var end = rangeEnd.valueOf();
         if(interval) {
-          for(var ii = 0; ii < 60; ii++) {
+          for(var ii = start; ii <= end; ii += interval) {
             events.push({
               'title': title,
-              start: new Date(startingDate + (interval * ii))
+              start: new Date(ii)
             });
           }
         }else{
-          events.push({
-            'title': title,
-            start: new Date(startingDate)
-          });
+          // only if within range
+          if(scheduleDate > rangeStart && scheduleDate < rangeEnd) {
+            events.push({
+              'title': title,
+              start: new Date(scheduleDate)
+            });
+          }
         }
         return events;
       }
 
-      function getEventSources(scheduleArray, name) {
+      function getEventSources(scheduleArray, name, rangeStart, rangeEnd) {
+
         return lodash.map(scheduleArray, function(schedule, index, arr){
-          var ms = new Date(schedule.data.scheduleData.runDate);
           // 200 is the offset of the color wheel where 0 is red, change at will.
           // 180 is how wide will the angle be to get colors from,
           // lower (narrower) angle will get you a more subtle palette.
@@ -436,35 +466,16 @@ $(function(){
             scheduleData: schedule,
             events: buildEventSeries(
               name,
-              ms.valueOf(),
-              schedule.data.scheduleData.repeatEvery
+              // some magic is fuzzing with the returned date from api
+              new Date(schedule.data.scheduleData.runDate),
+              schedule.data.scheduleData.repeatEvery,
+              rangeStart,
+              rangeEnd
             )
           };
         });
       }
 
-      function showDeleteModal(eventObject) {
-        var schedule = eventObject.source.scheduleData;
-        $deleteModal.modal('show');
-
-        // TODO potential bug here
-        // If agenda has been stopped for any period of time, when it's
-        // started again it will check for scheduled jobs that SHOULD HAVE RAN
-        // while it was stopped. Any job that fits this situation will be run
-        // when agenda is started. Hence this problem occurs: lastRun is set to
-        // the re-start moment and nextRun RE-CALCULATED based on schedule
-        // repeat interval. In an ideal world the agenda would never be stopped,
-        // but if it happens, then the event series estimation (UI) will differ from
-        // what's really gonna happen with the schedule (DB). --cg
-        $('.startsOn', $deleteModal).text(new Date(schedule.data.scheduleData.runDate));
-        $('.repeatEvery', $deleteModal).text(schedule.data.scheduleData.repeatEvery || "Never");
-
-        // this two are hidden till we figure out how last/next Run is really set
-        $('.lastRun', $deleteModal).text(schedule.lastRunAt);
-        $('.nextRun', $deleteModal).text(schedule.nextRunAt);
-
-        $scheduleDeleter.data('schedule', eventObject);
-      }
       //fix para el scroll despues de abrir modal sobre modal
       $deleteModal.on('hidden.bs.modal', function(event){
         $('body').addClass('modal-open');
@@ -492,7 +503,7 @@ $(function(){
         var itemData = $(this).closest('.itemRow').data();
         //esto tiene que apuntar a /task/:id/schedule
         $.get("/task/" + itemData.itemId + "/schedule").done(function(data){
-          eventSources = getEventSources(data.scheduleData, itemData.itemName);
+          // eventSources = getEventSources(data.scheduleData, itemData.itemName);
           //prepare form
           $form.data('task-id',itemData.itemId);
           //prepare modal
@@ -500,6 +511,10 @@ $(function(){
           $('input[name=datetime]').val('');
           $('input[name=frequency]').val('');
 
+          // store data on $mainModal.data('schedule')
+          $mainModal.data('schedule', data);
+          // store task data as well
+          $mainModal.data('task', itemData);
           //calendar stuff on event handler below
           $mainModal.modal('show');
 
@@ -509,18 +524,42 @@ $(function(){
         return;
       });
 
-      //initialize calendar only once
-      $mainModal.on('shown.bs.modal', function(event) {
-        if(!$calendarElement) {
-          $calendarElement = $('.taskScheduleCalendar', $mainModal).fullCalendar({
-            eventClick: showDeleteModal
-          });
-        }
-
+      function onCalendarViewRender () {
+        var schedule = $mainModal.data('schedule');
+        var itemData = $mainModal.data('task');
+        $calendarElement.fullCalendar('removeEventSources');
+        // TODO:
+        // re calculate eventSeries here within dates:
+        // $calendarElement.data('fullCalendar').getView().start|end.toString();
+        var view = $calendarElement.data('fullCalendar').getView();
+        eventSources = getEventSources(schedule.scheduleData, itemData.itemName, view.start, view.end);
         eventSources.forEach(function(item){
           $calendarElement.fullCalendar('addEventSource', item);
         });
-        window.aaa = $calendarElement;
+      }
+
+      //initialize calendar only once
+      $mainModal.on('shown.bs.modal', function(event) {
+        // console.log(schedule);
+        // initialize empty fullCalendar
+        if(!$calendarElement) {
+          $calendarElement = $('.taskScheduleCalendar', $mainModal);
+          $calendarElement.fullCalendar({
+            header: {
+              left: 'prev,next today',
+              center: 'title',
+              right: 'month,basicWeek,basicDay'
+            },
+            eventLimit: 5,
+            eventClick: showDeleteModal,
+            viewRender: onCalendarViewRender
+          });
+
+        }else{
+          // when calendar was already here it doesn't trigger
+          // viewRender just because modal is shown, force it
+          $calendarElement.data('fullCalendar').trigger('viewRender');
+        }
       });
       $mainModal.on('hide.bs.modal', function(event) {
         $calendarElement.fullCalendar('removeEventSources');
