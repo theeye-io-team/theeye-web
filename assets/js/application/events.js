@@ -31,7 +31,13 @@ $(function(){
       return elems[0];
     },
     filterAlertIconClasses: function(iconClasses) {
-      var failureClasses = ['icon-info','icon-warn','icon-fatal'],
+      var failureClasses = [
+        'icon-info',
+        'icon-warn',
+        'icon-fatal',
+        'icon-error',
+        'icon-nonsense'
+      ],
         filtered = iconClasses.filter(function(idx,icon){
           return failureClasses.indexOf(icon) != -1
         });
