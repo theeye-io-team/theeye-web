@@ -86,7 +86,7 @@ var HostStats = function (io, specs) {
         if (!Stats.psaux.sort.column) {
           return;
         }
-        var stat = _.sortByOrder($psauxTable.data("data"), [Stats.psaux.sort.column], [Stats.psaux.sort.direction]);
+        var stat = lodash.sortBy($psauxTable.data("data"), [Stats.psaux.sort.column], [Stats.psaux.sort.direction]);
         $psauxTable.data("data", stat);
       },
       filterProcesses : function () {
