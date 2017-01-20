@@ -4,23 +4,6 @@ $(function() {
 
   var $state = $({});
 
-  function extractFormData (action, $el) {
-    return $el.serializeArray().reduce(function(obj, input) {
-
-      if(input.name=='customers'){
-        if(!obj[input.name]) obj[input.name]=[];
-        obj[input.name].push(input.value);
-      }
-      else if(input.name=='emails')
-      {
-        obj[input.name] = $("[data-hook=emails-"+action+"]").val();
-      }
-      else obj[input.name] = input.value;
-      return obj;
-
-    }, {});
-  }
-
   //CREATE CUSTOMER FORM
   (function create(el){
 
@@ -128,7 +111,7 @@ $(function() {
       if (!updates) return;
 
       updates.description = data.description;
-      updates.emails = data.emails;
+      updates.emails = data.emails||[];
 
       jQuery.ajax({
         url: '/customer/' + $customerForm.data('customer-id'),
