@@ -1,4 +1,3 @@
 'use strict';
 
-var BaseModel = Backbone.Model.extend({
-});
+var BaseModel = Backbone.Model.extend({ });

@@ -285,8 +285,8 @@ $(function() {
 
   //**Public script upload**//
   $('.example-code').click(function(e) {
-    var mode = $("[data-hook=editor-mode]").val();
-    var url = "";
+    var mode = $('[data-hook=editor-mode]').val();
+    var url = '';
     if(mode === 'javascript')
       url = 'https://raw.githubusercontent.com/JuanMsanchez/scripts/master/example-node.js';
     if(mode === 'sh')
@@ -297,40 +297,35 @@ $(function() {
       type: 'POST',
       dataType: 'json',
       data: {url : url}
-    }).done(function(data)
-    {
+    }).done(function(data){
       aceEditor.setValue(data);
-    }).fail(function(xhr, err, xhrStatus)
-    {
+    }).fail(function(xhr, err, xhrStatus){
     });
   });
 
   // Drop me something
   (function(){
-    var fillForm = function(filename, content){
-
+    function fillForm (filename, content) {
       var nameonly = !!~filename.indexOf('.')
         ? filename.substr(0, filename.lastIndexOf('.'))
         : filename;
 
-      $('input[name=filename]', '#script-modal').val(nameonly);
+      $('input[name=filename]','#script-modal').val(nameonly);
       var modelist = ace.require('ace/ext/modelist');
       var modeMeta = modelist.getModeForPath(filename);
 
       aceEditor.session.setMode(modeMeta.mode);
       aceEditor.getSession().setValue(content);
 
-      $("input:radio[name=live-edit]", '#script-modal').first().prop('checked',true);
-      $("[data-hook=live-edit][value=editor]", '#script-modal').trigger('click');
+      $('input:radio[name=live-edit]','#script-modal').first().prop('checked',true);
+      $('[data-hook=live-edit][value=editor]','#script-modal').trigger('click');
+      $('textarea[name=description]','#script-modal').val('');
+      $('[data-hook=editor-mode]','#script-modal').val(modeMeta.name);
+      $('[data-hook=editor-mode]','#script-modal').trigger('change');
+    }
 
-      $('textarea[name=description]', '#script-modal').val("");
-
-      $("[data-hook=editor-mode]", '#script-modal').val(modeMeta.name);
-      $("[data-hook=editor-mode]", '#script-modal').trigger('change');
-
-    };
-    var fileSelectHandler = function(evt){
-      var file = evt.type == "change"
+    function fileSelectHandler (evt){
+      var file = evt.type == 'change'
         ? evt.originalEvent.target.files[0] // comes from input#fileChooser
         : evt.originalEvent.dataTransfer.files[0]; // comes from drag'n drop
 
@@ -355,7 +350,7 @@ $(function() {
       }catch(err){
         alert('Could not read your file, sorry. Try with a script (simple text) file');
       }
-    };
+    }
     var $megaContainer = $('.droptarget');
     var $ddOverlay = $('<div />')
       .width('100%')

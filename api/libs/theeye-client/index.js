@@ -332,13 +332,6 @@ TheEyeClient.prototype = {
     return request;
   },
   /**
-   *
-   * in progress
-   *
-   */
-  uploadMultiparted: function(options){
-  },
-  /**
    * put request wrapper
    * @author Facundo
    * @return Request connection.request

@@ -82,6 +82,10 @@ var Modal = function (specs) {
     this.$el.modal('hide');
   }
 
+  this.close = function(){
+    this.$el.modal('hide');
+  }
+
   var _content;
   Object.defineProperty(this, 'content', {
     get: function(){ return _content; },

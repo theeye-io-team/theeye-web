@@ -3,6 +3,7 @@
 var extend = require('lodash/assign');
 
 var viewer = {
+  'fileapi':['*'],
   'api':['*'],
   'dashboard':['index'],
   'events':['index'],

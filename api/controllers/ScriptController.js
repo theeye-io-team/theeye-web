@@ -107,8 +107,7 @@ module.exports = {
     var params = req.params.all();
     var supervisor = req.supervisor;
 
-
-    var str = new Buffer(params.script, 'base64').toString('ascii') ;
+    var str = new Buffer(params.script,'base64').toString('ascii') ;
     var source = decodeURIComponent(escape(str));
 
     var fname = '/tmp/' + req.user.id + '_' + Date.now();
