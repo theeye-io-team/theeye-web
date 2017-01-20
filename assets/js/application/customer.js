@@ -67,23 +67,19 @@ $(function() {
       $customerForm.data('customer-id',id);
       $customerForm.data('action','edit');
 
-      jQuery.get('/customer/' + id)
-        .done(function(data){
-          var form = new FormElement($customerForm);
-          var customer = data.customer;
-          customer.elasticsearch = JSON.stringify(customer.config.elasticsearch);
-          customer.kibana = customer.config.kibana||'';
-          form.set(customer);
+      jQuery.get("/customer/" + customerId).done(function(data) {
+        var form = new FormElement($customerForm);
 
-          // reset tags input
-          var $emails = $('[data-hook=emails]');
-          $emails.tagsinput('removeAll');
-          customer.emails.forEach(function(email){
-            $emails.tagsinput('add',email);
-          });
-        })
-        .fail(function(xhr, err) {
-        });
+        var customer = data.customer,
+          config = customer.config||{elasticsearch:{}};
+
+        customer.elasticsearch = JSON.stringify(config.elasticsearch);
+        customer.kibana = (config.kibana||'');
+
+        form.set(customer);
+      });
+
+      return false;
     });
 
     function setConfiguration (data) {
