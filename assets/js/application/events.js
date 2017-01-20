@@ -212,6 +212,14 @@ $(function(){
       var hostName = $(this).closest('.itemRow').data('item-name');
       window.location = "/admin/monitor#search="+hostName;
     });
+
+    $('.editTasks').on('click', function(evt){
+      evt.preventDefault();
+      evt.stopPropagation();
+      var id = $(this).data('id');
+      window.location = "/admin/task#search="+id;
+    });
+
     $('.monitorStats').on('click', function(evt){
       evt.preventDefault();
       evt.stopPropagation();
