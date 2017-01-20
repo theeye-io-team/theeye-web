@@ -111,12 +111,13 @@ $(function() {
       jQuery.get("/customer/" + customerId).done(function(data) {
         var form = new FormElement($customerForm);
 
-        var customer = data.customer;
-        customer.elasticsearch = JSON.stringify(customer.config.elasticsearch);
-        customer.kibana = customer.config.kibana||'';
+        var customer = data.customer,
+          config = customer.config||{elasticsearch:{}};
+
+        customer.elasticsearch = JSON.stringify(config.elasticsearch);
+        customer.kibana = (config.kibana||'');
 
         form.set(customer);
-      }).fail(function(xhr, err) {
       });
 
       return false;
