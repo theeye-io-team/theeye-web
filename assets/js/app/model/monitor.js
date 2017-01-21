@@ -76,8 +76,8 @@ window.App.Models.Monitor = BaseModel.extend({
   },
   stateSeverity: function(){
     var state = this.get('state') ,
-      severity = this.get('failure_severity').toLowerCase();
-    return (state==='failure')?severity:state;
+      severity = this.get('failure_severity');
+    return (state==='failure')?(severity||'failure').toLowerCase():state;
   },
   stateOrder: function(){
     return stateIcons.indexOf(this.stateSeverity());

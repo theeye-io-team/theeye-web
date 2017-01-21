@@ -81,14 +81,19 @@
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <% tasks.forEach( function(task, key) { %>
-          <% var tags = [
+          <% var missingScript = task.type=='script' && (!task.script_id||!task.host_id);
+          var tags = [
             'task',
             task.description,
             task.name,
             'task='+ task.id,
             'host='+ task.hostname,
             'script='+ task.script_id
-          ].concat(task.tags).join(','); %>
+          ].concat(task.tags);
+
+          if(missingScript){ tags.push('missing'); }
+          tags = tags.join(',');
+        %>
           <div
             class="itemRow panel panel-default js-searchable-item"
             data-item-id="<%= task.id %>"
@@ -109,7 +114,7 @@
                       <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                     </button>
                     <span class="panel-item name" id="<%= task.id %>">
-                      <% if( task.type=='script' && (!task.script_id||!task.host_id) ) { %>
+                      <% if (missingScript) { %>
 
                       <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
                       &nbsp; <%= task.name %>

@@ -26,6 +26,8 @@ $(function() {
       case "ps1": mode = "powershell"; break;
       case "js": mode = "javascript"; break;
       case "bat": mode = "batchfile"; break;
+      case "pl": mode = "perl"; break;
+      case "go": mode = "go"; break;
       case "sh": mode = "sh"; break;
       case "py": mode = "python"; break;
       case "php": mode = "php"; break;
@@ -39,6 +41,8 @@ $(function() {
       case "powershell": extension = "ps1"; break;
       case "javascript": extension = "js"; break;
       case "batchfile": extension = "bat"; break;
+      case "go": mode = "go"; break;
+      case "perl": extension = "pl"; break;
       case "sh": extension = "sh"; break;
       case "python": extension = "py"; break;
       case "php": extension = "php"; break;
@@ -285,23 +289,27 @@ $(function() {
 
   //**Public script upload**//
   $('.example-code').click(function(e) {
+    var scriptsPath = 'https://raw.githubusercontent.com/theeye-io-team/theeye-docs/master/scripts';
     var mode = $("[data-hook=editor-mode]").val();
-    var url = "";
-    if(mode === 'javascript')
-      url = 'https://raw.githubusercontent.com/JuanMsanchez/scripts/master/example-node.js';
-    if(mode === 'sh')
-      url = 'https://raw.githubusercontent.com/JuanMsanchez/scripts/master/example-bash.sh';
+    var url = scriptsPath + '/example.' + mode2extension(mode);
+
+    function noSample () {
+      bootbox.alert('we are very sorry, but we don\'t have an example for you at this moment');
+    }
 
     $.ajax({
       url: '/admin/script/download',
       type: 'POST',
       dataType: 'json',
       data: {url : url}
-    }).done(function(data)
-    {
-      aceEditor.setValue(data);
-    }).fail(function(xhr, err, xhrStatus)
-    {
+    }).done(function(data){
+      if (!data) {
+        noSample();
+      } else {
+        aceEditor.setValue(data);
+      }
+    }).fail(function(xhr, err, xhrStatus){
+      noSample();
     });
   });
 
