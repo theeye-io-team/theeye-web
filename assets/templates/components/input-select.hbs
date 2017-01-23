@@ -1,17 +1,16 @@
 <div>
-  <label for="tasks" class="col-sm-3 control-label" data-hook="label">
+  <label for="{{ name }}" class="col-sm-3 control-label" data-hook="label">
     {{ label }}
     <span style="cursor:help"
-      title="Select the task you want to copy"
+      title="{{ help }}"
       class="tooltiped glyphicon glyphicon-question-sign">
     </span>
   </label>
   <div class="col-sm-9">
     <div>
-      <select data-hook="tasks"
+      <select data-hook="{{ name }}"
         class="form-control select"
-        title="tasks"
-        name="tasks"
+        name="{{ name }}"
         style="width:100%">
         <option></option>
       </select>

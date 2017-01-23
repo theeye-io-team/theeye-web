@@ -1,15 +1,56 @@
 'use strict';
 
-window.App || ( window.App = {} );
-window.App.Models || ( window.App.Models = {} );
+// please do not use global
+var stateIcons = {
+  unknown         : "icon-nonsense",
+  normal          : "icon-check",
+  low             : "icon-info", /* failure state */
+  high            : "icon-warn", /* failure state */
+  critical        : "icon-fatal", /* failure state */
+  updates_stopped : "icon-error",
+  getIcon: function (state) {
+    var icon = (this[state.toLowerCase()]||this.unknown);
+    return icon;
+  },
+  indexOf: function (value) {
+    // keep the indexes in order !
+    return [
+      "unknown",
+      "normal",
+      "low",
+      "high",
+      "critical",
+      "updates_stopped"
+    ].indexOf(value);
+  },
+  classToState: function (iconClass) {
+    var self = this;
+    var elems = Object.keys(self).filter(function(state){
+      if (self[state]==iconClass) return state;
+    });
+    return elems[0];
+  },
+  filterAlertIconClasses: function(iconClasses) {
+    var failureClasses = ['icon-info','icon-warn','icon-fatal'],
+      filtered = iconClasses.filter(function(idx,icon){
+        return failureClasses.indexOf(icon) != -1
+      });
+    return filtered;
+  }
+};
+
+window.App||(window.App={});
+window.App.Models||(window.App.Models={});
 window.App.Models.Monitor = BaseModel.extend({
   urlRoot:'/api/resource',
   parse:function(response){
     if (Array.isArray(response)) {
       response = response[0];
     }
-    var resource = response.resource||response;
-    var monitor = resource.monitor||response.monitor;
+    var resource = (response.resource||response);
+    var monitor = (resource.monitor||response.monitor);
+
+    if (!monitor) return resource;
 
     var last_update_formated = moment(resource.last_update)
       .startOf('second')
@@ -21,7 +62,8 @@ window.App.Models.Monitor = BaseModel.extend({
       resource.hostname,
       resource.type,
       resource.state,
-    ].concat( monitor.tags );
+      resource.failure_severity,
+    ].concat(monitor.tags);
 
     return lodash.merge(resource,{
       // monitor
@@ -31,6 +73,21 @@ window.App.Models.Monitor = BaseModel.extend({
       formatted_tags: tags,
       last_update_formated: last_update_formated
     });
+  },
+  stateSeverity: function(){
+    var state = this.get('state') ,
+      severity = this.get('failure_severity');
+    return (state==='failure')?(severity||'failure').toLowerCase():state;
+  },
+  stateOrder: function(){
+    return stateIcons.indexOf(this.stateSeverity());
+  },
+  stateIcon: function(){
+    return stateIcons[this.stateSeverity()];
+  },
+  isFailing: function(){
+    var state = this.get('state');
+    return state === 'failure' || state === 'updates_stopped';
   },
   createClone: function(props,options){
     var resource = this,
@@ -62,19 +119,20 @@ window.App.Models.Monitor = BaseModel.extend({
   }
 });
 
-var monitorStatePriority = {
-  normal: 0,
-  failure: 1,
-  updates_stopped: 2,
-  unknown: 3
-}
+window.App.Models.FileMonitor = window.App.Models.Monitor.extend({
+  parse:function(response){
+    var parsed = window.App.Models.Monitor.prototype.parse.apply(this,arguments);
+    if (!response.monitor) return;
+    return lodash.merge(parsed,response.monitor.config);
+  }
+});
 
-window.App.Collections || ( window.App.Collections = {} );
+window.App.Collections||(window.App.Collections={});
 window.App.Collections.Monitors = Backbone.Collection.extend({
   model: window.App.Models.Monitor,
   url:'/api/resource',
   comparator:function(model){
-    return monitorStatePriority[model.get('state')];
+    return model.stateOrder();
   },
   /**
    * obtein a collection of every single tag.

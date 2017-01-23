@@ -508,9 +508,11 @@ span.selectorIcon.glyphicon-check {
   font-size: 30px;
 }
 
-.icon-error { color: #FF3300; }
-.icon-warn { color: yellow; }
 .icon-check { color: green; }
+.icon-info { color: #00dcff; }
+.icon-warn { color: #ffff00; }
+.icon-fatal { color: #FF3300; }
+.icon-error { color: #FF3300; }
 
 .events-panel .panel-item.icons .btn-icon-image {
   float:right;
@@ -685,10 +687,23 @@ a.flowchart-icon {
 
 .navbar-header .user-profile { color:#80a1b8; position:absolute; right:5px; top:5px; float:right; }
 
+.advanced-section-title,
 .scraper-section-title { text-align:center; margin-bottom:15px; }
+.advanced-section-title label,
 .scraper-section-title label { display:none }
 
 
 .dashboard .group select {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
 .dashboard .group .select2-container--default .select2-selection--multiple { border-radius: 0; background-color:#44567d; border:none; }
 .dashboard .monitors.admin-panel h3 span { float:right;top:6px;rigth:5px;cursor:pointer;color:#44567d;}
+
+.attention:after {
+  content: ' ';
+  background-color: #d88e47;
+  width: 7px;
+  height: 7px;
+  position: absolute;
+  top: -4px;
+  right: -9px;
+  border-radius: 7px;
+}

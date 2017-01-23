@@ -11,7 +11,7 @@ var TagsSelect = (function(){
     className:'form-group form-horizontal',
     template: Templates['assets/templates/components/tags-select.hbs'],
     initialize:function(){
-      this.title = 'TAGS';
+      this.title = 'Tags [optional]';
       this.name = 'tags';
       BaseView.prototype.initialize.apply(this,arguments);
 

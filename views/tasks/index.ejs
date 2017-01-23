@@ -81,14 +81,19 @@
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <% tasks.forEach( function(task, key) { %>
-          <% var tags = [
+          <% var missingScript = task.type=='script' && (!task.script_id||!task.host_id);
+          var tags = [
             'task',
             task.description,
             task.name,
             'task='+ task.id,
             'host='+ task.hostname,
             'script='+ task.script_id
-          ].concat(task.tags).join(','); %>
+          ].concat(task.tags);
+
+          if(missingScript){ tags.push('missing'); }
+          tags = tags.join(',');
+        %>
           <div
             class="itemRow panel panel-default js-searchable-item"
             data-item-id="<%= task.id %>"
@@ -109,7 +114,7 @@
                       <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                     </button>
                     <span class="panel-item name" id="<%= task.id %>">
-                      <% if( task.type=='script' && (!task.script_id||!task.host_id) ) { %>
+                      <% if (missingScript) { %>
 
                       <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
                       &nbsp; <%= task.name %>
@@ -160,9 +165,9 @@
 
                         <span class="glyphicon glyphicon-edit"></span>
                       </button>
-                      <% var btnClass = tags.indexOf("scheduled") >= 0 ? 'btn-warning' : 'btn-primary'; %>
-                      <button class="scheduleTask btn <%= btnClass %> simple-btn tooltiped" title="Schedule task" aria-label="Center Align">
-                        <span class="glyphicon glyphicon-time"></span>
+                      <% var attention = tags.indexOf("scheduled") >= 0 ? 'attention' : ''; %>
+                      <button class="scheduleTask btn btn-primary simple-btn tooltiped" title="Schedule task" aria-label="Center Align">
+                        <span class="glyphicon glyphicon-time <%= attention%>"></span>
                       </button>
                       <button class="deleteTask btn btn-primary simple-btn tooltiped" title="Delete task" aria-label="Center Align">
                         <span class="glyphicon glyphicon-trash"></span>
@@ -174,13 +179,27 @@
             </div>
             <div id="collapse<%= task.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= task.id %>">
               <div class="panel-body">
-                <div>
-                  <h4>Description</h4>
-                  <p><%= task.description %></p>
-                  <h4>Script</h4>
-                  <p><%= task.script_name %></p>
-                  <h4>Script arguments</h4>
-                  <p><%= task.script_arguments %></p>
+                <div class="row">
+                  <div class="col-sm-4">
+                    <h4>Description</h4>
+                    <p><%= task.description %></p>
+                  </div>
+                  <div class="col-sm-4">
+                    <h4>Script</h4>
+                    <p><%= task.script_name %></p>
+                  </div>
+                  <div class="col-sm-4">
+                    <h4>Script arguments</h4>
+                    <p><%= task.script_arguments %></p>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-xs-12">
+                    <h4 style="border-bottom: 1px solid grey;">Schedules for this task</h4>
+                  </div>
+                  <div class="schedule-list">
+
+                  </div>
                 </div>
               </div>
             </div>
@@ -188,6 +207,26 @@
         <% }); %>
       </div> <!-- end panel -->
     </div> <!-- Tableresults -->
+  </div>
+  <div class="scheduleItem hidden">
+    <div class="col-sm-4 startDate">
+      Initial date:<br />
+      <span></span>
+    </div>
+    <div class="col-sm-2 repeatsEvery">
+      Repeats every:<br />
+      <span></span>
+    </div>
+    <div class="col-sm-4 nextDate">
+      Next iteration:<br />
+      <span>-</span>
+    </div>
+    <div class="col-sm-2 removeSchedule">
+      <button type="button"
+        class="btn btn-danger deleteSchedule">
+        Delete
+      </button>
+    </div>
   </div>
 </div> <!-- main -->
 

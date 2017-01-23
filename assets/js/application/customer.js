@@ -4,23 +4,6 @@ $(function() {
 
   var $state = $({});
 
-  function extractFormData (action, $el) {
-    return $el.serializeArray().reduce(function(obj, input) {
-
-      if(input.name=='customers'){
-        if(!obj[input.name]) obj[input.name]=[];
-        obj[input.name].push(input.value);
-      }
-      else if(input.name=='emails')
-      {
-        obj[input.name] = $("[data-hook=emails-"+action+"]").val();
-      }
-      else obj[input.name] = input.value;
-      return obj;
-
-    }, {});
-  }
-
   //CREATE CUSTOMER FORM
   (function create(el){
 
@@ -78,65 +61,42 @@ $(function() {
 
     var $customerForm = $(el);
 
-    function fillForm($viewElement, data){
-      $viewElement[0].reset();
-      Object.keys(data).forEach(function(k) {
-
-        if(k == 'emails') {
-          var emails = data[k];
-          $('[data-hook=emails-edit]').tagsinput('removeAll');
-          emails.forEach(function(email) {
-            $('[data-hook=emails-edit]').tagsinput('add', email);
-          });
-        } else {
-          var $el = $viewElement.find("[data-hook="+ k + "]");
-          if (k == 'config') {
-            var config = JSON.stringify(data[k]);
-            $el.val(config);
-          } else {
-            $el.val(data[k]);
-          }
-        }
-      });
-    }
-
-    $(".modal#edit-customer").on('shown.bs.modal', function(event){
-      event.preventDefault();
-      event.stopPropagation();
-
-      var customerId = event.relatedTarget.getAttribute('data-customer-id');
-      $customerForm.data('customer-id',customerId);
+    $(".modal#edit-customer").on('show.bs.modal',function(event){
+      var id = event.relatedTarget.getAttribute('data-customer-id');
+      $customerForm[0].reset();
+      $customerForm.data('customer-id',id);
       $customerForm.data('action','edit');
 
-      jQuery.get("/customer/" + customerId).done(function(data) {
-        var form = new FormElement($customerForm);
+      jQuery.get('/customer/' + id)
+        .done(function(data){
+          var form = new FormElement($customerForm);
+          var customer = data.customer;
+          customer.elasticsearch = JSON.stringify(customer.config.elasticsearch);
+          customer.kibana = customer.config.kibana||'';
+          form.set(customer);
 
-        var customer = data.customer;
-        customer.elasticsearch = JSON.stringify(customer.config.elasticsearch);
-        customer.kibana = customer.config.kibana||'';
-
-        form.set(customer);
-      }).fail(function(xhr, err) {
-      });
-
-      return false;
+          // reset tags input
+          var $emails = $('[data-hook=emails]');
+          $emails.tagsinput('removeAll');
+          customer.emails.forEach(function(email){
+            $emails.tagsinput('add',email);
+          });
+        })
+        .fail(function(xhr, err) {
+        });
     });
 
     function setConfiguration (data) {
       var elasticsearch = data.elasticsearch;
       var kibana = data.kibana;
-
       var updates = { config: {} };
-
       // convert config into an object
-
       try {
         updates.config.elasticsearch = JSON.parse(elasticsearch);
       } catch (e) {
         bootbox.alert('The Elastic Search configuration is not a valid JSON object. Please, try again');
         return null;
       }
-
       updates.config.kibana = kibana;
       return updates;
     }
@@ -151,7 +111,7 @@ $(function() {
       if (!updates) return;
 
       updates.description = data.description;
-      updates.emails = data.emails;
+      updates.emails = data.emails||[];
 
       jQuery.ajax({
         url: '/customer/' + $customerForm.data('customer-id'),

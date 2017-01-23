@@ -50,7 +50,7 @@ $(function(){
         var task = _tasks.get(id);
 
         var modal = new Modal({
-          'title': 'Copy task ' + task.get('name') 
+          'title': 'Copy task ' + task.get('name')
         });
         modal.render();
 
@@ -329,54 +329,14 @@ $(function(){
       var $form = $('form', $mainModal);
       var $submitter = $('button[type=submit]',$mainModal);
       var $scheduleDeleter = $('.deleteSchedule', $deleteModal);
-      var $calendarElement, scheduleData;
+      var $calendarElement, eventSources;
+      var $scheduleItemElement = $('.scheduleItem').first().clone().removeClass('hidden');
+      var kindlyApologyze = 'Ooops, something went wrong. Sorry ¯\\_(ツ)_/¯ ' +
+        'Would you care to refresh the page?';
 
-      function buildEventSeries(title, startingDate, interval) {
-        var events = [];
-        interval = interval ? humanInterval(interval) : false;
-        //60 iterations / dates
-        if(interval) {
-          for(var ii = 0; ii < 60; ii++) {
-            events.push({
-              'title': title,
-              start: new Date(startingDate + (interval * ii))
-            });
-          }
-        }else{
-          events.push({
-            'title': title,
-            start: new Date(startingDate)
-          });
-        }
-        return events;
-      }
-
-      function getEventSources(scheduleData, name) {
-        return lodash.map(scheduleData, function(scheduleEvent, index, arr){
-          var ms = new Date(scheduleEvent.data.scheduleData.runDate);
-          // 200 is the offset of the color wheel where 0 is red, change at will.
-          // 180 is how wide will the angle be to get colors from,
-          // lower (narrower) angle will get you a more subtle palette.
-          // Tone values are evenly sparsed based on array.length.
-          // Check this: http://www.workwithcolor.com/hsl-color-picker-01.htm
-          var wheelDegree = 200 + 180 / arr.length * ++index;
-          return {
-            id: scheduleEvent._id,
-            backgroundColor: 'hsl('+wheelDegree+', 80%, 48%)',
-            textColor: 'white',
-            className: ["calendarEvent"],
-            scheduleData: scheduleEvent,
-            events: buildEventSeries(
-              name,
-              ms.valueOf(),
-              scheduleEvent.data.scheduleData.repeatEvery
-            )
-          };
-        });
-      }
-
+      // starts the deletion process by showing a delete-confirmation-modal
       function showDeleteModal(eventObject) {
-        var eventData = eventObject.source.scheduleData;
+        var schedule = eventObject.source.scheduleData;
         $deleteModal.modal('show');
 
         // TODO potential bug here
@@ -388,15 +348,134 @@ $(function(){
         // repeat interval. In an ideal world the agenda would never be stopped,
         // but if it happens, then the event series estimation (UI) will differ from
         // what's really gonna happen with the schedule (DB). --cg
-        $('.startsOn', $deleteModal).text(new Date(eventData.data.scheduleData.runDate));
-        $('.repeatEvery', $deleteModal).text(eventData.data.scheduleData.repeatEvery || "Never");
+        $('.startsOn', $deleteModal).text(new Date(schedule.data.scheduleData.runDate));
+        $('.repeatEvery', $deleteModal).text(schedule.data.scheduleData.repeatEvery || "Never");
 
         // this two are hidden till we figure out how last/next Run is really set
-        $('.lastRun', $deleteModal).text(eventData.lastRunAt);
-        $('.nextRun', $deleteModal).text(eventData.nextRunAt);
+        $('.lastRun', $deleteModal).text(schedule.lastRunAt);
+        $('.nextRun', $deleteModal).text(schedule.nextRunAt);
 
         $scheduleDeleter.data('schedule', eventObject);
       }
+
+      function updateAttention($itemRow, numSchedules) {
+        // if numSchedules is specified, don't search the DOM for hasSchedule
+        var hasSchedule = numSchedules !== undefined
+          ? Boolean(numSchedules)
+          : $('.scheduleItem', $itemRow).length > 0;
+
+        if(hasSchedule) {
+          $('.scheduleTask > span', $itemRow).toggleClass('attention', true);
+        }else{
+          $('.scheduleTask > span', $itemRow).toggleClass('attention', false);
+        }
+      }
+      // show.bs.collapse, load schedules on collapse show
+      $('.itemRow > .collapse').each(function(i,e){
+        $(e).on('show.bs.collapse', function(event){
+          // this is the div.collapse
+          var $itemRow = $(this).closest('.itemRow');
+          // get the scheduleList and clean it
+          var $scheduleList = $('.schedule-list', this).html('');
+
+          var itemData = $itemRow.data();
+          //esto tiene que apuntar a /task/:id/schedule
+          $.get("/task/" + itemData.itemId + "/schedule").done(function(data){
+            // only if we have some data
+            if(data.scheduleData.length > 0) {
+              data.scheduleData.forEach(function(schedule){
+                // get the scheduleItem template
+                var $scheduleItem = $scheduleItemElement.clone();
+                var nextDate = schedule.nextRunAt ? new Date(schedule.nextRunAt).toString() : 'false';
+                $('.startDate > span', $scheduleItem).text(schedule.data.scheduleData.runDate);
+                $('.nextDate > span', $scheduleItem).text(nextDate || '-');
+                $('.repeatsEvery > span', $scheduleItem).text(schedule.repeatInterval || '-');
+                $('button.deleteSchedule', $scheduleItem).click(function(evt){
+                  evt.preventDefault();
+                  evt.preventDefault();
+
+                  //confirm and request DELETE
+                  bootbox.confirm('The schedule will be canceled. Want to continue?',
+                    function(confirmed) {
+                      if(!confirmed) return;
+                      $scheduleItem.addClass('hidden');
+                      $.ajax({
+                        url: '/task/' + schedule.data.task_id +
+                        '/schedule/' + schedule._id,
+                        type: 'DELETE'
+                      }).done(function(data) {
+                        $deleteModal.modal('hide');
+                        $scheduleItem.remove();
+                        updateAttention($itemRow);
+                      }).fail(function(xhr, err, xhrStatus) {
+                        $scheduleItem.removeClass('hidden');
+                        alert(kindlyApologyze);
+                      });
+                    }
+                  );
+                });
+                $scheduleList.append($scheduleItem);
+              });
+            }
+          }).fail(function(xhr, err, xhrStatus) {
+            alert(kindlyApologyze);
+          });
+        });
+      });
+
+      function buildEventSeries(title, scheduleDate, interval, rangeStart, rangeEnd) {
+        var events = [];
+        interval = interval ? humanInterval(interval) : false;
+        var start = scheduleDate < rangeStart
+          ? rangeStart.valueOf()
+          : scheduleDate.valueOf();
+        var end = rangeEnd.valueOf();
+        if(interval) {
+          for(var ii = start; ii <= end; ii += interval) {
+            events.push({
+              'title': title,
+              start: new Date(ii)
+            });
+          }
+        }else{
+          // only if within range
+          if(scheduleDate > rangeStart && scheduleDate < rangeEnd) {
+            events.push({
+              'title': title,
+              start: new Date(scheduleDate)
+            });
+          }
+        }
+        return events;
+      }
+
+      function getEventSources(scheduleArray, name, rangeStart, rangeEnd) {
+
+        return lodash.map(scheduleArray, function(schedule, index, arr){
+          // 200 is the offset of the color wheel where 0 is red, change at will.
+          // 180 is how wide will the angle be to get colors from,
+          // lower (narrower) angle will get you a more subtle palette.
+          // Tone values are evenly sparsed based on array.length.
+          // Check this: http://www.workwithcolor.com/hsl-color-picker-01.htm
+          var wheelDegree = 200 + 180 / arr.length * ++index;
+          return {
+            id: schedule._id,
+            backgroundColor: 'hsl('+wheelDegree+', 80%, 48%)',
+            textColor: 'white',
+            className: ["calendarEvent"],
+            scheduleData: schedule,
+            events: buildEventSeries(
+              name,
+              // some magic is fuzzing with the returned date from api
+              new Date(schedule.data.scheduleData.runDate),
+              schedule.data.scheduleData.repeatEvery,
+              rangeStart,
+              rangeEnd
+            )
+          };
+        });
+      }
+
       //fix para el scroll despues de abrir modal sobre modal
       $deleteModal.on('hidden.bs.modal', function(event){
         $('body').addClass('modal-open');
@@ -415,14 +494,16 @@ $(function(){
 
       //show modal on scheduleTask click
       $('.scheduleTask').click(function(evt){
+        // close any collapsible, for the sake of it
+        $('.itemRow > .collapse.in').collapse('hide');
         evt.preventDefault();
         evt.stopPropagation();
 
-        scheduleData = [];
+        eventSources = [];
         var itemData = $(this).closest('.itemRow').data();
         //esto tiene que apuntar a /task/:id/schedule
         $.get("/task/" + itemData.itemId + "/schedule").done(function(data){
-          scheduleData = getEventSources(data.scheduleData, itemData.itemName);
+          // eventSources = getEventSources(data.scheduleData, itemData.itemName);
           //prepare form
           $form.data('task-id',itemData.itemId);
           //prepare modal
@@ -430,35 +511,65 @@ $(function(){
           $('input[name=datetime]').val('');
           $('input[name=frequency]').val('');
 
+          // store data on $mainModal.data('schedule')
+          $mainModal.data('schedule', data);
+          // store task data as well
+          $mainModal.data('task', itemData);
           //calendar stuff on event handler below
           $mainModal.modal('show');
 
         }).fail(function(xhr, err, xhrStatus) {
-          alert(xhr.responseText);
+          alert(kindlyApologyze);
         });
         return;
       });
 
-      //initialize calendar only once
-      $mainModal.on('shown.bs.modal', function(event) {
-        if(!$calendarElement) {
-          $calendarElement = $('.taskScheduleCalendar', $mainModal).fullCalendar({
-            eventClick: showDeleteModal
-          });
-        }
-        scheduleData.forEach(function(item){
+      function onCalendarViewRender () {
+        var schedule = $mainModal.data('schedule');
+        var itemData = $mainModal.data('task');
+        $calendarElement.fullCalendar('removeEventSources');
+        // TODO:
+        // re calculate eventSeries here within dates:
+        // $calendarElement.data('fullCalendar').getView().start|end.toString();
+        var view = $calendarElement.data('fullCalendar').getView();
+        eventSources = getEventSources(schedule.scheduleData, itemData.itemName, view.start, view.end);
+        eventSources.forEach(function(item){
           $calendarElement.fullCalendar('addEventSource', item);
         });
+      }
 
+      //initialize calendar only once
+      $mainModal.on('shown.bs.modal', function(event) {
+        // console.log(schedule);
+        // initialize empty fullCalendar
+        if(!$calendarElement) {
+          $calendarElement = $('.taskScheduleCalendar', $mainModal);
+          $calendarElement.fullCalendar({
+            header: {
+              left: 'prev,next today',
+              center: 'title',
+              right: 'month,basicWeek,basicDay'
+            },
+            eventLimit: 5,
+            eventClick: showDeleteModal,
+            viewRender: onCalendarViewRender
+          });
+
+        }else{
+          // when calendar was already here it doesn't trigger
+          // viewRender just because modal is shown, force it
+          $calendarElement.data('fullCalendar').trigger('viewRender');
+        }
       });
       $mainModal.on('hide.bs.modal', function(event) {
         $calendarElement.fullCalendar('removeEventSources');
-        scheduleData = [];
+        eventSources = [];
       });
 
       $submitter.click(function(evt){
         var datetime = $('input[name=datetime]',$form).datetimepicker('getValue');
         var frequency = $('input[name=frequency]', $form).val();
+        var taskId = $form.data('task-id');
         //SCHEDULE!!!
         $.post("/task/schedule", {
           task: $form.data('task-id'),
@@ -469,34 +580,40 @@ $(function(){
         }).done(function(data,status,xhr){
           alert("All right! Your task will run on: " + data.nextRun, function(){
             $mainModal.modal('hide');
+            // force attention update on corresponding itemRow
+            updateAttention($('.itemRow[data-item-id=' + taskId + ']'), true);
           });
         }).fail(function(xhr, status, message) {
-          console.log('fail');
+          alert(kindlyApologyze);
         });
       });
 
       $scheduleDeleter.click(function(evt){
         evt.preventDefault();
 
-        var scheduleData = $(this).data('schedule');
-        if(!scheduleData.source.id) {
-          console.log('Error, schedule ID not set');
-          console.log($(this).data());
+        var eventData = $(this).data('schedule');
+        if(!eventData.source.id) {
+          alert(kindlyApologyze);
           return;
         }
         //confirm and request DELETE
         bootbox.confirm('The schedule will be canceled. Want to continue?',
           function(confirmed) {
             if(!confirmed) return;
+            var taskId = eventData.source.scheduleData.data.task_id;
             $.ajax({
-              url: '/task/' + scheduleData.source.scheduleData.data.task_id +
-              '/schedule/' + scheduleData.source.id,
+              url: '/task/' + taskId +
+              '/schedule/' + eventData.source.scheduleData._id,
               type: 'DELETE'
             }).done(function(data) {
               $deleteModal.modal('hide');
-              $calendarElement.fullCalendar('removeEventSource', scheduleData.source);
+              $calendarElement.fullCalendar('removeEventSource', eventData.source);
+              updateAttention(
+                $('.itemRow[data-item-id=' + taskId + ']'),
+                $calendarElement.data().fullCalendar.clientEvents().length
+              );
             }).fail(function(xhr, err, xhrStatus) {
-              alert(xhr.responseText);
+              alert(kindlyApologyze);
             });
           }
         );
@@ -576,8 +693,6 @@ $(function(){
               $.blockUI();
               var deleteRequests = [];
               var removeOnSuccess = function(id) {
-                console.log('request success');
-                // console.log('would remove '+'div.itemRow[data-item-id='+id+']');
                 $('div.itemRow[data-item-id='+id+']').remove();
               };
               for(var ii = 0; ii < taskIds.length; ii++) {
@@ -594,10 +709,12 @@ $(function(){
                 );
               }
 
-              // que es esto chris? borre todos los console.logs
-              // esto agarra el array deleteRequests y ejecuta todos los requests
-              // es similar a lo que haces vos con lodash.after --
-              // restaure las funciones de success/fail que habias sacado
+              // que es esto chris?
+              // deleteRequests es un array de jqXHR:
+              // http://api.jquery.com/jQuery.ajax/#jqXHR
+              // que devuelven una suerte de deferred/promise.
+              // Cuando todos resuelven se ejecuta .then(success, fail)
+              // Es similar a lodash.after -- cg
               $.when.apply($, deleteRequests)
                 .then(
                   // success

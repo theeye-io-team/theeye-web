@@ -49,9 +49,16 @@
               <a role="menuitem" tabindex="-1"
                 class="create-monitor"
                 data-hook="create-scraper-monitor"
-                data-resource-type="scraper"
-                data-action="create">WEB/API Check</a>
+                data-resource-type="scraper">WEB/API Check</a>
             </li>
+            <!--
+            <li role="presentation">
+              <a role="menuitem" tabindex="-1"
+                class="create-monitor"
+                data-hook="create-file-monitor"
+                data-resource-type="file">File</a>
+            </li>
+            -->
             <li role="presentation">
               <a role="menuitem" tabindex="-1"
                 class="create-monitor createResourceMonitor"
@@ -232,7 +239,7 @@
                               aria-label="Center Align">
                               <span class="glyphicon glyphicon-plus"></span>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1" style="min-width: 120px">
+                            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1" style="min-width: 120px; cursor:pointer;">
                               <li role="presentation">
                                 <span role="menuitem" tabindex="-1"
                                   class="create-monitor"
@@ -242,6 +249,15 @@
                                   data-resource-type="scraper"
                                   data-action="create">WEB/API Check</span>
                               </li>
+                              <!--
+                              <li role="presentation">
+                                <span role="menuitem" tabindex="-1"
+                                  class="create-monitor"
+                                  data-hook="create-file-monitor"
+                                  data-host_id="<%= monitor.host_id %>"
+                                  data-action="create">File</span>
+                              </li>
+                              -->
                               <li role="presentation">
                                 <span role="menuitem" tabindex="-1"
                                   class="create-monitor createResourceMonitor"
@@ -322,7 +338,6 @@
 </div> <!-- main -->
 
 <%- partial ('./partials/dstat-modal-form.ejs') %>
-<%- partial ('./partials/scraper-modal-form.ejs') %>
 <%- partial ('./partials/process-modal-form.ejs') %>
 <%- partial ('./partials/script-modal-form.ejs') %>
 <%- partial ('../script/partials/modal.ejs') %>

@@ -1,9 +1,11 @@
+'use strict';
+
 /* global async */
 var debug = require('debug')('eye:web:controller:resource');
 var moment = require('moment');
 var extend = require('util')._extend;
 
-var toBoolean = function(value){
+var toBoolean = function (value) {
   if(value==='true'||value===true)
     return true;
   if(value==='false'||value===false)

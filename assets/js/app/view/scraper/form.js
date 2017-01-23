@@ -46,7 +46,7 @@ var Scraper = (function Scraper(){
       var $parent = this.$el;
 
       // binding form events
-      $advancedSection = this.find('section[data-hook=advanced]');
+      var $advancedSection = this.find('section[data-hook=advanced]');
       $parent.on('click','[data-hook=advanced-section-toggler]',function(event){
         $advancedSection.slideToggle();
         $("i", this).toggleClass("glyphicon-chevron-down glyphicon-chevron-up");
@@ -82,10 +82,6 @@ var Scraper = (function Scraper(){
       this.bindFormEvents();
       this.setupSelect();
 
-      var usersSelect = new UsersSelect({ collection: this.users });
-      usersSelect.render();
-      this.queryByHook('advanced').append( usersSelect.el );
-
       this.setFormData(options.model);
     },
     setFormData : function(model) {
@@ -119,6 +115,11 @@ var Scraper = (function Scraper(){
         placeholder: 'Monitor Host',
         data: Select2Data.PrepareHosts( this.hosts )
       });
+      var usersSelect = new UsersSelect({
+        collection: this.users,
+        autoRender: true
+      });
+      this.queryByHook('advanced').append( usersSelect.el );
     },
     remove : function(){
       this.$el.off('click');

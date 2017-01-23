@@ -249,11 +249,21 @@ $(function(){
         var usersSelect = new UsersSelect({ collection: _users });
         usersSelect.render();
 
+        /**
+         * Ugly oneline code - je je je
+         * @author TuVieja
+         */
+        var severity = (resource.failure_severity||(type==='dstat'?'LOW':'HIGH'));
+        var severitySelect = new SeveritySelect({ selected: severity.toUpperCase() });
+
         $form.find('[data-hook=advanced]').append( usersSelect.$el );
+        $form.find('[data-hook=advanced]').append( severitySelect.$el );
+
         fillForm($form,resource);
         var $modal = $('#'+type+'ResourceModal');
         $modal.one('hidden.bs.modal',function(){
           usersSelect.remove();
+          severitySelect.remove();
         });
 
         function bindModalElementsEvents(){
@@ -265,59 +275,53 @@ $(function(){
 
           var $tagsSelect = $form.find('select[name=tags]');
           $tagsSelect.select2({
-            placeholder:"Tags",
-            data:Select2Data.PrepareTags(Tags),
-            tags:true
+            placeholder: "Tags",
+            data: Select2Data.PrepareTags(Tags),
+            tags: true
           });
 
           // only script monitor has scripts selection
           if(type=='script'){
-            var $scriptSelect = $form.find('select#script_id');
-            $scriptSelect.select2({
-              allowClear:true,
-              placeholder:'Select a script...'
-            });
-            $scriptSelect.on('change',function(event){
-              var val = $(this).val();
-              if(val) {
-                $('a.scripter', '#'+type+'ResourceModal')
-                .text('Update script')
-                .removeClass('createScript')
-                .addClass('editScript')
-                .data('script-id', val);
-              } else {
-                $('a.scripter', '#'+type+'ResourceModal')
-                .text('Create script')
-                .removeClass('editScript')
-                .addClass('createScript')
-                .data('script-id', null);
-              }
-            });
-            $scriptSelect.trigger('change');
+            (function(){
+              var $scriptSelect = $form.find('select#script_id');
+              $scriptSelect.select2({
+                allowClear:true,
+                placeholder:'Select a script...'
+              });
+              $scriptSelect.on('change',function(event){
+                var val = $(this).val();
+                if(val) {
+                  $('a.scripter', '#scriptResourceModal')
+                    .text('Update script')
+                    .removeClass('createScript')
+                    .addClass('editScript')
+                    .data('script-id', val);
+                } else {
+                  $('a.scripter', '#scriptResourceModal')
+                    .text('Create script')
+                    .removeClass('editScript')
+                    .addClass('createScript')
+                    .data('script-id', null);
+                }
+              });
+              $scriptSelect.trigger('change');
+            })();
           }
 
-          var $firstInput = $modal.find('input[type!=hidden]').first().focus();
-          $modal.one('shown.bs.modal',function(){ $firstInput.focus(); });
-        }
-
-        $modal.one('shown.bs.modal',bindModalElementsEvents);
-
-        if(type=='dstat'){
-          (function bindSubmitButton(){
-            // ^ limit the scope
-            var $submitBtn = $modal.find('button[type=submit]');
-
-            $modal.one('hidden.bs.modal',function(){
-              // remove click event bindings
+          if(type=='dstat'){
+            (function(){
+              // ^ limit the scope
+              var $submitBtn = $modal.find('button[type=submit]');
               $submitBtn.off('click');
-            });
-
-            $modal.one('show.bs.modal',function(){
+              $modal.one('hidden.bs.modal',function(){
+                // remove click event bindings
+                $submitBtn.off('click');
+              });
               // bind click event
-              $submitBtn.on('click', function(event){
+              $submitBtn.on('click',function(event){
                 event.preventDefault();
                 event.stopPropagation();
-                log('saving host config');
+                log('saving host stats config');
 
                 var data = (new FormElement($form)).get();
 
@@ -334,9 +338,14 @@ $(function(){
                   bootbox.alert(xhr.responseText);
                 });
               });
-            });
-          })();
+            })();
+          }
+
+          $modal.find('input[type!=hidden]').first().focus();
         }
+
+        $modal.one('shown.bs.modal',bindModalElementsEvents);
+
         $modal.modal('show');
         $.unblockUI();
       }).fail(function(xhr, err, xhrStatus){
@@ -352,7 +361,7 @@ $(function(){
       var $input  = $form.find('.resource-host input');
       var $modal = $('#' + options.type + 'ResourceModal');
 
-      $select.prop('multiple', true);
+      $select.prop('multiple',true);
       $input.attr('value','');
 
       var monitorCopy = new MonitorSelect({
@@ -361,9 +370,6 @@ $(function(){
           return m.get('type') == options.type;
         })
       });
-
-      $form.prepend( monitorCopy.$el );
-
       monitorCopy.on('change',function(id){
         if (!id) {
           $form[0].reset();
@@ -384,13 +390,26 @@ $(function(){
         }
       });
 
+      $form.prepend( monitorCopy.$el );
+
       var usersSelect = new UsersSelect({ collection: _users });
       usersSelect.render();
-      $form.find('[data-hook=advanced]').append( usersSelect.$el );
+
+      var severitySelect = new SeveritySelect({ selected: 'HIGH' });
+
+      var $advanced = $form.find('[data-hook=advanced]');
+      if ($advanced.length>0) {
+        $advanced.append( severitySelect.$el );
+        $advanced.append( usersSelect.$el );
+      } else {
+        $form.append( severitySelect.$el );
+        $form.append( usersSelect.$el );
+      }
 
       $modal.one('hidden.bs.modal',function(){
         usersSelect.remove();
         monitorCopy.remove();
+        severitySelect.remove();
       });
 
       $form[0].reset();
@@ -401,7 +420,6 @@ $(function(){
         if(host) $select.val(host).trigger('change');
 
         $form.find('select[data-hook=looptime]').val(60000);
-
         $form.find('select#script_id')
           .select2({allowClear:true, placeholder:"Select a script" })
           .on('change', function(event){
@@ -420,8 +438,13 @@ $(function(){
             }
           })
           .trigger('change');
-
-        $form.find('select[name=tags]').select2({ placeholder:"Tags", data: Select2Data.PrepareTags(Tags), tags:true });
+        $form
+          .find('select[name=tags]')
+          .select2({ 
+            placeholder:"Tags",
+            data: Select2Data.PrepareTags(Tags), 
+            tags:true 
+          });
 
         var $firstInput = $(this).find('input[type!=hidden]').first().focus();
         $(this).on('shown.bs.modal', function(){
@@ -451,14 +474,18 @@ $(function(){
       usersSelect.render();
       $form.append( usersSelect.$el );
 
+      var severitySelect = new SeveritySelect({ selected: 'LOW' });
+      $form.append( severitySelect.$el );
+
       $modal.one('hidden.bs.modal',function(){
         $submitBtn.off('click');
         $hosts.hide();
         usersSelect.remove();
+        severitySelect.remove();
       });
+
       $modal.one('show.bs.modal',function(){
         $hosts.show();
-
         $submitBtn.on('click', function(event){
           event.preventDefault();
           event.stopPropagation();
@@ -481,12 +508,13 @@ $(function(){
           });
         });
       });
+
       $modal.modal('show');
       $.unblockUI();
     }
 
     function setupResourceAction (options) {
-      if (options.action=='create' & options.type=='dstat') {
+      if (options.action=='create' && options.type=='dstat') {
 
         createStatMonitor(options);
 
@@ -532,8 +560,7 @@ $(function(){
 
     // hook to scripts.js event script_uploaded
     window.scriptState.on('script_uploaded', function(evt,result){
-      // seems like the result is now the script and not a prop of it
-      var script = result
+      var script = result;
       alert("Script succesfully uploaded", "Script upload",function(){
         var $scriptIdSelect = $('select[data-hook=script_id]');
         //remove previous script option
@@ -688,7 +715,7 @@ $(function(){
         evt.preventDefault();
         var taskRows = "";
         var taskIds = [];
-        //collect selected rows.data (dataId  dataDescriptor)
+        //collect selected rows.data (dataId & dataDescriptor)
         $(itemSelector).each(function(i,e){
           var itemId = $(e).data(dataId);
           var itemName = $(e).data(dataDescriptor);
@@ -825,9 +852,8 @@ $(function(){
    * scraper modal CRUD
    *
    */
-  (function setupScraperModal(){
-    var formContainer = '[data-hook=scraper-form-container]';
-    var scraperModal = new ScraperModal.MonitorCRUD(formContainer);
+  (function setupScraperMonitorModal(){
+    var scraperModal = new ScraperModal.MonitorCRUD();
 
     // on click create , render form
     function onClickCreate(event){
@@ -843,11 +869,40 @@ $(function(){
       scraperModal.edit(scraper_id);
     }
 
+    // create and edit triggers
     $('.dropdown.resource [data-hook=create-scraper-monitor]').on('click',onClickCreate);
     $('.panel-group [data-hook=create-scraper-monitor]').on('click',onClickCreate);
     $('[data-hook=edit-scraper-monitor]').on('click',onClickEdit);
   })();
 
+  (function setupFileMonitorModal(){
+    var file = new PermanentFile.MonitorCRUD({
+      monitors: _monitors,
+      users: _users,
+      looptimes: window.Looptimes,                                                        
+      hosts: window.Hosts,                                                                
+      tags: window.Tags
+    });
+
+    // on click create , render form
+    function onClickCreate(event){
+      event.preventDefault();
+      event.stopPropagation();
+      file.create();
+    }
+    // on click edit , fetch scraper and render form
+    function onClickEdit(event){
+      event.preventDefault();
+      event.stopPropagation();
+      var _id = event.currentTarget.getAttribute('data-resource_id');
+      file.edit(_id);
+    }
+
+    // create and edit triggers
+    $('.dropdown.resource [data-hook=create-file-monitor]').on('click',onClickCreate);
+    $('.panel-group [data-hook=create-file-monitor]').on('click',onClickCreate);
+    $('[data-hook=edit-file-monitor]').on('click',onClickEdit);
+  })();
 
   (function editHost(){
     $('[data-hook=edit-host-monitor]').on('click',function(event){
