@@ -20,22 +20,53 @@ var FilesStore = (function(){
   }
 
   function update (id,properties,source,next) {
-    /**
-    var file = new App.Models.File();
+    var file = new App.Models.File({ id: id });
     file.set(properties);
     var source = btoa(unescape(encodeURIComponent(source)));
     file.set('file',source);
+
     file.upload({},{
       success: function(model, response, options){
+        files.add([file],{merge:true});
+        next(null,file);
       },
       error: function(model, response, options){
       }
     });
-    */
   }
 
   function remove (id,next) {
     //store.emitChange();
+  }
+
+  function get (id,next) {
+    var model = files.get(id);
+    if (!model) {
+      var file = new App.Models.File({ id: id });
+      file.fetch({
+        success:function(model, response, options){
+          files.add(file);
+          next(null,file);
+        },
+        error:function(model, response, options){
+          next(new Error(response));
+        }
+      });
+    } else {
+      next(null,model);
+    }
+  }
+
+  function download (id,next) {
+    var file = new App.Models.File({ id: id });
+    file.download({
+      success: function(model, response, options){
+        next(null,file);
+      },
+      error: function(model, response, options){
+        next(new Error(response));
+      }
+    });
   }
 
   files.fetch();
@@ -87,6 +118,12 @@ var FilesStore = (function(){
           break;
         case App.Constants.FILE_REMOVE:
           remove(action.id, next);
+          break;
+        case App.Constants.FILE_GET:
+          get(action.id, next);
+          break;
+        case App.Constants.FILE_DOWNLOAD:
+          download(action.id, next);
           break;
         default:
           // no op

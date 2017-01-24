@@ -10,20 +10,18 @@ var fs = require('fs');
  */
 module.exports = {
   /**
-   * @method POST
+   * @method {POST||PUT}
    * @route /api/file
    */
-  create (req, res, next) {
+  upload (req, res, next) {
     var url = req.originalUrl.replace('/api/',`/${req.session.customer}/`);
     var params = req.params.all();
-
     var buffer = new Buffer(params.file,'base64');
     var source = decodeURIComponent(escape(buffer.toString('ascii')));
-
     var fname = '/tmp/' + req.user.id + '_' + Date.now();
+
 		fs.writeFile(fname,source,'ascii',err => {
 			var readstream = fs.createReadStream(fname);
-
 			params.file = {
 				value: readstream,
 				options: {
@@ -32,7 +30,7 @@ module.exports = {
 			};
 
 			req.supervisor.performRequest({
-				method: 'POST',
+				method: req.method, // POST or PUT
 				url: url,
 				formData: params
 			}, function(error, body) {
@@ -45,4 +43,23 @@ module.exports = {
 			});
 		});
   },
+  download (req, res, next) {
+    var url = req.originalUrl.replace('/api/',`/${req.session.customer}/`);
+    var supervisor = req.supervisor;
+
+    supervisor.performRequest({
+      method: 'GET',
+      url: url
+    },function(error,file){
+      supervisor.performRequest({
+        method: 'GET',
+        url: url + '/download'
+      },function(error, body) {
+        if (error) return res.send(500,error);
+        var source = unescape(encodeURIComponent(body));
+        file.file = new Buffer(source).toString('base64');
+        res.send(200,file);
+      });
+    });
+  }
 }

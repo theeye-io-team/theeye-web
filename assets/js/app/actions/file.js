@@ -21,5 +21,25 @@ var FileActions = {
       actionType: App.Constants.FILE_REMOVE,
       id: id
     });
+  },
+  get: function(id){
+    if (!id) {
+      console.error('id is required');
+      return;
+    }
+    App.Dispatcher.dispatch({
+      actionType: App.Constants.FILE_GET,
+      id: id
+    });
+  },
+  download: function(id){
+    if (!id) {
+      console.error('id is required');
+      return;
+    }
+    App.Dispatcher.dispatch({
+      actionType: App.Constants.FILE_DOWNLOAD,
+      id: id
+    });
   }
 };

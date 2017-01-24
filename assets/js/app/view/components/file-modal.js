@@ -4,20 +4,14 @@
 
 var FileModal = (function(){
 
-  var modal;
-
   var Editor = BaseView.extend({
     initialize:function(options){
       var self = this;
       BaseView.prototype.initialize.apply(this,arguments);
 
-      Object.defineProperty(this,'data',{
+      Object.defineProperty(this,'content',{
         get: function(){
           return self.ace.getSession().getValue().trim();
-        },
-        set: function(source){
-          self.ace.getSession().setValue(source);
-          return self;
         },
         enumerable: true
       });
@@ -28,8 +22,29 @@ var FileModal = (function(){
       editor.session.setMode('ace/mode/javascript');
       editor.setOptions({ maxLines: 20 });
       editor.$blockScrolling = Infinity
-
+      editor.getSession().setValue('');
       this.ace = editor;
+    },
+    setFile: function(file) {
+      var self = this,
+        filename = file.name,
+        reader = new FileReader();
+      try {
+        reader.onload = function(event) {
+          var content = event.target.result;
+          self.setContent(content,filename);
+        };
+        reader.readAsText(file);
+      } catch (err) {
+        alert('Sorry, we could not read your file. Try with a text file');
+      }
+    },
+    setContent: function(content,filename) {
+      var modelist = ace.require('ace/ext/modelist');
+      var modeMeta = modelist.getModeForPath(filename);
+      this.ace.session.setMode(modeMeta.mode);
+      this.ace.getSession().setValue(content);
+      return this;
     }
   });
 
@@ -139,7 +154,6 @@ var FileModal = (function(){
 
   var FormView = BaseView.extend({
     template: Templates['assets/templates/file-form.hbs'],
-    autoRender:true,
     initialize:function(options){
       var self = this;
       // initialize parent to autoRender
@@ -150,15 +164,14 @@ var FileModal = (function(){
         get: function(){
           var form = new FormElement( self.$el[0] );
           var data = form.get();
-          var source = this.editor.data;
-          data.file = btoa(unescape(encodeURIComponent(source)));
+          data.file = self.editor.content;
           return data;
         },
         set: function(data){
           var form = new FormElement( self.$el[0] );
-          //if (data.file) {
-          //  this.editor.data = ;
-          //}
+          if (data.file) {
+            self.editor.setContent(data.file, data.filename);
+          }
           form.set( data );
           return self;
         },
@@ -195,33 +208,16 @@ var FileModal = (function(){
         el: this.queryByHook('editor')
       });
 
-      var droppable = modal.find('.modal-content')[0];
       var dropTarget = this.dropTarget = new DropTarget({
-        el: droppable
+        el: this.droppableContainer
       });
       dropTarget.render();
 
       this.listenTo(dropTarget,'dropped',this.onFileDropped);
     },
     processFile:function(file){
-      var reader = new FileReader();
-      var self = this;
-      try {
-        reader.onload = function(event) {
-          var filename = file.name,
-            content = event.target.result;
-
-          self.data = { filename: filename };
-
-          var modelist = ace.require('ace/ext/modelist');
-          var modeMeta = modelist.getModeForPath(filename);
-          self.editor.ace.session.setMode(modeMeta.mode);
-          self.editor.ace.getSession().setValue(content);
-        };
-        reader.readAsText(file);
-      } catch (err) {
-        alert('We could not read your file, sorry. Try again with a text file');
-      }
+      this.data = { filename: file.name };
+      this.editor.setFile(file);
     },
     onFileDropped:function(event){
       event.preventDefault();
@@ -252,32 +248,41 @@ var FileModal = (function(){
     }
   });
 
-  var FileModal = BaseView.extend({
-    initialize:function(options){
+  return BaseView.extend({
+    initialize: function(options){
       options||(options={});
       this.title = options.title||'File';
 
       BaseView.prototype.initialize.apply(this,arguments);
     },
     render: function(){
-      var form;
+      var self = this;
+      var modal, title, formData,
+        model = this.model,
+        form = new FormView();
 
-      modal = new Modal({ title: this.title });
+      if (model) {
+        title = 'Editing file ' + model.get('filename');
+        formData = model.attributes;
+      }
+
+      modal = new Modal({ title: title });
       modal.render();
 
-      form = new FormView();
+      var droppable = modal.find('.modal-content')[0];
+      form.droppableContainer = droppable;
+      form.render();
+      // set after render
+      if (formData) form.data = formData;
 
       modal.$el.on('click','button[data-hook=save]',function(event){
         var data = form.data;
-        if (self.model&&self.model.isNew()) {
-          FileActions.update(model.id,data,form.editor.data);
+        if (self.model && !self.model.isNew()) {
+          FileActions.update(model.id,data,form.editor.content);
         } else {
-          FileActions.create(data,form.editor.data);
+          FileActions.create(data,form.editor.content);
         }
       })
-
-      FilesStore.addChangeListener(this.onFilesChange,this);
-
       modal.$el.on('shown.bs.modal', function(){
         form.focus();
       });
@@ -287,16 +292,12 @@ var FileModal = (function(){
       });
       modal.queryByHook('container').append(form.$el);
       modal.show();
+      this.modal = modal;
     },
-    onFilesChange:function(){
-      modal.close();
-    },
-    remove:function(){
-      FilesStore.removeChangeListener(this.onFilesChange);
+    remove: function(){
+      this.modal.close();
       BaseView.prototype.remove.apply(this);
     }
   });
-
-  return FileModal;
 
 })();
