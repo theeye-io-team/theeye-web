@@ -67,7 +67,7 @@ $(function() {
       $customerForm.data('customer-id',id);
       $customerForm.data('action','edit');
 
-      jQuery.get("/customer/" + customerId).done(function(data) {
+      jQuery.get("/customer/" + id).done(function(data) {
         var form = new FormElement($customerForm);
 
         var customer = data.customer,
@@ -77,9 +77,13 @@ $(function() {
         customer.kibana = (config.kibana||'');
 
         form.set(customer);
+        // reset tags input
+        var $emails = $('[data-hook=emails]');
+        $emails.tagsinput('removeAll');
+        customer.emails.forEach(function(email){
+          $emails.tagsinput('add',email);
+        });
       });
-
-      return false;
     });
 
     function setConfiguration (data) {
@@ -141,11 +145,11 @@ $(function() {
         if(!confirmed) return;
 
         var $delTrigger = $(ev.currentTarget);
-        var customerId = $delTrigger.data("customer-id");
+        var id = $delTrigger.data("customer-id");
         var customerName = $delTrigger.data("customer-name");
 
         $.ajax({
-          url: '/customer/' + customerId,
+          url: '/customer/' + id,
           type: 'DELETE',
           data: { 'name': customerName }
         }).done(function() {
