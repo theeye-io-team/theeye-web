@@ -9,10 +9,8 @@ var UsersSelect = BaseView.extend({
   className: 'form-group form-horizontal',
   template: Templates['assets/templates/components/users-select.hbs'],
   initialize: function(options){
-    this.title = (options.title||'ACL');
+    this.label = (options.label||'ACL\'s');
     this.name = (options.name||'acl');
-
-    this.optional = (options.optional||true);
 
     BaseView.prototype.initialize.apply(this,arguments);
 
@@ -28,6 +26,10 @@ var UsersSelect = BaseView.extend({
   },
   render: function(){
     this.renderTemplate();
+
+    this.help = new HelpIcon({
+      text: 'Add permissions to specific users or indicate emails who will receive'
+    }).$el.appendTo(this.find('label'));
 
     this.find('select').select2({
       placeholder: 'Users',

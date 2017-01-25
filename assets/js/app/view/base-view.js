@@ -89,5 +89,20 @@ var BaseView = Backbone.View.extend({
   },
   remove:function(){
     Backbone.View.prototype.remove.apply(this,arguments);
+  },
+  appendTo: function(view){
+    this.$el.appendTo(view.$el);
+    this.parent = view;
+    return this;
+  },
+  append: function(view){
+    this.$el.append(view.$el);
+    view.parent = this;
+    return this;
+  },
+  prepend: function(view){
+    this.$el.prepend(view.$el);
+    view.parent = this;
+    return this;
   }
 });

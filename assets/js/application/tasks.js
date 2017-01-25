@@ -208,7 +208,6 @@ $(function(){
       usersSelect.render();
 
       var taskSelect = new TaskSelect({
-        label: 'Copy from task',
         collection: _tasks.filter(function(t){
           return t.get('type') == 'script';
         })
@@ -846,4 +845,32 @@ $(function(){
     // END SCRAPER
     //
   }
+
+  (function initFormsHelp(){
+		// edit form
+    $editForm = $("form#editTaskForm");
+    $editForm.find('label[for=name]').append( new HelpIcon({ text: 'Give the task a name.' }).$el );
+		$editForm.find('label[for=host]').append( new HelpIcon({ text: 'Where does this task run?' }).$el );
+		$editForm.find('label[for=script_select]').append( new HelpIcon({ text: 'Which script should it run?' }).$el );
+		$editForm.find('label[for=tags]').append( new HelpIcon({ text: 'To help you find your resources quickly.' }).$el );
+		$editForm.find('label[for=description]').append( new HelpIcon({ text: 'Use descriptions to improve teamwork and problem solving.' }).$el );
+		//$editForm.find('label[for=public]').append( new HelpIcon({ text: '' }).$el );
+		$editForm.find('label[for=script_runas]').append( new HelpIcon({ text: 'Run the selected script using a different username. Use \'%script%\' reserved word to include the script, this will be replaced during execution time with the real script path. Windows users, requires to mimic this action putting the password for the first time.' }).$el );
+		$editForm.find('label[for=script_arguments]').append( new HelpIcon({ text: 'Put here a comma separated list of arguments.' }).$el );
+		$editForm.find('label[for=triggers]').append( new HelpIcon({ text: 'Select a task, monitor or webhook event that will trigger this task automagically.' }).$el );
+		$editForm.find('label[for=grace_time]').append( new HelpIcon({ text: 'If you select to Trigger on an event, you can select to delay the execution that allows you to cancel this action via email.' }).$el );
+
+		// create form
+		$createForm = $('form#createTaskForm');
+    $createForm.find('label[for=name]').append( new HelpIcon({ text: 'Give the task a name.' }).$el );
+		$createForm.find('label[for=host]').append( new HelpIcon({ text: 'Where does this task run?' }).$el );
+		$createForm.find('label[for=script_select]').append( new HelpIcon({ text: 'Which script should it run?' }).$el );
+		$createForm.find('label[for=tags]').append( new HelpIcon({ text: 'To help you find your resources quickly.' }).$el );
+		$createForm.find('label[for=description]').append( new HelpIcon({ text: 'Use descriptions to improve teamwork and problem solving.' }).$el );
+		//$createForm.find('label[for=public]').append( new HelpIcon({ text: '' }) );
+		$createForm.find('label[for=script_runas]').append( new HelpIcon({ text: 'Run the selected script using a different username. Use \'%script%\' reserved word to include the script, this will be replaced during execution time with the real script path. Windows users, requires to mimic this action putting the password for the first time.' }).$el );
+		$createForm.find('label[for=script_arguments]').append( new HelpIcon({ text: 'Put here a comma separated list of arguments.' }).$el );
+		$createForm.find('label[for=triggers]').append( new HelpIcon({ text: 'Select a task, monitor or webhook event that will trigger this task automagically.' }).$el );
+		$createForm.find('label[for=grace_time]').append( new HelpIcon({ text: 'If you select to Trigger on an event, you can select to delay the execution that allows you to cancel this action via email.' }).$el );
+	})();
 });

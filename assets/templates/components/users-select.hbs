@@ -1,17 +1,10 @@
 <div>
-  <label for="users" class="col-sm-3 control-label">
-    {{title}}
-    {{#if this.optional}} <small>[optional]</small> {{/if}}
-    <span style="cursor:help"
-      title="Add permissions to specific users. Users will receive notifications"
-      class="tooltiped glyphicon glyphicon-question-sign">
-    </span>
-  </label>
+  <label for="users" class="col-sm-3 control-label"> {{label}} </label>
   <div class="col-sm-9">
     <div>
       <select data-hook="{{ name }}"
         class="form-control select"
-        title="{{ title }}"
+        title="{{ label }}"
         name="{{ name }}"
         multiple
         style="width:100%">
