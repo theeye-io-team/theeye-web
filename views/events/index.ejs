@@ -51,7 +51,7 @@
               }
             };
             function resourceStateSeverity (resource) {
-              return resource[(resource.state==='failure')?'failure_severity':'state'];
+              return (resource[(resource.state==='failure')?'failure_severity':'state']).toLowerCase();
             }
 
           indexedResources.forEach(function(resource){
@@ -66,7 +66,7 @@
               "state=" + resource.state,
             ];
             resource.subs.forEach(function(subresource){
-              var resourceSeverity = resourceStateSeverity(subresource.state);
+              var resourceSeverity = resourceStateSeverity(subresource);
               var orderA = iconsDicc.indexOf(resourceSeverity);
               var orderB = iconsDicc.indexOf(overallStateSeverity);
               if ( orderA > orderB ) {
@@ -290,7 +290,7 @@
       <div class="resultTemplate" style="display:none;">
         <div class="output-block">
           <button type="button" class="close" style="opacity:1;" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">×</span>
+            <span aria-hidden="true">x</span>
           </button>
           <div>
             <p>Script execution result</p>
@@ -305,7 +305,7 @@
       <div data-hook="scraper-job-result-template" style="display:none;">
         <div class="output-block">
           <button type="button" class="close" style="opacity:1;" data-dismiss="alert" aria-label="Close">
-            <span aria-hidden="true">×</span>
+            <span aria-hidden="true">x</span>
           </button>
           <div>
             <p>Web Request result</p>

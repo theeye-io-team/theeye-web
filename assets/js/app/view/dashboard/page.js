@@ -120,7 +120,7 @@ function DashboardPage () {
 
   /**
    *
-   * extend submonitors view , change the table format and data.
+   * extend submonitors view, change table format and data with template.
    *
    */
   var SubmonitorGroupView = SubmonitorView.extend({
@@ -496,9 +496,10 @@ function DashboardPage () {
       var self = this;
       var failing = this.monitors.filter(function(monitor){
         // check if monitor is in the group
-        var model = self.monitorGroups.get( monitor );
+        var model = self.monitorGroups.get(monitor);
         if (!model) return false;
-        return monitor.isFailing();
+
+        return monitor.isFailing()||monitor.submonitorsFailing();
       });
 
       if (failing.length>0) {
@@ -520,7 +521,8 @@ function DashboardPage () {
       var self = this;
       this.monitorRows.views.forEach(function(view){
         var monitor = view.model;
-        if (!monitor.isFailing()) {
+        var isFailing = monitor.isFailing()||monitor.submonitorsFailing();
+        if (!isFailing) {
           view.$el.appendTo(self.monitorsFolding.$container);
         } else {
           view.$el.prependTo(self.$monitorsPanel);
@@ -620,7 +622,7 @@ function DashboardPage () {
   }
 
   //
-  // The page starts here (if the method name did not say enough...)
+  // The page starts here.
   // fetch data, regroup, format, order and render page
   //
   (function start () {
@@ -698,7 +700,6 @@ function DashboardPage () {
       monitors.fetch();
       tasks.fetch();
     }
-
   })();
 }
 

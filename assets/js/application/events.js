@@ -37,13 +37,27 @@ $(function(){
         'icon-fatal',
         'icon-error',
         'icon-nonsense'
-      ],
-        filtered = iconClasses.filter(function(idx,icon){
-          return failureClasses.indexOf(icon) != -1
-        });
+      ];
+      var filtered = iconClasses.filter(function(idx,icon){
+        return failureClasses.indexOf(icon) != -1
+      });
       return filtered;
     }
   };
+
+  function getRowElementsWorstState (elems) {
+    var subIconClasses = elems.map(function(i,el){
+      return $(el).attr('class').split(' ')[1];
+    }); 
+    var sortedIconClasses = subIconClasses.sort(function(a,b){
+      // sort by state
+      var orderA = iconsDicc.indexOf(iconsDicc.classToState(a));
+      var orderB = iconsDicc.indexOf(iconsDicc.classToState(b));
+      return orderA < orderB;
+    }); 
+    worstState = iconsDicc.classToState(sortedIconClasses[0]);
+    return worstState;
+  }
 
   function ResourcesFolding () {
     var $items = $('[data-hook=hidden-resources]');
@@ -113,13 +127,9 @@ $(function(){
       $items.sort(function(a,b){
         // sort! only if any has some failure/warning
         function getSortOrder (el) {
-          var stateIcon = $('.state-icon',el).first()[0];
-          var iconClass = stateIcon.classList.value.split(" ")
-            .find(function(cls){
-              return cls.indexOf('icon-') === 0;
-            });
-
-          return iconsDicc.indexOf(iconsDicc.classToState(iconClass));
+          var subElems = $('tr td span.state-icon', el);
+          var worstState = getRowElementsWorstState(subElems);
+          return iconsDicc.indexOf(worstState);
         }
         var orderA = getSortOrder(a);
         var orderB = getSortOrder(b);
@@ -130,11 +140,10 @@ $(function(){
       $resourcesList.slideDown();
 
       $items.each(function(){
-        var $row = $(this),
-          stateIcon = $row.find('.panel-heading .state-icon')[0],
-          iconClass = stateIcon.className.match(/icon-[a-z]*[ ]?/)[0].trim();
-        
-        if (iconsDicc.filterAlertIconClasses( $([iconClass]) ).length === 0) {
+        var $row = $(this);
+        var subElems = $('tr td span.state-icon', $row);
+        var worstState = getRowElementsWorstState(subElems);
+        if (iconsDicc.indexOf(worstState)<=1) {
           $row.appendTo( $('[data-hook=hidden-resources-container]') );
         }
       });
@@ -497,18 +506,9 @@ $(function(){
           var stateSeverity = resource[(resource.state==='failure')?'failure_severity':'state'];
           $('.state-icon', $tr).addClass(iconsDicc.getIcon(stateSeverity));
 
-          var worstState, elems = $('tr td span.state-icon', $rowItem);
-          if (elems.length!==0) {
-            var iconClasses = elems.map(function(i,el){
-              return $(el).attr('class').split(' ')[1];
-            });
-            var sortedIconClasses = iconClasses.sort(function(a,b){
-              // sort by state
-              var orderA = iconsDicc.indexOf(iconsDicc.classToState(a));
-              var orderB = iconsDicc.indexOf(iconsDicc.classToState(b));
-              return orderA < orderB;
-            });
-            worstState = iconsDicc.classToState(sortedIconClasses[0]);
+          var worstState, subElems = $('tr td span.state-icon', $rowItem);
+          if (subElems.length!==0) {
+            worstState = getRowElementsWorstState(subElems);
           } else {
             worstState = stateSeverity;
           }

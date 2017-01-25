@@ -87,7 +87,13 @@ window.App.Models.Monitor = BaseModel.extend({
   },
   isFailing: function(){
     var state = this.get('state');
-    return state === 'failure' || state === 'updates_stopped';
+    return state==='failure'||state==='updates_stopped';
+  },
+  submonitorsFailing: function(){
+    return this.get('submonitors')
+      .filter(function(monitor){
+        return monitor.isFailing();
+      }).length > 0;
   },
   createClone: function(props,options){
     var resource = this,
