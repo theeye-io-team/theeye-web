@@ -871,6 +871,6 @@ $(function(){
 		$createForm.find('label[for=script_runas]').append( new HelpIcon({ category:'task_create_form', text: 'Run the selected script using a different username. Use \'%script%\' reserved word to include the script, this will be replaced during execution time with the real script path. Windows users, requires to mimic this action putting the password for the first time.' }).$el );
 		$createForm.find('label[for=script_arguments]').append( new HelpIcon({ category:'task_create_form', text: 'Put here a comma separated list of arguments.' }).$el );
 		$createForm.find('label[for=triggers]').append( new HelpIcon({ category:'task_create_form', text: 'Select a task, monitor or webhook event that will trigger this task automagically.' }).$el );
-		$createForm.find('label[for=grace_time]').append( new HelpIcon({ category:'task_create_form', text: 'If you select to Trigger on an event, you can select to delay the execution that allows you to cancel this action via email.' }).$el );
+		$createForm.find('label[for=grace_time]').append( new HelpIcon({ category:'task_create_form', text: 'If you select to Trigger on an event, you can choose a delayed execution that allows you to cancel this action via email.' }).$el );
 	})();
 });

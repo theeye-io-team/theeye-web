@@ -71,7 +71,6 @@ var Scraper = (function Scraper(){
         else $bodyContainer.slideUp(80);
       });
 
-
       this.find('span.tooltiped').tooltip();
 
       return this;
@@ -79,10 +78,77 @@ var Scraper = (function Scraper(){
     render : function(options){
       options||(options={});
       this.renderTemplate();
-      this.bindFormEvents();
       this.setupSelect();
+      this.bindFormEvents();
+      this.initHelp();
 
       this.setFormData(options.model);
+    },
+    initHelp: function() {
+      new HelpIcon({
+        container: this.find('label[for=name]'),
+        category: 'scraper_form',
+        text: 'Give it a name.'
+      });
+      new HelpIcon({
+        container: this.find('label[for=host]'),
+        category: 'scraper_form',
+        text: 'Where it has to run?'
+      });
+      new HelpIcon({
+        container: this.find('label[for=looptime]'),
+        category: 'scraper_form',
+        text: 'Select the check interval in minutes. The shorter the interval, the more CPU and resource usage.'
+      });
+      new HelpIcon({
+        container: this.find('label[for=method]'),
+        category: 'scraper_form',
+        text: 'Select the request Method.'
+      });
+      new HelpIcon({
+        container: this.find('label[for=url]'),
+        category: 'scraper_form',
+        text: 'The URL of the service to check, remember to encode it.',
+        link: 'https://en.wikipedia.org/wiki/Percent-encoding'
+      });
+      new HelpIcon({
+        container: this.find('label[for=tags]'),
+        category: 'scraper_form',
+        text: 'To help you find your resources quickly.'
+      });
+      new HelpIcon({
+        container: this.find('label[for=body]'),
+        category: 'scraper_form',
+        text: 'Here can add body parameters to the request. Only available for POST and PUT methods. Default is GET'
+      });
+      new HelpIcon({
+        container: this.find('label[for=timeout]'),
+        category: 'scraper_form',
+        text: 'How much time to wait the server\'s response before giving up. Default is 5 seconds.'
+      });
+      new HelpIcon({
+        container: this.find('label[for=gzip]'),
+        category: 'scraper_form',
+        text: 'Enable HTTP compression to improve transfer speed and bandwidth utilization. An \'Accept-Encoding: gzip\' header will be added to the request. Default is true.',
+        link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding'
+      });
+      new HelpIcon({
+        container: this.find('label[for=json]'),
+        category: 'scraper_form',
+        text: 'Tells the server that the data being transferred is actually JSON. A \'Content-type: application/json\' header will be added to the request. Additionally, parses the response body as JSON. Default is false.',
+        link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type'
+      });
+      new HelpIcon({
+        container: this.find('label[for=status_code]'),
+        category: 'scraper_form',
+        text: 'The expected status code that will be considered ok. Regular Expressions can be used to match a status, for example \'2[0-9][0-9]\' will match 2XX codes in the Success group. Default value is 200.',
+        link: 'https://en.wikipedia.org/wiki/List_of_HTTP_status_codes'
+      });
+      new HelpIcon({
+        container: this.find('label[for=pattern]'),
+        category: 'scraper_form',
+        text: 'A String or Regular Expression, also could be a part of the response, that will be considered ok.'
+      });
     },
     setFormData : function(model) {
       if( model ){
@@ -102,12 +168,13 @@ var Scraper = (function Scraper(){
       this.queryByHook('looptimes').select2({ placeholder: 'Monitor Looptime', data: Select2Data.PrepareIdValueData( this.looptimes ) });
       this.queryByHook('timeouts').select2({ placeholder: 'Request Timeout', data: Select2Data.PrepareIdValueData( this.timeouts ) });
       this.queryByHook('hosts').select2({ placeholder: 'Monitor Host', data: Select2Data.PrepareHosts( this.hosts ) });
-      var usersSelect = new UsersSelect({ collection: this.users, autoRender: true });
+      var usersSelect = this.usersSelect = new UsersSelect({ collection: this.users, autoRender: true });
       this.queryByHook('advanced').append( usersSelect.el );
     },
     remove : function(){
       this.$el.off('click');
       this.$el.off('change');
+      this.usersSelect.remove();
       BaseView.prototype.remove.call(this);
     },
     focus : function(){
@@ -122,21 +189,39 @@ var Scraper = (function Scraper(){
     render: function() {
       // parent render
       this.renderTemplate();
-      this.bindFormEvents();
-      this.setupSelect();
+
+      // tasks doesn't has a loop
+      this.find('[data-hook=looptime-container]').remove();
 
       var advancedSection = this.queryByHook('advanced');
-
       var triggerInputsHTML = Templates['assets/templates/trigger-inputs.hbs']();
       advancedSection.append( triggerInputsHTML );
 
-      var usersSelect = new UsersSelect({ collection: this.users });
-      usersSelect.render();
-      advancedSection.append( usersSelect.el );
+      this.setupSelect();
+      this.bindFormEvents();
 
-      this.queryByHook('events-container').select2({ placeholder: 'Events', data: Select2Data.PrepareEvents( this.events ) });
+      this.queryByHook('events-container').select2({
+        placeholder: 'Events',
+        data: Select2Data.PrepareEvents(this.events)
+      });
 
+      this.initHelp();
       this.setFormData(this.model);
+    },
+    initHelp: function() {
+      FormView.prototype.initHelp.apply(this);
+
+      new HelpIcon({
+        container: this.find('label[for=triggers]'),
+        category: 'scraper_form',
+        text: 'Select a task, monitor or webhook event that will trigger this task automagically.'
+      });
+
+      new HelpIcon({
+        container: this.find('label[for=grace_time]'),
+        category: 'scraper_form',
+        text: 'If you select to Trigger on an event, you can choose a delayed execution that allows you to cancel this action via email.'
+      });
     }
   });
 
