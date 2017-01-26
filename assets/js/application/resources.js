@@ -36,7 +36,7 @@ $(function(){
       var id = $(this).data('monitor');
       var monitor = _monitors.get(id);
 
-      var modal = new Modal({ title: 'Copy monitor ' + monitor.get('name') });
+      var modal = new Modal({ title: 'Copy From ' + monitor.get('name') });
       modal.render();
 
       var hosts = new Backbone.Collection(window.Hosts);
@@ -365,7 +365,7 @@ $(function(){
       $input.attr('value','');
 
       var monitorCopy = new MonitorSelect({
-        label: 'Copy from monitor',
+        label: 'Copy From',
         collection: _monitors.filter(function(m){
           return m.get('type') == options.type;
         })
@@ -966,6 +966,24 @@ $(function(){
       });
       return false;
     });
+  })();
+
+  (function initFormsHelp(){
+    var $scriptForm = $('form[data-hook=script-monitor-form]');
+    new HelpIcon({ container: $scriptForm.find('label[for=name]'), category: 'monitor_form', text: HelpTexts.monitor.name });
+    new HelpIcon({ container: $scriptForm.find('label[for=host]'), category: 'monitor_form', text: HelpTexts.host });
+    new HelpIcon({ container: $scriptForm.find('label[for=script]'), category: 'monitor_form', text: HelpTexts.scripts });
+    new HelpIcon({ container: $scriptForm.find('label[for=looptime]'), category: 'monitor_form', text: HelpTexts.looptime });
+    new HelpIcon({ container: $scriptForm.find('label[for=tags]'), category: 'monitor_form', text: HelpTexts.tags });
+    new HelpIcon({ container: $scriptForm.find('label[for=script_runas]'), category: 'monitor_form', text: HelpTexts.script_runas });
+    new HelpIcon({ container: $scriptForm.find('label[for=script_arguments]'), category: 'monitor_form', text: HelpTexts.script_arguments });
+
+    var $processForm = $('form[data-hook=process-monitor-form]');
+    new HelpIcon({ container: $processForm.find('label[for=name]'), category: 'monitor_form', text: HelpTexts.monitor.name });
+    new HelpIcon({ container: $processForm.find('label[for=host]'), category: 'monitor_form', text: HelpTexts.host });
+    new HelpIcon({ container: $processForm.find('label[for=looptime]'), category: 'monitor_form', text: HelpTexts.looptime });
+    new HelpIcon({ container: $processForm.find('label[for=process]'), category: 'monitor_form', text: HelpTexts.monitor.process });
+    new HelpIcon({ container: $processForm.find('label[for=tags]'), category: 'monitor_form', text: HelpTexts.tags });
   })();
 
 });
