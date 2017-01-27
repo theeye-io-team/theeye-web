@@ -131,12 +131,22 @@ var FileSelect = (function(){
       this.$el.append(button.$el);
 
       this.listenTo(button,'click',function(event){
+        var modal = new FileModal();
+        this.fileModal = modal;
         if (event.mode === App.Constants.FILE_CREATE) {
-          var modal =  new FileModal();
           modal.render();
-          this.fileModal = modal;
         } else if (event.mode === App.Constants.FILE_UPDATE) {
-          FileActions.download(this.value);
+          modal.model = FilesStore.files.get(this.selected); // selected file id.
+          if (modal.model.get('file')) {
+            modal.render();
+          } else {
+            modal.listenTo(modal.model,'change:file',function(){
+              modal.render();
+              modal.model.off('change');
+            });
+            // start download and wait
+            FileActions.download(this.selected);
+          }
         }
       });
     },
@@ -176,10 +186,6 @@ var FileSelect = (function(){
           break;
         case App.Constants.FILE_DOWNLOAD:
         case App.Constants.FILE_GET:
-          modal = new FileModal();
-          modal.model = action.file;
-          modal.render();
-          this.fileModal = modal;
           break;
       }
     },

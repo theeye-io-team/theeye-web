@@ -58,7 +58,7 @@ var FilesStore = (function(){
   }
 
   function download (id,next) {
-    var file = new App.Models.File({ id: id });
+    var file = files.get({ id: id });
     file.download({
       success: function(model, response, options){
         next(null,file);
