@@ -88,66 +88,66 @@ var Scraper = (function Scraper(){
       new HelpIcon({
         container: this.find('label[for=name]'),
         category: 'scraper_form',
-        text: 'Give it a name.'
+        text: HelpTexts.task.name
       });
       new HelpIcon({
         container: this.find('label[for=host]'),
         category: 'scraper_form',
-        text: 'Where it has to run?'
+        text: HelpTexts.host
       });
       new HelpIcon({
         container: this.find('label[for=looptime]'),
         category: 'scraper_form',
-        text: 'Select the check interval in minutes. The shorter the interval, the more CPU and resource usage.'
+        text: HelpTexts.looptime
       });
       new HelpIcon({
         container: this.find('label[for=method]'),
         category: 'scraper_form',
-        text: 'Select the request Method.'
+        text: HelpTexts.request.method
       });
       new HelpIcon({
         container: this.find('label[for=url]'),
         category: 'scraper_form',
-        text: 'The URL of the service to check, remember to encode it.',
+        text: HelpTexts.request.url,
         link: 'https://en.wikipedia.org/wiki/Percent-encoding'
       });
       new HelpIcon({
         container: this.find('label[for=tags]'),
         category: 'scraper_form',
-        text: 'To help you find your resources quickly.'
+        text: HelpTexts.tags
       });
       new HelpIcon({
         container: this.find('label[for=body]'),
         category: 'scraper_form',
-        text: 'Here can add body parameters to the request. Only available for POST and PUT methods. Default is GET'
+        text: HelpTexts.request.body
       });
       new HelpIcon({
         container: this.find('label[for=timeout]'),
         category: 'scraper_form',
-        text: 'How much time to wait the server\'s response before giving up. Default is 5 seconds.'
+        text: HelpTexts.request.timeout
       });
       new HelpIcon({
         container: this.find('label[for=gzip]'),
         category: 'scraper_form',
-        text: 'Enable HTTP compression to improve transfer speed and bandwidth utilization. An \'Accept-Encoding: gzip\' header will be added to the request. Default is true.',
+        text: HelpTexts.request.gzip,
         link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding'
       });
       new HelpIcon({
         container: this.find('label[for=json]'),
         category: 'scraper_form',
-        text: 'Tells the server that the data being transferred is actually JSON. A \'Content-type: application/json\' header will be added to the request. Additionally, parses the response body as JSON. Default is false.',
+        text: HelpTexts.request.json,
         link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type'
       });
       new HelpIcon({
         container: this.find('label[for=status_code]'),
         category: 'scraper_form',
-        text: 'The expected status code that will be considered ok. Regular Expressions can be used to match a status, for example \'2[0-9][0-9]\' will match 2XX codes in the Success group. Default value is 200.',
+        text: HelpTexts.request.status_code,
         link: 'https://en.wikipedia.org/wiki/List_of_HTTP_status_codes'
       });
       new HelpIcon({
         container: this.find('label[for=pattern]'),
         category: 'scraper_form',
-        text: 'A String or Regular Expression, also could be a part of the response, that will be considered ok.'
+        text: HelpTexts.scraper_pattern,
       });
     },
     setFormData : function(model) {
