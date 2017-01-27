@@ -140,7 +140,7 @@ window.App.Collections.Monitors = Backbone.Collection.extend({
    */
   tagsUnique:function(){
     var tags = this.reduce(function(tags,monitor){
-      monitor.get('tags').forEach(function(tag){
+      monitor.get('formatted_tags').forEach(function(tag){
         if (tags.indexOf(tag)==-1) {
           tags.push(tag);
         }
