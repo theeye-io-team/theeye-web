@@ -120,35 +120,36 @@ $(function(){
     // calculated average servers/agents number based on amount of selected events.
     var servers = getServersAverage(selections['events']);
 
-    var budget = 0;
+    var anualBudget = 0;
 
     // per year
     for (var prop in selections) {
       switch (prop) {
         case 'license' :
-          budget += ANUAL_LICENSE_COST ;
+          anualBudget += ANUAL_LICENSE_COST ;
           break;
         case 'events' :
-          budget += ( this.eventsCost(selections[prop]) - (this.eventsCost(5)) ) * 12; // one server/5 events free
+          anualBudget += ( this.eventsCost(selections[prop]) - (this.eventsCost(5)) ) * 12; // one server/5 events free
           break;
         case 'support' :
-          budget += supportTotal(selections[prop]);
+          anualBudget += supportTotal(selections[prop]);
           break;
         case 'retention' :
-          budget += retentionTotal(selections[prop], servers);
+          anualBudget += retentionTotal(selections[prop], servers);
           break;
         case 'implementation' :
-          budget += implementationTotal(selections[prop]);
+          anualBudget += implementationTotal(selections[prop]);
           break;
         case 'reports' :
-          budget += reportsTotal(selections[prop]);
+          anualBudget += reportsTotal(selections[prop]);
           break;
         default: break;
       }
     }
 
-    this.$form.find('[data-hook=total-anual]').html( budget );
-    this.$form.find('input[name=total]').val( budget );
+    var monthlyTotal = (anualBudget / 12).toFixed(2);
+    this.$form.find('[data-hook=total-month]').html( monthlyTotal );
+    this.$form.find('input[name=total]').val( monthlyTotal );
   }
 
   Calc.prototype.initialize = function (options) {
