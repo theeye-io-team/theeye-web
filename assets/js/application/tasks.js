@@ -849,28 +849,28 @@ $(function(){
   (function initFormsHelp(){
 		// edit form
     $editForm = $("form#editTaskForm");
-    $editForm.find('label[for=name]').append( new HelpIcon({ category:'task_edit_form', text: 'Give the task a name.' }).$el );
-		$editForm.find('label[for=host]').append( new HelpIcon({ category:'task_edit_form', text: 'Where does this task run?' }).$el );
-		$editForm.find('label[for=script_select]').append( new HelpIcon({ category:'task_edit_form', text: 'Which script should it run?' }).$el );
-		$editForm.find('label[for=tags]').append( new HelpIcon({ category:'task_edit_form', text: 'To help you find your resources quickly.' }).$el );
-		$editForm.find('label[for=description]').append( new HelpIcon({ category:'task_edit_form', text: 'Use descriptions to improve teamwork and problem solving.' }).$el );
+    $editForm.find('label[for=name]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.task.name }).$el );
+		$editForm.find('label[for=host]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.host }).$el );
+		$editForm.find('label[for=script_select]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.scripts }).$el );
+		$editForm.find('label[for=tags]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.tags }).$el );
+		$editForm.find('label[for=description]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.description }).$el );
 		//$editForm.find('label[for=public]').append( new HelpIcon({ category:'task_edit_form', text: '' }).$el );
-		$editForm.find('label[for=script_runas]').append( new HelpIcon({ category:'task_edit_form', text: 'Run the selected script using a different username. Use \'%script%\' reserved word to include the script, this will be replaced during execution time with the real script path. Windows users, requires to mimic this action putting the password for the first time.' }).$el );
-		$editForm.find('label[for=script_arguments]').append( new HelpIcon({ category:'task_edit_form', text: 'Put here a comma separated list of arguments.' }).$el );
-		$editForm.find('label[for=triggers]').append( new HelpIcon({ category:'task_edit_form', text: 'Select a task, monitor or webhook event that will trigger this task automagically.' }).$el );
-		$editForm.find('label[for=grace_time]').append( new HelpIcon({ category:'task_edit_form', text: 'If you select to Trigger on an event, you can select to delay the execution that allows you to cancel this action via email.' }).$el );
+		$editForm.find('label[for=script_runas]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.script_runas }).$el );
+		$editForm.find('label[for=script_arguments]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.script_arguments }).$el );
+		$editForm.find('label[for=triggers]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.task.triggers }).$el );
+		$editForm.find('label[for=grace_time]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.task.grace_time }).$el );
 
 		// create form
 		$createForm = $('form#createTaskForm');
-    $createForm.find('label[for=name]').append( new HelpIcon({ category:'task_create_form', text: 'Give the task a name.' }).$el );
-		$createForm.find('label[for=host]').append( new HelpIcon({ category:'task_create_form', text: 'Where does this task run?' }).$el );
-		$createForm.find('label[for=script_select]').append( new HelpIcon({ category:'task_create_form', text: 'Which script should it run?' }).$el );
-		$createForm.find('label[for=tags]').append( new HelpIcon({ category:'task_create_form', text: 'To help you find your resources quickly.' }).$el );
-		$createForm.find('label[for=description]').append( new HelpIcon({ category:'task_create_form', text: 'Use descriptions to improve teamwork and problem solving.' }).$el );
+    $createForm.find('label[for=name]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.task.name }).$el );
+		$createForm.find('label[for=host]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.host }).$el );
+		$createForm.find('label[for=script_select]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.scripts }).$el );
+		$createForm.find('label[for=tags]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.tags }).$el );
+		$createForm.find('label[for=description]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.description }).$el );
 		//$createForm.find('label[for=public]').append( new HelpIcon({ category:'task_create_form', text: '' }) );
-		$createForm.find('label[for=script_runas]').append( new HelpIcon({ category:'task_create_form', text: 'Run the selected script using a different username. Use \'%script%\' reserved word to include the script, this will be replaced during execution time with the real script path. Windows users, requires to mimic this action putting the password for the first time.' }).$el );
-		$createForm.find('label[for=script_arguments]').append( new HelpIcon({ category:'task_create_form', text: 'Put here a comma separated list of arguments.' }).$el );
-		$createForm.find('label[for=triggers]').append( new HelpIcon({ category:'task_create_form', text: 'Select a task, monitor or webhook event that will trigger this task automagically.' }).$el );
-		$createForm.find('label[for=grace_time]').append( new HelpIcon({ category:'task_create_form', text: 'If you select to Trigger on an event, you can select to delay the execution that allows you to cancel this action via email.' }).$el );
+		$createForm.find('label[for=script_runas]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.script_runas }).$el );
+		$createForm.find('label[for=script_arguments]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.script_arguments }).$el );
+		$createForm.find('label[for=triggers]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.task.triggers }).$el );
+		$createForm.find('label[for=grace_time]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.task.grace_time }).$el );
 	})();
 });

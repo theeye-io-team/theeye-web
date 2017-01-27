@@ -195,10 +195,6 @@ var ScraperModal = new (function ScraperModal(){
         }
       });
 
-      _form.find('[data-hook=name-container] label').html('Give it a name');
-      _form.find('[data-hook=hosts-container] label').html('Where it has to run?');
-      _form.find('[data-hook=looptime-container]').remove();
-
       modal.$el.on('click','button[data-hook=save]',function(){
         var data = _form.data;
         _scraper.set(data);
@@ -222,9 +218,6 @@ var ScraperModal = new (function ScraperModal(){
       _scraper.fetch({
         success:function(model, response, options){
           _form.render();
-          _form.find('[data-hook=name-container] label').html('Give it a name');
-          _form.find('[data-hook=hosts-container] label').html('Where it has to run?');
-          _form.find('[data-hook=looptime-container]').remove();
 
           modal.$el.on('click','button[data-hook=save]',function(){
             var values = _form.data;
