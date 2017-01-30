@@ -119,9 +119,7 @@ function DashboardPage () {
   });
 
   /**
-   *
    * extend submonitors view, change table format and data with template.
-   *
    */
   var SubmonitorGroupView = SubmonitorView.extend({
     template:Templates['assets/templates/dashboard/submonitor-group-row.hbs'],
@@ -165,14 +163,14 @@ function DashboardPage () {
    */
   var MonitorView = BaseView.extend({
     template: Templates['assets/templates/dashboard/monitor-row.hbs'],
-    className:'monitorRow',
-    events:{
+    className: 'monitorRow',
+    events: {
       'click button[data-hook=search]':'onClickSearch',
       'click button[data-hook=workflow]':'onClickWorkflow',
       'click button[data-hook=stats]':'onClickStats',
       'click button[data-hook=edit]':'onClickEdit',
     },
-    onClickSearch:function(event){
+    onClickSearch: function(event){
       event.stopPropagation();
       event.preventDefault();
 
@@ -182,7 +180,7 @@ function DashboardPage () {
 
       return false;
     },
-    onClickWorkflow:function(event){
+    onClickWorkflow: function(event){
       event.stopPropagation();
       event.preventDefault();
 
@@ -190,7 +188,7 @@ function DashboardPage () {
 
       return false;
     },
-    onClickStats:function(event){
+    onClickStats: function(event){
       event.stopPropagation();
       event.preventDefault();
 
@@ -198,7 +196,7 @@ function DashboardPage () {
 
       return false;
     },
-    onClickEdit:function(event){
+    onClickEdit: function(event){
       event.stopPropagation();
       event.preventDefault();
 
@@ -206,26 +204,29 @@ function DashboardPage () {
 
       return false;
     },
-    initialize:function(){
+    initialize: function(){
       this.listenTo(this.model.get('submonitors'),'change',this.updateStateIcon);
     },
-    updateStateIcon:function(){
-      var highSeverityMonitor = this.model
-        .get('submonitors')
-        .reduce(function(worstMonitor,monitor){
-          if (!worstMonitor) return monitor;
-          var m1 = monitor.stateOrder();
-          var m2 = worstMonitor.stateOrder();
-          return (m1>m2)?monitor:worstMonitor;
-        },null);
+    updateStateIcon: function(){
+      var submonitors = this.model.get('submonitors');
+      if (submonitors.length!==0) {
+        var highSeverityMonitor = submonitors
+          .reduce(function(worstMonitor,monitor){
+            if (!worstMonitor) return monitor;
+            var m1 = monitor.stateOrder();
+            var m2 = worstMonitor.stateOrder();
+            return (m1>m2) ? monitor : worstMonitor;
+          },null);
 
-      this.stateIcon = highSeverityMonitor.stateIcon();
-      this.state = highSeverityMonitor.get('state');
-      this.queryByHook('state-icon')[0].className = this.stateIcon;
-
-      this.trigger('change:stateIcon',this);
+        this.stateIcon = highSeverityMonitor.stateIcon();
+        this.state = highSeverityMonitor.get('state');
+        this.queryByHook('state-icon')[0].className = this.stateIcon;
+        this.trigger('change:stateIcon',this);
+      } else {
+        console.warn('this group of monitors is empty, there is nothing to show');
+      }
     },
-    render:function(){
+    render: function(){
       BaseView.prototype.render.apply(this, arguments);
       this.renderCollection(
         this.model.get('submonitors'),
@@ -333,8 +334,7 @@ function DashboardPage () {
 
       window.location = uri.toString();
     },
-    template:'<select name="tags" class="tags" ' +
-      ' style="width:100%;" multiple></select>',
+    template:'<select name="tags" class="tags" style="width:100%;" multiple></select>',
     events:{
       'change select':'onChangeSelect'
     },
@@ -498,7 +498,6 @@ function DashboardPage () {
         // check if monitor is in the group
         var model = self.monitorGroups.get(monitor);
         if (!model) return false;
-
         return monitor.isFailing()||monitor.submonitorsFailing();
       });
 
@@ -601,7 +600,7 @@ function DashboardPage () {
     });
 
     monitors.forEach(function(monitor){
-      var ctags = monitor.get('tags');
+      var ctags = monitor.get('formatted_tags');
       if (!Array.isArray(ctags)||ctags.length===0) {
         return;
       }

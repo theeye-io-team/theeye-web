@@ -6,15 +6,12 @@
       class="tooltiped glyphicon glyphicon-question-sign">
     </span>
   </label>
-  <div class="col-sm-9">
+  <div data-hook="select-container" class="col-sm-9">
     <div>
-      <select data-hook="{{ name }}"
-        class="form-control select"
-        name="{{ name }}"
-        style="width:100%">
+      <select data-hook="{{ name }}" class="form-control select" name="{{ name }}" style="width:100%">
         <option></option>
       </select>
     </div>
   </div>
-  <!-- <span class="clear" style="clear: left;display: block;"></span> ONLY REQUIRED WHEN THIS IS THE ONLY INPUT WITHIN A MODAL -->
+  <!-- <span class="clear" style="clear: left;display: block;"></span> <<<<< THIS TAG IS REQUIRED ONLY WHEN THIS TEMPLATE IS THE ONLY ELEMENT WITHIN A MODAL CONTAINER -->
 </div>

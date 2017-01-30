@@ -1,3 +1,5 @@
+"use strict";
+
 function CollectionRenderer (specs) {
   var View = specs.View;
   var container = specs.container;
@@ -52,6 +54,8 @@ var BaseView = Backbone.View.extend({
   initialize:function(options){
     Backbone.View.prototype.initialize.apply(this,arguments);
     _.extend(this,options);
+
+    this.rendered = false;
     if (this.autoRender) this.render();
   },
   renderTemplate: function(){
@@ -62,10 +66,14 @@ var BaseView = Backbone.View.extend({
       html = this.template;
     }
 
-    this.$el.html( html );
+    this.$el.html(html);
 
-    if (this.container) {
-      this.container.appendChild( this.el );
+    if (this.container&&!this.rendered/** yet **/) {
+      /** then append to the container only once **/
+      this.container.appendChild(this.el);
+    }
+    if (!this.rendered) {
+      this.rendered = true;
     }
 
     return this;

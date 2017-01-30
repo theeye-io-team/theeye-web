@@ -103,6 +103,9 @@ module.exports.routes = {
    * generic api endpoints
    *
    */
+  'put /api/file/:id':'FileApiController.upload',
+  'post /api/file':'FileApiController.upload',
+  'get /api/file/:id':'FileApiController.download',
   'put /api/:resource/:id*':'ApiController.update',
   'patch /api/:resource/:id*':'ApiController.patch',
   'delete /api/:resource/:id*':'ApiController.remove',

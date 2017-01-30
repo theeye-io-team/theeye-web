@@ -6,6 +6,7 @@
 //var MonitorSelect = require('../components/monitor-select');
 //var UsersSelect = require('../components/users-select');
 //var TagsSelect = require('../components/tags-select');
+//var FileSelect = require('../components/file-select');
 //var Modal = require('../modal');
 
 var PermanentFile = new (function(){
@@ -64,7 +65,6 @@ var PermanentFile = new (function(){
           return m.get('type') == 'file';
         })
       });
-
       this.monitorSelect.on('change',function(id){
         if (!id) {
           self.reset();
@@ -81,8 +81,11 @@ var PermanentFile = new (function(){
           self.data = values;
         }
       });
-
       this.find('form').prepend( this.monitorSelect.$el );
+
+      this.fileSelect = new FileSelect({ label:'Select File' });
+      this.fileSelect.on('change',function(id){ });
+      this.find('form section[data-hook=main]').append(this.fileSelect.$el);
 
       this.queryByHook('hosts').select2({
         placeholder: 'File Host',
@@ -138,6 +141,7 @@ var PermanentFile = new (function(){
 
     form = new FormView({
       model: fileMonitor,
+      //files: options.files,
       users: options.users,
       monitors: options.monitors,
       looptimes: options.looptimes,

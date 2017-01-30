@@ -111,7 +111,7 @@ $(function() {
       if (!updates) return;
 
       updates.description = data.description;
-      updates.emails = data.emails||[];
+      updates.emails = (data.emails||[]);
 
       jQuery.ajax({
         url: '/customer/' + $customerForm.data('customer-id'),
@@ -140,8 +140,7 @@ $(function() {
       ev.stopPropagation();
 
       bootbox.confirm('The customer will be removed from users (resources and checks will be disabled).<br/>Want to continue?',
-      function(confirmed)
-      {
+      function(confirmed) {
         if(!confirmed) return;
 
         var $delTrigger = $(ev.currentTarget);

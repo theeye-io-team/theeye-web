@@ -500,6 +500,7 @@ span.selectorIcon.glyphicon-check {
 .events-panel h4.panel-title.process { background-image: url('/images/The-eye-icons-30.png'); }
 .events-panel h4.panel-title.script { background-image: url('/images/The-eye-icons-18.png'); }
 .events-panel h4.panel-title.task { background-image: url('/images/The-eye-icons-27.png'); }
+.events-panel h4.panel-title.file { background-image: url('/images/files.png'); }
 .events-panel h3 { height: 40px; line-height: 28px;/* h3 inherits a top/bottom padding of 6 */ }
 
 .events-panel .panel-item.icons .icon-edit,

@@ -24,6 +24,9 @@ $(function(){
   });
   window.Users = _users;
 
+  var _files = new App.Collections.Files();
+  _files.fetch({});
+
   var _monitors = new App.Collections.Monitors();
   _monitors.fetch({ });
   //window.monitors = _monitors;
@@ -879,6 +882,7 @@ $(function(){
     var file = new PermanentFile.MonitorCRUD({
       monitors: _monitors,
       users: _users,
+      files: _files,
       looptimes: window.Looptimes,                                                        
       hosts: window.Hosts,                                                                
       tags: window.Tags

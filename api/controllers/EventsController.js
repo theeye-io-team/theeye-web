@@ -38,22 +38,18 @@ module.exports = {
 
       function sendResponse () {
         var subs = _.chain(data.resources)
-        .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
-        .filter(function(r){
-          return r.type != 'host' && r.type != 'scraper' && r.type != 'script' && r.type != 'process';
-        })
-        .groupBy('host_id')
-        .value();
+          .reject({type:'psaux'}) // psaux is not being show
+          .filter(r => r.type=='dstat')  // only group dstat
+          .groupBy('host_id')
+          .value();
 
         var indexed = _.chain(data.resources)
-        .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
-        .filter(function(r){
-          return r.type == 'host' || r.type == 'scraper' || r.type == 'script' || r.type == 'process';
-        })
+        .reject({type:'psaux'}) // psaux is not being show
+        .filter(r => r.type!='dstat')
         .map(function(i){
-          if(i.type == 'host' && subs[i.host_id]) {
+          if (i.type == 'host' && subs[i.host_id]) {
             i.subs = subs[i.host_id];
-          }else{
+          } else {
             i.subs = []; //consistency on view iterator
           }
           return i;
@@ -64,7 +60,7 @@ module.exports = {
         data.indexedResources = indexed;
         data.ACL = ACL;
 
-        if(req.route.path.indexOf('test') > -1) {
+        if (req.route.path.indexOf('test') > -1) {
           res.view('events/grouptest', data);
         } else {
           res.view('events/index', data);
