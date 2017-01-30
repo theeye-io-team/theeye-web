@@ -147,9 +147,12 @@ $(function(){
       }
     }
 
-    var monthlyTotal = (anualBudget / 12).toFixed(2);
+    var monthlyTotal = ( anualBudget / 12 ).toFixed(2);
+    var anualTotal = ( anualBudget - (anualBudget * 0.20) ).toFixed(2);
     this.$form.find('[data-hook=total-month]').html( monthlyTotal );
-    this.$form.find('input[name=total]').val( monthlyTotal );
+    this.$form.find('[data-hook=total-anual]').html( anualTotal );
+
+    //this.$form.find('input[name=total]').val( monthlyTotal );
   }
 
   Calc.prototype.initialize = function (options) {
