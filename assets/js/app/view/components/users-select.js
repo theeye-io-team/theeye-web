@@ -28,8 +28,9 @@ var UsersSelect = BaseView.extend({
     this.renderTemplate();
 
     this.help = new HelpIcon({
-      text: 'Add permissions to specific users or indicate emails who will receive'
-    }).$el.appendTo(this.find('label'));
+      container: this.find('label'),
+      text: 'Add permissions to specific users or emails who will receive notifications.'
+    });
 
     this.find('select').select2({
       placeholder: 'Users',
