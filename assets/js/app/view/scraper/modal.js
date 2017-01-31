@@ -78,7 +78,7 @@ var ScraperModal = new (function ScraperModal(){
 
           var config = (monitor.config||{});
           var values = _.extend(
-            { description: monitor.name },
+            { name: monitor.name },
             monitor,
             (config.ps||config),
             monitors.get(id).attributes

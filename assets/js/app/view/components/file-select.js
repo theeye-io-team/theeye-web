@@ -67,7 +67,7 @@ var FileSelect = (function(){
       this.label = 'Files';
       this.name = 'file';
       this.help = 'All the uploaded files including scripts, configurations, etc';
-      this.selected = options.selected||null;
+      this.selected = (options.selected||null);
 
       BaseView.prototype.initialize.apply(this,arguments);
 
@@ -142,7 +142,7 @@ var FileSelect = (function(){
           } else {
             modal.listenTo(modal.model,'change:file',function(){
               modal.render();
-              modal.model.off('change');
+              modal.model.off('change:file');
             });
             // start download and wait
             FileActions.download(this.selected);
@@ -167,8 +167,6 @@ var FileSelect = (function(){
      * basically, there are other views(childs) that depends on this one,
      * so this view interactar directly with the store and 
      * change the behaviour of the childs.
-     *
-     * @author Facugon
      */
     onFilesChange:function(action){
       console.log('files store changed');
@@ -176,17 +174,13 @@ var FileSelect = (function(){
       var type = action.actionType,
         modal = this.fileModal;
 
-      switch (type) {
-        case App.Constants.FILE_CREATE:
-        case App.Constants.FILE_UPDATE:
-          if (modal) modal.remove();
-        case App.Constants.FILE_REMOVE:
-          // should change select combo with created/updated/removed elements
-          this.renderFilesSelect();
-          break;
-        case App.Constants.FILE_DOWNLOAD:
-        case App.Constants.FILE_GET:
-          break;
+      if (
+        type===App.Constants.FILE_CREATE||
+        type===App.Constants.FILE_UPDATE
+      ) {
+        this.selected = action.file.get('id'); // affected model
+        this.renderFilesSelect();
+        if (modal) modal.remove();
       }
     },
     remove: function(){

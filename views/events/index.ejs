@@ -58,7 +58,7 @@
             var overallStateSeverity = resourceStateSeverity(resource);
             var tags = [
               resource.id,
-              resource.description,
+              resource.name,
               resource.failure_severity,
               resource.name,
               "hostname=" + resource.hostname,
@@ -73,7 +73,6 @@
                 overallStateSeverity = resourceSeverity;
               }
               tags.push(subresource.id);
-              tags.push(subresource.description);
               tags.push(subresource.name);
               tags.push(subresource.hostname);
               tags.push(subresource.type);
@@ -96,9 +95,9 @@
                 <h4 class="panel-title <%= resource.type %>">
                   <span class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= resource.id %>" aria-expanded="false" aria-controls="collapse<%= resource.id %>">
                     <div class="panel-title-content">
-                      <span class="panel-item name" id="<%= resource.id %>"><%= resource.description %><small> > <%= resource.type %></small></span>
+                      <span class="panel-item name" id="<%= resource.id %>"><%= resource.name %><small> > <%= resource.type %></small></span>
                       <span class="panel-item icons">
-                        <button data-search="<%= resource.description %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
+                        <button data-search="<%= resource.name %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
                           <span class="glyphicon glyphicon-search"></span>
                         </button>
                         <a title="Workflow"
@@ -197,7 +196,6 @@
           <% tasks.forEach(function(task){ %>
             <% var tags = [
               'task',
-              task.description,
               task.name,
               'task='+ task.id,
               'host='+ task.hostname,

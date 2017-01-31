@@ -21,6 +21,7 @@ window.App.Models.File = BaseModel.extend({
     return data;
   },
   upload:function(data,options){
+    var self = this;
     var method, url, SOURCE_KEY = 'source';
     var data = this.attributes;
     var formData = new FormData();
@@ -50,7 +51,18 @@ window.App.Models.File = BaseModel.extend({
       contentType: false,
       processData: false,
       type: method,
-    }).done(options.success).fail(options.error);
+    }).done(function(data,status,jqxhr){
+      var parsed = self.parse(data)
+      self.set(parsed);
+      if (options.success) {
+        options.success(self,jqxhr,options);
+      }
+    }).fail(function(){
+      console.log(arguments);
+      if (options.error) {
+        options.error(self,jqxhr,options);
+      }
+    });
   },
   download:function(options){
     var self = this;
@@ -61,10 +73,14 @@ window.App.Models.File = BaseModel.extend({
     }).done(function(data,status,jqxhr){
       var parsed = self.parse(data)
       self.set(parsed);
-      if (options.success) options.success(self,jqxhr,options);
-    }).fail(options.error||function(){
+      if (options.success) {
+        options.success(self,jqxhr,options);
+      }
+    }).fail(function(){
       console.log(arguments);
-      if (options.error) options.error(self,jqxhr,options);
+      if (options.error) {
+        options.error(self,jqxhr,options);
+      }
     });
   }
 });

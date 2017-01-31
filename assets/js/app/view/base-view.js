@@ -97,6 +97,7 @@ var BaseView = Backbone.View.extend({
   },
   remove:function(){
     Backbone.View.prototype.remove.apply(this,arguments);
+    this.rendered = false;
   },
   appendTo: function(view){
     this.$el.appendTo(view.$el);

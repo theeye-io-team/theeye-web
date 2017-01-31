@@ -857,8 +857,8 @@ $(function(){
 		//$editForm.find('label[for=public]').append( new HelpIcon({ category:'task_edit_form', text: '' }).$el );
 		$editForm.find('label[for=script_runas]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.script_runas }).$el );
 		$editForm.find('label[for=script_arguments]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.script_arguments }).$el );
-		$editForm.find('label[for=triggers]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.task.triggers }).$el );
-		$editForm.find('label[for=grace_time]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.task.grace_time }).$el );
+		$editForm.find('label[for=triggers]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.triggers }).$el );
+		$editForm.find('label[for=grace_time]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.grace_time }).$el );
 
 		// create form
 		$createForm = $('form#createTaskForm');
@@ -870,7 +870,7 @@ $(function(){
 		//$createForm.find('label[for=public]').append( new HelpIcon({ category:'task_create_form', text: '' }) );
 		$createForm.find('label[for=script_runas]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.script_runas }).$el );
 		$createForm.find('label[for=script_arguments]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.script_arguments }).$el );
-		$createForm.find('label[for=triggers]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.task.triggers }).$el );
-		$createForm.find('label[for=grace_time]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.task.grace_time }).$el );
+		$createForm.find('label[for=triggers]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.triggers }).$el );
+		$createForm.find('label[for=grace_time]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.grace_time }).$el );
 	})();
 });

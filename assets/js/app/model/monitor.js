@@ -58,7 +58,7 @@ window.App.Models.Monitor = BaseModel.extend({
 
     var tags = [
       'monitor', 
-      (resource.description||resource.name),
+      resource.name,
       resource.hostname,
       resource.type,
       resource.state,

@@ -5,7 +5,7 @@ window.App.Models.Task = BaseModel.extend({
   parse:function(task){
     var tags = [
       'task', 
-      (task.description||task.name),
+      task.name,
       task.hostname,
       task.type
     ].concat( task.tags );

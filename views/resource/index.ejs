@@ -110,7 +110,7 @@
         <% monitors.forEach( function(monitor, key) {
           var tags = [
             "id=" + monitor.resource.id,
-            "description=" + monitor.resource.description,
+            "name=" + monitor.resource.name,
             "hostname=" + monitor.resource.hostname,
             "type=" + monitor.type,
             "state=" + monitor.resource.state,
@@ -118,7 +118,7 @@
 
           <div class="itemRow panel panel-default js-searchable-item"
             data-item-id="<%= monitor.resource.id %>"
-            data-item-name="<%= monitor.resource.description %>"
+            data-item-name="<%= monitor.resource.name %>"
             data-tags="<%= tags %>">
             <div class="panel-heading" role="tab" id="heading<%= monitor.id %>">
               <h4 class="panel-title">
@@ -155,7 +155,7 @@
                         </small>&nbsp;
                       <% } %>
 
-                      <%= monitor.resource.description %>
+                      <%= monitor.resource.name %>
                       <span class="monitor-<%= monitor.enable?'enabled':'disabled' %>">
                         <small>
                           <% if (monitor.resource.type != 'host') { %>

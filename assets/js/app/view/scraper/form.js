@@ -178,7 +178,7 @@ var Scraper = (function Scraper(){
       BaseView.prototype.remove.call(this);
     },
     focus : function(){
-      this.find('input[name=description]').focus();
+      this.find('input[name=name]').focus();
     },
     reset: function(){
       this.find('form')[0].reset();

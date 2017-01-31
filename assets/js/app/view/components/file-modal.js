@@ -158,7 +158,7 @@ var FileModal = (function(){
       var self = this;
       // initialize parent to autoRender
       BaseView.prototype.initialize.apply(this,arguments);
-      this.$description = this.find('input[name=description]');
+      this.$name = this.find('input[name=name]');
 
       Object.defineProperty(this,'data',{
         get: function(){
@@ -192,7 +192,7 @@ var FileModal = (function(){
       this.queryByHook('gist').show(0);
     },
     focus:function(){
-      this.$description.focus();
+      this.$name.focus();
     },
     events:{
       'change input[data-hook=file-selector]':'onChangeFileSelector',

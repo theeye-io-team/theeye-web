@@ -39,9 +39,9 @@ window.App.Models.ScraperTemplate = BaseModel.extend({
 
     return Object.keys(attrs)
     .map(function(key){
-      if( key == 'name' ){
-        return { 'name': 'description', 'value': attrs[key] };
-      }
+      //if( key == 'name' ){
+      //  return { 'name': 'description', 'value': attrs[key] };
+      //}
       return { 'name': key, 'value': attrs[key] };
     });
   }

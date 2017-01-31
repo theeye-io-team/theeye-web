@@ -201,7 +201,7 @@ $(function(){
       //var $form = $('form#' + type + 'ResourceForm');
       $form.find('[data-hook=resource_id]').val(resource.id);
       $form.find('[data-hook=monitor_type]').val(type);
-      $form.find('[data-hook=description]').val(resource.description);
+      $form.find('[data-hook=name]').val(resource.name);
       $form.find('[data-hook=hosts_id]').val(resource.host_id);
       $form.find('[data-hook=disabled]').prop('checked', !monitor.enable);
       var acls = $form.find('select[data-hook=acl]');
@@ -382,7 +382,7 @@ $(function(){
 
           var config = (monitor.config||{});
           var values = _.extend(
-            {description: monitor.name},
+            {name: monitor.name},
             monitor,
             (config.ps||config),
             _monitors.get(id).attributes

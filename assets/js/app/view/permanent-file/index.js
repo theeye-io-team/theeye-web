@@ -34,7 +34,7 @@ var PermanentFile = new (function(){
       this.find('form')[0].reset();
     },
     focus: function(){
-      this.find('input[name=description]').focus();
+      this.find('input[name=name]').focus();
     },
     events: {
       'click [data-hook=advanced-section-toggler]':'onClickAdvancedToggler',
@@ -74,7 +74,8 @@ var PermanentFile = new (function(){
           var monitor = self.monitors.get(id).get('monitor');
           var config = (monitor.config||{});
           var values = _.extend(
-            { description: monitor.name },
+            //{ description: monitor.name },
+            { name: monitor.name },
             monitor,
             (config.ps||config),
             self.monitors.get(id).attributes
