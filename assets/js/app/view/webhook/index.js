@@ -55,6 +55,17 @@ var WebhookPage = (function(){
 
   var WebhookFormView = BaseView.extend({
     template: Templates['assets/templates/webhook/form.hbs'],
+    events:{
+      'keydown':'onKeyEvent',
+      'keypress':'onKeyEvent',
+    },
+    onKeyEvent: function(event){
+      if (event.keyCode == 13) {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+      }
+    },
     initialize : function(options){
       var self = this;
 
@@ -141,6 +152,7 @@ var WebhookPage = (function(){
       modal.$el.on('click','button[data-hook=save]',function(){
         model.set(form.data);
         WebhookActions.update(model);
+        modal.close();
       });
 
       form.container = modal.queryByHook('container')[0];
@@ -188,6 +200,7 @@ var WebhookPage = (function(){
       modal.$el.on('click','button[data-hook=save]',function(){
         webhook.set(form.data);
         WebhookActions.create(webhook);
+        modal.close();
       });
 
       modal.show();
