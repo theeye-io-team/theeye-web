@@ -42,6 +42,13 @@ var stateIcons = {
 window.App||(window.App={});
 window.App.Models||(window.App.Models={});
 window.App.Models.Monitor = BaseModel.extend({
+  initialize:function(options){
+    Object.defineProperty(this,'state_severity',{
+      get:function(){
+        return this.stateSeverity();
+      }
+    });
+  },
   urlRoot:'/api/resource',
   parse:function(response){
     if (Array.isArray(response)) {

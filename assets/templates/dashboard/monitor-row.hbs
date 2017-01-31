@@ -32,7 +32,8 @@
               </button>
             </section>
             <div class="tooltiped state-icon state-resource-container">
-              <span data-hook="state-icon" class="{{ stateIcon }}" title="{{ model.attributes.state }}">
+              <!-- state_severity is a model object derived property, not an attribute -->
+              <span data-hook="state-icon" class="{{ stateIcon }}" title="{{ model.state_severity }}">
               </span>
             </div>
           </span>

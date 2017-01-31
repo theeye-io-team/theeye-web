@@ -2,7 +2,7 @@
 
 $(function(){
 
-  var ANUAL_LICENSE_COST = 8000 ;
+  var ANNUAL_LICENSE_COST = 8000 ;
 
   /***************************************************************************/
   /* CONTACT FORM */
@@ -120,37 +120,37 @@ $(function(){
     // calculated average servers/agents number based on amount of selected events.
     var servers = getServersAverage(selections['events']);
 
-    var anualBudget = 0;
+    var annualBudget = 0;
 
     // per year
     for (var prop in selections) {
       switch (prop) {
         case 'license' :
-          anualBudget += ANUAL_LICENSE_COST ;
+          annualBudget += ANNUAL_LICENSE_COST ;
           break;
         case 'events' :
-          anualBudget += ( this.eventsCost(selections[prop]) - (this.eventsCost(5)) ) * 12; // one server/5 events free
+          annualBudget += ( this.eventsCost(selections[prop]) - (this.eventsCost(5)) ) * 12; // one server/5 events free
           break;
         case 'support' :
-          anualBudget += supportTotal(selections[prop]);
+          annualBudget += supportTotal(selections[prop]);
           break;
         case 'retention' :
-          anualBudget += retentionTotal(selections[prop], servers);
+          annualBudget += retentionTotal(selections[prop], servers);
           break;
         case 'implementation' :
-          anualBudget += implementationTotal(selections[prop]);
+          annualBudget += implementationTotal(selections[prop]);
           break;
         case 'reports' :
-          anualBudget += reportsTotal(selections[prop]);
+          annualBudget += reportsTotal(selections[prop]);
           break;
         default: break;
       }
     }
 
-    var monthlyTotal = ( anualBudget / 12 ).toFixed(2);
-    var anualTotal = ( anualBudget - (anualBudget * 0.20) ).toFixed(2);
+    var monthlyTotal = ( annualBudget / 12 ).toFixed(2);
+    var annualTotal = ( annualBudget - (annualBudget * 0.20) ).toFixed(2);
     this.$form.find('[data-hook=total-month]').html( monthlyTotal );
-    this.$form.find('[data-hook=total-anual]').html( anualTotal );
+    this.$form.find('[data-hook=total-annual]').html( annualTotal );
 
     //this.$form.find('input[name=total]').val( monthlyTotal );
   }
