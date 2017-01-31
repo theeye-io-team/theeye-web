@@ -22,6 +22,7 @@ window.App.Models.File = BaseModel.extend({
   },
   upload:function(data,options){
     var self = this;
+    options||(options={});
     var method, url, SOURCE_KEY = 'source';
     var data = this.attributes;
     var formData = new FormData();
@@ -57,7 +58,7 @@ window.App.Models.File = BaseModel.extend({
       if (options.success) {
         options.success(self,jqxhr,options);
       }
-    }).fail(function(){
+    }).fail(function(jqxhr,textStatus,errorThrown){
       console.log(arguments);
       if (options.error) {
         options.error(self,jqxhr,options);
@@ -76,7 +77,7 @@ window.App.Models.File = BaseModel.extend({
       if (options.success) {
         options.success(self,jqxhr,options);
       }
-    }).fail(function(){
+    }).fail(function(jqXHR,textStatus,errorThrown){
       console.log(arguments);
       if (options.error) {
         options.error(self,jqxhr,options);
