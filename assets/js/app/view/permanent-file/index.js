@@ -65,6 +65,7 @@ var PermanentFile = new (function(){
           return m.get('type') == 'file';
         })
       });
+
       this.monitorSelect.on('change',function(id){
         if (!id) {
           self.reset();
@@ -81,6 +82,7 @@ var PermanentFile = new (function(){
           self.data = values;
         }
       });
+
       this.find('form').prepend( this.monitorSelect.$el );
 
       this.fileSelect = new FileSelect({ label:'Select File' });
@@ -98,16 +100,45 @@ var PermanentFile = new (function(){
 
       this.setFormData(this.model);
 
-      this.find('label[for=owner]').append(new HelpIcon({
-        text: 'the user name for the file'
-      }).$el);
-      this.find('label[for=group]').append(new HelpIcon({
-        text: 'this group name for the file'
-      }).$el);
-      this.find('label[for=permissions]').append(new HelpIcon({
-        text: 'permissions in unix numeric notation. default is 755',
+      this.initHelp();
+    },
+    initHelp: function(){
+      new HelpIcon({
+        container: this.find('label[for=name]'),
+        category: 'file_form',
+        text: HelpTexts.task.name
+      });
+      new HelpIcon({
+        container: this.find('label[for=host]'),
+        category: 'file_form',
+        text: HelpTexts.host
+      });
+      new HelpIcon({
+        container: this.find('label[for=looptime]'),
+        category: 'file_form',
+        text: HelpTexts.looptime
+      });
+      new HelpIcon({
+        container: this.find('label[for=path]'),
+        category: 'file_form',
+        text: HelpTexts.file.path
+      });
+      new HelpIcon({
+        container: this.find('label[for=uid]'),
+        category: 'file_form',
+        text: HelpTexts.file.uid
+      });
+      new HelpIcon({
+        container: this.find('label[for=gid]'),
+        category: 'file_form',
+        text: HelpTexts.file.gid
+      });
+      new HelpIcon({
+        container: this.find('label[for=permissions]'),
+        category: 'file_form',
+        text: HelpTexts.file.permissions,
         link: 'https://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation'
-      }).$el);
+      });
     },
     setFormData: function(model){
       if (model) {

@@ -25,5 +25,11 @@ var HelpTexts = {
   },
   task: {
     name: 'Give this task a name',
+  },
+  file: {
+    path: 'The full path to put the file in',
+    uid: 'The user id for the file',
+    gid: 'The group id for the file',
+    permissions: 'Permissions in octal format. Default is 0755'
   }
 }

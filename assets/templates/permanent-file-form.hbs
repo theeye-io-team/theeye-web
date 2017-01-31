@@ -2,25 +2,25 @@
   <section data-hook="main">
     <input data-hook="type" type="hidden" name="type" value="file" />
     <div data-hook="name-container" class="form-group">
-      <label for="name" class="col-sm-3 control-label">Descriptive name</label>
+      <label for="name" class="col-sm-3 control-label"> Name * </label>
       <div class="col-sm-9">
         <input name="name" data-hook="name" type="text" class="form-control" placeholder="My Apache Config File">
       </div>
     </div>
     <div data-hook="looptime-container" class="form-group">
-      <label for="looptime" class="col-sm-3 control-label">Check Interval (mins)</label>
+      <label for="looptime" class="col-sm-3 control-label"> Check Interval (mins) * </label>
       <div class="col-sm-9">
         <select name="looptime" data-hook="looptimes" class="form-control" style="width:100%"> </select>
       </div>
     </div>
     <div data-hook="hosts-container" class="form-group">
-      <label for="hosts" class="col-sm-3 control-label">Target host</label>
+      <label for="host" class="col-sm-3 control-label"> Target Host * </label>
       <div class="col-sm-9">
         <select name="hosts" data-hook="hosts" class="form-control" style="width:100%" multiple></select>
       </div>
     </div>
     <div class="form-group">
-      <label for="path" class="col-sm-3 control-label">Target path</label>
+      <label for="path" class="col-sm-3 control-label"> Target Path * </label>
       <div class="col-sm-9">
         <input name="path" data-hook="path" type="text" class="form-control" placeholder="/etc/apache2">
       </div>
@@ -30,19 +30,19 @@
   <!-- ADVANCED SECTION START HERE -->
   <section data-hook="advanced" style="display:none;">
     <div class="form-group">
-      <label for="owner" class="col-sm-3 control-label"> File owner </label>
+      <label for="uid" class="col-sm-3 control-label"> File UID </label>
       <div class="col-sm-9">
-        <input name="owner" data-hook="owner" type="text" class="form-control" placeholder="apache">
+        <input name="uid" data-hook="uid" type="text" class="form-control" placeholder="0">
       </div>
     </div>
     <div class="form-group">
-      <label for="group" class="col-sm-3 control-label"> File group </label>
+      <label for="gid" class="col-sm-3 control-label"> File GID </label>
       <div class="col-sm-9">
-        <input name="group" data-hook="group" type="text" class="form-control" placeholder="apache">
+        <input name="gid" data-hook="gid" type="text" class="form-control" placeholder="1000">
       </div>
     </div>
     <div class="form-group">
-      <label for="permissions" class="col-sm-3 control-label"> File permissions </label>
+      <label for="permissions" class="col-sm-3 control-label"> File Permissions </label>
       <div class="col-sm-9">
         <input name="permissions" data-hook="permissions" type="text" class="form-control" placeholder="0755">
       </div>
