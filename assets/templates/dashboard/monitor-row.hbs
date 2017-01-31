@@ -10,13 +10,13 @@
         aria-controls="collapse{{ model.attributes.id }}">
         <div class="panel-title-content">
           <span class="panel-item name">
-            {{ model.attributes.description }}
+            {{ model.attributes.name }}
             <small> > {{ model.attributes.type }}</small>
           </span>
           <span class="panel-item icons">
             <section data-hook="monitor-icons-block" style="float:right;">
               <button data-hook="search"
-                data-search="{{ model.attributes.description }}"
+                data-search="{{ model.attributes.name }}"
                 class="btn btn-icon-image resource-search">
                 <span class="glyphicon glyphicon-search"></span>
               </button>

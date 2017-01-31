@@ -74,8 +74,6 @@ var PermanentFile = new (function(){
           var monitor = self.monitors.get(id).get('monitor');
           var config = (monitor.config||{});
           var values = _.extend(
-            //{ description: monitor.name },
-            { name: monitor.name },
             monitor,
             (config.ps||config),
             self.monitors.get(id).attributes
