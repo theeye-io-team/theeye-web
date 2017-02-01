@@ -58,8 +58,11 @@
                 var severity = resource.failure_severity;
                 if (!severity) { // failure_severity is null or empty string
                   return 'failure';
+                } else {
+                  return severity;
                 }
               } else {
+                if (!resource.state) return 'unknown';
                 return resource.state.toLowerCase();
               }
             }
