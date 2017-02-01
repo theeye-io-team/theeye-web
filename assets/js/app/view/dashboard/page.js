@@ -220,7 +220,10 @@ function DashboardPage () {
 
         this.stateIcon = highSeverityMonitor.stateIcon();
         this.state = highSeverityMonitor.get('state');
-        this.queryByHook('state-icon')[0].className = this.stateIcon;
+        var stateIconEl = this.queryByHook('state-icon')[0];
+        stateIconEl.className = this.stateIcon;
+        stateIconEl.title = highSeverityMonitor.state_severity;
+
         this.trigger('change:stateIcon',this);
       } else {
         console.warn('this group of monitors is empty, there is nothing to show');
