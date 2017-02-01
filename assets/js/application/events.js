@@ -7,6 +7,7 @@ $(function(){
     low             : "icon-info", /* failure state */
     high            : "icon-warn", /* failure state */
     critical        : "icon-fatal", /* failure state */
+    failure         : "icon-fatal", /* failure state */
     updates_stopped : "icon-error",
     getIcon: function (state) {
       var icon = (this[state.toLowerCase()]||this.unknown);
@@ -20,6 +21,7 @@ $(function(){
         "low",
         "high",
         "critical",
+        "failure",
         "updates_stopped"
       ].indexOf(value);
     },
@@ -44,6 +46,20 @@ $(function(){
       return filtered;
     }
   };
+
+  function getResourceStateSeverity (resource) {
+    var state = resource.state;
+    var failure_severity = resource.failure_severity;
+    if (state==='failure') {
+      if (!failure_severity) {
+        return 'failure';
+      } else {
+        return failure_severity.toLowerCase();
+      }
+    } else {
+      return state.toLowerCase();
+    }
+  }
 
   function getRowElementsWorstState (elems) {
     var subIconClasses = elems.map(function(i,el){
@@ -503,7 +519,7 @@ $(function(){
           $('.state-icon', $tr).removeClass().addClass('state-icon');
 
           // if state is failure use the failure_severity property for the icon
-          var stateSeverity = resource[(resource.state==='failure')?'failure_severity':'state'];
+          var stateSeverity = getResourceStateSeverity(resource);
           $('.state-icon', $tr).addClass(iconsDicc.getIcon(stateSeverity));
 
           var worstState, subElems = $('tr td span.state-icon', $rowItem);

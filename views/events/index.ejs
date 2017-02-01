@@ -28,6 +28,7 @@
               low             : "icon-info", /* failure state */
               high            : "icon-warn", /* failure state */
               critical        : "icon-fatal", /* failure state */
+              failure         : "icon-fatal", /* failure state */
               updates_stopped : "icon-error",
               getIcon: function (state) {
                 return (this[state.toLowerCase()]||this.unknown);
@@ -40,6 +41,7 @@
                   "low",
                   "high",
                   "critical",
+                  "failure",
                   "updates_stopped"
                 ].indexOf(value);
               },
@@ -50,8 +52,16 @@
                 });
               }
             };
+
             function resourceStateSeverity (resource) {
-              return (resource[(resource.state==='failure')?'failure_severity':'state']).toLowerCase();
+              if (resource.state==='failure') {
+                var severity = resource.failure_severity;
+                if (!severity) { // failure_severity is null or empty string
+                  return 'failure';
+                }
+              } else {
+                return resource.state.toLowerCase();
+              }
             }
 
           indexedResources.forEach(function(resource){

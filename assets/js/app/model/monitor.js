@@ -7,6 +7,7 @@ var stateIcons = {
   low             : "icon-info", /* failure state */
   high            : "icon-warn", /* failure state */
   critical        : "icon-fatal", /* failure state */
+  failure         : "icon-fatal", /* failure state */
   updates_stopped : "icon-error",
   getIcon: function (state) {
     var icon = (this[state.toLowerCase()]||this.unknown);
@@ -20,6 +21,7 @@ var stateIcons = {
       "low",
       "high",
       "critical",
+      "failure", // when failure_severity is not set use failure
       "updates_stopped"
     ].indexOf(value);
   },
@@ -82,9 +84,15 @@ window.App.Models.Monitor = BaseModel.extend({
     });
   },
   stateSeverity: function(){
-    var state = this.get('state') ,
-      severity = this.get('failure_severity');
-    return (state==='failure')?(severity||'failure').toLowerCase():state;
+    var state = this.get('state');
+    var severity = this.get('failure_severity');
+
+    if (state==='failure') {
+      if (!severity) return 'failure';
+      else return severity.toLowerCase();
+    } else {
+      return state.toLowerCase();
+    }
   },
   stateOrder: function(){
     return stateIcons.indexOf(this.stateSeverity());
