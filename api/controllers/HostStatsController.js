@@ -63,20 +63,26 @@ module.exports = {
     var resource = req.param('resource');
     var supervisor = req.supervisor;
 
-    supervisor.host( id, function(err,host){
-      if (resources.indexOf(resource) != -1) {
-        var room = roomNameFormat
-        .replace(':customer:', req.session.customer)
-        .replace(':hostname:', host.hostname)
-        .replace(':resource:', resource);
-
-        var socket = req.socket;
-        debug('suscribing socket to room %s', room);
-        socket.join(room);
-
-        res.json({ message: 'subscribed to room ' + room });
+    supervisor.host(id, function(err,host){
+      if (err) {
+        res.json({ message: err.message, error: err });
+      } else if (!host) {
+        res.json({ message: 'host not found' });
       } else {
-        res.json({ message: 'invalid host resource ' + resource }, 400);
+        if (resources.indexOf(resource) != -1) {
+          var room = roomNameFormat
+            .replace(':customer:', req.session.customer)
+            .replace(':hostname:', host.hostname)
+            .replace(':resource:', resource);
+
+          var socket = req.socket;
+          debug('suscribing socket to room %s', room);
+          socket.join(room);
+
+          res.json({ message: 'subscribed to room ' + room });
+        } else {
+          res.json({ message: 'invalid host resource ' + resource }, 400);
+        }
       }
     });
   },
