@@ -8,12 +8,13 @@
  * For usage docs see:
  * 		https://github.com/gruntjs/grunt-contrib-cssmin
  */
+var productionCSS  = require('../pipeline').productionCSSFilename;
 module.exports = function(grunt) {
 
 	grunt.config.set('cssmin', {
 		dist: {
-			src: ['.tmp/public/concat/production.css'],
-			dest: '.tmp/public/min/production.css'
+			src: ['.tmp/public/concat/' + productionCSS],
+			dest: '.tmp/public/min/' + productionCSS
 		}
 	});
 

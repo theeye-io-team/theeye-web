@@ -10,16 +10,20 @@
  * For usage docs see:
  * 		https://github.com/gruntjs/grunt-contrib-concat
  */
+var productionJS  = require('../pipeline').productionJSFilename;
+var productionCSS  = require('../pipeline').productionCSSFilename;
 module.exports = function(grunt) {
+
+  var hash = Date.now();
 
 	grunt.config.set('concat', {
 		js: {
 			src: require('../pipeline').jsFilesToInject,
-			dest: '.tmp/public/concat/production.js'
+			dest: '.tmp/public/concat/' + productionJS
 		},
 		css: {
 			src: require('../pipeline').cssFilesToInject,
-			dest: '.tmp/public/concat/production.css'
+			dest: '.tmp/public/concat/' + productionCSS
 		}
 	});
 
