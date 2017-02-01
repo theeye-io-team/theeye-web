@@ -9,7 +9,7 @@ MonitorSelect, _, ScraperModal, TagsSelect, bootbox, Tags, $searchbox, debug */
 // var ScraperModal = require('../app/view/scraper/modal');
 // var Select2Data = require('../app/lib/select2data');
 
-$(function(){
+var MonitorsPageInit = (function(){
 
   var log = debug('eye:web:admin:resources');
   var _users = new App.Collections.Users();

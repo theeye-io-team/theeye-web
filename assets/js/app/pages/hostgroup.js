@@ -1,7 +1,7 @@
 /**
  * @author Facundo
  */
-$(function(){
+var TemplatesPageInit = (function(){
   var group ;
   var $tasksTags = $('#group-form input#tasks-container');
   var $monitorsTags = $('#group-form input#monitors-container');

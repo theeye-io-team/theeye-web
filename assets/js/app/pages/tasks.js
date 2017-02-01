@@ -1,5 +1,5 @@
 /* global Select2Data, Tags, FormElement, bootbox, humanInterval, lodash, $searchbox, ScraperModal */
-$(function(){
+var TasksPageInit = (function(){
 
   window.scriptState = window.scriptState ? window.scriptState : $({});
   var $state = window.scriptState;

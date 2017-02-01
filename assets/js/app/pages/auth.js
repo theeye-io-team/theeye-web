@@ -1,9 +1,7 @@
-$(function()
-{
+var AuthPageInit = (function() {
   var $state = $({});
 
-  $state.on("password_changed",function()
-  {
+  $state.on("password_changed",function(){
     alert("Password updated", "Change password", function(){
         $('.modal#changePass').modal("hide");
     });
@@ -13,10 +11,8 @@ $(function()
     alert(error);
   });
 
-  var submit = function($el)
-  {
-    $el.on("submit",function(event)
-    {
+  var submit = function($el) {
+    $el.on("submit",function(event) {
       event.preventDefault();
       var vals = $el.serializeArray()
         .reduce(function(obj, input) {
@@ -24,9 +20,8 @@ $(function()
           return obj;
         }, {});
 
-        $.post("/auth/local/update", vals)
-        .done(function(data)
-        {
+      $.post("/auth/local/update", vals)
+        .done(function(data) {
           $state.trigger("password_changed");
         })
         .fail(function(xhr, xhrStatus, err) {

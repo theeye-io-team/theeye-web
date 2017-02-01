@@ -26,12 +26,14 @@ var jsFilesToInject = [
 	// Dependencies like sails.io.js, jQuery, or Angular
 	// are brought in here
 	//'js/dependencies/**/*.js',
+  'js/ace-editor/ace.js',
+  'js/ace-editor/ext-modelist.js',
 
 	// All of the rest of your client-side js files
 	// will be injected here in no particular order.
 	'js/*.js',
 	//'js/ace-editor/ace.js',
-  'js/app/**/*.js'
+  'js/app/**/*.js',
 ];
 
 

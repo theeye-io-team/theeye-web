@@ -1,4 +1,4 @@
-$(function() {
+var LoginPageInit = (function() {
 
   // add class to body
   $('body').addClass('login');

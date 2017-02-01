@@ -1,6 +1,6 @@
 /* global bootbox, $searchbox, console, Clipboard */
 
-$(function() {
+var CustomersPageInit = (function() {
 
   var $state = $({});
 

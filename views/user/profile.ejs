@@ -1,5 +1,5 @@
-<% block('scripts', '<script src="/js/application/auth.js"></script>') %>
-<% block('scripts', '<script src="/js/application/profile.js"></script>') %>
+<% block('scripts', '<script> $(document).ready(function(){ new AuthPageInit(); new ProfilePageInit(); }); </script>') %>
+
 <div class="container-fluid profile-page">
   <div class="row">
     <div class="col-md-6">

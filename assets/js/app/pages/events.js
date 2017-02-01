@@ -1,5 +1,5 @@
 /* global getHashParams, debug, $searchbox, log, Ladda, bootbox, Cookies, Clipboard, _ */
-$(function(){
+var EventsPageInit = (function(){
 
   var iconsDicc = {
     unknown         : "icon-nonsense",

@@ -1,5 +1,5 @@
 <% block('styles', '<link rel="stylesheet" href="/styles/ladda-themeless.min.css">') %>
-<% block('scripts', '<script src="/js/application/events.js"></script>') %>
+<% block('scripts','<script> $(document).ready(function(){ new EventsPageInit(); }); </script>') %>
 
 <div class="admin-container events-container"><!-- MAIN -->
   <div class="js-searchable-box">

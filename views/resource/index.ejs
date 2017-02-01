@@ -1,11 +1,10 @@
-<% block('scripts','<script src="/js/ace-editor/ext-modelist.js"></script>') %>
-<% block('scripts','<script src="/js/application/scripts.js"></script>')%>
-<% block('scripts','<script src="/js/application/resources.js"></script>') %>
 <% block('scripts','<script> window.Tags = ' + JSON.stringify(tags) + '; </script>') %>
 <% block('scripts','<script> window.Looptimes = ' + JSON.stringify(looptimes) + '; </script>') %>
 <% block('scripts','<script> window.Timeouts = ' + JSON.stringify(timeouts) + '; </script>') %>
 <% block('scripts','<script> window.Hosts = ' + JSON.stringify(hosts) + '; </script>') %>
 <% block('scripts','<script> window.Scripts = ' + JSON.stringify(scripts) + '; </script>') %>
+
+<% block('scripts','<script> $(document).ready(function(){ new ScriptsPageInit(); new MonitorsPageInit(); }); </script>') %>
 
 <!-- Main  -->
 <div class="admin-container monitorContainer">

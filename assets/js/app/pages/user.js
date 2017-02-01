@@ -1,5 +1,5 @@
 /* global bootbox, $searchbox, console */
-$(function(){
+var UsersPageInit = (function(){
 
   var $state = $({});
 

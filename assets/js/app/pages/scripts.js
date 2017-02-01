@@ -1,5 +1,6 @@
 /* global ace, bootbox, $searchbox */
-$(function() {
+var ScriptsPageInit = (function(){
+
   var self = this;
   window.scriptState = window.scriptState ? window.scriptState : $({});
   var $state = window.scriptState;
