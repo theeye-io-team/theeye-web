@@ -90,7 +90,7 @@ module.exports = {
       socket.join(customer + '_events');
     }
 
-    res.json({ message: 'subscribed to customers events' });
+    res.send(200,{ message: 'subscribed to customers events' });
   },
   update: function(req, res) {
     // sns updates received
@@ -98,27 +98,25 @@ module.exports = {
     debug('event update received');
     debug(body);
     snsreceiver.handleSubscription(body, function(error, action) {
-      if( error || ! body.Message ) {
+      if (error || ! body.Message) {
         debug.error('Error Invalid request');
         debug.error(body);
         res.json({
-          'status': 400,
-          'error': {
-            'message': 'invalid request'
-          }
+          status: 400,
+          error: { message: 'invalid request' }
         });
       } else {
         var message = snsreceiver.parseSNSMessage(body.Message);
-        if(!message) {
+        if (!message) {
           return res.json({
-            'status': 400,
-            'error': {
-              'message': "SNS body.Message Couldn't be parsed" ,
-              'received' : body.Message
+            status: 400,
+            error: {
+              message: "SNS body.Message Couldn't be parsed" ,
+              received : body.Message
             }
           });
         } else {
-          if(action == 'continue') {
+          if (action == 'continue') {
             var room = message.customer_name + '_events';
             debug('sending information via socket to ' + room);
             message.last_update_moment = moment(message.last_update).startOf('second').fromNow();

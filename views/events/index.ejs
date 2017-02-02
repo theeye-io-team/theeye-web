@@ -56,10 +56,10 @@
             function resourceStateSeverity (resource) {
               if (resource.state==='failure') {
                 var severity = resource.failure_severity;
-                if (!severity) { // failure_severity is null or empty string
+                if (!severity) { // failure_severity is undefined, null, empty..
                   return 'failure';
                 } else {
-                  return severity;
+                  return severity.toLowerCase();
                 }
               } else {
                 if (!resource.state) return 'unknown';

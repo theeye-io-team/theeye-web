@@ -65,9 +65,9 @@ module.exports = {
 
     supervisor.host(id, function(err,host){
       if (err) {
-        res.json({ message: err.message, error: err });
+        res.send(500,{ message: err.message, error: err });
       } else if (!host) {
-        res.json({ message: 'host not found' });
+        res.send(400,{ message: 'host not found' });
       } else {
         if (resources.indexOf(resource) != -1) {
           var room = roomNameFormat
@@ -79,9 +79,9 @@ module.exports = {
           debug('suscribing socket to room %s', room);
           socket.join(room);
 
-          res.json({ message: 'subscribed to room ' + room });
+          res.send(200,{ message: 'subscribed to room ' + room });
         } else {
-          res.json({ message: 'invalid host resource ' + resource }, 400);
+          res.send(200,{ message: 'invalid host resource ' + resource });
         }
       }
     });
