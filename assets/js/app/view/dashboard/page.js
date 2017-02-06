@@ -498,9 +498,13 @@ function DashboardPage () {
     checkMonitors: function(){
       var self = this;
       var failing = this.monitors.filter(function(monitor){
-        // check if monitor is in the group
-        var model = self.monitorGroups.get(monitor);
-        if (!model) return false;
+
+        // check if monitor is in a group
+        var group = self.monitorGroups.find(function(group){
+          var sm = group.attributes.submonitors.get(monitor.get('id'));
+          return sm !== undefined;
+        });
+        if (!group) return false;
         return monitor.isFailing()||monitor.submonitorsFailing();
       });
 
@@ -522,8 +526,8 @@ function DashboardPage () {
     foldMonitors: function(){
       var self = this;
       this.monitorRows.views.forEach(function(view){
-        var monitor = view.model;
-        var isFailing = monitor.isFailing()||monitor.submonitorsFailing();
+        var group = view.model; // model is a monitor model or monitoGroup model
+        var isFailing = group.isFailing()||group.submonitorsFailing();
         if (!isFailing) {
           view.$el.appendTo(self.monitorsFolding.$container);
         } else {
@@ -585,6 +589,18 @@ function DashboardPage () {
     return groupedMonitors;
   }
 
+  var MonitorsGroup = Backbone.Model.extend({
+    isFailing : function(){
+      return false;
+    },
+    submonitorsFailing: function(){
+      return this.get('submonitors')
+        .filter(function(monitor){
+          return monitor.isFailing();
+        }).length > 0;
+    },
+  });
+
   function groupByTags (monitors,tags) {
     if (!Array.isArray(tags)||tags.length===0) {
       return monitors;
@@ -592,14 +608,13 @@ function DashboardPage () {
 
     var groups = [];
     tags.forEach(function(t){
-      groups.push({
-        id: uid(),
+      groups.push(new MonitorsGroup({
         tags: [t,'group'],
         type: 'group',
         name: t.toLowerCase(),
         description: t,
         submonitors: new Backbone.Collection()
-      });
+      }));
     });
 
     monitors.forEach(function(monitor){
@@ -609,11 +624,13 @@ function DashboardPage () {
       }
 
       ctags.forEach(function(tag){
+        if (!tag) return;
         var ltag = tag.toLowerCase();
         if (tags.indexOf(ltag) !== -1) {
-          lodash.find(groups,function(g){
-            return g.name == ltag 
-          }).submonitors.add(monitor);
+          var group = lodash.find(groups,function(g){
+            return g.get('name') == ltag 
+          });
+          group.get('submonitors').add(monitor);
         } else {
           // do not group nor show. ignore
         }

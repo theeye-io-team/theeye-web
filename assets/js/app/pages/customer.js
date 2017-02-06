@@ -71,9 +71,9 @@ var CustomersPageInit = (function() {
         var form = new FormElement($customerForm);
 
         var customer = data.customer,
-          config = customer.config||{elasticsearch:{}};
+          config = customer.config||{};
 
-        customer.elasticsearch = JSON.stringify(config.elasticsearch);
+        customer.elasticsearch = JSON.stringify(config.elasticsearch||{});
         customer.kibana = (config.kibana||'');
 
         form.set(customer);
