@@ -14,7 +14,6 @@ var PermanentFile = new (function(){
 
   var DEFAULT_PATH_SEPARATOR = '/';
 
-
   var TargetPathView = BaseView.extend({
     template: Templates['assets/templates/filepath-input.hbs'],
     initialize: function(options){
@@ -23,7 +22,7 @@ var PermanentFile = new (function(){
       var model = this.model;
 
       var _manual = false,
-        _path, _basename, _dirname,
+        _path = '', _basename = '', _dirname = '',
         _pathSeparator = (options.pathSeparator||DEFAULT_PATH_SEPARATOR);
 
       if (model) {
@@ -141,17 +140,20 @@ var PermanentFile = new (function(){
     },
     setPreview: function(){
       var preview;
-      if (this.manual) {
-        preview = this.path;
+
+      if (!this.path&&!this.basename) {
+        preview = '';
       } else {
-        preview = this.path + this.pathSeparator + this.basename;
+        if (this.manual) {
+          preview = this.path;
+        } else {
+          preview = this.path + this.pathSeparator + this.basename;
+        }
       }
 
       this.queryByHook('preview').html(preview);
     }
   });
-
-
 
   var FormView = BaseView.extend({
     template: Templates['assets/templates/permanent-file-form.hbs'],
