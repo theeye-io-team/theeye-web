@@ -8,8 +8,150 @@
 //var TagsSelect = require('../components/tags-select');
 //var FileSelect = require('../components/file-select');
 //var Modal = require('../modal');
+//var path = require('../../lib/path');
 
 var PermanentFile = new (function(){
+
+  var DEFAULT_PATH_SEPARATOR = '/';
+
+
+  var TargetPathView = BaseView.extend({
+    template: Templates['assets/templates/filepath-input.hbs'],
+    initialize: function(options){
+      BaseView.prototype.initialize.apply(this,arguments);
+
+      var model = this.model;
+
+      var _manual = false,
+        _path, _basename, _dirname,
+        _pathSeparator = (options.pathSeparator||DEFAULT_PATH_SEPARATOR);
+
+      if (model) {
+        if (!model.isNew()) {
+          _basename = FilesStore.files
+            .get(model.get('file'))
+            .get('filename');
+          _manual = model.get('is_manual_path');
+          _dirname = model.get('dirname');
+
+          if (_manual===true) {
+            _path = model.get('path');
+          } else {
+            _path = model.get('dirname');
+          }
+        }
+      }
+
+      Object.defineProperty(this,'manual',{
+        get: function(){
+          return _manual;
+        },
+        set: function(value){
+          _manual = value;
+          this.trigger('change');
+          return this;
+        }
+      });
+
+      Object.defineProperty(this,'pathSeparator',{
+        get: function(){
+          return _pathSeparator;
+        },
+        set: function(value){
+          _pathSeparator = value;
+          this.trigger('change');
+          return this;
+        }
+      });
+
+      //
+      // if the user choose the manual way , the path will include both dirname + basename
+      // so the path will be equal the dirname + basename
+      //
+      Object.defineProperty(this,'basename',{
+        get: function(){
+          if (_manual) {
+            return path.basename(_path);
+          } else {
+            return _basename;
+          }
+        },
+        set: function (value) {
+          _basename = value;
+          this.trigger('change');
+          return this;
+        }
+      });
+
+      Object.defineProperty(this,'dirname',{
+        get: function(){
+          if (_manual) {
+            return path.dirname(_path);
+          } else {
+            return _path;
+          }
+        }
+      });
+
+      Object.defineProperty(this,'path',{
+        get: function(){
+          return _path; // from user input
+        },
+        set: function(value){
+          _path = value;
+          this.trigger('change');
+          return this;
+        }
+      });
+
+      Object.defineProperty(this,'parsedpath',{
+        get: function(){
+          if (this.manual) {
+            return _path; // from user input
+          } else {
+            return _path + _pathSeparator + _basename;
+          }
+        }
+      });
+
+    },
+    render: function(){
+      BaseView.prototype.render.apply(this,arguments);
+
+      this.listenTo(this,'change',this.setPreview);
+
+      this.queryByHook('is_manual_path')[0].checked = this.manual;
+      this.queryByHook('path').val( this.path );
+
+      this.setPreview();
+    },
+    events: {
+      'change input[data-hook=path]': function(){
+        this.path = this.queryByHook('path').val();
+      },
+      'input input[data-hook=path]': function(){
+        this.path = this.queryByHook('path').val();
+      },
+      'change input[data-hook=is_manual_path]': function(){
+        this.manual = this.queryByHook('is_manual_path')[0].checked;
+      },
+      'click input[data-hook=is_manual_path]': function(){
+        this.manual = this.queryByHook('is_manual_path')[0].checked;
+      },
+    },
+    setPreview: function(){
+      var preview;
+      if (this.manual) {
+        preview = this.path;
+      } else {
+        preview = this.path + this.pathSeparator + this.basename;
+      }
+
+      this.queryByHook('preview').html(preview);
+    }
+  });
+
+
 
   var FormView = BaseView.extend({
     template: Templates['assets/templates/permanent-file-form.hbs'],
@@ -20,7 +162,14 @@ var PermanentFile = new (function(){
       Object.defineProperty(this,'data',{
         get: function(){
           var form = new FormElement( self.$el[0] );
-          return form.get();
+          var data = form.get();
+
+          data.dirname = this.targetPath.dirname;
+          data.basename = this.targetPath.basename;
+          data.is_manual_path = this.targetPath.manual;
+          data.path = this.targetPath.parsedpath;
+
+          return data;
         },
         set: function(data){
           var form = new FormElement( self.$el[0] );
@@ -37,7 +186,7 @@ var PermanentFile = new (function(){
       this.find('input[name=name]').focus();
     },
     events: {
-      'click [data-hook=advanced-section-toggler]':'onClickAdvancedToggler',
+      'click [data-hook=advanced-section-toggler]':'onClickAdvancedToggler'
     },
     onClickAdvancedToggler: function(){
       var $toggle = this.find('section[data-hook=advanced]');
@@ -50,14 +199,8 @@ var PermanentFile = new (function(){
       this.renderTemplate();
       this.find('span.tooltiped').tooltip();
 
-      this.tagsSelect = new TagsSelect({ collection: this.tags, autoRender: true });
-      this.find('[data-hook=main]').append( this.tagsSelect.$el );
-
-      //this.usersSelect = new UsersSelect({ collection: this.users, autoRender: true });
-      //this.find('[data-hook=advanced]').append( this.usersSelect.$el );
-
-      //this.severitySelect = new SeveritySelect({ selected:'HIGH' });
-      //this.find('form [data-hook=advanced]').append( this.severitySelect.$el );
+      this.queryByHook('hosts').select2({ placeholder: 'File Host', data: Select2Data.PrepareHosts(this.hosts) });
+      this.queryByHook('looptimes').select2({ placeholder: 'Monitor Looptime', data: Select2Data.PrepareIdValueData(this.looptimes) });
 
       this.monitorSelect = new MonitorSelect({
         label:'Copy From',
@@ -82,22 +225,37 @@ var PermanentFile = new (function(){
         }
       });
 
-      this.find('form').prepend( this.monitorSelect.$el );
+      this.find('section[data-hook=main]').prepend( this.monitorSelect.$el );
 
-      this.fileSelect = new FileSelect({ label:'Select File' });
-      this.fileSelect.on('change',function(id){ });
-      this.find('form section[data-hook=main]').append(this.fileSelect.$el);
+      this.fileSelect = new FileSelect({ label: 'Select File' });
+      this.find('section[data-hook=main]').append(this.fileSelect.$el);
 
-      this.queryByHook('hosts').select2({
-        placeholder: 'File Host',
-        data: Select2Data.PrepareHosts(this.hosts)
-      });
-      this.queryByHook('looptimes').select2({
-        placeholder: 'Monitor Looptime',
-        data: Select2Data.PrepareIdValueData( this.looptimes )
-      });
+      this.tagsSelect = new TagsSelect({ collection: this.tags, autoRender: true });
+      this.find('section[data-hook=main]').append( this.tagsSelect.$el );
+
+      this.usersSelect = new UsersSelect({ collection: this.users, autoRender: true });
+      this.find('section[data-hook=advanced]').append( this.usersSelect.$el );
+
+      this.severitySelect = new SeveritySelect({ selected:'HIGH' });
+      this.find('section[data-hook=advanced]').append( this.severitySelect.$el );
 
       this.setFormData(this.model);
+
+      this.targetPath = new TargetPathView({
+        model: this.model,
+        pathSeparator: undefined
+      });
+      this.targetPath.render();
+      this.find('section[data-hook=main]').append( this.targetPath.$el );
+
+      // listen to selected files changes , take the filename and append to the path
+      this.listenTo(this.fileSelect,'change',function(id){
+        if (!id) {
+          this.targetPath.basename = '';
+        } else {
+          this.targetPath.basename = FilesStore.files.get(id).get('filename');
+        }
+      });
 
       this.initHelp();
     },

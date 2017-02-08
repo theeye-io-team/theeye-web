@@ -56,7 +56,10 @@ var BaseView = Backbone.View.extend({
     _.extend(this,options);
 
     this.rendered = false;
-    if (this.autoRender) this.render();
+    if (this.autoRender) {
+      //console.warn('do not use this feature anymore!! unexpected behavior');
+      this.render();
+    }
   },
   renderTemplate: function(){
     var html;
