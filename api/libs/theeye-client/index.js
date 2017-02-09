@@ -746,7 +746,7 @@ TheEyeClient.prototype = {
       url: '/:customer/host/' + id
     }, function(error, body) {
       if (error) return callback(error);
-      callback(null, body.host);
+      callback(null, body);
     });
   },
   /**
@@ -759,7 +759,7 @@ TheEyeClient.prototype = {
       url: '/:customer/host'
     }, function(error, body) {
       if (error) return callback(error);
-      callback(null, body.hosts);
+      callback(null, body);
     });
   },
   /**

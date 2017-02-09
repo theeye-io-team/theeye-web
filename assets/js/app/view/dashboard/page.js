@@ -4,7 +4,7 @@
  *
  * @author Facugon
  * @module DashboardPage
- * @namespace Components
+ * @namespace Views
  *
  */
 
@@ -83,7 +83,7 @@ function DashboardPage () {
   var PanelView = BaseView.extend({
     tagName:'section',
     className:'dashboard-panel',
-    template:Templates['assets/templates/dashboard/panel.hbs'],
+    template:Templates['assets/templates/dashboard-page/panel.hbs'],
     title:'no title',
     name:'noname'
   });
@@ -96,7 +96,7 @@ function DashboardPage () {
   var SubmonitorView = BaseView.extend({
     tagName:'tr',
     className:'submonitoRow',
-    template:Templates['assets/templates/dashboard/submonitor-row.hbs'],
+    template:Templates['assets/templates/dashboard-page/submonitor-row.hbs'],
     events:{
       'click [data-hook=last_event]':'onClickLastEvent'
     },
@@ -122,7 +122,7 @@ function DashboardPage () {
    * extend submonitors view, change table format and data with template.
    */
   var SubmonitorGroupView = SubmonitorView.extend({
-    template:Templates['assets/templates/dashboard/submonitor-group-row.hbs'],
+    template:Templates['assets/templates/dashboard-page/submonitor-group-row.hbs'],
   });
 
   /**
@@ -132,7 +132,7 @@ function DashboardPage () {
    */
   var LastEventView = BaseView.extend({
     autoRender: true,
-    template: Templates['assets/templates/dashboard/monitor-last-event.hbs'],
+    template: Templates['assets/templates/dashboard-page/monitor-last-event.hbs'],
     render: function(){
       var self = this;
       BaseView.prototype.render.apply(this, arguments);
@@ -162,7 +162,7 @@ function DashboardPage () {
    *
    */
   var MonitorView = BaseView.extend({
-    template: Templates['assets/templates/dashboard/monitor-row.hbs'],
+    template: Templates['assets/templates/dashboard-page/monitor-row.hbs'],
     className: 'monitorRow',
     events: {
       'click button[data-hook=search]':'onClickSearch',
@@ -274,7 +274,7 @@ function DashboardPage () {
    */
   var TaskView = BaseView.extend({
     className:'taskRow',
-    template: Templates['assets/templates/dashboard/task-row.hbs'],
+    template: Templates['assets/templates/dashboard-page/task-row.hbs'],
     events:{
       'click button[data-hook=workflow]':'onClickWorkflow',
       'click button[data-hook=edit]':'onClickEdit',
@@ -380,9 +380,9 @@ function DashboardPage () {
    * all the other views render inside this
    *
    */
-  var Index = BaseView.extend({
+  var IndexView = BaseView.extend({
     autoRender: true,
-    template: Templates['assets/templates/dashboard/page.hbs'],
+    template: Templates['assets/templates/dashboard-page/page.hbs'],
     container: $('[data-hook=page-container]')[0],
     events:{
       'click [data-hook=up-and-running] i':'hideUpAndRunning',
@@ -505,7 +505,7 @@ function DashboardPage () {
           return sm !== undefined;
         });
         if (!group) return false;
-        return monitor.isFailing()||monitor.submonitorsFailing();
+        return monitor.hasError()||monitor.submonitorsWithError();
       });
 
       if (failing.length>0) {
@@ -527,8 +527,8 @@ function DashboardPage () {
       var self = this;
       this.monitorRows.views.forEach(function(view){
         var group = view.model; // model is a monitor model or monitoGroup model
-        var isFailing = group.isFailing()||group.submonitorsFailing();
-        if (!isFailing) {
+        var hasError = group.hasError()||group.submonitorsWithError();
+        if (!hasError) {
           view.$el.appendTo(self.monitorsFolding.$container);
         } else {
           view.$el.prependTo(self.$monitorsPanel);
@@ -590,13 +590,13 @@ function DashboardPage () {
   }
 
   var MonitorsGroup = Backbone.Model.extend({
-    isFailing : function(){
+    hasError : function(){
       return false;
     },
-    submonitorsFailing: function(){
+    submonitorsWithError: function(){
       return this.get('submonitors')
         .filter(function(monitor){
-          return monitor.isFailing();
+          return monitor.hasError();
         }).length > 0;
     },
   });
@@ -688,7 +688,7 @@ function DashboardPage () {
       monitors = new App.Collections.Monitors();
       monitors.once('sync',function(){
         var groups = groupByTags(attachToHost(monitors),tagsToGroup);
-        new Index({
+        new IndexView({
           monitorGroups: groups,
           monitors: monitors,
           tasks: null,
@@ -700,7 +700,7 @@ function DashboardPage () {
     } else {
       synced = lodash.after(2,function(){
         var groups = groupByTags(attachToHost(monitors),tagsToGroup);
-        new Index({
+        new IndexView({
           monitorGroups: groups,
           monitors: monitors,
           tasks: tasks,

@@ -1,0 +1,66 @@
+<div class="statsContainer">
+
+	<div class="breadcrumbs col-xs-12">
+		<a href="javascript:history.back()" class="back">
+			<i class="fa fa-angle-left" aria-hidden="true"></i>
+		</a>
+		<i class="fa fa-bar-chart item-icon" aria-hidden="true"></i>
+		<h4>Detailed Stats</h4>
+	</div>
+
+  <div class="col-xs-12 col-md-5">
+    <div data-hook="host-container" class="stats-icon-container">
+    </div>
+
+    <div data-hook="stat-load-container" class="stats-icon-container">
+      <p>Load average :
+        <span data-hook="load_average_1" class="loadAverage" id="lavg1"></span>,
+        <span data-hook="load_average_5" class="loadAverage" id="lavg5"></span>,
+        <span data-hook="load_average_15" class="loadAverage" id="lavg15"></span>
+      </p>
+    </div>
+
+    <div data-hook="stat-container" class="main-stats gray-zebra">
+    </div>
+  </div>
+
+  <div data-hook="processes-container" class="col-xs-12 col-md-7">
+    <div id="psaux-container">
+      <h3>Host processes</h3> 
+      <div id="psaux-search">
+        <form action="#" method="get">
+          <div class="input-group">
+            <!-- USE TWITTER TYPEAHEAD JSON WITH API TO SEARCH -->
+            <input class="form-control" id="ps-search" name="q" placeholder="Search among processes status" required>
+            <span class="input-group-btn">
+              <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
+            </span>
+          </div>
+        </form>
+      </div>
+      <div id="psaux-div">
+        <table id="psaux-table" class="table table-responsive table-list-search">
+          <thead>
+            <tr>
+              <th>username</th>
+              <th>PID</th>
+              <!-- the &nbsp; here is for avoiding wrapping -->
+              <th data-sort="%cpu">%&nbsp;CPU</th>
+              <th data-sort="%mem">%&nbsp;Mem</th>
+              <th>VSZ</th>
+              <th>RSS</th>
+              <th>TTY</th>
+              <th>State</th>
+              <th>Started</th>
+              <th>Time</th>
+              <th>Command</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

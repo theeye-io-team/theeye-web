@@ -1,3 +1,5 @@
+'use strict';
+
 var debug = require('debug')('eye:web:hoststats');
 var snsreceiver = require('../services/snshandler');
 var roomNameFormat = ':customer:_:hostname:_:resource:';
@@ -5,6 +7,8 @@ var resources = ['host-stats', 'psaux'];
 var eventNameFormat = ':resource:_:action:';
 
 module.exports = {
+  index: (req, res) => res.view(),
+  /**
   index: function(req, res) {
     var supervisor = req.supervisor;
     async.parallel({
@@ -58,6 +62,7 @@ module.exports = {
       }
     });
   },
+  */
   subscribe: function(req, res) {
     var id = req.params.id;
     var resource = req.param('resource');
