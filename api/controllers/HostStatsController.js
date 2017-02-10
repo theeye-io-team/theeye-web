@@ -1,3 +1,5 @@
+'use strict';
+
 var debug = require('debug')('eye:web:hoststats');
 var snsreceiver = require('../services/snshandler');
 var roomNameFormat = ':customer:_:hostname:_:resource:';
@@ -5,59 +7,7 @@ var resources = ['host-stats', 'psaux'];
 var eventNameFormat = ':resource:_:action:';
 
 module.exports = {
-  index: function(req, res) {
-    var supervisor = req.supervisor;
-    async.parallel({
-      host: (callback) => supervisor.host(req.params.host, callback) ,
-      hostStats: (callback) => {
-        supervisor.get({
-          route:'/:customer/host/' + req.params.host + '/stats',
-          success: (stats) => callback(null,stats),
-          failure: (err) => callback(err)
-        });
-      },
-      hostResource: (callback) => {
-        supervisor.fetch({
-          route: supervisor.RESOURCE,
-          query:{
-            where:{
-              host_id: req.params.host,
-              type: 'host',
-              enable: true
-            },
-            limit: 1
-          },
-          success: (body) => {
-            var err;
-            if (Array.isArray(body)) {
-              if (body.length===0) { // not found
-                return callback(null,null);
-              } else {
-                return callback(null,body[0]);
-              }
-            } else {
-              err = new Error('server response error');
-              callback(err,null);
-            }
-          },
-          failure: (err) => callback(err)
-        });
-      }
-    },function(err, data){
-      if (err) {
-        sails.log.error('supervisor request error');
-        sails.log.error(err);
-        res.view({ error: 'cannot connect server' });
-      } else {
-        res.view({
-          error: null,
-          host: data.host,
-          cachedStats: data.hostStats,
-          hostResource: data.hostResource
-        });
-      }
-    });
-  },
+  index: (req, res) => res.view(),
   subscribe: function(req, res) {
     var id = req.params.id;
     var resource = req.param('resource');

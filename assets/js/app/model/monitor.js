@@ -44,16 +44,23 @@ var stateIcons = {
 window.App||(window.App={});
 window.App.Models||(window.App.Models={});
 window.App.Models.Monitor = BaseModel.extend({
-  initialize:function(options){
+  urlRoot: '/api/resource',
+  initialize: function(options){
     Object.defineProperty(this,'state_severity',{
       get:function(){
         return this.stateSeverity();
       }
     });
+    Object.defineProperty(this,'formatted_last_update',{
+      get:function(){
+        return moment(this.get('last_update'))
+          .format('MMMM Do YYYY, h:mm:ss a');
+      }
+    });
   },
-  urlRoot:'/api/resource',
-  parse:function(response){
+  parse: function(response){
     if (Array.isArray(response)) {
+      if (response.length===0) return {};
       response = response[0];
     }
     var resource = (response.resource||response);
@@ -83,6 +90,11 @@ window.App.Models.Monitor = BaseModel.extend({
       last_update_formated: last_update_formated
     });
   },
+  /**
+   * Based on resource state and its failure severity returns its severity state
+   * If the resource is failing, resturns the failure severity instead.
+   * @return String
+   */
   stateSeverity: function(){
     var state = this.get('state');
     var severity = this.get('failure_severity');
@@ -100,15 +112,21 @@ window.App.Models.Monitor = BaseModel.extend({
   stateIcon: function(){
     return stateIcons[this.stateSeverity()];
   },
-  isFailing: function(){
-    var state = this.get('state');
-    return state==='failure'||state==='updates_stopped';
+  hasError: function(){
+    return this.isFailing()||this.isNotReporting();
   },
-  submonitorsFailing: function(){
-    return this.get('submonitors')
-      .filter(function(monitor){
-        return monitor.isFailing();
-      }).length > 0;
+  isFailing: function(){
+    return this.get('state')==='failure';
+  },
+  isNotReporting: function(){
+    return this.get('state')==='updates_stopped';
+  },
+  submonitorsWithError: function(){
+    var submons = this.get('submonitors');
+    if (!submons) return null;
+    return submons.filter(function(monitor){
+      return monitor.hasError();
+    }).length > 0;
   },
   createClone: function(props,options){
     var resource = this,

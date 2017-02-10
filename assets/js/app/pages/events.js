@@ -192,7 +192,7 @@ var EventsPageInit = (function(){
   $(function(){
     // copy paste de dashboard/page
     var LastEventView = BaseView.extend({
-      template: Templates['assets/templates/dashboard/monitor-last-event.hbs'],
+      template: Templates['assets/templates/dashboard-page/monitor-last-event.hbs'],
       render:function(){
         BaseView.prototype.render.apply(this, arguments);
         this

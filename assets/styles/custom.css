@@ -50,7 +50,7 @@ pre {
 .statsContainer h3 { color: #EEE; }
 
 #psaux-container #psaux-search { margin-bottom: 20px; }
-#psaux-div { height:400px; overflow:auto; }
+#psaux-div { height:400px; overflow:auto; margin-bottom:20px; }
 #psaux-table {color:#304269; font-family: monospace; }
 #psaux-table th[data-sort]{ cursor:pointer; }
 
@@ -708,3 +708,60 @@ a.flowchart-icon {
   right: -9px;
   border-radius: 7px;
 }
+
+
+/* new styles stats */
+.breadcrumbs {background:#23324c;margin-bottom:30px}
+.breadcrumbs h4 {display:inline-block;margin-top:15px}
+.breadcrumbs .back {font-size:30px;color:#fff;float:left}
+.breadcrumbs .item-icon {border-radius:50%;background:#5bc4e8;color:#fff;text-align:center;width:26px;height:26px;line-height:26px;float:left;margin:10px 20px;font-size:11px}
+.cyan-progress {background:#158df9}
+.orange-progress {background:#ff8f43}
+.green-progress {background:#06b777}
+.red-progress {background:#f94b4b}
+.pink-progress {background:#f73c89}
+.stats-icon-container {position:relative;padding-left:60px}
+.stats-icon-container .icons {position:absolute;top:0;right:0}
+.stats-icon-container .icons span {margin-left:15px;display:inline-block;width:25px;height:25px;color:#fff;background:#192435;text-align:center;border-radius:50%;line-height:24px;font-size:12px;cursor:pointer}
+.stats-icon-container .icons span.ok {background:#50d841}
+.stats-icon-container .icons span.error {background:#d60922}
+.stats-icon-container .stats-icon {position:absolute;top:0;left:0px;width:38px;height:38px;text-align:center;line-height:38px;color:#fff;background:#ea7526;border-radius:50%;font-size:24px}
+.stats-icon-container h3 {margin:0;font-size:18px}
+.stats-icon-container h4 {margin-top:0;font-size:14px}
+.stats-icon-container small {color:#c4c4c4}
+.stats-icon-container p {display:inline-block;margin:0;font-size:0.9em}
+.disk-usage .progress {height:24px;margin-bottom:0}
+.disk-usage hr {border-bottom:1px solid #1f2b43;margin:10px 0}
+.disk-usage h3 {text-transform:uppercase;font-weight:normal;font-size:18px;margin-bottom:30px}
+.disk-usage h4 {font-size:18px;font-weight:normal;margin:0}
+#psaux-search button, #psaux-search input {background:none;border:none;box-shadow:none;font-size:21px;border-bottom:1px solid #0e151e;border-radius:0}
+#psaux-search input {color:#fff;padding-left:0;font-size:18px}
+#psaux-search button {height:34px;padding:0;color: #0e151e}
+#psaux-search ::-webkit-input-placeholder {color: #0e151e}
+#psaux-search :-moz-placeholder {color: #0e151e}
+#psaux-search ::-moz-placeholder {color: #0e151e}
+#psaux-search :-ms-input-placeholder {color: #0e151e}
+#psaux-container h3 {text-transform:uppercase;font-size:18px;margin-top:0}
+#psaux-table th {background:#0e151e;color:#fff;border-right:1px solid #fff;font-weight:normal;text-transform:uppercase;text-align:center;border-bottom:0}
+#psaux-table {background:#fff}
+.main-stats, .disk-usage {float:left;width:100%}
+.disk-usage {margin-top:20px}
+.disk-usage .progress .progress-bar, .vertical span {font-size:16px}
+.progress {background:none;box-shadow:none;border-radius:0}
+.progress-bar-vertical {width: 50px;min-height: 100px;display: flex;align-items: flex-end;margin: 0 20px;float: left;position:relative}
+.progress-bar-vertical .progress-bar {width: 100%;height: 0;font-size:16px}
+.main-stats .pull-left {position:relative}
+.main-stats .pull-left .title {position:absolute;bottom:-30px;left:0;width:100%;text-align:center;font-weight:bold}
+.main-stats {background:url('/images/bg-stats.png');height:180px;padding:80px 0 0;margin:30px 0}
+
+@media all and (max-width: 480px) {
+.progress-bar-vertical {margin: 0 5px}
+}
+@media all and (max-width: 991px) and (min-width: 768px) {
+.progress-vertical-item span.title {bottom:-90px}
+}
+
+@media all and (max-width: 1199px) and (min-width: 992px) {
+.progress-bar-vertical {margin: 0 10px}
+}
+
