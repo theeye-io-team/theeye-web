@@ -50,7 +50,7 @@ pre {
 .statsContainer h3 { color: #EEE; }
 
 #psaux-container #psaux-search { margin-bottom: 20px; }
-#psaux-div { height:400px; overflow:auto; }
+#psaux-div { height:400px; overflow:auto; margin-bottom:20px; }
 #psaux-table {color:#304269; font-family: monospace; }
 #psaux-table th[data-sort]{ cursor:pointer; }
 
