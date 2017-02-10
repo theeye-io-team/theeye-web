@@ -1,7 +1,8 @@
 <div class="resource-container panel panel-default js-searchable-item"
   data-tags="{{ model.attributes.formatted_tags }}">
   <div class="panel-heading" role="tab">
-    <h4 class="panel-title {{ model.attributes.type }}">
+    <h4 data-hook="monitor-icon" class="panel-title-icon"><i></i></h4>
+    <h4 class="panel-title">
       <span class="collapsed"
         data-toggle="collapse"
         data-parent="#monitor-accordion"

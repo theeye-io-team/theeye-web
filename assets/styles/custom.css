@@ -765,3 +765,28 @@ a.flowchart-icon {
 .progress-bar-vertical {margin: 0 10px}
 }
 
+.admin-container.dashboard { }
+.admin-container.dashboard .resource-container .panel-heading h4.panel-title-icon {
+  float: left;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 16px;
+  color: inherit;
+  padding: 5px;
+}
+.admin-container.dashboard .resource-container .panel-heading h4.panel-title-icon i {
+  min-height: 38px;
+  width: 38px;
+  padding-top: 5px;
+  line-height: 28px;
+  text-align: center;
+  font-size: 18px;
+}
+.circle {
+  border-radius: 50%;
+}
+.host-color { background-color: #ea7526 }
+.script-color { background-color: #cc006f }
+.process-color { background-color: #1c73b9 }
+.scraper-color { background-color: #ba45ff }
+.file-color { background-color: #8da452 }

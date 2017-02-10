@@ -229,6 +229,35 @@ function DashboardPage () {
         console.warn('this group of monitors is empty, there is nothing to show');
       }
     },
+    setMonitorIcon: function(){
+      var icon = 'circle fa', type = this.model.get('type');
+      switch (type) {
+        case 'scraper':
+          icon += ' fa-cloud';
+          break;
+        case 'script':
+          //icon += ' fa-terminal';
+          icon += ' fa-code';
+          break;
+        case 'host':
+          icon += ' fa-server';
+          //icon += ' fa-home';
+          break;
+        case 'process':
+          icon += ' fa-cogs';
+          //icon += ' fa-cog';
+          break;
+        case 'file':
+          icon += ' fa-file-o';
+          break;
+        case 'group':
+          break;
+      }
+
+      icon += ' ' + type + '-color'; 
+
+      this.find('h4[data-hook=monitor-icon] i')[0].className = icon;
+    },
     render: function(){
       BaseView.prototype.render.apply(this, arguments);
       this.renderCollection(
@@ -237,6 +266,7 @@ function DashboardPage () {
         this.queryByHook('submonitors-container')[0]
       );
       this.updateStateIcon();
+      this.setMonitorIcon();
     }
   });
 
