@@ -64,7 +64,6 @@ function StatsPage () {
 
   }
 
-
   function subscribeSocketNotifications(resource) {
     var host = window.location.pathname.split('/')[2];
     io.socket.post('/hoststats/subscribe/' + host, {
@@ -79,11 +78,6 @@ function StatsPage () {
     var deb = debug('eye:web:stats');
     deb.apply(deb, arguments);
   }
-
-  var Stats = {
-    loadAverage: {},
-    gauges: {}
-  };
 
   var Psaux = function(options){
     var config = {
@@ -197,158 +191,12 @@ function StatsPage () {
     }
   };
 
-  var Stat = function(options){
-    function updateGauges(dstat) {
-      var memoryValue = (dstat.stat.mem_used * 100 / dstat.stat.mem_total);
-      Stats.gauges.memoryConsumption.refresh(memoryValue.toFixed(2));
-
-      var cpuValue = (100 - dstat.stat.cpu_idle);
-      Stats.gauges.cpuConsumption.refresh(cpuValue.toFixed(2));
-
-      var cacheValue = ((dstat.stat.cacheTotal - dstat.stat.cacheFree) * 100 / dstat.stat.cacheTotal);
-      Stats.gauges.cacheConsumption.refresh(cacheValue.toFixed(2));
-
-      //var diskValue = (dstat.stat.disk.total.usage.used * 100 / dstat.stat.disk.total.usage.total);
-      //Stats.gauges.diskConsumption.refresh(diskValue.toFixed(2));
-      var gauges = Stats.gauges.disks;
-      var disks = dstat.stat.disk;
-      _.each(disks,function(disk,index){ // object
-        gauges.forEach(function(gauge){ // array
-          if(gauge.name == index){
-            var value = (disk.usage.used * 100 / disk.usage.total);
-            gauge.elem.refresh(value.toFixed(2));
-          }
-        });
-      });
-    }
-
-    function updateDiskUsage(disk) {
-      var $diskusage = $("#diskusage");
-      $diskusage.html("");
-      Object.keys(disk).forEach(function(d) {
-        if(d != 'total'){
-          var $div = $("<div />");
-          var name = d;
-          var total = disk[d].usage.total;
-          var usage = disk[d].usage.used / total * 100;
-          var $title = $("<h3 />").html(name);
-          var $bar = $("<div />").addClass("progress").css("width", "100%");
-          var $barInner = $("<div />").addClass("progress-bar").css("width", usage + "%");
-          $barInner.html(usage.toFixed(2) + "%");
-          if (usage < 5) {
-            $barInner.addClass("progress-bar-danger");
-          } else if (usage < 25) {
-            $barInner.addClass("progress-bar-warning");
-          } else {
-            $barInner.addClass("progress-bar-success");
-          }
-          $bar.append($barInner);
-          $div.append($title);
-          $div.append($bar);
-          $diskusage.append($div);
-        }
-      });
-    }
-
-    function updateLoadAverage(dstat) {
-      var lavg1 = dstat.stat.load_1_minute.toFixed(2);
-      var lavg5 = dstat.stat.load_5_minute.toFixed(2);
-      var lavg15 = dstat.stat.load_15_minute.toFixed(2);
-      $loadAvg1.html(lavg1);
-      $loadAvg5.html(lavg5);
-      $loadAvg15.html(lavg15);
-    }
-
-    function createGauges() {
-      if (Object.keys(Stats.gauges).length) {
-        // Si los gauges ya está creados
-        return;
-      }
-      Stats.gauges.memoryConsumption = new JustGage({
-        id: "memoryconsumption",
-        value: 0,
-        min: 0,
-        max: 100,
-        title: "Memory Usage",
-        label: "Percentage",
-        titleFontColor: "#eee",
-        valueFontColor : "#eee",
-        labelFontColor : "#eee",
-
-      });
-      Stats.gauges.cpuConsumption = new JustGage({
-        id: "cpuconsumption",
-        value: 0,
-        min: 0,
-        max: 100,
-        title: "CPU Usage",
-        label: "Percentage",
-        titleFontColor: "#eee",
-        valueFontColor : "#eee",
-        labelFontColor : "#eee",
-      });
-      Stats.gauges.cacheConsumption = new JustGage({
-        id: "cacheconsumption",
-        value: 0,
-        min: 0,
-        max: 100,
-        title: "Swap Usage",
-        label: "Percentage",
-        titleFontColor: "#eee",
-        valueFontColor : "#eee",
-        labelFontColor : "#eee",
-      });
-    }
-
-    function createDiskGauges(disks) {
-      var $container = $("#gaugescontainer #disksconsumptioncontainer");
-      var disksGauges = [];
-      disks.forEach(function(disk){
-        if( disk != 'total' ) {
-          var id = "disk" + disk + "usage";
-          $('<div class="col-sm-4"></div>').attr('id',id).appendTo($container);
-          var gauge = new JustGage({
-            id: id,
-            value: 0,
-            min: 0,
-            max: 100,
-            title: "Disk " + disk + " Usage",
-            label: "Percentage",
-            titleFontColor: "#eee",
-            valueFontColor : "#eee",
-            labelFontColor : "#eee",
-          });
-          disksGauges.push({
-            name: disk,
-            elem: gauge
-          });
-        }
-      });
-      Stats.gauges.disks = disksGauges;
-    }
-
-    return {
-      update: function(dstat){
-        log('new host-stats data');
-        log(dstat);
-
-        updateLoadAverage({ stat: dstat.stats });
-        updateGauges({ stat: dstat.stats });
-        updateDiskUsage( dstat.stats.disk );
-      },
-      initialize: function(options){
-        createGauges();
-        createDiskGauges(options.disks);
-      }
-    };
-  }
-
   var LoadAverageView = BaseView.extend({
     initialize: function(){
       BaseView.prototype.initialize.apply(this,arguments);
       this.listenTo(this.model,'change',this.render);
     },
-    render:function(){
+    render: function(){
       BaseView.prototype.render.apply(this,arguments);
       var stats = this.model.get('stats');
 
@@ -360,6 +208,68 @@ function StatsPage () {
 
       var $load15 = this.queryByHook('load_average_15');
       $load15.html(parseFloat(stats.load_15_minute).toFixed(2));
+    }
+  });
+
+  function getBlueToRed(percent){
+    var b = percent < 50 ? 255 : Math.floor(255 - (percent * 2 - 100) * 255 / 100);
+    var r = percent > 50 ? 150 : Math.floor((percent * 2) * 150 / 100);
+    return 'rgb(' + r + ', 0, ' + b + ')';
+  }
+
+  var VerticalBarView = BaseView.extend({
+    template: Templates['assets/templates/stats-page/progress-bar-vertical.hbs'],
+    render: function(){
+      this.renderTemplate();
+      this.queryByHook('percent').css('height', this.percent + '%');
+      this.queryByHook('percent').css('background', getBlueToRed(this.percent));
+      this.queryByHook('percent_tag').html(this.percent_tag);
+      this.queryByHook('tag').html(this.tag);
+    }
+  });
+
+  var StatGraphView = BaseView.extend({
+    initialize: function(options){
+      BaseView.prototype.initialize.apply(this,arguments);
+      this.listenTo(this.model,'change',this.render);
+    },
+    render: function(){
+      BaseView.prototype.render.apply(this,arguments);
+      var $container = this.$el;
+      $container.empty();
+
+      var cacheValue, cpuValue, memValue,
+        cacheBar, cpuBar, memBar,
+        stat = this.model.get('stats');
+
+      cpuValue = parseInt(100 - stat.cpu_idle);
+      memValue = parseInt(stat.mem_used * 100 / stat.mem_total);
+      cacheValue = parseInt((stat.cacheTotal - stat.cacheFree) * 100 / stat.cacheTotal);
+
+      cpuBar = new VerticalBarView({ percent: cpuValue, percent_tag: cpuValue, tag: 'CPU' });
+      cpuBar.render();
+      cpuBar.$el.appendTo($container);
+
+      memBar = new VerticalBarView({ percent: memValue, percent_tag: memValue, tag: 'MEM' });
+      memBar.render();
+      memBar.$el.appendTo($container);
+
+      cacheBar = new VerticalBarView({ percent: cacheValue, percent_tag: cacheValue, tag: 'CACHE' });
+      cacheBar.render();
+      cacheBar.$el.appendTo($container);
+
+      _.each(stat.disk,function(disk,index){ // object
+        if (index !== 'total') {
+          var diskValue = parseInt(disk.usage.used * 100 / disk.usage.total);
+          var diskBar = new VerticalBarView({
+            percent: diskValue,
+            percent_tag: diskValue,
+            tag: index.toUpperCase()
+          });
+          diskBar.render();
+          diskBar.$el.appendTo($container);
+        }
+      });
     }
   });
 
@@ -461,7 +371,6 @@ function StatsPage () {
         stat = this.stats.find(function(stat){
         return stat.get('type') === 'dstat';
       });
-
       if (!stat) return;
 
       var loadAverageView = new LoadAverageView({
@@ -469,6 +378,10 @@ function StatsPage () {
         model: stat
       });
       loadAverageView.render();
+
+      var statGraphView = new StatGraphView({ model: stat });
+      statGraphView.render();
+      statGraphView.$el.appendTo(this.queryByHook('stat-graph-container'));
 
       // connect and subscribe host-stats notifications
       // update stat state when updates arrive
