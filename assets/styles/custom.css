@@ -406,7 +406,7 @@ ol.list-group.tasks { color:#34495E }
   .loginBox {width:35%}
 }
 
-::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar{width:8px;height:8px;}
 ::-webkit-scrollbar-button:start:decrement,#doc ::-webkit-scrollbar-button:end:increment{display:block;height:0;background-color:transparent;}
 ::-webkit-scrollbar-track-piece{background-color:rgba(0, 0, 0, 0.1);-webkit-border-radius:0;-webkit-border-bottom-right-radius:8px;-webkit-border-bottom-left-radius:8px;}
 ::-webkit-scrollbar-thumb:vertical{height:50px;background-color:rgba(0, 0, 0, 0.5);-webkit-border-radius:8px;}
