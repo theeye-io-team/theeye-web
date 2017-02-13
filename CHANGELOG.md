@@ -1,50 +1,58 @@
 # CHANGELOG
 
+### v0.8.0 - 2017-02-13
+
+> change scrollbar size     
+> change dashboard icons    
+> new reactive stats page          
+>> updated to new style/css.     
+>> add socket update to load average and last update.       
+>> resource state is not updated via socket yet.       
+>> page is now reactive, was migrated to backbone view       
+>> added routing, controller, view components       
+>> psaux module was re-used       
+>> hoststats part is in progress       
+> file monitor form        
+> file selector component       
+> file form component        
+> customers config validation in customers page       
+> set correct status on socket response       
+> validate error and host on dstat socket subscription        
+> reestructure js application code      
+> added grunt task to rename js bundle in production env         
+> validate failure state and icon determination in dashboards     
+> name is name , description is description       
+> add help icon in forms inputs        
+> fix group in new dashboard      
+
+
 ### v0.7.0 - 2016-12-04
 
 > improve proxy /api/ endpoint       
-
 > added resources and task folding (hide/show) in dashboard page       
-
 > agent binary path and named via configuration file 
-
 > improve site style
-
 > added new landing page with calculator
-
 > removed run external logic
-
 > mass selector on webhooks
-
 > improve scripts upload feature (remove dropzone)
-
 > cleanup scheduler and task controllers      
-
 > improve navigability
-
 > some improvements in customer and credentials
-
-| remove proxy methods to the api in customer page
-| added login user in top right corner
-| added input to display and set customers configuration (json-only)
-| added link to display webhooks workflow from webhook page
-| remove unused fetchs from events/dashboard page
-| in dashboard page, if it is a viewer hide tasks part, only display
-| monitors
-| fix and improve css
-
+>> remove proxy methods to the api in customer page             
+>> added login user in top right corner          
+>> added input to display and set customers configuration (json-only)           
+>> added link to display webhooks workflow from webhook page         
+>> remove unused fetchs from events/dashboard page       
+>> in dashboard page, if it is a viewer hide tasks part, only display          
+>> monitors        
+>> fix and improve css          
 > allow to edit customer and users extra data
-
 > new dashboard with backbone , group by tags and filtering. (missing tasks execution)    
-
 > added acl's selection 
-
 > allow to hide tasks and show stats from kibana
-
 > allow to edit customers configuration (elasticsearch and kibana panel)
-
 > added feature to clone and copy monitors (directly from rows and within forms)
-
 > easter eggs - ToastyAlert & MarioWalk     
 
 
