@@ -1,9 +1,7 @@
 <% block('styles' ,'<link rel="stylesheet" type="text/css" href="/styles/highlight/default.css">') %>
 <% block('styles' ,'<link rel="stylesheet" type="text/css" href="/styles/jquery.datetimepicker.min.css">') %>
 <% block('styles', '<link rel="stylesheet" type="text/css" href="/styles/jquery.fullcalendar.min.css">') %>
-
-<% block('scripts', '<script> $(document).ready(function(){ new ScriptsPageInit(); new TasksPageInit(); hljs.initHighlightingOnLoad(); }); </script>') %>
-
+<% block('scripts','<script> $(document).ready(function(){ new ScriptsPageInit(); new TasksPageInit(); hljs.initHighlightingOnLoad(); }); </script>') %>
 <% block('scripts','<script> window.Tags = ' + JSON.stringify(tags) + '; </script>') %>
 <% block('scripts','<script> window.Looptimes = ' + JSON.stringify(looptimes) + '; </script>') %>
 <% block('scripts','<script> window.Timeouts = ' + JSON.stringify(timeouts) + '; </script>') %>
@@ -30,7 +28,7 @@
           aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
         </button>
-        <span class="title">Tasks &nbsp; &nbsp; |</span>
+        <span class="title">Tasks <i data-hook="help"></i> | </span>
 
         <div class="dropdown new-btn">
           <span id="dropdownMenu1"

@@ -6,6 +6,14 @@ var TasksPageInit = (function(){
 
   var fetchSuccess = lodash.after(2,initialize);
 
+  $('.table-header.admin span.title i[data-hook=help]').append(
+    new HelpIcon({
+      color:[255,255,255],
+      category:'title_help',
+      text: HelpTexts.task.page_title 
+    }).$el 
+  );
+
   var _users = new App.Collections.Users();
   _users.fetch({
     data:{ where:{
