@@ -54,8 +54,7 @@ module.exports = {
    * Edit script
    * PUT /script/:id
    */
-  update: function(req, res)
-  {
+  update: function(req, res) {
     var params = req.params.all();
     var supervisor = req.supervisor;
 

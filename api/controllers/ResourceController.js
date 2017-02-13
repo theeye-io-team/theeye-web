@@ -76,20 +76,19 @@ module.exports = {
    * Create resource
    * POST /resource
    */
-  create : function(req,res,next)
-  {
+  create : function(req,res,next) {
     var supervisor = req.supervisor;
     var params = req.params.all();
 
-    var hosts = params.hosts_id || params.hosts || params.host_id ;
-    if( ! hosts ) res.send(400, 'At least one host is required');
-    hosts = ( ! Array.isArray(hosts) ) ? [ hosts ] : hosts;
+    var hosts = params.hosts;
+    if (!hosts) res.send(400, 'At least one host is required');
+    hosts = (!Array.isArray(hosts)) ? [ hosts ] : hosts;
 
     var type = params.monitor_type || params.type;
-    if( !type ) return res.send(400,"No resource type supplied");
+    if (!type) return res.send(400,"No resource type supplied");
 
     var data = extend(params, { hosts: hosts, type: type });
-    if( params.script_arguments ){
+    if (params.script_arguments) {
       data.script_arguments = params.script_arguments
         .split(',')
         .map(arg => arg.trim());
@@ -110,15 +109,15 @@ module.exports = {
     var supervisor = req.supervisor;
     var params = req.params.all();
 
-    var host = params.hosts_id ||  params.hosts || params.host_id;
-    if( ! host ) return res.send(400,'the host is required');
+    var host = params.host_id;
+    if (!host) return res.send(400,'the host is required');
     host = (Array.isArray(host) ? host[0] : host);
 
-    var type = params.monitor_type || params.type;
-    if( ! type ) return res.send(400,'No resource type supplied');
+    var type = (params.monitor_type||params.type);
+    if (!type) return res.send(400,'No resource type supplied');
 
     var data = extend(params, { host_id: host, type: type });
-    if( params.script_arguments ){
+    if (params.script_arguments) {
       data.script_arguments = params.script_arguments
         .split(',')
         .map(arg => arg.trim());

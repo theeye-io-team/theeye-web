@@ -2,7 +2,6 @@
 var TasksPageInit = (function(){
 
   window.scriptState = window.scriptState ? window.scriptState : $({});
-  var $state = window.scriptState;
 
   var fetchSuccess = lodash.after(2,initialize);
 
@@ -246,26 +245,15 @@ var TasksPageInit = (function(){
         $taskForm.submit();
       });
 
-      $state.on('script_uploaded', function(ev, script) {
-        if(location.pathname != '/admin/task') {
-          //restrict the event function to the /admin/task layout
-          return;
-        }
+      window.scriptState.on('script_uploaded', function(ev, script) {
         alert('Script succesfully uploaded','Script upload', function() {
-          $('[data-hook=script_id]').each(function(index, element){
-            if($(element).val()) {
-              return;
-            }
-            $(element).append($('<option>', {
-              value: script.id,
-              text: script.filename
-            }));
-            $(element).val(script.id);
-            $(element).trigger('change');
-          });
-
-          $('#script-modal').modal('hide');
-          $('body').addClass('modal-open');
+          var $scriptIdSelect = $('select[data-hook=script_id]');
+          //remove previous script option
+          $('option[value='+script.id+']').remove();
+          $scriptIdSelect.append('<option value="'+script.id+'">'+script.filename+'</option>');
+          $scriptIdSelect.val(script.id);
+          $scriptIdSelect.trigger('change');
+          $('.modal#script-modal').modal('hide');
         });
       });
 

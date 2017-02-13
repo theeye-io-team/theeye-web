@@ -91,7 +91,7 @@ var Scraper = (function Scraper(){
         text: HelpTexts.task.name
       });
       new HelpIcon({
-        container: this.find('label[for=host]'),
+        container: this.find('label[for=hosts]'),
         category: 'scraper_form',
         text: HelpTexts.host
       });

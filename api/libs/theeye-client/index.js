@@ -25,12 +25,9 @@ module.exports = TheEyeClient;
  *
  *
  */
-function TheEyeClient (options)
-{
+function TheEyeClient (options) {
   this.access_token = '';
-
   this.configure(options);
-
   return this;
 }
 
@@ -494,7 +491,7 @@ TheEyeClient.prototype = {
       url: '/:customer/script/' + id
     }, function(error, body) {
       if (error) return callback(error);
-      callback(null, body.script);
+      callback(null, body);
     });
   },
   /**
@@ -512,7 +509,7 @@ TheEyeClient.prototype = {
       url: '/:customer/script'
     }, function(error, body) {
       if (error) return callback(error);
-      callback(null, body.scripts);
+      callback(null, body);
     });
   },
   /**
@@ -525,8 +522,7 @@ TheEyeClient.prototype = {
    * @return {Stream} downloaded file stream
    *
    */
-  scriptDownloadStream : function(scriptId)
-  {
+  scriptDownloadStream : function(scriptId) {
     return this.performRequest({
       method: 'get',
       url: '/:customer/script/' + scriptId  + '/download'

@@ -170,6 +170,7 @@ var PermanentFile = new (function(){
           data.basename = this.targetPath.basename;
           data.is_manual_path = this.targetPath.manual;
           data.path = this.targetPath.parsedpath;
+          data.host_id = data.hosts;
 
           return data;
         },
@@ -262,42 +263,14 @@ var PermanentFile = new (function(){
       this.initHelp();
     },
     initHelp: function(){
-      new HelpIcon({
-        container: this.find('label[for=name]'),
-        category: 'file_form',
-        text: HelpTexts.task.name
-      });
-      new HelpIcon({
-        container: this.find('label[for=host]'),
-        category: 'file_form',
-        text: HelpTexts.host
-      });
-      new HelpIcon({
-        container: this.find('label[for=looptime]'),
-        category: 'file_form',
-        text: HelpTexts.looptime
-      });
-      new HelpIcon({
-        container: this.find('label[for=path]'),
-        category: 'file_form',
-        text: HelpTexts.file.path
-      });
-      new HelpIcon({
-        container: this.find('label[for=uid]'),
-        category: 'file_form',
-        text: HelpTexts.file.uid
-      });
-      new HelpIcon({
-        container: this.find('label[for=gid]'),
-        category: 'file_form',
-        text: HelpTexts.file.gid
-      });
-      new HelpIcon({
-        container: this.find('label[for=permissions]'),
-        category: 'file_form',
-        text: HelpTexts.file.permissions,
-        link: 'https://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation'
-      });
+      new HelpIcon({ container: this.find('label[for=name]'), category: 'file_form', text: HelpTexts.task.name });
+      new HelpIcon({ container: this.find('label[for=hosts]'), category: 'file_form', text: HelpTexts.host });
+      new HelpIcon({ container: this.find('label[for=looptime]'), category: 'file_form', text: HelpTexts.looptime });
+      new HelpIcon({ container: this.find('label[for=path]'), category: 'file_form', text: HelpTexts.file.path });
+      new HelpIcon({ container: this.find('label[for=uid]'), category: 'file_form', text: HelpTexts.file.uid });
+      new HelpIcon({ container: this.find('label[for=gid]'), category: 'file_form', text: HelpTexts.file.gid });
+      new HelpIcon({ container: this.find('label[for=permissions]'), category: 'file_form', text: HelpTexts.file.permissions,
+        link: 'https://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation' });
     },
     setFormData: function(model){
       if (model) {

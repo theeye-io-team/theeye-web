@@ -59,7 +59,7 @@ var MonitorsPageInit = (function(){
           var hosts = view.values;
 
           hosts.forEach(function(id){
-            monitor.createClone({ host: id, host_id: id },{
+            monitor.createClone({ host_id: id },{
               success:function(model, response, options){
                 bootbox.alert('monitors created',function(){
                   window.location.reload();
@@ -132,6 +132,8 @@ var MonitorsPageInit = (function(){
         }
       }
 
+      if (!values.host_id) values.host_id = values.hosts;
+
       $.ajax({
         url: '/resource/' + idResource,
         type: 'PUT',
@@ -202,7 +204,7 @@ var MonitorsPageInit = (function(){
       $form.find('[data-hook=resource_id]').val(resource.id);
       $form.find('[data-hook=monitor_type]').val(type);
       $form.find('[data-hook=name]').val(resource.name);
-      $form.find('[data-hook=hosts_id]').val(resource.host_id);
+      $form.find('[data-hook=hosts]').val(resource.host_id);
       $form.find('[data-hook=disabled]').prop('checked', !monitor.enable);
       var acls = $form.find('select[data-hook=acl]');
       acls.val(resource.acl).trigger('change');
@@ -420,7 +422,7 @@ var MonitorsPageInit = (function(){
 
       function onShowModal () {
         $select.select2();
-        if(host) $select.val(host).trigger('change');
+        if (host) $select.val(host).trigger('change');
 
         $form.find('select[data-hook=looptime]').val(60000);
         $form.find('select#script_id')
@@ -562,9 +564,8 @@ var MonitorsPageInit = (function(){
     $('[data-hook=create-monitor').on('click', handleResourceAction);
 
     // hook to scripts.js event script_uploaded
-    window.scriptState.on('script_uploaded', function(evt,result){
-      var script = result;
-      alert("Script succesfully uploaded", "Script upload",function(){
+    window.scriptState.on('script_uploaded', function(evt,script){
+      alert('Script succesfully uploaded', 'Script upload',function(){
         var $scriptIdSelect = $('select[data-hook=script_id]');
         //remove previous script option
         $('option[value='+script.id+']').remove();
@@ -633,7 +634,7 @@ var MonitorsPageInit = (function(){
       $form.find('[data-hook=disk]').val(limits.disk);
       $form.find('[data-hook=looptime]').val(resource.monitor.looptime);
       $form.find('[data-hook=resource_id]').val(resource.id);
-      $form.find('[data-hook=hosts_id]').val(resource.host_id);
+      $form.find('[data-hook=hosts]').val(resource.host_id);
       if(doneFn) doneFn();
     }
 
@@ -975,7 +976,7 @@ var MonitorsPageInit = (function(){
   (function initFormsHelp(){
     var $scriptForm = $('form[data-hook=script-monitor-form]');
     new HelpIcon({ container: $scriptForm.find('label[for=name]'), category: 'monitor_form', text: HelpTexts.monitor.name });
-    new HelpIcon({ container: $scriptForm.find('label[for=host]'), category: 'monitor_form', text: HelpTexts.host });
+    new HelpIcon({ container: $scriptForm.find('label[for=hosts]'), category: 'monitor_form', text: HelpTexts.host });
     new HelpIcon({ container: $scriptForm.find('label[for=script]'), category: 'monitor_form', text: HelpTexts.scripts });
     new HelpIcon({ container: $scriptForm.find('label[for=looptime]'), category: 'monitor_form', text: HelpTexts.looptime });
     new HelpIcon({ container: $scriptForm.find('label[for=tags]'), category: 'monitor_form', text: HelpTexts.tags });
@@ -984,7 +985,7 @@ var MonitorsPageInit = (function(){
 
     var $processForm = $('form[data-hook=process-monitor-form]');
     new HelpIcon({ container: $processForm.find('label[for=name]'), category: 'monitor_form', text: HelpTexts.monitor.name });
-    new HelpIcon({ container: $processForm.find('label[for=host]'), category: 'monitor_form', text: HelpTexts.host });
+    new HelpIcon({ container: $processForm.find('label[for=hosts]'), category: 'monitor_form', text: HelpTexts.host });
     new HelpIcon({ container: $processForm.find('label[for=looptime]'), category: 'monitor_form', text: HelpTexts.looptime });
     new HelpIcon({ container: $processForm.find('label[for=process]'), category: 'monitor_form', text: HelpTexts.monitor.process });
     new HelpIcon({ container: $processForm.find('label[for=tags]'), category: 'monitor_form', text: HelpTexts.tags });
