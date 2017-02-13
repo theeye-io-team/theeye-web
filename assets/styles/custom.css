@@ -12,6 +12,8 @@ a:-webkit-any-link {
   cursor: auto;
 }
 
+h1,h2,h3,h4 { font-size: inherit; }
+
 p { text-align: justify; max-width: 700px; }
 
 pre {
@@ -325,13 +327,19 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 .admin-container .panel-collapse .btn-stats { float:right; margin-top:-12px; }
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body .fields {width:100%;clear:both;}
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body .fields>.field {width:50%;float:left;}
-.admin-container .table-header {height:50px; padding:0 10px 0 10px;}
-.admin-container .table-header span.title {padding:10px 1%; padding-left:0; font-size:18px;font-weight:700;color:#fff}
+
+.admin-container .table-header.admin {height:50px; padding:10px;}
+.admin-container .table-header.admin span.title,
+.admin-container .table-header.admin button,
+.admin-container .table-header.admin div {float:left;}
+
+.admin-container .table-header.admin span.title {font-weight: bold;padding: 6px 12px;}
+.admin-container .table-header.admin button.mass-action {width:40px;}
+
 .admin-container .panel-heading {}
 .admin-container .panel-heading .actions label {font-size:20px; text-align:center;}
 .admin-container .panel-heading .name,
 .admin-container .panel-heading .hostname {white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.admin-container .table-header span.title {float:left; width:auto;}
 .admin-container .panel-heading .panel-item.name {float:left; width:50%; padding:0px 5px 0 5px; line-height: 28px}
 .admin-container .panel-heading .panel-item.icons {float:right; text-align:right; padding:0;}
 .admin-container .panel-heading .panel-item.icons .host-menu.dropdown {
@@ -456,7 +464,7 @@ button.bulkRunner {
 button.rowSelector-not,
 button.rowSelector {
   float: left;
-  width: 6%;
+  width: 40px;
   max-width: 46px;
 }
 

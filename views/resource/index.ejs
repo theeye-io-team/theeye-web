@@ -21,15 +21,14 @@
     <h3>Monitors Admin</h3>
     <div>
       <div class="table-header admin">
-        <button class="pull-left tableHeaderIconButton massChecker btn btn-primary simple-btn tooltiped"
-          title="Select all"
-          aria-label="Center Align">
+        <button class="mass-action massChecker btn btn-primary simple-btn tooltiped" title="Select all" aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
         </button>
 
-        <span class="title">Monitors &nbsp; &nbsp; |</span>
+        <span class="title">Monitor Actions &nbsp;</span>
+        <span class="title separator">|&nbsp;</span>
 
-        <div class="dropdown resource new-btn">
+        <div class="dropdown resource">
           <span id="dropdownMenu1"
             data-toggle="dropdown"
             aria-expanded="true"
@@ -86,19 +85,19 @@
           </ul>
         </div>
 
-        <button class="pull-right tableHeaderIconButton massDelete btn btn-primary simple-btn tooltiped"
+        <button class="mass-action pull-right massDelete btn btn-primary simple-btn tooltiped"
           title="Delete selected monitors"
           aria-label="Center Align">
           <span class="glyphicon glyphicon-trash"></span>
         </button>
 
-        <button class="pull-right tableHeaderIconButton massMuteActivate btn btn-primary simple-btn tooltiped"
+        <button class="mass-action pull-right massMuteActivate btn btn-primary simple-btn tooltiped"
           title="Activate selected monitors alerts"
           aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-volume-up"></span>
         </button>
 
-        <button class="pull-right tableHeaderIconButton massMuteDeactivate btn btn-primary simple-btn tooltiped"
+        <button class="mass-action pull-right massMuteDeactivate btn btn-primary simple-btn tooltiped"
           title="Deactivate selected monitors alerts"
           aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-volume-off"></span>
@@ -133,7 +132,7 @@
                       <button class="rowSelector-not btn btn-primary simple-btn tooltiped"
                         title="I'm a Host!"
                         aria-label="Center Align">
-                        <span class="selectorIcon glyphicon glyphicon-home"></span>
+                        <span class="selectorIcon fa fa-server"></span>
                       </button>
                     <% } else { %>
                       <button class="rowSelector btn btn-primary simple-btn tooltiped"
@@ -168,19 +167,6 @@
                     <div class="panel-item icons">
                       <% var type = (monitor.type||monitor.monitor_type); %>
                       <% if (type != 'host' && type != 'psaux') { %><!-- TYPE SCRIPT, PROCESS OR SCRAPER -->
-                        <button class="editResourceMonitor editResource <%= monitor.type %>ResourceEditAction btn btn-primary simple-btn tooltiped"
-                          aria-label="Center Align"
-                          title="Edit monitor"
-                          data-hook="edit-<%= monitor.type %>-monitor"
-                          data-host_id="<%= monitor.host_id %>"
-                          data-hostname="<%= monitor.resource.hostname %>"
-                          data-resource_id="<%= monitor.resource.id %>"
-                          data-action="edit"
-                          data-toggle="modal"
-                          data-resource-type="<%= monitor.type %>"
-                          data-target="#<%= monitor.type %>ResourceModal">
-                          <span class="glyphicon glyphicon-edit"></span>
-                        </button>
 
                         <button
                           class="btn btn-primary tooltiped simple-btn"
@@ -208,26 +194,31 @@
                           <span class="glyphicon <%= muteIcon %>"></span>
                         </button>
 
+                        <!-- EDIT BUTTON -->
+                        <button class="editResourceMonitor editResource <%= monitor.type %>ResourceEditAction btn btn-primary simple-btn tooltiped"
+                          aria-label="Center Align"
+                          title="Edit monitor"
+                          data-hook="edit-<%= monitor.type %>-monitor"
+                          data-host_id="<%= monitor.host_id %>"
+                          data-hostname="<%= monitor.resource.hostname %>"
+                          data-resource_id="<%= monitor.resource.id %>"
+                          data-action="edit"
+                          data-toggle="modal"
+                          data-resource-type="<%= monitor.type %>"
+                          data-target="#<%= monitor.type %>ResourceModal">
+                          <span class="glyphicon glyphicon-edit"></span>
+                        </button>
+                        <!-- /EDIT BUTTON -->
+
                         <button class="deleteResource btn btn-primary simple-btn tooltiped"
-                          title="Delete monitor"
+                          title="Delete Monitor"
                           aria-label="Center Align"
                           data-resource_id="<%= monitor.resource.id %>">
                           <span class="glyphicon glyphicon-trash"></span>
                         </button>
+
                       <% } else { %>
                         <% if (type == 'host') { %>
-
-                          <button class="btn btn-primary simple-btn tooltiped"
-                            aria-label="Center Align"
-                            title="Edit Host"
-                            data-hook="edit-host-monitor"
-                            data-host_id="<%= monitor.host_id %>"
-                            data-hostname="<%= monitor.resource.hostname %>"
-                            data-resource_id="<%= monitor.resource.id %>"
-                            >
-                            <span class="glyphicon glyphicon-edit"></span>
-                          </button>
-
                           <div class="dropdown host-menu">
                             <button id="dropdownMenu1"
                               data-toggle="dropdown"
@@ -301,14 +292,34 @@
                               -->
                             </ul>
                           </div>
-                        <% } %>
 
-                        <button class="deleteHostResource btn btn-primary simple-btn tooltiped"
-                          title="Delete monitor"
-                          aria-label="Center Align"
-                          data-resource_id="<%= monitor.resource.id %>">
-                          <span class="glyphicon glyphicon-trash"></span>
-                        </button>
+                          <!-- EDIT BUTTON -->
+                          <button class="btn btn-primary simple-btn tooltiped"
+                            aria-label="Center Align"
+                            title="Edit Host"
+                            data-hook="edit-host-monitor"
+                            data-host_id="<%= monitor.host_id %>"
+                            data-hostname="<%= monitor.resource.hostname %>"
+                            data-resource_id="<%= monitor.resource.id %>"
+                            >
+                            <span class="glyphicon glyphicon-edit"></span>
+                          </button>
+                          <!-- /EDIT BUTTON -->
+
+                          <button class="deleteHostResource btn btn-primary simple-btn tooltiped"
+                            title="Delete Host"
+                            aria-label="Center Align"
+                            data-resource_id="<%= monitor.resource.id %>">
+                            <span class="glyphicon glyphicon-trash"></span>
+                          </button>
+                        <% } else {  %>
+                          <button class="deleteResource btn btn-primary simple-btn tooltiped"
+                            title="Delete Monitor"
+                            aria-label="Center Align"
+                            data-resource_id="<%= monitor.resource.id %>">
+                            <span class="glyphicon glyphicon-trash"></span>
+                          </button>
+                        <% } %>
                       <% } %>
                     </div>
                   </div>

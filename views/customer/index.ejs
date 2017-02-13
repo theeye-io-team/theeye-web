@@ -13,20 +13,21 @@
     <h3>Organizations Admin</h3>
     <div>
       <div class="table-header admin">
-        <button class="pull-left tableHeaderIconButton massChecker btn btn-primary simple-btn tooltiped"
-          style="margin-left:5px;"
+        <button class="mass-action massChecker btn btn-primary simple-btn tooltiped"
           title="Select all"
           aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
         </button>
-        <span class="title panel-item name">Organizations &nbsp; &nbsp; |</span>
 
-        <button class="createCustomer btn btn-primary simple-btn new-btn tooltiped" data-placement="right" title="Create new customer" aria-label="Left Align" data-toggle="modal" data-target="#create-customer">
+        <span class="title">Organization Actions &nbsp;</span>
+        <span class="title separator">|&nbsp;</span>
+
+        <button class="createCustomer btn btn-primary simple-btn tooltiped" data-placement="right" title="Create new customer" aria-label="Left Align" data-toggle="modal" data-target="#create-customer">
           <span class="glyphicon glyphicon-plus"></span>
           New Organization
         </button>
 
-        <button class="pull-right tableHeaderIconButton massDelete btn btn-primary simple-btn tooltiped"
+        <button class="mass-action pull-right massDelete btn btn-primary simple-btn tooltiped"
           title="Delete selected customers"
           aria-label="Center Align">
           <span class="glyphicon glyphicon-trash"></span>
@@ -59,6 +60,14 @@
                     <span class="panel-item name" id="<%= customer.id %>"><%= customer.name %></span>
                     <div class="panel-item icons">
                       <!-- buttons -->
+                      <!-- curlpopup -->
+                      <button
+                        class="seeAgentCurl btn btn-primary simple-btn tooltiped"
+                        title="Check agent"
+                        aria-label="Center Align"
+                        data-customer-name="<%= customer.name %>">
+                        <span class="glyphicon glyphicon-download"></span>
+                      </button>
                       <!-- edit -->
                       <button
                         class="editCustomer btn btn-primary simple-btn tooltiped"
@@ -77,14 +86,6 @@
                         data-customer-id="<%= customer.id %>"
                         data-customer-name="<%= customer.name %>" >
                         <span class="glyphicon glyphicon-trash"></span>
-                      </button>
-                      <!-- curlpopup -->
-                      <button
-                        class="seeAgentCurl btn btn-primary simple-btn tooltiped"
-                        title="Check agent"
-                        aria-label="Center Align"
-                        data-customer-name="<%= customer.name %>">
-                        <span class="glyphicon glyphicon-download"></span>
                       </button>
                       <!-- /buttons -->
                     </div>
