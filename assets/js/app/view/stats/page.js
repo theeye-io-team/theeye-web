@@ -61,7 +61,6 @@ function StatsPage () {
     }).fail(function(xhr,status){
       next(new Error(status));
     });
-
   }
 
   function subscribeSocketNotifications(resource) {
@@ -223,7 +222,7 @@ function StatsPage () {
       this.renderTemplate();
       this.queryByHook('percent').css('height', this.percent + '%');
       this.queryByHook('percent').css('background', getBlueToRed(this.percent));
-      this.queryByHook('percent_tag').html(this.percent_tag);
+      this.queryByHook('percent_tag').html(this.percent_tag + '%');
       this.queryByHook('tag').html(this.tag);
     }
   });

@@ -756,21 +756,26 @@ a.flowchart-icon {
 .disk-usage {margin-top:20px}
 .disk-usage .progress .progress-bar, .vertical span {font-size:16px}
 .progress {background:none;box-shadow:none;border-radius:0}
-.progress-bar-vertical {width: 50px;min-height: 100px;display: flex;align-items: flex-end;margin: 0 20px;float: left;position:relative}
-.progress-bar-vertical .progress-bar {width: 100%;height: 0;font-size:16px}
+
+.progress-bar-vertical {width:50px; min-height:100px; display:flex; align-items:flex-end; margin: 0 20px; float:left; position:relative}
+.progress-bar-vertical .progress-bar {width:100%; height:0; font-size:16px}
+.progress-bar-vertical span {top:-20px;position:absolute;left:0;width:100%}
+.progress-bar-vertical {overflow:visible}
+.progress-bar-vertical .progress-bar {position:relative}
+
 .main-stats .pull-left {position:relative}
 .main-stats .pull-left .title {position:absolute;bottom:-30px;left:0;width:100%;text-align:center;font-weight:bold}
 .main-stats {background:url('/images/bg-stats.png');height:180px;padding:80px 0 0;margin:30px 0}
 
 @media all and (max-width: 480px) {
-.progress-bar-vertical {margin: 0 5px}
+  .progress-bar-vertical {margin: 0 5px}
 }
 @media all and (max-width: 991px) and (min-width: 768px) {
-.progress-vertical-item span.title {bottom:-90px}
+  .progress-vertical-item span.title {bottom:-90px}
 }
 
 @media all and (max-width: 1199px) and (min-width: 992px) {
-.progress-bar-vertical {margin: 0 10px}
+  .progress-bar-vertical {margin: 0 10px}
 }
 
 .admin-container.dashboard { }
