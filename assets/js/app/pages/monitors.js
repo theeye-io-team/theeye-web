@@ -24,6 +24,16 @@ var MonitorsPageInit = (function(){
   });
   window.Users = _users;
 
+  new HelpIcon({
+    color:[255,255,255],
+    category:'title_help',
+    text: HelpTexts.titles.monitor_page 
+  })
+    .$el
+    .appendTo(
+      $('.table-header.admin span.title i[data-hook=help]')
+    );
+
   var _files = new App.Collections.Files();
   _files.fetch({});
 

@@ -223,6 +223,16 @@ var WebhookPage = (function(){
         WebhookView,
         self.queryByHook('webhooks-container')[0]
       );
+
+      new HelpIcon({
+        color:[255,255,255],
+        category:'title_help',
+        text: HelpTexts.titles.webhook_page 
+      })
+        .$el
+        .appendTo(
+          this.find('span.title i[data-hook=help]')
+        );
     }
   });
 

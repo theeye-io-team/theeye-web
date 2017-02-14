@@ -1,6 +1,18 @@
 /* global ace, bootbox, $searchbox */
 var ScriptsPageInit = (function(){
 
+  if (location.pathname == '/admin/script') {
+    new HelpIcon({
+      color:[255,255,255],
+      category:'title_help',
+      text: HelpTexts.titles.script_page 
+    })
+      .$el
+      .appendTo(
+        $('.table-header.admin span.title i[data-hook=help]')
+      );
+  }
+
   var self = this;
   window.scriptState = window.scriptState ? window.scriptState : $({});
   var $state = window.scriptState;

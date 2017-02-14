@@ -25,12 +25,20 @@ var HelpTexts = {
   },
   task: {
     name: 'Give this task a name',
-    page_title: 'task_page_title_help'
   },
   file: {
     path: 'The full path to put the file in',
     uid: 'The user id for the file',
     gid: 'The group id for the file',
     permissions: 'Permissions in octal format. Default is 0755'
-  }
+  },
+  titles:{
+    user_page: 'user_page_title_help',
+    task_page: 'task_page_title_help',
+    script_page: 'script_page_title_help',
+    customer_page: 'customer_page_title_help',
+    monitor_page: 'monitor_page_title_help',
+    webhook_page: 'webhook_page_title_help',
+    template_page: 'template_page_title_help',
+  },
 }

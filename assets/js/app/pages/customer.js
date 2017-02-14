@@ -4,6 +4,17 @@ var CustomersPageInit = (function() {
 
   var $state = $({});
 
+  new HelpIcon({
+    color:[255,255,255],
+    category:'title_help',
+    text: HelpTexts.titles.customer_page 
+  })
+    .$el
+    .appendTo(
+      $('.table-header.admin span.title i[data-hook=help]')
+    );
+
+
   //CREATE CUSTOMER FORM
   (function create(el){
 
