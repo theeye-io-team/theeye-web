@@ -5,17 +5,24 @@ window.App.Help = { icons: [] };
 
 var HelpIcon = BaseView.extend({
   tagName: 'span',
-  className: 'glyphicon glyphicon-question-sign',
+  className: 'fa fa-question-circle',
   autoRender: true,
   initialize: function(options){
-    BaseView.prototype.initialize.apply(this,arguments);
-
     this.category = (options.category||'help');
     this.container = (options.container||null);
+    this.color = (options.color||[48,66,105]);
+
+    BaseView.prototype.initialize.apply(this,arguments);
 
     window.App.Help.icons.push( this );
   },
   events: {
+    'mouseover': function(e) {
+      this.$el.css('color','rgba(' + this.color.join(',') + ', 1)');
+    },
+    'mouseout': function(e) {
+      this.$el.css('color','rgba(' + this.color.join(',') + ', 0.2)');
+    },
     'click': function(e) {
       if (this.link) window.open(this.link, '_blank');
     }
@@ -26,7 +33,7 @@ var HelpIcon = BaseView.extend({
   hide: function(){
     this.$el.hide();
   },
-  render: function() {
+  render: function(){
     var $el = this.$el;
     $el.css('cursor','help');
     if (this.link) this.text += '. CLICK FOR MORE';
@@ -38,5 +45,9 @@ var HelpIcon = BaseView.extend({
         this.container.append(this.$el);
       }
     }
+    this.$el.css('color','rgba(' + this.color.join(',') + ', 0.2)');
+  },
+  remove: function(){
+    BaseView.prototype.remove.apply(this,arguments);
   }
 })

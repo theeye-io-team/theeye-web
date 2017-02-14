@@ -25,6 +25,7 @@ var HelpTexts = {
   },
   task: {
     name: 'Give this task a name',
+    page_title: 'task_page_title_help'
   },
   file: {
     path: 'The full path to put the file in',
