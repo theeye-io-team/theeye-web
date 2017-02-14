@@ -1,6 +1,7 @@
 /**
  *
  * @author Facugon
+ * @module WorkflowPage
  *
  */
 var WorkflowPage = function(){
@@ -64,13 +65,12 @@ var WorkflowPage = function(){
   var uri = URI(document.location);
   var query = uri.search(true);
 
-  $.ajax({
+  var req = $.ajax({
     method:'get',
     url:'/api/workflow',
     data: query
   })
-  .done(function(data){
-
+  req.done(function(data){
     var elems = [];
 
     //data.nodes.forEach(d => console.log(d.value&&d.value._type) );
@@ -148,9 +148,6 @@ var WorkflowPage = function(){
         window.location.href = href; 
       } 
     });
-
-  })
-  .fail(function(xhr,status){
   });
-
+  req.fail(function(xhr,status){ });
 }
