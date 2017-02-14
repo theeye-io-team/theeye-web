@@ -159,6 +159,11 @@ var FileSelect = (function(){
 
       this.find('.tooltiped').tooltip();
 
+      this.help = new HelpIcon({
+        container: this.find('label'),
+        text: HelpTexts.file.select
+      });
+
       FilesStore.addChangeListener(this.onFilesChange,this);
     },
     /**
@@ -186,6 +191,7 @@ var FileSelect = (function(){
     remove: function(){
       BaseView.prototype.remove.apply(this);
       this.off('change');
+      this.help.remove();
       FilesStore.removeChangeListener(this.onFilesChange,this);
     }
   });

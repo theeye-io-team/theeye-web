@@ -35,6 +35,11 @@ var MonitorSelect = BaseView.extend({
   render:function(){
     this.renderTemplate();
 
+    this.help = new HelpIcon({
+      text: HelpTexts.monitor.copy
+    });
+    this.help.$el.appendTo(this.find('label'));
+
     var options = { id:'id', text:'text' },
       data = Select2Data.PrepareIdValueData(
         this.collection.map(function(u){
@@ -57,6 +62,7 @@ var MonitorSelect = BaseView.extend({
   },
   remove:function(){
     BaseView.prototype.remove.apply(this);
+    this.help.remove();
     this.off('change');
   }
 });
