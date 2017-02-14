@@ -62,11 +62,17 @@ var SeveritySelect = BaseView.extend({
       this.find('select').val(this.selected).trigger('change');
     }
 
+    this.help = new HelpIcon({
+      container: this.find('label'),
+      text: HelpTexts.severity
+    });
+
     this.find('.tooltiped').tooltip();
   },
   remove: function(){
     BaseView.prototype.remove.apply(this);
     this.off('change');
+    this.help.remove();
   }
 });
 

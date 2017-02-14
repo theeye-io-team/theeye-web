@@ -168,13 +168,6 @@
                       <% var type = (monitor.type||monitor.monitor_type); %>
                       <% if (type != 'host' && type != 'psaux') { %><!-- TYPE SCRIPT, PROCESS OR SCRAPER -->
 
-                        <button
-                          class="btn btn-primary tooltiped simple-btn"
-                          data-hook="copy"
-                          data-monitor="<%= monitor.resource.id %>">
-                          <span class="glyphicon glyphicon-duplicate"></span>
-                        </button>
-
                         <%
                             if (monitor.resource.alerts===false) {
                               var muteClass='resource-enable-alerts';
@@ -193,6 +186,14 @@
                           data-resource_id="<%= monitor.resource.id %>">
                           <span class="glyphicon <%= muteIcon %>"></span>
                         </button>
+
+                        <button
+                          class="btn btn-primary tooltiped simple-btn"
+                          data-hook="copy"
+                          data-monitor="<%= monitor.resource.id %>">
+                          <span class="glyphicon glyphicon-duplicate"></span>
+                        </button>
+
 
                         <!-- EDIT BUTTON -->
                         <button class="editResourceMonitor editResource <%= monitor.type %>ResourceEditAction btn btn-primary simple-btn tooltiped"
@@ -300,8 +301,7 @@
                             data-hook="edit-host-monitor"
                             data-host_id="<%= monitor.host_id %>"
                             data-hostname="<%= monitor.resource.hostname %>"
-                            data-resource_id="<%= monitor.resource.id %>"
-                            >
+                            data-resource_id="<%= monitor.resource.id %>" >
                             <span class="glyphicon glyphicon-edit"></span>
                           </button>
                           <!-- /EDIT BUTTON -->

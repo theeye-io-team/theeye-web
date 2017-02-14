@@ -35,8 +35,9 @@ var TaskSelect = BaseView.extend({
     this.renderTemplate();
 
     this.help = new HelpIcon({
-      text: 'Select the task you want to copy from'
-    }).$el.appendTo(this.find('label'));
+      text: HelpTexts.task.copy
+    });
+    this.help.$el.appendTo(this.find('label'));
 
     var options = { id:'id', text:'text' },
       data = Select2Data.PrepareIdValueData(
@@ -58,8 +59,8 @@ var TaskSelect = BaseView.extend({
     this.find('.tooltiped').tooltip();
   },
   remove:function(){
-    this.help.remove();
     BaseView.prototype.remove.apply(this);
+    this.help.remove();
     this.off('change');
   }
 });

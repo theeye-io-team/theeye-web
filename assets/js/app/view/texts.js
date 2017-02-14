@@ -9,6 +9,8 @@ var HelpTexts = {
   tags: 'To help you find your resources quickly.',
   triggers: 'Select a task, monitor or webhook event that will trigger this task automagically.',
   grace_time: 'If you select to Trigger on an event, you can select to delay the execution that allows you to cancel this action via email.',
+  acls: 'Add permissions to specific users or emails who will receive notifications.',
+  severity: 'You can select a severity for this monitor, between LOW, HIGH or CRITICAL',
   request: {
     timeout:'How much time to wait the server\'s response before giving up. Default is 5 seconds.',
     method: 'Select the request Method.',
@@ -21,16 +23,19 @@ var HelpTexts = {
   scraper_pattern: 'Could be a String or Regular Expression, also could be part of the response, that we have to considered ok.',
   monitor: {
     name: 'Give this monitor a name',
-    process: 'Which process it has to search for?'
+    process: 'Which process it has to search for?',
+    copy: 'Select the monitor you want to copy from'
   },
   task: {
     name: 'Give this task a name',
+    copy: 'Select the task you want to copy from'
   },
   file: {
     path: 'The full path to put the file in',
     uid: 'The user id for the file',
     gid: 'The group id for the file',
-    permissions: 'Permissions in octal format. Default is 0755'
+    permissions: 'Permissions in octal format. Default is 0755',
+    select: 'Select a file'
   },
   titles:{
     user_page: 'user_page_title_help',

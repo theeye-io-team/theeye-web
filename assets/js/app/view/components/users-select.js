@@ -29,7 +29,7 @@ var UsersSelect = BaseView.extend({
 
     this.help = new HelpIcon({
       container: this.find('label'),
-      text: 'Add permissions to specific users or emails who will receive notifications.'
+      text: HelpTexts.acls
     });
 
     this.find('select').select2({
@@ -50,4 +50,8 @@ var UsersSelect = BaseView.extend({
 
     this.find('.tooltiped').tooltip();
   },
+  remove: function(){
+    BaseView.prototype.remove.apply(this,arguments);
+    this.help.remove();
+  }
 });
