@@ -1,10 +1,21 @@
-/* global Modal, Clipboard, App, bootbox, BaseView, Templates, _, FormElement, ListView*/
 /**
  *
  * kind of modular structure
- * @author Facugon
  *
+ * @author Facugon
+ * @module WebhookPage
  */
+
+//var Modal = require(modal);
+//var Clipboard = require(clipboard);
+//var App = require(app);
+//var bootbox = require(bootbox);
+//var BaseView = require(base-view);
+//var Templates = require(templates);
+//var _ = require(underscore);
+//var FormElement = require(form-element);
+//var ListView = require(list-view);
+
 var WebhookPage = (function(){
 
   // use only one main modal for the page.
@@ -17,34 +28,34 @@ var WebhookPage = (function(){
   new Clipboard('.clip');
 
   var WebhookActions = {
-    remove:function(webhook){
+    remove: function(webhook){
       webhook.destroy({
-        success:function(){
+        success: function(){
           bootbox.alert('Webhook Deleted',function(){ });
           webhooks.remove( webhook );
         }
       });
     },
-    update:function(webhook){
+    update: function(webhook){
       webhook.save({},{
-        success:function(){
+        success: function(){
           bootbox.alert('Webhook Updated',function(){ });
         }
       });
     },
-    create:function(webhook){
+    create: function(webhook){
       webhook.save({},{
-        success:function(){
+        success: function(){
           bootbox.alert('Webhook Created',function(){ });
           webhooks.add( webhook );
         }
       });
     },
-    trigger:function(webhook){
+    trigger: function(webhook){
       $.ajax({
-        method:'POST',
-        url:webhook.triggerUrl,
-        dataType:'json'
+        method: 'POST',
+        url: webhook.triggerUrl,
+        dataType: 'json'
       }).done(function(data){
         bootbox.alert('Webhook triggered');
       }).fail(function(xhr,status){
@@ -55,6 +66,17 @@ var WebhookPage = (function(){
 
   var WebhookFormView = BaseView.extend({
     template: Templates['assets/templates/webhook/form.hbs'],
+    events:{
+      'keydown':'onKeyEvent',
+      'keypress':'onKeyEvent',
+    },
+    onKeyEvent: function(event){
+      if (event.keyCode == 13) {
+        event.preventDefault();
+        event.stopPropagation();
+        return false;
+      }
+    },
     initialize : function(options){
       var self = this;
 
@@ -104,7 +126,12 @@ var WebhookPage = (function(){
     onClickRemove:function(event){
       event.preventDefault();
       event.stopPropagation();
-      WebhookActions.remove(this.model);
+      var model = this.model;
+      bootbox.confirm('Continue removing ' + model.get('name') + ' webhook ?', function(confirmed){
+        if (confirmed) {
+          WebhookActions.remove(model);
+        }
+      });
     },
     onClickTrigger:function(event){
       event.preventDefault();
@@ -141,6 +168,7 @@ var WebhookPage = (function(){
       modal.$el.on('click','button[data-hook=save]',function(){
         model.set(form.data);
         WebhookActions.update(model);
+        modal.close();
       });
 
       form.container = modal.queryByHook('container')[0];
@@ -188,6 +216,7 @@ var WebhookPage = (function(){
       modal.$el.on('click','button[data-hook=save]',function(){
         webhook.set(form.data);
         WebhookActions.create(webhook);
+        modal.close();
       });
 
       modal.show();
@@ -210,6 +239,16 @@ var WebhookPage = (function(){
         WebhookView,
         self.queryByHook('webhooks-container')[0]
       );
+
+      new HelpIcon({
+        color:[255,255,255],
+        category:'title_help',
+        text: HelpTexts.titles.webhook_page 
+      })
+        .$el
+        .appendTo(
+          this.find('span.title i[data-hook=help]')
+        );
     }
   });
 

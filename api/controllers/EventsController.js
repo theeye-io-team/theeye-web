@@ -38,22 +38,18 @@ module.exports = {
 
       function sendResponse () {
         var subs = _.chain(data.resources)
-        .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
-        .filter(function(r){
-          return r.type != 'host' && r.type != 'scraper' && r.type != 'script' && r.type != 'process';
-        })
-        .groupBy('host_id')
-        .value();
+          .reject({type:'psaux'}) // psaux is not being show
+          .filter(r => r.type=='dstat')  // only group dstat
+          .groupBy('host_id')
+          .value();
 
         var indexed = _.chain(data.resources)
-        .reject({type:'psaux'}) // esto es para que ni lleguen los psaux
-        .filter(function(r){
-          return r.type == 'host' || r.type == 'scraper' || r.type == 'script' || r.type == 'process';
-        })
+        .reject({type:'psaux'}) // psaux is not being show
+        .filter(r => r.type!='dstat')
         .map(function(i){
-          if(i.type == 'host' && subs[i.host_id]) {
+          if (i.type == 'host' && subs[i.host_id]) {
             i.subs = subs[i.host_id];
-          }else{
+          } else {
             i.subs = []; //consistency on view iterator
           }
           return i;
@@ -64,7 +60,7 @@ module.exports = {
         data.indexedResources = indexed;
         data.ACL = ACL;
 
-        if(req.route.path.indexOf('test') > -1) {
+        if (req.route.path.indexOf('test') > -1) {
           res.view('events/grouptest', data);
         } else {
           res.view('events/index', data);
@@ -94,7 +90,7 @@ module.exports = {
       socket.join(customer + '_events');
     }
 
-    res.json({ message: 'subscribed to customers events' });
+    res.send(200,{ message: 'subscribed to customers events' });
   },
   update: function(req, res) {
     // sns updates received
@@ -102,27 +98,25 @@ module.exports = {
     debug('event update received');
     debug(body);
     snsreceiver.handleSubscription(body, function(error, action) {
-      if( error || ! body.Message ) {
+      if (error || ! body.Message) {
         debug.error('Error Invalid request');
         debug.error(body);
         res.json({
-          'status': 400,
-          'error': {
-            'message': 'invalid request'
-          }
+          status: 400,
+          error: { message: 'invalid request' }
         });
       } else {
         var message = snsreceiver.parseSNSMessage(body.Message);
-        if(!message) {
+        if (!message) {
           return res.json({
-            'status': 400,
-            'error': {
-              'message': "SNS body.Message Couldn't be parsed" ,
-              'received' : body.Message
+            status: 400,
+            error: {
+              message: "SNS body.Message Couldn't be parsed" ,
+              received : body.Message
             }
           });
         } else {
-          if(action == 'continue') {
+          if (action == 'continue') {
             var room = message.customer_name + '_events';
             debug('sending information via socket to ' + room);
             message.last_update_moment = moment(message.last_update).startOf('second').fromNow();

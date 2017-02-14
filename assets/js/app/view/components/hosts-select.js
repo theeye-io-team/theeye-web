@@ -29,6 +29,11 @@ var HostsSelect = BaseView.extend({
   render:function(){
     this.renderTemplate();
 
+    this.help = new HelpIcon({
+      text: HelpTexts.monitor.copy
+    });
+    this.help.$el.appendTo(this.find('label'));
+
     this.find('select').select2({
       placeholder: 'Hosts',
       data: Select2Data.PrepareIdValueData(
@@ -47,5 +52,9 @@ var HostsSelect = BaseView.extend({
 
     this.find('.tooltiped').tooltip();
   },
+  remove:function(){
+    BaseView.prototype.remove.apply(this);
+    this.help.remove();
+  }
 });
 //module.exports = View;

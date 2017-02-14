@@ -71,7 +71,6 @@ var Scraper = (function Scraper(){
         else $bodyContainer.slideUp(80);
       });
 
-
       this.find('span.tooltiped').tooltip();
 
       return this;
@@ -79,10 +78,77 @@ var Scraper = (function Scraper(){
     render : function(options){
       options||(options={});
       this.renderTemplate();
-      this.bindFormEvents();
       this.setupSelect();
+      this.bindFormEvents();
+      this.initHelp();
 
       this.setFormData(options.model);
+    },
+    initHelp: function() {
+      new HelpIcon({
+        container: this.find('label[for=name]'),
+        category: 'scraper_form',
+        text: HelpTexts.task.name
+      });
+      new HelpIcon({
+        container: this.find('label[for=hosts]'),
+        category: 'scraper_form',
+        text: HelpTexts.host
+      });
+      new HelpIcon({
+        container: this.find('label[for=looptime]'),
+        category: 'scraper_form',
+        text: HelpTexts.looptime
+      });
+      new HelpIcon({
+        container: this.find('label[for=method]'),
+        category: 'scraper_form',
+        text: HelpTexts.request.method
+      });
+      new HelpIcon({
+        container: this.find('label[for=url]'),
+        category: 'scraper_form',
+        text: HelpTexts.request.url,
+        link: 'https://en.wikipedia.org/wiki/Percent-encoding'
+      });
+      new HelpIcon({
+        container: this.find('label[for=tags]'),
+        category: 'scraper_form',
+        text: HelpTexts.tags
+      });
+      new HelpIcon({
+        container: this.find('label[for=body]'),
+        category: 'scraper_form',
+        text: HelpTexts.request.body
+      });
+      new HelpIcon({
+        container: this.find('label[for=timeout]'),
+        category: 'scraper_form',
+        text: HelpTexts.request.timeout
+      });
+      new HelpIcon({
+        container: this.find('label[for=gzip]'),
+        category: 'scraper_form',
+        text: HelpTexts.request.gzip,
+        link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept-Encoding'
+      });
+      new HelpIcon({
+        container: this.find('label[for=json]'),
+        category: 'scraper_form',
+        text: HelpTexts.request.json,
+        link: 'https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type'
+      });
+      new HelpIcon({
+        container: this.find('label[for=status_code]'),
+        category: 'scraper_form',
+        text: HelpTexts.request.status_code,
+        link: 'https://en.wikipedia.org/wiki/List_of_HTTP_status_codes'
+      });
+      new HelpIcon({
+        container: this.find('label[for=pattern]'),
+        category: 'scraper_form',
+        text: HelpTexts.scraper_pattern,
+      });
     },
     setFormData : function(model) {
       if( model ){
@@ -98,36 +164,21 @@ var Scraper = (function Scraper(){
     },
     setupSelect : function() {
       // initialize & render select2 combos
-      this.queryByHook('tags').select2({
-        placeholder: 'Tags',
-        data: Select2Data.PrepareTags( this.tags ),
-        tags: true
-      });
-      this.queryByHook('looptimes').select2({
-        placeholder: 'Monitor Looptime',
-        data: Select2Data.PrepareIdValueData( this.looptimes )
-      });
-      this.queryByHook('timeouts').select2({
-        placeholder: 'Request Timeout',
-        data: Select2Data.PrepareIdValueData( this.timeouts )
-      });
-      this.queryByHook('hosts').select2({
-        placeholder: 'Monitor Host',
-        data: Select2Data.PrepareHosts( this.hosts )
-      });
-      var usersSelect = new UsersSelect({
-        collection: this.users,
-        autoRender: true
-      });
+      this.queryByHook('tags').select2({ placeholder: 'Tags', data: Select2Data.PrepareTags( this.tags ), tags: true });
+      this.queryByHook('looptimes').select2({ placeholder: 'Monitor Looptime', data: Select2Data.PrepareIdValueData( this.looptimes ) });
+      this.queryByHook('timeouts').select2({ placeholder: 'Request Timeout', data: Select2Data.PrepareIdValueData( this.timeouts ) });
+      this.queryByHook('hosts').select2({ placeholder: 'Monitor Host', data: Select2Data.PrepareHosts( this.hosts ) });
+      var usersSelect = this.usersSelect = new UsersSelect({ collection: this.users, autoRender: true });
       this.queryByHook('advanced').append( usersSelect.el );
     },
     remove : function(){
       this.$el.off('click');
       this.$el.off('change');
+      this.usersSelect.remove();
       BaseView.prototype.remove.call(this);
     },
     focus : function(){
-      this.find('input[name=description]').focus();
+      this.find('input[name=name]').focus();
     },
     reset: function(){
       this.find('form')[0].reset();
@@ -138,24 +189,39 @@ var Scraper = (function Scraper(){
     render: function() {
       // parent render
       this.renderTemplate();
-      this.bindFormEvents();
-      this.setupSelect();
+
+      // tasks doesn't has a loop
+      this.find('[data-hook=looptime-container]').remove();
 
       var advancedSection = this.queryByHook('advanced');
-
       var triggerInputsHTML = Templates['assets/templates/trigger-inputs.hbs']();
       advancedSection.append( triggerInputsHTML );
 
-      var usersSelect = new UsersSelect({ collection: this.users });
-      usersSelect.render();
-      advancedSection.append( usersSelect.el );
+      this.setupSelect();
+      this.bindFormEvents();
 
       this.queryByHook('events-container').select2({
         placeholder: 'Events',
-        data: Select2Data.PrepareEvents( this.events )
+        data: Select2Data.PrepareEvents(this.events)
       });
 
+      this.initHelp();
       this.setFormData(this.model);
+    },
+    initHelp: function() {
+      FormView.prototype.initHelp.apply(this);
+
+      new HelpIcon({
+        container: this.find('label[for=triggers]'),
+        category: 'scraper_form',
+        text: 'Select a task, monitor or webhook event that will trigger this task automagically.'
+      });
+
+      new HelpIcon({
+        container: this.find('label[for=grace_time]'),
+        category: 'scraper_form',
+        text: 'If you select to Trigger on an event, you can choose a delayed execution that allows you to cancel this action via email.'
+      });
     }
   });
 

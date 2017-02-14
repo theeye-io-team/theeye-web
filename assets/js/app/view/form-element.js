@@ -37,15 +37,15 @@ FormElement.prototype.get = function(){
   var values = {};
   inputs.each(function(){
     var input = this;
-    if(!input.name) return;
-    if(input.type=='checkbox') {
-      if(input.value && input.value != 'on'){
+    if (!input.name) return;
+    if (input.type=='checkbox') {
+      if (input.value && input.value != 'on') {
         values[input.name] = input.checked ? input.value : null;
       } else {
         values[input.name] = input.checked;
       }
-    } else if(input.type=='radio') {
-      if( input.checked )
+    } else if (input.type=='radio') {
+      if (input.checked)
         values[input.name] = input.value;
     } else {
       values[input.name] = $(input).val();

@@ -1,7 +1,7 @@
 /**
  * @author Facundo
  */
-$(function(){
+var TemplatesPageInit = (function(){
   var group ;
   var $tasksTags = $('#group-form input#tasks-container');
   var $monitorsTags = $('#group-form input#monitors-container');
@@ -15,8 +15,17 @@ $(function(){
   var $regex = $('input#hostname-regex');
   var $groupModal = $('div.group-modal#group-template');
   var $taskModal = $('div.modal#task-modal');
-
   var logger = debug('eye:hostgroup');
+
+  new HelpIcon({
+    color:[255,255,255],
+    category:'title_help',
+    text: HelpTexts.titles.template_page 
+  })
+    .$el
+    .appendTo(
+      $('.table-header.admin span.title i[data-hook=help]')
+    );
 
   $('select[name=tags]').select2({
     placeholder: 'Tags',

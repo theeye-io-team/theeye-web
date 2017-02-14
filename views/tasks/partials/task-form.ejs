@@ -1,13 +1,13 @@
 <form id="createTaskForm" action="/task" class="form-horizontal">
   <input type="hidden" value="script">
   <div class="form-group">
-    <label for="name" class="col-sm-3 control-label">Give it a name</label>
+    <label for="name" class="col-sm-3 control-label">Name * </label>
     <div class="col-sm-9">
       <input data-hook="name" type="text" name="name" class="form-control" id="name" placeholder="Task name">
     </div>
   </div>
   <div class="form-group">
-    <label for="target" class="col-sm-3 control-label">Where should it run?</label>
+    <label for="host" class="col-sm-3 control-label">Target Host * </label>
     <div class="col-sm-9">
 
       <!-- single host selection -->
@@ -34,7 +34,7 @@
     </div>
   </div>
   <div class="form-group">
-    <label for="script_id" class="col-sm-3 control-label">What script should it run?</label>
+    <label for="script_select" class="col-sm-3 control-label">Select Script * </label>
     <div class="col-sm-6">
       <select data-hook="script_id" name="script_id" class="form-control" style="width:100%">
         <option value="0" disabled selected></option>
@@ -48,28 +48,28 @@
     </div>
   </div>
   <div class="form-group">
-    <label for="tags" class="col-sm-3 control-label">Tags<br/><small>[optional]</small></label>
+    <label for="tags" class="col-sm-3 control-label">Tags </label>
     <div class="col-sm-9">
       <div>
-        <select class="form-control tooltiped select" title="" name="tags" data-hook="tags" multiple style="width:100%"> </select>
+        <select class="form-control select" name="tags" data-hook="tags" multiple style="width:100%"> </select>
       </div>
     </div>
   </div>
 
   <div class="scraper-section-title" data-hook="advanced-section-toggler">
-    <label>Advanced</label>
-    <i class="tooltiped glyphicon glyphicon-chevron-down" title="advanced"></i>
+    <label>Advanced </label>
+    <i class="glyphicon glyphicon-chevron-down" title="Advanced"></i>
   </div>
   <section data-hook="advanced" style="display:none">
 
     <div class="form-group">
-      <label for="description" class="col-sm-3 control-label">More about it</label>
+      <label for="description" class="col-sm-3 control-label">More about it </label>
       <div class="col-sm-9">
         <textarea data-hook="description" type="text" name="description" class="form-control" id="description" placeholder="Task description"></textarea>
       </div>
     </div>
     <div class="form-group" style="display:none">
-      <label for="public" class="col-sm-3 control-label">Share this Task?</label>
+      <label for="public" class="col-sm-3 control-label">Share this Task? </label>
       <div class="col-sm-9">
         <div>
           <label class="radio-inline">
@@ -84,55 +84,33 @@
       </div>
     </div>
     <div class="form-group">
-      <label for="script_runas" class="col-sm-3 control-label">
-        RunAs<br/><small>[optional]</small>
-        <span style="cursor:help" class="glyphicon glyphicon-question-sign"></span>
-      </label>
+      <label for="script_runas" class="col-sm-3 control-label">RunAs </label>
       <div class="col-sm-9">
         <div>
-          <input class="form-control tooltiped"
-          title="Surround the script with something else, eg. sudo. Use '%script%' to include the script. Before execution will be replaced with the script path"
-          type="text"
-          name="script_runas"
-          data-hook="script_runas"
-          placeholder="sudo -u facugon $(%script%)"
-          >
+          <input class="form-control" type="text" name="script_runas" data-hook="script_runas" placeholder="sudo -u facugon $(%script%)">
         </div>
       </div>
     </div>
     <div class="form-group">
-      <label for="script_arguments" class="col-sm-3 control-label">Script Arguments<br/><small>[optional]</small></label>
+      <label for="script_arguments" class="col-sm-3 control-label">Script Arguments </label>
       <div class="col-sm-9">
         <div id="script-arguments-input">
-          <input class="form-control tooltiped" title="You can write a comma separated list of arguments" type="text" name="script_arguments" data-hook="script_arguments" placeholder="--color, --exclude-dir='node_modules'">
+          <input class="form-control" type="text" name="script_arguments" data-hook="script_arguments" placeholder="--color, --exclude-dir='node_modules'">
         </div>
       </div>
     </div>
     <!-- TRIGGER TASK ON EVENT -->
     <div class="form-group">
-      <label for="triggers" class="col-sm-3 control-label">
-        Trigger on Events<br/><small>[optional]</small>
-      </label>
+      <label for="triggers" class="col-sm-3 control-label">Trigger on </label>
       <div class="col-sm-9">
-        <select data-hook="events-container"
-          name="triggers"
-          class="form-control"
-          style="width:100%;"
-          multiple>
-        </select>
+        <select data-hook="events-container" name="triggers" class="form-control" style="width:100%;" multiple> </select>
       </div>
     </div>
     <!-- GRACE TIME FOR CANCELATION -->
     <div class="form-group">
-      <label for="grace_time" class="col-sm-3 control-label">
-        Grace Time (mins)<br/><small>[optional]</small>
-      </label>
+      <label for="grace_time" class="col-sm-3 control-label">Grace Time (mins) </label>
       <div class="col-sm-9">
-        <select name="grace_time"
-          class="form-control tooltiped select"
-          title=""
-          data-hook="grace_time"
-          style="width:100%">
+        <select name="grace_time" class="form-control select" data-hook="grace_time" style="width:100%">
           <option value="0">No wait / No Cancelation</option>
           <option value="300">5</option>
           <option value="600">10</option>

@@ -1,3 +1,5 @@
+"use strict";
+
 function CollectionRenderer (specs) {
   var View = specs.View;
   var container = specs.container;
@@ -52,7 +54,12 @@ var BaseView = Backbone.View.extend({
   initialize:function(options){
     Backbone.View.prototype.initialize.apply(this,arguments);
     _.extend(this,options);
-    if (this.autoRender) this.render();
+
+    this.rendered = false;
+    if (this.autoRender) {
+      //console.warn('do not use this feature anymore!! unexpected behavior');
+      this.render();
+    }
   },
   renderTemplate: function(){
     var html;
@@ -62,10 +69,14 @@ var BaseView = Backbone.View.extend({
       html = this.template;
     }
 
-    this.$el.html( html );
+    this.$el.html(html);
 
-    if (this.container) {
-      this.container.appendChild( this.el );
+    if (this.container&&!this.rendered/** yet **/) {
+      /** then append to the container only once **/
+      this.container.appendChild(this.el);
+    }
+    if (!this.rendered) {
+      this.rendered = true;
     }
 
     return this;
@@ -89,5 +100,21 @@ var BaseView = Backbone.View.extend({
   },
   remove:function(){
     Backbone.View.prototype.remove.apply(this,arguments);
+    this.rendered = false;
+  },
+  appendTo: function(view){
+    this.$el.appendTo(view.$el);
+    this.parent = view;
+    return this;
+  },
+  append: function(view){
+    this.$el.append(view.$el);
+    view.parent = this;
+    return this;
+  },
+  prepend: function(view){
+    this.$el.prepend(view.$el);
+    view.parent = this;
+    return this;
   }
 });

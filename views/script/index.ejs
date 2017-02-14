@@ -1,14 +1,10 @@
 <% block('styles' ,'<link rel="stylesheet" type="text/css" href="/styles/highlight/default.css">') %>
 
-<% block("scripts" , '<script src="/js/ace-editor/ext-modelist.js"></script>') %>
-<% block("scripts" , '<script src="/js/application/scripts.js"></script>') %>
-<% block('scripts' , '<script src="/js/application/tags.js"></script>')%>
-<% block('scripts' , '<script>hljs.initHighlightingOnLoad();</script>') %>
-<% block("scripts" , "<script> window.scripts = " + JSON.stringify(scripts) + ";</script>") %>
+<% block('scripts', '<script> $(document).ready(function(){ new ScriptsPageInit(); new ProfilePageInit(); hljs.initHighlightingOnLoad(); }); </script>') %>
+<% block('scripts' , '<script> window.scripts = ' + JSON.stringify(scripts) + ';</script>') %>
 
 <!-- Main  -->
 <div class="admin-container droptarget">
-
   <div class="js-searchable-box">
     <form>
       <input type="text" placeholder="Find a Script">
@@ -16,28 +12,25 @@
       <button class="search"><i class="glyphicon glyphicon-search"></i></button>
     </form>
   </div>
-
   <div class="admin-panel scripts-admin">
     <h3>Scripts Admin</h3>
     <div>
       <div class="table-header admin">
-        <button class="pull-left tableHeaderIconButton massChecker btn btn-primary simple-btn tooltiped"
-          title="Select all"
-          aria-label="Center Align">
+        <button class="mass-action massChecker btn btn-primary simple-btn tooltiped" title="Select all" aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
         </button>
-        <span class="title panel-item name">Scripts &nbsp; &nbsp; |</span>
 
-        <button class="createScript btn btn-primary simple-btn new-btn tooltiped" data-placement="right" title="Create new script" aria-label="Left Align">
-          <span class="glyphicon glyphicon-plus"></span>
-          New Script
+        <span class="title">Script Actions &nbsp;<i data-hook="help"></i></span>
+        <span class="title separator">|&nbsp;</span>
+
+        <button class="createScript btn btn-primary simple-btn tooltiped" data-placement="right" title="Create new script">
+          <span class="glyphicon glyphicon-plus"></span> New Script
         </button>
-        <button class="pull-right tableHeaderIconButton massDelete btn btn-primary simple-btn tooltiped"
-          title="Delete selected scripts"
-          aria-label="Center Align">
+        <button class="mass-action pull-right massDelete btn btn-primary simple-btn tooltiped" title="Delete selected scripts" aria-label="Center Align">
           <span class="glyphicon glyphicon-trash"></span>
         </button>
       </div>
+
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <% scripts.forEach( function(script, key) { %>
           <%

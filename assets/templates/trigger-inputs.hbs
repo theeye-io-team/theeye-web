@@ -1,30 +1,17 @@
 <div data-hook="triggers">
   <!-- TRIGGER ON EVENTS -->
   <div class="form-group">
-    <label for="triggers" class="col-sm-3 control-label">
-      Trigger on Events<br/><small>[optional]</small>
-    </label>
+    <label for="triggers" class="col-sm-3 control-label"> Trigger on Events </label>
     <div class="col-sm-9">
-      <select data-hook="events-container"
-        name="triggers"
-        class="form-control"
-        style="width:100%;"
-        multiple>
-      </select>
+      <select data-hook="events-container" name="triggers" class="form-control" style="width:100%;" multiple> </select>
     </div>
   </div>
   <!-- /TRIGGER ON EVENTS -->
   <!-- GRACE TIME FOR CANCELATION -->
   <div class="form-group">
-    <label for="grace_time" class="col-sm-3 control-label">
-      Grace Time (mins)<br/><small>[optional]</small>
-    </label>
+    <label for="grace_time" class="col-sm-3 control-label"> Grace Time (mins) </label>
     <div class="col-sm-9">
-      <select name="grace_time"
-        class="form-control tooltiped select"
-        title=""
-        data-hook="grace_time"
-        style="width:100%">
+      <select name="grace_time" class="form-control tooltiped select" title="" data-hook="grace_time" style="width:100%">
         <option value="0">No wait / No Cancelation</option>
         <option value="300">5</option>
         <option value="600">10</option>

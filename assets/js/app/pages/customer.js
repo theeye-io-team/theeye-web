@@ -1,8 +1,19 @@
 /* global bootbox, $searchbox, console, Clipboard */
 
-$(function() {
+var CustomersPageInit = (function() {
 
   var $state = $({});
+
+  new HelpIcon({
+    color:[255,255,255],
+    category:'title_help',
+    text: HelpTexts.titles.customer_page 
+  })
+    .$el
+    .appendTo(
+      $('.table-header.admin span.title i[data-hook=help]')
+    );
+
 
   //CREATE CUSTOMER FORM
   (function create(el){
@@ -71,9 +82,9 @@ $(function() {
         var form = new FormElement($customerForm);
 
         var customer = data.customer,
-          config = customer.config||{elasticsearch:{}};
+          config = customer.config||{};
 
-        customer.elasticsearch = JSON.stringify(config.elasticsearch);
+        customer.elasticsearch = JSON.stringify(config.elasticsearch||{});
         customer.kibana = (config.kibana||'');
 
         form.set(customer);
@@ -111,7 +122,7 @@ $(function() {
       if (!updates) return;
 
       updates.description = data.description;
-      updates.emails = data.emails||[];
+      updates.emails = (data.emails||[]);
 
       jQuery.ajax({
         url: '/customer/' + $customerForm.data('customer-id'),
@@ -140,8 +151,7 @@ $(function() {
       ev.stopPropagation();
 
       bootbox.confirm('The customer will be removed from users (resources and checks will be disabled).<br/>Want to continue?',
-      function(confirmed)
-      {
+      function(confirmed) {
         if(!confirmed) return;
 
         var $delTrigger = $(ev.currentTarget);

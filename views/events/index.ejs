@@ -1,5 +1,5 @@
 <% block('styles', '<link rel="stylesheet" href="/styles/ladda-themeless.min.css">') %>
-<% block('scripts', '<script src="/js/application/events.js"></script>') %>
+<% block('scripts','<script> $(document).ready(function(){ new EventsPageInit(); }); </script>') %>
 
 <div class="admin-container events-container"><!-- MAIN -->
   <div class="js-searchable-box">
@@ -28,6 +28,7 @@
               low             : "icon-info", /* failure state */
               high            : "icon-warn", /* failure state */
               critical        : "icon-fatal", /* failure state */
+              failure         : "icon-fatal", /* failure state */
               updates_stopped : "icon-error",
               getIcon: function (state) {
                 return (this[state.toLowerCase()]||this.unknown);
@@ -40,6 +41,7 @@
                   "low",
                   "high",
                   "critical",
+                  "failure",
                   "updates_stopped"
                 ].indexOf(value);
               },
@@ -50,15 +52,26 @@
                 });
               }
             };
+
             function resourceStateSeverity (resource) {
-              return (resource[(resource.state==='failure')?'failure_severity':'state']).toLowerCase();
+              if (resource.state==='failure') {
+                var severity = resource.failure_severity;
+                if (!severity) { // failure_severity is undefined, null, empty..
+                  return 'failure';
+                } else {
+                  return severity.toLowerCase();
+                }
+              } else {
+                if (!resource.state) return 'unknown';
+                return resource.state.toLowerCase();
+              }
             }
 
           indexedResources.forEach(function(resource){
             var overallStateSeverity = resourceStateSeverity(resource);
             var tags = [
               resource.id,
-              resource.description,
+              resource.name,
               resource.failure_severity,
               resource.name,
               "hostname=" + resource.hostname,
@@ -73,7 +86,6 @@
                 overallStateSeverity = resourceSeverity;
               }
               tags.push(subresource.id);
-              tags.push(subresource.description);
               tags.push(subresource.name);
               tags.push(subresource.hostname);
               tags.push(subresource.type);
@@ -96,9 +108,9 @@
                 <h4 class="panel-title <%= resource.type %>">
                   <span class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= resource.id %>" aria-expanded="false" aria-controls="collapse<%= resource.id %>">
                     <div class="panel-title-content">
-                      <span class="panel-item name" id="<%= resource.id %>"><%= resource.description %><small> > <%= resource.type %></small></span>
+                      <span class="panel-item name" id="<%= resource.id %>"><%= resource.name %><small> > <%= resource.type %></small></span>
                       <span class="panel-item icons">
-                        <button data-search="<%= resource.description %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
+                        <button data-search="<%= resource.name %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search">
                           <span class="glyphicon glyphicon-search"></span>
                         </button>
                         <a title="Workflow"
@@ -197,7 +209,6 @@
           <% tasks.forEach(function(task){ %>
             <% var tags = [
               'task',
-              task.description,
               task.name,
               'task='+ task.id,
               'host='+ task.hostname,

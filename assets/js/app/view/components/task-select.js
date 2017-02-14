@@ -10,7 +10,7 @@ var TaskSelect = BaseView.extend({
   className:'form-group form-horizontal',
   template: Templates['assets/templates/components/task-select.hbs'],
   initialize:function(options){
-    this.label = options.label||'Tasks';
+    this.label = (options.label||'Copy From');
 
     BaseView.prototype.initialize.apply(this,arguments);
 
@@ -34,6 +34,11 @@ var TaskSelect = BaseView.extend({
   render:function(){
     this.renderTemplate();
 
+    this.help = new HelpIcon({
+      text: HelpTexts.task.copy
+    });
+    this.help.$el.appendTo(this.find('label'));
+
     var options = { id:'id', text:'text' },
       data = Select2Data.PrepareIdValueData(
         this.collection.map(function(t){
@@ -55,6 +60,7 @@ var TaskSelect = BaseView.extend({
   },
   remove:function(){
     BaseView.prototype.remove.apply(this);
+    this.help.remove();
     this.off('change');
   }
 });

@@ -1,5 +1,5 @@
 /* global Clipboard */
-$('document').ready(function(){
+var ProfilePageInit = (function(){
 
   new Clipboard('.clipboard-btn');
   new Clipboard('.clipboard-token-btn');

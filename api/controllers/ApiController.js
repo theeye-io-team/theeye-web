@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  *
  * API Proxy controller
@@ -51,7 +53,10 @@ module.exports = {
       route: route,
       query: req.query,
       body: req.body,
-      failure: (error, apiRes) => res.send(error.statusCode, error),
+      failure: (error, apiRes) => {
+        sails.log.debug(error);
+        res.send(error.statusCode, error)
+      },
       success: (body, apiRes) => res.json(body),
     });
   },

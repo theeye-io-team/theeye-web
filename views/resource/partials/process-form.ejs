@@ -3,24 +3,24 @@
     <input data-hook="monitor_type" type="hidden" name="monitor_type" value="process"></input>
     <input data-hook="resource_id" type="hidden" name="resource_id" value=""></input>
     <div class="form-group">
-      <label for="description" class="col-sm-3 control-label">Give me a Name</label>
+      <label for="name" class="col-sm-3 control-label"> Name * </label>
       <div class="col-sm-9">
-        <input data-hook="description" type="text" name="description" class="form-control" placeholder="eg: Nginx Service Check"></input>
+        <input data-hook="name" type="text" name="name" class="form-control" placeholder="eg: Nginx Service Check"></input>
       </div>
     </div>
     <div class="form-group">
-      <label for="hosts_id" class="col-sm-3 control-label">Where should I run?</label>
+      <label for="hosts" class="col-sm-3 control-label"> Target Host * </label>
       <div class="col-sm-9 resource-host">
-        <select multiple data-hook="hosts_id" name="hosts_id" class="form-control">
+        <select multiple data-hook="hosts" name="hosts" class="form-control">
           <% hosts.forEach(function(h) { %>
             <option value="<%=h.id%>"><strong><%=h.hostname%></strong></option>
           <% }); %>
         </select>
-        <input name="host_id" value="" class="hiddenHostInput">
+        <!-- <input name="host_id" value="" class="hiddenHostInput"> -->
       </div>
     </div>
     <div class="form-group">
-      <label for="looptime" class="col-sm-3 control-label">Check Interval (mins)</label>
+      <label for="looptime" class="col-sm-3 control-label"> Check Interval (mins) * </label>
       <div class="col-sm-9">
         <select data-hook="looptime" name="looptime" class="form-control">
           <option value="0" disabled selected><strong>select check interval</strong></option>
@@ -33,11 +33,11 @@
 
     <!-- raw_search INPUT -->
     <div data-hook="raw_search-section" class="form-group">
-      <label for="raw_search" class="col-sm-3 control-label">What should I search for? <br/></label>
+      <label for="process" class="col-sm-3 control-label"> Process * </label>
       <div class="col-sm-9">
         <div class="input-group">
           <input data-hook="raw_search" type="text" name="raw_search" class="form-control" placeholder="eg: apache2 -k start Or termsvcs ">
-          <label class="input-group-addon">
+          <label class="input-group-addon" for="is_regexp">
             <!-- initialized not checked -->
             RegExp <input type="checkbox" name="is_regexp" value="true">
             <!-- <span data-hook="is_regexp" data-value="false" class="glyphicon glyphicon-unchecked"></span> -->
@@ -48,10 +48,10 @@
     <!-- /raw_search INPUT -->
 
     <div class="form-group">
-      <label for="tags" class="col-sm-3 control-label">Tags <small>[optional]</small></label>
+      <label for="tags" class="col-sm-3 control-label"> Tags </label>
       <div class="col-sm-9">
         <div>
-          <select class="form-control tooltiped select" title="" name="tags" data-hook="tags" multiple style="width:100%">
+          <select class="form-control select" name="tags" data-hook="tags" multiple style="width:100%">
           </select>
         </div>
       </div>

@@ -28,6 +28,11 @@ var TagsSelect = (function(){
     render:function(){
       this.renderTemplate();
 
+      this.help = new HelpIcon({
+        container: this.find('label'),
+        text: HelpTexts.tags
+      });
+
       this.find('select').select2({
         placeholder: 'Users',
         data: Select2Data.PrepareTags( this.collection ),
@@ -36,6 +41,10 @@ var TagsSelect = (function(){
 
       this.find('.tooltiped').tooltip();
     },
+    remove:function(){
+      BaseView.prototype.remove.apply(this,arguments);
+      this.help.remove();
+    }
   });
 
   // module.exports = View

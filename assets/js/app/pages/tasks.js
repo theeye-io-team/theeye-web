@@ -1,10 +1,19 @@
 /* global Select2Data, Tags, FormElement, bootbox, humanInterval, lodash, $searchbox, ScraperModal */
-$(function(){
+var TasksPageInit = (function(){
 
   window.scriptState = window.scriptState ? window.scriptState : $({});
-  var $state = window.scriptState;
 
   var fetchSuccess = lodash.after(2,initialize);
+
+  new HelpIcon({
+    color:[255,255,255],
+    category:'title_help',
+    text: HelpTexts.titles.task_page 
+  })
+    .$el
+    .appendTo(
+      $('.table-header.admin span.title i[data-hook=help]')
+    );
 
   var _users = new App.Collections.Users();
   _users.fetch({
@@ -208,7 +217,6 @@ $(function(){
       usersSelect.render();
 
       var taskSelect = new TaskSelect({
-        label: 'Copy from task',
         collection: _tasks.filter(function(t){
           return t.get('type') == 'script';
         })
@@ -247,26 +255,15 @@ $(function(){
         $taskForm.submit();
       });
 
-      $state.on('script_uploaded', function(ev, script) {
-        if(location.pathname != '/admin/task') {
-          //restrict the event function to the /admin/task layout
-          return;
-        }
+      window.scriptState.on('script_uploaded', function(ev, script) {
         alert('Script succesfully uploaded','Script upload', function() {
-          $('[data-hook=script_id]').each(function(index, element){
-            if($(element).val()) {
-              return;
-            }
-            $(element).append($('<option>', {
-              value: script.id,
-              text: script.filename
-            }));
-            $(element).val(script.id);
-            $(element).trigger('change');
-          });
-
-          $('#script-modal').modal('hide');
-          $('body').addClass('modal-open');
+          var $scriptIdSelect = $('select[data-hook=script_id]');
+          //remove previous script option
+          $('option[value='+script.id+']').remove();
+          $scriptIdSelect.append('<option value="'+script.id+'">'+script.filename+'</option>');
+          $scriptIdSelect.val(script.id);
+          $scriptIdSelect.trigger('change');
+          $('.modal#script-modal').modal('hide');
         });
       });
 
@@ -846,4 +843,32 @@ $(function(){
     // END SCRAPER
     //
   }
+
+  (function initFormsHelp(){
+		// edit form
+    $editForm = $("form#editTaskForm");
+    $editForm.find('label[for=name]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.task.name }).$el );
+		$editForm.find('label[for=host]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.host }).$el );
+		$editForm.find('label[for=script_select]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.scripts }).$el );
+		$editForm.find('label[for=tags]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.tags }).$el );
+		$editForm.find('label[for=description]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.description }).$el );
+		//$editForm.find('label[for=public]').append( new HelpIcon({ category:'task_edit_form', text: '' }).$el );
+		$editForm.find('label[for=script_runas]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.script_runas }).$el );
+		$editForm.find('label[for=script_arguments]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.script_arguments }).$el );
+		$editForm.find('label[for=triggers]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.triggers }).$el );
+		$editForm.find('label[for=grace_time]').append( new HelpIcon({ category:'task_edit_form', text: HelpTexts.grace_time }).$el );
+
+		// create form
+		$createForm = $('form#createTaskForm');
+    $createForm.find('label[for=name]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.task.name }).$el );
+		$createForm.find('label[for=host]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.host }).$el );
+		$createForm.find('label[for=script_select]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.scripts }).$el );
+		$createForm.find('label[for=tags]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.tags }).$el );
+		$createForm.find('label[for=description]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.description }).$el );
+		//$createForm.find('label[for=public]').append( new HelpIcon({ category:'task_create_form', text: '' }) );
+		$createForm.find('label[for=script_runas]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.script_runas }).$el );
+		$createForm.find('label[for=script_arguments]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.script_arguments }).$el );
+		$createForm.find('label[for=triggers]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.triggers }).$el );
+		$createForm.find('label[for=grace_time]').append( new HelpIcon({ category:'task_create_form', text: HelpTexts.grace_time }).$el );
+	})();
 });

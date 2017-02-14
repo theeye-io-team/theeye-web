@@ -9,12 +9,13 @@
  * 		https://github.com/gruntjs/grunt-contrib-uglify
  *
  */
+var productionJS  = require('../pipeline').productionJSFilename;
 module.exports = function(grunt) {
 
 	grunt.config.set('uglify', {
 		dist: {
-			src: ['.tmp/public/concat/production.js'],
-			dest: '.tmp/public/min/production.js'
+			src: ['.tmp/public/concat/' + productionJS],
+			dest: '.tmp/public/min/' + productionJS
 		}
 	});
 

@@ -1,7 +1,8 @@
 <div class="resource-container panel panel-default js-searchable-item"
   data-tags="{{ model.attributes.formatted_tags }}">
   <div class="panel-heading" role="tab">
-    <h4 class="panel-title {{ model.attributes.type }}">
+    <h4 data-hook="monitor-icon" class="panel-title-icon"><i></i></h4>
+    <h4 class="panel-title">
       <span class="collapsed"
         data-toggle="collapse"
         data-parent="#monitor-accordion"
@@ -10,29 +11,29 @@
         aria-controls="collapse{{ model.attributes.id }}">
         <div class="panel-title-content">
           <span class="panel-item name">
-            {{ model.attributes.description }}
+            {{ model.attributes.name }}
             <small> > {{ model.attributes.type }}</small>
           </span>
           <span class="panel-item icons">
             <section data-hook="monitor-icons-block" style="float:right;">
               <button data-hook="search"
-                data-search="{{ model.attributes.description }}"
+                data-search="{{ model.attributes.name }}"
                 class="btn btn-icon-image resource-search">
-                <span class="glyphicon glyphicon-search"></span>
+                <i class="fa fa-search" aria-hidden="true"></i>
               </button>
-              <button title="Workflow"
-                data-hook="workflow"
-                class="tooltiped btn-icon-image flowchart-icon">
+              <button data-hook="workflow" class="btn btn-icon-image tooltiped" title="Workflow">
+                <i class="fa fa-sitemap" aria-hidden="true"></i>
               </button>
               <button data-hook="stats" class="btn btn-icon-image tooltiped" title="Stats">
-                <span class="glyphicon glyphicon-stats"></span>
+                <i class="fa fa-bar-chart" aria-hidden="true"></i>
               </button>
               <button data-hook="edit" class="btn btn-icon-image tooltiped" title="Edit monitors">
-                <span class="glyphicon glyphicon-edit"></span>
+                <i class="fa fa-edit" aria-hidden="true"></i>
               </button>
             </section>
             <div class="tooltiped state-icon state-resource-container">
-              <span data-hook="state-icon" class="{{ stateIcon }}" title="{{ model.attributes.state }}">
+              <!-- state_severity is a model object derived property, not an attribute -->
+              <span data-hook="state-icon" class="{{ stateIcon }}" title="{{ model.state_severity }}">
               </span>
             </div>
           </span>

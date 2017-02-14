@@ -4,7 +4,7 @@
  *
  * @author Facugon
  * @module DashboardPage
- * @namespace Components
+ * @namespace Views
  *
  */
 
@@ -83,7 +83,7 @@ function DashboardPage () {
   var PanelView = BaseView.extend({
     tagName:'section',
     className:'dashboard-panel',
-    template:Templates['assets/templates/dashboard/panel.hbs'],
+    template:Templates['assets/templates/dashboard-page/panel.hbs'],
     title:'no title',
     name:'noname'
   });
@@ -96,7 +96,7 @@ function DashboardPage () {
   var SubmonitorView = BaseView.extend({
     tagName:'tr',
     className:'submonitoRow',
-    template:Templates['assets/templates/dashboard/submonitor-row.hbs'],
+    template:Templates['assets/templates/dashboard-page/submonitor-row.hbs'],
     events:{
       'click [data-hook=last_event]':'onClickLastEvent'
     },
@@ -119,12 +119,10 @@ function DashboardPage () {
   });
 
   /**
-   *
    * extend submonitors view, change table format and data with template.
-   *
    */
   var SubmonitorGroupView = SubmonitorView.extend({
-    template:Templates['assets/templates/dashboard/submonitor-group-row.hbs'],
+    template:Templates['assets/templates/dashboard-page/submonitor-group-row.hbs'],
   });
 
   /**
@@ -134,7 +132,7 @@ function DashboardPage () {
    */
   var LastEventView = BaseView.extend({
     autoRender: true,
-    template: Templates['assets/templates/dashboard/monitor-last-event.hbs'],
+    template: Templates['assets/templates/dashboard-page/monitor-last-event.hbs'],
     render: function(){
       var self = this;
       BaseView.prototype.render.apply(this, arguments);
@@ -164,15 +162,15 @@ function DashboardPage () {
    *
    */
   var MonitorView = BaseView.extend({
-    template: Templates['assets/templates/dashboard/monitor-row.hbs'],
-    className:'monitorRow',
-    events:{
+    template: Templates['assets/templates/dashboard-page/monitor-row.hbs'],
+    className: 'monitorRow',
+    events: {
       'click button[data-hook=search]':'onClickSearch',
       'click button[data-hook=workflow]':'onClickWorkflow',
       'click button[data-hook=stats]':'onClickStats',
       'click button[data-hook=edit]':'onClickEdit',
     },
-    onClickSearch:function(event){
+    onClickSearch: function(event){
       event.stopPropagation();
       event.preventDefault();
 
@@ -182,7 +180,7 @@ function DashboardPage () {
 
       return false;
     },
-    onClickWorkflow:function(event){
+    onClickWorkflow: function(event){
       event.stopPropagation();
       event.preventDefault();
 
@@ -190,7 +188,7 @@ function DashboardPage () {
 
       return false;
     },
-    onClickStats:function(event){
+    onClickStats: function(event){
       event.stopPropagation();
       event.preventDefault();
 
@@ -198,7 +196,7 @@ function DashboardPage () {
 
       return false;
     },
-    onClickEdit:function(event){
+    onClickEdit: function(event){
       event.stopPropagation();
       event.preventDefault();
 
@@ -206,26 +204,61 @@ function DashboardPage () {
 
       return false;
     },
-    initialize:function(){
+    initialize: function(){
       this.listenTo(this.model.get('submonitors'),'change',this.updateStateIcon);
     },
-    updateStateIcon:function(){
-      var highSeverityMonitor = this.model
-        .get('submonitors')
-        .reduce(function(worstMonitor,monitor){
-          if (!worstMonitor) return monitor;
-          var m1 = monitor.stateOrder();
-          var m2 = worstMonitor.stateOrder();
-          return (m1>m2)?monitor:worstMonitor;
-        },null);
+    updateStateIcon: function(){
+      var submonitors = this.model.get('submonitors');
+      if (submonitors.length!==0) {
+        var highSeverityMonitor = submonitors
+          .reduce(function(worstMonitor,monitor){
+            if (!worstMonitor) return monitor;
+            var m1 = monitor.stateOrder();
+            var m2 = worstMonitor.stateOrder();
+            return (m1>m2) ? monitor : worstMonitor;
+          },null);
 
-      this.stateIcon = highSeverityMonitor.stateIcon();
-      this.state = highSeverityMonitor.get('state');
-      this.queryByHook('state-icon')[0].className = this.stateIcon;
+        this.stateIcon = highSeverityMonitor.stateIcon();
+        this.state = highSeverityMonitor.get('state');
+        var stateIconEl = this.queryByHook('state-icon')[0];
+        stateIconEl.className = this.stateIcon;
+        stateIconEl.title = highSeverityMonitor.state_severity;
 
-      this.trigger('change:stateIcon',this);
+        this.trigger('change:stateIcon',this);
+      } else {
+        console.warn('this group of monitors is empty, there is nothing to show');
+      }
     },
-    render:function(){
+    setMonitorIcon: function(){
+      var icon = 'circle fa', type = this.model.get('type');
+      switch (type) {
+        case 'scraper':
+          icon += ' fa-cloud';
+          break;
+        case 'script':
+          //icon += ' fa-terminal';
+          icon += ' fa-code';
+          break;
+        case 'host':
+          icon += ' fa-server';
+          //icon += ' fa-home';
+          break;
+        case 'process':
+          icon += ' fa-cogs';
+          //icon += ' fa-cog';
+          break;
+        case 'file':
+          icon += ' fa-file-o';
+          break;
+        case 'group':
+          break;
+      }
+
+      icon += ' ' + type + '-color'; 
+
+      this.find('h4[data-hook=monitor-icon] i')[0].className = icon;
+    },
+    render: function(){
       BaseView.prototype.render.apply(this, arguments);
       this.renderCollection(
         this.model.get('submonitors'),
@@ -233,6 +266,7 @@ function DashboardPage () {
         this.queryByHook('submonitors-container')[0]
       );
       this.updateStateIcon();
+      this.setMonitorIcon();
     }
   });
 
@@ -270,7 +304,7 @@ function DashboardPage () {
    */
   var TaskView = BaseView.extend({
     className:'taskRow',
-    template: Templates['assets/templates/dashboard/task-row.hbs'],
+    template: Templates['assets/templates/dashboard-page/task-row.hbs'],
     events:{
       'click button[data-hook=workflow]':'onClickWorkflow',
       'click button[data-hook=edit]':'onClickEdit',
@@ -333,8 +367,7 @@ function DashboardPage () {
 
       window.location = uri.toString();
     },
-    template:'<select name="tags" class="tags" ' +
-      ' style="width:100%;" multiple></select>',
+    template:'<select name="tags" class="tags" style="width:100%;" multiple></select>',
     events:{
       'change select':'onChangeSelect'
     },
@@ -377,9 +410,9 @@ function DashboardPage () {
    * all the other views render inside this
    *
    */
-  var Index = BaseView.extend({
+  var IndexView = BaseView.extend({
     autoRender: true,
-    template: Templates['assets/templates/dashboard/page.hbs'],
+    template: Templates['assets/templates/dashboard-page/page.hbs'],
     container: $('[data-hook=page-container]')[0],
     events:{
       'click [data-hook=up-and-running] i':'hideUpAndRunning',
@@ -495,11 +528,14 @@ function DashboardPage () {
     checkMonitors: function(){
       var self = this;
       var failing = this.monitors.filter(function(monitor){
-        // check if monitor is in the group
-        var model = self.monitorGroups.get(monitor);
-        if (!model) return false;
 
-        return monitor.isFailing()||monitor.submonitorsFailing();
+        // check if monitor is in a group
+        var group = self.monitorGroups.find(function(group){
+          var sm = group.attributes.submonitors.get(monitor.get('id'));
+          return sm !== undefined;
+        });
+        if (!group) return false;
+        return monitor.hasError()||monitor.submonitorsWithError();
       });
 
       if (failing.length>0) {
@@ -520,9 +556,9 @@ function DashboardPage () {
     foldMonitors: function(){
       var self = this;
       this.monitorRows.views.forEach(function(view){
-        var monitor = view.model;
-        var isFailing = monitor.isFailing()||monitor.submonitorsFailing();
-        if (!isFailing) {
+        var group = view.model; // model is a monitor model or monitoGroup model
+        var hasError = group.hasError()||group.submonitorsWithError();
+        if (!hasError) {
           view.$el.appendTo(self.monitorsFolding.$container);
         } else {
           view.$el.prependTo(self.$monitorsPanel);
@@ -583,6 +619,18 @@ function DashboardPage () {
     return groupedMonitors;
   }
 
+  var MonitorsGroup = Backbone.Model.extend({
+    hasError : function(){
+      return false;
+    },
+    submonitorsWithError: function(){
+      return this.get('submonitors')
+        .filter(function(monitor){
+          return monitor.hasError();
+        }).length > 0;
+    },
+  });
+
   function groupByTags (monitors,tags) {
     if (!Array.isArray(tags)||tags.length===0) {
       return monitors;
@@ -590,28 +638,29 @@ function DashboardPage () {
 
     var groups = [];
     tags.forEach(function(t){
-      groups.push({
-        id: uid(),
+      groups.push(new MonitorsGroup({
         tags: [t,'group'],
         type: 'group',
         name: t.toLowerCase(),
         description: t,
         submonitors: new Backbone.Collection()
-      });
+      }));
     });
 
     monitors.forEach(function(monitor){
-      var ctags = monitor.get('tags');
+      var ctags = monitor.get('formatted_tags');
       if (!Array.isArray(ctags)||ctags.length===0) {
         return;
       }
 
       ctags.forEach(function(tag){
+        if (!tag) return;
         var ltag = tag.toLowerCase();
         if (tags.indexOf(ltag) !== -1) {
-          lodash.find(groups,function(g){
-            return g.name == ltag 
-          }).submonitors.add(monitor);
+          var group = lodash.find(groups,function(g){
+            return g.get('name') == ltag 
+          });
+          group.get('submonitors').add(monitor);
         } else {
           // do not group nor show. ignore
         }
@@ -669,7 +718,7 @@ function DashboardPage () {
       monitors = new App.Collections.Monitors();
       monitors.once('sync',function(){
         var groups = groupByTags(attachToHost(monitors),tagsToGroup);
-        new Index({
+        new IndexView({
           monitorGroups: groups,
           monitors: monitors,
           tasks: null,
@@ -681,7 +730,7 @@ function DashboardPage () {
     } else {
       synced = lodash.after(2,function(){
         var groups = groupByTags(attachToHost(monitors),tagsToGroup);
-        new Index({
+        new IndexView({
           monitorGroups: groups,
           monitors: monitors,
           tasks: tasks,

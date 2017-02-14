@@ -26,12 +26,14 @@ var jsFilesToInject = [
 	// Dependencies like sails.io.js, jQuery, or Angular
 	// are brought in here
 	//'js/dependencies/**/*.js',
+  'js/ace-editor/ace.js',
+  'js/ace-editor/ext-modelist.js',
 
 	// All of the rest of your client-side js files
 	// will be injected here in no particular order.
 	'js/*.js',
 	//'js/ace-editor/ace.js',
-  'js/app/**/*.js'
+  'js/app/**/*.js',
 ];
 
 
@@ -68,3 +70,7 @@ module.exports.jsFilesToInject = jsFilesToInject.map(function(path) {
 module.exports.templateFilesToInject = templateFilesToInject.map(function(path) {
 	return 'assets/' + path;
 });
+
+var hash = Date.now();
+module.exports.productionJSFilename  = 'production.' + hash + '.js';
+module.exports.productionCSSFilename = 'production.' + hash + '.css';

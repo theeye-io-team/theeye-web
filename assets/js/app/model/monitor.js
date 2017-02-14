@@ -7,6 +7,7 @@ var stateIcons = {
   low             : "icon-info", /* failure state */
   high            : "icon-warn", /* failure state */
   critical        : "icon-fatal", /* failure state */
+  failure         : "icon-fatal", /* failure state */
   updates_stopped : "icon-error",
   getIcon: function (state) {
     var icon = (this[state.toLowerCase()]||this.unknown);
@@ -20,6 +21,7 @@ var stateIcons = {
       "low",
       "high",
       "critical",
+      "failure", // when failure_severity is not set use failure
       "updates_stopped"
     ].indexOf(value);
   },
@@ -42,9 +44,23 @@ var stateIcons = {
 window.App||(window.App={});
 window.App.Models||(window.App.Models={});
 window.App.Models.Monitor = BaseModel.extend({
-  urlRoot:'/api/resource',
-  parse:function(response){
+  urlRoot: '/api/resource',
+  initialize: function(options){
+    Object.defineProperty(this,'state_severity',{
+      get:function(){
+        return this.stateSeverity();
+      }
+    });
+    Object.defineProperty(this,'formatted_last_update',{
+      get:function(){
+        return moment(this.get('last_update'))
+          .format('MMMM Do YYYY, h:mm:ss a');
+      }
+    });
+  },
+  parse: function(response){
     if (Array.isArray(response)) {
+      if (response.length===0) return {};
       response = response[0];
     }
     var resource = (response.resource||response);
@@ -58,7 +74,7 @@ window.App.Models.Monitor = BaseModel.extend({
 
     var tags = [
       'monitor', 
-      (resource.description||resource.name),
+      resource.name,
       resource.hostname,
       resource.type,
       resource.state,
@@ -74,10 +90,21 @@ window.App.Models.Monitor = BaseModel.extend({
       last_update_formated: last_update_formated
     });
   },
+  /**
+   * Based on resource state and its failure severity returns its severity state
+   * If the resource is failing, resturns the failure severity instead.
+   * @return String
+   */
   stateSeverity: function(){
-    var state = this.get('state') ,
-      severity = this.get('failure_severity');
-    return (state==='failure')?(severity||'failure').toLowerCase():state;
+    var state = this.get('state');
+    var severity = this.get('failure_severity');
+
+    if (state==='failure') {
+      if (!severity) return 'failure';
+      else return severity.toLowerCase();
+    } else {
+      return state.toLowerCase();
+    }
   },
   stateOrder: function(){
     return stateIcons.indexOf(this.stateSeverity());
@@ -85,15 +112,21 @@ window.App.Models.Monitor = BaseModel.extend({
   stateIcon: function(){
     return stateIcons[this.stateSeverity()];
   },
-  isFailing: function(){
-    var state = this.get('state');
-    return state==='failure'||state==='updates_stopped';
+  hasError: function(){
+    return this.isFailing()||this.isNotReporting();
   },
-  submonitorsFailing: function(){
-    return this.get('submonitors')
-      .filter(function(monitor){
-        return monitor.isFailing();
-      }).length > 0;
+  isFailing: function(){
+    return this.get('state')==='failure';
+  },
+  isNotReporting: function(){
+    return this.get('state')==='updates_stopped';
+  },
+  submonitorsWithError: function(){
+    var submons = this.get('submonitors');
+    if (!submons) return null;
+    return submons.filter(function(monitor){
+      return monitor.hasError();
+    }).length > 0;
   },
   createClone: function(props,options){
     var resource = this,
@@ -146,7 +179,7 @@ window.App.Collections.Monitors = Backbone.Collection.extend({
    */
   tagsUnique:function(){
     var tags = this.reduce(function(tags,monitor){
-      monitor.get('tags').forEach(function(tag){
+      monitor.get('formatted_tags').forEach(function(tag){
         if (tags.indexOf(tag)==-1) {
           tags.push(tag);
         }

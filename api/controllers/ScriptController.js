@@ -54,8 +54,7 @@ module.exports = {
    * Edit script
    * PUT /script/:id
    */
-  update: function(req, res)
-  {
+  update: function(req, res) {
     var params = req.params.all();
     var supervisor = req.supervisor;
 
@@ -107,8 +106,7 @@ module.exports = {
     var params = req.params.all();
     var supervisor = req.supervisor;
 
-
-    var str = new Buffer(params.script, 'base64').toString('ascii') ;
+    var str = new Buffer(params.script,'base64').toString('ascii') ;
     var source = decodeURIComponent(escape(str));
 
     var fname = '/tmp/' + req.user.id + '_' + Date.now();

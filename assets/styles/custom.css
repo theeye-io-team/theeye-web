@@ -12,6 +12,8 @@ a:-webkit-any-link {
   cursor: auto;
 }
 
+h1,h2,h3,h4 { font-size: inherit; }
+
 p { text-align: justify; max-width: 700px; }
 
 pre {
@@ -50,7 +52,7 @@ pre {
 .statsContainer h3 { color: #EEE; }
 
 #psaux-container #psaux-search { margin-bottom: 20px; }
-#psaux-div { height:400px; overflow:auto; }
+#psaux-div { height:400px; overflow:auto; margin-bottom:20px; }
 #psaux-table {color:#304269; font-family: monospace; }
 #psaux-table th[data-sort]{ cursor:pointer; }
 
@@ -325,13 +327,19 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 .admin-container .panel-collapse .btn-stats { float:right; margin-top:-12px; }
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body .fields {width:100%;clear:both;}
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body .fields>.field {width:50%;float:left;}
-.admin-container .table-header {height:50px; padding:0 10px 0 10px;}
-.admin-container .table-header span.title {padding:10px 1%; padding-left:0; font-size:18px;font-weight:700;color:#fff}
+
+.admin-container .table-header.admin {height:50px; padding:10px;}
+.admin-container .table-header.admin span.title,
+.admin-container .table-header.admin button,
+.admin-container .table-header.admin div {float:left;}
+
+.admin-container .table-header.admin span.title {font-weight: bold;padding: 6px 12px;}
+.admin-container .table-header.admin button.mass-action {width:40px;}
+
 .admin-container .panel-heading {}
 .admin-container .panel-heading .actions label {font-size:20px; text-align:center;}
 .admin-container .panel-heading .name,
 .admin-container .panel-heading .hostname {white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.admin-container .table-header span.title {float:left; width:auto;}
 .admin-container .panel-heading .panel-item.name {float:left; width:50%; padding:0px 5px 0 5px; line-height: 28px}
 .admin-container .panel-heading .panel-item.icons {float:right; text-align:right; padding:0;}
 .admin-container .panel-heading .panel-item.icons .host-menu.dropdown {
@@ -406,7 +414,7 @@ ol.list-group.tasks { color:#34495E }
   .loginBox {width:35%}
 }
 
-::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar{width:8px;height:8px;}
 ::-webkit-scrollbar-button:start:decrement,#doc ::-webkit-scrollbar-button:end:increment{display:block;height:0;background-color:transparent;}
 ::-webkit-scrollbar-track-piece{background-color:rgba(0, 0, 0, 0.1);-webkit-border-radius:0;-webkit-border-bottom-right-radius:8px;-webkit-border-bottom-left-radius:8px;}
 ::-webkit-scrollbar-thumb:vertical{height:50px;background-color:rgba(0, 0, 0, 0.5);-webkit-border-radius:8px;}
@@ -456,7 +464,7 @@ button.bulkRunner {
 button.rowSelector-not,
 button.rowSelector {
   float: left;
-  width: 6%;
+  width: 40px;
   max-width: 46px;
 }
 
@@ -500,6 +508,7 @@ span.selectorIcon.glyphicon-check {
 .events-panel h4.panel-title.process { background-image: url('/images/The-eye-icons-30.png'); }
 .events-panel h4.panel-title.script { background-image: url('/images/The-eye-icons-18.png'); }
 .events-panel h4.panel-title.task { background-image: url('/images/The-eye-icons-27.png'); }
+.events-panel h4.panel-title.file { background-image: url('/images/files.png'); }
 .events-panel h3 { height: 40px; line-height: 28px;/* h3 inherits a top/bottom padding of 6 */ }
 
 .events-panel .panel-item.icons .icon-edit,
@@ -707,3 +716,90 @@ a.flowchart-icon {
   right: -9px;
   border-radius: 7px;
 }
+
+
+/* new styles stats */
+.breadcrumbs {background:#23324c;margin-bottom:30px}
+.breadcrumbs h4 {display:inline-block;margin-top:15px}
+.breadcrumbs .back {font-size:30px;color:#fff;float:left}
+.breadcrumbs .item-icon {border-radius:50%;background:#5bc4e8;color:#fff;text-align:center;width:26px;height:26px;line-height:26px;float:left;margin:10px 20px;font-size:11px}
+.cyan-progress {background:#158df9}
+.orange-progress {background:#ff8f43}
+.green-progress {background:#06b777}
+.red-progress {background:#f94b4b}
+.pink-progress {background:#f73c89}
+.stats-icon-container {position:relative;padding-left:60px}
+.stats-icon-container .icons {position:absolute;top:0;right:0}
+.stats-icon-container .icons span {margin-left:15px;display:inline-block;width:25px;height:25px;color:#fff;background:#192435;text-align:center;border-radius:50%;line-height:24px;font-size:12px;cursor:pointer}
+.stats-icon-container .icons span.ok {background:#50d841}
+.stats-icon-container .icons span.error {background:#d60922}
+.stats-icon-container .stats-icon {position:absolute;top:0;left:0px;width:38px;height:38px;text-align:center;line-height:38px;color:#fff;background:#ea7526;border-radius:50%;font-size:24px}
+.stats-icon-container h3 {margin:0;font-size:18px}
+.stats-icon-container h4 {margin-top:0;font-size:14px}
+.stats-icon-container small {color:#c4c4c4}
+.stats-icon-container p {display:inline-block;margin:0;font-size:0.9em}
+.disk-usage .progress {height:24px;margin-bottom:0}
+.disk-usage hr {border-bottom:1px solid #1f2b43;margin:10px 0}
+.disk-usage h3 {text-transform:uppercase;font-weight:normal;font-size:18px;margin-bottom:30px}
+.disk-usage h4 {font-size:18px;font-weight:normal;margin:0}
+#psaux-search button, #psaux-search input {background:none;border:none;box-shadow:none;font-size:21px;border-bottom:1px solid #0e151e;border-radius:0}
+#psaux-search input {color:#fff;padding-left:0;font-size:18px}
+#psaux-search button {height:34px;padding:0;color: #0e151e}
+#psaux-search ::-webkit-input-placeholder {color: #0e151e}
+#psaux-search :-moz-placeholder {color: #0e151e}
+#psaux-search ::-moz-placeholder {color: #0e151e}
+#psaux-search :-ms-input-placeholder {color: #0e151e}
+#psaux-container h3 {text-transform:uppercase;font-size:18px;margin-top:0}
+#psaux-table th {background:#0e151e;color:#fff;border-right:1px solid #fff;font-weight:normal;text-transform:uppercase;text-align:center;border-bottom:0}
+#psaux-table {background:#fff}
+.main-stats, .disk-usage {float:left;width:100%}
+.disk-usage {margin-top:20px}
+.disk-usage .progress .progress-bar, .vertical span {font-size:16px}
+.progress {background:none;box-shadow:none;border-radius:0}
+
+.progress-bar-vertical {width:50px; min-height:100px; display:flex; align-items:flex-end; margin: 0 20px; float:left; position:relative}
+.progress-bar-vertical .progress-bar {width:100%; height:0; font-size:16px}
+.progress-bar-vertical span {top:-20px;position:absolute;left:0;width:100%}
+.progress-bar-vertical {overflow:visible}
+.progress-bar-vertical .progress-bar {position:relative}
+
+.main-stats .pull-left {position:relative}
+.main-stats .pull-left .title {position:absolute;bottom:-30px;left:0;width:100%;text-align:center;font-weight:bold}
+.main-stats {background:url('/images/bg-stats.png');height:180px;padding:80px 0 0;margin:30px 0}
+
+@media all and (max-width: 480px) {
+  .progress-bar-vertical {margin: 0 5px}
+}
+@media all and (max-width: 991px) and (min-width: 768px) {
+  .progress-vertical-item span.title {bottom:-90px}
+}
+
+@media all and (max-width: 1199px) and (min-width: 992px) {
+  .progress-bar-vertical {margin: 0 10px}
+}
+
+.admin-container.dashboard { }
+.admin-container.dashboard .resource-container .panel-heading h4.panel-title-icon {
+  float: left;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 16px;
+  color: inherit;
+  padding: 5px;
+}
+.admin-container.dashboard .resource-container .panel-heading h4.panel-title-icon i {
+  min-height: 38px;
+  width: 38px;
+  padding-top: 5px;
+  line-height: 28px;
+  text-align: center;
+  font-size: 18px;
+}
+.circle {
+  border-radius: 50%;
+}
+.host-color { background-color: #ea7526 }
+.script-color { background-color: #cc006f }
+.process-color { background-color: #1c73b9 }
+.scraper-color { background-color: #ba45ff }
+.file-color { background-color: #8da452 }

@@ -25,12 +25,9 @@ module.exports = TheEyeClient;
  *
  *
  */
-function TheEyeClient (options)
-{
+function TheEyeClient (options) {
   this.access_token = '';
-
   this.configure(options);
-
   return this;
 }
 
@@ -332,13 +329,6 @@ TheEyeClient.prototype = {
     return request;
   },
   /**
-   *
-   * in progress
-   *
-   */
-  uploadMultiparted: function(options){
-  },
-  /**
    * put request wrapper
    * @author Facundo
    * @return Request connection.request
@@ -501,7 +491,7 @@ TheEyeClient.prototype = {
       url: '/:customer/script/' + id
     }, function(error, body) {
       if (error) return callback(error);
-      callback(null, body.script);
+      callback(null, body);
     });
   },
   /**
@@ -519,7 +509,7 @@ TheEyeClient.prototype = {
       url: '/:customer/script'
     }, function(error, body) {
       if (error) return callback(error);
-      callback(null, body.scripts);
+      callback(null, body);
     });
   },
   /**
@@ -532,8 +522,7 @@ TheEyeClient.prototype = {
    * @return {Stream} downloaded file stream
    *
    */
-  scriptDownloadStream : function(scriptId)
-  {
+  scriptDownloadStream : function(scriptId) {
     return this.performRequest({
       method: 'get',
       url: '/:customer/script/' + scriptId  + '/download'
@@ -753,7 +742,7 @@ TheEyeClient.prototype = {
       url: '/:customer/host/' + id
     }, function(error, body) {
       if (error) return callback(error);
-      callback(null, body.host);
+      callback(null, body);
     });
   },
   /**
@@ -766,7 +755,7 @@ TheEyeClient.prototype = {
       url: '/:customer/host'
     }, function(error, body) {
       if (error) return callback(error);
-      callback(null, body.hosts);
+      callback(null, body);
     });
   },
   /**

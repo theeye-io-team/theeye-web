@@ -1,10 +1,23 @@
 /* global ace, bootbox, $searchbox */
-$(function() {
+var ScriptsPageInit = (function(){
+
+  if (location.pathname == '/admin/script') {
+    new HelpIcon({
+      color:[255,255,255],
+      category:'title_help',
+      text: HelpTexts.titles.script_page 
+    })
+      .$el
+      .appendTo(
+        $('.table-header.admin span.title i[data-hook=help]')
+      );
+  }
+
   var self = this;
   window.scriptState = window.scriptState ? window.scriptState : $({});
   var $state = window.scriptState;
 
-  self.scriptId = null;
+  var scriptId = null;
 
   //**initialize ace editor**//
   var aceEditor = ace.edit("ace-editor");
@@ -26,8 +39,6 @@ $(function() {
       case "ps1": mode = "powershell"; break;
       case "js": mode = "javascript"; break;
       case "bat": mode = "batchfile"; break;
-      case "pl": mode = "perl"; break;
-      case "go": mode = "go"; break;
       case "sh": mode = "sh"; break;
       case "py": mode = "python"; break;
       case "php": mode = "php"; break;
@@ -41,8 +52,6 @@ $(function() {
       case "powershell": extension = "ps1"; break;
       case "javascript": extension = "js"; break;
       case "batchfile": extension = "bat"; break;
-      case "go": mode = "go"; break;
-      case "perl": extension = "pl"; break;
       case "sh": extension = "sh"; break;
       case "python": extension = "py"; break;
       case "php": extension = "php"; break;
@@ -77,38 +86,27 @@ $(function() {
     $('#filenamePreview').text( ($filenameInput.val() || "[auto]") + "." + ext);
   });
 
-  //**Delete script**//
-  $state.on("script_deleted", function(ev,$el) {
-    //$el.remove();
-    location.reload();
-  });
-
-  $state.on("script_delete_error", function(ev, resp, err) {
-    bootbox.alert(resp);
-  });
-
   $(".deleteScript").on("click",function(ev) {
     ev.preventDefault();
     ev.stopPropagation();
 
     bootbox.confirm('The resource will be removed. Want to continue?',
-    function(confirmed)
-    {
-      if(!confirmed)
-        return;
+      function(confirmed) {
+        if (!confirmed) return;
 
-      var $delTrigger = $(ev.currentTarget);
-      var idScript = $delTrigger.attr("data-script-id");
+        var $delTrigger = $(ev.currentTarget);
+        var idScript = $delTrigger.attr("data-script-id");
 
-      $.ajax({
-        url: '/script/' + idScript,
-        type: 'DELETE'
-      }).done(function(data) {
-        $state.trigger("script_deleted", $delTrigger.closest('div.panel-group')[0]);
-      }).fail(function(xhr, err, xhrStatus) {
-        $state.trigger("script_delete_error", xhr.responseText, err);
-      });
-    });
+        $.ajax({
+          url: '/script/' + idScript,
+          type: 'DELETE'
+        }).done(function(data) {
+          location.reload();
+        }).fail(function(xhr, err, xhrStatus) {
+          bootbox.alert(resp);
+        });
+      }
+    );
   });
 
   //**Script create modal show**//
@@ -117,11 +115,10 @@ $(function() {
     // listener remains. So, when the button toggles to .editScript
     // it is also provided with a data('script-id').
     // If data('script-id') exits, cancel the "createScript" routine
-    if($(this).data('script-id')) {
-      return;
-    }
+    if ($(this).data('script-id')) return;
+
     var $scriptModal = $("#script-modal");
-    self.scriptId = null;
+    scriptId = null;
 
     ext = "js";
     $('#filenamePreview').text("[auto]." + ext);
@@ -213,88 +210,79 @@ $(function() {
 
   //**Script form submit**//
   $('[data-hook=submit-form]').click(function(e) {
+    var baseUrl = '/script',
+      url, type, extension = ext;
     var filename = $("input#filename").val();
     var isPublic = $('input[data-hook=public]:checked').val();
+    var description = $('form[data-hook=script-form] textarea#description').val();
+    var uploadMethod = $('input:radio[name=live-edit]:checked').val();
+    scriptId = $('[data-hook=script-id]').val();
 
     var regex = new RegExp(/ *[\\~#%&*{}/:<>?/;/ |-]+ */);
-    if(regex.test(filename)) {
+    if (regex.test(filename)) {
       bootbox.alert("Invalid file filename!");
       return;
     }
 
-    var description = $('form[data-hook=script-form] textarea#description').val();
-    var uploadMethod = $('input:radio[name=live-edit]:checked').val();
-    var extension = ext;
-    var url  = '/script';
-    var type = 'POST';
-
-    var scriptId = self.scriptId = $('[data-hook=script-id]').val();
-    if(scriptId) {
-      url  = '/script/' + scriptId;
+    if (scriptId) {
+      url = baseUrl + '/' + scriptId;
       type = 'PUT';
+    } else {
+      url = baseUrl;
+      type = 'POST';
     }
 
-    if( uploadMethod == 'fileupload' ) {
+    var source = aceEditor.getSession().getValue();
+    if (!source.trim()) {
+      return bootbox.alert('Script should not be empty!');
+    }
 
-      // this should not happen anymore
+    var formData = new FormData();
+    formData.append('filename', filename + '.' + extension);
+    formData.append('description', description);
+    formData.append('uploadMethod', uploadMethod);
+    formData.append('script', btoa(unescape(encodeURIComponent(source))));
+    formData.append('extension', extension);
+    formData.append('public', isPublic);
 
-    } else {
+    var req = $.ajax({
+      url: url,
+      type: type,
+      data: formData,
+      processData: false,
+      contentType: false,
+      dataType: 'json'
+    });
+    req.done(function(script) {
+      $state.trigger('script_uploaded', script);
 
-      var source = aceEditor.getSession().getValue();
-      if( !source.trim() ) {
-        return bootbox.alert('Script should not be empty!');
+      //**Handle script upload success**//
+      if (location.pathname != '/admin/script') {
+        return;
+      } else {
+        alert("Script succesfully uploaded", "Script upload", function() {
+          if (scriptId) {
+            $('#script-modal').modal('hide');
+            $('span.name','div.itemRow[data-item-id=' + script.id + ']').text(script.filename);
+          } else {
+            location.reload();
+          }
+        });
       }
-
-      var formData = new FormData();
-      formData.append('filename', filename + '.' + extension);
-      formData.append('description', description);
-      formData.append('uploadMethod', uploadMethod);
-      formData.append('script', btoa(unescape(encodeURIComponent(source))));
-      formData.append('extension', extension);
-      formData.append('public', isPublic);
-
-      $.ajax({
-        url: url,
-        type: type,
-        data: formData,
-        processData: false,
-        contentType: false,
-        dataType: 'json'
-      })
-      .done(function(data) {
-        $state.trigger('script_uploaded', data);
-      })
-      .fail(function(error) {
-        alert('Error processing the script!', 'Scripts');
-      });
-    }
-
+    });
+    req.fail(function(error) {
+      alert('Error processing the script!', 'Scripts');
+    });
   });
 
-  //**Handle script upload success**//
-  $state.on('script_uploaded', function(ev, data) {
-    if(location.pathname != '/admin/script') {
-      return;
-    } else {
-      alert("Script succesfully uploaded", "Script upload", function() {
-        if(self.scriptId) {
-          $('#script-modal').modal('hide');
-          $('span.name','div.itemRow[data-item-id='+data.script.id+']').text(data.script.filename);
-        } else {
-          location.reload();
-        }
-      });
-    }
-  });
-
-  //**Public script upload**//
+  /** Public script upload */
   $('.example-code').click(function(e) {
     var scriptsPath = 'https://raw.githubusercontent.com/theeye-io-team/theeye-docs/master/scripts';
     var mode = $("[data-hook=editor-mode]").val();
     var url = scriptsPath + '/example.' + mode2extension(mode);
 
     function noSample () {
-      bootbox.alert('we are very sorry, but we don\'t have an example for you at this moment');
+      bootbox.alert('we are very sorry, but we don\'t have a code example for you at this moment');
     }
 
     $.ajax({
@@ -315,30 +303,27 @@ $(function() {
 
   // Drop me something
   (function(){
-    var fillForm = function(filename, content){
-
+    function fillForm (filename, content) {
       var nameonly = !!~filename.indexOf('.')
         ? filename.substr(0, filename.lastIndexOf('.'))
         : filename;
 
-      $('input[name=filename]', '#script-modal').val(nameonly);
+      $('input[name=filename]','#script-modal').val(nameonly);
       var modelist = ace.require('ace/ext/modelist');
       var modeMeta = modelist.getModeForPath(filename);
 
       aceEditor.session.setMode(modeMeta.mode);
       aceEditor.getSession().setValue(content);
 
-      $("input:radio[name=live-edit]", '#script-modal').first().prop('checked',true);
-      $("[data-hook=live-edit][value=editor]", '#script-modal').trigger('click');
+      $('input:radio[name=live-edit]','#script-modal').first().prop('checked',true);
+      $('[data-hook=live-edit][value=editor]','#script-modal').trigger('click');
+      $('textarea[name=description]','#script-modal').val('');
+      $('[data-hook=editor-mode]','#script-modal').val(modeMeta.name);
+      $('[data-hook=editor-mode]','#script-modal').trigger('change');
+    }
 
-      $('textarea[name=description]', '#script-modal').val("");
-
-      $("[data-hook=editor-mode]", '#script-modal').val(modeMeta.name);
-      $("[data-hook=editor-mode]", '#script-modal').trigger('change');
-
-    };
-    var fileSelectHandler = function(evt){
-      var file = evt.type == "change"
+    function fileSelectHandler (evt){
+      var file = evt.type == 'change'
         ? evt.originalEvent.target.files[0] // comes from input#fileChooser
         : evt.originalEvent.dataTransfer.files[0]; // comes from drag'n drop
 

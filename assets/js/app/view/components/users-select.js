@@ -9,10 +9,8 @@ var UsersSelect = BaseView.extend({
   className: 'form-group form-horizontal',
   template: Templates['assets/templates/components/users-select.hbs'],
   initialize: function(options){
-    this.title = (options.title||'ACL');
+    this.label = (options.label||'ACL\'s');
     this.name = (options.name||'acl');
-
-    this.optional = (options.optional||true);
 
     BaseView.prototype.initialize.apply(this,arguments);
 
@@ -28,6 +26,11 @@ var UsersSelect = BaseView.extend({
   },
   render: function(){
     this.renderTemplate();
+
+    this.help = new HelpIcon({
+      container: this.find('label'),
+      text: HelpTexts.acls
+    });
 
     this.find('select').select2({
       placeholder: 'Users',
@@ -47,4 +50,8 @@ var UsersSelect = BaseView.extend({
 
     this.find('.tooltiped').tooltip();
   },
+  remove: function(){
+    BaseView.prototype.remove.apply(this,arguments);
+    this.help.remove();
+  }
 });

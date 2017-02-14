@@ -1,11 +1,10 @@
 <!-- modal body -->
-<form id="dstatResourceForm" action="/resource" class="form-horizontal">
+<form data-hook="dstat-monitor-form" id="dstatResourceForm" action="/resource" class="form-horizontal">
   <section data-hook="advanced">
     <input type="hidden" data-hook="type" name="type" value="dstat"/>
     <input type="hidden" data-hook="resource_id" name="resource_id"/>
-    <input type="hidden" data-hook="hosts_id" name="hosts_id"/>
+    <!-- <input type="hidden" data-hook="hosts_id" name="hosts_id"/> -->
     <input type="hidden" data-hook="monitor_type" name="monitor_type"/>
-    <input type="hidden" data-hook="description" name="description" value="Dstat"/>
     <div class="form-group" data-hook="hosts-container" style="display:none">
       <label for="hosts" class="col-sm-3 control-label">Hosts</label>
       <div class="col-sm-9">
@@ -13,9 +12,9 @@
       </div>
     </div>
     <div class="form-group">
-      <label for="description" class="col-sm-3 control-label">Description</label>
+      <label for="name" class="col-sm-3 control-label"> Name * </label>
       <div class="col-sm-9">
-        <input data-hook="description" type="text" name="description" class="form-control">
+        <input data-hook="name" type="text" name="name" value="Host Stat" class="form-control">
       </div>
     </div>
     <div class="form-group">

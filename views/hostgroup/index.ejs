@@ -1,9 +1,6 @@
 <!-- SCRIPTS CRUD -->
 <% block('styles' , '<link rel="stylesheet" type="text/css" href="/styles/highlight/default.css"></script>') %>
-<% block("scripts", '<script src="/js/ace-editor/ext-modelist.js"></script>') %>
-<% block('scripts', '<script src="/js/application/scripts.js"></script>') %>
-<% block('scripts', '<script src="/js/application/hostgroup.js"></script>') %>
-
+<% block('scripts', '<script> $(document).ready(function(){ new ScriptsPageInit(); new TemplatesPageInit(); }); </script>') %>
 <% block('scripts','<script> window.tasks = ' + JSON.stringify(tasks) + ';</script>') %>
 <% block('scripts','<script> window.Tags = ' + JSON.stringify(tags) + '; </script>') %>
 <% block('scripts','<script> window.Looptimes = ' + JSON.stringify(looptimes) + '; </script>') %>
@@ -18,13 +15,15 @@
       <button class="search"><i class="glyphicon glyphicon-search"></i></button>
     </form>
   </div>
-
   <div class="admin-panel">
     <h3>Host Templates Admin</h3>
     <div>
+      <!-- HEADER -->
       <div class="table-header admin">
-        <span class="title">Host Templates  &nbsp; &nbsp;|</span>
-        <button class="create-group btn btn-primary simple-btn new-btn"
+        <span class="title">Host Template Actions &nbsp;<i data-hook="help"></i></span>
+        <span class="title separator">|&nbsp;</span>
+
+        <button class="create-group btn btn-primary simple-btn"
           aria-label="Left Align"
           data-toggle="modal"
           data-target="#group-template">
