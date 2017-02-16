@@ -367,6 +367,7 @@ function StatsPage () {
     },
     initStat: function(){
       var self = this,
+        $graphContainer = this.queryByHook('stat-graph-container'),
         stat = this.stats.find(function(stat){
         return stat.get('type') === 'dstat';
       });
@@ -380,7 +381,20 @@ function StatsPage () {
 
       var statGraphView = new StatGraphView({ model: stat });
       statGraphView.render();
-      statGraphView.$el.appendTo(this.queryByHook('stat-graph-container'));
+      statGraphView.$el.appendTo($graphContainer);
+
+      var elems = this.find('.pull-left > div');
+      function progressBarWidth (event) {
+        elems.each(function(idx,p){
+          var value = $graphContainer.width()/elems.length;
+          var m = value * 0.3;
+          var w = Math.floor(value - m);
+
+          $(p).width(w);
+          $(p).css('margin','0 ' + Math.floor(m/2) + 'px');
+        })
+      };
+      window.onresize = progressBarWidth;
 
       // connect and subscribe host-stats notifications
       // update stat state when updates arrive
@@ -391,6 +405,7 @@ function StatsPage () {
           log(data);
           self.resource.set('last_update',new Date());
           stat.set(data);
+          progressBarWidth();
         });
         subscribeSocketNotifications('host-stats');
       }
