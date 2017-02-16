@@ -8,7 +8,6 @@
  *
  */
 function StatsPage () {
-
   var StatModel = Backbone.Model.extend({ });
   var StatCollection = Backbone.Collection.extend({ model: StatModel });
 
@@ -212,7 +211,7 @@ function StatsPage () {
 
   function getBlueToRed(percent){
     var b = percent < 50 ? 255 : Math.floor(255 - (percent * 2 - 100) * 255 / 100);
-    var r = percent > 50 ? 150 : Math.floor((percent * 2) * 150 / 100);
+    var r = percent > 50 ? 255 : Math.floor((percent * 2) * 150 / 100);
     return 'rgb(' + r + ', 0, ' + b + ')';
   }
 
@@ -237,7 +236,7 @@ function StatsPage () {
       var $container = this.$el;
       $container.empty();
 
-      var cacheValue, cpuValue, memValue,
+      var self = this, cacheValue, cpuValue, memValue,
         cacheBar, cpuBar, memBar,
         stat = this.model.get('stats');
 
@@ -269,6 +268,24 @@ function StatsPage () {
           diskBar.$el.appendTo($container);
         }
       });
+
+      window.onresize = function(event){
+        self.progressBarWidth(event);
+      }
+    },
+    // resize bars event
+    progressBarWidth: function (event) {
+      var self = this,
+        elems = self.find('.pull-left > div');
+
+      elems.each(function(idx,p){
+        var value = self.$el.width()/elems.length;
+        var m = value * 0.3;
+        var w = Math.floor(value - m);
+
+        $(p).width(w);
+        $(p).css('margin','0 ' + Math.floor(m/2) + 'px');
+      })
     }
   });
 
@@ -328,7 +345,7 @@ function StatsPage () {
     initialize: function(options){
       BaseView.prototype.initialize.apply(this,arguments);
     },
-    initPsaux: function(){
+    initPsauxView: function(){
       var stat = this.stats.find(function(stat){
         return stat.get('type') === 'psaux';
       });
@@ -365,22 +382,25 @@ function StatsPage () {
       if (io.socket.socket && io.socket.socket.connected) subscribe();
       io.socket.on('connect',subscribe);
     },
-    initStat: function(){
+    initStatView: function(){
       var self = this,
         stat = this.stats.find(function(stat){
         return stat.get('type') === 'dstat';
       });
+
       if (!stat) return;
 
-      var loadAverageView = new LoadAverageView({
-        $el: this.queryByHook('stat-load-container'),
+      new LoadAverageView({
+        el: this.queryByHook('stat-load-container')[0],
         model: stat
-      });
-      loadAverageView.render();
+      }).render();
 
       var statGraphView = new StatGraphView({ model: stat });
       statGraphView.render();
-      statGraphView.$el.appendTo(this.queryByHook('stat-graph-container'));
+      statGraphView.$el.appendTo(
+        this.queryByHook('stat-graph-container')
+      );
+      statGraphView.progressBarWidth();
 
       // connect and subscribe host-stats notifications
       // update stat state when updates arrive
@@ -394,21 +414,22 @@ function StatsPage () {
         });
         subscribeSocketNotifications('host-stats');
       }
-      if (io.socket.socket && io.socket.socket.connected) subscribe();
+      if (io.socket.socket&&io.socket.socket.connected) subscribe();
       io.socket.on('connect',subscribe);
+    },
+    initHostView:function(){
+      this.hostView = new HostView({ host: this.host, resource: this.resource });
+      this.hostView.render();
+      this.hostView.$el.appendTo(this.queryByHook('host-container'));
     },
     render:function(){
       BaseView.prototype.render.apply(this,arguments);
-      this.initPsaux();
-      this.initStat();
 
-      this.hostView = new HostView({
-        host: this.host,
-        resource: this.resource
-      });
+      this.$el.appendTo( $('[data-hook=page-container]') );
 
-      this.hostView.render();
-      this.hostView.$el.appendTo(this.queryByHook('host-container'));
+      this.initPsauxView();
+      this.initStatView();
+      this.initHostView();
     }
   });
 
@@ -417,9 +438,7 @@ function StatsPage () {
     index: function(){
       var id = document.location.pathname.replace('/hoststats/','');
       getState(id,function(err,state){
-        var view = new IndexView(state);
-        view.render();
-        view.$el.appendTo( $('[data-hook=page-container]') );
+        new IndexView(state).render();
       });
     }
   }
