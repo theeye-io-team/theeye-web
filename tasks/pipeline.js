@@ -71,6 +71,19 @@ module.exports.templateFilesToInject = templateFilesToInject.map(function(path) 
 	return 'assets/' + path;
 });
 
-var hash = Date.now();
+function formatDate(date) {
+  var d = date,
+    month = '' + (d.getMonth() + 1),
+    day = '' + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = '0' + month;
+  if (day.length < 2) day = '0' + day;
+
+  return [year, month, day].join('-');
+}
+
+var hash = (new Date( formatDate( new Date() ) )).getTime();
+
 module.exports.productionJSFilename  = 'production.' + hash + '.js';
 module.exports.productionCSSFilename = 'production.' + hash + '.css';
