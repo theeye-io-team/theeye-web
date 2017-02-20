@@ -38,12 +38,12 @@ var HelpTexts = {
     select: 'Select a file'
   },
   titles:{
-    user_page: 'user_page_title_help',
-    task_page: 'task_page_title_help',
-    script_page: 'script_page_title_help',
-    customer_page: 'customer_page_title_help',
-    monitor_page: 'monitor_page_title_help',
-    webhook_page: 'webhook_page_title_help',
-    template_page: 'template_page_title_help',
+    user_page: 'Users CRUD operations',
+    customer_page: 'Customers CRUD operations',
+    script_page: 'Tasks/Monitors Scripts CRUD operations',
+    task_page: 'Tasks allow\'s you to run Web/APi requests and custom scripts. You can then schedule the tasks.',
+    monitor_page: 'Monitors watches your Web/API endpoints, files, processes, hosts health and scripts changes and send alerts to You.',
+    webhook_page: 'Webhooks allows you to Trigger tasks automagically, through requests from outside applications.',
+    template_page: 'Templates allows you to group hosts and assign them monitors, tasks and webhooks, that way You can reach Auto-Provisioning.',
   },
 }
