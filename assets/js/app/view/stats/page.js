@@ -253,8 +253,8 @@ function StatsPage () {
         $progress.css('margin','0 ' + Math.floor(m/2) + 'px');
 
         var $texts = $bar.find('span');
-        if (w > 39) $texts.css('font-size','16px');
-        else if (w > 20) $texts.css('font-size','14px');
+        if (w > 39) $texts.css('font-size','14px');
+        else if (w > 20) $texts.css('font-size','12px');
         else $texts.css('font-size','11px');
       })
     },
