@@ -7,30 +7,25 @@
  * (Note that you can take advantage of Grunt-style wildcard/glob/splat expressions
  * for matching multiple files.)
  */
-
 var path = require('path');
 var execSync = require('child_process').execSync;
-
 
 // CSS files to inject in order
 //
 // (if you're using LESS with the built-in default config, you'll want
 //  to change `assets/styles/importer.less` instead.)
 var cssFilesToInject = [
-	'styles/**/*.css'
+	'styles/*.css'
 ];
-
 
 // Client-side javascript files to inject in order
 // (uses Grunt-style wildcard/glob/splat expressions)
 var jsFilesToInject = [
-
 	// Dependencies like sails.io.js, jQuery, or Angular
 	// are brought in here
 	//'js/dependencies/**/*.js',
   'js/ace-editor/ace.js',
   'js/ace-editor/ext-modelist.js',
-
 	// All of the rest of your client-side js files
 	// will be injected here in no particular order.
 	'js/*.js',
@@ -53,13 +48,6 @@ var templateFilesToInject = [
   'js/app/view/**/*.hbs'
 ];
 
-
-
-
-
-
-
-
 // Prefix relative paths to source files so they point to the proper locations
 // (i.e. where the other Grunt tasks spit them out, or in some cases, where
 // they reside in the first place)
@@ -73,14 +61,13 @@ module.exports.templateFilesToInject = templateFilesToInject.map(function(path) 
 	return 'assets/' + path;
 });
 
-function getMD5Sum () {
-  var jsAssets = __dirname + '/../assets/js';
-  var cmd = "find " + jsAssets + " -type f -exec md5sum {} \\;  | sort -k 2 | md5sum | sed -e 's/  -//'";
-
+function getPathMD5Sum (path) {
+  var cmd = "find " + path + " -type f -exec md5sum {} \\;  | sort -k 2 | md5sum | sed -e 's/  -//'";
   return execSync(cmd).toString().trim();
 }
 
-var hash = getMD5Sum();
+var jsHash = getPathMD5Sum(__dirname + '/../assets/js');
+var cssHash = getPathMD5Sum(__dirname + '/../assets/styles');
 
-module.exports.productionJSFilename  = 'production.' + hash + '.js';
-module.exports.productionCSSFilename = 'production.' + hash + '.css';
+module.exports.productionJSFilename  = 'production.' + jsHash + '.js';
+module.exports.productionCSSFilename = 'production.' + cssHash + '.css';

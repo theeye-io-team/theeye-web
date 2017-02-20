@@ -20,73 +20,74 @@ var ScriptsPageInit = (function(){
   var scriptId = null;
 
   //**initialize ace editor**//
-  var aceEditor = ace.edit("ace-editor");
-  aceEditor.setTheme("ace/theme/twilight");
-  aceEditor.session.setMode("ace/mode/javascript");
+  ace.config.set('basePath','/js/ace-editor');
+  var aceEditor = ace.edit('ace-editor');
+  aceEditor.setTheme('ace/theme/twilight');
+  aceEditor.session.setMode('ace/mode/javascript');
   aceEditor.setOptions({ maxLines: 20 });
 
-  var ext = "js";
+  var ext = 'js';
 
-  var $filenameInput = $("input[name=filename]");
+  var $filenameInput = $('input[name=filename]');
 
   function extension2mode(extension) {
     //remove initial dot (.) if any
     if(extension.indexOf('.') == 0) {
       extension = extension.substr(1);
     }
-    var mode = "";
+    var mode = '';
     switch(extension) {
-      case "ps1": mode = "powershell"; break;
-      case "js": mode = "javascript"; break;
-      case "bat": mode = "batchfile"; break;
-      case "sh": mode = "sh"; break;
-      case "py": mode = "python"; break;
-      case "php": mode = "php"; break;
+      case 'ps1': mode = 'powershell'; break;
+      case 'js': mode = 'javascript'; break;
+      case 'bat': mode = 'batchfile'; break;
+      case 'sh': mode = 'sh'; break;
+      case 'py': mode = 'python'; break;
+      case 'php': mode = 'php'; break;
     }
     return mode;
   }
 
   function mode2extension(mode) {
-    var extension = "";
+    var extension = '';
     switch(mode) {
-      case "powershell": extension = "ps1"; break;
-      case "javascript": extension = "js"; break;
-      case "batchfile": extension = "bat"; break;
-      case "sh": extension = "sh"; break;
-      case "python": extension = "py"; break;
-      case "php": extension = "php"; break;
+      case 'powershell': extension = 'ps1'; break;
+      case 'javascript': extension = 'js'; break;
+      case 'batchfile': extension = 'bat'; break;
+      case 'sh': extension = 'sh'; break;
+      case 'python': extension = 'py'; break;
+      case 'php': extension = 'php'; break;
     }
     return extension;
   }
 
   $filenameInput.on('input', function(event){
-    $('#filenamePreview').text( ($filenameInput.val() || "[auto]") + "." + ext);
+    $('#filenamePreview').text( ($filenameInput.val() || '[auto]') + '.' + ext);
   });
 
   //**live-editor / file-upload toogle**//
-  $("[data-hook=live-edit]").click(function(e) {
+  $('[data-hook=live-edit]').click(function(e) {
     var uploadMethod = $('input:radio[name=live-edit]:checked').val();
-    $("div.option").addClass('hidden-container');
-    $("div[data-hook="+uploadMethod+"-container]").removeClass('hidden-container');
+    $('div.option').addClass('hidden-container');
+    $('div[data-hook='+uploadMethod+'-container]').removeClass('hidden-container');
     switch(uploadMethod) {
-      case "editor":
-        $("div[data-hook=editor-mode-container]").removeClass('hidden-container');
+      case 'editor':
+        $('div[data-hook=editor-mode-container]').removeClass('hidden-container');
         break;
-      case "gist":
-        $("div[data-hook=editor-container]").removeClass('hidden-container');
+      case 'gist':
+        $('div[data-hook=editor-container]').removeClass('hidden-container');
         break;
     }
   });
 
   //**live-editor mode setter**//
-  $("[data-hook=editor-mode]").change(function() {
-    var mode = $("[data-hook=editor-mode]").val();
-    aceEditor.session.setMode("ace/mode/" + mode);
+  $('[data-hook=editor-mode]').change(function() {
+    var mode = $('[data-hook=editor-mode]').val();
+    aceEditor.session.setMode('ace/mode/' + mode);
     ext = mode2extension(mode);
-    $('#filenamePreview').text( ($filenameInput.val() || "[auto]") + "." + ext);
+    $('#filenamePreview').text( ($filenameInput.val() || '[auto]') + '.' + ext);
   });
 
-  $(".deleteScript").on("click",function(ev) {
+  $('.deleteScript').on('click',function(ev) {
     ev.preventDefault();
     ev.stopPropagation();
 
@@ -95,7 +96,7 @@ var ScriptsPageInit = (function(){
         if (!confirmed) return;
 
         var $delTrigger = $(ev.currentTarget);
-        var idScript = $delTrigger.attr("data-script-id");
+        var idScript = $delTrigger.attr('data-script-id');
 
         $.ajax({
           url: '/script/' + idScript,
@@ -117,27 +118,27 @@ var ScriptsPageInit = (function(){
     // If data('script-id') exits, cancel the "createScript" routine
     if ($(this).data('script-id')) return;
 
-    var $scriptModal = $("#script-modal");
+    var $scriptModal = $('#script-modal');
     scriptId = null;
 
-    ext = "js";
-    $('#filenamePreview').text("[auto]." + ext);
+    ext = 'js';
+    $('#filenamePreview').text('[auto].' + ext);
 
-    $("[data-hook=script-id]",$scriptModal).val('');
-    $("[data-hook=editor-mode]",$scriptModal).val('javascript');
-    $("form[data-hook=script-form] textarea#description",$scriptModal).val("");
-    $("input#filename",$scriptModal).val("");
-    $("input#gist-url",$scriptModal).val("");
-    $("input[data-hook=public]",$scriptModal).removeAttr('checked');
-    $("input[data-hook=public][value=false]",$scriptModal)[0].checked = true;
+    $('[data-hook=script-id]',$scriptModal).val('');
+    $('[data-hook=editor-mode]',$scriptModal).val('javascript');
+    $('form[data-hook=script-form] textarea#description',$scriptModal).val('');
+    $('input#filename',$scriptModal).val('');
+    $('input#gist-url',$scriptModal).val('');
+    $('input[data-hook=public]',$scriptModal).removeAttr('checked');
+    $('input[data-hook=public][value=false]',$scriptModal)[0].checked = true;
 
-    aceEditor.getSession().setValue("");
-    aceEditor.session.setMode("ace/mode/javascript");
+    aceEditor.getSession().setValue('');
+    aceEditor.session.setMode('ace/mode/javascript');
 
-    $("input:radio[name=live-edit]",$scriptModal).first().prop('checked',true);
-    $("[data-hook=live-edit][value=editor]",$scriptModal).trigger('click');
-    $("[data-hook=editor-mode]",$scriptModal).trigger('change');
-    $("#script-modal").modal();
+    $('input:radio[name=live-edit]',$scriptModal).first().prop('checked',true);
+    $('[data-hook=live-edit][value=editor]',$scriptModal).trigger('click');
+    $('[data-hook=editor-mode]',$scriptModal).trigger('change');
+    $('#script-modal').modal();
   });
 
   //**Script edit modal show and load**//
@@ -170,21 +171,21 @@ var ScriptsPageInit = (function(){
         filename = filename.substr(0,filename.lastIndexOf('.'));
       }else{
         //defaults when fails to get info
-        ext = "js";
+        ext = 'js';
       }
 
-      $("textarea#description", $form).val(script.description);
-      $("input#filename", $form).val(filename);
+      $('textarea#description', $form).val(script.description);
+      $('input#filename', $form).val(filename);
 
       $('input[data-hook=public]', $form).removeAttr('checked');
       if(isPublic) {
-        $("input[data-hook=public][value=true]", $form)[0].checked = true;
+        $('input[data-hook=public][value=true]', $form)[0].checked = true;
       }else{
-        $("input[data-hook=public][value=false]", $form)[0].checked = true;
+        $('input[data-hook=public][value=false]', $form)[0].checked = true;
       }
 
 
-      $('#filenamePreview').text(filename + "." + ext);
+      $('#filenamePreview').text(filename + '.' + ext);
 
       // dejo esto aca porque podria servir eventualmente
       // var modelist = ace.require("ace/ext/modelist")
@@ -193,16 +194,16 @@ var ScriptsPageInit = (function(){
       // editor.session.setMode(mode)
 
       var mode = extension2mode(ext);
-      $("[data-hook=editor-mode]").val(mode);
+      $('[data-hook=editor-mode]').val(mode);
 
-      aceEditor.session.setMode("ace/mode/" + mode);
+      aceEditor.session.setMode('ace/mode/' + mode);
       // delay de content for when modal is visible
       $('#script-modal').one('shown.bs.modal', function(){
-        aceEditor.getSession().setValue(file || "");
+        aceEditor.getSession().setValue(file || '');
       });
-      // var newSession = ace.createEditSession(file || "", "ace/mode/"+mode);
+      // var newSession = ace.createEditSession(file || '', 'ace/mode/'+mode);
       // aceEditor.setSession(newSession);
-      $("#script-modal").modal();
+      $('#script-modal').modal();
     })
     .fail(function(error){
     });
@@ -212,7 +213,7 @@ var ScriptsPageInit = (function(){
   $('[data-hook=submit-form]').click(function(e) {
     var baseUrl = '/script',
       url, type, extension = ext;
-    var filename = $("input#filename").val();
+    var filename = $('input#filename').val();
     var isPublic = $('input[data-hook=public]:checked').val();
     var description = $('form[data-hook=script-form] textarea#description').val();
     var uploadMethod = $('input:radio[name=live-edit]:checked').val();
@@ -260,7 +261,7 @@ var ScriptsPageInit = (function(){
       if (location.pathname != '/admin/script') {
         return;
       } else {
-        alert("Script succesfully uploaded", "Script upload", function() {
+        alert('Script succesfully uploaded', 'Script upload', function() {
           if (scriptId) {
             $('#script-modal').modal('hide');
             $('span.name','div.itemRow[data-item-id=' + script.id + ']').text(script.filename);
@@ -278,7 +279,7 @@ var ScriptsPageInit = (function(){
   /** Public script upload */
   $('.example-code').click(function(e) {
     var scriptsPath = 'https://raw.githubusercontent.com/theeye-io-team/theeye-docs/master/scripts';
-    var mode = $("[data-hook=editor-mode]").val();
+    var mode = $('[data-hook=editor-mode]').val();
     var url = scriptsPath + '/example.' + mode2extension(mode);
 
     function noSample () {
