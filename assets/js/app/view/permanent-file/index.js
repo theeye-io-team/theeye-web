@@ -191,6 +191,24 @@ var PermanentFile = new (function(){
     events: {
       'click [data-hook=advanced-section-toggler]':'onClickAdvancedToggler'
     },
+    enableWindowsMode: function(){
+      var $perms = this.queryByHook('permissions');
+      var $uid  = this.queryByHook('uid');
+      var $gid  = this.queryByHook('gid');
+
+      $perms.hide(); $perms[0].disabled = true;
+      $uid.hide(); $uid[0].disabled = true;
+      $gid.hide(); $gid[0].disabled = true;
+    },
+    disableWindowsMode: function(){
+      var $perms = this.queryByHook('permissions');
+      var $uid  = this.queryByHook('uid');
+      var $gid  = this.queryByHook('gid');
+
+      $perms.show(); $perms[0].disabled = false;
+      $uid.show(); $uid[0].disabled = false;
+      $gid.show(); $gid[0].disabled = false;
+    },
     onClickAdvancedToggler: function(){
       var $toggle = this.find('section[data-hook=advanced]');
       $toggle.slideToggle();
@@ -202,7 +220,24 @@ var PermanentFile = new (function(){
       this.renderTemplate();
       this.find('span.tooltiped').tooltip();
 
-      this.queryByHook('hosts').select2({ placeholder: 'File Host', data: Select2Data.PrepareHosts(this.hosts) });
+      var hostsContainer = this.queryByHook('hosts');
+      hostsContainer.select2({ placeholder: 'File Host', data: Select2Data.PrepareHosts(this.hosts) });
+      hostsContainer.on('change',function(event){
+        var options = Array.prototype.slice.call( this.selectedOptions ); // HTMLCollection to Array
+        var windows = options.find(function(option){
+          var host = self.hosts.find(function(host){
+            return host.id === option.value;
+          });
+          return /windows/i.test(host.os_name) === true;
+        });
+
+        if (windows !== undefined) {
+          self.enableWindowsMode();
+        } else {
+          self.disableWindowsMode();
+        }
+      });
+
       this.queryByHook('looptimes').select2({ placeholder: 'Monitor Looptime', data: Select2Data.PrepareIdValueData(this.looptimes) });
 
       this.monitorSelect = new MonitorSelect({

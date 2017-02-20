@@ -8,6 +8,8 @@
  * for matching multiple files.)
  */
 
+var path = require('path');
+var execSync = require('child_process').execSync;
 
 
 // CSS files to inject in order
@@ -71,19 +73,14 @@ module.exports.templateFilesToInject = templateFilesToInject.map(function(path) 
 	return 'assets/' + path;
 });
 
-function formatDate(date) {
-  var d = date,
-    month = '' + (d.getMonth() + 1),
-    day = '' + d.getDate(),
-    year = d.getFullYear();
+function getMD5Sum () {
+  var jsAssets = __dirname + '/../assets/js';
+  var cmd = "find " + jsAssets + " -type f -exec md5sum {} \\;  | sort -k 2 | md5sum | sed -e 's/  -//'";
 
-  if (month.length < 2) month = '0' + month;
-  if (day.length < 2) day = '0' + day;
-
-  return [year, month, day].join('-');
+  return execSync(cmd).toString().trim();
 }
 
-var hash = (new Date( formatDate( new Date() ) )).getTime();
+var hash = getMD5Sum();
 
 module.exports.productionJSFilename  = 'production.' + hash + '.js';
 module.exports.productionCSSFilename = 'production.' + hash + '.css';

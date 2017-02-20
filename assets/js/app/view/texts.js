@@ -8,9 +8,9 @@ var HelpTexts = {
   host: 'Where it has to run?',
   tags: 'To help you find your resources quickly.',
   triggers: 'Select a task, monitor or webhook event that will trigger this task automagically.',
-  grace_time: 'If you select to Trigger on an event, you can select to delay the execution that allows you to cancel this action via email.',
-  acls: 'Add permissions to specific users or emails who will receive notifications.',
-  severity: 'You can select a severity for this monitor, between LOW, HIGH or CRITICAL',
+  grace_time: 'If you select to Trigger with an event, you can choose a grace time to delay the execution of this action and have some time to cancel it via email if necessary.',
+  acls: 'Add permissions to specific users (or emails) that will be able to execute this task and receive notifications.',
+  severity: 'You can set a severity to this monitor, which can be LOW, HIGH or CRITICAL.',
   request: {
     timeout:'How much time to wait the server\'s response before giving up. Default is 5 seconds.',
     method: 'Select the request Method.',

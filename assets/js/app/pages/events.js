@@ -573,6 +573,11 @@ var EventsPageInit = (function(){
   // auto focus search input on keypress
   //
   $(document).on('keypress',function(){
+    if (
+      document.activeElement.tagName === 'TEXTAREA' ||
+      document.activeElement.tagName === 'INPUT'
+    ) return;
+
     $('.js-searchable-box input').focus();
   });
 
