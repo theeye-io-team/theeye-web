@@ -88,20 +88,20 @@ function StatsPage () {
 
     /** PS aux table */
     var $el = options.$el;
-    var $psauxTable = $el.find("#psaux-table"),
-      $psauxTbody = $el.find("#psaux-table tbody"),
-      $psauxSearchInput = $el.find("#ps-search");
+    var $psauxTable = $el.find('#psaux-table'),
+      $psauxTbody = $el.find('#psaux-table tbody'),
+      $psauxSearchInput = $el.find('#ps-search');
 
     function render (rows) {
       // Clear the  TBODY
-      $psauxTbody.find("tr:not(.search-sf):not(.search-query-sf)").remove();
+      $psauxTbody.find('tr:not(.search-sf):not(.search-query-sf)').remove();
       var $rows = [];
 
       $rows = rows.map(function mapPsauxToRows(ps) {
         var $cols = [];
-        var $tr = $("<tr></tr>");
+        var $tr = $('<tr></tr>');
         for (var col in ps) {
-          var $td = $("<td></td>");
+          var $td = $('<td></td>');
           $td.html(ps[col]);
           $cols.push($td);
         }
@@ -158,23 +158,23 @@ function StatsPage () {
       update: function (data) {
         log('new psaux data');
         log(data);
-        $psauxTable.data("data", data.stat);
+        $psauxTable.data('data', data.stat);
         // Sort renderPsaux & filter
         processSort();
-        render($psauxTable.data("data"));
+        render($psauxTable.data('data'));
         filterProcesses();
       },
       createControl: function () {
         // Click sobre el th[data-sort] ordena por esa columna
         $psauxTable.find('th[data-sort]').click(function() {
-          var orderBy = $(this).data("sort");
+          var orderBy = $(this).data('sort');
           if (orderBy == config.sort.column) {
             config.sort.direction = (config.sort.direction === 'desc') ? 'asc' : 'desc';
           }
           config.sort.column = orderBy;
           // reverse the order if sort is the current sort order
           processSort();
-          render($psauxTable.data("data"));
+          render($psauxTable.data('data'));
         });
 
         //something is entered in search form
@@ -230,6 +230,33 @@ function StatsPage () {
     initialize: function(options){
       BaseView.prototype.initialize.apply(this,arguments);
       this.listenTo(this.model,'change',this.render);
+
+      var self = this;
+      window.onresize = function(event){
+        self.progressBarWidth(event);
+      }
+    },
+    // resize bars event
+    progressBarWidth: function(event){
+      var self = this,
+        elems = this.find('.pull-left');
+
+      elems.each(function(idx,bar){
+        var value = self.$el.width()/elems.length;
+        var m = value * 0.3;
+        var w = Math.floor(value - m);
+
+        var $bar = $(bar);
+
+        var $progress = $bar.find('.progress-bar-vertical');
+        $progress.width(w);
+        $progress.css('margin','0 ' + Math.floor(m/2) + 'px');
+
+        var $texts = $bar.find('span');
+        if (w > 39) $texts.css('font-size','16px');
+        else if (w > 20) $texts.css('font-size','14px');
+        else $texts.css('font-size','11px');
+      })
     },
     render: function(){
       BaseView.prototype.render.apply(this,arguments);
@@ -269,23 +296,7 @@ function StatsPage () {
         }
       });
 
-      window.onresize = function(event){
-        self.progressBarWidth(event);
-      }
-    },
-    // resize bars event
-    progressBarWidth: function (event) {
-      var self = this,
-        elems = self.find('.pull-left > div');
-
-      elems.each(function(idx,p){
-        var value = self.$el.width()/elems.length;
-        var m = value * 0.3;
-        var w = Math.floor(value - m);
-
-        $(p).width(w);
-        $(p).css('margin','0 ' + Math.floor(m/2) + 'px');
-      })
+      this.progressBarWidth();
     }
   });
 
@@ -396,11 +407,10 @@ function StatsPage () {
       }).render();
 
       var statGraphView = new StatGraphView({ model: stat });
-      statGraphView.render();
       statGraphView.$el.appendTo(
         this.queryByHook('stat-graph-container')
-      );
-      statGraphView.progressBarWidth();
+      ); // append main container to the DOM
+      statGraphView.render();
 
       // connect and subscribe host-stats notifications
       // update stat state when updates arrive
