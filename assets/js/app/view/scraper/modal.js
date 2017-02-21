@@ -21,20 +21,6 @@ var ScraperModal = new (function ScraperModal(){
     return view ;
   }
 
-  function getScraper(id,done){
-    var scraper = new App.Models.ScraperMonitor({ id: id });
-    scraper.fetch({
-      success:function(model, response, options){
-        // on click render form
-        done(null,scraper);
-      },
-      error:function(model, response, options){
-        bootbox.alert(response.responseText);
-        done(new Error(response.responseText));
-      }
-    });
-  }
-
   this.MonitorCRUD = function(){
     var _modal = new Modal({ title: 'Website Monitor' });
     _modal.render();
@@ -88,28 +74,14 @@ var ScraperModal = new (function ScraperModal(){
         }
       });
 
-
-      var scraper = new App.Models.ScraperMonitor({});
-
       _modal.$el.on('click','button[data-hook=save]',function(){
-        var data = _form.data;
-        scraper.set(data);
-        scraper.save({},{
-          success:function(model, response, options){
-            bootbox.alert('Monitor Created',function(){
-              window.location.reload();
-            });
-          },
-          error:function(model, response, options){
-            bootbox.alert(response.responseText);
-          }
-        });
+        ScraperMonitorActions.create(_form.data);
       });
       _modal.show();
     };
 
     this.edit = function (scraper_id) {
-      getScraper(scraper_id,function(error,scraper){
+      ScraperMonitorActions.get(scraper_id,function(error,scraper){
 
         _form.render({ model: scraper });
 
@@ -119,18 +91,7 @@ var ScraperModal = new (function ScraperModal(){
         _form.find('form [data-hook=advanced]').append( _severity.$el );
 
         _modal.$el.on('click','button[data-hook=save]',function(){
-          var values = _form.data;
-          scraper.set(values);
-          scraper.save({},{
-            success:function(model, response, options){
-              bootbox.alert('Monitor Updated',function(){
-                window.location.reload();
-              });
-            },
-            error:function(model, response, options){
-              bootbox.alert(response.responseText);
-            }
-          });
+          ScraperMonitorActions.update(scraper_id,_form.data);
         });
         _modal.show();
       });

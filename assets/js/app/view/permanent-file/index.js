@@ -225,7 +225,11 @@ var PermanentFile = new (function(){
       this.find('span.tooltiped').tooltip();
 
       var hostsContainer = this.queryByHook('hosts');
-      hostsContainer.select2({ placeholder: 'File Host', data: Select2Data.PrepareHosts(this.hosts) });
+      hostsContainer.select2({
+        placeholder: 'File Host',
+        data: Select2Data.PrepareHosts(this.hosts)
+      });
+
       hostsContainer.on('change',function(event){
         var options = Array.prototype.slice.call( this.selectedOptions ); // HTMLCollection to Array
         var windows = options.find(function(option){
@@ -242,7 +246,11 @@ var PermanentFile = new (function(){
         }
       });
 
-      this.queryByHook('looptimes').select2({ placeholder: 'Monitor Looptime', data: Select2Data.PrepareIdValueData(this.looptimes) });
+      this.queryByHook('looptimes').select2({
+        placeholder: 'Monitor Looptime',
+        data: Select2Data.PrepareIdValueData(this.looptimes)
+      });
+      this.queryByHook('looptimes').val('30000').trigger('change');
 
       this.monitorSelect = new MonitorSelect({
         label:'Copy From',
@@ -372,7 +380,7 @@ var PermanentFile = new (function(){
             });
           },
           error: function(model, response, options){
-            bootbox.alert(response.responseText);
+            new ServerError(response.responseJSON);
           }
         });
       });
@@ -403,8 +411,7 @@ var PermanentFile = new (function(){
           modal.show();
         },
         error:function(model, response, options){
-          bootbox.alert(response.responseText);
-          done(new Error(response.responseText));
+          new ServerError(response.responseJSON);
         }
       });
     }

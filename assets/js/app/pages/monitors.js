@@ -28,11 +28,9 @@ var MonitorsPageInit = (function(){
     color:[255,255,255],
     category:'title_help',
     text: HelpTexts.titles.monitor_page 
-  })
-    .$el
-    .appendTo(
-      $('.table-header.admin span.title i[data-hook=help]')
-    );
+  }).$el.appendTo(
+    $('.table-header.admin span.title i[data-hook=help]')
+  );
 
   var _files = new App.Collections.Files();
   _files.fetch({});
@@ -131,68 +129,34 @@ var MonitorsPageInit = (function(){
 
   //CREATE RESOURCE FUNCTION
   (function(){
-    function updateResourceMonitor($el){
-      var idResource = $el.find("[data-hook=resource_id]").val();
-      var values = (new FormElement($el)).get();
-
-      if (values.script_runas) {
-        if ( /%script%/.test(values.script_runas) === false ) {
-          bootbox.alert('The script runas must include the "%script%" keyword');
-          return;
-        }
-      }
-
-      if (!values.host_id) values.host_id = values.hosts;
-
-      $.ajax({
-        url: '/resource/' + idResource,
-        type: 'PUT',
-        data: values
-      }).done(function(data) {
-        bootbox.alert('monitor updated',function(){
-          window.location.reload();
-        });
-      }).fail(function(xhr, err, xhrStatus) {
-        bootbox.alert(err);
-      });
-    }
-
-    function createResourceMonitor($el){
-      var values = (new FormElement($el)).get();
-
-      if (values.script_runas) {
-        if ( /%script%/.test(values.script_runas) === false ) {
-          bootbox.alert('The script runas must include the "%script%" keyword');
-          return;
-        }
-      }
-
-      $.ajax({
-        method:'POST',
-        url:'/resource/' + values.monitor_type,
-        data: JSON.stringify(values),
-        contentType: "application/json; charset=utf-8"
-      }).done(function(data){
-        bootbox.alert('Monitor created',function(){
-          window.location.reload();
-        });
-      }).fail(function(xhr, err, xhrStatus){
-        bootbox.alert(xhr.responseText);
-      });
-    }
-
-    function formSubmit(event, type){
+    function formSubmit(event,type){
       event.preventDefault();
       log('submiting form type %s', type);
       log('current action %o', window.resourceActionData);
 
       var action = window.resourceActionData.action;
-      var $form = $("form#" + type + "ResourceForm");
+      var $form = $('form#' + type + 'ResourceForm');
 
-      if(action=='edit'){
-        updateResourceMonitor($form);
+      var values = (new FormElement($form)).get();
+      if (values.script_runas) {
+        if (/%script%/.test(values.script_runas) === false) {
+          bootbox.alert('The script runas must include the "%script%" keyword');
+          return;
+        }
+      }
+
+      if (values.script_arguments) {
+        values.script_arguments = values.script_arguments
+          .split(',')
+          .map(arg => arg.trim());
+      }
+
+      if (action=='edit') {
+        var idResource = $form.find('[data-hook=resource_id]').val();
+        if (!values.host_id) values.host_id = values.hosts;
+        MonitorActions.update(idResource,values);
       } else {
-        createResourceMonitor($form);
+        MonitorActions.create(values);
       }
     }
 
@@ -265,7 +229,7 @@ var MonitorsPageInit = (function(){
         usersSelect.render();
 
         /**
-         * Ugly oneline code - je je je
+         * Ugly oneline code
          * @author TuVieja
          */
         var severity = (resource.failure_severity||(type==='dstat'?'LOW':'HIGH'));
@@ -340,18 +304,7 @@ var MonitorsPageInit = (function(){
 
                 var data = (new FormElement($form)).get();
 
-                log('saving values %o', data);
-                jQuery.ajax({
-                  url: '/resource/' + data.resource_id,
-                  type: 'PUT',
-                  data: JSON.stringify(data),
-                  contentType: "application/json; charset=utf-8"
-                }).done(function(data) {
-                  bootbox.alert('Limits updated');
-                  $modal.modal('hide');
-                }).fail(function(xhr, err, xhrStatus) {
-                  bootbox.alert(xhr.responseText);
-                });
+                MonitorActions.update(data.resource_id,data);
               });
             })();
           }
@@ -483,8 +436,8 @@ var MonitorsPageInit = (function(){
       var $modal = $('[data-hook=dstat-modal]');
       var $submitBtn = $modal.find('button[type=submit]');
       var $hosts = $modal.find('[data-hook=hosts-container]');
-
       var $form = $modal.find('form');
+
       var usersSelect = new UsersSelect({ collection: _users });
       usersSelect.render();
       $form.append( usersSelect.$el );
@@ -504,25 +457,16 @@ var MonitorsPageInit = (function(){
         $submitBtn.on('click', function(event){
           event.preventDefault();
           event.stopPropagation();
-          log('saving host config');
 
           var data = (new FormElement($form)).get();
-
-          log('saving values %o', data);
-          jQuery.ajax({
-            url: '/resource',
-            type: 'POST',
-            data: JSON.stringify(data),
-            contentType: "application/json; charset=utf-8"
-          }).done(function(data) {
-            bootbox.alert('Host Stats monitor created',function(){
-              window.location.reload();
-            });
-          }).fail(function(xhr, err, xhrStatus) {
-            bootbox.alert(xhr.responseText);
-          });
+          MonitorActions.create(data);
         });
       });
+
+      $form.find('input[name=cache]').val('60');
+      $form.find('input[name=mem]').val('60');
+      $form.find('input[name=cpu]').val('60');
+      $form.find('input[name=disk]').val('60');
 
       $modal.modal('show');
       $.unblockUI();
@@ -591,21 +535,9 @@ var MonitorsPageInit = (function(){
   $('.modal#scriptUpload div#scriptTemplateDescription').hide();
 
   (function(){
-    function deleteResourceRequest (idResource,done) {
-      jQuery.ajax({
-        url: '/resource/' + idResource,
-        type: 'DELETE'
-      }).done(function(data) {
-        if(done) done(null,data);
-        else window.location.reload();
-      }).fail(function(xhr, err, xhrStatus) {
-        bootbox.alert(xhr.responseText);
-      });
-    }
-
     /**
-    * DELETE RESEOURCE FUNCTION
-    */
+     * DELETE RESEOURCE FUNCTION
+     */
     $(".deleteResource").on("click",function (event) {
       event.preventDefault();
       bootbox.confirm('The resource will be removed. Want to continue?',
@@ -613,21 +545,21 @@ var MonitorsPageInit = (function(){
           if(!confirmed) return;
           var $delTrigger = $(event.currentTarget);
           var idResource = $delTrigger.attr("data-resource_id");
-          deleteResourceRequest(idResource);
+          MonitorActions.remove(idResource);
         });
       return false;
     });
 
     /**
-    * DELETE HOST RESEOURCE FUNCTION
-    */
+     * DELETE HOST RESEOURCE FUNCTION
+     */
     $(".deleteHostResource").on("click",function (event) {
       bootbox.confirm('<h3>WARNING!</h3><p>The selected HOST and all the monitors attached to it will be removed. This is operation cannot be undo.</p><p>Are you sure you want to continue?</p>',
         function(confirmed){
           if(!confirmed) return;
           var $delTrigger = $(event.currentTarget);
           var idResource = $delTrigger.attr("data-resource_id");
-          deleteResourceRequest(idResource,function(){
+          MonitorActions.remove(idResource,function(){
             bootbox.alert('Ok, the host is gone. Dont\' forget to shutdown and remove the AGENT from the host.',
               function(){
                 window.location.reload();
