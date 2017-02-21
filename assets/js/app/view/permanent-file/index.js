@@ -196,18 +196,22 @@ var PermanentFile = new (function(){
       var $uid  = this.queryByHook('uid');
       var $gid  = this.queryByHook('gid');
 
-      $perms.hide(); $perms[0].disabled = true;
-      $uid.hide(); $uid[0].disabled = true;
-      $gid.hide(); $gid[0].disabled = true;
+      $perms[0].disabled = true;
+      $uid[0].disabled = true;
+      $gid[0].disabled = true;
+
+      this.queryByHook('access-setup').slideUp();
     },
     disableWindowsMode: function(){
       var $perms = this.queryByHook('permissions');
       var $uid  = this.queryByHook('uid');
       var $gid  = this.queryByHook('gid');
 
-      $perms.show(); $perms[0].disabled = false;
-      $uid.show(); $uid[0].disabled = false;
-      $gid.show(); $gid[0].disabled = false;
+      $perms[0].disabled = false;
+      $uid[0].disabled = false;
+      $gid[0].disabled = false;
+
+      this.queryByHook('access-setup').slideDown();
     },
     onClickAdvancedToggler: function(){
       var $toggle = this.find('section[data-hook=advanced]');
