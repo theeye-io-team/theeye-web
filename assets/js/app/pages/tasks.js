@@ -161,32 +161,22 @@ var TasksPageInit = (function(){
       $taskForm.on("submit", function(event){
         event.preventDefault();
 
-        var form = new FormElement($taskForm);
-        var vals = form.get();
+        var id = $taskForm.data('task-id');
+        var vals = (new FormElement($taskForm)).get();
         vals.type = 'script';
 
         // parse arguments
-        var args = vals.script_arguments.split(',');
-        vals.script_arguments = args.map(function(str){ return str.trim(); });
+        vals.script_arguments = vals.script_arguments
+          .split(',')
+          .map(function(str){
+            return str.trim();
+          });
 
-        jQuery.ajax({
-          type:'PUT',
-          url:'/task/' + $taskForm.data('task-id'),
-          data: JSON.stringify(vals),
-          contentType: "application/json; charset=utf-8"
-        }).done(function(task) {
-          $(".modal#edit-task").modal("hide");
-          window.location.reload();
-        }).fail(function(xhr, err, xhrStatus) {
-          alert( xhr.responseText );
-        });
+        TaskActions.update(id,vals);
 
         return false; // stopPropagation from within the flow
       });
-
-      return $taskForm;
     })("form#editTaskForm");
-
 
     (function create(el){
       var $taskForm = $(el);
@@ -270,32 +260,22 @@ var TasksPageInit = (function(){
       $taskForm.on('submit', function(event) {
         event.preventDefault();
 
-        var form = new FormElement($taskForm);
-        var vals = form.get();
+        var vals = (new FormElement($taskForm)).get();
         vals.type = 'script';
 
         // parse arguments
-        var args = vals.script_arguments.split(',');
-        vals.script_arguments = args.map(function(str){ return str.trim(); });
-
-        $.ajax({
-          method:'POST',
-          url:'/task',
-          data: JSON.stringify(vals),
-          contentType: 'application/json; charset=utf-8'
-        }).done(function(task) {
-          $('.modal#create-task').modal('hide');
-          alert('Task Created','Task', function(){
-            window.location.reload();
+        vals.script_arguments = vals.script_arguments
+          .split(',')
+          .map(function(str){
+            return str.trim();
           });
-        }).fail(function(xhr, err, xhrStatus) {
-          alert(err);
-        });
+        vals.hosts = vals.hosts_id;
+
+        TaskActions.create(vals);
 
         return false; // stopPropagation from within the flow
       });
     })('form#createTaskForm');
-
 
     (function remove(){
       $('.deleteTask').on('click',function(ev){
@@ -303,18 +283,10 @@ var TasksPageInit = (function(){
         ev.stopPropagation();
         var itemRow = $(this).closest('.itemRow');
 
-        bootbox.confirm('The resource will be removed. Want to continue?',
+        bootbox.confirm('The task will be removed. Want to continue?',
           function(confirmed) {
             if(!confirmed) return;
-            $.ajax({
-              url: '/task/' + itemRow.data().itemId,
-              type: 'DELETE'
-            }).done(function(response) {
-              itemRow.remove();
-              // location.reload();
-            }).fail(function(xhr, err, xhrStatus) {
-              alert(xhr.responseText);
-            });
+            TaskActions.remove(itemRow.data().itemId);
           }
         );
       });
@@ -629,7 +601,6 @@ var TasksPageInit = (function(){
         closeOnDateSelect:false
       });
     })();
-
 
     // MASS DELETE
     (function massDelete(){
