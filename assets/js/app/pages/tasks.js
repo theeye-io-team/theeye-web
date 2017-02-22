@@ -58,9 +58,7 @@ var TasksPageInit = (function(){
         var id = $(this).data('task');
         var task = _tasks.get(id);
 
-        var modal = new Modal({
-          'title': 'Copy task ' + task.get('name')
-        });
+        var modal = new Modal({ 'title': 'Copy task ' + task.get('name') });
         modal.render();
 
         var hosts = new Backbone.Collection(window.Hosts);
@@ -79,7 +77,7 @@ var TasksPageInit = (function(){
             var hosts = view.values;
 
             hosts.forEach(function(id){
-              task.createClone({ host: id, host_id: id },{
+              task.createClone({ hosts: [id] },{
                 success:function(model, response, options){
                   bootbox.alert('task created',function(){
                     window.location.reload();

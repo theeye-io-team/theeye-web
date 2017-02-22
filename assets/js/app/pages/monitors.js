@@ -51,7 +51,7 @@ var MonitorsPageInit = (function(){
       modal.render();
 
       var hosts = new Backbone.Collection(window.Hosts);
-      hosts.remove( monitor.get('host_id') );
+      hosts.remove(monitor.get('host_id'));
 
       var view = new HostsSelect({ collection: hosts });
 
@@ -67,7 +67,7 @@ var MonitorsPageInit = (function(){
           var hosts = view.values;
 
           hosts.forEach(function(id){
-            monitor.createClone({ host_id: id },{
+            monitor.createClone({ hosts: [id] },{
               success:function(model, response, options){
                 bootbox.alert('monitors created',function(){
                   window.location.reload();
@@ -609,22 +609,6 @@ var MonitorsPageInit = (function(){
         bootbox.alert(err);
         $.unblockUI();
       });
-    });
-
-    $('button.resource-search').click(function(event){
-      event.preventDefault();
-      event.stopPropagation();
-
-      var idResource = event.currentTarget.getAttribute('data-resource_id');
-      var $searchComponent = $('.js-searchable-box');
-
-      var $input = $searchComponent.find('input');
-      $input.val(idResource);
-      $input.trigger('input');
-
-      $searchComponent
-      .find('button.search')
-      .trigger('click');
     });
 
     /* ROW SELECTOR + MASS CHECKER + MASS DELETE */
