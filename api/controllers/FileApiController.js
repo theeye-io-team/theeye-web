@@ -52,9 +52,10 @@ module.exports = {
       url: url
     },function(error,file){
       supervisor.performRequest({
+        json: false,
         method: 'GET',
         url: url + '/download'
-      },function(error, body) {
+      },function(error, body){
         if (error) return res.send(500,error);
         var source = unescape(encodeURIComponent(body));
         file.file = new Buffer(source).toString('base64');

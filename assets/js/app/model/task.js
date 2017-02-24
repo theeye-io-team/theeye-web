@@ -11,6 +11,7 @@ window.App.Models.Task = BaseModel.extend({
     ].concat( task.tags );
 
     return lodash.merge(task,{
+      hosts: [ task.host_id ],
       formatted_tags: tags
     });
   },

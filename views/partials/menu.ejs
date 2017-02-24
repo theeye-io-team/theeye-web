@@ -9,21 +9,25 @@
 
     <a class="navbar-brand" href="/events"><img src="/images/logo-hor.png" alt="The eye"></a>
     <div class="navData">
-      <a href="/profile"><span class="clientName"><%= req.session.customer %></span></a>
+      <a href="/profile">
+        <span class="clientName"><%= req.session.customer %></span>
+      </a>
       <div class="client hidden-sm hidden-md hidden-lg">
         <a href="#" class="switcher"><img src="/images/switcher.png" /></a>
         <select id="clientSelect" class="hidden " tabindex=-1>
           <% req.user.customers.forEach( function(customer, key){ %>
-          <option value="<%= customer %>"><%= customer %></option>
+            <option value="<%= customer %>"><%= customer %></option>
           <% }); %>
         </select>
       </div>
       <div class="hidden-xs client dropdown">
-        <a href="#" data-toggle="dropdown" class="switcher"><img src="/images/switcher.png" /></a>
+        <a href="#" data-toggle="dropdown" class="switcher">
+          <img src="/images/switcher.png" />
+        </a>
         <ul class="dropdown-menu" role="menu">
           <span class="glyphicon glyphicon-triangle-top"></span>
           <% req.user.customers.forEach( function (customer, key) { %>
-          <li><a onClick="javascript:setCustomer('<%= customer %>')" ><%= customer %></a></li>
+            <li><a onClick="javascript:setCustomer('<%= customer %>')" ><%= customer %></a></li>
           <% }); %>
         </ul>
       </div>

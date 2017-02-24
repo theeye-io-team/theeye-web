@@ -80,24 +80,16 @@ module.exports = {
     var supervisor = req.supervisor;
     var params = req.params.all();
 
-    var hosts = params.hosts;
-    if (!hosts) res.send(400, 'At least one host is required');
-    hosts = (!Array.isArray(hosts)) ? [ hosts ] : hosts;
-
-    var type = params.monitor_type || params.type;
-    if (!type) return res.send(400,"No resource type supplied");
-
-    var data = extend(params, { hosts: hosts, type: type });
     if (params.script_arguments) {
-      data.script_arguments = params.script_arguments
+      params.script_arguments = params.script_arguments
         .split(',')
         .map(arg => arg.trim());
     }
 
     supervisor.create({
       route: supervisor.RESOURCE,
-      body: data,
-      failure: error => res.send(500, error),
+      body: params,
+      failure: error => res.send(error.statusCode, error),
       success: monitors => res.json(monitors),
     });
   },
@@ -109,16 +101,8 @@ module.exports = {
     var supervisor = req.supervisor;
     var params = req.params.all();
 
-    var host = params.host_id;
-    if (!host) return res.send(400,'the host is required');
-    host = (Array.isArray(host) ? host[0] : host);
-
-    var type = (params.monitor_type||params.type);
-    if (!type) return res.send(400,'No resource type supplied');
-
-    var data = extend(params, { host_id: host, type: type });
     if (params.script_arguments) {
-      data.script_arguments = params.script_arguments
+      params.script_arguments = params.script_arguments
         .split(',')
         .map(arg => arg.trim());
     }
@@ -126,8 +110,8 @@ module.exports = {
     supervisor.patch({
       id: params.id,
       route: supervisor.RESOURCE,
-      body: data,
-      failure: error => res.send(500, error),
+      body: params,
+      failure: error => res.send(error.statusCode, error),
       success: resource => res.json(resource),
     });
   },

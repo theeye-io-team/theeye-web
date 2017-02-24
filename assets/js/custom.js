@@ -32,9 +32,9 @@ $(document).ready(function() {
     $('.tooltiped').tooltip({container: 'tooltipHolder'});
   }
 
+  $('#clientSelect').val(Cookies.getJSON('theeye').customer);
   $('a.switcher').on('click', function(evt){
     $('#clientSelect').removeClass('hidden');
-    //.trigger('click',evt.originalEvent);
   });
   $('#clientSelect').on('blur', function(evt){
     $(this).addClass('hidden');

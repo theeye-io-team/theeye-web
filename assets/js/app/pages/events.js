@@ -588,5 +588,13 @@ var EventsPageInit = (function(){
     $('.resources-panel-list').slideDown(); 
   });
 
+  $('button.resource-search').click(function(event){
+    event.preventDefault();
+    event.stopPropagation();
 
+    var term = event.currentTarget.getAttribute('data-search');
+    $searchbox.trigger('search',[term]);
+
+    return false;
+  });
 });
