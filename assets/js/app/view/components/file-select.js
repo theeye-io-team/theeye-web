@@ -7,56 +7,45 @@
 
 var FileSelect = (function(){
 
-  var ActionButton = (function(){
-    var _label = 'Create File',
-      _mode = App.Constants.FILE_CREATE;
+  var ActionButton = BaseView.extend({
+    autoRender: true,
+    tagName: 'div',
+    className: 'col-sm-3',
+    template: function(ctx){
+      return '<button data-mode="' + ctx.mode + '" class="btn btn-block btn-primary">' + ctx.label + '</button>';
+    },
+    initialize: function(options){
+      var self = this;
+      this.label = 'Create File';
+      this.mode = App.Constants.FILE_CREATE;
 
-    return BaseView.extend({
-      autoRender: true,
-      tagName: 'div',
-      className: 'col-sm-3',
-	  	template: function(ctx){
-        return '<button data-mode="' + ctx.mode + '" class="btn btn-block btn-primary">' + ctx.label + '</button>';
-	  	},
-      initialize:function(options){
-        var self = this;
+      BaseView.prototype.initialize.apply(this,arguments);
 
-        Object.defineProperty(this,'label',{
-          get: function(){ return _label; }
-        });
-
-        Object.defineProperty(this,'mode',{
-          get: function(){ return _mode; }
-        });
-
-        BaseView.prototype.initialize.apply(this,arguments);
-
-        this.on('change',this.render,this);
-      },
-      render:function(){
-        this.renderTemplate();
-      },
-      events:{
-        'click button':'onClickButton'
-      },
-      onClickButton:function(event){
-        event.preventDefault();
-        event.stopPropagation();
-        this.trigger('click',{ mode: this.mode });
-        return false;
-      },
-      createMode:function(){
-        _label = 'Create File';
-        _mode = App.Constants.FILE_CREATE;
-        this.trigger('change');
-      },
-      updateMode:function(id){
-        _label = 'Update File';
-        _mode = App.Constants.FILE_UPDATE;
-        this.trigger('change');
-      },
-    });
-  })();
+      this.on('change',this.render,this);
+    },
+    render: function(){
+      this.renderTemplate();
+    },
+    events: {
+      'click button':'onClickButton'
+    },
+    onClickButton: function(event){
+      event.preventDefault();
+      event.stopPropagation();
+      this.trigger('click',{ mode: this.mode });
+      return false;
+    },
+    createMode: function(){
+      this.label = 'Create File';
+      this.mode = App.Constants.FILE_CREATE;
+      this.trigger('change');
+    },
+    updateMode: function(id){
+      this.label = 'Update File';
+      this.mode = App.Constants.FILE_UPDATE;
+      this.trigger('change');
+    },
+  });
 
   return BaseView.extend({
     autoRender: true,
@@ -84,7 +73,7 @@ var FileSelect = (function(){
       });
     },
     events: {
-      'change select':function(event){
+      'change select': function(event){
         if (!this.value) {
           this.button.createMode();
         } else {
@@ -131,8 +120,7 @@ var FileSelect = (function(){
       this.$el.append(button.$el);
 
       this.listenTo(button,'click',function(event){
-        var modal = new FileModal();
-        this.fileModal = modal;
+        var modal = this.fileModal = new FileModal();
         if (event.mode === App.Constants.FILE_CREATE) {
           modal.render();
         } else if (event.mode === App.Constants.FILE_UPDATE) {

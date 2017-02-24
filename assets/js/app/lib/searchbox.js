@@ -11,6 +11,20 @@
     var $searchCleanBtn = $searchBox.find('button.clean');
     var $searchInput = $searchBox.find('input');
 
+    $emitter.on('search',function(event,term){
+      window.location.hash = 'search=' + term;
+      $searchInput.val(term);
+      //$searchBtn.trigger('click');
+    });
+
+    function resetSearch () {
+      $searchCleanBtn.removeClass('active');
+      $emitter.trigger('search:done');
+      $emitter.trigger('search:empty');
+      $emitter.searching = false;
+      window.location.hash = '';
+    }
+
     $searchInput.on('input', function(event){
       lastTimer && clearTimeout(lastTimer);
       if( $searchInput.val() != '' ) {
@@ -22,39 +36,31 @@
       }
     });
 
-    function resetSearch () {
-      $searchCleanBtn.removeClass('active');
-      $emitter.trigger('search:done');
-      $emitter.trigger('search:empty');
-      $emitter.searching = false;
-      window.location.hash = '';
-    }
-
     $searchInput.on('keypress', function(event){
-      if ( event.which == 13 ) { // Enter key = keycode 13
+      if (event.which == 13) { // Enter key = keycode 13
         $searchBtn.trigger('click');
         return false;
       }
     });
 
-    $searchInput.on('keyup',function(event){
-      if (event.keyCode===27) {
+    $searchInput.on('keyup', function(event){
+      if (event.keyCode === 27) {
         $searchInput.val('');
         $searchBtn.trigger('click');
         //resetSearch();
       } else {
         var input = $searchInput.val();
         var chars = input.length;
-        if( chars >= 3 ) {
+        if (chars >= 3) {
           $searchBtn.trigger('click');
-        } else if( chars == 0 ) {
+        } else if (chars == 0) {
           $searchBtn.trigger('click');
         }
         window.location.hash = 'search='+input;
       }
     });
 
-    $searchCleanBtn.on('click',function(event){
+    $searchCleanBtn.on('click', function(event){
       event.preventDefault();
       event.stopPropagation();
       log('clean search');
@@ -83,17 +89,17 @@
       var pattern = new RegExp(search);
 
       for (var i=0; i<$searchItems.length; i++) {
-        var $item = $( $searchItems[i] );
+        var $item = $($searchItems[i]);
         var tags = $item.data('tags');
         if (!tags) return;
 
         tags = tags.toLowerCase();
 
         if (!pattern.test(tags)) {
-          if ($item.is(':visible')) {
+          //if ($item.is(':visible')) {
             $item.slideUp(200);
             waitForIt = true;
-          }
+          //}
         } else {
           log('pattern matches on tags %s', tags);
           if (!$item.is(':visible')) {
@@ -123,8 +129,9 @@
       $searchInput.val(existingSearch.search);
       $searchBtn.trigger('click');
     }
+
     return $emitter;
-  };
-}( jQuery ));
+  }
+}(jQuery));
 
 window.$searchbox = $.searchbox();

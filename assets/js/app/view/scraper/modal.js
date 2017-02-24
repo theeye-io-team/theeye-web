@@ -7,7 +7,6 @@
 //var Modal = require('../modal');
 
 var ScraperModal = new (function ScraperModal(){
-
   function initializeForm(container){
     // initialize a scraper form
     var view = new Scraper.FormView({
@@ -21,21 +20,7 @@ var ScraperModal = new (function ScraperModal(){
     return view ;
   }
 
-  function getScraper(id,done){
-    var scraper = new App.Models.ScraperMonitor({ id: id });
-    scraper.fetch({
-      success:function(model, response, options){
-        // on click render form
-        done(null,scraper);
-      },
-      error:function(model, response, options){
-        bootbox.alert(response.responseText);
-        done(new Error(response.responseText));
-      }
-    });
-  }
-
-  this.MonitorCRUD = function(){
+  function Monitor (){
     var _modal = new Modal({ title: 'Website Monitor' });
     _modal.render();
 
@@ -77,39 +62,25 @@ var ScraperModal = new (function ScraperModal(){
           var monitor = monitors.get(id).get('monitor');
 
           var config = (monitor.config||{});
-          var values = _.extend(
+          var data = _.extend(
             { name: monitor.name },
             monitor,
             (config.ps||config),
             monitors.get(id).attributes
           );
 
-          _form.data = values;
+          _form.data = data;
         }
       });
 
-
-      var scraper = new App.Models.ScraperMonitor({});
-
       _modal.$el.on('click','button[data-hook=save]',function(){
-        var data = _form.data;
-        scraper.set(data);
-        scraper.save({},{
-          success:function(model, response, options){
-            bootbox.alert('Monitor Created',function(){
-              window.location.reload();
-            });
-          },
-          error:function(model, response, options){
-            bootbox.alert(response.responseText);
-          }
-        });
+        ScraperMonitorActions.create(_form.data);
       });
       _modal.show();
     };
 
     this.edit = function (scraper_id) {
-      getScraper(scraper_id,function(error,scraper){
+      ScraperMonitorActions.get(scraper_id,function(error,scraper){
 
         _form.render({ model: scraper });
 
@@ -119,34 +90,23 @@ var ScraperModal = new (function ScraperModal(){
         _form.find('form [data-hook=advanced]').append( _severity.$el );
 
         _modal.$el.on('click','button[data-hook=save]',function(){
-          var values = _form.data;
-          scraper.set(values);
-          scraper.save({},{
-            success:function(model, response, options){
-              bootbox.alert('Monitor Updated',function(){
-                window.location.reload();
-              });
-            },
-            error:function(model, response, options){
-              bootbox.alert(response.responseText);
-            }
-          });
+          ScraperMonitorActions.update(scraper_id,_form.data);
         });
         _modal.show();
       });
     };
 
     return this;
-  };
+  }
 
-  this.TaskCRUD = function(options){
+  function Task (options){
     var tasks = options.tasks,
       users = options.users,
       modal = new Modal({ title: 'API Request Task' });
 
     modal.render();
 
-    var _scraper = new App.Models.ScraperTask();
+    var _scraper = new App.Models.Task();
     var _form = new Scraper.TaskFormView({
       model: _scraper,
       looptimes: window.Looptimes,
@@ -172,7 +132,7 @@ var ScraperModal = new (function ScraperModal(){
         _form.remove();
         $modal.off('click','button[data-hook=save]');
       });
-    })( modal.$el );
+    })(modal.$el);
 
     this.create = function () {
       _scraper.clear();
@@ -197,17 +157,7 @@ var ScraperModal = new (function ScraperModal(){
 
       modal.$el.on('click','button[data-hook=save]',function(){
         var data = _form.data;
-        _scraper.set(data);
-        _scraper.save({},{
-          success:function(model, response, options){
-            bootbox.alert('Task Created',function(){
-              window.location.reload();
-            });
-          },
-          error:function(model, response, options){
-            bootbox.alert(response.responseText);
-          }
-        });
+        TaskActions.create(data);
       });
       modal.show();
     };
@@ -220,19 +170,9 @@ var ScraperModal = new (function ScraperModal(){
           _form.render();
 
           modal.$el.on('click','button[data-hook=save]',function(){
-            var values = _form.data;
-            values.host_id = values.hosts;
-            _scraper.set(values);
-            _scraper.save({},{
-              success:function(model, response, options){
-                bootbox.alert('Task Updated',function(){
-                  window.location.reload();
-                });
-              },
-              error:function(model, response, options){
-                bootbox.alert(response.responseText);
-              }
-            });
+            var data = _form.data;
+            data.host_id = data.hosts;
+            TaskActions.update(scraper_id,data);
           });
 
           modal.show();
@@ -244,10 +184,9 @@ var ScraperModal = new (function ScraperModal(){
     };
 
     return this;
-  };
+  }
 
-  this.TemplateMonitorCRUD = function(options){
-
+  function Template (options){
     var _form = initializeForm( $(options.container)[0] );
 
     var _model = null ;
@@ -307,8 +246,8 @@ var ScraperModal = new (function ScraperModal(){
 
     this.persist = function(done){
       // var tag = _tag;
-      var values = _form.data;
-      _model.set(values);
+      var data = _form.data;
+      _model.set(data);
       _model.save({},{
         success:function(model, response, options){
           done(null, {}, _tag);
@@ -321,6 +260,11 @@ var ScraperModal = new (function ScraperModal(){
     };
 
     return this;
-  };
+  }
 
+  return {
+    TaskCRUD: Task,
+    TemplateMonitorCRUD: Template,
+    MonitorCRUD: Monitor
+  }
 })();

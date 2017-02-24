@@ -23,22 +23,24 @@
 
   <!-- ADVANCED SECTION START HERE -->
   <section data-hook="advanced" style="display:none;">
-    <div class="form-group">
-      <label for="uid" class="col-sm-3 control-label"> File UID </label>
-      <div class="col-sm-9">
-        <input name="uid" data-hook="uid" type="text" class="form-control" placeholder="0">
+    <div data-hook="access-setup">
+      <div class="form-group">
+        <label for="uid" class="col-sm-3 control-label"> File UID </label>
+        <div class="col-sm-9">
+          <input name="uid" data-hook="uid" type="text" class="form-control" placeholder="0">
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <label for="gid" class="col-sm-3 control-label"> File GID </label>
-      <div class="col-sm-9">
-        <input name="gid" data-hook="gid" type="text" class="form-control" placeholder="1000">
+      <div class="form-group">
+        <label for="gid" class="col-sm-3 control-label"> File GID </label>
+        <div class="col-sm-9">
+          <input name="gid" data-hook="gid" type="text" class="form-control" placeholder="1000">
+        </div>
       </div>
-    </div>
-    <div class="form-group">
-      <label for="permissions" class="col-sm-3 control-label"> File Permissions </label>
-      <div class="col-sm-9">
-        <input name="permissions" data-hook="permissions" type="text" class="form-control" placeholder="0755">
+      <div class="form-group">
+        <label for="permissions" class="col-sm-3 control-label"> File Permissions </label>
+        <div class="col-sm-9">
+          <input name="permissions" data-hook="permissions" type="text" class="form-control" placeholder="0755">
+        </div>
       </div>
     </div>
   </section>
