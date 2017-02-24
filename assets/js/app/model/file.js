@@ -55,6 +55,7 @@ window.App.Models.File = BaseModel.extend({
     }).done(function(data,status,jqxhr){
       var parsed = self.parse(data)
       self.set(parsed);
+      self.set('file',data.file);
       if (options.success) {
         options.success(self,jqxhr,options);
       }
