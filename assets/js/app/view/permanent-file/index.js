@@ -193,23 +193,23 @@ var PermanentFile = new (function(){
     },
     enableWindowsMode: function(){
       var $perms = this.queryByHook('permissions');
-      var $uid  = this.queryByHook('uid');
-      var $gid  = this.queryByHook('gid');
+      var $user  = this.queryByHook('user');
+      var $group  = this.queryByHook('group');
 
       $perms[0].disabled = true;
-      $uid[0].disabled = true;
-      $gid[0].disabled = true;
+      $user[0].disabled = true;
+      $group[0].disabled = true;
 
       this.queryByHook('access-setup').slideUp();
     },
     disableWindowsMode: function(){
       var $perms = this.queryByHook('permissions');
-      var $uid  = this.queryByHook('uid');
-      var $gid  = this.queryByHook('gid');
+      var $user  = this.queryByHook('user');
+      var $group  = this.queryByHook('group');
 
       $perms[0].disabled = false;
-      $uid[0].disabled = false;
-      $gid[0].disabled = false;
+      $user[0].disabled = false;
+      $group[0].disabled = false;
 
       this.queryByHook('access-setup').slideDown();
     },
@@ -314,8 +314,8 @@ var PermanentFile = new (function(){
       new HelpIcon({ container: this.find('label[for=hosts]'), category: 'file_form', text: HelpTexts.host });
       new HelpIcon({ container: this.find('label[for=looptime]'), category: 'file_form', text: HelpTexts.looptime });
       new HelpIcon({ container: this.find('label[for=path]'), category: 'file_form', text: HelpTexts.file.path });
-      new HelpIcon({ container: this.find('label[for=uid]'), category: 'file_form', text: HelpTexts.file.uid });
-      new HelpIcon({ container: this.find('label[for=gid]'), category: 'file_form', text: HelpTexts.file.gid });
+      new HelpIcon({ container: this.find('label[for=user]'), category: 'file_form', text: HelpTexts.file.user });
+      new HelpIcon({ container: this.find('label[for=group]'), category: 'file_form', text: HelpTexts.file.group });
       new HelpIcon({ container: this.find('label[for=permissions]'), category: 'file_form', text: HelpTexts.file.permissions,
         link: 'https://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation' });
     },
