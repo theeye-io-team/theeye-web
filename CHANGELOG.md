@@ -1,5 +1,17 @@
 # CHANGELOG
 
+### 0.8.2 - 2017-02-28
+
+* c9772fa replace uid/gid  > user/group
+* 184794f set uploaded file to source. do not convert json to object
+* a60dfa7 fix task/monitor clone. fix searchbox
+* 8726c97 customer selection
+* ddf64a2 task and monitor actions with error validation
+* 6d641ed Monitors server submit error validation
+* 833cf37 show hide file access setup
+* 22803c1 Title help texts
+
+
 ### v0.8.1 - 2017-02-24
 
 * Merged in development (pull request #9)
