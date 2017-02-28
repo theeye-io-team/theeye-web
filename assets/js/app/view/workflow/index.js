@@ -73,8 +73,6 @@ var WorkflowPage = function(){
   req.done(function(data){
     var elems = [];
 
-    //data.nodes.forEach(d => console.log(d.value&&d.value._type) );
-
     data.nodes.forEach( function(n) {
       var node = new Node(n.value);
       elems.push({

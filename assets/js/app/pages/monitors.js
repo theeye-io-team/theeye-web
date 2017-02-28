@@ -148,7 +148,7 @@ var MonitorsPageInit = (function(){
       if (values.script_arguments) {
         values.script_arguments = values.script_arguments
           .split(',')
-          .map(arg => arg.trim());
+          .map(function(arg){ return arg.trim(); });
       }
 
       if (action=='edit') {
