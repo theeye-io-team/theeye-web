@@ -584,17 +584,16 @@ function DashboardPage () {
   });
 
   function attachToHost (monitors) {
-    var typesToGroup=['host','dstat','psaux'],
-      groups={},
-      groupedMonitors = new Backbone.Collection();
+    var typesToGroup = ['host','dstat','psaux'];
+    var groups = {};
+    var groupedMonitors = new Backbone.Collection();
 
     monitors.forEach(function(monitor){
       if (typesToGroup.indexOf(monitor.get('type')) !== -1) {
         if (!groups[monitor.get('hostname')]) {
-          groups[monitor.get('hostname')] = {};
+          groups[monitor.get('hostname')] = [];
         }
-
-        groups[monitor.get('hostname')][monitor.get('type')] = monitor;
+        groups[monitor.get('hostname')].push(monitor);
       } else {
         monitor.set('submonitors', new Backbone.Collection());
         monitor.get('submonitors').add(monitor);
@@ -604,16 +603,19 @@ function DashboardPage () {
 
     for (var hostname in groups) {
       var group = groups[hostname];
-      var host = group['host'];
+      var host = group.find(function(m){ return m.get('type') === 'host' });
 
-      if (host) { // data error ??
+      if (host!==undefined) {
         host.set('submonitors', new Backbone.Collection());
-        host.get('submonitors').add([
-          group['host'],
-          group['dstat']
-        ]);
+        host.get('submonitors').add(
+          group.filter(function(m){
+            var type = m.get('type');
+            return type === 'host' || type === 'dstat';
+          })
+        );
         groupedMonitors.add(host);
       }
+      // else data error ??
     }
 
     return groupedMonitors;
