@@ -578,9 +578,12 @@ function DashboardPage () {
 
   // anywere keypress event focus on search
   $(document).on('keypress',function(event){
-    if (document.activeElement.tagName.toLowerCase()!='input') {
-      $('.js-searchable-box input').focus();
-    }
+    if (
+      document.activeElement.tagName === 'TEXTAREA' ||
+      document.activeElement.tagName === 'INPUT'
+    ) return;
+
+    $('.js-searchable-box input').focus();
   });
 
   function attachToHost (monitors) {
