@@ -19,3 +19,4 @@ newrelic*.log
 config/env/production.js
 .sailsrc
 config/env/*
+*.orig
