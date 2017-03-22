@@ -1010,7 +1010,22 @@ border-radius:300px
 .saas-tab .slider-track:after, .saas-tab .slider-selection, .saas-tab .slider-handle {background:#cda2bc}
 .premise-tab .slider-track:after, .premise-tab .slider-selection, .premise-tab .slider-handle {background:#797979}
 
-@media only screen and (max-width: 479px) {
-	.btn-learn {font-size:18px}
-	.btn-standard.btn-learn {min-width:140px}
+
+/* new features code */
+.features {padding:60px 0 120px}
+
+.features .feature {font-size:21px;margin:30px 0 0;padding:0}
+.features .feature h4 {border-bottom:1px solid #fff;padding-bottom:10px;margin-bottom:10px;font-size:24px;font-weight:600}
+.features .feature ul, .features .feature ul li {text-align:left;margin:0} 
+.features .feature ul li {padding:8px 0 8px 32px;position:relative;margin-bottom:10px;border-bottom:1px solid #12263c}
+.features .feature ul li i {position:absolute;top:12px;left:0}
+
+
+
+@media only screen and (min-width: 768px) {
+	.features .feature ul li:last-child {border:none}	
+}
+
+@media only screen and (max-width: 767px) {
+	.features .row {margin:0}	
 }
