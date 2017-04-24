@@ -1,10 +1,5 @@
-<% block('styles', '<link rel="stylesheet" type="text/css" href="/styles/jquery.fullcalendar.min.css">') %>
-<% block('styles', '<style>.fc-unthemed .fc-today { background-color: #23324C; }</style>') %>
-<% block('styles', '<style>.fc-unthemed .fc-list-heading td { background-color: #428bca; }</style>') %>
-<% block('styles', '<style>.fc-unthemed .fc-list-empty { background-color: #23324C; }</style>') %>
-<% block('styles', '<style>.fc-list-item:hover td{ background-color: #23324C; }</style>') %>
+<div class="admin-container">
+  <div style="padding:10px;" id="schedulePageContainer"> </div>
+</div>
 
-<div style="padding:10px;" data-hook="scheduler-page-container"></div>
-
-<% block('scripts','<script src="/js/app/view/scheduler/index.js"></script>') %>
-<% block('scripts','<script>$(document).ready(function(){ new SchedulerPageView(); });</script>') %>
+<% block('scripts','<script src="/js/app/bundles/scheduler.bundle.js"></script>') %>

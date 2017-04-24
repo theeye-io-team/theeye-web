@@ -4,6 +4,41 @@ var mailer = require('../services/mailer');
 var underscore = require('underscore');
 
 var UserController = module.exports = {
+  // index: function(req, res) {
+  //   var supervisor = req.supervisor;
+  //   async.parallel({
+  //     protocols: function(next){
+  //       Passport.find({ protocol: 'theeye' }, next);
+  //     },
+  //     users: function(next){
+  //       User.find({ username : { $ne: null } }, next);
+  //     },
+  //     customers: (next) => supervisor.fetch({
+  //       route: '/customer',
+  //       success: customers => next(null,customers),
+  //       failure: err => {
+  //         sails.log.error(err);
+  //         next(err)
+  //       }
+  //     })
+  //   }, function(error, data){
+  //     if(error) {
+  //       return res.view({
+  //         users : [],
+  //         protocols : [],
+  //         customers : [],
+  //         errors : req.flash({message:'internal error',data:error})
+  //       });
+  //     }
+  //
+  //     res.view({
+  //       users : data.users,
+  //       protocols: data.protocols,
+  //       customers : data.customers,
+  //       errors : null
+  //     });
+  //   });
+  // },
   index: function(req, res) {
     var supervisor = req.supervisor;
     async.parallel({
@@ -18,20 +53,22 @@ var UserController = module.exports = {
         success: customers => next(null,customers),
         failure: err => {
           sails.log.error(err);
-          next(err)
+          next(err);
         }
       })
     }, function(error, data){
       if(error) {
-        return res.view({
+        return res.view('user/index', {
+          layout: 'layout-ampersand',
           users : [],
           protocols : [],
           customers : [],
-          errors : req.flash({message:'internal error',data:error})
+          errors : req.flash({message:'internal error', data:error})
         });
       }
 
-      res.view({
+      res.view('user/index', {
+        layout: 'layout-ampersand',
         users : data.users,
         protocols: data.protocols,
         customers : data.customers,
@@ -105,10 +142,13 @@ var UserController = module.exports = {
     }, function(error, users) {
       if(error) return res.send(500, error);
 
-      return res.json({ user: users });
+      return res.json(users);
     });
   },
   //GET  /admin/user/:id
+  // TODO: change how the API respond to GET/:id requests
+  // This case shows we need separation on the API:Passport
+  // from API:User
   get: function(req, res) {
     var params = req.params.all();
     var userId = params.id;
@@ -117,6 +157,8 @@ var UserController = module.exports = {
       id : userId
     }, function(err, user) {
       if(err) return res.send(500, err);
+
+      if (!user) res.send(404)
 
       Passport.findOne({
         user: userId,
@@ -158,6 +200,9 @@ var UserController = module.exports = {
             } else return res.json(user);
           });
         } else {
+          if (!params.password) {
+            return res.send(400, 'Need password')
+          }
           if(params.password !== params.confirmPassword)
             return res.send(400, 'Passwords don\'t match');
           if(params.password.length < 8)
@@ -236,11 +281,15 @@ var UserController = module.exports = {
     var userId = req.params.id;
     var supervisor = req.supervisor;
 
+    if (!userId) {
+      res.send(400, 'Parameter missing')
+    }
+
     User.findOne({
       id : userId
     }, function(error, user) {
       if(error) return res.send(500, 'internal error');
-      if(!user) return res.send(400, 'User not found');
+      if(!user) return res.send(404, 'User not found');
 
       Passport.find({
         user: userId
@@ -290,7 +339,7 @@ var UserController = module.exports = {
             sails.log.error('error removing user %s', user.id);
             return res.send(500, 'internal error');
           }
-          return res.send(204, 'User deleted');
+          return res.json(204, 'User deleted');
         });
       });
     });

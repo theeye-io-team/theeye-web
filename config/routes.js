@@ -114,7 +114,14 @@ module.exports.routes = {
   'post /api/:resource*':'ApiController.create',
   // template only render
   'get /admin/webhook':'WebhookController.index',
+
   'get /dashboard':'DashboardController.index',
   'get /admin/workflow':'WorkflowController.index',
   'get /admin/scheduler':'SchedulerController.index',
+
+  // webpack parallel routes
+  // 'get /admin/scheduler/new'   : 'SchedulerController.ampersand',
+  // 'get /admin/task/new'        : 'TasksController.ampersand',
+  // 'get /admin/user/new'        : 'UserController.ampersand',
+
 };

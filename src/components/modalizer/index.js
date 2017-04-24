@@ -1,0 +1,175 @@
+/**
+ *
+ * @author Facugon <facugon@interactar.com>
+ * @version 0.0.1
+ *
+ * Ampersand View component for rendering Bootstrap Modals
+ *
+ */
+var View = require('ampersand-view')
+
+var ButtonsView = View.extend({
+  template: `
+    <div>
+      <button type="button"
+        class="btn btn-default"
+        data-dismiss="modal">
+        Cancel
+      </button>
+      <button type="button"
+        class="btn btn-primary"
+        data-hook="confirm">
+      </button>
+    </div>
+  `,
+  props: {
+    confirmButton: {
+      type: 'string',
+      default: 'CONFIRM'
+    }
+  },
+  bindings: {
+    confirmButton: {
+      hook: 'confirm',
+      type: 'text'
+    }
+  }
+})
+
+module.exports = View.extend({
+  template: `
+    <div class="modalizer">
+      <!-- MODALIZER CONTAINER -->
+      <div data-hook="modalizer-class" class="">
+        <div class="modal fade" 
+          tabindex="-1" 
+          role="dialog" 
+          aria-labelledby="modal" 
+          aria-hidden="true" 
+          style="display:none;">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button"
+                  class="close"
+                  data-dismiss="modal"
+                  aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 data-hook="title" class="modal-title"></h4>
+              </div>
+              <div class="modal-body" data-hook="body"></div>
+              <div class="modal-footer" data-hook="buttons">
+                <div data-hook="buttons-container"></div>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
+      </div><!-- /MODALIZER CONTAINER -->
+    </div>
+  `,
+  autoRender: true,
+  props: {
+    buttons: ['boolean', false, false],
+    class: 'string',
+    bodyView: 'object',
+    title: ['string', false, 'MODAL TITLE'],
+    confirmButton: ['string', false, 'CONFIRM'],
+    visible: ['boolean', false, false]
+  },
+  bindings: {
+    class: {
+      hook: 'modalizer-class',
+      type: 'attribute',
+      name: 'class'
+    },
+    title: {
+      hook: 'title',
+      type: 'text'
+    },
+    buttons: {
+      hook: 'buttons',
+      type: 'toggle'
+    }
+  },
+  events: {
+    'click button[data-hook=confirm]':'onClickConfirm'
+  },
+  onClickConfirm () {
+    this.trigger('confirm')
+  },
+  initialize (options) {
+    this._triggerShown = this._triggerShown.bind(this)
+    this._triggerHidden = this._triggerHidden.bind(this)
+    this._onBeingHide = this._onBeingHide.bind(this)
+  },
+  render () {
+    this.renderWithTemplate(this)
+
+    document.body.appendChild(this.el)
+
+    var $modal = $(this.query('.modal'))
+    this.$modal = $modal
+
+    if (this.buttons) {
+      this.renderSubview(
+        new ButtonsView({ confirmButton: this.confirmButton }),
+        this.queryByHook('buttons-container')
+      )
+    }
+
+    this.$modal.on('hide.bs.modal',this._onBeingHide)
+    this.$modal.on('show.bs.modal',this._triggerShown)
+    this.$modal.on('hidden.bs.modal',this._triggerHidden)
+
+    this.listenTo(this,'change:visible',this._toggleVisibility)
+
+    if (this.visible) this.show()
+  },
+  renderBody () {
+    const modalBody = this.queryByHook('body')
+    if (modalBody.childNodes.length === 0) {
+      if ( ! (this.bodyView.el instanceof HTMLDivElement) || !this.bodyView.rendered ) {
+        this.bodyView.render()
+      }
+      modalBody.appendChild(this.bodyView.el)
+    }
+  },
+  show () {
+    this.renderBody()
+    this.visible = true
+  },
+  hide () {
+    this.visible = false
+  },
+  /** 
+   * if bootstrap modal is being hided (with click or X) from bootstrap modal itself
+   */
+  _onBeingHide () {
+    if (this.visible) {
+      // change inner state
+      this.hide()
+    }
+  },
+  _triggerShown () {
+    this.trigger('shown')
+  },
+  _triggerHidden () {
+    this.trigger('hidden')
+  },
+  _showElem () {
+    this.$modal.modal('show')
+  },
+  _hideElem () {
+    this.trigger('hide')
+    this.$modal.modal('hide')
+  },
+  _toggleVisibility () {
+    this.visible ? this._showElem() : this._hideElem()
+  },
+  remove () {
+    this.hide()
+    this.bodyView.remove()
+    View.prototype.remove.apply(this, arguments)
+  }
+})

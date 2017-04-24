@@ -1,0 +1,43 @@
+<div>
+  <div class="row">
+    <span class="col-xs-3">Name</span>
+    <span class="col-xs-9">{{ model.name }}</span>
+  </div>
+  <div class="row">
+    <span class="col-xs-3">Hook Unique ID</span>
+    <span class="col-xs-9">{{ model.id }}</span>
+  </div>
+  <div class="row">
+    <span class="col-xs-3">Trigger URL</span>
+    <span class="col-xs-9">
+      <div class="input-group">
+        <input data-hook="trigger-url" id="webhookTriggerUrl" type=text class=form-control readonly value="{{ model.triggerUrl }}" />
+        <span class="input-group-btn">
+          <button class="btn btn-primary clipboard-token-btn clip" type="button"
+            data-clipboard-target="#webhookTriggerUrl">
+            <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+          </button>
+        </span>
+      </div>
+    </span>
+  </div>
+  <div class="row" style="padding:10px;"></div>
+  <div class="row">
+    <span class="col-xs-3">How to Trigger</span>
+    <span class="col-xs-9">
+      To Trigger push
+      <button data-hook="trigger" class="btn btn-primary simple-btn">
+        This Button
+      </button> ! Also, you can trigger this hook running this command via CLI (you required curl)
+      <div class="input-group">
+        <input id=webhookTriggerCurl type=text class=form-control readonly value="curl -X POST '{{ model.triggerUrl }}'" />
+        <span class="input-group-btn">
+          <button class="btn btn-primary clipboard-token-btn clip" type="button"
+            data-clipboard-target="#webhookTriggerCurl">
+            <span class="glyphicon glyphicon-copy" alt="copy to clipboard"> </span>
+          </button>
+        </span>
+      </div>
+    </span>
+  </div>
+</div>

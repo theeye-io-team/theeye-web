@@ -1,0 +1,5 @@
+div.js-searchable-box {width:100%;font-weight:700;font-size:14px;z-index: 1000; position: relative;}
+div.js-searchable-box input {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
+div.js-searchable-box button {color:#fff;background:#d88e47;border:none;padding:8px 12px;position:absolute;top:0;right:0;width:39px;}
+div.js-searchable-box button.clean {right:39px;color:#999;background:#ccc;}
+div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}

@@ -1,0 +1,14 @@
+
+{{#if tooFast}}
+  <p class="bg-danger" style="padding:15px"><strong>Hold on cowboy</strong>, you only took {{timeTaken}} seconds to hit that confirm button.</p>
+{{/if}}
+<p class="lead">These are not tamagochis, these are <strong>{{ items }}</strong> you
+  are deleting. Take a good look at them, 'cos they will be gone for good when you
+  hit that <span class="label label-danger">Yes</span> button.
+  <br /><br />
+  {{#each items}}
+  <strong>{{this}}</strong><br />
+  {{/each}}
+</p>
+<br />
+<h3>Are you <strong>completely</strong> sure?</h3>

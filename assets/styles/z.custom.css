@@ -289,11 +289,6 @@ h3.light { color: #EEE}
 .list-group.tasks h3 { color:#304269; }
 .panel-group .panel+.panel { margin-top:0; }
 
-div.js-searchable-box {width:100%;font-weight:700;font-size:14px;z-index: 1000;}
-div.js-searchable-box input {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
-div.js-searchable-box button {color:#fff;background:#d88e47;border:none;padding:8px 12px;position:absolute;top:0;right:0;width:39px;}
-div.js-searchable-box button.clean {right:39px;color:#999;background:#ccc;}
-div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 
 .admin-container { width:100%; color:white;}
 .admin-container h3 {background-color: #23324C;margin: 0;padding: 6px;color: #fff;font-size: 14px;text-align: center;}
@@ -316,11 +311,11 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 }
 .admin-container .panel-default>.panel-heading:hover {
   background-color: #212F48;
-  -webkit-transition: background-color 500ms linear;
-     -moz-transition: background-color 500ms linear;
-       -o-transition: background-color 500ms linear;
-      -ms-transition: background-color 500ms linear;
-          transition: background-color 500ms linear}
+  -webkit-transition: background-color 300ms linear;
+     -moz-transition: background-color 300ms linear;
+       -o-transition: background-color 300ms linear;
+      -ms-transition: background-color 300ms linear;
+          transition: background-color 300ms linear}
 .admin-container .panel-default.panelActive>.panel-heading {background:#212F48;border-bottom:1px dotted #aaa}
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body {border:none;color:#fff;background:#23324C}
 .admin-container .panel-default .panel-title-content {min-height:50px; padding:10px;}
@@ -458,9 +453,9 @@ button.bulkRunner {
 }
 .bootstrap-tagsinput span.tag.label { cursor: pointer; }
 
-.tableHeaderIconButton { margin: 7px; margin-left: 0px; margin-right: 0px; }
-.tableHeaderIconButton.pull-left { margin-left: 5px; }
+/*.tableHeaderIconButton { margin: 7px; margin-left: 0px; margin-right: 0px; }*/
 
+.tableHeaderIconButton.massChecker,
 button.rowSelector-not,
 button.rowSelector {
   float: left;
@@ -468,12 +463,14 @@ button.rowSelector {
   max-width: 46px;
 }
 
-span.selectorIcon.glyphicon-unchecked {
+.itemRow button.rowSelector > span { color: #bbb; }
+.itemRow.selectedItem button.rowSelector > span { color: #f39b0f; }
+/*span.selectorIcon.glyphicon-unchecked {
   color: #BBB;
 }
 span.selectorIcon.glyphicon-check {
   color: #F39B0F;
-}
+}*/
 
 /* select2 fixes */
 .select2-container { color: #444; }
@@ -664,8 +661,8 @@ a.flowchart-icon {
 }
 
 .main-container {
-  position:absolute;
-  width: 100%;
+  /*position:absolute;
+  width: 100%;*/
   margin-bottom:36px;
   margin-top:76px;
 }
@@ -716,7 +713,6 @@ a.flowchart-icon {
   right: -9px;
   border-radius: 7px;
 }
-
 
 /* new styles stats */
 .breadcrumbs {background:#23324c;margin-bottom:30px}
@@ -796,3 +792,8 @@ a.flowchart-icon {
 .process-color { background-color: #1c73b9 }
 .scraper-color { background-color: #ba45ff }
 .file-color { background-color: #8da452 }
+div.js-searchable-box {width:100%;font-weight:700;font-size:14px;z-index: 1000; position: relative;}
+div.js-searchable-box input {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
+div.js-searchable-box button {color:#fff;background:#d88e47;border:none;padding:8px 12px;position:absolute;top:0;right:0;width:39px;}
+div.js-searchable-box button.clean {right:39px;color:#999;background:#ccc;}
+div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}

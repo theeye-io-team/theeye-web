@@ -6,7 +6,7 @@ lib-cov
 *.log
 *.out
 *.pid
-npm-debug.log
+npm-debug.log.*
 *~
 *#
 .DS_STORE

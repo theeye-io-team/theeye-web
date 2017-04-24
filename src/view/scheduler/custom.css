@@ -1,0 +1,13 @@
+[data-hook="calendar-container"] {
+  padding: 10px;
+}
+.calendarEvent { cursor: pointer; }
+.calendarEvent:hover { border-color: red; }
+
+.fc-unthemed td.fc-today { background-color: #23324C; }
+.fc-row .fc-content-skeleton td, .fc-row .fc-helper-skeleton td {
+    border-top: 0;
+  }
+.fc-unthemed .fc-list-heading td { background-color: #428bca; }
+.fc-unthemed .fc-list-empty { background-color: #23324C; }
+.fc-list-item:hover td { background-color: #23324C; }
