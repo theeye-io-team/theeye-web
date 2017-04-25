@@ -7,10 +7,10 @@
 import UserPage from 'view/page/user'
 import App from 'ampersand-app'
 
-function Controller () {
+function Route () {
 }
 
-Controller.prototype = {
+Route.prototype = {
   route () {
     var page = this.index()
 
@@ -32,4 +32,4 @@ Controller.prototype = {
   }
 }
 
-module.exports = Controller
+module.exports = Route

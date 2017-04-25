@@ -3,16 +3,20 @@
 //const App = require('ampersand-app')
 const Router = require('ampersand-router')
 //var qs = require('qs');
-const UserController = require('controller/user')
-const WebhookController = require('controller/webhook')
+const UserRoute = require('./user')
+const WebhookRoute = require('./webhook')
+const TemplateRoute = require('./template')
 
 module.exports = Router.extend({
   routes: {
+    'admin/template(/:id/:action)': () => {
+      new TemplateRoute().route()
+    },
     'admin/user(/:id/:action)': () => {
-      new UserController().route()
+      new UserRoute().route()
     },
     'admin/webhook(/:id/:action)': () => {
-      new WebhookController().route()
+      new WebhookRoute().route()
     }
   }
 })

@@ -1,12 +1,12 @@
 'use strict'
 
-import WebhookPageView from 'view/page/webhook'
+import TemplatePageView from 'view/page/webhook'
 import App from 'ampersand-app'
 
-function Controller () {
+function Route () {
 }
 
-Controller.prototype = {
+Route.prototype = {
   route () {
     var page = this.index()
 
@@ -14,16 +14,16 @@ Controller.prototype = {
   },
   index () {
     // webhooks collection
-    App.state.webhooks.fetch()
+    App.state.templates.fetch()
 
     const selector = 'body .main-container [data-hook=page-container]'
     const container = document.querySelector(selector)
 
-    return new WebhookPageView({
+    return new TemplatePageView({
       el: container,
-      collection: App.state.webhooks
+      collection: App.state.templates
     })
   }
 }
 
-module.exports = Controller
+module.exports = Route
