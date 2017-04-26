@@ -103,8 +103,6 @@ exports.updateUser = function (userId, updates, supervisor, doneFn) {
   });
 }
 
-var AGENT_INSTALLER_URL = 'http://interactar.com/public/install/041fc48819b171530c47c0d598bf75ad08188836/setup_generic.sh' ;
-
 exports.getCustomerAgentCredentials = function (customer,supervisor,done) {
   supervisor.fetch({
     route:'/:customer/user',
@@ -122,7 +120,7 @@ exports.getCustomerAgentCredentials = function (customer,supervisor,done) {
       var user = users[0];
       user.curl = format(
         'curl -s "%s" | bash -s "%s" "%s" "%s" ',
-        AGENT_INSTALLER_URL,
+        sails.config.application.agentInstallerUrl.linux,
         user.client_id,
         user.client_secret,
         user.customers[0].name // agents MUST have only one customer
