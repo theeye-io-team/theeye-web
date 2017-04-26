@@ -136,6 +136,7 @@
     <!--SCRIPTS END-->
     <%- blocks.scripts %>
 
+    <% if (sails.config.application.environment === 'production') { %>
     <% if (sails.config.application.googleAnalytics !== false) { %>
       <script type="text/javascript">
           (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -154,6 +155,6 @@
           	c.parentNode.insertBefore(n,c);
           }();
     </script>
-    <% } %>
+  <% } } %>
   </body>
 </html>
