@@ -3,6 +3,7 @@ import AmpersandCollection from 'ampersand-collection'
 import { Collection as Webhooks } from 'models/webhook'
 import { Collection as Users } from 'models/user'
 import { Collection as Customers } from 'models/customer'
+import { Collection as Schedules } from 'models/schedule'
 
 import Alerts from 'components/alerts'
 
@@ -49,6 +50,7 @@ module.exports = function (webType) {
     webhooks: new Webhooks([]),
     users: new Users([]),
     customers: new Customers([]),
+    schedules: new Schedules(),
     credentials: credentials
   })
 }
