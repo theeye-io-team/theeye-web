@@ -9,13 +9,16 @@ module.exports = View.extend({
   autoRender: true,
   template: '<div data-hook="calendar-container"></div>',
   props: {
-    schedules: 'array',
     eventClickHandler: 'any'
   },
+  initialize: function () {
+    this.listenTo(this.collection, 'change sync', this.onCalendarViewRender)
+  },
   onCalendarViewRender: function () {
+    if (!this._rendered) return
     this.$calendar.fullCalendar('removeEventSources')
     var view = this.$calendar.data('fullCalendar').getView()
-    const events = getEventSources(this.schedules, '', view.start, view.end)
+    const events = getEventSources(this.collection.toJSON(), '', view.start, view.end)
     events.forEach(item => {
       this.$calendar.fullCalendar('addEventSource', item)
     })

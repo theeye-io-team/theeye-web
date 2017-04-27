@@ -10,7 +10,7 @@ const TARGET_PATH = 'js/bundles';
 module.exports = {
   // context: '', // some root path
   resolve: {
-    modulesDirectories: [
+    modules: [
       'node_modules',
       'src'
     ]
@@ -33,26 +33,24 @@ module.exports = {
       {
         test: /\.js/,
         exclude: /node_modules/,
-        loader: 'babel',
-        query: {
-          presets: ['es2015', 'stage-0']
-        }
+        loader: 'babel-loader',
+        query: JSON.stringify({ presets: [ [ 'es2015', { modules: false } ], 'stage-0', 'env' ] })
       },
       { test: /\.hbs$/, loader: 'handlebars-loader' },
       {
         test: /\.css/,
-        loaders: ['style', 'css']
+        loaders: ['style-loader', 'css-loader']
       },
       {
         test: /\.(svg|jpg|png|gif)$/,
-        loader: 'url?limit=4000&name=images/[name].[ext]'
+        loader: 'url-loader?limit=4000&name=images/[name].[ext]'
       },
       {
         // this would output any imported font to assets/fonts/...  (?)
         // same could be done with images
         // removed svg in favor of url loader above
         test: /\.(eot|ttf|woff|woff2)$/,
-        loader: 'file?name=fonts/[name].[ext]'
+        loader: 'file-loader?name=fonts/[name].[ext]'
       }
     ]
   },

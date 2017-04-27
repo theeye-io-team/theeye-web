@@ -1,6 +1,3 @@
-import App from 'init' // eslint-disable-line no-unused-vars
-
-import $ from 'jquery'
 import 'fullcalendar'
 import 'fullcalendar/dist/fullcalendar.css'
 import BaseView from 'view/base-view'
@@ -10,20 +7,16 @@ import bootbox from 'bootbox'
 
 import './custom.css'
 
-const SchedulerPageView = BaseView.extend({
+export default BaseView.extend({
   template: require('./page.hbs'),
-  props: {
-    schedules: 'array'
-  },
   taskTemplate: require('./modal-body.hbs'),
   subviews: {
     calendar: {
       hook: 'calendar-container',
-      waitFor: 'schedules',
       prepareView: function (el) {
         return new CalendarView({
           el: el,
-          schedules: this.schedules,
+          collection: this.collection,
           eventClickHandler: (scheduleEvent, mouseEvent, fullcalendar) => {
             let alertTitle = `Scheduled task: ${scheduleEvent.title}`
             let alertBody = this.taskTemplate({
@@ -38,23 +31,5 @@ const SchedulerPageView = BaseView.extend({
         })
       }
     }
-  },
-  initialize: function () {
-    const self = this
-    $.get('/api/schedule')
-      .done(function (data) {
-        self.schedules = data
-      })
-      .fail(function (xhr, err, xhrStatus) {
-        bootbox.alert({
-          message: xhr.responseText,
-          title: 'Error getting schedules'
-        })
-      })
   }
-})
-
-// instantiate and render on element
-const page = new SchedulerPageView({ // eslint-disable-line no-unused-vars
-  el: document.getElementById('schedulePageContainer')
 })

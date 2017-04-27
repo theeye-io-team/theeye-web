@@ -6,6 +6,7 @@ const Router = require('ampersand-router')
 const UserRoute = require('./user')
 const WebhookRoute = require('./webhook')
 const TemplateRoute = require('./template')
+import SchedulerRoute from './scheduler'
 
 module.exports = Router.extend({
   routes: {
@@ -17,6 +18,9 @@ module.exports = Router.extend({
     },
     'admin/webhook(/:id/:action)': () => {
       new WebhookRoute().route()
+    },
+    'admin/scheduler': () => {
+      new SchedulerRoute().route()
     }
   }
 })
