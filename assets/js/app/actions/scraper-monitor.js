@@ -17,6 +17,7 @@ var ScraperMonitorActions = {
   update: function(id,data){
     if (!id) return console.error('id is required');
 
+    data.host_id = data.hosts
     var scraper = new App.Models.ScraperMonitor({ id: id });
     scraper.set(data);
     scraper.save({},{
