@@ -97,7 +97,7 @@
     "webpack": "^2.4.1"
   },
   "scripts": {
-    "start": "node .",
+    "start": "./node_modules/webpack/bin/webpack.js && node .",
     "devel": "NODE_ENV='development' PORT=6080 DEBUG=eye:* ./node_modules/.bin/nodemon .",
     "core": "PORT=6080 DEBUG=eye:* INSTANCE_FQDN=localhost:6080 ./node_modules/.bin/nodemon .",
     "local": "NODE_ENV=localdev PORT=6080 DEBUG=eye:* INSTANCE_FQDN='localhost:6080' ./node_modules/.bin/nodemon . -i src, node_modules",

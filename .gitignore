@@ -20,3 +20,4 @@ config/env/production.js
 .sailsrc
 config/env/*
 *.orig
+assets/js/bundles
