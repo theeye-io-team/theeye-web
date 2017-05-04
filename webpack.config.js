@@ -19,22 +19,29 @@ module.exports = {
   devtool: IS_PRODUCTION ? 'source-map' : '#inline-source-map',
   output: {
     path: path.resolve('./assets/'), // get absolute path from fs
-    filename: TARGET_PATH + '/[name]' + (IS_PRODUCTION?'.[hash:6]':'') + '.bundle.js',
+    filename: TARGET_PATH + '/[name]' + (IS_PRODUCTION ? '.[hash:6]' : '') + '.bundle.js',
     chunkFilename: TARGET_PATH + '/[id].bundle.js',
     publicPath: '/', // This is used to generate URLs to e.g. images, could be relative or http too
-    sourceMapFilename: TARGET_PATH + '/[name]' + (IS_PRODUCTION?'.[hash:6]':'') + '.bundle.map'
+    sourceMapFilename: TARGET_PATH + '/[name]' + (IS_PRODUCTION ? '.[hash:6]' : '') + '.bundle.map'
   },
   devServer: { // ????
     inline: true,
     port: 3000
   },
   module: {
-    loaders: [
+    rules: [
       {
-        test: /\.js/,
+        test: /\.jsx?$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
-        query: JSON.stringify({ presets: [ [ 'es2015', { modules: false } ], 'stage-0', 'env' ] })
+        options: {
+          presets: [
+            'react',
+            [ 'es2015', { modules: false } ],
+            'stage-0',
+            'env'
+          ]
+        }
       },
       { test: /\.hbs$/, loader: 'handlebars-loader' },
       {
@@ -62,22 +69,22 @@ module.exports = {
     }),
     // new ExtractTextPlugin('css/[name]-[local]-[hash:6].css'),
     new webpack.DefinePlugin({
-      'process.env':{
+      'process.env': {
         'NODE_ENV': JSON.stringify(IS_PRODUCTION ? 'production' : 'development')
       }
     }),
-    //new webpack.optimize.UglifyJsPlugin({
+    // new webpack.optimize.UglifyJsPlugin({
     //  compress:{
     //    warnings: false
     //  },
     //  output:{
     //    comments: false
     //  }
-    //}),
+    // }),
     new webpack.optimize.CommonsChunkPlugin({
-      filename: TARGET_PATH + '/common' + (IS_PRODUCTION?'.[hash:6]':'') + '.bundle.js',
+      filename: TARGET_PATH + '/common' + (IS_PRODUCTION ? '.[hash:6]' : '') + '.bundle.js',
       name: 'common'
     })
     // will generate common.js for shared code
   ]
-};
+}

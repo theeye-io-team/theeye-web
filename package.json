@@ -88,6 +88,8 @@
     "matches-selector": "^1.0.0",
     "nodemon": "1.10.0",
     "npm-2": "2.15.0",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
     "select2": "^4.0.3",
     "standard": "^8.6.0",
     "url-loader": "^0.5.7",
@@ -98,7 +100,7 @@
     "start": "node .",
     "devel": "NODE_ENV='development' PORT=6080 DEBUG=eye:* ./node_modules/.bin/nodemon .",
     "core": "PORT=6080 DEBUG=eye:* INSTANCE_FQDN=localhost:6080 ./node_modules/.bin/nodemon .",
-    "local": "NODE_ENV=localdev PORT=6080 DEBUG=eye:* INSTANCE_FQDN='localhost:6080' ./node_modules/.bin/nodemon . -i src",
+    "local": "NODE_ENV=localdev PORT=6080 DEBUG=eye:* INSTANCE_FQDN='localhost:6080' ./node_modules/.bin/nodemon . -i src, node_modules",
     "webpack": "./node_modules/webpack/bin/webpack.js -w",
     "hbs-compile": "./handlebars assets/js/app/templates/*.hbs -f assets/js/templates.js --e hbs"
   },

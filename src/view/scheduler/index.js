@@ -5,6 +5,10 @@ import BaseView from 'view/base-view'
 import CalendarView from 'components/calendar'
 import bootbox from 'bootbox'
 
+import React from 'react'
+import ReactDOM from 'react-dom'
+import SimpleClock from 'components/simple-clock.jsx'
+
 import './custom.css'
 
 export default BaseView.extend({
@@ -31,5 +35,10 @@ export default BaseView.extend({
         })
       }
     }
+  },
+  render: function () {
+    console.log('render the scheduler page')
+    this.renderWithTemplate(this)
+    ReactDOM.render(<SimpleClock />, this.el.querySelector('.thaClock'))
   }
 })
