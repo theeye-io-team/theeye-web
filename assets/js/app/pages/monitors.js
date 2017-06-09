@@ -86,36 +86,75 @@ var MonitorsPageInit = (function(){
     });
   })();
 
+    function getSelectedItems (next) {
+      var listTemplate = "{descriptor} ({id})<br/>"
+
+      var ids = []
+      var items = ""
+
+      // collect selected rows.data (dataId & dataDescriptor)
+      $('div.itemRow.selectedItem:visible').each(function(i,e){
+        var $e = $(e)
+        var itemId = $e.data('itemId')
+        var itemDesc = $e.data('itemName')
+        if (itemId) {
+          ids.push(itemId)
+          var listItem = listTemplate
+            .replace("{id}", itemId)
+            .replace("{descriptor}", itemDesc)
+
+          // concatenate notification rows
+          items = items + listItem
+        }
+      })
+
+      return ids
+    }
+
+
   /**
    *  MUTE
    */
-  (function(){
-    function setAlerts (resource_id,enable) {
-      if(typeof enable === 'boolean'){
-        jQuery.ajax({
-          url: '/resource/' + resource_id + '/alerts',
-          type: 'PATCH',
-          data:{ 'enable': enable }
-        }).done(function(data) {
-          bootbox.alert('success!',function(){
-            window.location.reload();
-          });
-        }).fail(function(xhr, err, xhrStatus) {
-          bootbox.alert(err);
-        });
-      }
-    }
-
+  (function setMuteBindings () {
     $('button.resource-disable-alerts').on('click',function(event){
-      var resource_id = event.currentTarget.dataset.resource_id;
-      setAlerts(resource_id,enable=false);
+      var resource_id = event.currentTarget.dataset.resource_id
+      MonitorActions.mute(resource_id)
     });
-    $('button.resource-enable-alerts').on('click',function(event){
-      var resource_id = event.currentTarget.dataset.resource_id;
-      setAlerts(resource_id,enable=true);
-    });
-  })();
 
+    $('button.resource-enable-alerts').on('click',function(event){
+      var resource_id = event.currentTarget.dataset.resource_id
+      MonitorActions.unmute(resource_id)
+    });
+
+    $('button.mass-action.massMuteDeactivate').on('click',function(event){
+      var selectedItems = getSelectedItems()
+      if (selectedItems.length>0) {
+        bootbox.confirm(
+          'Everybody will start receiving alerts again for all the selected monitor. Wish to continue?',
+          function (confirmed) {
+            if (confirmed) {
+              MonitorActions.unmuteAll(selectedItems)
+            }
+          }
+        )
+      }
+    })
+
+    $('button.mass-action.massMuteActivate').on('click',function(event){
+      var selectedItems = getSelectedItems()
+      if (selectedItems.length>0) {
+        bootbox.confirm(
+          'Everybody will stop receiving alert for all selected monitor. Wish to continue?',
+          function (confirmed) {
+            if (confirmed) {
+              MonitorActions.muteAll(selectedItems)
+            }
+          }
+        )
+      }
+    })
+
+  })()
 
   var $scriptModal = $('.modal#scriptResourceModal');
   $scriptModal.on("click","[data-hook=advanced-section-toggler]", function(event){
@@ -611,7 +650,7 @@ var MonitorsPageInit = (function(){
       });
     });
 
-    /* ROW SELECTOR + MASS CHECKER + MASS DELETE */
+    /** ROW SELECTOR + MASS CHECKER + MASS DELETE **/
     (function(){
       // searchbox hook
       $searchbox.on('search:start', function() {
@@ -627,12 +666,6 @@ var MonitorsPageInit = (function(){
       var secondConfirmHeader = '<h1>Wait, really sure?</h1>' +
         'Please review the list, just in case:<br /><br />';
       var secondConfirmFooter = '<br />WILL BE DELETED<h2>Confirm wisely</h2>';
-      // var successTitle = 'Monitors deleted';
-      // var successFooter = '<br/>...you will be missed';
-      // var failTitle = 'Monitors deleted (some)';
-      // var failFooter = '<br/>...I tried to delete these monitors' +
-      //   ' yet some of them came back with errors.' +
-      //   '<br /><br />Please refresh now';
       var dataId = "itemId"; // the data-something where we get the id of the item
       var dataDescriptor = "itemName"; // the data-something where we get the name of the item
       var listTemplate = "{descriptor} ({id})<br />";
@@ -645,6 +678,7 @@ var MonitorsPageInit = (function(){
         evt.preventDefault();
         var taskRows = "";
         var taskIds = [];
+
         //collect selected rows.data (dataId & dataDescriptor)
         $(itemSelector).each(function(i,e){
           var itemId = $(e).data(dataId);
@@ -658,6 +692,7 @@ var MonitorsPageInit = (function(){
             taskRows = taskRows + listItem;
           }
         });
+
         if(taskRows) {
           bootbox.confirm(firstConfirmHeader + taskRows + firstConfirmFooter, function(result1){
             if(!result1) return;
