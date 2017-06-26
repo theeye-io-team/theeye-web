@@ -139,22 +139,14 @@
     <% if (sails.config.application.environment === 'production') { %>
     <% if (sails.config.application.googleAnalytics !== false) { %>
       <script type="text/javascript">
-          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-          	(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-          
-          ga('create', 'UA-72130107-1', 'auto');
-          ga('send', 'pageview');
-          window._chatlio = window._chatlio||[];
-          !function(){ var t=document.getElementById("chatlio-widget-embed");
-		  if(t&&window.ChatlioReact&&_chatlio.init)return void _chatlio.init(t,ChatlioReact);
-		  for(var e=function(t){return function(){_chatlio.push([t].concat(arguments)) }},i=["configure","identify","track","show","hide","isShown","isOnline"],a=0;a<i.length;a++)_chatlio[i[a]]||(_chatlio[i[a]]=e(i[a]));
-		  var n=document.createElement("script"),c=document.getElementsByTagName("script")[0];n.id="chatlio-widget-embed",n.src="https://w.chatlio.com/w.chatlio-widget.js",n.async=!0,n.setAttribute("data-embed-version","2.1");
-          	n.setAttribute('data-widget-id','30d41051-7d2e-4603-51c2-73bbdb9e1144');
-          	c.parentNode.insertBefore(n,c);
-          }();
-    </script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', 'UA-72130107-1', 'auto');
+      ga('send', 'pageview');
+      </script>
   <% } } %>
   </body>
 </html>
