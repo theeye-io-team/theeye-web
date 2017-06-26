@@ -1,6 +1,7 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
+import HostGroupActions from 'actions/hostgroup'
 
 import './styles.css'
 
