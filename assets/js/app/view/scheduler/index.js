@@ -8,52 +8,64 @@
  */
 var SchedulerPageView = (function(){
 
-  function buildEventSeries(title, startingDate, interval) {
+  function buildEventSeries (title, scheduleDate, interval, rangeStart, rangeEnd) {
     var events = [];
-    var halfHourInMiliseconds = 30 * 60 * 1000;
     interval = interval ? humanInterval(interval) : false;
-    //60 iterations / dates
-    if(interval) {
-      for(var ii = 0; ii < 60; ii++) {
+    var start;
+    if (scheduleDate < rangeStart) {
+      // get offset from 0 hours of sunday (first day of week on fullcalendar)
+      var offset =
+        scheduleDate.getDay() * 24 * 60 * 60 * 1000
+        + (scheduleDate.getHours() * 60 * 60 * 1000)
+        + (scheduleDate.getMinutes() * 60 * 1000);
+      start = rangeStart.valueOf() + offset;
+    } else {
+      start = scheduleDate.valueOf();
+    }
+    var end = rangeEnd.valueOf();
+    if (interval) {
+      for (var ii = start; ii <= end; ii += interval) {
         events.push({
-          title: title,
-          start: new Date(startingDate + (interval * ii)),
-          end: new Date(startingDate + (interval * ii) + halfHourInMiliseconds)
+          'title': title,
+          start: new Date(ii)
         });
       }
-    }else{
-      events.push({
-        title: title,
-        start: new Date(startingDate),
-        end: new Date(startingDate + halfHourInMiliseconds)
-      });
+    } else {
+      // only if within range
+      if (scheduleDate > rangeStart && scheduleDate < rangeEnd) {
+        events.push({
+          'title': title,
+          start: new Date(scheduleDate)
+        });
+      }
     }
     return events;
   }
 
-  function getEventSources(scheduleData, name) {
-    return _.map(scheduleData, function(scheduleEvent, index, arr){
-      var ms = new Date(scheduleEvent.data.scheduleData.runDate);
-      // 170 is the offset of the color wheel where 0 is red, change at will.
+  function getEventSources (scheduleArray, name, rangeStart, rangeEnd) {
+    return _.map(scheduleArray, function (schedule, index, arr) {
+      // 200 is the offset of the color wheel where 0 is red, change at will.
       // 180 is how wide will the angle be to get colors from,
       // lower (narrower) angle will get you a more subtle palette.
-      // Tone values are evenly sparsed based on array.length, within the given angle (180)
+      // Tone values are evenly sparsed based on array.length.
       // Check this: http://www.workwithcolor.com/hsl-color-picker-01.htm
-      var wheelDegree = 170 + 180 / arr.length * ++index;
+      var wheelDegree = 200 + 180 / arr.length * ++index;
       return {
-        id: scheduleEvent._id,
-        backgroundColor: 'hsl('+wheelDegree+', 80%, 65%)',
+        id: schedule._id,
+        backgroundColor: 'hsl(' + wheelDegree + ', 80%, 48%)',
         textColor: 'white',
-        className: ["calendarEvent"],
-        scheduleData: scheduleEvent,
+        className: ['calendarEvent'],
+        scheduleData: schedule,
         events: buildEventSeries(
-          scheduleEvent.data.name,
-          ms.valueOf(),
-          scheduleEvent.data.scheduleData.repeatEvery
+          schedule.data.name,
+          // some magic is fuzzing with the returned date from api
+          new Date(schedule.data.scheduleData.runDate),
+          schedule.data.scheduleData.repeatEvery,
+          rangeStart,
+          rangeEnd
         )
       };
     });
-
   }
 
   // use only one modal for the page.
@@ -66,35 +78,52 @@ var SchedulerPageView = (function(){
     container: $('div[data-hook=scheduler-page-container]')[0],
     events: {},
     taskTemplate: Templates['assets/js/app/view/scheduler/task-modal-body.hbs'],
+    onCalendarViewRender: function () {
+      if (!this._rendered) return;
+      this.$calendar.fullCalendar('removeEventSources');
+      var view = this.$calendar.data('fullCalendar').getView();
+      var events = getEventSources(this.collection, '', view.start, view.end);
+      var self = this;
+      events.forEach(function(item) {
+        self.$calendar.fullCalendar('addEventSource', item);
+      });
+    },
+    _rendered: false,
+    collection: [],
     render:function(){
       BaseView.prototype.render.apply(this, arguments);
-      var scheduleData = [];
       var self = this;
+      this.$calendar = $(this.el);
+
+      this.$calendar.fullCalendar({
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,agendaWeek,agendaDay,listWeek'
+        },
+        eventLimit: 5,
+        viewRender: this.onCalendarViewRender.bind(this),
+        defaultTimedEventDuration: '00:30:00',
+        // eventClick: this.eventClickHandler || function () {},
+        eventClick: function(scheduleEvent, mouseEvent, fullcalendar){
+          let alertTitle = `Scheduled task: ${scheduleEvent.title}`;
+          let alertBody = self.taskTemplate({
+            taskText: scheduleEvent.start.calendar(),
+            taskId: scheduleEvent.source.scheduleData.data.task_id
+          });
+          alert(alertBody, alertTitle, function(){});
+        },
+        aspectRatio: 1.618 // golden
+      });
+
+      // mock ampersand-view _rendered prop
+      this._rendered = true;
+
       //TODO cambiar $.get por un polyfill/xhr
       $.get("/api/schedule")
         .done(function(data){
-          scheduleData = getEventSources(data);
-          var calendar = self.queryByHook('schedule-container').fullCalendar({
-            header: {
-              left: 'prev,next today',
-              center: 'title',
-              right: 'month,agendaWeek,agendaDay,listWeek'
-            },
-            defaultTimedEventDuration: '00:30:00',
-            eventClick: function(scheduleEvent, mouseEvent, fullcalendar){
-              var alertTitle = "Scheduled task: " + scheduleEvent.title;
-              var alertBody = self.taskTemplate({
-                taskText: scheduleEvent.start.calendar(),
-                taskId: scheduleEvent.source.scheduleData.data.task_id
-              });
-              alert(alertBody, alertTitle, function(){});
-            },
-            aspectRatio: 1.618 //golden
-          });
-          scheduleData.forEach(function(item){
-            calendar.fullCalendar('addEventSource', item);
-          });
-
+          self.collection = data;
+          self.onCalendarViewRender();
         })
         .fail(function(xhr, err, xhrStatus) {
           alert(xhr.responseText);

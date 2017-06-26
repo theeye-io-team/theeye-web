@@ -8,7 +8,7 @@ var TasksPageInit = (function(){
   new HelpIcon({
     color:[255,255,255],
     category:'title_help',
-    text: HelpTexts.titles.task_page 
+    text: HelpTexts.titles.task_page
   })
     .$el
     .appendTo(
@@ -393,9 +393,18 @@ var TasksPageInit = (function(){
       function buildEventSeries(title, scheduleDate, interval, rangeStart, rangeEnd) {
         var events = [];
         interval = interval ? humanInterval(interval) : false;
-        var start = scheduleDate < rangeStart
-          ? rangeStart.valueOf()
-          : scheduleDate.valueOf();
+        var start;
+        if (scheduleDate < rangeStart) {
+          // get offset from 0 hours of sunday (first day of week on fullcalendar)
+          var offset =
+            scheduleDate.getDay() * 24 * 60 * 60 * 1000
+            + (scheduleDate.getHours() * 60 * 60 * 1000)
+            + (scheduleDate.getMinutes() * 60 * 1000);
+          start = rangeStart.valueOf() + offset;
+        } else {
+          start = scheduleDate.valueOf();
+        }
+
         var end = rangeEnd.valueOf();
         if(interval) {
           for(var ii = start; ii <= end; ii += interval) {
@@ -432,7 +441,7 @@ var TasksPageInit = (function(){
             className: ["calendarEvent"],
             scheduleData: schedule,
             events: buildEventSeries(
-              name,
+              schedule.data.name,
               // some magic is fuzzing with the returned date from api
               new Date(schedule.data.scheduleData.runDate),
               schedule.data.scheduleData.repeatEvery,
