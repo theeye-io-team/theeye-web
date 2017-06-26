@@ -1,9 +1,13 @@
 import AmpersandState from 'ampersand-state'
 import AmpersandCollection from 'ampersand-collection'
 import { Collection as Webhooks } from 'models/webhook'
+import { Collection as HostGroups } from 'models/hostgroup'
 import { Collection as Users } from 'models/user'
 import { Collection as Customers } from 'models/customer'
+import { Collection as Hosts } from 'models/host'
 import { Collection as Schedules } from 'models/schedule'
+
+import HostGroupPageState from './hostgrouppage'
 
 import Alerts from 'components/alerts'
 
@@ -18,13 +22,12 @@ const AppState = State.extend({
   }
 });
 
-const credentials = new AmpersandCollection([
+const Credentials = new AmpersandCollection([
   { id: 'viewer', name: 'viewer', description: 'Viewer' },
   { id: 'owner', name: 'owner', description: 'Owner' },
   { id: 'admin', name: 'admin', description: 'Admin' },
   { id: 'user', name: 'user', description: 'User' }
 ])
-
 
 module.exports = function (webType) {
   const LoaderState = State.extend({
@@ -48,9 +51,12 @@ module.exports = function (webType) {
     notify: new NotifyState(),
     loader: new LoaderState(),
     webhooks: new Webhooks([]),
+    hostGroups: new HostGroups([]),
+    hosts: new Hosts([]),
     users: new Users([]),
     customers: new Customers([]),
     schedules: new Schedules(),
-    credentials: credentials
+    credentials: Credentials,
+    hostGroupPage: new HostGroupPageState()
   })
 }

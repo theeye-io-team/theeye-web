@@ -1,8 +1,8 @@
 'use strict'
 
-require('jquery')
-require('bootstrap')
-require('app/init')
+//import 'jquery' // imported by webpack. not required
+import 'bootstrap'
+import 'app/init'
 
 import App from 'ampersand-app'
 import AppState from 'state'
@@ -17,7 +17,9 @@ App.extend({
   Router: new Router(),
   init () {
     this.state = new AppState()
+
     new Loader()
+
 		App.Router.history.start({ pushState: true })
   },
   navigate (page) {

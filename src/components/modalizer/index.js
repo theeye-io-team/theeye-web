@@ -6,9 +6,12 @@
  * Ampersand View component for rendering Bootstrap Modals
  *
  */
-var View = require('ampersand-view')
+const View = require('ampersand-view')
 
-var ButtonsView = View.extend({
+// http://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal
+$.fn.modal.Constructor.prototype.enforceFocus = function() {};
+
+const ButtonsView = View.extend({
   template: `
     <div>
       <button type="button"
@@ -70,6 +73,7 @@ module.exports = View.extend({
   `,
   autoRender: true,
   props: {
+    removeOnHide: ['boolean',false,false],
     buttons: ['boolean', false, false],
     class: 'string',
     bodyView: 'object',
@@ -111,6 +115,7 @@ module.exports = View.extend({
     var $modal = $(this.query('.modal'))
     this.$modal = $modal
 
+
     if (this.buttons) {
       this.renderSubview(
         new ButtonsView({ confirmButton: this.confirmButton }),
@@ -124,9 +129,16 @@ module.exports = View.extend({
 
     this.listenTo(this,'change:visible',this._toggleVisibility)
 
+    if (this.removeOnHide === true) {
+      this.on('hidden',function(){
+        this.remove()
+      })
+    }
+
     if (this.visible) this.show()
   },
   renderBody () {
+    if (!this.bodyView) return
     const modalBody = this.queryByHook('body')
     if (modalBody.childNodes.length === 0) {
       if ( ! (this.bodyView.el instanceof HTMLDivElement) || !this.bodyView.rendered ) {

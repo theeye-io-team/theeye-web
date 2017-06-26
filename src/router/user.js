@@ -19,9 +19,19 @@ Route.prototype = {
   index () {
     //const protocols = window.Protocols
 
-    // collecting value from global var. TODO: solve this!
-    App.state.users.set(window.Users)
+    // collecting value from global var. TODO: improve this!
     App.state.customers.set(window.Customers)
+
+    const users = window.Users
+    users.forEach(function(user){
+      // map to object customers
+      const customers = user.customers.map(name => {
+        return App.state.customers.find(c => c.name == name)
+      })
+      user.customers = customers
+    })
+    App.state.users.set(users)
+
 
     // instantiate and render on element
     return new UserPage({

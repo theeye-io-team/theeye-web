@@ -1,5 +1,5 @@
 // require('./bootstrap-theme.min.css');
-import 'bootstrap';
+//import 'bootstrap'
 // require('./epoch.min.css');
 // require('./z.bootstrap.multiselect.css');
 // require('./bootstrap-tagsinput.css');

@@ -1,6 +1,6 @@
 'use strict'
 
-import TemplatePageView from 'view/page/webhook'
+import PageView from 'view/page/hostgroup'
 import App from 'ampersand-app'
 
 function Route () {
@@ -14,14 +14,15 @@ Route.prototype = {
   },
   index () {
     // webhooks collection
-    App.state.templates.fetch()
+    App.state.hostGroups.fetch()
+    App.state.hosts.fetch()
 
     const selector = 'body .main-container [data-hook=page-container]'
     const container = document.querySelector(selector)
 
-    return new TemplatePageView({
+    return new PageView({
       el: container,
-      collection: App.state.templates
+      collection: App.state.hostGroups
     })
   }
 }

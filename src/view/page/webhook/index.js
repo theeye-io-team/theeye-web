@@ -1,23 +1,20 @@
 /**
  * @author Facugon
- * @namespace View
- * @module WebhookPage
+ * @namespace view
+ * @module page/webhook
  */
-var Clipboard = require('clipboard')
-var BaseView = require('view/base-view')
-var List = require('components/list');
-var HelpIconView = require('components/help-icon');
-var HelpTexts = require('language/help')
 import App from 'ampersand-app'
-
+import Clipboard from 'clipboard'
+import HelpTexts from 'language/help'
+import WebhookActions from 'actions/webhook'
+import List from 'components/list'
+import HelpIconView from 'components/help-icon'
 import Loader from 'components/loader'
 import Modalizer from 'components/modalizer'
-import WebhookActions from 'actions/webhook'
-import SearchBox from 'components/list/searchbox'
-import WebhookForm from './form'
-import WebhookRow from './list-item'
 import CommonButton from 'components/common-button'
 import MassiveDeleteButton from 'components/list/header/buttons/massive-delete'
+import WebhookForm from './form'
+import WebhookRow from './list-item'
 
 const CreateButton = CommonButton.extend({
   initialize (options) {

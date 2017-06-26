@@ -1,8 +1,7 @@
-import merge from 'lodash/merge'
-import jquery from 'jquery'
-import bootbox from 'bootbox'
+//import jquery from 'jquery'
+import 'bootbox'
 
-const xhr = jquery.ajax
+const xhr = $.ajax
 
 // This file is a HACK. Actions here should be pointing to:
 // App.Collections.Users <-- collection

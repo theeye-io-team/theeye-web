@@ -1,7 +1,7 @@
-import BaseModel from './model'
-import AmpersandRestCollection from 'ampersand-rest-collection'
+import AppModel from 'lib/app-model'
+import AppCollection from 'lib/app-collection'
 
-export const Model = BaseModel.extend({
+export const Model = AppModel.extend({
   props: {
     id: 'string',
     _id: 'string',
@@ -14,7 +14,7 @@ export const Model = BaseModel.extend({
   }
 })
 
-export const Collection = AmpersandRestCollection.extend({
+export const Collection = AppCollection.extend({
   model: Model,
   url: '/api/schedule'
 })

@@ -1,9 +1,9 @@
 module.exports = {
   application: {
-    baseUrl : "http://localhost:6080",
-    port : 6080,
-    environment : 'localdev',
-    secret : '692fc164a0c06a9fd02575cf17688c9e',
+    baseUrl: "http://localhost:6080",
+    port: 6080,
+    environment: 'localdev',
+    secret: '692fc164a0c06a9fd02575cf17688c9e',
     agentInstallerUrl: {
       linux: 'https://s3.amazonaws.com/theeye.agent/linux/setup.sh',
     },
@@ -15,20 +15,26 @@ module.exports = {
   },
   connections: {
     mongo: {
-      adapter:'sails-mongo',
-      host:'localhost',
-      port:27017,
-      database:'theeye'
+      adapter: 'sails-mongo',
+      host: 'localhost',
+      port: 27017,
+      database: 'theeye'
     }
   },
   session: {
-    secret:'692fc164a0c06a9fd02575cf17688c9e',
-    collection:'web_session',
-    adapter:'mongo',
-    host:'localhost',
-    port:27017,
-    db:'theeye'
+    secret: '692fc164a0c06a9fd02575cf17688c9e',
+    adapter: 'mongo',
+    host: 'localhost',
+    port: 27017,
+    db: 'theeye',
+    collection: 'web_session'
   },
+  //sockets: {
+  //  adapter: 'redis',
+  //  host: 'redis-prod.theeye.io',
+  //  port: 6379,
+  //  db: 'theeye-web'
+  //},
   mailer: {
     from: 'TheEye.io <support@theeye.io>',
     replyTo: 'Support <support@theeye.io>',
@@ -37,7 +43,7 @@ module.exports = {
     support: [],
     invitation: 'contact@theeye.io',
     transport: {
-      type:"sendmail"
+      type: "sendmail"
     }
   },
   passport: {
@@ -49,13 +55,13 @@ module.exports = {
       name: 'Google',
       protocol: 'oauth2',
       strategy: require('passport-google-oauth').OAuth2Strategy,
-      scope : ['profile', 'email'],
+      scope: ['profile', 'email'],
       options: {
-        clientID : '714923395260-9jd45ige6gg86mffrvf419dvuh85360t.apps.googleusercontent.com',
-        clientSecret : 'k6eNjkeiRriseEUgPBWlGiHr',
-        callbackURL : "http://localhost:6080/auth/google/callback"
+        clientID: '714923395260-9jd45ige6gg86mffrvf419dvuh85360t.apps.googleusercontent.com',
+        clientSecret: 'k6eNjkeiRriseEUgPBWlGiHr',
+        callbackURL: "http://localhost:6080/auth/google/callback"
       }
-    },
+    }
   },
   supervisor: {
     client_id: '939e7ad87f616af22325a84b6192ba7974404160',
@@ -63,7 +69,7 @@ module.exports = {
     url: 'http://localhost:60080',
     port: 60080,
     palancas: {
-      resource : 'job'
+      resource: 'job'
     }
   }
 }

@@ -1,10 +1,8 @@
-// this only works extending base-view since
-// it uses jquery (baseView.find returns a jquery object)
-// Abstract when possible
-import BaseView from 'view/base-view'
+import View from 'ampersand-view'
 import matchesSelector from 'matches-selector'
 import dom from 'ampersand-dom'
 import 'select2'
+import $ from 'jquery'
 
 function getMatches (el, selector) {
   if (selector === '') return [el]
@@ -13,14 +11,14 @@ function getMatches (el, selector) {
   return matches.concat(Array.prototype.slice.call(el.querySelectorAll(selector)))
 }
 
-export default BaseView.extend({
+export default View.extend({
   template: `
     <div class="form-group form-horizontal">
       <label data-hook="label" class="col-sm-3 control-label"></label>
       <div class="col-sm-9">
         <select class="form-control select" style="width:100%"></select>
-        <div data-hook="message-container">
-          <p data-hook="message-text" class="alert alert-warning"></p>
+        <div data-hook="message-container" class="message message-below message-error">
+          <p data-hook="message-text"></p>
         </div>
       </div>
     </div>`,
@@ -40,15 +38,12 @@ export default BaseView.extend({
       selector: 'select',
       name: 'tabindex'
     },
-    label: [
-      {
-        hook: 'label'
-      },
-      {
-        type: 'toggle',
-        hook: 'label'
-      }
-    ],
+    label: [{
+      hook: 'label'
+    }, {
+      type: 'toggle',
+      hook: 'label'
+    }],
     message: {
       type: 'text',
       hook: 'message-text'
@@ -111,15 +106,25 @@ export default BaseView.extend({
       }
     },
     showMessage: {
-      deps: ['message'],
+      deps: ['message', 'shouldValidate'],
       fn: function () {
-        return Boolean(this.message)
+        return this.shouldValidate && Boolean(this.message)
+      }
+    },
+    changed: {
+      deps: ['inputValue','startingValue'],
+      fn: function () {
+        return this.inputValue !== this.startingValue;
       }
     },
     validityClass: {
-      deps: ['valid', 'validClass', 'invalidClass'],
+      deps: ['valid', 'validClass', 'invalidClass', 'shouldValidate'],
       fn: function () {
-        return this.valid ? this.validClass : this.invalidClass
+        if (!this.shouldValidate) {
+          return '';
+        } else {
+          return this.valid ? this.validClass : this.invalidClass
+        }
       }
     }
   },
@@ -129,21 +134,23 @@ export default BaseView.extend({
     var value = spec.value
     this.startingValue = value
     this.inputValue = value
+    this.handleChange = this.handleChange.bind(this)
+    this.handleInputChanged = this.handleInputChanged.bind(this)
   },
   reset: function () {
     // this will reset the value to the original value and
     // trigger change on the select2 element for proper UI update
-    this.$input.val(this.startingValue).trigger('change')
+    this.$select.val(this.startingValue).trigger('change')
   },
   render: function () {
     this.renderWithTemplate(this)
-    this.$input = this.find('select').first()
+    this.$select = $(this.query('select')).first()
 
     const select2setup = {
       placeholder: this.unselectedText,
       tags: this.tags,
       tokenSeparator: this.tokenSeparator,
-			createTag: (()=>{
+      createTag: (()=>{
         // https://select2.github.io/options.html#can-i-control-when-tags-are-created
         if (!this.allowCreateTags) {
           return function(){return null} // disable tag creation
@@ -154,7 +161,7 @@ export default BaseView.extend({
     }
 
     if (this.options) {
-      select2setup.data = this.options.map((value, index) => {
+      select2setup.data = this.options.map(value => {
         return {
           text: value[this.textAttribute],
           id: value[this.idAttribute]
@@ -163,25 +170,32 @@ export default BaseView.extend({
     }
 
     // select2 instantiate
-    this.$input.select2(select2setup)
+    this.$select.select2(select2setup)
 
-    this.on('change:valid', this.reportToParent, this)
-    this.on('change:validityClass', this.validityClassChanged, this)
+    this.listenTo(this,'change:valid',this.reportToParent)
+    this.listenTo(this,'change:validityClass', this.validityClassChanged)
 
     // darn jquery event cannot be handled by
     // a method on this object
-    this.$input.on('change', event => {
-      this.set('inputValue', this.$input.val())
-    })
+    this.$select.on('change',this.handleInputChanged)
 
-    this.$input.val(this.inputValue)
-    this.$input.trigger('change')
+    this.setValues(this.inputValue)
   },
-  remove: function () {
-    this.off('change:valid', this.reportToParent)
-    this.off('change:validityClass', this.validityClassChanged)
+  setValues (items) {
+    if (!items) {
+      this.$select.val(null)
+    } else {
+      var data 
+      if (items.isCollection) {
+        data = items.map(model => model.get(this.idAttribute))
+      } else {
+        data = items.map(item => item[this.idAttribute])
+      }
 
-    BaseView.prototype.remove.apply(this, arguments)
+      this.$select.val(data)
+    }
+    this.$select.trigger('change')
+    return
   },
   validityClassChanged: function (view, newClass) {
     var oldClass = view.previousAttributes().validityClass
@@ -193,7 +207,7 @@ export default BaseView.extend({
     if (this.parent) this.parent.update(this)
   },
   clear: function () {
-    this.$input
+    this.$select
       .val([])
       .trigger('change')
   },
@@ -212,5 +226,36 @@ export default BaseView.extend({
       }, this)
       return message
     }
-  }
+  },
+  //`change` event handler
+  handleInputChanged: function () {
+    this.directlyEdited = true
+    this.inputValue = this.$select.val()
+  },
+  handleChange: function () {
+    if (this.inputValue && this.changed) {
+      this.shouldValidate = true;
+    }
+    this.runTests()
+  },
+  runTests: function () {
+    var message = this.getErrorMessage();
+    if (!message && this.inputValue && this.changed) {
+      // if it's ever been valid,
+      // we want to validate from now
+      // on.
+      this.shouldValidate = true;
+    }
+    this.message = message;
+    return message;
+  },
+	beforeSubmit: function () {
+    this.inputValue = this.$select.val()
+
+		// at the point where we've tried
+		// to submit, we want to validate
+		// everything from now on.
+		this.shouldValidate = true;
+		this.runTests();
+	},
 })

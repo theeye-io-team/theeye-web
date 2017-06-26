@@ -62,12 +62,7 @@ export default FormView.extend({
         name: 'customers',
         required: true,
         label: 'Customers',
-        value: this.model.customers.map(name => {
-          if (!name) return null
-          const customer = App.state.customers.find(u => u.name == name)
-          if (!customer) return null
-          return customer.id
-        }),
+        value: this.model.customers.map(customer => customer.id),
         unselectedText: 'organizations',
         idAttribute: 'id',
         textAttribute: 'name',

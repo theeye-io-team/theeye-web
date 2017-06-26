@@ -1,15 +1,12 @@
-import BaseModel from './model'
-import AppCollection from 'ampersand-rest-collection'
+import AppModel from 'lib/app-model'
+import AppCollection from 'lib/app-collection'
 
-export const Model = BaseModel.extend({
-  // urlRoot:'/api/user',
-  parse: function (response) {
-    return response
-  },
-  initialize: function () {
-    // constructor
-    return this
-  },
+import { Collection as Customers } from 'models/customer'
+
+const urlRoot = '/api/user'
+
+export const Model = AppModel.extend({
+  // urlRoot: urlRoot,
   props: {
     id: 'string',
     username: 'string',
@@ -17,17 +14,22 @@ export const Model = BaseModel.extend({
     email: 'string',
     enabled: ['boolean', false, false],
     invitation_token: 'string',
-    customers: ['array', false, () => []],
+    //customers: ['array', false, () => []],
+		//creation_date: 'date',
+		//last_update: 'date',
     createdAt: 'date',
     updatedAt: 'date'
   },
   session: {
     show: ['boolean', false, true],
     selected: ['boolean', false, false]
+  },
+  collections: {
+    customers: Customers
   }
 })
 
 export const Collection = AppCollection.extend({
-  model: Model,
-  url: '/api/user'
+  // urlRoot: urlRoot,
+  model: Model
 })

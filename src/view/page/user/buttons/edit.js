@@ -1,4 +1,4 @@
-import $ from 'jquery'
+//import $ from 'jquery'
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
 import UserActions from 'actions/user'

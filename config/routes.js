@@ -118,6 +118,6 @@ module.exports.routes = {
   'get /admin/webhook':'WebhookController.index',
   'get /admin/workflow':'WorkflowController.index',
   'get /admin/scheduler':'SchedulerController.index',
-  'get /admin/template':'TemplateController.index',
+  'get /admin/hostgroup':'HostGroupController.index',
 
 };

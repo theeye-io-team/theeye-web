@@ -7,7 +7,7 @@ export default Backdrop.extend({
   template: `
     <div class="modal-backdrop fade in">
       <div class="loader-component">
-        <img src="http://interactar.com/public/images/icon.gif">
+        <img src="/images/roboto_loader.gif">
         <h3 data-hook="message"></h3>
       </div>
     </div>

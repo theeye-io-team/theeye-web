@@ -1,5 +1,5 @@
-import BaseModel from './model'
-import AmpersandRestCollection from 'ampersand-rest-collection'
+import BaseModel from 'lib/app-model'
+import BaseCollection from 'lib/app-collection'
 import Cookies from 'js-cookie'
 import { Model as Customer } from './customer'
 
@@ -35,7 +35,7 @@ export const Model = BaseModel.extend({
   }
 })
 
-export const Collection = AmpersandRestCollection.extend({
+export const Collection = BaseCollection.extend({
   model: Model,
   url:'/api/webhook'
 })

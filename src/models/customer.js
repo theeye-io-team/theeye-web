@@ -1,19 +1,22 @@
-import BaseModel from './model'
-import AmpersandRestCollection from 'ampersand-rest-collection'
+import AppModel from 'lib/app-model'
+import AppCollection from 'lib/app-collection'
 
-export const Model = BaseModel.extend({
-  //urlRoot: '/api/customer',
+const urlRoot = '/api/customer'
+
+export const Model = AppModel.extend({
+  //urlRoot: urlRoot,
   props: {
-    id:'string',
-    name:'string',
-    description:'string',
-    emails:['array',false,() => { return [] }],
-    config:['object',false,() => { return {} }],
-    creation_date:'date'
+    id: 'string',
+    name: 'string',
+    description: 'string',
+    emails: ['array', false, () => { return [] }],
+    config: ['object', false, () => { return {} }],
+    creation_date: 'date',
+		last_update: 'date'
   }
 })
 
-export const Collection = AmpersandRestCollection.extend({
-  model: Model,
-  //url:'/api/customer'
+export const Collection = AppCollection.extend({
+  //url: urlRoot,
+  model: Model
 })

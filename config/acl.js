@@ -24,7 +24,7 @@ var admin = extend({},user,{
   'tasks' : ['*'],
   'script' : ['*'],
   'resource' : ['*'],
-  'template' : ['*'],
+  'hostgroup' : ['*'],
   "scheduler" : ['*'],
 });
 
