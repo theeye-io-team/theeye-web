@@ -48,15 +48,16 @@ module.exports = function (webType) {
 
   return new AppState({
     alerts: new Alerts(),
-    notify: new NotifyState(),
-    loader: new LoaderState(),
-    webhooks: new Webhooks([]),
-    hostGroups: new HostGroups([]),
-    hosts: new Hosts([]),
-    users: new Users([]),
     customers: new Customers([]),
-    schedules: new Schedules(),
     credentials: Credentials,
-    hostGroupPage: new HostGroupPageState()
+    hosts: new Hosts([]),
+    hostsByRegex: new Hosts([]),
+    hostGroups: new HostGroups([]),
+    hostGroupPage: new HostGroupPageState(),
+    loader: new LoaderState(),
+    notify: new NotifyState(),
+    schedules: new Schedules(),
+    users: new Users([]),
+    webhooks: new Webhooks([]),
   })
 }

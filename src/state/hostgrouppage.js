@@ -16,6 +16,9 @@ const TaskEvents = AmpersandCollection.extend({ model: TaskEvent })
 
 // representation of the current host group being display
 export default AmpersandState.extend({
+  //props: {
+  //  currentGroup: 'state'
+  //},
   collections: {
     configTasks: Tasks,
     configResources: Resources,

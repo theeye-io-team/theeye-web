@@ -43,7 +43,7 @@ module.exports = {
       }
     }
     return AmpersandCollection.prototype
-      .fetch.call(this, merge({},query, options))
+      .fetch.call(this, merge({}, query, options))
   },
   filterFetch (filter) {
     return this.fetch({

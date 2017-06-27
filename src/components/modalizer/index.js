@@ -44,7 +44,7 @@ module.exports = View.extend({
     <div class="modalizer">
       <!-- MODALIZER CONTAINER -->
       <div data-hook="modalizer-class" class="">
-        <div class="modal fade" 
+        <div class="modal" 
           tabindex="-1" 
           role="dialog" 
           aria-labelledby="modal" 
@@ -73,7 +73,8 @@ module.exports = View.extend({
   `,
   autoRender: true,
   props: {
-    removeOnHide: ['boolean',false,false],
+    fade: ['boolean', false, true],
+    removeOnHide: ['boolean', false, false],
     buttons: ['boolean', false, false],
     class: 'string',
     bodyView: 'object',
@@ -82,6 +83,10 @@ module.exports = View.extend({
     visible: ['boolean', false, false]
   },
   bindings: {
+    fade: {
+      type: 'booleanClass',
+      selector: '[data-hook=modalizer-class]>.modal'
+    },
     class: {
       hook: 'modalizer-class',
       type: 'attribute',

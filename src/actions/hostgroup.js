@@ -5,6 +5,7 @@ import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 import assign from 'lodash/assign'
 
+import { Collection as Hosts } from 'models/host'
 import { Model as HostGroup } from 'models/hostgroup'
 
 export default {
@@ -64,9 +65,7 @@ export default {
     XHR({
       url: `/api/hostgroup/${id}`,
       method: 'delete',
-      headers: {
-        Accepts:'application/json;charset=UTF-8'
-      },
+      headers: { Accepts:'application/json;charset=UTF-8' },
       withCredentials: true,
       done (data,xhr) {
         App.state.hostGroups.remove(id)
@@ -90,5 +89,18 @@ export default {
   //
   removeConfig (item) {
     item.collection.remove(item)
+  },
+  searchHostsByRegex (regex) {
+    App.state.hostsByRegex.fetch({
+      data: {
+        filter: {
+          where: {
+            hostname: { $regex: regex }
+          }
+        }
+      },
+      //success: () => {
+      //}
+    })
   }
 }
