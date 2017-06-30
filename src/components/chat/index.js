@@ -1,12 +1,12 @@
-
+import View from 'ampersand-view'
 /**
  *
  * @module components/chat
  *
  */
-const ChatBox = (function(){
+module.exports = {
 
-  const ChatBoxBaloon = BaseView.extend({
+  ChatBoxBaloon : View.extend({
     autoRender: true,
     template: `
     <div class="chat-box chat-box-baloon">
@@ -16,16 +16,10 @@ const ChatBox = (function(){
       </a>
     </div>`,
     render: function () {
-      this.renderTemplate()
+      this.renderWithTemplate()
 
       document.body.appendChild(this.el)
-    },
-    events: {
     }
-  })
+  }),
 
-  return {
-    ChatBoxBaloon: ChatBoxBaloon
-  }
-
-})()
+}

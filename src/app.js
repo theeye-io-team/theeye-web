@@ -8,6 +8,7 @@ import App from 'ampersand-app'
 import AppState from 'state'
 import Router from 'router'
 import Loader from 'components/loader'
+import ChatBox from 'components/chat'
 
 window.App = App
 
@@ -19,6 +20,7 @@ App.extend({
     this.state = new AppState()
 
     new Loader()
+    new ChatBox.ChatBoxBaloon()
 
 		App.Router.history.start({ pushState: true })
   },

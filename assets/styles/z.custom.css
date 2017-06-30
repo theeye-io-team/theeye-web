@@ -213,20 +213,24 @@ hr {border:none;border-bottom:1px dotted #fff}
 footer {
   width:100%;
   position:fixed;
-  height:40px;
   padding: 10px;
   bottom:0;
   left:0;
   right:0;
   background:#EEE;
   color: #555;
-  padding:8px 15px;
+  padding: 5px;
   position:fixed;
   text-align:center;
   z-index: 999;
 }
 footer a.image {padding:6px;display:inline-block}
 footer a.image img {margin-top:-4px}
+@media (max-width: 500px) {
+  footer {
+    padding: 5px;
+  }
+}
 
 
 /* custom switch */
@@ -801,4 +805,35 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 .modalizer .hosts-list-modal>.modal>.modal-dialog {
   width: 400px;
   margin-top: 100px;
+}
+
+.chat-box.chat-box-baloon {
+  position: fixed;
+  bottom: 0px;
+  right: 10px;
+  z-index: 1000;
+  background: #304269;
+  padding: 5px 15px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 20px 20px 0 0;
+}
+
+.chat-box.chat-box-baloon a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+@media (max-width: 500px) {
+  .chat-box.chat-box-baloon span {
+    display:none;
+  }
+
+  .chat-box.chat-box-baloon {
+    border: 1px solid #FFF;
+    padding: 5px 10px;
+    border-radius: 20px 0 0 20px;
+    bottom: 8px;
+    right: 0px;
+  }
 }
