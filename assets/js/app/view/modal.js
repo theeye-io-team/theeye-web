@@ -28,11 +28,11 @@ var Modal = function (specs) {
     return this.find('[data-hook=' + name +']');
   }
 
-  this.find = function(selector){
+  this.find = function (selector) {
     return this.$el.find(selector);
   }
 
-  this.bindEvents = function(){
+  this.bindEvents = function () {
   }
 
   this.renderTemplate = function(){

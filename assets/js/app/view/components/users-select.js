@@ -33,6 +33,7 @@ var UsersSelect = BaseView.extend({
     });
 
     this.find('select').select2({
+      tabindex: 0,
       placeholder: 'Users',
       data: Select2Data.PrepareIdValueData(
         this.collection.map(function(u){

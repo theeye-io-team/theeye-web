@@ -396,6 +396,7 @@ function DashboardPage () {
         });
       }
       $select.select2({
+        tabindex: 0,
         //tags: true,
         multiple: true,
         placeholder: 'Grouping Tags',

@@ -11,7 +11,7 @@ var MonitorSelect = BaseView.extend({
   className: 'form-group form-horizontal',
   template: Templates['assets/templates/components/monitor-select.hbs'],
   initialize: function(options){
-    this.label = options.label||'Monitor';
+    this.label = options.label||'Copy Monitor';
 
     BaseView.prototype.initialize.apply(this,arguments);
 
@@ -40,19 +40,20 @@ var MonitorSelect = BaseView.extend({
     });
     this.help.$el.appendTo(this.find('label'));
 
-    var options = { id:'id', text:'text' },
-      data = Select2Data.PrepareIdValueData(
-        this.collection.map(function(u){
-          var hostname = u.get('resource') ? ' (' + u.get('resource').hostname + ')' : '';
-          return {
-            // text: u.get('name') + ' (' + u.get('resource').hostname + ')',
-            text: u.get('name') + hostname,
-            id: u.get('id')
-          };
-        }), options
-      );
+    var options = { id:'id', text:'text' }
+    var data = Select2Data.PrepareIdValueData(
+      this.collection.map(function(u){
+        var hostname = u.get('resource') ? ' (' + u.get('resource').hostname + ')' : '';
+        return {
+          // text: u.get('name') + ' (' + u.get('resource').hostname + ')',
+          text: u.get('name') + hostname,
+          id: u.get('id')
+        };
+      }), options
+    )
 
     this.find('select').select2({
+      tabindex: 0,
       placeholder: 'Select a monitor',
       data: data,
       allowClear: true

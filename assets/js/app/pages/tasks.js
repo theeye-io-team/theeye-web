@@ -97,9 +97,13 @@ var TasksPageInit = (function(){
     (function update (el){
       var $taskForm = $(el);
 
-      $taskForm.find('select[name=host_id]').select2({ placeholder: 'Choose a host' });
+      $taskForm.find('select[name=host_id]').select2({
+        tabindex: 0,
+        placeholder: 'Choose a host' });
       $taskForm.find('select[name=script_id]')
-        .select2({ allowClear:true, placeholder: 'Choose a script' })
+        .select2({
+        tabindex: 0,
+          allowClear:true, placeholder: 'Choose a script' })
         .on('change', function(event){
           if($(this).val()) {
             $('a.scripter', $taskForm)
@@ -115,8 +119,12 @@ var TasksPageInit = (function(){
               .data('script-id', null);
           }
         });
-      $taskForm.find('select[name=tags]').select2({ placeholder: 'Choose tags', data: Select2Data.PrepareTags(Tags), tags: true });
-      $taskForm.find('select[name=triggers]').select2({ placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
+      $taskForm.find('select[name=tags]').select2({
+        tabindex: 0,
+        placeholder: 'Choose tags', data: Select2Data.PrepareTags(Tags), tags: true });
+      $taskForm.find('select[name=triggers]').select2({
+        tabindex: 0,
+        placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
 
       var usersSelect = new UsersSelect({ collection: _users });
       usersSelect.render();
@@ -180,9 +188,13 @@ var TasksPageInit = (function(){
       var $taskForm = $(el);
       var $multihostContainer = $taskForm.find('.hidden-container.multiple-hosts-selection');
 
-      $taskForm.find('select[name=hosts_id]').select2({ placeholder: 'Type a hostname or hit Enter to list' });
+      $taskForm.find('select[name=hosts_id]').select2({
+        tabindex: 0,
+        placeholder: 'Type a hostname or hit Enter to list' });
       $taskForm.find('select[name=script_id]')
-        .select2({ allowClear:true, placeholder: 'Choose a script' })
+        .select2({
+        tabindex: 0,
+          allowClear:true, placeholder: 'Choose a script' })
         .on('change', function(event){
           if($(this).val()) {
             $('a.scripter', $taskForm)
@@ -198,8 +210,12 @@ var TasksPageInit = (function(){
               .data('script-id', null);
           }
         });
-      $taskForm.find('select[name=tags]').select2({ placeholder:'Tags', tags:true, data: Select2Data.PrepareTags(Tags) });
-      $taskForm.find('select[name=triggers]').select2({ placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
+      $taskForm.find('select[name=tags]').select2({
+        tabindex: 0,
+        placeholder:'Tags', tags:true, data: Select2Data.PrepareTags(Tags) });
+      $taskForm.find('select[name=triggers]').select2({
+        tabindex: 0,
+        placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
 
       var usersSelect = new UsersSelect({ collection: _users });
       usersSelect.render();
