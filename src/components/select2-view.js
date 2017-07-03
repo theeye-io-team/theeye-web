@@ -188,8 +188,10 @@ export default View.extend({
       var data 
       if (items.isCollection) {
         data = items.map(model => model.get(this.idAttribute))
-      } else {
+      } else if(Array.isArray(items)){
         data = items.map(item => item[this.idAttribute])
+      } else { // single item
+        data = items
       }
 
       this.$select.val(data)
