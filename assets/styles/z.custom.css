@@ -804,7 +804,13 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 
 .modalizer .hosts-list-modal>.modal>.modal-dialog {
   width: 400px;
-  margin-top: 100px;
+  margin-top: 50px;
+}
+
+.modalizer .hosts-list-modal>.modal .modal-body .items {
+  height: 123px;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 .chat-box.chat-box-baloon {

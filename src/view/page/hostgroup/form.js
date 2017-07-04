@@ -15,6 +15,15 @@ const HelpTexts = require('language/help')
 
 var currentGroup
 
+/**
+ *
+ * @param {Host} hostModel
+ *
+ */
+const addHostToGroup = (hostModel) => {
+  currentGroup.hosts.add(hostModel)
+}
+
 const RegexInputView = InputView.extend({
   template: `
     <div>
@@ -62,45 +71,72 @@ const RegexInputView = InputView.extend({
 
 const ItemView = View.extend({
   template: `
-  <li style="list-style-type:none; border-bottom: 1px solid #dadada; padding: 10px">
-    <span></span>
-    <a href="#">
-      <i class="fa fa-plus" style="float:right; position:relative; top: 4px; "></i>
-    </a>
-  </li>`,
+    <li style="list-style-type:none; border-bottom: 1px solid #dadada; padding: 10px">
+      <span></span>
+      <a data-hook="" href="#">
+        <i class="fa fa-plus" style="float:right; position:relative; top: 4px; "></i>
+      </a>
+    </li>`,
   bindings: {
     'model.hostname': {
       selector: 'span'
     }
   },
   events: {
-    'click a':'onClickButton'
+    'click a':'onClickButton',
   },
   onClickButton (event) {
     //this.trigger('clicked',event)
-    currentGroup.hosts.add( this.model )
+    addHostToGroup(this.model)
   }
 })
 
 const HostsListView = View.extend({
   props: {
-    hosts:'collection'
+    hosts: 'collection',
+    massiveAddButton: ['boolean',false,false]
   },
-  template: `<div data-hook="items"></div>`,
+  template: `
+  <div>
+    <div data-hook="items" class="items">
+    </div>
+    <div data-hook="massive-add-container">
+      <li style="list-style-type:none; padding: 10px;background-color: #eee;">
+        <a data-hook="massive-add" href="#" style="height:20px;">
+          <b>Add All</b>
+          <i class="fa fa-plus" style="float:right; position:relative; top: 4px; right:8px;"></i>
+        </a>
+      </li>
+    </div>
+  </div>
+  `,
+  initialize (options) {
+    View.prototype.initialize.apply(this,arguments)
+
+    this.listenTo(this.collection,'sync',function(){
+      this.massiveAddButton = ! Boolean(this.collection.length === 0)
+    })
+  },
+  events: {
+    'click a[data-hook=massive-add]':'onClickMassiveAddButton',
+  },
+  onClickMassiveAddButton () {
+    this.collection.forEach((model) => {
+      addHostToGroup(model)
+    })
+  },
+  bindings: {
+    massiveAddButton: {
+      type: 'toggle',
+      hook: 'massive-add-container'
+    }
+  },
   render () {
     this.renderWithTemplate(this)
 
     this.renderCollection(
       this.collection,
-      //ItemView,
-      (options) => {
-        const view = new ItemView(options)
-        this.listenTo(view,'clicked', (event) => {
-          console.log('click')
-          console.log(options.model)
-        })
-        return view
-      },
+      ItemView,
       this.queryByHook('items')
     )
   }
@@ -181,7 +217,7 @@ export default FormView.extend({
 
     this.fields = [
       new InputView({
-        label: 'Template Name',
+        label: 'Template Name *',
         name: 'name',
         required: true,
         invalidClass: 'text-danger',
@@ -202,7 +238,7 @@ export default FormView.extend({
 
     if (this.model.isNew()) {
       const hostSelect = new HostConfigSelect({
-        label: 'Host to Copy',
+        label: 'Host to Copy *',
         name: 'copy_host',
         multiple: false,
         tags: false,
@@ -215,12 +251,25 @@ export default FormView.extend({
         textAttribute: 'hostname',
         requiredMessage: 'Selection required',
         invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
+        validityClassSelector: '.control-label',
+        tests: [
+          () => {
+            const noConfig = (
+              App.state.hostGroupPage.configResources.length === 0 &&
+              App.state.hostGroupPage.configTasks.length === 0 &&
+              App.state.hostGroupPage.configTriggers.length === 0
+            )
+
+            if (noConfig) {
+              return 'Configuration is required. We need something to create a template'
+            }
+          }
+        ]
       })
       this.fields.unshift(hostSelect)
     } else {
-      App.state.hostGroupPage.configResources = this.model.resources
-      App.state.hostGroupPage.configTasks = this.model.tasks
+      //App.state.hostGroupPage.configResources = this.model.resources
+      //App.state.hostGroupPage.configTasks = this.model.tasks
 
       const configs = new ConfigsView()
       configs.render()

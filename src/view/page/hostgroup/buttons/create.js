@@ -29,10 +29,12 @@ export default CommonButton.extend({
       this.listenTo(modal,'shown',function(){
         form.focus()
       })
+
       this.listenTo(modal,'hidden',function(){
         form.remove()
         modal.remove()
       })
+
       this.listenTo(modal,'confirm',function(){
         form.beforeSubmit()
         if (form.valid === true) {
@@ -40,6 +42,7 @@ export default CommonButton.extend({
           modal.hide()
         }
       })
+
       modal.show()
     }
   }

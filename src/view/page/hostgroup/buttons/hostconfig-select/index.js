@@ -12,8 +12,8 @@ export default SelectView.extend({
         <div data-hook="message-container" class="message message-below message-error">
           <p data-hook="message-text"></p>
         </div>
-        <section data-hook="configs-container"> </section>
       </div>
+        <section class="col-sm-12" data-hook="configs-container"> </section>
     </div>`,
   derived: {
     has_config: {
@@ -42,7 +42,7 @@ export default SelectView.extend({
     SelectView.prototype.render.apply(this,arguments)
 
     this.renderSubview(
-      new ConfigsView({ }),
+      new ConfigsView({ edit_mode: true }),
       this.queryByHook('configs-container')
     )
   }

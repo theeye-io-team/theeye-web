@@ -9,6 +9,7 @@ import XHR from 'lib/xhr'
 const TaskEvent = AmpersandState.extend({
   props: {
     task_id: 'string',
+    task: 'object',
     events: ['array',false,() => { return [] }]
   }
 })

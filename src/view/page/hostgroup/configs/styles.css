@@ -22,3 +22,7 @@
   overflow-y: scroll;
   padding: 5px;
 }
+
+.template-configs div.configs ul.list-group.empty>h3 {
+  background-color: #ddd;
+}
