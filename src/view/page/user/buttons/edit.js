@@ -7,7 +7,7 @@ import EditFormView from './edit-form'
 export default PanelButton.extend({
   initialize: function (options) {
     this.title = 'Edit User'
-    this.iconClass = 'glyphicon glyphicon-edit'
+    this.iconClass = 'fa fa-edit'
     this.className = 'btn btn-primary editButton simple-btn tooltiped'
   },
   events: {

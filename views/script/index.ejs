@@ -1,5 +1,4 @@
 <% block('styles' ,'<link rel="stylesheet" type="text/css" href="/styles/highlight/default.css">') %>
-
 <% block('scripts', '<script> $(document).ready(function(){ new ScriptsPageInit(); new ProfilePageInit(); hljs.initHighlightingOnLoad(); }); </script>') %>
 <% block('scripts' , '<script> window.scripts = ' + JSON.stringify(scripts) + ';</script>') %>
 
@@ -15,33 +14,35 @@
   <div class="admin-panel scripts-admin">
     <h3>Scripts Admin</h3>
     <div>
+      <!-- PAGE HEADER -->
       <div class="table-header admin">
         <button class="mass-action massChecker btn btn-primary simple-btn tooltiped" title="Select all" aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
         </button>
-
         <span class="title">Script Actions &nbsp;<i data-hook="help"></i></span>
         <span class="title separator">|&nbsp;</span>
 
+        <!-- HEADER BUTTONS { -->
         <button class="createScript btn btn-primary simple-btn tooltiped" data-placement="right" title="Create new script">
-          <span class="glyphicon glyphicon-plus"></span> New Script
+          <span class="glyphicon glyphicon-plus"></span>
+          <i class="menu-title-desktop">New Script</i>
         </button>
         <button class="mass-action pull-right massDelete btn btn-primary simple-btn tooltiped" title="Delete selected scripts" aria-label="Center Align">
           <span class="glyphicon glyphicon-trash"></span>
         </button>
+        <!-- } HEADER BUTTONS -->
       </div>
 
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-        <% scripts.forEach( function(script, key) { %>
-          <%
+        <!-- BODY LIST { -->
+        <% scripts.forEach( function(script, key) {
           var tags = [
             "script",
             script.description,
             script.filename,
             script.extension,
             "script="+ script.id,
-          ].join(',');
-          %>
+          ].join(','); %>
           <div class="itemRow panel panel-default js-searchable-item"
             data-item-id="<%= script.id %>"
             data-item-name="<%= script.filename %>"
@@ -55,21 +56,24 @@
                       aria-label="Center Align">
                       <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                     </button>
-                    <span class="panel-item name" id="<%= script.id %>">
-                      <%= script.filename %>
-                    </span>
-                    <div class="panel-item icons">
+                    <span class="panel-item name" id="<%= script.id %>"> <%= script.filename %> </span>
 
-                      <button class="editScript btn btn-primary simple-btn tooltiped" title="Edit script" aria-label="Center Align" data-script-id="<%= script.id %>" data-toggle="modal" data-target="#edit-script">
-                        <span class="glyphicon glyphicon-edit"></span>
-                      </button>
-
-                      <button class="deleteScript btn btn-primary simple-btn tooltiped" title="Delete script" aria-label="Center Align" data-script-id="<%= script.id %>">
-                        <span class="glyphicon glyphicon-trash"></span>
-                      </button>
-
-
+										<!-- DESKTOP ICONS MENU -->
+										<div class="panel-item icons panel-item-desktop">
+											<%- partial('./partials/menu/buttons.ejs',{ script: script }) %>
                     </div>
+                    <!-- /DESKTOP ICONS MENU -->
+
+                    <!-- MOBILE ICONS MENU -->
+										<div class="panel-item icons dropdown panel-item-mobile">
+											<button class="btn dropdown-toggle btn-primary simple-btn" type="button" id="dropdownMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+												<i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+											</button>
+											<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+												<%- partial('./partials/menu/buttons.ejs',{ script: script }) %>
+											</ul>
+                    </div>
+                    <!-- /MOBILE ICONS MENU -->
                   </div>
                 </a>
               </h4>
@@ -84,8 +88,9 @@
                 </div>
               </div>
             </div>
-          </div> <!-- end item -->
+          </div>
         <% }); %>
+        <!-- } BODY LIST -->
       </div> <!-- end panel -->
     </div> <!-- Tableresults -->
   </div>

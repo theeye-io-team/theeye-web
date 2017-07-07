@@ -47,21 +47,23 @@ export default BaseView.extend({
       }
     }
   },
-  addButtons (views) {
-    const container = this.queryByHook('action-buttons')
+  addButtons (buttons) {
     const self = this
-    var buttons = []
-    if (!Array.isArray(views)) {
-      buttons.push(views)
-    } else {
-      buttons = views
-    }
 
-    if (buttons.length>0) {
-      buttons.forEach(btn => {
-        self.renderSubview(btn, container)
-      })
+    if (!Array.isArray(buttons)) {
+      console.error('array required')
+      return
     }
+    if (buttons.length===0) return
+
+    const mobileContainer = this.query('.panel-item-mobile ul.dropdown-menu[data-hook=action-buttons]')
+    const desktopContainer = this.query('div.panel-item.icons.panel-item-desktop[data-hook=action-buttons]')
+
+    buttons.forEach(button => {
+      // render one for each container view
+      this.renderSubview(new button.view(button.params), mobileContainer)
+      this.renderSubview(new button.view(button.params), desktopContainer)
+    })
   },
   // most of these bindings should be removed over time
   // to migrate from a jquery scriptage to a reactive UI (model rules)

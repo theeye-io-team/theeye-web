@@ -107,10 +107,14 @@ var MonitorsPageInit = (function(){
     }
 
     $('button.resource-disable-alerts').on('click',function(event){
+      event.preventDefault()
+      event.stopPropagation()
       var resource_id = event.currentTarget.dataset.resource_id;
       setAlerts(resource_id,enable=false);
     });
     $('button.resource-enable-alerts').on('click',function(event){
+      event.preventDefault()
+      event.stopPropagation()
       var resource_id = event.currentTarget.dataset.resource_id;
       setAlerts(resource_id,enable=true);
     });

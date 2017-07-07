@@ -19,12 +19,12 @@
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
         </button>
 
-        <span class="title">Organization Actions &nbsp;<i data-hook="help"></i></span>
-        <span class="title separator">|&nbsp;</span>
+        <span class="title">Organizations &nbsp;<i data-hook="help"></i></span>
+        <span class="title separator">|</span>
 
         <button class="createCustomer btn btn-primary simple-btn tooltiped" data-placement="right" title="Create new customer" aria-label="Left Align" data-toggle="modal" data-target="#create-customer">
           <span class="glyphicon glyphicon-plus"></span>
-          New Organization
+          <i class="menu-title-desktop">New Organization</i>
         </button>
 
         <button class="mass-action pull-right massDelete btn btn-primary simple-btn tooltiped"
@@ -34,61 +34,43 @@
         </button>
       </div>
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-        <% customers.forEach( function(customer, key) { %>
-          <%
+        <% customers.forEach( function(customer, key) {
           var tags = [
             "customer",
             customer.name,
             customer.description,
             customer.emails,
             "customer="+ customer.id
-          ].join(',');
-          %>
-          <div class="itemRow panel panel-default js-searchable-item"
-            data-item-id="<%= customer.id %>"
-            data-item-name="<%= customer.name %>"
-            data-tags="<%= tags %>">
+          ].join(','); %>
+          <div class="itemRow panel panel-default js-searchable-item" data-item-id="<%= customer.id %>" data-item-name="<%= customer.name %>" data-tags="<%= tags %>">
             <div class="panel-heading" role="tab" id="heading<%= customer.id %>">
               <h4 class="panel-title">
-                <a class="collapsed" data-toggle="collapse"  data-parent="#accordion" href="#collapse<%= customer.id %>" aria-expanded="false" aria-controls="collapse<%= customer.id %>">
+                <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapse<%= customer.id %>" aria-expanded="false" aria-controls="collapse<%= customer.id %>">
                   <div class="panel-title-content">
-                    <button class="rowSelector btn btn-primary simple-btn tooltiped"
-                      title="Select customer"
-                      aria-label="Center Align">
+                    <button class="rowSelector btn btn-primary simple-btn tooltiped" title="Select customer" aria-label="Center Align">
                       <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                     </button>
                     <span class="panel-item name" id="<%= customer.id %>"><%= customer.name %></span>
-                    <div class="panel-item icons">
-                      <!-- buttons -->
-                      <!-- curlpopup -->
-                      <button
-                        class="seeAgentCurl btn btn-primary simple-btn tooltiped"
-                        title="Check agent"
-                        aria-label="Center Align"
-                        data-customer-name="<%= customer.name %>">
-                        <span class="glyphicon glyphicon-download"></span>
-                      </button>
-                      <!-- edit -->
-                      <button
-                        class="editCustomer btn btn-primary simple-btn tooltiped"
-                        title="Edit customer"
-                        aria-label="Center Align"
-                        data-customer-id="<%= customer.id %>"
-                        data-toggle="modal"
-                        data-target="#edit-customer">
-                        <span class="glyphicon glyphicon-edit"></span>
-                      </button>
-                      <!-- delete -->
-                      <button
-                        class="deleteCustomer btn btn-primary simple-btn tooltiped"
-                        title="Delete customer"
-                        aria-label="Center Align"
-                        data-customer-id="<%= customer.id %>"
-                        data-customer-name="<%= customer.name %>" >
-                        <span class="glyphicon glyphicon-trash"></span>
-                      </button>
-                      <!-- /buttons -->
+
+                    <!-- DESKTOP/MOBILE ICONS MENU { -->
+                    <div class="panel-item icons panel-item-desktop">
+                      <%- partial('./partials/buttons.ejs',{ customer: customer }) %>
                     </div>
+                    <div class="panel-item icons dropdown panel-item-mobile">
+                      <button class="btn dropdown-toggle btn-primary simple-btn"
+                        type="button"
+                        id="dropdownMenu"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="true">
+                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <%- partial('./partials/buttons.ejs',{ customer: customer }) %>
+                      </ul>
+                    </div>
+                    <!-- } DESKTOP/MOBILE ICONS MENU -->
+
                   </div>
                 </a>
               </h4>

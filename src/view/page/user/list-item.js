@@ -34,14 +34,12 @@ export default ListItem.extend({
   render () {
     ListItem.prototype.render.apply(this,arguments)
 
-    const buttons = [
-      new UserButtons.InfoButton({ model: this.model }),
-      new UserButtons.ResendInvitationButton({ model: this.model }),
-      new UserButtons.EditButton({ model: this.model }),
-      new UserButtons.DeleteButton({ model: this.model }),
-    ]
-
-    this.addButtons(buttons)
+    this.addButtons([
+      { view: UserButtons.InfoButton, params: { model: this.model } },
+      { view: UserButtons.ResendInvitationButton, params: { model: this.model } },
+      { view: UserButtons.EditButton, params: { model: this.model } },
+      { view: UserButtons.DeleteButton, params: { model: this.model } },
+    ])
 
     this.renderSubview(
       new Collapsed({ model: this.model }),

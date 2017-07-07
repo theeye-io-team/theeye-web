@@ -5,7 +5,7 @@ import UserActions from 'actions/user'
 export default PanelButton.extend({
   initialize: function (options) {
     this.title = 'delete user'
-    this.iconClass = 'glyphicon glyphicon-trash'
+    this.iconClass = 'fa fa-trash'
     this.className = 'btn btn-primary deleteButton simple-btn tooltiped'
   },
   events: {

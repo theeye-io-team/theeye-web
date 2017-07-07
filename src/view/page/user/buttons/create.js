@@ -11,7 +11,7 @@ export default HeaderButton.extend({
   initialize: function (options) {
     this.title = 'New User'
     this.className = 'btn btn-primary tooltiped createUser'
-    this.iconClass = 'glyphicon glyphicon-plus'
+    this.iconClass = 'fa fa-plus'
   },
   events: {
     click: function (event) {

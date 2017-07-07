@@ -22,8 +22,8 @@ export default ListItem.extend({
     ListItem.prototype.render.apply(this,arguments)
 
     this.addButtons([
-      new EditButton({ model: this.model }),
-      new DeleteButton({ model: this.model }),
+      { view: EditButton, params: { model: this.model } },
+      { view: DeleteButton, params: { model: this.model } },
     ])
 
     this.renderSubview(

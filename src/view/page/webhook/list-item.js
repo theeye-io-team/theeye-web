@@ -8,17 +8,23 @@ import WebhookForm from './form'
 
 const WebhookButtons = BaseView.extend({
   template: `
-  <div>
-    <button class="btn btn-primary simple-btn tooltiped" data-hook="workflow" title="Workflow">
-      <span class="fa fa-sitemap"></span>
-    </button>
-    <button class="btn btn-primary simple-btn tooltiped" data-hook="edit" title="Edit">
-      <span class="fa fa-edit"></span>
-    </button>
-    <button class="btn btn-primary simple-btn tooltiped" data-hook="remove" title="Delete">
-      <span class="fa fa-trash"></span>
-    </button>
-  </div>
+    <div>
+      <li>
+        <button class="btn btn-primary simple-btn tooltiped" data-hook="workflow" title="Workflow">
+          <span class="fa fa-sitemap"></span>
+        </button>
+      </li>
+      <li>
+        <button class="btn btn-primary simple-btn tooltiped" data-hook="edit" title="Edit">
+          <span class="fa fa-edit"></span>
+        </button>
+      </li>
+      <li>
+        <button class="btn btn-primary simple-btn tooltiped" data-hook="remove" title="Delete">
+          <span class="fa fa-trash"></span>
+        </button>
+      </li>
+    </div>
   `,
   events: {
     'click [data-hook=edit]':'onClickEdit',
@@ -26,6 +32,8 @@ const WebhookButtons = BaseView.extend({
     'click [data-hook=workflow]':'onClickWorkflow',
   },
   onClickWorkflow(event){
+    event.preventDefault();
+    event.stopPropagation();
     window.open('/admin/workflow?node=' + this.model.id, '_blank');
     return false;
   },
@@ -106,7 +114,12 @@ module.exports = ListItem.extend({
 
     this.renderSubview(
       new WebhookButtons({ model: this.model }),
-      this.queryByHook('action-buttons')
+      this.query('div.panel-item.icons.panel-item-desktop[data-hook=action-buttons]')
+    )
+
+    this.renderSubview(
+      new WebhookButtons({ model: this.model }),
+      this.query('.panel-item-mobile ul.dropdown-menu[data-hook=action-buttons]')
     )
 
     this.renderSubview(

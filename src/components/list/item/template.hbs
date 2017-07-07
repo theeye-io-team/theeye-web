@@ -23,8 +23,23 @@
             <small> > <span data-hook="item_description"></span> </small>
           </span>
 
-          <!-- model actions button container -->
-          <div class="panel-item icons" data-hook="action-buttons"> </div>
+          <!-- DESKTOP ICONS MENU -->
+          <div class="panel-item icons panel-item-desktop" data-hook="action-buttons">
+          </div>
+          <!-- /DESKTOP ICONS MENU -->
+          <!-- MOBILE ICONS MENU -->
+          <div class="panel-item icons dropdown panel-item-mobile">
+            <button class="btn dropdown-toggle btn-primary"
+              type="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="true">
+              <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu" data-hook="action-buttons">
+            </ul>
+          </div>
+          <!-- /MOBILE ICONS MENU -->
 
         </div>
       </span>

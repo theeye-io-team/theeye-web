@@ -1,0 +1,20 @@
+<li>
+  <button data-search="<%= resource.name %>" data-resource_id="<%= resource.id %>" class="btn btn-primary resource-search tooltiped" title="Search related elements">
+    <span class="fa fa-search"></span>
+  </button>
+</li>
+<li>
+  <a href="/admin/workflow?node=<%= resource.monitor.id %>" data-hook="workflow-button" class="btn btn-primary tooltiped" title="Workflow">
+    <i class="fa fa-sitemap" aria-hidden="true"></i>
+  </a>
+</li>
+<li>
+  <button class="monitorStats btn btn-primary tooltiped" title="Host Stats">
+    <i class="fa fa-bar-chart" aria-hidden="true"></i>
+  </button>
+</li>
+<li>
+  <button class="editMonitors btn btn-primary tooltiped" title="Edit Monitor">
+    <i class="fa fa-edit" aria-hidden="true"></i>
+  </button>
+</li>

@@ -155,6 +155,10 @@ function DashboardPage () {
     }
   });
 
+  var MonitorButtonsView = BaseView.extend({
+    template: Templates['assets/templates/dashboard-page/monitor-row-buttons.hbs']
+  })
+
   /**
    *
    * single monitor row view.
@@ -265,8 +269,22 @@ function DashboardPage () {
         SubmonitorView,
         this.queryByHook('submonitors-container')[0]
       );
+
+      this.renderButtons();
       this.updateStateIcon();
       this.setMonitorIcon();
+    },
+    renderButtons: function(){
+      new MonitorButtonsView({
+        autoRender: true,
+        el: this.find('div[data-hook=buttons-container]'),
+        model: this.model
+      })
+      new MonitorButtonsView({
+        autoRender: true,
+        el: this.find('ul.dropdown-menu[data-hook=buttons-container]'),
+        model: this.model
+      })
     }
   });
 
@@ -278,13 +296,14 @@ function DashboardPage () {
       BaseView.prototype.render.apply(this, arguments);
 
       // change collapsed content table headers
-      var columns =
-        '<th></th>' + 
-        '<th>Name</th>' +
-        '<th>Hostname</th>' +
-        '<th>Type</th>' +
-        '<th>Last Update</th>' +
-        '<th></th>' ;
+      var columns = [
+        '<th></th>',
+        '<th>Name</th>',
+        '<th>Hostname</th>',
+        '<th>Type</th>',
+        '<th>Last Update</th>',
+        '<th></th>'
+      ].join();
 
       this.queryByHook('title-cols').html(columns);
       this.queryByHook('collapse-container').find('h4').remove();
@@ -298,6 +317,11 @@ function DashboardPage () {
       this.updateStateIcon();
     }
   });
+
+  var TaskButtonsView = BaseView.extend({
+    template: Templates['assets/templates/dashboard-page/task-row-buttons.hbs']
+  })
+
 
   /**
    * tasks rows
@@ -325,6 +349,22 @@ function DashboardPage () {
 
       return false;
     },
+    render: function(){
+      BaseView.prototype.render.apply(this, arguments);
+      this.renderButtons();
+    },
+    renderButtons: function(){
+      new TaskButtonsView({
+        autoRender: true,
+        el: this.find('div[data-hook=buttons-container]'),
+        model: this.model
+      })
+      new TaskButtonsView({
+        autoRender: true,
+        el: this.find('ul.dropdown-menu[data-hook=buttons-container]'),
+        model: this.model
+      })
+    }
   });
 
   /**
