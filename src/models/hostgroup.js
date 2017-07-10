@@ -1,3 +1,6 @@
+import AmpersandState from 'ampersand-state'
+import AmpersandCollection from 'ampersand-collection'
+
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 
@@ -8,6 +11,18 @@ import { Collection as Hosts } from 'models/host'
 //import { Collection as Monitors } from 'models/monitor/template'
 
 const urlRoot = '/api/hostgroup'
+
+const EventTemplate = AmpersandState.extend({
+	props: {
+    _id: 'string',
+		emitter_template_id: 'string',
+		event_name: 'string',
+		event_type: 'string',
+		task_template_id: 'string',
+    task_template: 'object'
+	}
+})
+const EventTemplates = AmpersandCollection.extend({ model: EventTemplate })
 
 export const Model = AppModel.extend({
   urlRoot: urlRoot,
@@ -27,6 +42,7 @@ export const Model = AppModel.extend({
     hosts: Hosts, // has many host
     tasks: TaskTemplates, // has many task templates
     resources: ResourceTemplates, // has many resource templates
+    triggers: EventTemplates // has many event templates
   }
 })
 

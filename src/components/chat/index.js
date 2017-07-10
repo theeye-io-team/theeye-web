@@ -10,7 +10,7 @@ module.exports = {
     autoRender: true,
     template: `
     <div class="chat-box chat-box-baloon">
-      <a href="">
+      <a href="https://community.theeye.io" target="_blank">
         <i class="fa fa-comment"></i>&nbsp;
         <span>Chat with us.</span>
       </a>

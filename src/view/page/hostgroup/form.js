@@ -268,8 +268,9 @@ export default FormView.extend({
       })
       this.fields.unshift(hostSelect)
     } else {
-      //App.state.hostGroupPage.configResources = this.model.resources
-      //App.state.hostGroupPage.configTasks = this.model.tasks
+      App.state.hostGroupPage.configResources = this.model.resources
+      App.state.hostGroupPage.configTasks = this.model.tasks
+      App.state.hostGroupPage.configTriggers = this.model.triggers
 
       const configs = new ConfigsView()
       configs.render()

@@ -62,11 +62,38 @@ const ItemView = View.extend({
   }
 })
 
-const TriggerItemView = ItemView.extend({
+/**
+ *
+ * the model data structure changes before creation
+ *
+ */
+const ShowTriggerItemView = ItemView.extend({
+  initialize () {
+    ItemView.prototype.initialize.apply(this,arguments)
+  },
+  template: `
+    <li>
+      <b><span data-hook="task-name"></span></b>
+      trigger on <span data-hook="type"></span>
+      <span data-hook="name"></span>
+    </li>`,
+  bindings: lodash.merge({}, ItemView.prototype.bindings, {
+    'model.event_name': { hook: 'name' },
+    'model.event_type': { hook: 'type' },
+    'model.task_template.name': { hook: 'task-name' }
+  })
+})
+
+/**
+ *
+ * this view display different information that the above view
+ *
+ */
+const CreateTriggerItemView = ItemView.extend({
   template: `
   <li>
     <span data-hook="name"></span>
-    (<span data-hook="count"></span> events attached)
+    <span data-hook="count-visibility">(<span data-hook="count"></span> events attached)</span>
     <i class="fa fa-remove" title="Do not add this to the Template" data-hook="remove-button"></i>
     <i class="fa fa-eye" title="More" data-hook="show" style="display:none"></i>
   </li>`,
@@ -75,10 +102,13 @@ const TriggerItemView = ItemView.extend({
       type: 'text',
       hook: 'name'
     },
-    'model.events.length': {
+    'model.events.length': [{
       type: 'text',
       hook: 'count'
-    }
+    //},{
+    //  type: 'toggle',
+    //  hook: 'count-visibility'
+    }]
   })
 })
 
@@ -177,8 +207,13 @@ export default View.extend({
     this.renderCollection(
       App.state.hostGroupPage.configTriggers,
       (options) => {
+        // edit only when create
         options.readonly = ! this.edit_mode
-        return new TriggerItemView(options)
+        if (options.readonly===true) {
+          return new ShowTriggerItemView(options)
+        } else {
+          return new CreateTriggerItemView(options)
+        }
       },
       this.queryByHook('triggers')
     )
