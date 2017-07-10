@@ -25,61 +25,23 @@
         <button class="mass-action massChecker btn btn-primary simple-btn tooltiped" title="Select all" aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
         </button>
+        <span class="title">Tasks &nbsp;<i data-hook="help"></i></span>
+        <span class="title separator">|</span>
 
-        <span class="title">Task Actions &nbsp;<i data-hook="help"></i></span>
-        <span class="title separator">|&nbsp;</span>
-
-        <!-- DROPDOWN BUTTON -->
-        <div class="dropdown">
-          <span id="dropdownMenu1"
-            data-toggle="dropdown"
-            aria-expanded="true"
-            class="btn btn-primary simple-btn dropdown-toggle"
-            data-placement="right"
-            title="Create"
-            aria-label="Center Align">
-            <span class="glyphicon glyphicon-plus"></span> New Task
-          </span>
-          <ul class="dropdown-menu"
-            role="menu"
-            aria-labelledby="dropdownMenu1"
-            style="min-width: 120px">
-            <li role="presentation">
-              <a role="menuitem"
-                tabindex="-1"
-                class="menu-create-button"
-                data-hook="create-scraper-task"
-                data-action="create">
-                WEB/API Request
-              </a>
-            </li>
-            <li role="presentation">
-              <a role="menuitem"
-                tabindex="-1"
-                class="menu-create-button"
-                data-toggle="modal"
-                data-target="#create-task">
-                Script
-              </a>
-            </li>
-          </ul>
-          <a class="btn btn-primary" target="_blank" href="/admin/scheduler">
-            <span class="glyphicon glyphicon-calendar"></span> Schedule View
-          </a>
-        </div>
-        <!-- /DROPDOWN BUTTON -->
-
+        <%- partial('./partials/menu/create-tasks-dropdown.ejs') %>
+        <!-- DESKTOP/MOBILE MASSIVE MENU { -->
         <button class="mass-action pull-right massDelete btn btn-primary simple-btn tooltiped"
           title="Delete selected tasks"
           aria-label="Center Align">
           <span class="glyphicon glyphicon-trash"></span>
         </button>
+        <!-- } DESKTOP/MOBILE MASSIVE MENU -->
       </div>
       <!-- /HEADER -->
 
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-        <% tasks.forEach( function(task, key) { %>
-          <% var missingScript = task.type=='script' && (!task.script_id||!task.host_id);
+        <% tasks.forEach(function (task, key) {
+          var missingScript = task.type=='script' && (!task.script_id||!task.host_id);
           var tags = [
             'task',
             task.description,
@@ -89,141 +51,113 @@
             'script='+ task.script_id
           ].concat(task.tags);
 
-          if(missingScript){ tags.push('missing'); }
-          tags = tags.join(',');
-        %>
-          <div
-            class="itemRow panel panel-default js-searchable-item"
-            data-item-id="<%= task.id %>"
-            data-item-name="<%= task.name %>"
-            data-tags="<%= tags %>">
-            <div class="panel-heading" role="tab" id="heading<%= task.id %>">
-              <h4 class="panel-title">
-                <span class="collapsed"
-                  data-toggle="collapse"
-                  data-parent="#accordion"
-                  href="#collapse<%= task.id %>"
-                  aria-expanded="false"
-                  aria-controls="collapse<%= task.id %>">
-                  <div class="panel-title-content">
-                    <button class="rowSelector btn btn-primary simple-btn tooltiped"
-                      title="Select task"
-                      aria-label="Center Align">
-                      <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
-                    </button>
-                    <span class="panel-item name" id="<%= task.id %>">
-                      <% if (missingScript) { %>
+          if (missingScript) { tags.push('missing'); }
+          tags = tags.join(','); %>
+        <div class="itemRow panel panel-default js-searchable-item"
+          data-item-id="<%= task.id %>"
+          data-item-name="<%= task.name %>"
+          data-tags="<%= tags %>">
+          <div class="panel-heading" role="tab" id="heading<%= task.id %>">
+            <h4 class="panel-title">
+              <span class="collapsed"
+                data-toggle="collapse"
+                data-parent="#accordion"
+                href="#collapse<%= task.id %>"
+                aria-expanded="false"
+                aria-controls="collapse<%= task.id %>">
+                <div class="panel-title-content">
+                  <button class="rowSelector btn btn-primary simple-btn tooltiped"
+                    title="Select task"
+                    aria-label="Center Align">
+                    <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
+                  </button>
 
-                      <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
-                      &nbsp; <%= task.name %>
-                      <small class="remark-alert">> host and/or script is missing </small>
-
-                      <% } else if( task.type=='scraper' && !task.host_id ) { %>
-
-                      <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
-                      &nbsp; <%= task.name %>
-                      <small class="remark-alert">> undefined . host is missing </small>
-
-                      <% } else { %>
-
-                      <% if( task.template ) { %>
+                  <!-- ITEM INFORMATION { -->
+                  <span class="panel-item name" id="<%= task.id %>">
+                    <% if (missingScript) { %>
                       <small>
-                        <a href="/admin/hostgroup">
+                        <span class="glyphicon glyphicon-remove-sign remark-alert"></span>
+                      </small>
+                      <span>&nbsp; <%= task.name %></span>
+                      <small class="remark-alert">> host and/or script is missing </small>
+                    <% } else if (task.type=='scraper' && !task.host_id) { %>
+                      <small><span class="glyphicon glyphicon-remove-sign remark-alert"></span></small>
+                      <span>&nbsp; <%= task.name %></span>
+                      <small class="remark-alert">> undefined . host is missing </small>
+                    <% } else {
+                      if (task.template) { %>
+                      <small>
+                        <a href="/admin/template">
                           <span title="This task was created from a template"
                             class="glyphicon glyphicon-list-alt remark-success tooltiped">
                           </span>
                         </a>
-                      </small>
-                      <% } %>
+                      </small> <%
+                      } %> <span>&nbsp; <%= task.name %> <small><%= task.type %> > <%= task.hostname %></small></span>
+                    <% } %>
+                  </span>
+                  <!-- } ITEM INFORMATION -->
 
-                      &nbsp; <%= task.name %> <small><%= task.type %> > <%= task.hostname %></small>
-
-                      <% } %>
-                    </span>
-                    <div class="panel-item icons">
-
-                      <% var attention = tags.indexOf("scheduled") >= 0 ? 'attention' : ''; %>
-                      <button class="scheduleTask btn btn-primary simple-btn tooltiped" title="Schedule task" aria-label="Center Align">
-                        <span class="glyphicon glyphicon-time <%= attention%>"></span>
-                      </button>
-
-                      <button
-                        class="btn btn-primary tooltiped simple-btn"
-                        data-hook="copy"
-                        data-task="<%= task.id %>">
-                        <span class="glyphicon glyphicon-duplicate"></span>
-                      </button>
-
-                      <% if (task.type=='scraper') { %>
-                      <button data-hook="edit-scraper-task"
-                        data-task="<%= task.id %>"
-                        class="btn btn-primary simple-btn tooltiped"
-                        title="Edit task"
-                        aria-label="Center Align" >
-                      <% } else { %>
-                      <button class="editTask btn btn-primary simple-btn tooltiped"
-                        title="Edit task"
-                        aria-label="Center Align">
-                      <% } %>
-                        <span class="glyphicon glyphicon-edit"></span>
-                      </button>
-
-                      <button class="deleteTask btn btn-primary simple-btn tooltiped" title="Delete task" aria-label="Center Align">
-                        <span class="glyphicon glyphicon-trash"></span>
-                      </button>
-                    </div>
+                  <!-- DESKTOP ICONS MENU -->
+                  <div class="panel-item icons panel-item-desktop">
+                    <%- partial('./partials/menu/actions.ejs',{ task: task, tags: tags }) %>
                   </div>
-                </span>
-              </h4>
-            </div>
-            <div id="collapse<%= task.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= task.id %>">
-              <div class="panel-body">
-                <div class="row">
-                  <div class="col-sm-4">
-                    <h4>Description</h4>
-                    <p><%= task.description %></p>
+                  <!-- /DESKTOP ICONS MENU -->
+                  <!-- MOBILE ICONS MENU -->
+                  <div class="panel-item icons dropdown panel-item-mobile">
+                    <button class="btn dropdown-toggle btn-primary simple-btn"
+                      type="button"
+                      id="dropdownMenu"
+                      data-toggle="dropdown"
+                      aria-haspopup="true"
+                      aria-expanded="true">
+                      <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                      <%- partial('./partials/menu/actions.ejs',{ task: task, tags: tags }) %>
+                    </ul>
                   </div>
-                  <div class="col-sm-4">
-                    <h4>Script</h4>
-                    <p><%= task.script_name %></p>
-                  </div>
-                  <div class="col-sm-4">
-                    <h4>Script arguments</h4>
-                    <p><%= task.script_arguments %></p>
-                  </div>
+                  <!-- /MOBILE ICONS MENU -->
                 </div>
-                <div class="row">
-                  <div class="col-xs-12">
-                    <h4 style="border-bottom: 1px solid grey;">Schedules for this task</h4>
-                  </div>
-                  <div class="schedule-list">
-
-                  </div>
+              </span>
+            </h4>
+          </div>
+          <div id="collapse<%= task.id %>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="heading<%= task.id %>">
+            <div class="panel-body">
+              <div class="row">
+                <div class="col-sm-4">
+                  <h4>Description</h4>
+                  <p><%= task.description %></p>
+                </div>
+                <div class="col-sm-4">
+                  <h4>Script</h4>
+                  <p><%= task.script_name %></p>
+                </div>
+                <div class="col-sm-4">
+                  <h4>Script arguments</h4>
+                  <p><%= task.script_arguments %></p>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <h4 style="border-bottom: 1px solid grey;">Schedules for this task</h4>
+                </div>
+                <div class="schedule-list">
                 </div>
               </div>
             </div>
-          </div> <!-- end item -->
-        <% }); %>
+          </div>
+        </div>
+      <% }); %>
       </div> <!-- end panel -->
     </div> <!-- Tableresults -->
   </div>
   <div class="scheduleItem hidden">
-    <div class="col-sm-4 startDate">
-      Initial date:<br />
-      <span></span>
-    </div>
-    <div class="col-sm-2 repeatsEvery">
-      Repeats every:<br />
-      <span></span>
-    </div>
-    <div class="col-sm-4 nextDate">
-      Next iteration:<br />
-      <span>-</span>
-    </div>
+    <div class="col-sm-4 startDate"> Initial date:<br /> <span></span> </div>
+    <div class="col-sm-2 repeatsEvery"> Repeats every:<br /> <span></span> </div>
+    <div class="col-sm-4 nextDate"> Next iteration:<br /> <span>-</span> </div>
     <div class="col-sm-2 removeSchedule">
-      <button type="button"
-        class="btn btn-danger deleteSchedule">
-        Delete
+      <button type="button" class="btn btn-danger deleteSchedule"> Delete
       </button>
     </div>
   </div>

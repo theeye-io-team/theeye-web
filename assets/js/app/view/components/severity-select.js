@@ -53,6 +53,7 @@ var SeveritySelect = BaseView.extend({
       );
 
     this.find('select').select2({
+      tabindex: 0,
       placeholder: 'Select a task',
       data: data,
       allowClear: true

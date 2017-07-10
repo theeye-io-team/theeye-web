@@ -6,7 +6,7 @@ lib-cov
 *.log
 *.out
 *.pid
-npm-debug.log
+npm-debug.log.*
 *~
 *#
 .DS_STORE
@@ -20,3 +20,4 @@ config/env/production.js
 .sailsrc
 config/env/*
 *.orig
+assets/js/bundles

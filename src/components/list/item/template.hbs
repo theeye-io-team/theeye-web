@@ -1,0 +1,56 @@
+<div class="itemRow panel panel-default js-searchable-item"
+  data-item-id="model.id"
+  data-item-name="model.username"
+  data-tags="view.tags">
+  <div class="panel-heading" role="tab" id="heading+model.id">
+    <h4 class="panel-title">
+      <span class="collapsed" data-toggle="collapse"
+        data-parent="#new-accordion"
+        href="#collapse+model.id"
+        aria-expanded="false"
+        aria-controls="collapse+model.id">
+        <div class="panel-title-content">
+
+          <!-- model select button -->
+          <span data-hook="left-container">
+            <button class="btn btn-primary rowSelector simple-btn">
+              <span data-hook="selectable" class="glyphicon glyphicon-unchecked"></span>
+            </button>
+          </span>
+
+          <span class="panel-item name">
+            <span data-hook="item_name"></span>
+            <small> > <span data-hook="item_description"></span> </small>
+          </span>
+
+          <!-- DESKTOP ICONS MENU -->
+          <div class="panel-item icons panel-item-desktop" data-hook="action-buttons">
+          </div>
+          <!-- /DESKTOP ICONS MENU -->
+          <!-- MOBILE ICONS MENU -->
+          <div class="panel-item icons dropdown panel-item-mobile">
+            <button class="btn dropdown-toggle btn-primary"
+              type="button"
+              data-toggle="dropdown"
+              aria-haspopup="true"
+              aria-expanded="true">
+              <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+            </button>
+            <ul class="dropdown-menu" data-hook="action-buttons">
+            </ul>
+          </div>
+          <!-- /MOBILE ICONS MENU -->
+
+        </div>
+      </span>
+    </h4>
+  </div>
+
+  <!-- collapsible content -->
+  <div id="collapse{{ model.id }}"
+    class="panel-collapse collapse"
+    role="tabpanel"
+    aria-labelledby="heading{{ model.id }}">
+    <div data-hook="collapsed-content" class="panel-body"> </div>
+  </div>
+</div>

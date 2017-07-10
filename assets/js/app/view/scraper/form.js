@@ -157,6 +157,7 @@ var Scraper = (function Scraper(){
           this.queryByHook('hosts-container').remove();
         } else if( ! model.isNew() ){
           this.queryByHook('hosts').select2({
+        tabindex: 0,
             multiple:false
           });
         }
@@ -164,10 +165,21 @@ var Scraper = (function Scraper(){
     },
     setupSelect : function() {
       // initialize & render select2 combos
-      this.queryByHook('tags').select2({ placeholder: 'Tags', data: Select2Data.PrepareTags( this.tags ), tags: true });
-      this.queryByHook('looptimes').select2({ placeholder: 'Monitor Looptime', data: Select2Data.PrepareIdValueData( this.looptimes ) });
-      this.queryByHook('timeouts').select2({ placeholder: 'Request Timeout', data: Select2Data.PrepareIdValueData( this.timeouts ) });
-      this.queryByHook('hosts').select2({ placeholder: 'Monitor Host', data: Select2Data.PrepareHosts( this.hosts ) });
+      this.queryByHook('tags').select2({
+        tabindex: 0,
+        placeholder: 'Tags',
+        data: Select2Data.PrepareTags( this.tags ),
+        tags: true
+      });
+      this.queryByHook('looptimes').select2({
+        tabindex: 0,
+        placeholder: 'Monitor Looptime', data: Select2Data.PrepareIdValueData( this.looptimes ) });
+      this.queryByHook('timeouts').select2({
+        tabindex: 0,
+        placeholder: 'Request Timeout', data: Select2Data.PrepareIdValueData( this.timeouts ) });
+      this.queryByHook('hosts').select2({
+        tabindex: 0,
+        placeholder: 'Monitor Host', data: Select2Data.PrepareHosts( this.hosts ) });
       var usersSelect = this.usersSelect = new UsersSelect({ collection: this.users, autoRender: true });
       this.queryByHook('advanced').append( usersSelect.el );
     },
@@ -201,6 +213,7 @@ var Scraper = (function Scraper(){
       this.bindFormEvents();
 
       this.queryByHook('events-container').select2({
+        tabindex: 0,
         placeholder: 'Events',
         data: Select2Data.PrepareEvents(this.events)
       });

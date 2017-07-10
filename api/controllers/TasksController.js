@@ -108,7 +108,7 @@ module.exports = {
   create: function(req, res) {
     var supervisor = req.supervisor;
     var params = req.params.all();
-    
+
     var data = extend(params,{
       'description': params.description || params.name,
       'script': params.script_id,

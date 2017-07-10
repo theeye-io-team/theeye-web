@@ -3,12 +3,10 @@
 <% block('scripts','<script> window.Timeouts = ' + JSON.stringify(timeouts) + '; </script>') %>
 <% block('scripts','<script> window.Hosts = ' + JSON.stringify(hosts) + '; </script>') %>
 <% block('scripts','<script> window.Scripts = ' + JSON.stringify(scripts) + '; </script>') %>
-
 <% block('scripts','<script> $(document).ready(function(){ new ScriptsPageInit(); new MonitorsPageInit(); }); </script>') %>
 
 <!-- Main  -->
 <div class="admin-container monitorContainer">
-
   <div class="js-searchable-box">
     <form>
       <input type="text" placeholder="Find a Monitor">
@@ -16,102 +14,50 @@
       <button class="search"><i class="glyphicon glyphicon-search"></i></button>
     </form>
   </div>
-
   <div class="admin-panel resources-panel">
     <h3>Monitors Admin</h3>
     <div>
+      <!-- PAGE HEADER -->
       <div class="table-header admin">
         <button class="mass-action massChecker btn btn-primary simple-btn tooltiped" title="Select all" aria-label="Center Align">
           <span class="massiveSelector glyphicon glyphicon-unchecked"></span>
         </button>
+        <span class="title">Monitors &nbsp;<i data-hook="help"></i></span>
+        <span class="title separator">|</span>
 
-        <span class="title">Monitor Actions &nbsp;<i data-hook="help"></i></span>
-        <span class="title separator">|&nbsp;</span>
-
-        <div class="dropdown resource">
-          <span id="dropdownMenu1"
+        <%- partial('./partials/menu/create-monitors-dropdown.ejs') %>
+        <!-- DESKTOP/MOBILE MASSIVE MENU { -->
+        <div class="panel-item panel-item-mobile icons dropdown">
+          <button class="btn dropdown-toggle btn-primary simple-btn mobile-dropdown-button"
+            type="button"
+            id="dropdownMenu"
             data-toggle="dropdown"
-            aria-expanded="true"
-            class="btn btn-primary simple-btn dropdown-toggle"
-            data-placement="right"
-            title="Create new monitor"
-            aria-label="Center Align">
-            <span class="glyphicon glyphicon-plus"></span> New Monitor
-          </span>
-
-          <ul class="dropdown-menu"
-            role="menu"
-            aria-labelledby="dropdownMenu1"
-            style="min-width: 120px">
-            <li role="presentation">
-              <a role="menuitem" tabindex="-1"
-                class="create-monitor"
-                data-hook="create-scraper-monitor"
-                data-resource-type="scraper">WEB/API Check</a>
-            </li>
-            <li role="presentation">
-              <a role="menuitem" tabindex="-1"
-                class="create-monitor"
-                data-hook="create-file-monitor"
-                data-resource-type="file">File</a>
-            </li>
-            <li role="presentation">
-              <a role="menuitem" tabindex="-1"
-                class="create-monitor createResourceMonitor"
-                data-toggle="modal"
-                data-hook="create-monitor"
-                data-target="#processResourceModal"
-                data-resource-type="process"
-                data-action="create">Process</a>
-            </li>
-            <li role="presentation">
-              <a role="menuitem" tabindex="-1"
-                class="create-monitor createResourceMonitor"
-                data-toggle="modal"
-                data-hook="create-monitor"
-                data-target="#scriptResourceModal"
-                data-resource-type="script"
-                data-action="create">Script</a>
-            </li>
-            <li role="presentation">
-              <a role="menuitem" tabindex="-1"
-                class="create-monitor createResourceMonitor"
-                data-toggle="modal"
-                data-hook="create-monitor"
-                data-target="#dstatResourceModal"
-                data-resource-type="dstat"
-                data-action="create">Host Stats</a>
-            </li>
+            aria-haspopup="true"
+            aria-expanded="true">
+            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+          </button>
+          <ul class="dropdown-menu desktop-mobile-dropdown" aria-labelledby="dropdownMenu1">
+            <%- partial('./partials/menu/massive-actions.ejs') %>
           </ul>
         </div>
 
-        <button class="mass-action pull-right massDelete btn btn-primary simple-btn tooltiped"
-          title="Delete selected monitors"
-          aria-label="Center Align">
-          <span class="glyphicon glyphicon-trash"></span>
-        </button>
-
-        <button class="mass-action pull-right massMuteDeactivate btn btn-primary simple-btn tooltiped"
-          title="Enable selected monitors alerts"
-          aria-label="Center Align">
-          <span class="massiveSelector glyphicon glyphicon-volume-up"></span>
-        </button>
-
-        <button class="mass-action pull-right massMuteActivate btn btn-primary simple-btn tooltiped"
-          title="Silence selected monitors alerts"
-          aria-label="Center Align">
-          <span class="massiveSelector glyphicon glyphicon-volume-off"></span>
-        </button>
+        <div class="panel-item panel-item-desktop icons">
+          <%- partial('./partials/menu/massive-actions.ejs') %>
+        </div>
+        <!-- } DESKTOP/MOBILE MASSIVE MENU -->
 
       </div>
+      <!-- /PAGE HEADER -->
+
+      <!-- PAGE CONTENT -->
       <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <% monitors.forEach( function(monitor, key) {
           var tags = [
-            "id=" + monitor.resource.id,
-            "name=" + monitor.resource.name,
-            "hostname=" + monitor.resource.hostname,
-            "type=" + monitor.type,
-            "state=" + monitor.resource.state,
+            'id=' + monitor.resource.id,
+            'name=' + monitor.resource.name,
+            'hostname=' + monitor.resource.hostname,
+            'type=' + monitor.type,
+            'state=' + monitor.resource.state,
           ].concat(monitor.tags).join(',') %>
 
           <div class="itemRow panel panel-default js-searchable-item"
@@ -128,7 +74,7 @@
                   aria-controls="collapse<%= monitor.id %>">
                   <div class="panel-title-content">
 
-                    <% if(monitor.type == 'host') { %>
+                    <% if (monitor.type == 'host') { %>
                       <button class="rowSelector-not btn btn-primary simple-btn tooltiped"
                         title="I'm a Host!"
                         aria-label="Center Align">
@@ -141,187 +87,67 @@
                         <span class="selectorIcon glyphicon glyphicon-unchecked"></span>
                       </button>
                     <% } %>
-
                     <span class="panel-item name" id="<%= monitor.id %>">
-                      <% if( monitor.template ) { %>
+                      <% if (monitor.template) { %>
                         <small>
-                          <a href="/admin/hostgroup">
+                          <a href="/admin/template">
                             <span title="This monitor was created from a template"
                               class="glyphicon glyphicon-list-alt remark-success tooltiped">
                             </span>
                           </a>
                         </small>&nbsp;
                       <% } %>
-
                       <%= monitor.resource.name %>
-                      <span class="monitor-<%= monitor.enable?'enabled':'disabled' %>">
+                      <span class="monitor-<%= monitor.enable ? 'enabled' : 'disabled' %>">
                         <small>
                           <% if (monitor.resource.type != 'host') { %>
-                            (<%=monitor.resource.hostname%>)
+                            (<%= monitor.resource.hostname %>)
                           <% } %>
                           <%= !monitor.enable? ' > disabled' :'' %> > <%= monitor.type %>
                         </small>
                       </span>
-                      <small class="<%= monitor.resource.state === 'normal' ? '' : 'remark-alert' %>"> > host status :: <%= monitor.resource.state %></small>
+                      <small class="<%= monitor.resource.state === 'normal' ? '' : 'remark-alert' %>">
+                        > host status :: <%= monitor.resource.state %>
+                      </small>
                     </span>
-                    <div class="panel-item icons">
-                      <% var type = (monitor.type||monitor.monitor_type); %>
-                      <% if (type != 'host' && type != 'psaux') { %><!-- TYPE SCRIPT, PROCESS OR SCRAPER -->
 
-                        <%
-                            if (monitor.resource.alerts===false) {
-                              var muteClass='resource-enable-alerts';
-                              var muteIcon='glyphicon-volume-up';
-                              var muteTitle='Activate monitor alerts';
-                            } else {
-                              var muteClass='resource-disable-alerts';
-                              var muteIcon='glyphicon-volume-off';
-                              var muteTitle='Deactivate monitor alerts';
-                            }
-                          %>
-
-                        <button class="<%= muteClass %> btn btn-primary simple-btn tooltiped"
-                          title="<%= muteTitle %>"
-                          aria-label="Center Align"
-                          data-resource_id="<%= monitor.resource.id %>">
-                          <span class="glyphicon <%= muteIcon %>"></span>
-                        </button>
-
-                        <button
-                          class="btn btn-primary tooltiped simple-btn"
-                          data-hook="copy"
-                          data-monitor="<%= monitor.resource.id %>">
-                          <span class="glyphicon glyphicon-duplicate"></span>
-                        </button>
-
-
-                        <!-- EDIT BUTTON -->
-                        <button class="editResourceMonitor editResource <%= monitor.type %>ResourceEditAction btn btn-primary simple-btn tooltiped"
-                          aria-label="Center Align"
-                          title="Edit monitor"
-                          data-hook="edit-<%= monitor.type %>-monitor"
-                          data-host_id="<%= monitor.host_id %>"
-                          data-hostname="<%= monitor.resource.hostname %>"
-                          data-resource_id="<%= monitor.resource.id %>"
-                          data-action="edit"
-                          data-toggle="modal"
-                          data-resource-type="<%= monitor.type %>"
-                          data-target="#<%= monitor.type %>ResourceModal">
-                          <span class="glyphicon glyphicon-edit"></span>
-                        </button>
-                        <!-- /EDIT BUTTON -->
-
-                        <button class="deleteResource btn btn-primary simple-btn tooltiped"
-                          title="Delete Monitor"
-                          aria-label="Center Align"
-                          data-resource_id="<%= monitor.resource.id %>">
-                          <span class="glyphicon glyphicon-trash"></span>
-                        </button>
-
+                    <!-- DESKTOP ICONS MENU -->
+                    <div class="panel-item icons panel-item-desktop">
+                      <% var type = (monitor.type||monitor.monitor_type) %>
+                      <% if (type == 'host') { %>
+                        <%- partial ('./partials/menu/host.ejs',{ monitor: monitor }) %>
+                      <% } else if (type == 'psaux') { %>
+                        <%- partial ('./partials/menu/psaux.ejs',{ monitor: monitor }) %>
                       <% } else { %>
-                        <% if (type == 'host') { %>
-                          <div class="dropdown host-menu">
-                            <button id="dropdownMenu1"
-                              data-toggle="dropdown"
-                              aria-expanded="true"
-                              class="btn btn-primary simple-btn dropdown-toggle"
-                              aria-label="Center Align">
-                              <span class="glyphicon glyphicon-plus"></span>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-right" role="menu" aria-labelledby="dropdownMenu1" style="min-width: 120px; cursor:pointer;">
-                              <li role="presentation">
-                                <span role="menuitem" tabindex="-1"
-                                  class="create-monitor"
-                                  data-hook="create-scraper-monitor"
-                                  data-host_id="<%= monitor.host_id %>"
-                                  data-hostname="<%= monitor.resource.hostname %>"
-                                  data-resource-type="scraper"
-                                  data-action="create">WEB/API Check</span>
-                              </li>
-                              <li role="presentation">
-                                <span role="menuitem" tabindex="-1"
-                                  class="create-monitor"
-                                  data-hook="create-file-monitor"
-                                  data-host_id="<%= monitor.host_id %>"
-                                  data-action="create">File</span>
-                              </li>
-                              <li role="presentation">
-                                <span role="menuitem" tabindex="-1"
-                                  class="create-monitor createResourceMonitor"
-                                  data-host_id="<%= monitor.host_id %>"
-                                  data-hostname="<%= monitor.resource.hostname %>"
-                                  data-toggle="modal"
-                                  data-hook="create-monitor"
-                                  data-target="#processResourceModal"
-                                  data-resource-type="process"
-                                  data-action="create">Process</span>
-                              </li>
-                              <li role="presentation">
-                                <span role="menuitem" tabindex="-1"
-                                  class="create-monitor createResourceMonitor"
-                                  data-host_id="<%= monitor.host_id %>"
-                                  data-hostname="<%= monitor.resource.hostname %>"
-                                  data-toggle="modal"
-                                  data-hook="create-monitor"
-                                  data-target="#scriptResourceModal"
-                                  data-resource-type="script"
-                                  data-action="create">Script</span>
-                              </li>
-                              <li role="presentation">
-                                <span role="menuitem" tabindex="-1"
-                                  class="create-monitor createResourceMonitor"
-                                  data-host_id="<%= monitor.host_id %>"
-                                  data-hostname="<%= monitor.resource.hostname %>"
-                                  data-toggle="modal"
-                                  data-hook="create-monitor"
-                                  data-target="#dstat-resource-modal"
-                                  data-resource-type="dstat"
-                                  data-action="create">Host Stats</span>
-                              </li>
-                              <!--
-                              <li role="presentation">
-                                <span role="menuitem" tabindex="-1"
-                                  class="create-monitor createResourceMonitor"
-                                  data-host_id="<%= monitor.host_id %>"
-                                  data-hostname="<%= monitor.resource.hostname %>"
-                                  data-toggle="modal"
-                                  data-hook="create-monitor"
-                                  data-target="#psauxResourceModal"
-                                  data-resource-type="psaux"
-                                  data-action="create">Process List</span>
-                              </li>
-                              -->
-                            </ul>
-                          </div>
-
-                          <!-- EDIT BUTTON -->
-                          <button class="btn btn-primary simple-btn tooltiped"
-                            aria-label="Center Align"
-                            title="Edit Host"
-                            data-hook="edit-host-monitor"
-                            data-host_id="<%= monitor.host_id %>"
-                            data-hostname="<%= monitor.resource.hostname %>"
-                            data-resource_id="<%= monitor.resource.id %>" >
-                            <span class="glyphicon glyphicon-edit"></span>
-                          </button>
-                          <!-- /EDIT BUTTON -->
-
-                          <button class="deleteHostResource btn btn-primary simple-btn tooltiped"
-                            title="Delete Host"
-                            aria-label="Center Align"
-                            data-resource_id="<%= monitor.resource.id %>">
-                            <span class="glyphicon glyphicon-trash"></span>
-                          </button>
-                        <% } else {  %>
-                          <button class="deleteResource btn btn-primary simple-btn tooltiped"
-                            title="Delete Monitor"
-                            aria-label="Center Align"
-                            data-resource_id="<%= monitor.resource.id %>">
-                            <span class="glyphicon glyphicon-trash"></span>
-                          </button>
-                        <% } %>
+                        <%- partial ('./partials/menu/monitors.ejs',{ monitor: monitor }) %>
+                        <!-- TYPE SCRIPT, PROCESS OR SCRAPER -->
                       <% } %>
                     </div>
+                    <!-- /DESKTOP ICONS MENU -->
+                    <!-- MOBILE ICONS MENU -->
+                    <div class="panel-item icons dropdown panel-item-mobile">
+                      <button class="btn dropdown-toggle btn-primary simple-btn"
+                        type="button"
+                        id="dropdownMenu"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="true">
+                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                      <% var type = (monitor.type||monitor.monitor_type) %>
+                      <% if (type == 'host') { %>
+                        <%- partial ('./partials/menu/host.ejs',{ monitor: monitor }) %>
+                      <% } else if (type == 'psaux') { %>
+                        <%- partial ('./partials/menu/psaux.ejs',{ monitor: monitor }) %>
+                      <% } else { %>
+                        <%- partial ('./partials/menu/monitors.ejs',{ monitor: monitor }) %>
+                        <!-- TYPE SCRIPT, PROCESS OR SCRAPER -->
+                      <% } %>
+                      </ul>
+                    </div>
+                    <!-- /MOBILE ICONS MENU -->
+
                   </div>
                 </span>
               </h4>
@@ -338,7 +164,9 @@
             </div>
           </div> <!-- end item -->
         <% }) %>
-      </div> <!-- end panel -->
+      </div>
+      <!-- /PAGE CONTENT -->
+
     </div> <!-- Tableresults -->
   </div>
 </div> <!-- main -->

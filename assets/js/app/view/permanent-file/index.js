@@ -226,6 +226,7 @@ var PermanentFile = new (function(){
 
       var hostsContainer = this.queryByHook('hosts');
       hostsContainer.select2({
+        tabindex: 0,
         placeholder: 'File Host',
         data: Select2Data.PrepareHosts(this.hosts)
       });
@@ -247,6 +248,7 @@ var PermanentFile = new (function(){
       });
 
       this.queryByHook('looptimes').select2({
+        tabindex: 0,
         placeholder: 'Monitor Looptime',
         data: Select2Data.PrepareIdValueData(this.looptimes)
       });
@@ -325,7 +327,10 @@ var PermanentFile = new (function(){
         if (model.isTemplate === true) {
           this.queryByHook('hosts-container').remove();
         } else if (!model.isNew()) {
-          this.queryByHook('hosts').select2({ multiple:false });
+          this.queryByHook('hosts').select2({
+            tabindex: 0,
+            multiple:false
+          });
         }
       }
     },

@@ -9,7 +9,7 @@ var viewer = {
   'events':['index'],
   'password': ['*'],
   'auth': ['login','activate','google','connect','unlink','logout'],
-  'user': ['profile','setcustomer']
+  'user': ['profile','setcustomer', 'ampersand']
 }
 
 var user = extend({},viewer,{
@@ -21,18 +21,16 @@ var user = extend({},viewer,{
 var admin = extend({},user,{
   'workflow' : ['index'],
   'webhook' : ['index'],
-  'scheduler' : ['index'],
   'tasks' : ['*'],
   'script' : ['*'],
   'resource' : ['*'],
   'hostgroup' : ['*'],
-  'hostgrouptasktemplate' : ['*'],
-  'hostgroupmonitortemplate' : ['*']
+  "scheduler" : ['*'],
 });
 
 var owner = extend({},admin,{
   'auth' : ['*'],
-  'user' : ['profile','setcustomer']
+  'user' : ['profile','setcustomer', 'ampersand']
 });
 
 var root = extend({},admin,{

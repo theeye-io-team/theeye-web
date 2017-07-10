@@ -1,0 +1,99 @@
+<!-- CREATE RESOURCES BUTTON -->
+<div class="dropdown host-menu button-desktop">
+  <button id="dropdownMenu1"
+    data-toggle="dropdown"
+    aria-expanded="true"
+    class="btn btn-primary simple-btn dropdown-toggle"
+    aria-label="Center Align">
+    <span class="glyphicon glyphicon-plus"></span>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-right"
+    role="menu"
+    aria-labelledby="dropdownMenu1"
+    style="min-width: 120px; cursor:pointer;">
+    <li role="presentation">
+      <span role="menuitem" tabindex="-1"
+        class="create-monitor"
+        data-hook="create-scraper-monitor"
+        data-host_id="<%= monitor.host_id %>"
+        data-hostname="<%= monitor.resource.hostname %>"
+        data-resource-type="scraper"
+        data-action="create">WEB/API Check</span>
+    </li>
+    <li role="presentation">
+      <span role="menuitem" tabindex="-1"
+        class="create-monitor"
+        data-hook="create-file-monitor"
+        data-host_id="<%= monitor.host_id %>"
+        data-action="create">File</span>
+    </li>
+    <li role="presentation">
+      <span role="menuitem" tabindex="-1"
+        class="create-monitor createResourceMonitor"
+        data-host_id="<%= monitor.host_id %>"
+        data-hostname="<%= monitor.resource.hostname %>"
+        data-toggle="modal"
+        data-hook="create-monitor"
+        data-target="#processResourceModal"
+        data-resource-type="process"
+        data-action="create">Process</span>
+    </li>
+    <li role="presentation">
+      <span role="menuitem" tabindex="-1"
+        class="create-monitor createResourceMonitor"
+        data-host_id="<%= monitor.host_id %>"
+        data-hostname="<%= monitor.resource.hostname %>"
+        data-toggle="modal"
+        data-hook="create-monitor"
+        data-target="#scriptResourceModal"
+        data-resource-type="script"
+        data-action="create">Script</span>
+    </li>
+    <li role="presentation">
+      <span role="menuitem" tabindex="-1"
+        class="create-monitor createResourceMonitor"
+        data-host_id="<%= monitor.host_id %>"
+        data-hostname="<%= monitor.resource.hostname %>"
+        data-toggle="modal"
+        data-hook="create-monitor"
+        data-target="#dstat-resource-modal"
+        data-resource-type="dstat"
+        data-action="create">Host Stats</span>
+    </li>
+    <!--
+    <li role="presentation">
+      <span role="menuitem" tabindex="-1"
+        class="create-monitor createResourceMonitor"
+        data-host_id="<%= monitor.host_id %>"
+        data-hostname="<%= monitor.resource.hostname %>"
+        data-toggle="modal"
+        data-hook="create-monitor"
+        data-target="#psauxResourceModal"
+        data-resource-type="psaux"
+        data-action="create">Process List</span>
+    </li>
+    -->
+  </ul>
+</div>
+<!-- /CREATE RESOURCES BUTTON -->
+
+<!-- EDIT BUTTON -->
+<button class="btn btn-primary simple-btn tooltiped"
+  aria-label="Center Align"
+  title="Edit Host"
+  data-hook="edit-host-monitor"
+  data-host_id="<%= monitor.host_id %>"
+  data-hostname="<%= monitor.resource.hostname %>"
+  data-resource_id="<%= monitor.resource.id %>" >
+  <span class="glyphicon glyphicon-edit"></span>
+</button>
+<!-- /EDIT BUTTON -->
+
+<!-- DELETE BUTTON -->
+<button class="deleteHostResource btn btn-primary simple-btn tooltiped"
+  title="Delete Host"
+  aria-label="Center Align"
+  data-resource_id="<%= monitor.resource.id %>">
+  <span class="glyphicon glyphicon-trash"></span>
+</button>
+<!-- /DELETE BUTTON -->

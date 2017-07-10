@@ -34,6 +34,7 @@ var TagsSelect = (function(){
       });
 
       this.find('select').select2({
+        tabindex: 0,
         placeholder: 'Users',
         data: Select2Data.PrepareTags( this.collection ),
         tags: true

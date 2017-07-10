@@ -23,7 +23,9 @@ var UsersPageInit = (function(){
       $userForm.data('action','create');
       $userForm[0].reset();
       $('#name',this).focus();
-      $('#customers',$userForm).select2({placeholder: 'Select customers...'});
+      $('#customers',$userForm).select2({
+        tabindex: 0,
+        placeholder: 'Select customers...'});
     });
 
     $state.on('user_created', function() {
@@ -69,7 +71,9 @@ var UsersPageInit = (function(){
     $modal.on('shown.bs.modal', function(){
       // nice-guy first input auto focus
       $('#name',this).focus();
-      $('#customers-edit',this).select2();
+      $('#customers-edit',this).select2({
+        tabindex: 0,
+      });
     });
 
     $('button.editUser').on('click', function(evt){

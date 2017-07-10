@@ -1,0 +1,29 @@
+{
+  "name": "ampersand-component-modalizer",
+  "version": "0.0.0",
+  "description": "ampersand bootstrap modal component",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/interactar/ampersand-bootstrap-modal.git"
+  },
+  "keywords": [
+    "ampersand",
+    "bootstrap",
+    "modal"
+  ],
+  "author": "Facugon <facugon@interactar.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/interactar/ampersand-bootstrap-modal/issues"
+  },
+  "homepage": "https://github.com/interactar/ampersand-bootstrap-modal#readme",
+  "dependencies": {
+    "ampersand-view": "10.0.1",
+    "bootstrap": "3.3.6",
+    "jquery": "3.0.0"
+  }
+}

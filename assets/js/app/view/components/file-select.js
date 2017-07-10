@@ -86,10 +86,7 @@ var FileSelect = (function(){
     renderFilesSelect: function(){
       var $select = this.find('select');
 
-      $select.select2()
-        .select2('destroy')
-        .empty()
-        .html('<option></option>');
+      $select.select2({}).select2('destroy').empty().html('<option></option>');
 
       var options = { id:'id', text:'text' },
         data = Select2Data.PrepareIdValueData(
@@ -102,6 +99,7 @@ var FileSelect = (function(){
         );
 
       $select.select2({
+        tabindex: 0,
         placeholder: 'Select a file',
         data: data,
         allowClear: true

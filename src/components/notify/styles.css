@@ -1,0 +1,8 @@
+
+.notify-component.red i {
+  color: red
+}
+
+.notify-component.red .badge {
+  color: #fff
+}

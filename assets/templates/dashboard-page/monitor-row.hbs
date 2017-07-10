@@ -10,33 +10,37 @@
         aria-expanded="false"
         aria-controls="collapse{{ model.attributes.id }}">
         <div class="panel-title-content">
+
           <span class="panel-item name">
             {{ model.attributes.name }}
             <small> > {{ model.attributes.type }}</small>
           </span>
-          <span class="panel-item icons">
-            <section data-hook="monitor-icons-block" style="float:right;">
-              <button data-hook="search"
-                data-search="{{ model.attributes.name }}"
-                class="btn btn-icon-image resource-search">
-                <i class="fa fa-search" aria-hidden="true"></i>
+
+          <section data-hook="monitor-icons-block" style="float:right;">
+            <!-- DESKTOP ICONS MENU { -->
+            <div data-hook="buttons-container" class="panel-item icons panel-item-desktop"> </div>
+            <!-- } DESKTOP ICONS MENU -->
+            <!-- MOBILE ICONS MENU { -->
+            <div class="panel-item icons dropdown panel-item-mobile">
+              <button class="btn dropdown-toggle btn-primary simple-btn"
+                type="button"
+                id="dropdownMenu"
+                data-toggle="dropdown"
+                aria-haspopup="true"
+                aria-expanded="true">
+                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
               </button>
-              <button data-hook="workflow" class="btn btn-icon-image tooltiped" title="Workflow">
-                <i class="fa fa-sitemap" aria-hidden="true"></i>
-              </button>
-              <button data-hook="stats" class="btn btn-icon-image tooltiped" title="Stats">
-                <i class="fa fa-bar-chart" aria-hidden="true"></i>
-              </button>
-              <button data-hook="edit" class="btn btn-icon-image tooltiped" title="Edit monitors">
-                <i class="fa fa-edit" aria-hidden="true"></i>
-              </button>
-            </section>
-            <div class="tooltiped state-icon state-resource-container">
-              <!-- state_severity is a model object derived property, not an attribute -->
-              <span data-hook="state-icon" class="{{ stateIcon }}" title="{{ model.state_severity }}">
-              </span>
+              <ul data-hook="buttons-container" class="dropdown-menu" aria-labelledby="dropdownMenu1"> </ul>
             </div>
-          </span>
+            <!-- } MOBILE ICONS MENU -->
+          </section>
+
+          <!-- state_severity is a model object derived property, not an attribute -->
+          <div class="panel-item tooltiped state-icon state-resource-container">
+            <span data-hook="state-icon" class="{{ stateIcon }}" title="{{ model.state_severity }}">
+            </span>
+          </div>
+
         </div>
       </span>
     </h4>

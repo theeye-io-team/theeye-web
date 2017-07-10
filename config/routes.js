@@ -81,23 +81,23 @@ module.exports.routes = {
   'delete /resource/:id' : 'ResourceController.destroy',
   //ContactController routes
   'post   /contact' : 'ContactController.contact',
-  // Template-HostGroups routes
-  'get    /admin/hostgroup' : 'HostGroupController.index',
-  'post   /admin/hostgroup' : 'HostGroupController.create',
-  'get    /admin/hostgroup/:id' : 'HostGroupController.get',
-  'put    /admin/hostgroup/:id' : 'HostGroupController.update',
-  'delete /admin/hostgroup/:id' : 'HostGroupController.destroy',
-  // TaskTemplate-HostGroups routes
-  'put    /admin/hostgroup/:groupid/tasktemplate/:taskid' : 'HostGroupTaskTemplateController.update',
-  'post   /admin/hostgroup/:groupid/tasktemplate' : 'HostGroupTaskTemplateController.create',
-  'delete /admin/hostgroup/:groupid/tasktemplate/:taskid' : 'HostGroupTaskTemplateController.destroy',
-  // MonitorTemplate-HostGroups routes
-  'put    /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.update',
-  'post   /admin/hostgroup/:groupid/monitortemplate' : 'HostGroupMonitorTemplateController.create',
-  'delete /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.destroy',
 
-  // temporary just for testing grouped monitors
-  'get    /events/test' : 'EventsController.index',
+  // NO MORE
+  ///// // Template-HostGroups routes
+  ///// 'get    /admin/hostgroup' : 'HostGroupController.index',
+  ///// 'post   /admin/hostgroup' : 'HostGroupController.create',
+  ///// 'get    /admin/hostgroup/:id' : 'HostGroupController.get',
+  ///// 'put    /admin/hostgroup/:id' : 'HostGroupController.update',
+  ///// 'delete /admin/hostgroup/:id' : 'HostGroupController.destroy',
+  ///// // TaskTemplate-HostGroups routes
+  ///// 'put    /admin/hostgroup/:groupid/tasktemplate/:taskid' : 'HostGroupTaskTemplateController.update',
+  ///// 'post   /admin/hostgroup/:groupid/tasktemplate' : 'HostGroupTaskTemplateController.create',
+  ///// 'delete /admin/hostgroup/:groupid/tasktemplate/:taskid' : 'HostGroupTaskTemplateController.destroy',
+  ///// // MonitorTemplate-HostGroups routes
+  ///// 'put    /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.update',
+  ///// 'post   /admin/hostgroup/:groupid/monitortemplate' : 'HostGroupMonitorTemplateController.create',
+  ///// 'delete /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.destroy',
+
   /**
    *
    * generic api endpoints
@@ -112,9 +112,12 @@ module.exports.routes = {
   'get /api/:resource/:id*':'ApiController.get',
   'get /api/:resource*':'ApiController.fetch',
   'post /api/:resource*':'ApiController.create',
-  // template only render
-  'get /admin/webhook':'WebhookController.index',
+
+  // template only render. response with SPA entry
   'get /dashboard':'DashboardController.index',
+  'get /admin/webhook':'WebhookController.index',
   'get /admin/workflow':'WorkflowController.index',
   'get /admin/scheduler':'SchedulerController.index',
+  'get /admin/hostgroup':'HostGroupController.index',
+
 };

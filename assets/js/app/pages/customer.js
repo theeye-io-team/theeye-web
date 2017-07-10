@@ -8,11 +8,9 @@ var CustomersPageInit = (function() {
     color:[255,255,255],
     category:'title_help',
     text: HelpTexts.titles.customer_page 
-  })
-    .$el
-    .appendTo(
-      $('.table-header.admin span.title i[data-hook=help]')
-    );
+  }).$el.appendTo(
+    $('.table-header.admin span.title i[data-hook=help]')
+  );
 
 
   //CREATE CUSTOMER FORM
@@ -70,8 +68,35 @@ var CustomersPageInit = (function() {
   //EDIT USER FORM
   (function update (el){
 
-    var $customerForm = $(el);
+    const $customerForm = $(el);
 
+    $('button.editCustomer.btn').on('click',function(event){
+      event.preventDefault()
+      event.stopPropagation()
+      //var id = event.relatedTarget.getAttribute('data-customer-id');
+      const id = event.currentTarget.dataset.customerId
+      $customerForm[0].reset();
+      $customerForm.data('customer-id',id);
+      $customerForm.data('action','edit');
+      jQuery.get("/customer/" + id).done(function(data) {
+        var form = new FormElement($customerForm);
+        var customer = data.customer;
+        var config = customer.config||{};
+        customer.elasticsearch = JSON.stringify(config.elasticsearch||{});
+        customer.kibana = (config.kibana||'');
+        form.set(customer);
+        // reset tags input
+        var $emails = $('[data-hook=emails]');
+        $emails.tagsinput('removeAll');
+        customer.emails.forEach(function(email){
+          $emails.tagsinput('add',email);
+        });
+
+        $(".modal#edit-customer").modal('show')
+      });
+    })
+
+    /**
     $(".modal#edit-customer").on('show.bs.modal',function(event){
       var id = event.relatedTarget.getAttribute('data-customer-id');
       $customerForm[0].reset();
@@ -81,8 +106,8 @@ var CustomersPageInit = (function() {
       jQuery.get("/customer/" + id).done(function(data) {
         var form = new FormElement($customerForm);
 
-        var customer = data.customer,
-          config = customer.config||{};
+        var customer = data.customer;
+        var config = customer.config||{};
 
         customer.elasticsearch = JSON.stringify(config.elasticsearch||{});
         customer.kibana = (config.kibana||'');
@@ -96,6 +121,7 @@ var CustomersPageInit = (function() {
         });
       });
     });
+    */
 
     function setConfiguration (data) {
       var elasticsearch = data.elasticsearch;
@@ -151,26 +177,26 @@ var CustomersPageInit = (function() {
       ev.stopPropagation();
 
       bootbox.confirm('The customer will be removed from users (resources and checks will be disabled).<br/>Want to continue?',
-      function(confirmed) {
-        if(!confirmed) return;
+        function(confirmed) {
+          if(!confirmed) return;
 
-        var $delTrigger = $(ev.currentTarget);
-        var id = $delTrigger.data("customer-id");
-        var customerName = $delTrigger.data("customer-name");
+          var $delTrigger = $(ev.currentTarget);
+          var id = $delTrigger.data("customer-id");
+          var customerName = $delTrigger.data("customer-name");
 
-        $.ajax({
-          url: '/customer/' + id,
-          type: 'DELETE',
-          data: { 'name': customerName }
-        }).done(function() {
-          location.reload();
-        }).fail(function(jqxhr) {
-          bootbox.alert('an error has ocurred : ' + jqxhr.status,
-            function(){
-              location.reload();
-            });
+          $.ajax({
+            url: '/customer/' + id,
+            type: 'DELETE',
+            data: { 'name': customerName }
+          }).done(function() {
+            location.reload();
+          }).fail(function(jqxhr) {
+            bootbox.alert('an error has ocurred : ' + jqxhr.status,
+              function(){
+                location.reload();
+              });
+          });
         });
-      });
     });
   })();
 
@@ -182,15 +208,16 @@ var CustomersPageInit = (function() {
       var customerName = $curlTrigger.attr("data-customer-name");
       $("#user-agent").modal('show');
 
-      $.ajax({
+      jQuery.ajax({
         url: '/customer/' + customerName + '/agent',
         type: 'GET'
       }).done(function(data){
         new Clipboard('.clipboard-btn');
-        if(data.user.curl)
+        if (data.user.curl) {
           $("[data-hook=curl-agent]").val(data.user.curl);
-        else
+        } else {
           $("[data-hook=curl-agent]").val("No agent detected!");
+        }
       }).fail(function() {
         $("[data-hook=curl-agent]").val("No agent detected!");
       });

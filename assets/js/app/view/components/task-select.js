@@ -10,7 +10,7 @@ var TaskSelect = BaseView.extend({
   className:'form-group form-horizontal',
   template: Templates['assets/templates/components/task-select.hbs'],
   initialize:function(options){
-    this.label = (options.label||'Copy From');
+    this.label = (options.label||'Copy Task');
 
     BaseView.prototype.initialize.apply(this,arguments);
 
@@ -51,6 +51,7 @@ var TaskSelect = BaseView.extend({
       );
 
     this.find('select').select2({
+      tabindex: 0,
       placeholder: 'Select a task',
       data: data,
       allowClear: true

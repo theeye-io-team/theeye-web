@@ -1,0 +1,37 @@
+<% var attention = tags.indexOf("scheduled") >= 0 ? 'attention' : ''; %>
+<li>
+  <button class="scheduleTask btn btn-primary simple-btn tooltiped"
+    title="Schedule task"
+    aria-label="Center Align">
+    <span class="glyphicon glyphicon-time <%= attention%>"></span>
+  </button>
+</li>
+<li>
+  <button class="btn btn-primary tooltiped simple-btn"
+    data-hook="copy"
+    data-task="<%= task.id %>">
+    <span class="glyphicon glyphicon-duplicate"></span>
+  </button>
+</li>
+<li>
+  <% if (task.type=='scraper') { %>
+    <button data-hook="edit-scraper-task"
+      data-task="<%= task.id %>"
+      class="btn btn-primary simple-btn tooltiped"
+      title="Edit task"
+      aria-label="Center Align" >
+      <span class="glyphicon glyphicon-edit"></span>
+    </button>
+  <% } else { %>
+    <button class="editTask btn btn-primary simple-btn tooltiped"
+      title="Edit task"
+      aria-label="Center Align">
+      <span class="glyphicon glyphicon-edit"></span>
+    </button>
+  <% } %>
+</li>
+<li>
+  <button class="deleteTask btn btn-primary simple-btn tooltiped" title="Delete task" aria-label="Center Align">
+    <span class="glyphicon glyphicon-trash"></span>
+  </button>
+</li>

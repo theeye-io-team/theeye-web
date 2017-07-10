@@ -35,6 +35,7 @@ var HostsSelect = BaseView.extend({
     this.help.$el.appendTo(this.find('label'));
 
     this.find('select').select2({
+      tabindex: 0,
       placeholder: 'Hosts',
       data: Select2Data.PrepareIdValueData(
         this.collection.map(function(u){

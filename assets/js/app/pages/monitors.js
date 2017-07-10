@@ -117,11 +117,15 @@ var MonitorsPageInit = (function(){
    */
   (function setMuteBindings () {
     $('button.resource-disable-alerts').on('click',function(event){
+      event.preventDefault()
+      event.stopPropagation()
       var resource_id = event.currentTarget.dataset.resource_id
       MonitorActions.mute(resource_id)
     });
 
     $('button.resource-enable-alerts').on('click',function(event){
+      event.preventDefault()
+      event.stopPropagation()
       var resource_id = event.currentTarget.dataset.resource_id
       MonitorActions.unmute(resource_id)
     });
@@ -289,10 +293,13 @@ var MonitorsPageInit = (function(){
           var $hostSelect = $form.find('.resource-host select');
           $hostSelect.prop('multiple', false);
           $hostSelect.show();
-          $hostSelect.select2();
+          $hostSelect.select2({
+            tabindex: 0,
+          });
 
           var $tagsSelect = $form.find('select[name=tags]');
           $tagsSelect.select2({
+            tabindex: 0,
             placeholder: "Tags",
             data: Select2Data.PrepareTags(Tags),
             tags: true
@@ -303,6 +310,7 @@ var MonitorsPageInit = (function(){
             (function(){
               var $scriptSelect = $form.find('select#script_id');
               $scriptSelect.select2({
+                tabindex: 0,
                 allowClear:true,
                 placeholder:'Select a script...'
               });
@@ -423,12 +431,18 @@ var MonitorsPageInit = (function(){
       $.unblockUI();
 
       function onShowModal () {
-        $select.select2();
+        $select.select2({
+          tabindex: 0
+        });
         if (host) $select.val(host).trigger('change');
 
         $form.find('select[data-hook=looptime]').val(60000);
         $form.find('select#script_id')
-          .select2({allowClear:true, placeholder:"Select a script" })
+          .select2({
+            tabindex: 0,
+            allowClear:true,
+            placeholder:"Select a script"
+          })
           .on('change', function(event){
             if($(this).val()) {
               $('a.scripter', $modal)
@@ -448,6 +462,7 @@ var MonitorsPageInit = (function(){
         $form
           .find('select[name=tags]')
           .select2({ 
+            tabindex: 0,
             placeholder:"Tags",
             data: Select2Data.PrepareTags(Tags), 
             tags:true 
@@ -466,6 +481,7 @@ var MonitorsPageInit = (function(){
     (function(){
       var $dstatHosts = $('[data-hook=dstat-modal] form select[data-hook=hosts]');
       $dstatHosts.select2({
+        tabindex: 0,
         placeholder: 'Hosts',
         data: Select2Data.PrepareHosts(window.Hosts)
       });
