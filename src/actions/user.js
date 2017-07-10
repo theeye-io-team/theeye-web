@@ -1,13 +1,8 @@
 //import jquery from 'jquery'
-import 'bootbox'
+import bootbox from 'bootbox'
 
 const xhr = $.ajax
 
-// This file is a HACK. Actions here should be pointing to:
-// App.Collections.Users <-- collection
-// App.Collections.Users.get(id) <-- model
-// Some value should be returned in order to inform the user
-// what's happened with his request.
 export default {
   create (data) {
     App.state.loader.visible = true

@@ -817,7 +817,7 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 .admin-container.dashboard .panel-item.icons .dropdown-menu>li>a:hover {background-image: none;background-color: #286090;}
 
 @media (max-width: 767px) {
-	.admin-container .panel-heading .panel-item.name {width:75%;padding-right:20px;}
+	.admin-container .panel-heading .panel-item.name {width:72%;padding-right:20px;}
 	.admin-container .panel-heading .panel-title-content {position:relative}
 	.admin-container .panel-heading .panel-item.icons.panel-item-desktop {display:none}
 	/*.admin-container .panel-heading .panel-item.icons.panel-item-mobile {position:absolute;top:10px;right:15px;margin-left:0px;width:10%;}*/

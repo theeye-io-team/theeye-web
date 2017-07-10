@@ -99,10 +99,12 @@ export default View.extend({
       }
     },
     valid: {
+      cache: false,
       deps: ['inputValue'],
       fn: function () {
-        this.message = this.getErrorMessage()
-        return this.message === ''
+        return !this.runTests();
+        //this.message = this.getErrorMessage()
+        //return this.message === ''
       }
     },
     showMessage: {
@@ -218,13 +220,11 @@ export default View.extend({
   },
   getErrorMessage: function () {
     var message = ''
-    if (this.required && !this.inputValue) {
+    if (this.required && !this.value) {
       return this.requiredMessage
-    }
-    else if (Array.isArray(this.inputValue) && this.inputValue.length === 0) {
+    } else if (Array.isArray(this.value) && this.value.length === 0) {
       return this.requiredMessage
-    }
-    else {
+    } else {
       (this.tests || []).some(function (test) {
         message = test.call(this, this.value) || ''
         return message
@@ -254,13 +254,13 @@ export default View.extend({
     this.message = message;
     return message;
   },
-	beforeSubmit: function () {
+  beforeSubmit: function () {
     this.inputValue = this.$select.val()
 
-		// at the point where we've tried
-		// to submit, we want to validate
-		// everything from now on.
-		this.shouldValidate = true;
-		this.runTests();
-	},
+    // at the point where we've tried
+    // to submit, we want to validate
+    // everything from now on.
+    this.shouldValidate = true;
+    this.runTests();
+  },
 })
