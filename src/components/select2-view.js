@@ -187,10 +187,13 @@ export default View.extend({
     } else {
       var data 
       if (items.isCollection) {
+        // items are treated as models
         data = items.map(model => model.get(this.idAttribute))
-      } else if(Array.isArray(items)){
+      } else if (Array.isArray(items)) {
+        // items are treated as plain objects
         data = items.map(item => item[this.idAttribute])
-      } else { // single item
+      } else {
+        // items is a single item
         data = items
       }
 
