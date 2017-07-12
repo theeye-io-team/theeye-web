@@ -106,8 +106,8 @@ var SchedulerPageView = (function(){
         defaultTimedEventDuration: '00:30:00',
         // eventClick: this.eventClickHandler || function () {},
         eventClick: function(scheduleEvent, mouseEvent, fullcalendar){
-          let alertTitle = 'Scheduled task: ' + scheduleEvent.title;
-          let alertBody = self.taskTemplate({
+          var alertTitle = 'Scheduled task: ' + scheduleEvent.title;
+          var alertBody = self.taskTemplate({
             taskText: scheduleEvent.start.calendar(),
             taskId: scheduleEvent.source.scheduleData.data.task_id
           });
