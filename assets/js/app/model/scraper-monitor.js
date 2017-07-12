@@ -10,10 +10,11 @@ window.App.Models.ScraperMonitor = BaseModel.extend({
       return {};
     }
 
-    var monitor = resource.monitor;
-    if (!monitor) return {};
+    const monitor = resource.monitor;
+    if (!monitor || typeof monitor !== 'object') return {}
 
-		var config = monitor.config;
+		const config = monitor.config;
+    if (!config) return {}
 
 		return {
       // monitor

@@ -137,8 +137,8 @@
                       </section>
 
                       <!-- state_severity is a model object derived property, not an attribute -->
-                      <div class="panel-item tooltiped state-icon state-resource-container">
-                        <span class="tooltiped state-icon <%= iconsDicc.getIcon(overallStateSeverity) %>" title="<%= overallStateSeverity %>"></span>
+                      <div class="panel-item tooltiped state-icon state-resource-container" title="<%= overallStateSeverity %>">
+                        <span class="<%= iconsDicc.getIcon(overallStateSeverity) %>"></span>
                       </div>
 
                     </div>
@@ -162,7 +162,9 @@
                       <tbody>
                         <tr class="resource<%= resource.id %>">
                           <td class="text-center">
-                            <span class="state-icon <%= iconsDicc.getIcon(resourceStateSeverity(resource)) %>"></span>
+                            <div class="state-icon ">
+                              <span class="<%= iconsDicc.getIcon(resourceStateSeverity(resource)) %>"></span>
+                            </div>
                           </td>
                           <td><%= resource.type %></td>
                           <td><span class="state_text"><%= resourceStateSeverity(resource) %></span></td>
@@ -173,7 +175,9 @@
                         <% resource.subs.forEach(function(subresource){ %>
                           <tr class="resource<%=subresource.id%>">
                             <td class="text-center">
-                              <span class="state-icon <%= iconsDicc.getIcon(resourceStateSeverity(subresource)) %>"></span>
+                              <div class="state-icon">
+                                <span class="<%= iconsDicc.getIcon(resourceStateSeverity(subresource)) %>"></span>
+                              </div>
                             </td>
                             <td><%= subresource.type %></td>
                             <td><span class="state_text"><%= resourceStateSeverity(subresource) %></span></td>

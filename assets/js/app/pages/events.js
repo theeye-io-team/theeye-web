@@ -63,7 +63,7 @@ var EventsPageInit = (function(){
 
   function getRowElementsWorstState (elems) {
     var subIconClasses = elems.map(function(i,el){
-      return $(el).attr('class').split(' ')[1];
+      return el.className
     }); 
     var sortedIconClasses = subIconClasses.sort(function(a,b){
       // sort by state
@@ -134,8 +134,9 @@ var EventsPageInit = (function(){
 
   function checkAllUpAndRuning () {
     var $items = $('.itemRow');
-    var iconClasses = $('tr td span.state-icon').map(function(i,el){
-      return $(el).attr('class').split(' ')[1];
+    var iconClasses = $('tr td .state-icon span').map(function(i,el){
+      return el.className
+      //return $(el).attr('class').split(' ')[1];
     });
     var showAlerts = iconsDicc.filterAlertIconClasses(iconClasses).length > 0;
 
@@ -143,7 +144,7 @@ var EventsPageInit = (function(){
       $items.sort(function(a,b){
         // sort! only if any has some failure/warning
         function getSortOrder (el) {
-          var subElems = $('tr td span.state-icon', el);
+          var subElems = $('tr td .state-icon span', el);
           var worstState = getRowElementsWorstState(subElems);
           return iconsDicc.indexOf(worstState);
         }
@@ -157,7 +158,7 @@ var EventsPageInit = (function(){
 
       $items.each(function(){
         var $row = $(this);
-        var subElems = $('tr td span.state-icon', $row);
+        var subElems = $('tr td .state-icon span', $row);
         var worstState = getRowElementsWorstState(subElems);
         if (iconsDicc.indexOf(worstState)<=1) {
           $row.appendTo( $('[data-hook=hidden-resources-container]') );
@@ -504,37 +505,36 @@ var EventsPageInit = (function(){
         log('monitor event update received');
         log(resource);
 
-        if( resource.event == "host_registered" ){
+        if (resource.event == "host_registered") {
           return document.location.reload();
         }
 
         if (!resource.type||resource.type!='agent') {
           //row of the host
-          var $rowItem = $('tr.resource'+resource.id).closest('.itemRow');
+          var $rowItem = $('tr.resource' + resource.id).closest('.itemRow');
+
+          if ($rowItem.length===0) return
 
           //table tr with host entry
-          var $tr = $('tr.resource'+resource.id, $rowItem);
+          var $tr = $('tr.resource' + resource.id, $rowItem);
           $('span.state_text', $tr).text(resource.state);
           $('span.state_last_update', $tr).text(resource.last_update_moment);
-          $('.state-icon', $tr).removeClass().addClass('state-icon');
 
           // if state is failure use the failure_severity property for the icon
           var stateSeverity = getResourceStateSeverity(resource);
-          $('.state-icon', $tr).addClass(iconsDicc.getIcon(stateSeverity));
+          $('.state-icon span', $tr).removeClass().addClass(iconsDicc.getIcon(stateSeverity));
 
-          var worstState, subElems = $('tr td span.state-icon', $rowItem);
+          var worstState
+          var subElems = $('tr td .state-icon span', $rowItem);
           if (subElems.length!==0) {
             worstState = getRowElementsWorstState(subElems);
           } else {
             worstState = stateSeverity;
           }
 
-          $('.state-icon',$rowItem)
-            .first()
-            .attr('data-original-title', worstState)
-            .tooltip('fixTitle')
-            .removeClass()
-            .addClass('state-icon ' + iconsDicc.getIcon(worstState));
+          var $mainPanel = $rowItem.find('div.panel-item.tooltiped.state-icon.state-resource-container')
+          $mainPanel.attr('data-original-title', worstState).tooltip('fixTitle')
+          $mainPanel.find('span').removeClass().addClass(iconsDicc.getIcon(worstState))
 
           if (!$searchbox.searching) checkAllUpAndRuning();
         }
