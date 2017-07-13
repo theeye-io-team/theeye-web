@@ -73,14 +73,19 @@ module.exports = {
         'NODE_ENV': JSON.stringify(IS_PRODUCTION ? 'production' : 'development')
       }
     }),
-    // new webpack.optimize.UglifyJsPlugin({
-    //  compress:{
-    //    warnings: false
-    //  },
-    //  output:{
-    //    comments: false
-    //  }
-    // }),
+    (function(){
+      if (IS_PRODUCTION) {
+        console.log('uglifying')
+        return new webpack.optimize.UglifyJsPlugin({
+          compress: { warnings: false },
+          output: { comments: false }
+        })
+      } else {
+        return function () {
+          console.log('uglify desactivated')
+        }
+      }
+    })(),
     new webpack.optimize.CommonsChunkPlugin({
       filename: TARGET_PATH + '/common' + (IS_PRODUCTION ? '.[hash:6]' : '') + '.bundle.js',
       name: 'common'
