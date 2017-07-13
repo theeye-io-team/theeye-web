@@ -30,7 +30,7 @@ var jsFilesToInject = [
 	// will be injected here in no particular order.
 	'js/*.js',
 	//'js/ace-editor/ace.js',
-  'js/app/**/*.js',
+  'js/app/**/*.js'
 ];
 
 
