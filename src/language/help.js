@@ -4,7 +4,7 @@
  */
 module.exports = {
   looptime: 'Select the check interval in minutes. The shorter the interval, the more CPU and resource usage.',
-  description: 'Use descriptions to improve teamwork and problem solving.',
+  description: 'Use a descriptions to improve teamwork and problem solving.',
   scripts: 'Which script it has to run?',
   script_runas: 'Run the selected script using a different username. Use \'%script%\' reserved word to include the script, this will be replaced during execution time with the real script path. Windows users, requires to mimic this action putting the password for the first time.',
   script_arguments: 'Put here a comma separated list of arguments.',
@@ -51,11 +51,12 @@ module.exports = {
   },
   hostgroup: {
     form: {
-      name: 'Name',
-      description: 'Description',
-      hostname_regex: 'Hostname Regular Expression',
-      hosts: 'Hosts belonging to this Template',
-      copy_host: 'Host to Copy config',
-    }
+      name: 'Give this template a name',
+      description: 'Use a description to improve teamwork an usability',
+      hostname_regex: 'Use a Regular Expression if you want the auto provisioning features. You can test the Regular Expression by using the "Search..." button',
+      hosts: 'Select the Hosts you want to include in this Template. [Warning] Existent hosts won\'t be included in the Template unless you choose them. [Tip] You can use the "Search..." button',
+      copy_host: 'Select a properly configured host to create the Template.',
+    },
+    regexp_search: 'All this hosts match the regular expression. If you don\'t add them to the template they will be ignored. To include all this hosts into the Template click on <b style="color:#337ab7">Add All</b>'
   }
 }

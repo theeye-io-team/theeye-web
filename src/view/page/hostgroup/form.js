@@ -98,7 +98,8 @@ const HostsListView = View.extend({
   },
   template: `
   <div>
-    <div data-hook="items" class="items">
+    <div>${HelpTexts.hostgroup.regexp_search}</div>
+    <div data-hook="items" class="items" style="border-top: 1px solid #eee; margin-top: 15px;">
     </div>
     <div data-hook="massive-add-container">
       <li style="list-style-type:none; padding: 10px;background-color: #eee;">
@@ -124,6 +125,7 @@ const HostsListView = View.extend({
     this.collection.forEach((model) => {
       addHostToGroup(model)
     })
+    this.trigger('click:add_all')
   },
   bindings: {
     massiveAddButton: {
@@ -148,7 +150,7 @@ const HostsPreviewModal = Modalizer.extend({
 
     this.fade = options.fade || true
     this.visible = options.visible || false // like auto open
-    this.title = options.title || 'Hosts matching Regular Expression'
+    this.title = options.title || 'Hosts matching the Regular Expression'
     this.content = null
     this.class = 'hosts-list-modal'
 
@@ -161,6 +163,10 @@ const HostsPreviewModal = Modalizer.extend({
 
     this.listenTo(App.state.hostsByRegex, 'sync', () => {
       this.show()
+    })
+
+    this.listenTo(this.content, 'click:add_all', () => {
+      this.hide()
     })
 
     //this.listenTo(this,'hidden',() => {
@@ -224,6 +230,8 @@ export default FormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.name,
       }),
+      regexInput,
+      selectedHosts,
       new InputView({
         label: 'Description',
         name: 'description',
@@ -232,8 +240,6 @@ export default FormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.description,
       }),
-      regexInput,
-      selectedHosts
     ]
 
     if (this.model.isNew()) {

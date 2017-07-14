@@ -6,6 +6,7 @@ const $ = require('jquery')
 module.exports = View.extend({
   template: `<span class="fa fa-question-circle"></span>`,
   props: {
+    placement: ['string', false, 'top'],
     text: 'string',
     color: ['array',false,() => { return [48,66,105] }],
     link: 'string'
@@ -42,6 +43,8 @@ module.exports = View.extend({
     this.el.style.cursor = 'help'
     this.el.style.color = 'rgba(' + this.colorRGB + ', 0.2)'
 
-    $(this.el).tooltip()
+    $(this.el).tooltip({
+      placement: this.placement
+    })
   }
 })

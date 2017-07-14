@@ -847,3 +847,7 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
  * } SETTINGS FOR NEW ADMIN PAGES MOBILE BUTTON
  *
  */
+
+.tooltip {
+  min-width: 150px;
+}
