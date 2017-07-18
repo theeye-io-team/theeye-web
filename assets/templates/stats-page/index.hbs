@@ -1,4 +1,5 @@
-<div class="statsContainer">
+<div class="stats-container">
+
 	<div class="breadcrumbs col-xs-12">
 		<a href="javascript:history.back()" class="back">
 			<i class="fa fa-angle-left" aria-hidden="true"></i>
@@ -7,9 +8,8 @@
 		<h4>Detailed Stats</h4>
 	</div>
 
-  <div class="col-xs-12 col-md-5">
+  <div class="col-xs-12 col-md-6 stats-section">
     <div data-hook="host-container" class="stats-icon-container"> </div>
-
     <div data-hook="stat-load-container" class="stats-icon-container">
       <p>Load average :
         <span data-hook="load_average_1" class="loadAverage" id="lavg1"></span>,
@@ -17,20 +17,28 @@
         <span data-hook="load_average_15" class="loadAverage" id="lavg15"></span>
       </p>
     </div>
-
     <div data-hook="stat-graph-container" class="main-stats gray-zebra"> </div>
   </div>
 
-  <div data-hook="processes-container" class="col-xs-12 col-md-7">
-    <div id="psaux-container">
-      <h3>Host processes</h3> 
+  <div data-hook="processes-container" class="col-xs-12 col-md-6 stats-section">
+    <div class="psaux-container">
+      <!-- TITLE -->
+      <div class="stats-icon-container">
+        <span class="stats-icon">
+          <i class="fa fa-cogs" aria-hidden="true"></i>
+        </span>
+        <h3>Host processes</h3> 
+      </div>
+      <!-- //TITLE -->
       <div id="psaux-search">
         <form action="#" method="get">
           <div class="input-group">
             <!-- USE TWITTER TYPEAHEAD JSON WITH API TO SEARCH -->
-            <input class="form-control" id="ps-search" name="q" placeholder="Search among processes status" required>
+            <input class="form-control" id="ps-search" name="q" placeholder="Search among server running processes" required>
             <span class="input-group-btn">
-              <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-search"></i></button>
+              <button type="submit" class="btn btn-default">
+                <i class="fa fa-search"></i>
+              </button>
             </span>
           </div>
         </form>
@@ -59,4 +67,17 @@
       </div>
     </div>
   </div>
+
+	<div class="col-xs-12 col-md-6 stats-section">
+    <!-- TITLE -->
+    <div class="stats-icon-container">
+      <span class="stats-icon">
+        <i class="fa fa-cubes" aria-hidden="true"></i>
+      </span>
+      <h3>Host Interfaces</h3> 
+    </div>
+    <!-- //TITLE -->
+    <div data-hook="interfaces-container"></div>
+  </div>
+
 </div>

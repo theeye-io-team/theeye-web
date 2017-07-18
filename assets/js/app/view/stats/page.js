@@ -12,7 +12,9 @@ function StatsPage () {
   var StatCollection = Backbone.Collection.extend({ model: StatModel });
 
   function getState (id,next) {
-    var host, stats, resource;
+    var host
+    var stats
+    var resource
 
     var done = lodash.after(3, function(){
       next(null,{
@@ -62,20 +64,62 @@ function StatsPage () {
     });
   }
 
-  function subscribeSocketNotifications(resource) {
-    var host = window.location.pathname.split('/')[2];
-    io.socket.post('/hoststats/subscribe/' + host, {
-      resource: resource
-    }, function serviceSocketSubscription(data, jwres) {
-      log(data);
-      log(jwres);
-    });
+  function log () {
+    var deb = debug('eye:web:stats')
+    deb.apply(deb, arguments)
   }
 
-  function log() {
-    var deb = debug('eye:web:stats');
-    deb.apply(deb, arguments);
-  }
+  var IpItemView = BaseView.extend({
+    tagName: 'tr',
+    template: [
+      '<td data-hook="name"></td>',
+      '<td data-hook="receive"></td>',
+      '<td data-hook="send"></td>'
+    ].join(''),
+    render: function(){
+      this.renderTemplate()
+
+      this.queryByHook('name').html(this.model.get('name'))
+      this.queryByHook('receive').html(this.model.get('receive'))
+      this.queryByHook('send').html(this.model.get('send'))
+    }
+  })
+
+  var IpsView = BaseView.extend({
+    template: [
+      '<table class="table">',
+        '<thead>',
+          '<tr>',
+            '<th>Interface</th><th>Receive</th><th>Send</th>',
+          '</tr>',
+        '</thead>',
+        '<tbody data-hook="items"></tbody>',
+      '</table>'
+    ].join(''),
+    initialize:function(){
+      BaseView.prototype.initialize.apply(this,arguments);
+      this.listenTo(this.model,'change',this.render);
+    },
+    render: function () {
+      this.renderTemplate()
+
+      var net = this.model.get('stats').net
+      var netArray = []
+      for(var name in net){
+        netArray.push({
+          name: name,
+          receive: net[name].receive,
+          send: net[name].send
+        })
+      }
+
+      this.renderCollection(
+        new Backbone.Collection(netArray),
+        IpItemView,
+        this.queryByHook('items')[0]
+      )
+    }
+  })
 
   var Psaux = function(options){
     var config = {
@@ -384,68 +428,86 @@ function StatsPage () {
         })
       });
 
-      // connect and subscribe psaux notifications
-      log('psaux listening socket updates');
-      function subscribe () {
+      onSocketConnected(function(){
+        // connect and subscribe psaux notifications
+        log('psaux listening socket updates');
         io.socket.on('psaux_update', psaux.update);
-        subscribeSocketNotifications('psaux');
-      }
-      if (io.socket.socket && io.socket.socket.connected) subscribe();
-      io.socket.on('connect',subscribe);
-    },
-    initStatView: function(){
-      var self = this,
-        stat = this.stats.find(function(stat){
-        return stat.get('type') === 'dstat';
-      });
-
-      if (!stat) return;
-
-      new LoadAverageView({
-        el: this.queryByHook('stat-load-container')[0],
-        model: stat
-      }).render();
-
-      var statGraphView = new StatGraphView({ model: stat });
-      statGraphView.$el.appendTo(
-        this.queryByHook('stat-graph-container')
-      ); // append main container to the DOM
-      statGraphView.render();
-
-      // connect and subscribe host-stats notifications
-      // update stat state when updates arrive
-      log('dstat listening socket updates');
-      function subscribe () {
-        io.socket.on('host-stats_update',function(data){
-          log('new dstat data');
-          log(data);
-          self.resource.set('last_update',new Date());
-          stat.set(data);
-        });
-        subscribeSocketNotifications('host-stats');
-      }
-      if (io.socket.socket&&io.socket.socket.connected) subscribe();
-      io.socket.on('connect',subscribe);
+      })
     },
     initHostView:function(){
       this.hostView = new HostView({ host: this.host, resource: this.resource });
       this.hostView.render();
       this.hostView.$el.appendTo(this.queryByHook('host-container'));
     },
+    initStatView: function(stat){
+      var average = new LoadAverageView({
+        el: this.queryByHook('stat-load-container')[0],
+        model: stat
+      })
+      average.render()
+
+      var statGraphView = new StatGraphView({ model: stat });
+      statGraphView.$el.appendTo(this.queryByHook('stat-graph-container'))
+      // append main container to the DOM
+      statGraphView.render()
+    },
+    initIpsView:function(stat){
+      this.ipsView = new IpsView({ model: stat })
+      this.ipsView.render()
+      this.ipsView.$el.appendTo(this.queryByHook('interfaces-container'))
+    },
     render:function(){
-      BaseView.prototype.render.apply(this,arguments);
+      BaseView.prototype.render.apply(this,arguments)
 
-      this.$el.appendTo( $('[data-hook=page-container]') );
+      this.$el.appendTo( $('[data-hook=page-container]') )
 
-      this.initPsauxView();
-      this.initStatView();
-      this.initHostView();
+      this.initPsauxView()
+      this.initHostView()
+
+      var stat = this.stats.find(function(stat){
+        return stat.get('type') === 'dstat';
+      })
+      if (!stat) return;
+      onSocketConnected(function(){
+        log('listening stats updates')
+        io.socket.on('host-stats_update',function(data){
+          log('new stats data arrived')
+          log(data)
+          stat.set(data)
+        })
+      })
+
+      this.initStatView(stat)
+      this.initIpsView(stat)
     }
-  });
+  })
+
+  function onSocketConnected (onConnected) {
+    if (io.socket.socket && io.socket.socket.connected) {
+      onConnected()
+    }
+    io.socket.on('connect',onConnected)
+  }
+
+  function subscribeSocketNotifications (resource) {
+    var host = window.location.pathname.split('/')[2];
+    io.socket.post('/hoststats/subscribe/' + host, {
+      resource: resource
+    }, function (data, jwres) {
+      log(data);
+      log(jwres);
+    });
+  }
 
   var Controller = function (){ }
   Controller.prototype = {
     index: function(){
+
+      onSocketConnected(function(){
+        subscribeSocketNotifications('psaux')
+        subscribeSocketNotifications('host-stats')
+      })
+
       var id = document.location.pathname.replace('/hoststats/','');
       getState(id,function(err,state){
         new IndexView(state).render();
