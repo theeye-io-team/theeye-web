@@ -67,7 +67,7 @@ module.exports = List.extend({
   autoRender: true,
   initialize (options) {
     options = options || {}
-    this.title = 'Webhooks Admin'
+    this.title = 'Webhooks'
   },
   render () {
     List.prototype.render.apply(this,arguments)

@@ -7,7 +7,7 @@ import MassDeleteButton from './buttons/mass-delete'
 module.exports = List.extend({
   initialize (options) {
     options = options || {}
-    this.title = 'Users Admin'
+    this.title = 'Users'
   },
   render () {
     List.prototype.render.apply(this,arguments)

@@ -47,7 +47,7 @@ module.exports = {
     task_page: 'Tasks allow\'s you to run Web/APi requests and custom scripts. You can then schedule the tasks.',
     monitor_page: 'Monitors watches your Web/API endpoints, files, processes, hosts health and scripts changes and send alerts to You.',
     webhook_page: 'Webhooks allows you to Trigger tasks automagically, through requests from outside applications.',
-    hostgroup_page: 'Host Templates allows you to group hosts and assign them monitors, tasks and webhooks, that way You can reach Auto-Provisioning.',
+    hostgroup_page: 'Templates allows you to group hosts, and give them the same monitors and tasks. Also use Templates for Auto-Provisioning of new hosts.',
   },
   hostgroup: {
     form: {

@@ -16,7 +16,7 @@ export default List.extend({
   autoRender: true,
   initialize (options) {
     options || (options = {})
-    this.title = 'Host Templates Admin'
+    this.title = 'Provisioning'
   },
   render () {
     List.prototype.render.apply(this,arguments)
