@@ -57,7 +57,7 @@ var CustomersPageInit = (function() {
           window.location.reload();
         });
       }).fail(function(xhr, err) {
-        bootbox.alert(response);
+        bootbox.alert(xhr.responseText)
       });
 
       return false;
@@ -162,7 +162,7 @@ var CustomersPageInit = (function() {
           window.location.reload();
         });
       }).fail(function(xhr, err) {
-        bootbox.alert(resp);
+        bootbox.alert(xhr.responseText)
       });
 
       return false;
@@ -190,8 +190,8 @@ var CustomersPageInit = (function() {
             data: { 'name': customerName }
           }).done(function() {
             location.reload();
-          }).fail(function(jqxhr) {
-            bootbox.alert('an error has ocurred : ' + jqxhr.status,
+          }).fail(function(xhr) {
+            bootbox.alert(xhr.responseText,
               function(){
                 location.reload();
               });
