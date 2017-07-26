@@ -8,8 +8,8 @@ module.exports = {
       linux: 'https://s3.amazonaws.com/theeye.agent/linux/setup.sh',
     },
     agentBinary:{
-      url:'/',
-      name:'noname.exe'
+      url: 'https://s3.amazonaws.com/theeye.agent/theEyeInstallerx64.exe',
+      name: 'theEyeInstallerx64.exe'
     },
     landingPage: true
   },

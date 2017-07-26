@@ -2,100 +2,159 @@
 
 <div class="container-fluid profile-page">
   <div class="row">
-    <div class="col-md-6">
-      <div class="well info-container">
-        <% if ( ! agent ) { %>
-
-        agent is not available.
-
-        <% } else { %>
-
-        <h3>Agent Credentials</h3>
-        <div class="row">
-          <div class="col-xs-3"><label>Customer</label></div>
-          <div class="input-group col-xs-9">
-            <input
-              readonly type="text"
-              id="customerName"
-              class="form-control"
-              value="<%= ( Array.isArray(agent.customers) && agent.customers.length > 0 ) ? agent.customers[0].name : '' %>">
-            <span class="input-group-btn">
-              <button class="btn btn-primary clipboard-customer-name-btn" type="button"
-                data-clipboard-target="#customerName">
-                <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
-              </button>
-            </span>
-          </div><!-- /input-group -->
+    <!-- LEFT -->
+    <div class="col-md-6 col-nopadding">
+      <!-- AGENT INSTALLER -->
+      <div class="col-md-12">
+        <div class="well info-container">
+          <%- partial ('../partials/agent-installer.ejs') %>
         </div>
-        <div class="row">
-          <div class="col-xs-3"><label>Client ID</label></div>
-          <div class="input-group col-xs-9">
-            <input
-              readonly type="text"
-              id="clientId"
-              class="form-control"
-              value="<%= agent.client_id %>">
-            <span class="input-group-btn">
-              <button class="btn btn-primary clipboard-client-id-btn" type="button"
-                data-clipboard-target="#clientId">
-                <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
-              </button>
-            </span>
-          </div><!-- /input-group -->
-        </div>
-        <div class="row">
-          <div class="col-xs-3"><label>Client Secret</label></div>
-          <div class="input-group col-xs-9">
-            <input data-hook="blurry"
-              readonly type="text"
-              id="clientSecret"
-              class="form-control"
-              value="<%= agent.client_secret %>">
-            <span class="input-group-btn">
-              <button class="btn btn-primary clipboard-client-secret-btn" type="button"
-                data-clipboard-target="#clientSecret">
-                <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
-              </button>
-            </span>
-          </div><!-- /input-group -->
-        </div>
-        <div class="row">
-          <div class="col-xs-3"><label>Access Token</label></div>
-          <!-- <div class="col-xs-9" data-hook="agent-token"> <i data-hook="blurry" class="hidden"> <%= agent.token %> </i> </div> -->
-          <div class="input-group col-xs-9">
-            <input data-hook="blurry"
-              readonly type="text"
-              id="agentToken"
-              class="form-control"
-              value="<%= agent.token %>">
-            <span class="input-group-btn">
-              <button class="btn btn-primary clipboard-agent-token-btn" type="button"
-                data-clipboard-target="#agentToken">
-                <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
-              </button>
-            </span>
-          </div><!-- /input-group -->
-        </div>
-
-        <%- partial ('../partials/agent-installer.ejs') %>
-
-        <% } %>
       </div>
+
+      <!-- AGENT CREDENTIALS -->
+      <div class="col-md-12">
+        <div class="well info-container">
+          <% if ( ! agent ) { %>
+
+            agent is not available.
+
+          <% } else { %>
+
+            <h3><i class="fa fa-lock"></i> Agent Credentials</h3>
+            <div class="row">
+              <div class="col-xs-3"><label>Customer</label></div>
+              <div class="input-group col-xs-9">
+                <input
+                readonly type="text"
+                id="customerName"
+                class="form-control"
+                value="<%= ( Array.isArray(agent.customers) && agent.customers.length > 0 ) ? agent.customers[0].name : '' %>">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary clipboard-customer-name-btn" type="button"
+                    data-clipboard-target="#customerName">
+                    <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+                  </button>
+                </span>
+              </div><!-- /input-group -->
+            </div>
+            <div class="row">
+              <div class="col-xs-3"><label>Client ID</label></div>
+              <div class="input-group col-xs-9">
+                <input
+                readonly type="text"
+                id="clientId"
+                class="form-control"
+                value="<%= agent.client_id %>">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary clipboard-client-id-btn" type="button"
+                    data-clipboard-target="#clientId">
+                    <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+                  </button>
+                </span>
+              </div><!-- /input-group -->
+            </div>
+            <div class="row">
+              <div class="col-xs-3"><label>Client Secret</label></div>
+              <div class="input-group col-xs-9">
+                <input data-hook="blurry"
+                readonly type="text"
+                id="clientSecret"
+                class="form-control"
+                value="<%= agent.client_secret %>">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary clipboard-client-secret-btn" type="button"
+                    data-clipboard-target="#clientSecret">
+                    <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+                  </button>
+                </span>
+              </div><!-- /input-group -->
+            </div>
+            <div class="row">
+              <div class="col-xs-3"><label>Access Token</label></div>
+              <!-- <div class="col-xs-9" data-hook="agent-token"> <i data-hook="blurry" class="hidden"> <%= agent.token %> </i> </div> -->
+              <div class="input-group col-xs-9">
+                <input data-hook="blurry"
+                readonly type="text"
+                id="agentToken"
+                class="form-control"
+                value="<%= agent.token %>">
+                <span class="input-group-btn">
+                  <button class="btn btn-primary clipboard-agent-token-btn" type="button"
+                    data-clipboard-target="#agentToken">
+                    <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+                  </button>
+                </span>
+              </div><!-- /input-group -->
+            </div>
+
+          <% } %>
+        </div>
+      </div>
+
     </div>
 
-    <% if(req.user.credential === 'owner' || req.user.credential === 'root') { %>
-    <div class="col-md-6">
-      <div class="well info-container">
-        <h3>Invite</h3>
-        <a href="/invite"><span class="glyphicon glyphicon-plus"></span> teammate / collaborator </a>
-      </div>
-    </div>
-    <% } %>
+    <!-- RIGHT -->
+    <div class="col-md-6 col-nopadding">
+      <!-- PASSPORT INFORMATION -->
+      <div class="col-md-12">
+        <div class="well">
+          <% if ( typeof (passports.local) !== "undefined") { %>
 
-    <div class="col-md-6">
-      <div class="well info-container">
-        <h3>TheEye Passport API</h3>
-        <h4>This are your credentials to connect TheEye Supervisor API.</h4>
+            <h3><i class="fa fa-user"></i> User Profile</h3>
+            <% var session = req.user; %>
+            <p>
+              <div class="row">
+                <strong class="col-sm-3">email</strong>
+                <span class="col-sm-9"> <%= session.email %></span>
+              </div>
+              <div class="row">
+                <strong class="col-sm-3">username</strong>
+                <span class="col-sm-9"> <%= user.username %></span>
+              </div>
+            </p>
+            <a data-toggle="modal" data-target="#changePass" class="btn btn-default">Change password</a>
+            <!-- <a href="/disconnect/local" class="btn btn-default">Unlink</a> -->
+
+          <% } %>
+
+          <!-- GOOGLE INFORMATION -->
+          <h3 class="text-danger"><i class="fa fa-google-plus"></i> Google</h3>
+          <% if( passports.oauth2 ) { %>
+            <p>
+              <div class="row">
+                <strong class="col-sm-3">id</strong>
+                <span class="col-sm-9"> <%= passports.oauth2.id %></span>
+              </div>
+              <div class="row">
+                <strong class="col-sm-3">username</strong>
+                <span class="col-sm-9"> <%= passports.oauth2.user %></span>
+              </div>
+            </p>
+
+            <% if ( typeof passports.local != "undefined" ) { %>
+              <a href="/disconnect/google" class="btn btn-danger">Unlink</a>
+            <% } %>
+
+          <% } else { %>
+            <a href="/connect/google" class="btn btn-danger">Connect Google</a>
+          <% } %>
+        </div>
+      </div>
+      <!-- INVITE USERS -->
+      <% if (req.user.credential === 'owner' || req.user.credential === 'root') { %>
+        <div class="col-md-12">
+          <div class="well info-container">
+            <h3><i class="fa fa-envelope"></i> Invite user</h3>
+            <a href="/invite"><i class="fa fa-plus"></i> teammate / collaborator </a>
+          </div>
+        </div>
+      <% } %>
+
+      <!-- API INFORMATION -->
+      <div class="col-md-12">
+        <div class="well info-container">
+          <h3>TheEye API</h3>
+          <h4>This are your credentials to connect TheEye API</h4>
 
           <div class="row">
             <!-- <label class="col-20">client id</label> -->
@@ -119,10 +178,10 @@
             <div class="col-xs-3"><label>access token</label></div>
             <div class="input-group col-xs-9">
               <input data-hook="blurry"
-                readonly type="text"
-                id="theeyeToken"
-                class="form-control"
-                value="<%= passports.theeye.token %>">
+              readonly type="text"
+              id="theeyeToken"
+              class="form-control"
+              value="<%= passports.theeye.token %>">
               <span class="input-group-btn">
                 <button class="btn btn-primary clipboard-token-btn" type="button"
                   data-clipboard-target="#theeyeToken">
@@ -132,61 +191,9 @@
             </div><!-- /input-group -->
 
           </div>
-
+        </div>
       </div>
     </div>
-
-    <!-- LOCAL INFORMATION -->
-    <div class="col-md-6">
-      <div class="well">
-        <% if ( typeof (passports.local) !== "undefined") { %>
-
-        <h3>Local</h3>
-        <% var session = req.user; %>
-        <p>
-          <div class="row">
-            <strong class="col-sm-3">id</strong>
-            <span class="col-sm-9"><%= session.id %></span>
-          </div>
-          <div class="row">
-            <strong class="col-sm-3">email</strong>
-            <span class="col-sm-9"> <%= session.email %></span>
-          </div>
-          <div class="row">
-            <strong class="col-sm-3">username</strong>
-            <span class="col-sm-9"> <%= user.username %></span>
-          </div>
-        </p>
-        <a data-toggle="modal" data-target="#changePass" class="btn btn-default">Change password</a>
-        <!-- <a href="/disconnect/local" class="btn btn-default">Unlink</a> -->
-
-        <% } %>
-
-        <!-- GOOGLE INFORMATION -->
-        <h3 class="text-danger"><span class="fa fa-google-plus"></span>Google</h3>
-        <% if( passports.oauth2 ) { %>
-        <p>
-          <div class="row">
-            <strong class="col-sm-3">id</strong>
-            <span class="col-sm-9"> <%= passports.oauth2.id %></span>
-          </div>
-          <div class="row">
-            <strong class="col-sm-3">username</strong>
-            <span class="col-sm-9"> <%= passports.oauth2.user %></span>
-          </div>
-        </p>
-
-        <% if ( typeof passports.local != "undefined" ) { %>
-        <a href="/disconnect/google" class="btn btn-danger">Unlink</a>
-        <% } %>
-
-        <% } else { %>
-        <a href="/connect/google" class="btn btn-danger">Connect Google</a>
-        <% } %>
-      </div>
-    </div>
-
-
   </div>
 </div>
 <%- partial ('./partials/update-password-modal.ejs') %>

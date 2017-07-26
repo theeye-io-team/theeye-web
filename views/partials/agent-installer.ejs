@@ -1,29 +1,46 @@
 <section>
-  <% if(agent) { %>
-  <h4>Linux Agent Installer</h4>
-  Run this cURL command from a bash console to install
-  the agent on the client<br /><br />
-  <div class="input-group">
-    <input readonly type="text"
-    id="agentCurl"
-    class="form-control"
-    data-hook="curl-agent"
-    value="<%= agent.curl %>">
-    <span class="input-group-btn">
-      <button class="btn btn-primary clipboard-btn" type="button"
-        data-clipboard-target="#agentCurl">
-        <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
-      </button>
-    </span>
-  </div><!-- /input-group -->
+  <% if (agent) { %>
+    <section>
+      <h3><i class="fa fa-linux"></i> Linux Agent Installer</h3>
+      Run the following command using your favourite shell to install the Agent<br/><br/>
+      <div class="input-group">
+        <input readonly type="text" id="agentCurl" class="form-control" data-hook="curl-agent" value="<%= agent.curl %>">
+        <span class="input-group-btn">
+          <button class="btn btn-primary clipboard-btn" type="button"
+            data-clipboard-target="#agentCurl">
+            <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+          </button>
+        </span>
+      </div><!-- /input-group -->
+    </section>
 
-  <h4>Window Agent Installer</h4>
-  <p>
-    Windows Users, please download the installer 
-    <a href="<%= agentBinary ? (agentBinary.url + agentBinary.name) :'/noname.exe' %>" class="btn btn-primary">
-      <%= agentBinary ? agentBinary.name : 'noname.exe' %> <span class="glyphicon glyphicon-download"></span></a>
-  </p>
+    <section>
+      <h3><i class="fa fa-windows"></i> Window Agent Installer</h3>
+      <p>To install the agent on Windows</p>
+			<ol>
+        <li>
+          Download the Agent Binaries 
+          <% var binurl = agentBinary ? agentBinary.url : '/error' %>
+          <% var binname = agentBinary ? agentBinary.name : 'error' %>
+          <code>
+            <a href="<%= binurl %>">
+              <%= binname %> <i class="fa fa-download"></i>
+            </a>
+          </code>
+          into the folder where you would like to install TheEye Agent (<code>C:/Program Files/The Eye</code>)
+        </li>
+        <li>Download and replace the configuration file <code>{installation folder}/config/credentials.js</code> with 
+          <a download="credentials.json" target="_blank" href="/api/agent/credentials">yours <i class="fa fa-download"></i></a>
+        </li>
+        <li>Open a <code>cmd.exe</code> <b>as Administrator</b> and change directory to the installation folder
+          <pre>cd {installation folder}</pre> </li>
+        <li>Run the self-extractor <code>theEyeInstaller.exe</code> <pre>./<%= binname %></pre> </li>
+        <li>Run <code>installer.bat</code> <b>from console!</b>
+          <pre>./installer.bat</pre></li>
+        <li>Go to the <a href="/events">Dashboard <i class="fa fa-link"></i></a> and check the status of the Agent</li>
+			</ol>
+    </section>
   <% } else { %>
-  <div>ERROR: Agent-User not found!</div>
+    <div>The Agent is unavailable. Please, contact us!</div>
   <% } %>
 </section>
