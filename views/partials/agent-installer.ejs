@@ -8,7 +8,7 @@
         <span class="input-group-btn">
           <button class="btn btn-primary clipboard-btn" type="button"
             data-clipboard-target="#agentCurl">
-            <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+            <span class="fa fa-clipboard" alt="copy to clipboard"></span>
           </button>
         </span>
       </div><!-- /input-group -->
@@ -17,11 +17,11 @@
     <section>
       <h3><i class="fa fa-windows"></i> Windows Agent Installer</h3>
       <p>To install the agent on Windows</p>
+      <% var binurl = agentBinary ? agentBinary.url : '/error' %>
+      <% var binname = agentBinary ? agentBinary.name : 'error' %>
 			<ol>
         <li>
           Download the Agent Binaries 
-          <% var binurl = agentBinary ? agentBinary.url : '/error' %>
-          <% var binname = agentBinary ? agentBinary.name : 'error' %>
           <code>
             <a href="<%= binurl %>">
               <%= binname %> <i class="fa fa-download"></i>
@@ -37,8 +37,17 @@
         <li>Run the self-extractor <code>theEyeInstaller.exe</code> <pre>./<%= binname %></pre> </li>
         <li>Run <code>installer.bat</code> <b>from console!</b>
           <pre>./installer.bat</pre></li>
-        <li>Go to the <a href="/events">Dashboard <i class="fa fa-link"></i></a> and check the status of the Agent</li>
+        <li>Go to the <a href="/events">Dashboard <i class="fa fa-dashboard"></i></a> and check the status of the Agent</li>
 			</ol>
+      <div>
+        <h3><i class="fa fa-download"></i> Downloads Section</h3>
+        <p>
+          <a download="<%= binname %>" target="_blank" href="<%= binurl %>"> Windows 64bit Installer </a>
+        </p>
+        <p>
+          <a download="credentials.json" target="_blank" href="/api/agent/credentials"> <%= req.session.customer %> Agent Credentials </a>
+        </p>
+      </div>
     </section>
   <% } else { %>
     <div>The Agent is unavailable. Please, contact us!</div>
