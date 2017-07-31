@@ -2,6 +2,9 @@
   <% if (agent) { %>
     <section>
       <h3><i class="fa fa-linux"></i> Linux Agent Installer</h3>
+
+      <div class="alert" style="background:#FFFFFF">The Agent was tested on Centos 7+, Ubuntu 14+. It should works out of the box on every Linux with a kernel version 3.x+</div>
+
       Run the following command using your favourite shell to install the Agent<br/><br/>
       <div class="input-group">
         <input readonly type="text" id="agentCurl" class="form-control" data-hook="curl-agent" value="<%= agent.curl %>">
@@ -16,6 +19,9 @@
 
     <section>
       <h3><i class="fa fa-windows"></i> Windows Agent Installer</h3>
+
+      <div class="alert" style="background:#FFFFFF">The Agent was tested on Windows 2012 and Windows 2010</div>
+
       <p>To install the agent on Windows</p>
       <% var binurl = agentBinary ? agentBinary.url : '/error' %>
       <% var binname = agentBinary ? agentBinary.name : 'error' %>
