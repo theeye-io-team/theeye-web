@@ -193,8 +193,8 @@ var PermanentFile = new (function(){
     },
     enableWindowsMode: function(){
       var $perms = this.queryByHook('permissions');
-      var $user  = this.queryByHook('user');
-      var $group  = this.queryByHook('group');
+      var $user  = this.queryByHook('os_username');
+      var $group  = this.queryByHook('os_groupname');
 
       $perms[0].disabled = true;
       $user[0].disabled = true;
@@ -204,8 +204,8 @@ var PermanentFile = new (function(){
     },
     disableWindowsMode: function(){
       var $perms = this.queryByHook('permissions');
-      var $user  = this.queryByHook('user');
-      var $group  = this.queryByHook('group');
+      var $user  = this.queryByHook('os_username');
+      var $group  = this.queryByHook('os_groupname');
 
       $perms[0].disabled = false;
       $user[0].disabled = false;
@@ -316,8 +316,8 @@ var PermanentFile = new (function(){
       new HelpIcon({ container: this.find('label[for=hosts]'), category: 'file_form', text: HelpTexts.host });
       new HelpIcon({ container: this.find('label[for=looptime]'), category: 'file_form', text: HelpTexts.looptime });
       new HelpIcon({ container: this.find('label[for=path]'), category: 'file_form', text: HelpTexts.file.path });
-      new HelpIcon({ container: this.find('label[for=user]'), category: 'file_form', text: HelpTexts.file.user });
-      new HelpIcon({ container: this.find('label[for=group]'), category: 'file_form', text: HelpTexts.file.group });
+      new HelpIcon({ container: this.find('label[for=os_username]'), category: 'file_form', text: HelpTexts.file.os_username });
+      new HelpIcon({ container: this.find('label[for=os_groupname]'), category: 'file_form', text: HelpTexts.file.os_groupname });
       new HelpIcon({ container: this.find('label[for=permissions]'), category: 'file_form', text: HelpTexts.file.permissions,
         link: 'https://en.wikipedia.org/wiki/File_system_permissions#Numeric_notation' });
     },

@@ -32,8 +32,8 @@ var HelpTexts = {
   },
   file: {
     path: 'The full path to put the file in',
-    user: 'The user name for the file',
-    group: 'The group name for the file',
+    os_username: 'The system username for the file',
+    os_groupname: 'The system groupname for the file',
     permissions: 'Permissions in octal format. Default is 0755',
     select: 'Select a file'
   },
