@@ -4,77 +4,8 @@ var mailer = require('../services/mailer');
 var underscore = require('underscore');
 
 var UserController = module.exports = {
-  // index: function(req, res) {
-  //   var supervisor = req.supervisor;
-  //   async.parallel({
-  //     protocols: function(next){
-  //       Passport.find({ protocol: 'theeye' }, next);
-  //     },
-  //     users: function(next){
-  //       User.find({ username : { $ne: null } }, next);
-  //     },
-  //     customers: (next) => supervisor.fetch({
-  //       route: '/customer',
-  //       success: customers => next(null,customers),
-  //       failure: err => {
-  //         sails.log.error(err);
-  //         next(err)
-  //       }
-  //     })
-  //   }, function(error, data){
-  //     if(error) {
-  //       return res.view({
-  //         users : [],
-  //         protocols : [],
-  //         customers : [],
-  //         errors : req.flash({message:'internal error',data:error})
-  //       });
-  //     }
-  //
-  //     res.view({
-  //       users : data.users,
-  //       protocols: data.protocols,
-  //       customers : data.customers,
-  //       errors : null
-  //     });
-  //   });
-  // },
-  index: function(req, res) {
-    var supervisor = req.supervisor;
-    async.parallel({
-      protocols: function(next){
-        Passport.find({ protocol: 'theeye' }, next);
-      },
-      users: function(next){
-        User.find({ username : { $ne: null } }, next);
-      },
-      customers: (next) => supervisor.fetch({
-        route: '/customer',
-        success: customers => next(null,customers),
-        failure: err => {
-          sails.log.error(err);
-          next(err);
-        }
-      })
-    }, function(error, data){
-      if(error) {
-        return res.view('user/index', {
-          layout: 'layout-ampersand',
-          users : [],
-          protocols : [],
-          customers : [],
-          errors : req.flash({message:'internal error', data:error})
-        });
-      }
-
-      res.view('user/index', {
-        layout: 'layout-ampersand',
-        users : data.users,
-        protocols: data.protocols,
-        customers : data.customers,
-        errors : null
-      });
-    });
+  index (req, res) {
+    res.view('spa/index', { layout: 'layout-ampersand' })
   },
   //Current user home
   profile: function (req, res) {
@@ -155,21 +86,16 @@ var UserController = module.exports = {
 
     User.findOne({
       id : userId
-    }, function(err, user) {
-      if(err) return res.send(500, err);
-
-      if (!user) res.send(404)
+    }, function (err, user) {
+      if (err) return res.send(500, err)
+      if (!user) return res.send(404)
 
       Passport.findOne({
         user: userId,
-        protocol:'theeye'
-      }, function(error, passport) {
-        if(!passport) return res.json({ user: user });
-
-        return res.json({
-          user: user,
-          theeye: passport
-        });
+        protocol: 'theeye'
+      }, function (error, theeye) {
+        user.theeye = theeye
+        return res.json(user)
       });
     });
   },
@@ -343,5 +269,17 @@ var UserController = module.exports = {
         });
       });
     });
+  },
+  myprofile (req, res) {
+    const user = req.user
+
+    Passport.findOne({
+      user: user.id,
+      protocol: 'theeye'
+    }, (err, theeye) => {
+      if (err) return res.send(500,err)
+      user.theeye = theeye
+      return res.json(user)
+    })
   }
 };

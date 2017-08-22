@@ -9,20 +9,53 @@ import AppState from 'state'
 import Router from 'router'
 import Loader from 'components/loader'
 import ChatBox from 'components/chat'
+import RootContainer from 'view/root-container'
+const logger = require('lib/logger')('app')
 
 window.App = App
 
 // Extends our main app singleton
 App.extend({
-  Collections: {},
+  EasterEggs: require('components/easter-eggs'),
   Router: new Router(),
+  bindDocumentEvents () {
+    const oninput = (event) => {
+      logger.log('document input')
+      App.trigger('document:input', event)
+    }
+    document.addEventListener('input', oninput, false)
+
+    const onclick = (event) => {
+      logger.log('document click')
+      App.trigger('document:click', event)
+    }
+    document.addEventListener('click', onclick, false)
+
+    const onkeydown = (event) => {
+      logger.log('document keydown')
+      App.trigger('document:keydown', event)
+    }
+    document.addEventListener('keydown', onkeydown, false)
+  },
   init () {
     this.state = new AppState()
 
     new Loader()
     new ChatBox.ChatBoxBaloon()
 
-		App.Router.history.start({ pushState: true })
+    App.state.loader.visible = true
+
+    this.bindDocumentEvents()
+
+    this.listenTo(App.state.session, 'change:ready', () => {
+      if (App.state.session.ready) {
+        App.state.loader.visible = false
+        const elem = document.querySelector('body #root-container')
+        new RootContainer({ el: elem })
+
+        App.Router.history.start({ pushState: true })
+      }
+    })
   },
   navigate (page) {
     var url = (page.charAt(0) === '/') ? page.slice(1) : page

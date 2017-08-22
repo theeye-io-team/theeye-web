@@ -77,6 +77,7 @@ a:hover {text-decoration:none}
 h1 {font-weight:700}
 button {outline:none}
 .fleft {float:left}
+.fright {float:right}
 .big-icon{ font-size: 10em }
 /* header */
 /*.navbar {max-height:100px;}*/
@@ -750,7 +751,7 @@ a.flowchart-icon {
 .admin-container.dashboard { }
 .admin-container.dashboard .group select {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
 .admin-container.dashboard .group .select2-container--default .select2-selection--multiple { border-radius: 0; background-color:#44567d; border:none; }
-.admin-container.dashboard .monitors.admin-panel h3 span { float:right;top:6px;rigth:5px;cursor:pointer;color:#44567d;}
+.admin-container.dashboard .monitors.admin-panel h3 span {float:right;top:7px;right:5px;cursor:pointer;color:#44567d;position:relative;}
 .admin-container.dashboard .resource-container .panel-heading h4.panel-title-icon {
   float: left;
   margin-top: 0;
@@ -758,6 +759,7 @@ a.flowchart-icon {
   font-size: 16px;
   color: inherit;
   padding: 5px;
+  padding-left: 10px;
 }
 .admin-container.dashboard .resource-container .panel-heading h4.panel-title-icon i {
   min-height: 38px;

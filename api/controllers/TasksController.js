@@ -149,9 +149,9 @@ module.exports = {
     var supervisor = req.supervisor;
     var taskId = req.param("id", null);
     var scheduleId = req.param("scheduleId", null);
-    if( ! taskId || ! taskId.match(/^[a-fA-F0-9]{24}$/) ) {
+    if ( ! taskId || ! taskId.match(/^[a-fA-F0-9]{24}$/) ) {
       return res.send(400,'invalid id');
-    } else if (! scheduleId || ! scheduleId.match(/^[a-fA-F0-9]{24}$/)) {
+    } else if ( ! scheduleId || ! scheduleId.match(/^[a-fA-F0-9]{24}$/) ) {
       return res.send(400,'invalid schedule id');
     } else {
       supervisor.remove({
@@ -162,6 +162,14 @@ module.exports = {
         success: task => res.json(task)
       });
     }
-
-  }
-};
+  },
+  //trigger: function(req, res) {
+  //  var supervisor = req.supervisor
+  //  supervisor.create({
+  //    route: supervisor.JOB,
+  //    query: { task: req.body.task_id },
+  //    failure: error => res.send(error.statusCode, error),
+  //    success: job => res.json(job)
+  //  })
+  //}
+}

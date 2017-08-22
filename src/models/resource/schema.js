@@ -15,7 +15,8 @@ export default AppModel.extend({
 		_type: 'string',
 		acl: 'array',
 		failure_severity: 'string',
-		alerts: 'boolean'
+		alerts: 'boolean',
+    tags: 'array'
 	},
   children: {
     customer: Customer,

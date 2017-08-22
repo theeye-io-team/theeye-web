@@ -1,0 +1,47 @@
+'use strict'
+
+import App from 'ampersand-app'
+import XHR from 'lib/xhr'
+import bootbox from 'bootbox'
+const logger = require('lib/logger')('actions:jobs')
+
+export default {
+  update (job) {
+    logger.log('job updates received')
+
+    const task_id = job.task_id
+
+    const task = App.state.tasks.get(task_id)
+    if (!task) {
+      logger.error('task not found')
+      logger.error(task)
+      return
+    }
+
+    logger.log('updating task job')
+    task.lastjob.set(job)
+  },
+  create (task) {
+    logger.log('creating new job with task %o', task)
+
+    XHR({
+      method: 'post',
+      url: `/api/job`,
+      withCredentials: true,
+      jsonData: { task: task.id },
+      timeout: 5000,
+      headers: {
+        Accepts: 'application/json;charset=UTF-8'
+      },
+      done (data,xhr) {
+        logger.debug('job created. updating task')
+        task.lastjob.clear()
+        task.lastjob.set(data)
+      },
+      fail (err,xhr) {
+        bootbox.alert('Job creation failed')
+        console.log(arguments)
+      }
+    })
+  }
+}

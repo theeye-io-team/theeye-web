@@ -80,7 +80,8 @@ module.exports = View.extend({
     bodyView: 'object',
     title: ['string', false, 'MODAL TITLE'],
     confirmButton: ['string', false, 'CONFIRM'],
-    visible: ['boolean', false, false]
+    visible: ['boolean', false, false],
+    backdrop: ['boolean', false, true]
   },
   bindings: {
     fade: {
@@ -117,9 +118,13 @@ module.exports = View.extend({
 
     document.body.appendChild(this.el)
 
-    var $modal = $(this.query('.modal'))
+    var $modal = $( this.query('.modal') )
     this.$modal = $modal
-
+    $modal.modal({
+      keyboard: true,
+      backdrop: this.backdrop,
+      show: false
+    })
 
     if (this.buttons) {
       this.renderSubview(
@@ -146,7 +151,7 @@ module.exports = View.extend({
     if (!this.bodyView) return
     const modalBody = this.queryByHook('body')
     if (modalBody.childNodes.length === 0) {
-      if ( ! (this.bodyView.el instanceof HTMLDivElement) || !this.bodyView.rendered ) {
+      if ( ! (this.bodyView.el instanceof HTMLElement) || !this.bodyView.rendered ) {
         this.bodyView.render()
       }
       modalBody.appendChild(this.bodyView.el)

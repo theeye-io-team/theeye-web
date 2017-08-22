@@ -1,24 +1,25 @@
 'use strict';
 
-var extend = require('lodash/assign');
+const assign = require('lodash/assign')
 
 var viewer = {
+  'sockets': ['*'],
   'fileapi':['*'],
   'api':['*'],
   'dashboard':['index'],
   'events':['index'],
   'password': ['*'],
   'auth': ['login','activate','google','connect','unlink','logout'],
-  'user': ['profile','setcustomer', 'ampersand']
+  'user': ['myprofile','profile','setcustomer','ampersand'],
 }
 
-var user = extend({},viewer,{
+var user = assign({},viewer,{
   'events': ['*'],
   'hoststats': ['*'],
-  'palanca': ['*']
+  'palanca': ['*'],
 });
 
-var admin = extend({},user,{
+var admin = assign({},user,{
   'workflow' : ['index'],
   'webhook' : ['index'],
   'tasks' : ['*'],
@@ -28,12 +29,12 @@ var admin = extend({},user,{
   "scheduler" : ['*'],
 });
 
-var owner = extend({},admin,{
+var owner = assign({},admin,{
   'auth' : ['*'],
   'user' : ['profile','setcustomer', 'ampersand']
 });
 
-var root = extend({},admin,{
+var root = assign({},admin,{
   'user'     : ['*'],
   'customer' : ['*']
 });

@@ -25,14 +25,13 @@ export default List.extend({
     this.header.addMassiveButton(new MassiveDeleteButton())
     this.renderList(ListItem,{})
 
-    this
-      .find('span.title i[data-hook=help]')
-      .html(
-        new HelpIconView({
-          color: [255,255,255],
-          category: 'title_help',
-          text: HelpTexts.titles.template_page 
-        }).el
-      )
+    //this.renderSubview(
+    //  new HelpIconView({
+    //    color: [255,255,255],
+    //    category: 'title_help',
+    //    text: HelpTexts.titles.template_page 
+    //  }),
+    //  this.query('span.title i[data-hook=help]') // this selector is wrong
+    //)
   }
 })

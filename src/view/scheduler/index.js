@@ -37,7 +37,6 @@ export default BaseView.extend({
     }
   },
   render: function () {
-    console.log('render the scheduler page')
     this.renderWithTemplate(this)
     ReactDOM.render(<SimpleClock />, this.el.querySelector('.thaClock'))
   }

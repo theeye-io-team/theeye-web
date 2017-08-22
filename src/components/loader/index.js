@@ -32,7 +32,14 @@ export default Backdrop.extend({
   },
   updateState () {
     const loader = App.state.loader
-    this.visible = loader.visible
+
+    if (!loader.visible) {
+      window.setTimeout(() => { // delay to hide
+        this.visible = false
+      }, 500)
+    } else {
+      this.visible = true // show inmeadiatelly
+    }
     this.message = loader.message || this.message
     this.progress = loader.progress
   }

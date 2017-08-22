@@ -3,10 +3,10 @@ import AppCollection from 'lib/app-collection'
 
 import { Collection as Customers } from 'models/customer'
 
-const urlRoot = '/api/user'
+const urlRoot = '/user' // sails users
 
 export const Model = AppModel.extend({
-  // urlRoot: urlRoot,
+  //urlRoot: urlRoot,
   props: {
     id: 'string',
     username: 'string',
@@ -30,6 +30,6 @@ export const Model = AppModel.extend({
 })
 
 export const Collection = AppCollection.extend({
-  // urlRoot: urlRoot,
+  //url: urlRoot,
   model: Model
 })

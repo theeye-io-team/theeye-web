@@ -17,14 +17,14 @@ var CustomerController = module.exports = {
     });
   },
   /**
-   * @route GET /admin/customer
+   * @route GET /customer
    */
   fetch (req, res) {
     var supervisor = req.supervisor;
     supervisor.fetch({
       route:'/customer',
       success: customers => {
-        res.send(200, { customer: customers });
+        res.send(200, customers)
       },
       failure: err => {
         sails.log.error(err);
@@ -34,7 +34,7 @@ var CustomerController = module.exports = {
   },
   /**
    *
-   * GET  /admin/customer/:id 
+   * GET  /customer/:id 
    *
    */
   get (req, res) {
@@ -45,7 +45,7 @@ var CustomerController = module.exports = {
       failure: err => res.send(err.statusCode, err)
     });
   },        
-  //POST  /admin/customer/:id
+  //POST  /customer/:id
   create (req, res) {
     var params = req.params.all();
 
@@ -61,7 +61,7 @@ var CustomerController = module.exports = {
   },
   /**
    * @method PUT  
-   * @route /admin/customer/:id
+   * @route /customer/:id
    * @param {String} id
    */
   edit (req, res) {
@@ -76,7 +76,7 @@ var CustomerController = module.exports = {
   },
   /**
    * @method DELETE
-   * @route /admin/customer/:id 
+   * @route /customer/:id 
    * @param {String} id
    */
   remove (req, res) {
@@ -107,7 +107,7 @@ var CustomerController = module.exports = {
   },
   /**
    * @method GET
-   * @route /admin/customer/:name/agent
+   * @route /customer/:name/agent
    */
   getUserAgent (req, res) {
     var supervisor = req.supervisor;

@@ -1,0 +1,53 @@
+<div class="admin-container dashboard">
+  <!-- MONITORS -->
+  <div data-hook="monitors-panel" class="monitors admin-panel">
+    <section class="col-md-6 resources-panel events-panel">
+      <h3>Monitors
+        <!--
+        <span data-hook="show-more-options"
+          title="group options"
+          class="tooltiped fa fa-plus">
+        </span>
+        -->
+      </h3>
+
+      <!-- HIDDEN CONTAINER WITH EXTRA OPTIONS -->
+      <div data-hook="more-options" class="group hidden-container">
+        <div data-hook="grouping-select"></div>
+      </div>
+
+      <!-- ALL UP AND RUNNING -->
+      <div data-hook="up-and-running" class="main-status hidden-container">
+        <i class="fa fa-check-circle big-icon"></i>
+        <h4>All up and running</h4>
+      </div>
+
+      <!-- MONITORS LIST -->
+      <div>
+        <div class="panel-group" id="monitor-accordion" role="tablist" aria-multiselectable="true">
+          <section data-hook="monitors-container">
+            <!-- MONITOR CONTAINER -->
+          </section>
+          <section data-hook="monitors-fold-container">
+          </section>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- /MONITORS -->
+
+  <!-- TASKS -->
+  <div data-hook="tasks-panel">
+    <section class="col-md-6 tasks-panel events-panel">
+      <h3>Tasks</h3>
+      <div>
+        <div class="panel-group" id="task-accordion" role="tablist" aria-multiselectable="true">
+          <section data-hook="run-all-tasks"> </section>
+          <section data-hook="tasks-container"> </section>
+          <section data-hook="tasks-fold-container"> </section>
+        </div>
+      </div>
+    </section>
+  </div>
+  <!-- /TASKS -->
+</div>

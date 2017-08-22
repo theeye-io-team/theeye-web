@@ -1,45 +1,64 @@
-// Special scenario where we don't have access to the API
-// (api/user points to users collection, we needed web_users collection)
-// so we instantiate a default AmpersandCollection (not Rest) and fill it with UserModel's
-// created from the "global" var users thrown on the ejs view.
-// TODO: The UserModel has been ripped of the urlRoot property till we implement
-// a more elegant solution
 import UserPage from 'view/page/user'
 import App from 'ampersand-app'
+import XHR from 'lib/xhr'
 
 function Route () {
 }
 
 Route.prototype = {
   route () {
-    var page = this.index()
-
-    App.currentPage = page
+    this.index()
   },
   index () {
-    //const protocols = window.Protocols
+    /**
+     * @summary note that users collection is retrived from sails and customers from
+     * the api via a custom sails endpoint.
+     * is not being directly consumed from the api because of some routes restriction.
+     * until now only root users can fetch data of users and customers directly from
+     * the supervisor api.
+     */
+    App.state.customers.fetch({
+      success: () => {
+        XHR({
+          url: `/user`,
+          method: 'get',
+          //jsonData: body,
+          withCredentials: true,
+          timeout: 5000,
+          headers: { Accepts: 'application/json;charset=UTF-8' },
+          done (users,xhr) {
 
-    // collecting value from global var. TODO: improve this!
-    App.state.customers.set(window.Customers)
+            users.forEach(user => {
+              // map to object customers
+              const customers = user.customers.map(name => {
+                return App.state.customers.find(c => c.name == name)
+              })
+              user.customers = customers
+            })
 
-    const users = window.Users
-    users.forEach(function(user){
-      // map to object customers
-      const customers = user.customers.map(name => {
-        return App.state.customers.find(c => c.name == name)
-      })
-      user.customers = customers
-    })
-    App.state.users.set(users)
-
-
-    // instantiate and render on element
-    return new UserPage({
-      el: document.getElementById('user-page'),
-      collection: App.state.users
-      //protocols: protocols
+            App.state.users.set(users)
+            renderPage()
+          },
+          fail (err,xhr) {
+            bootbox.alert('Something goes wrong. Please refresh')
+          }
+        })
+      },
+      error (err,xhr) {
+        bootbox.alert('Something goes wrong. Please refresh')
+      }
     })
   }
+}
+
+const renderPage = () => {
+  const selector = 'body .main-container [data-hook=page-container]'
+  const container = document.querySelector(selector)
+  const page = new UserPage({
+    el: container,
+    collection: App.state.users
+  })
+  App.currentPage = page
 }
 
 module.exports = Route

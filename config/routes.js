@@ -6,7 +6,7 @@ module.exports.routes = {
   //Home
   '/' : function(req, res, next){
     if (req.user) {
-      return res.redirect('/events');
+      return res.redirect('/dashboard');
     }
     if (sails.config.application.landingPage === false) {
       return res.redirect('/login');
@@ -37,6 +37,7 @@ module.exports.routes = {
   'put    /user/:id' : 'UserController.edit',
   'post   /user'  : 'UserController.create',
   'delete /user/:id' : 'UserController.remove',
+  'get    /myprofile'  : 'UserController.myprofile',
   /**
    * Password Recovery
    */
@@ -113,11 +114,12 @@ module.exports.routes = {
   'get /api/:resource*':'ApiController.fetch',
   'post /api/:resource*':'ApiController.create',
 
-  // template only render. response with SPA entry
+  // Template only renders. Response with SPA entry
+  '/events': (req,res,next) => res.redirect('/dashboard'),
   'get /dashboard':'DashboardController.index',
   'get /admin/webhook':'WebhookController.index',
   'get /admin/workflow':'WorkflowController.index',
   'get /admin/scheduler':'SchedulerController.index',
   'get /admin/hostgroup':'HostGroupController.index',
 
-};
+}

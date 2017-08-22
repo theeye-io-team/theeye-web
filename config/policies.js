@@ -16,6 +16,7 @@ module.exports.policies = {
   ContactController: {
     '*':['noSession'],
   },
+  // SNS receivers . will be deprecated soon
   EventsController: {
     'update':['noSession'],
   },

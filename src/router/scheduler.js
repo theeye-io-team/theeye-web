@@ -14,7 +14,7 @@ Route.prototype = {
     // schedules collection
     App.state.schedules.fetch()
 
-    const selector = '#schedulePageContainer'
+    const selector = 'body .main-container [data-hook=page-container]'
     const container = document.querySelector(selector)
 
     return new SchedulerPageView({

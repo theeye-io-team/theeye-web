@@ -48,10 +48,16 @@
       <div>
         <h3><i class="fa fa-download"></i> Downloads Section</h3>
         <p>
-          <a download="<%= binname %>" target="_blank" href="<%= binurl %>"> Windows 64bit Installer </a>
+          <a download="theeye-agent64.tar.gz" target="_blank" href="https://s3.amazonaws.com/theeye.agent/linux/theeye-agent64.tar.gz"> Linux 64bit Binary </a>
         </p>
         <p>
-          <a download="credentials.json" target="_blank" href="/api/agent/credentials"> <%= req.session.customer %> Agent Credentials </a>
+          <a download="<%= binname %>" target="_blank" href="<%= binurl %>"> Windows 64bit Self-Extractor </a>
+        </p>
+        <p>
+          <a download="credentials.json" target="_blank" href="/api/agent/credentials">
+            <%= req.session.customer[0].toUpperCase() + req.session.customer.slice(1,req.session.customer.length) %>
+            Agent Credentials
+          </a>
         </p>
       </div>
     </section>

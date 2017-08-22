@@ -97,19 +97,19 @@ const HostsListView = View.extend({
     massiveAddButton: ['boolean',false,false]
   },
   template: `
-  <div>
-    <div>${HelpTexts.hostgroup.regexp_search}</div>
-    <div data-hook="items" class="items" style="border-top: 1px solid #eee; margin-top: 15px;">
+    <div>
+      <div>${HelpTexts.hostgroup.regexp_search}</div>
+      <div data-hook="items" class="items" style="border-top: 1px solid #eee; margin-top: 15px;">
+      </div>
+      <div data-hook="massive-add-container">
+        <li style="list-style-type:none; padding: 10px;background-color: #eee;">
+          <a data-hook="massive-add" href="#" style="height:20px;">
+            <b>Add All</b>
+            <i class="fa fa-plus" style="float:right; position:relative; top: 4px; right:8px;"></i>
+          </a>
+        </li>
+      </div>
     </div>
-    <div data-hook="massive-add-container">
-      <li style="list-style-type:none; padding: 10px;background-color: #eee;">
-        <a data-hook="massive-add" href="#" style="height:20px;">
-          <b>Add All</b>
-          <i class="fa fa-plus" style="float:right; position:relative; top: 4px; right:8px;"></i>
-        </a>
-      </li>
-    </div>
-  </div>
   `,
   initialize (options) {
     View.prototype.initialize.apply(this,arguments)
@@ -151,27 +151,26 @@ const HostsPreviewModal = Modalizer.extend({
     this.fade = options.fade || true
     this.visible = options.visible || false // like auto open
     this.title = options.title || 'Hosts matching the Regular Expression'
-    this.content = null
     this.class = 'hosts-list-modal'
 
-    this.content = new HostsListView({
+    this.list = new HostsListView({
       collection: App.state.hostsByRegex,
       hosts: this.model.hosts
     })
 
-    this.bodyView = this.content
+    this.bodyView = this.list
 
     this.listenTo(App.state.hostsByRegex, 'sync', () => {
       this.show()
     })
 
-    this.listenTo(this.content, 'click:add_all', () => {
+    this.listenTo(this.list, 'click:add_all', () => {
       this.hide()
     })
 
     //this.listenTo(this,'hidden',() => {
-    //  this.content.remove()
-    //  delete this.content
+    //  this.list.remove()
+    //  delete this.list
     //})
   }
 })

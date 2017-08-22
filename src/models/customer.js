@@ -1,10 +1,10 @@
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 
-const urlRoot = '/api/customer'
+const urlRoot = '/customer'
 
 export const Model = AppModel.extend({
-  //urlRoot: urlRoot,
+  urlRoot: urlRoot,
   props: {
     id: 'string',
     name: 'string',
@@ -17,6 +17,6 @@ export const Model = AppModel.extend({
 })
 
 export const Collection = AppCollection.extend({
-  //url: urlRoot,
+  url: urlRoot,
   model: Model
 })

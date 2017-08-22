@@ -7,6 +7,14 @@ var resources = ['host-stats', 'psaux'];
 var eventNameFormat = ':resource:_:action:';
 
 module.exports = {
+  /**
+   * Overrides for the settings in `config/controllers.js`
+   * (specific to MonitorController)
+   */
+  _config: {
+    shortcurts: false,
+    rest: false
+  },
   index: (req, res) => res.view(),
   subscribe: function(req, res) {
     var id = req.params.id;
@@ -65,12 +73,4 @@ module.exports = {
       else res.json();
     });
   },
-  /**
-   * Overrides for the settings in `config/controllers.js`
-   * (specific to MonitorController)
-   */
-  _config: {
-    shortcurts: false,
-    rest: false
-  }
 };

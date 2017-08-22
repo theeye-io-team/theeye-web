@@ -1,4 +1,4 @@
-import lodash from 'lodash'
+import merge from 'lodash/merge'
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
@@ -77,7 +77,7 @@ const ShowTriggerItemView = ItemView.extend({
       trigger on <span data-hook="type"></span>
       <span data-hook="name"></span>
     </li>`,
-  bindings: lodash.merge({}, ItemView.prototype.bindings, {
+  bindings: merge({}, ItemView.prototype.bindings, {
     'model.event_name': { hook: 'name' },
     'model.event_type': { hook: 'type' },
     'model.task_template.name': { hook: 'task-name' }
@@ -97,7 +97,7 @@ const CreateTriggerItemView = ItemView.extend({
     <i class="fa fa-remove" title="Do not add this to the Template" data-hook="remove-button"></i>
     <i class="fa fa-eye" title="More" data-hook="show" style="display:none"></i>
   </li>`,
-  bindings: lodash.merge({}, ItemView.prototype.bindings, {
+  bindings: merge({}, ItemView.prototype.bindings, {
     'model.task.name': {
       type: 'text',
       hook: 'name'

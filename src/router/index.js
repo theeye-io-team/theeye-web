@@ -1,12 +1,11 @@
 'use strict'
 
-//const App = require('ampersand-app')
 const Router = require('ampersand-router')
-//var qs = require('qs');
 const UserRoute = require('./user')
 const WebhookRoute = require('./webhook')
 const HostGroupRoute = require('./hostgroup')
 import SchedulerRoute from './scheduler'
+import DashboardRoute from './dashboard'
 
 module.exports = Router.extend({
   routes: {
@@ -21,6 +20,9 @@ module.exports = Router.extend({
     },
     'admin/scheduler': () => {
       new SchedulerRoute().route()
+    },
+    'dashboard': () => {
+      new DashboardRoute().route()
     }
   }
 })

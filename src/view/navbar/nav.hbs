@@ -1,0 +1,47 @@
+<nav class="navbar navbar-inverse navbar-fixed-top navbar-eyemenu">
+  <!-- MENU { -->
+	<div data-hook="menu-container" class="eyemenu-panel eyemenu-panel-left">
+
+		<span data-hook="innerlauncher-container" class="eyemenu-panel-launcher eyemenu-panel-innerlauncher pull-left" style="">
+			<i data-hook="menu-toggle" class="fa fa-arrow-left hidden-sm" aria-hidden="true"></i>
+		</span>
+
+    <!-- MENU PROFILE HEADER { -->
+    <div data-hook="profile-container" class="eyemenu-top-panel pull-left">
+      <div data-hook="session-user"></div>    
+      <div data-hook="session-customer"></div>    
+
+      <div data-hook="customers-toggle" class="eyemenu-switch-panels pull-right">
+        <i class="fa fa-angle-down" aria-hidden="true"></i>
+      </div>
+    </div>
+    <!-- } END MENU PROFILE HEADER -->
+
+		<div class="eyemenu-bot-panel pull-left">
+      <ul data-hook="customers-container" class="eyemenu-links eyemenu-clients">
+      </ul>
+      <!-- LINKS CONTAINER { -->
+			<ul data-hook="links-container" class="eyemenu-links eyemenu-actions">
+				<li><a href="/dashboard" class="eyemenu-icon eyemenu-dashboard"> Dashboard </a></li>
+        <span></span>
+				<li><a href="/profile" class="eyemenu-icon eyemenu-settings"> Settings </a></li>
+				<li><a href="/logout" class="eyemenu-icon eyemenu-logout"> Logout </a> </li>            
+			</ul>
+      <!-- } END LINKS CONTAINER -->
+		</div>
+
+	</div>
+  <!-- } END MENU -->
+
+	<div class="navbar-header"> 
+		<div class="col-xs-8 col-sm-4 col-md-3">
+      <span class="eyemenu-panel-launcher pull-left">
+        <i data-hook="menu-toggle" class="fa fa-bars" aria-hidden="true"></i>
+      </span>
+      <a class="navbar-brand" href="/dashboard">
+        <img src="/images/logo-hor.png" alt="The eye">
+      </a>
+		</div>
+		<div data-hook="searchbox-container"></div>
+	</div>
+</nav>

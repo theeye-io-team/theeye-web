@@ -1,5 +1,5 @@
 import jQuery from 'jquery'
-import getHashParams from 'lib/get-hash-params'
+import uriFragment from 'lib/uri-fragment'
 import './searchbox.css'
 
 (function ($) {
@@ -121,7 +121,7 @@ import './searchbox.css'
 
     $emitter.input = $searchInput
 
-    var existingSearch = getHashParams()
+    var existingSearch = uriFragment.get()
     if (existingSearch.search) {
       $searchInput.val(existingSearch.search)
       $searchBtn.trigger('click')

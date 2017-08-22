@@ -1,6 +1,5 @@
 module.exports = {
   index: function(req, res) {
-    res.view('scheduler/index', {layout: 'layout-ampersand'});
-    // res.view();
+    return res.view('spa/index',{ layout:'layout-ampersand' });
   }
 };

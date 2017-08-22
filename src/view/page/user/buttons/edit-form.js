@@ -6,27 +6,6 @@ import Collection from 'ampersand-collection'
 import TheeyeCheckboxView from 'components/theeye-checkbox-view'
 import App from 'ampersand-app'
 
-function getMyCredentials () {
-  const cookie = Cookies.get('theeye')
-  var parsedCookie = {}
-  try {
-    parsedCookie = JSON.parse(cookie)
-  } catch (err) {
-    console.log('can not parse cookie')
-  }
-
-  const mycred = parsedCookie.credential
-  const credentials = new Collection(App.state.credentials.models)
-  if (mycred === 'root') {
-    credentials.add({
-      id: 'root',
-      name: 'root',
-      description: 'Root'
-    })
-  }
-  return credentials
-}
-
 export default FormView.extend({
   initialize: function (options) {
     this.fields = [
@@ -72,7 +51,7 @@ export default FormView.extend({
         validityClassSelector: '.control-label'
       }),
       new SelectView({
-        options: getMyCredentials(),
+        options: App.state.credentials, 
         styles: 'form-group',
         name: 'credential',
         required: true,
