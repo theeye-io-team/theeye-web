@@ -60,13 +60,13 @@ const ucfirst = (string) => {
 
 const monitorPropertyValueDescriptionMap = (value) => {
   const descriptions = {
-    'scraper': 'Web Check Monitors',
-    'script': 'Script Monitors',
-    'file': 'File Monitors',
-    'process': 'Process Monitors',
-    'host': 'Host Monitors',
-    'dstat': 'Host Stats Monitors',
-    'psaux': 'Host Processes Monitors',
+    'scraper': 'Web Checks',
+    'script': 'Scripts',
+    'file': 'Files',
+    'process': 'Processes',
+    'host': 'Hosts',
+    'dstat': 'Hosts Stats',
+    'psaux': 'Hosts Processes',
   }
 
   return ( descriptions[value] || ucfirst(value) )

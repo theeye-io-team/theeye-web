@@ -1,5 +1,5 @@
 import View from 'ampersand-view'
-const logger = require('lib/logger')('view:navbar:searchbox')
+import SearchActions from 'actions/searchbox'
 
 export default View.extend({
   autoRender: true,
@@ -34,7 +34,7 @@ export default View.extend({
     'click [data-hook=endsearch-button-mobile]': 'onClickEndSearchMobile'
   },
   oninput (event) {
-    App.state.searchbox.search = event.target.value
+    SearchActions.search(event.target.value)
   },
   onClickSearchMobile (event) {
     this.searchActivated = true
@@ -77,8 +77,7 @@ export default View.extend({
   },
   endsearch () {
     this.queryAll('input').forEach(input => input.value = '')
-    App.state.searchbox.search = ''
-    logger.log('search ended')
+    SearchActions.clear()
   },
   // listen to app state changes and update inputValue
   updateState () {

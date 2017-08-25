@@ -2,6 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import JobOutput from '../job-output'
 import assign from 'lodash/assign'
+import SearchActions from 'actions/searchbox'
 
 const genericTypes = ['scraper','script','host','process','file']
 const iconByType = {
@@ -136,9 +137,7 @@ const MonitorView = View.extend({
     event.stopPropagation();
     event.preventDefault();
 
-    var $search = $('.js-searchable-box');
-    $search.find('input').val( this.model.get('name') );
-    $search.find('button.search').trigger('click');
+    SearchActions.search(this.model.get('name'))
 
     return false;
   },
