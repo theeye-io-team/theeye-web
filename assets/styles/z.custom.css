@@ -475,8 +475,11 @@ span.selectorIcon.glyphicon-check {
 .icon-check { color: green; }
 .icon-info { color: #00dcff; }
 .icon-warn { color: #ffff00; }
-.icon-fatal { color: #FF3300; }
-.icon-error { color: #FF3300; }
+.icon-fatal, .icon-error { color: #ff3300; }
+
+.severity-low { color: #00dcff; }
+.severity-high { color: #ffff00; }
+.severity-critical { color: #ff3300; }
 
 .events-panel .panel-item.icons .btn-icon-image {
   float:right;
@@ -751,7 +754,41 @@ a.flowchart-icon {
 .admin-container.dashboard { }
 .admin-container.dashboard .group select {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
 .admin-container.dashboard .group .select2-container--default .select2-selection--multiple { border-radius: 0; background-color:#44567d; border:none; }
-.admin-container.dashboard .monitors.admin-panel h3 span {float:right;top:7px;right:5px;cursor:pointer;color:#44567d;position:relative;}
+.admin-container.dashboard .monitors.admin-panel h3 span.dropdown {float:right;cursor:pointer;color:#44567d;position:relative;}
+.admin-container.dashboard .monitors.admin-panel h3 span.dropdown button {
+  padding: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+  background-color: #23324c;
+  font-size: 16px;
+}
+.admin-container.dashboard .monitors.admin-panel h3 span.dropdown ul.dropdown-menu {
+  /*
+  background-color: #23324C;
+  color: #fff;
+  padding: 10px;
+  min-width: 0;
+   */
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  padding: 10px;
+  min-width: 0;
+  box-shadow: none;
+}
+
+.admin-container.dashboard .monitors.admin-panel h3 span.dropdown ul.dropdown-menu li {
+  width:100%;
+  background-color: #192435;
+  /* text-align: right; */
+  border-radius: 20px;
+  margin-bottom: 3px;
+}
+
+.admin-container.dashboard .monitors.admin-panel h3 span.dropdown ul.dropdown-menu li:hover {
+  background-color: #23324C;
+}
+
 .admin-container.dashboard .resource-container .panel-heading h4.panel-title-icon {
   float: left;
   margin-top: 0;
@@ -772,12 +809,15 @@ a.flowchart-icon {
 
 .admin-container.dashboard .panel-item.icons { }
 
-.circle { border-radius: 50%; }
-.host-color { background-color: #ea7526 }
-.script-color { background-color: #cc006f }
-.process-color { background-color: #1c73b9 }
-.scraper-color { background-color: #ba45ff }
-.file-color { background-color: #8da452 }
+.admin-container.dashboard i.circle { border-radius: 50%; }
+.admin-container.dashboard i.host-color { background-color: #ea7526 }
+.admin-container.dashboard i.script-color { background-color: #cc006f }
+.admin-container.dashboard i.process-color { background-color: #1c73b9 }
+.admin-container.dashboard i.scraper-color { background-color: #ba45ff }
+.admin-container.dashboard i.file-color { background-color: #8da452 }
+.admin-container.dashboard i.dstat-color { background-color: #338412 }
+.admin-container.dashboard i.psaux-color { background-color: #5d5b65 }
+
 div.js-searchable-box {width:100%;font-weight:700;font-size:14px;z-index: 1000; position: relative;}
 div.js-searchable-box input {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
 div.js-searchable-box button {color:#fff;background:#d88e47;border:none;padding:8px 12px;position:absolute;top:0;right:0;width:39px;}

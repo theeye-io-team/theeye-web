@@ -47,12 +47,11 @@ const formattedTags = () => {
     deps: ['name','hostname','type','description','acl','tags'],
     fn () {
       return [
-        'task',
-        this.name,
-        this.hostname,
-        this.type,
-        this.description,
-        this.acl,
+        'name=' + this.name,
+        'hostname=' + this.hostname,
+        'type=' + this.type,
+        'description=' + this.description,
+        'acl=' + this.acl,
       ].concat(this.tags)
     }
   }
@@ -106,6 +105,7 @@ export const Scraper = ScraperTemplate.extend({
 })
 
 export const Collection = AppCollection.extend({
+  comparator: 'name',
   url: urlRoot,
   model: function (attrs, options) {
     if ( /ScraperTask/.test(attrs._type) === true ) {

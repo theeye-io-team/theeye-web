@@ -5,6 +5,8 @@ import { Collection as ResourceCollection } from 'models/resource'
 import AmpersandState from 'ampersand-state'
 import AmpersandCollection from 'ampersand-collection'
 
+const typesToGroupIntoHostname = ['host','dstat','psaux'] // always group into hostname
+
 /**
  * Resource but with a subresources/submonitors collection
  */
@@ -23,29 +25,77 @@ const GroupedResource = Resource.extend({
 })
 
 const GroupedResourceCollection = ResourceCollection.extend({
+  comparator: 'name',
   model: GroupedResource
 })
 
-
-// representation of the current host group being display
 export default AmpersandState.extend({
   props: {
     resourcesDataSynced: ['boolean',false,false],
     tasksDataSynced: ['boolean',false,false],
+    monitorsGroupBy: ['object',false, () => { return { prop: 'type' } }]
   },
   collections: {
+    // representation of the current groups being display
     groupedResources: GroupedResourceCollection
   },
-  /**
-   * @summary 
-   * @param {String[]} tagsToGroup
-   */
-  groupResourcesByTags (tagsToGroup) {
+  groupResources () {
     const resources = App.state.resources.models
-    const groups = groupByTags( groupByHost(resources), tagsToGroup )
-    this.groupedResources.reset( groups )
+
+    var groups = applyMonitorsGroupBy(resources, this.monitorsGroupBy)
+    if (!groups) {
+      groups = groupByHost(resources)
+    }
+
+    this.groupedResources.reset(groups)
+  },
+  setMonitorsGroupBy (groupBy) {
+    this.monitorsGroupBy = parseMonitorsGroupBy(groupBy)
   }
 })
+
+const ucfirst = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+
+const monitorPropertyValueDescriptionMap = (value) => {
+  const descriptions = {
+    'scraper': 'Web Check Monitors',
+    'script': 'Script Monitors',
+    'file': 'File Monitors',
+    'process': 'Process Monitors',
+    'host': 'Host Monitors',
+    'dstat': 'Host Stats Monitors',
+    'psaux': 'Host Processes Monitors',
+  }
+
+  return ( descriptions[value] || ucfirst(value) )
+}
+
+/**
+ * @param {Object} query uri query string
+ * @return {String[]}
+ */
+const parseMonitorsGroupBy = (groupby) => {
+  if (!groupby) return {}
+  if (Array.isArray(groupby)) return {}
+  if (typeof groupby != 'object') return {}
+
+  if (typeof groupby.prop != 'string') groupby.prop = ''
+
+  if (!Array.isArray(groupby.tags)) {
+    if (typeof groupby.tags == 'string') {
+      groupby.tags = [groupby.tags.toLowerCase()]
+    }
+  } else {
+    groupby.tags = groupby
+      .tags
+      .filter(tag => typeof tag == 'string')
+      .map(tag => tag.toLowerCase())
+  }
+
+  return groupby
+}
 
 /**
  *
@@ -56,7 +106,6 @@ export default AmpersandState.extend({
  *
  */
 const groupByHost = (resources) => {
-  const typesToGroup = ['host','dstat','psaux'] // always group into host
   const groupedMonitors = []
   const hostGroups = {}
 
@@ -65,7 +114,7 @@ const groupByHost = (resources) => {
   }
 
   resources.forEach((resource) => {
-    if (typesToGroup.indexOf(resource.get('type')) !== -1) {
+    if (typesToGroupIntoHostname.indexOf(resource.get('type')) !== -1) {
       if (!hostGroups[resource.get('hostname')]) {
         hostGroups[resource.get('hostname')] = [];
       }
@@ -90,7 +139,7 @@ const groupByHost = (resources) => {
       groupedHost.submonitors.add(
         group.filter((m) => {
           let type = m.get('type')
-          return type === 'host' || type === 'dstat'
+          return type === 'host' || type === 'dstat' || type === 'psaux'
         })
       )
       groupedMonitors.push(groupedHost)
@@ -102,29 +151,103 @@ const groupByHost = (resources) => {
 }
 
 /**
- * @param {GroupedResourceCollection} groupedResources
- * @param {String[]} tagsToGroup lower case tags set . @todo are lower case ?
+ * @param {GroupedResourceCollection} resources
+ * @param {Object} groupBy
+ * @property {String[]} groupBy.tags
+ * @property {String} groupBy.prop
+ *
  * @return {GroupedResource[]}
  */
-const groupByTags = (groupedResources, tagsToGroup) => {
-  if (!Array.isArray(tagsToGroup)||tagsToGroup.length===0) {
-    return groupedResources
+const applyMonitorsGroupBy = (resources, groupBy) => {
+  const { tags, prop } = groupBy
+
+  if (Object.keys(groupBy).length === 0) return null
+
+  if (prop) {
+    return groupByProperty(resources, prop)
+  } else if (tags) {
+    return groupByTags(resources, tags)
+  } else {
+    return null
+  }
+}
+
+/**
+ * @summary Group resources using a single property of each model
+ *
+ * @param {GroupedResourceCollection} resources
+ * @param {String} prop
+ *
+ * @return {GroupedResource[]}
+ */
+const groupByProperty = (resources, prop) => {
+  if (!prop||typeof prop != 'string') {
+    return resources
   }
 
-  // create an item in the groupedResources for each tag
+  // build groups by distinct property values
+  const groups = {}
+
+  const addToGroup = (resource,name) => {
+    name || (name = 'Others')
+
+    const keys = ['group',prop,name]
+
+    if (!groups[name]) {
+      groups[name] = new GroupedResource({
+        id: keys.join('-'),
+        type: `groupby-${prop}-${name}`,
+        tags: keys,
+        name: monitorPropertyValueDescriptionMap( name.toLowerCase() ),
+        description: `Grouped monitors by ${prop} property with value ${name}`
+      })
+    }
+      
+    groups[name].submonitors.add(resource)
+  }
+
+  resources.forEach(resource => {
+    let name = resource[prop]
+    //if (prop == 'type') {
+    //  // group into hostname group
+    //  if (typesToGroupIntoHostname.indexOf(name) !== -1) {
+    //    addToGroup(resource,resource.hostname)
+    //  } else {
+          addToGroup(resource,name)
+    //  }
+  })
+
+  return Object.values(groups)
+}
+
+/**
+ * @summary Group resources using the tags of each model
+ * @param {GroupedResourceCollection} resources
+ * @param {String[]} tags
+ *
+ * @return {GroupedResource[]}
+ */
+const groupByTags = (resources, tags) => {
+  if (!Array.isArray(tags)||tags.length===0) {
+    return resources
+  }
+
+  // create an item in the resources for each tag
   const tagGroups = []
-  tagsToGroup.forEach((t) => {
+  tags.forEach(tag => {
+    const lctag = tag.toLowerCase
     tagGroups.push(
       new GroupedResource({
-        tags: [t,'group'],
-        type: 'group',
-        name: t.toLowerCase(),
-        description: t
+        id: 'group_tags_' + lctag,
+        type: 'groupby_tag_' + lctag,
+        tags: ['group', 'tags', lctag],
+        name: lctag,
+        description: lctag
       })
     )
   })
 
-  groupedResources.forEach((resource) => {
+  resources.forEach(resource => {
     /** @todo merge the tags of all the grouped items **/
     const ctags = resource.get('formatted_tags')
 
@@ -138,7 +261,7 @@ const groupByTags = (groupedResources, tagsToGroup) => {
       let lctag = tag.toLowerCase();
 
       // search for groups with the same tags
-      if (tagsToGroup.indexOf(lctag) !== -1) {
+      if (tags.indexOf(lctag) !== -1) {
         let group = tagGroups.find((g) => {
           return g.name == lctag 
         })

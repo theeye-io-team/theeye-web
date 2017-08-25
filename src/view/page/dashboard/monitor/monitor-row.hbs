@@ -1,6 +1,5 @@
 <div class="monitorRow">
-  <div class="resource-container panel panel-default js-searchable-item"
-    data-tags="{{ model.formatted_tags }}">
+  <div class="resource-container panel panel-default">
     <div class="panel-heading" role="tab">
       <h4 data-hook="monitor-icon" class="panel-title-icon"><i></i></h4>
       <h4 class="panel-title">
@@ -12,9 +11,8 @@
           aria-controls="monitor_{{ model.id }}">
           <div class="panel-title-content">
 
-            <span class="panel-item name">
-              {{ model.name }}
-              <small> > {{ model.type }}</small>
+            <span class="panel-item name"> {{ model.name }}
+              <small> > <i data-hook="type"></i></small>
             </span>
 
             <section data-hook="monitor-icons-block" style="float:right;">
@@ -25,21 +23,19 @@
               <div class="panel-item icons dropdown panel-item-mobile">
                 <button class="btn dropdown-toggle btn-primary simple-btn"
                   type="button"
-                  id="dropdownMenu"
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="true">
                   <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
                 </button>
-                <ul data-hook="buttons-container" class="dropdown-menu" aria-labelledby="dropdownMenu1"> </ul>
+                <ul data-hook="buttons-container" class="dropdown-menu"> </ul>
               </div>
               <!-- } MOBILE ICONS MENU -->
             </section>
 
             <!-- state_severity is a model object derived property, not an attribute -->
             <div class="panel-item tooltiped state-icon state-resource-container">
-              <span data-hook="state-icon" class="{{ stateIcon }}" title="{{ model.state_severity }}">
-              </span>
+              <span data-hook="state-icon"></span>
             </div>
 
           </div>
@@ -53,7 +49,7 @@
       aria-labelledby="monitor_{{ model.id }}">
       <div class="panel-body">
         <div>
-          <h4>Host: {{ model.hostname }}</h4>
+          <h4>Host <span data-hook="hostname"></span></h4>
           <table class="table table-stripped">
             <thead>
               <tr data-hook="title-cols">
@@ -64,8 +60,7 @@
                 <th>Last Event</th>
               </tr>
             </thead>
-            <tbody data-hook="submonitors-container">
-            </tbody>
+            <tbody data-hook="submonitors-container"> </tbody>
           </table>
         </div>
       </div>

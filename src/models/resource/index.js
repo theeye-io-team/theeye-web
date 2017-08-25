@@ -66,12 +66,11 @@ export const Model = Schema.extend({
       deps: ['name','hostname','type','state','failure_severity','tags'],
       fn () {
         return [
-          'monitor',
-          this.name,
-          this.hostname,
-          this.type,
-          this.state,
-          this.failure_severity
+          'name=' + this.name,
+          'state=' + this.state,
+          'hostname=' + this.hostname,
+          'type=' + this.type,
+          'criticity=' + this.failure_severity
         ].concat(this.tags)
       }
     },
@@ -120,6 +119,7 @@ export const Model = Schema.extend({
 })
 
 export const Collection = AppCollection.extend({
+  comparator: 'name',
   model: Model,
   url: urlRoot,
   /**

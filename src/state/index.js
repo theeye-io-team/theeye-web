@@ -10,7 +10,7 @@ import { Collection as Schedules } from 'models/schedule'
 import { Collection as Resources } from 'models/resource'
 import { Collection as Tasks } from 'models/task'
 import Alerts from 'components/alerts'
-import URI from 'urijs'
+//import URI from 'urijs'
 
 import HostGroupPageState from './hostgroup-page'
 import DashboardPageState from './dashboard-page'

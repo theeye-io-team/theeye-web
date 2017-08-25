@@ -1,14 +1,52 @@
 import App from 'ampersand-app'
-import BaseView from 'view/base-view'
+import View from 'ampersand-view'
 import JobOutput from '../job-output'
 import assign from 'lodash/assign'
+
+const genericTypes = ['scraper','script','host','process','file']
+const iconByType = {
+  scraper: 'fa-cloud',
+  script: 'fa-code',
+  host: 'fa-server',
+  process: 'fa-cog',
+  file: 'fa-file-o',
+  dstat: 'fa-bar-chart',
+  psaux: 'fa-cogs'
+}
+
+/**
+ * @summary turn string into hex color code
+ *
+ * https://stackoverflow.com/questions/3426404/create-a-hexadecimal-colour-based-on-a-string-with-javascript
+ */
+const str2rgb = (str) => {
+
+  function hashCode(str) { // java String#hashCode
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+  } 
+
+  function intToRGB(i){
+    var c = (i & 0x00FFFFFF)
+      .toString(16)
+      .toUpperCase();
+
+    return "00000".substring(0, 6 - c.length) + c;
+  }
+
+  return intToRGB(hashCode(str))
+
+}
 
 /**
  *
  * table row items for the collapsed content of the monitor rows.
  *
  */
-const SubmonitorView = BaseView.extend({
+const SubmonitorView = View.extend({
   template: require('./submonitor-row.hbs'),
   bindings: {
     'model.type': { hook: 'type' },
@@ -17,7 +55,8 @@ const SubmonitorView = BaseView.extend({
     'model.stateIcon': {
       type: 'class',
       hook: 'state-icon'
-    }
+    },
+    'model.hostname': { hook: 'hostname' }
   },
   events: {
     'click [data-hook=last_event]':'onClickLastEvent'
@@ -36,7 +75,7 @@ const SubmonitorView = BaseView.extend({
     return false;
   },
   initialize:function(){
-    BaseView.prototype.initialize.apply(this,arguments)
+    View.prototype.initialize.apply(this,arguments)
     this.listenTo(this.model,'change:stateIcon',() => {
       this.trigger('change')
     })
@@ -67,7 +106,7 @@ const SubmonitorGroupView = SubmonitorView.extend({
   })
 })
 
-const MonitorButtonsView = BaseView.extend({
+const MonitorButtonsView = View.extend({
   template: require('./monitor-row-buttons.hbs')
 })
 
@@ -76,12 +115,13 @@ const MonitorButtonsView = BaseView.extend({
  * @summary single monitor row view. trigger events when the monitor state changes
  *
  */
-const MonitorView = BaseView.extend({
+const MonitorView = View.extend({
   template: require('./monitor-row.hbs'),
   props: {
     show: ['boolean',false,true]
   },
   bindings: {
+    'model.type': {hook: 'type'},
     show: {
       type: 'toggle'
     }
@@ -126,12 +166,12 @@ const MonitorView = BaseView.extend({
 
     return false;
   },
-  initialize: function(){
-    BaseView.prototype.initialize.apply(this,arguments)
+  initialize: function () {
+    View.prototype.initialize.apply(this,arguments)
 
     this.listenTo(this.model.submonitors,'change',this.checkMonitorsState)
   },
-  checkMonitorsState: function(){
+  checkMonitorsState: function () {
     var submonitors = this.model.get('submonitors');
     if (submonitors.length!==0) {
       const highSeverityMonitor = submonitors
@@ -153,21 +193,41 @@ const MonitorView = BaseView.extend({
       console.warn('this group of monitors is empty, there is nothing to show');
     }
   },
-  setMonitorIcon: function(){
-    var icon = 'circle fa'
+  setMonitorIcon: function () {
+    var iconClass = 'circle fa'
+    var color
     var type = this.model.get('type');
-    switch (type) {
-      case 'scraper': icon += ' fa-cloud'; break;
-      case 'script': icon += ' fa-code'; break;
-      case 'host': icon += ' fa-server'; break;
-      case 'process': icon += ' fa-cogs'; break;
-      case 'file': icon += ' fa-file-o'; break;
-      case 'group': break;
+
+    const getIconByType = (type) => {
+      const hit = iconByType[type]
+      if (!hit) {
+        return 'fa-circle'
+      } else {
+        return hit
+      }
     }
 
-    icon += ' ' + type + '-color'; 
+    if (/^groupby-/.test(type) === true) {
+      const parts = type.split('-')
+      if (parts[1]==='hostname') {
+        iconClass += ` fa-server`
+        color = str2rgb(parts[2])
+      }
+      else if (parts[1]==='failure_severity') {
+        iconClass += ` fa-fire severity-${parts[2].toLowerCase()}`
+      }
+      else if (parts[1]==='type') {
+        iconClass += ` ${getIconByType(parts[2])} ${parts[2]}-color`
+      }
+    } else {
+      iconClass += ` ${getIconByType(type)} ${type}-color`
+    }
 
-    this.query('h4[data-hook=monitor-icon] i').className = icon;
+    const iconEl = this.query('h4[data-hook=monitor-icon] i')
+    iconEl.className = iconClass
+    if (color) {
+      iconEl.style.backgroundColor = `#${color}`
+    }
   },
   render: function(){
     this.renderWithTemplate()
@@ -220,13 +280,15 @@ const MonitorsGroupView = MonitorView.extend({
       SubmonitorGroupView,
       this.queryByHook('submonitors-container')
     )
+
     this.checkMonitorsState()
+    this.setMonitorIcon()
   }
 })
 
 module.exports = function (options) {
   var model = options.model;
-  if (model.get('type')=='group') {
+  if (/group/.test(model.type)) {
     return new MonitorsGroupView(options)
   } else {
     return new MonitorView(options)

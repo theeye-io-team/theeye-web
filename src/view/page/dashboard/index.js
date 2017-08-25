@@ -16,6 +16,7 @@ const logger = require('lib/logger')('view:page:dashboard')
 const ItemsFolding = require('./panel-items-fold')
 const searchRows = require('lib/filter-rows')
 
+import MonitorsOptions from './monitors-options'
 import MonitoringOboardingPanel from './monitoring-onboarding'
 import TasksOboardingPanel from './tasks-onboarding'
 
@@ -66,16 +67,10 @@ module.exports = View.extend({
     monitors: 'collection',
     tasks: 'collection',
     renderStats: ['boolean',false,false],
-    renderTasks: ['boolean',false,true],
-    tagsSelected: 'array'
+    renderTasks: ['boolean',false,true]
   },
   events: {
     'click [data-hook=up-and-running] i':'hideUpAndRunning',
-    'click [data-hook=show-more-options]':'showMoreOptions',
-  },
-  showMoreOptions (event) {
-    event.preventDefault()
-    event.stopPropagation()
   },
   hideUpAndRunning () {
     this.$upandrunning.slideUp()
@@ -125,6 +120,11 @@ module.exports = View.extend({
 
     this.$upandrunning = $( this.queryByHook('up-and-running') )
     this.$monitorsPanel = $( this.queryByHook('monitors-container') )
+
+    this.renderSubview(
+      new MonitorsOptions(),
+      this.queryByHook('monitors-panel-header')
+    )
 
     this.monitorRows = this.renderCollection(
       this.groupedResources,
@@ -251,7 +251,7 @@ module.exports = View.extend({
     })
 
     const rowtooltips = this.query('[data-hook=tasks-container] .tooltiped')
-    $( rowtooltips ).tooltip()
+    $(rowtooltips).tooltip()
 
     this.tasksFolding = this.renderSubview(
       new ItemsFolding({}),

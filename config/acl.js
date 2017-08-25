@@ -30,8 +30,7 @@ var admin = assign({},user,{
 });
 
 var owner = assign({},admin,{
-  'auth' : ['*'],
-  'user' : ['profile','setcustomer', 'ampersand']
+  'auth' : ['*']
 });
 
 var root = assign({},admin,{
