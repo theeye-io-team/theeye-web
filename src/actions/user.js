@@ -48,7 +48,6 @@ export default {
       })
     })
   },
-
   update (id, data) {
     var body = {}
     body.email = data.email
@@ -86,7 +85,6 @@ export default {
       })
     })
   },
-
   remove (id) {
     const req = xhr({
       url: `/user/${id}`,

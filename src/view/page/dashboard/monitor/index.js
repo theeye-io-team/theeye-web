@@ -98,6 +98,7 @@ const SubmonitorView = View.extend({
 
 /**
  * extend submonitors view, change table format and data with template.
+ * collapsed content for submonitors group
  */
 const SubmonitorGroupView = SubmonitorView.extend({
   template: require('./submonitor-group-row.hbs'),
@@ -108,7 +109,59 @@ const SubmonitorGroupView = SubmonitorView.extend({
 })
 
 const MonitorButtonsView = View.extend({
-  template: require('./monitor-row-buttons.hbs')
+  template: require('./monitor-row-buttons.hbs'),
+  derived: {
+    isHost: {
+      deps: ['model.type'],
+      fn () {
+        return this.model.type === 'host'
+      }
+    }
+  },
+  bindings: {
+    isHost: {
+      type: 'toggle',
+      hook: 'stats-button-container'
+    }
+  },
+  events: {
+    'click button[data-hook=search]':'onClickSearch',
+    'click button[data-hook=workflow]':'onClickWorkflow',
+    'click button[data-hook=stats]':'onClickStats',
+    'click button[data-hook=edit]':'onClickEdit',
+  },
+  onClickSearch: function(event){
+    event.stopPropagation();
+    event.preventDefault();
+
+    SearchActions.search(this.model.name)
+
+    return false;
+  },
+  onClickWorkflow: function(event){
+    event.stopPropagation();
+    event.preventDefault();
+
+    window.location = '/admin/workflow?node=' + this.model.monitor.id
+
+    return false;
+  },
+  onClickStats: function(event){
+    event.stopPropagation();
+    event.preventDefault();
+
+    window.location = "/hoststats/" + this.model.host_id
+
+    return false;
+  },
+  onClickEdit: function(event){
+    event.stopPropagation();
+    event.preventDefault();
+
+    window.location = "/admin/monitor#search=" + this.model.id
+
+    return false;
+  },
 })
 
 /**
@@ -126,44 +179,6 @@ const MonitorView = View.extend({
     show: {
       type: 'toggle'
     }
-  },
-  events: {
-    'click button[data-hook=search]':'onClickSearch',
-    'click button[data-hook=workflow]':'onClickWorkflow',
-    'click button[data-hook=stats]':'onClickStats',
-    'click button[data-hook=edit]':'onClickEdit',
-  },
-  onClickSearch: function(event){
-    event.stopPropagation();
-    event.preventDefault();
-
-    SearchActions.search(this.model.get('name'))
-
-    return false;
-  },
-  onClickWorkflow: function(event){
-    event.stopPropagation();
-    event.preventDefault();
-
-    window.location = '/admin/workflow?node=' + this.model.get('monitor').id
-
-    return false;
-  },
-  onClickStats: function(event){
-    event.stopPropagation();
-    event.preventDefault();
-
-    window.location = "/hoststats/" + this.model.get('host_id')
-
-    return false;
-  },
-  onClickEdit: function(event){
-    event.stopPropagation();
-    event.preventDefault();
-
-    window.location = "/admin/monitor#search=" + this.model.get('id')
-
-    return false;
   },
   initialize: function () {
     View.prototype.initialize.apply(this,arguments)
@@ -218,6 +233,10 @@ const MonitorView = View.extend({
       else if (parts[1]==='type') {
         iconClass += ` ${getIconByType(parts[2])} ${parts[2]}-color`
       }
+      else { // use value first letter as icon
+        iconClass += ` fa-letter fa-letter-${parts[2][0].toLowerCase()}`
+        color = str2rgb(parts[2])
+      }
     } else {
       iconClass += ` ${getIconByType(type)} ${type}-color`
     }
@@ -242,14 +261,17 @@ const MonitorView = View.extend({
     this.setMonitorIcon()
   },
   renderButtons: function(){
+
     this.renderSubview(
       new MonitorButtonsView({ model: this.model }),
       this.query('div[data-hook=buttons-container]')
     )
+
     this.renderSubview(
       new MonitorButtonsView({ model: this.model }),
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
     )
+
   }
 })
 

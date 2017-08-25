@@ -121,7 +121,7 @@ const groupByHost = (resources) => {
       hostGroups[resource.get('hostname')].push(resource);
     } else {
       let grouped = new GroupedResource()
-      grouped.set(resource._values)
+      grouped.set( resource.serialize() )
       grouped.submonitors.add(resource) // add itself to the subgroup
 
       groupedMonitors.push(grouped)
