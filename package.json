@@ -95,8 +95,7 @@
     "underscore": "~1.8.3",
     "urijs": "1.18.10",
     "url-loader": "^0.5.7",
-    "validate.js": "0.10.0",
-    "validator": "~3.43.0",
+    "validator": "8.1.0",
     "webpack": "^2.4.1",
     "webpack-bundle-analyzer": "2.9.0"
   },

@@ -1,8 +1,10 @@
 <div class="taskRow">
-  <div class="tasks-container panel panel-default js-searchable-item"
-    data-tags="{{ model.formatted_tags }}">
+  <div class="tasks-container panel panel-default">
     <div class="panel-heading" role="tab">
-      <h4 class="panel-title task">
+      <h4 class="panel-title-icon">
+        <i data-hook="header-icon"></i>
+      </h4>
+      <h4 class="panel-title">
         <span class="collapsed"
           data-toggle="collapse"
           data-parent="#task-accordion"
@@ -12,15 +14,13 @@
           <div class="panel-title-content">
 
             <span class="panel-item name">
-              {{ model.name }}
-              <small> > task ({{ model.hostname }})</small>
+              <span data-hook="name"></span>
+              <small> > <i data-hook="type"></i> (<i data-hook="hostname"></i>)</small>
             </span>
 
             <!-- DESKTOP ICONS MENU { -->
-            <div data-hook="buttons-container" class="panel-item icons panel-item-desktop">
-            </div>
+            <div data-hook="buttons-container" class="panel-item icons panel-item-desktop"> </div>
             <!-- } DESKTOP ICONS MENU -->
-
             <!-- MOBILE ICONS MENU { -->
             <div class="panel-item icons dropdown panel-item-mobile">
               <button class="btn dropdown-toggle btn-primary simple-btn"
@@ -42,17 +42,18 @@
       </h4>
     </div>
     <!-- COLLAPSE { -->
-    <div id="task_{{ model.id }}"
+    <div data-hook="collapse-container"
+      id="task_{{ model.id }}"
       class="panel-collapse collapse"
       role="tabpanel"
-      aria-labelledby="heading_{{ model.id }}">
+      aria-labelledby="task_{{ model.id }}">
       <div class="panel-body">
         <div>
-          <h4>Host: {{ model.hostname }}</h4>
+          <h4>Host: <i data-hook="hostname"></i></h4>
           <table class="table table-stripped">
             <thead>
               <tr data-hook="title-cols">
-                <th>Type</th>
+                <th></th>
                 <th>Description</th>
                 <th>Hostname</th>
                 <th>Last Run</th>
@@ -60,7 +61,7 @@
             </thead>
             <tbody>
               <tr>
-                <td> <span data-hook="type"></span> </td>
+                <td> <span data-hook="type-icon"></span> </td>
                 <td> <span data-hook="description"></span> </td>
                 <td> <span data-hook="hostname"></span> </td>
                 <td>

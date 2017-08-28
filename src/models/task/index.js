@@ -1,6 +1,8 @@
 //import AppModel from 'lib/app-model'
 import State from 'ampersand-state'
 import AppCollection from 'lib/app-collection'
+import isURL from 'validator/lib/isURL'
+import isMongoId from 'validator/lib/isMongoId'
 
 //import { Model as Host } from 'models/host'
 
@@ -67,7 +69,13 @@ export const Script = ScriptTemplate.extend({
     lastjob_id: 'string'
   },
   derived: {
-    formatted_tags: formattedTags()
+    formatted_tags: formattedTags(),
+    canExecute: {
+      deps: ['script_id','host_id'],
+      fn () {
+        return isMongoId(this.script_id || '') && isMongoId(this.host_id || '')
+      }
+    }
   },
   children: {
     //host: Host,
@@ -90,7 +98,19 @@ export const Scraper = ScraperTemplate.extend({
     lastjob_id: 'string'
   },
   derived: {
-    formatted_tags: formattedTags()
+    formatted_tags: formattedTags(),
+    canExecute: {
+      deps: ['url','host_id'],
+      fn () {
+        const url = this.url || ''
+
+        const isurl = /localhost/.test(url) || isURL(url, {
+          protocols: ['http','https'],
+          require_protocol: true
+        })
+        return isurl && isMongoId(this.host_id || '')
+      }
+    }
   },
   children: {
     //host: Host,

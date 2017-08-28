@@ -26,6 +26,16 @@ module.exports = View.extend({
       this.checkJobState()
     })
   },
+  props: {
+    disabled: ['boolean',false,false]
+  },
+  bindings: {
+    disabled: {
+      hook: 'trigger',
+      type: 'booleanAttribute',
+      name: 'disabled'
+    }
+  },
   checkJobState () {
     const state = this.model.state
     switch (state) {

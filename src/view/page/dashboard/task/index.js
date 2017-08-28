@@ -25,12 +25,49 @@ module.exports = View.extend({
       fn () {
         return Boolean(this.model.lastjob.result)
       }
+    },
+    formatted_hostname: {
+      deps: ['model.hostname'],
+      fn () {
+        return this.model.hostname || 'Hostname not assigned'
+      }
+    },
+    formatted_description: {
+      deps: ['model.description'],
+      fn () {
+        return this.model.description || 'Description is not available'
+      }
+    },
+    formatted_type: {
+      cache: true,
+      deps: ['model.type'],
+      fn () {
+        const type = this.model.type
+        if (type === 'scraper') return 'web request'
+        if (type === 'script') return 'script'
+      }
+    },
+    type_icon: {
+      cache: true,
+      deps: ['model.type'],
+      fn () {
+        const type = this.model.type
+        if (type === 'scraper') return 'fa fa-cloud'
+        if (type === 'script') return 'fa fa-code'
+      }
+    },
+    header_type_icon: {
+      cache: true,
+      deps: ['model.type'],
+      fn () {
+        const type = this.model.type
+        if (type === 'scraper') return 'circle fa fa-cloud scraper-color'
+        if (type === 'script') return 'circle fa fa-code script-color'
+      }
     }
   },
   bindings: {
-    'model.type': { hook: 'type' },
-    'model.description': { hook: 'description' },
-    'model.hostname': { hook: 'hostname' },
+    'model.name': { hook: 'name' },
     'model.lastjob.success': [
       {
         hook: 'last-job-state',
@@ -44,6 +81,19 @@ module.exports = View.extend({
         no: 'remark-alert'
       }
     ],
+    type_icon: {
+      type: 'attribute',
+      name: 'class',
+      hook: 'type-icon'
+    },
+    header_type_icon: {
+      type: 'attribute',
+      name: 'class',
+      hook: 'header-icon'
+    },
+    formatted_type: { hook: 'type' },
+    formatted_description: { hook: 'description' },
+    formatted_hostname: { hook: 'hostname' },
     executed: [
       {
         type: 'booleanAttribute',
@@ -98,6 +148,8 @@ module.exports = View.extend({
     event.stopPropagation()
     event.preventDefault()
 
+    if (!this.model.canExecute) return
+
     const message = `You are going to run the task <b>${this.model.name}</b>. Continue?`
     bootbox.confirm(message, (confirmed) => {
       if (confirmed) {
@@ -120,9 +172,13 @@ module.exports = View.extend({
       new TaskButtonsView({ model: this.model }),
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
     )
-    this.renderSubview(
+    const button = this.renderSubview(
       new ExecButton({ model: this.model.lastjob }),
       this.queryByHook('execute-button-container')
     )
+
+    if (!this.model.canExecute) {
+      button.disabled = true
+    }
   }
 })
