@@ -10,6 +10,7 @@ import Router from 'router'
 import Loader from 'components/loader'
 import ChatBox from 'components/chat'
 import RootContainer from 'view/root-container'
+import query from 'lib/query-params'
 const logger = require('lib/logger')('app')
 
 window.App = App
@@ -63,6 +64,13 @@ App.extend({
       return
     }
     this.Router.history.navigate(url,{ trigger: true })
+  },
+  reload (params, append=false) {
+    if (!append) {
+      query.set(params)
+    } else {
+      query.set( Object.assign({}, query.get(), params) )
+    }
   }
 })
 
