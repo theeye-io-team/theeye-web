@@ -78,13 +78,13 @@ module.exports = List.extend({
     this.header.addMassiveButton(new MassDelete())
     this.renderList(WebhookRow,{})
 
-    //this.renderSubview(
-    //  new HelpIconView({
-    //    color: [255,255,255],
-    //    category: 'title_help',
-    //    text: HelpTexts.titles.webhook_page 
-    //  }),
-    //  this.query('span.title i[data-hook=help]') // this selector is wrong
-    //)
+    this.renderSubview(
+      new HelpIconView({
+        color: [255,255,255],
+        category: 'title_help',
+        text: HelpTexts.titles.webhook_page 
+      }),
+      this.queryByHook('title-help')
+    )
   }
 })

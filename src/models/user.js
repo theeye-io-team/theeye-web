@@ -20,6 +20,19 @@ export const Model = AppModel.extend({
     createdAt: 'date',
     updatedAt: 'date'
   },
+  derived: {
+    formatted_tags: {
+      deps: ['username','email','credential','enabled'],
+      fn () {
+        return [
+          'username=' + this.username,
+          'email=' + this.email,
+          'credential=' + this.credential,
+          'enabled=' + this.enabled
+        ]
+      }
+    }
+  },
   session: {
     show: ['boolean', false, true],
     selected: ['boolean', false, false]
