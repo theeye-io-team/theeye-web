@@ -97,7 +97,8 @@
     "url-loader": "^0.5.7",
     "validator": "8.1.0",
     "webpack": "^2.4.1",
-    "webpack-bundle-analyzer": "2.9.0"
+    "webpack-bundle-analyzer": "2.9.0",
+    "uuid": "3.1.0"
   },
   "scripts": {
     "start": "./node_modules/webpack/bin/webpack.js && node .",

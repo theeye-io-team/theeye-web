@@ -1,5 +1,7 @@
 'use strict'
 
+import uuidv4 from 'uuid/v4'
+
 import { Model as Resource } from 'models/resource'
 import { Collection as ResourceCollection } from 'models/resource'
 import AmpersandState from 'ampersand-state'
@@ -195,7 +197,7 @@ const groupByProperty = (resources, prop) => {
 
     if (!groups[name]) {
       groups[name] = new GroupedResource({
-        id: keys.join('-'),
+        id: `group_${uuidv4()}`,
         type: `groupby-${prop}-${name}`,
         tags: keys,
         name: monitorPropertyValueDescriptionMap( name.toLowerCase() ),
