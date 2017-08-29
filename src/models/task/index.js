@@ -31,7 +31,7 @@ const JobResult = State.extend({
     result: ['object',false,null],
     creation_date: 'date',
     last_update: 'date',
-    event: 'object',
+    event: 'any',
     event_id: 'string'
   },
   derived: {
