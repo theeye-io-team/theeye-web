@@ -2,9 +2,10 @@
 
 import AmpersandState from 'ampersand-state'
 import AmpersandCollection from 'ampersand-collection'
-import { Collection as Resources } from 'models/resource'
-import { Collection as Tasks } from 'models/task'
 import XHR from 'lib/xhr'
+
+const Resources = require('models/resource/index').Collection
+const Tasks = require('models/task/index').Collection
 
 const TaskEvent = AmpersandState.extend({
   props: {
@@ -17,9 +18,6 @@ const TaskEvents = AmpersandCollection.extend({ model: TaskEvent })
 
 // representation of the current host group being display
 export default AmpersandState.extend({
-  //props: {
-  //  currentGroup: 'state'
-  //},
   collections: {
     configTasks: Tasks,
     configResources: Resources,

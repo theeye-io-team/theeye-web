@@ -24,16 +24,19 @@ export default PanelButton.extend({
       })
 
       this.listenTo(modal,'shown',() => { form.focus() })
+
       this.listenTo(modal,'hidden',() => {
         form.remove()
         modal.remove()
       })
+
       this.listenTo(modal,'confirm',() => {
         form.beforeSubmit()
         if (!form.valid) return
         HostGroupActions.update(this.model.id, form.data)
         modal.hide()
       })
+
       modal.show()
     }
   }

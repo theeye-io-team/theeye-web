@@ -5,7 +5,7 @@ import { Model as MonitorTemplate } from 'models/monitor/template'
 
 const urlRoot = '/api/resource-template'
 
-export const Model = Schema.extend({
+const Model = Schema.extend({
 	props: {
     hostgroup_id: 'string' // belongs to
 	},
@@ -15,7 +15,10 @@ export const Model = Schema.extend({
   }
 })
 
-export const Collection = AppCollection.extend({
+const Collection = AppCollection.extend({
   model: Model,
   url: urlRoot
 })
+
+exports.Model = Model
+exports.Collection = Collection

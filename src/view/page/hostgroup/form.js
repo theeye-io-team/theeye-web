@@ -43,7 +43,7 @@ const RegexInputView = InputView.extend({
   `,
   derived: {
     searchable: {
-      deps: ['value', 'valid'],
+      deps: ['value','valid'],
       fn () {
         return this.value && this.valid && this.inputValue.length > 3
       }
@@ -200,7 +200,7 @@ export default FormView.extend({
     })
 
     const selectedHosts = new SelectView({
-      label: 'Hosts in this Template',
+      label: 'Hosts to add to the Template',
       name: 'hosts',
       multiple: true,
       tags: true,
@@ -243,7 +243,7 @@ export default FormView.extend({
 
     if (this.model.isNew()) {
       const hostSelect = new HostConfigSelect({
-        label: 'Host to Copy *',
+        label: 'Template base Host *',
         name: 'copy_host',
         multiple: false,
         tags: false,

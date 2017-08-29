@@ -3,17 +3,22 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
-import assign from 'lodash/assign'
+//import merge from 'lodash/merge'
 
 import { Collection as Hosts } from 'models/host'
 import { Model as HostGroup } from 'models/hostgroup'
 
 export default {
   create (data) {
-    const body = assign({},data,{
-      resources: App.state.hostGroupPage.configResources,
-      tasks: App.state.hostGroupPage.configTasks,
-      triggers: App.state.hostGroupPage.configTriggers
+    const state = App.state.hostGroupPage
+    const resources = state.configResources.serialize()
+    const tasks = state.configTasks.serialize()
+    const triggers = state.configTriggers.serialize()
+
+    const body = Object.assign({}, data, {
+      resources: resources,
+      tasks: tasks,
+      triggers: triggers
     })
 
     XHR({
@@ -35,12 +40,7 @@ export default {
     })
   },
   update (id, data) {
-    //const body = assign({},data,{
-    //  resources: App.state.hostGroupPage.configResources,
-    //  tasks: App.state.hostGroupPage.configTasks,
-    //  hostTriggers: App.state.hostGroupPage.configTriggers
-    //})
-    const body = assign({},data)
+    const body = Object.assign({},data)
 
     XHR({
       url: `/api/hostgroup/${id}`,

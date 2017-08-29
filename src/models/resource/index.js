@@ -1,18 +1,58 @@
+'use strict'
+
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
-
 import Collect from 'ampersand-collection'
-
-import Schema from 'models/resource/schema'
-import { Model as Template } from 'models/resource/template'
-import { Model as Host } from 'models/host'
-import { Model as Monitor } from 'models/monitor'
 import moment from 'moment'
 import merge from 'lodash/merge'
 
-const urlRoot = '/api/resource'
+const Schema = require('models/resource/schema')
+const Template = require('models/resource/template').Model
+const Host = require('models/host/index').Model
+const Monitor = require('models/monitor/index').Model
 
-export const Model = Schema.extend({
+const urlRoot = '/api/resource'
+const stateIcons = {
+  unknown: 'icon-nonsense',
+  normal: 'icon-check',
+  low: 'icon-info', /* failure state */
+  high: 'icon-warn', /* failure state */
+  critical: 'icon-fatal', /* failure state */
+  failure: 'icon-fatal', /* failure state */
+  updates_stopped: 'icon-error',
+  getIcon (state) {
+    var icon = (this[state.toLowerCase()]||this.unknown);
+    return icon;
+  },
+  indexOf (value) {
+    // keep the indexes in order !
+    return [
+      'unknown',
+      'normal',
+      'low',
+      'high',
+      'critical',
+      'failure', // when failure_severity is not set use failure
+      'updates_stopped'
+    ].indexOf(value)
+  },
+  classToState (iconClass) {
+    var self = this;
+    var elems = Object.keys(self).filter(function(state){
+      if (self[state]==iconClass) return state
+    })
+    return elems[0]
+  },
+  filterAlertIconClasses (iconClasses) {
+    var failureClasses = ['icon-info','icon-warn','icon-fatal'],
+      filtered = iconClasses.filter(function(idx,icon){
+        return failureClasses.indexOf(icon) != -1
+      });
+    return filtered;
+  }
+}
+
+const Model = Schema.extend({
   urlRoot: urlRoot,
   props: {
     template_id: 'string',
@@ -115,7 +155,7 @@ export const Model = Schema.extend({
   }
 })
 
-export const Collection = AppCollection.extend({
+const Collection = AppCollection.extend({
   comparator: 'name',
   model: Model,
   url: urlRoot,
@@ -144,42 +184,5 @@ export const Collection = AppCollection.extend({
   }
 })
 
-const stateIcons = {
-  unknown         : 'icon-nonsense',
-  normal          : 'icon-check',
-  low             : 'icon-info', /* failure state */
-  high            : 'icon-warn', /* failure state */
-  critical        : 'icon-fatal', /* failure state */
-  failure         : 'icon-fatal', /* failure state */
-  updates_stopped : 'icon-error',
-  getIcon (state) {
-    var icon = (this[state.toLowerCase()]||this.unknown);
-    return icon;
-  },
-  indexOf (value) {
-    // keep the indexes in order !
-    return [
-      'unknown',
-      'normal',
-      'low',
-      'high',
-      'critical',
-      'failure', // when failure_severity is not set use failure
-      'updates_stopped'
-    ].indexOf(value);
-  },
-  classToState (iconClass) {
-    var self = this;
-    var elems = Object.keys(self).filter(function(state){
-      if (self[state]==iconClass) return state;
-    });
-    return elems[0];
-  },
-  filterAlertIconClasses (iconClasses) {
-    var failureClasses = ['icon-info','icon-warn','icon-fatal'],
-      filtered = iconClasses.filter(function(idx,icon){
-        return failureClasses.indexOf(icon) != -1
-      });
-    return filtered;
-  }
-}
+exports.Model = Model
+exports.Collection = Collection

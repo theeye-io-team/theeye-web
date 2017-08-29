@@ -1,10 +1,7 @@
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 
-//import { Model as Customer } from 'models/customer'
-//import { Model as User } from 'models/user'
-//import { Model as Script } from 'models/script'
-import { Collection as Events } from 'models/event'
+const Events = require('models/event').Collection
 
 const Schema = AppModel.extend({
 	props: {
@@ -22,8 +19,6 @@ const Schema = AppModel.extend({
     _type: 'string' // discriminator
 	},
 	collections: {
-  //	customer: Customer,
-  //	user: User, // owner/creator
 		triggers: Events,
 	},
   serialize (options) {
@@ -39,19 +34,16 @@ const Schema = AppModel.extend({
 
 const urlRoot = '/api/task-template'
 
-export const Script = Schema.extend({
+const Script = Schema.extend({
   urlRoot: urlRoot,
 	props: {
 		script_id: 'string',
 		script_arguments: 'array',
 		script_runas: 'string',
-	},
-  children: {
-    //script: Script
-  }
+	}
 })
 
-export const Scraper = Schema.extend({
+const Scraper = Schema.extend({
   urlRoot: urlRoot,
   props: {
     url: 'string',
@@ -66,7 +58,7 @@ export const Scraper = Schema.extend({
   }
 })
 
-export const Collection = AppCollection.extend({
+const Collection = AppCollection.extend({
   url: urlRoot,
   model: function (attrs, options) {
     if ( /ScraperTaskTemplate/.test(attrs._type) === true ) {
@@ -76,3 +68,7 @@ export const Collection = AppCollection.extend({
     }
   }
 })
+
+exports.Collection = Collection
+exports.Scraper = Scraper
+exports.Script = Script

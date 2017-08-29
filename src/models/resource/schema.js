@@ -1,9 +1,9 @@
 import AppModel from 'lib/app-model'
 
-import { Model as User } from 'models/user'
-import { Model as Customer } from 'models/customer'
+const User = require('models/user').Model
+const Customer = require('models/customer').Model
 
-export default AppModel.extend({
+module.exports = AppModel.extend({
 	props: {
     id: 'string',
 		user_id: 'string', // owner/creator

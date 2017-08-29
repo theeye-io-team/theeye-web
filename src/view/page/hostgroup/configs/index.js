@@ -133,7 +133,6 @@ export default View.extend({
   `,
   props: {
     valid: ['boolean',false,true],
-    required: ['boolean',false,false],
     show_config: ['boolean',false,false],
     name: ['string',false,'configs'],
     required: ['boolean',false,true],

@@ -1,14 +1,12 @@
 import AmpersandState from 'ampersand-state'
 import AmpersandCollection from 'ampersand-collection'
-
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 
-import { Model as Customer } from 'models/customer'
-import { Collection as TaskTemplates } from 'models/task/template'
-import { Collection as ResourceTemplates } from 'models/resource/template'
-import { Collection as Hosts } from 'models/host'
-//import { Collection as Monitors } from 'models/monitor/template'
+const Customer = require('models/customer').Model
+const Hosts = require('models/host').Collection
+const TaskTemplates = require('models/task/template').Collection
+const ResourceTemplates = require('models/resource/template').Collection
 
 const urlRoot = '/api/hostgroup'
 
@@ -22,9 +20,12 @@ const EventTemplate = AmpersandState.extend({
     task_template: 'object'
 	}
 })
-const EventTemplates = AmpersandCollection.extend({ model: EventTemplate })
 
-export const Model = AppModel.extend({
+const EventTemplates = AmpersandCollection.extend({
+  model: EventTemplate
+})
+
+const Model = AppModel.extend({
   urlRoot: urlRoot,
   props: {
     id: 'string',
@@ -35,9 +36,6 @@ export const Model = AppModel.extend({
     enable: 'boolean',
     name: 'string',
   },
-  //children: {
-  //  customer: Customer,
-  //},
   collections: {
     hosts: Hosts, // has many host
     tasks: TaskTemplates, // has many task templates
@@ -46,7 +44,10 @@ export const Model = AppModel.extend({
   }
 })
 
-export const Collection = AppCollection.extend({
+const Collection = AppCollection.extend({
   model: Model,
   url: urlRoot
 })
+
+exports.Model = Model
+exports.Collection = Collection

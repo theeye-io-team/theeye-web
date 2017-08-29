@@ -6,8 +6,8 @@ import isMongoId from 'validator/lib/isMongoId'
 
 //import { Model as Host } from 'models/host'
 
-import { Script as ScriptTemplate } from './template'
-import { Scraper as ScraperTemplate } from './template'
+const ScriptTemplate = require('./template').Script
+const ScraperTemplate = require('./template').Scraper
 
 const urlRoot = '/api/task'
 
@@ -60,7 +60,7 @@ const formattedTags = () => {
 }
 
 // add host and template to both script and scraper tasks
-export const Script = ScriptTemplate.extend({
+const Script = ScriptTemplate.extend({
   urlRoot: urlRoot,
   props: {
     hostname: 'string',
@@ -89,7 +89,7 @@ export const Script = ScriptTemplate.extend({
   }
 })
 
-export const Scraper = ScraperTemplate.extend({
+const Scraper = ScraperTemplate.extend({
   urlRoot: urlRoot,
   props: {
     hostname: 'string',
@@ -124,7 +124,7 @@ export const Scraper = ScraperTemplate.extend({
   }
 })
 
-export const Collection = AppCollection.extend({
+const Collection = AppCollection.extend({
   comparator: 'name',
   url: urlRoot,
   model: function (attrs, options) {
@@ -135,3 +135,7 @@ export const Collection = AppCollection.extend({
     }
   }
 })
+
+exports.Scraper = Scraper
+exports.Script = Script
+exports.Collection = Collection
