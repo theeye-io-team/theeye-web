@@ -49,14 +49,11 @@ export const Model = Schema.extend({
     stateSeverity: {
       deps: ['state','failure_severity'],
       fn () {
-        const state = this.get('state')
-        const severity = this.get('failure_severity')
-
-        if (!state || !severity) return
+        const state = this.get('state') || 'error'
+        const severity = this.get('failure_severity') || 'HIGH'
 
         if (state==='failure') {
-          if (!severity) return 'failure';
-          else return severity.toLowerCase();
+          return severity.toLowerCase();
         } else {
           return state.toLowerCase();
         }
@@ -97,19 +94,19 @@ export const Model = Schema.extend({
       tags: monitor.tags
     })
   },
-  //stateOrder: function(){
+  //stateOrder () {
   //  return stateIcons.indexOf(this.stateSeverity);
   //},
-  hasError: function(){
-    return this.isFailing()||this.isNotReporting();
+  hasError () {
+    return this.isFailing() || this.isNotReporting();
   },
-  isFailing: function(){
-    return this.get('state')==='failure';
+  isFailing () {
+    return this.get('state') === 'failure';
   },
-  isNotReporting: function(){
-    return this.get('state')==='updates_stopped';
+  isNotReporting () {
+    return this.get('state') === 'updates_stopped';
   },
-  submonitorsWithError: function(){
+  submonitorsWithError () {
     var submons = this.get('submonitors');
     if (!submons) return null;
     return submons.filter(function(monitor){

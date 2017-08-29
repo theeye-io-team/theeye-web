@@ -49,6 +49,14 @@ const str2rgb = (str) => {
  */
 const SubmonitorView = View.extend({
   template: require('./submonitor-row.hbs'),
+  derived: {
+    isStats: {
+      deps: ['model.type'],
+      fn () {
+        return this.model.type === 'dstat'
+      }
+    }
+  },
   bindings: {
     'model.type': { hook: 'type' },
     'model.state': { hook: 'state' },
@@ -57,12 +65,17 @@ const SubmonitorView = View.extend({
       type: 'class',
       hook: 'state-icon'
     },
-    'model.hostname': { hook: 'hostname' }
+    'model.hostname': { hook: 'hostname' },
+    isStats: {
+      type: 'toggle',
+      hook: 'stats-button-container'
+    }
   },
   events: {
-    'click [data-hook=last_event]':'onClickLastEvent'
+    'click [data-hook=last_event]':'onClickLastEvent',
+    'click button[data-hook=stats]':'onClickStats',
   },
-  onClickLastEvent: function (event) {
+  onClickLastEvent (event) {
     event.preventDefault();
     event.stopPropagation();
 
@@ -75,7 +88,15 @@ const SubmonitorView = View.extend({
 
     return false;
   },
-  initialize:function(){
+  onClickStats (event) {
+    event.stopPropagation();
+    event.preventDefault();
+
+    window.location = "/hoststats/" + this.model.host_id
+
+    return false;
+  },
+  initialize () {
     View.prototype.initialize.apply(this,arguments)
     this.listenTo(this.model,'change:stateIcon',() => {
       this.trigger('change')
@@ -110,24 +131,9 @@ const SubmonitorGroupView = SubmonitorView.extend({
 
 const MonitorButtonsView = View.extend({
   template: require('./monitor-row-buttons.hbs'),
-  derived: {
-    isHost: {
-      deps: ['model.type'],
-      fn () {
-        return this.model.type === 'host'
-      }
-    }
-  },
-  bindings: {
-    isHost: {
-      type: 'toggle',
-      hook: 'stats-button-container'
-    }
-  },
   events: {
     'click button[data-hook=search]':'onClickSearch',
     'click button[data-hook=workflow]':'onClickWorkflow',
-    'click button[data-hook=stats]':'onClickStats',
     'click button[data-hook=edit]':'onClickEdit',
   },
   onClickSearch: function(event){
@@ -143,14 +149,6 @@ const MonitorButtonsView = View.extend({
     event.preventDefault();
 
     window.location = '/admin/workflow?node=' + this.model.monitor.id
-
-    return false;
-  },
-  onClickStats: function(event){
-    event.stopPropagation();
-    event.preventDefault();
-
-    window.location = "/hoststats/" + this.model.host_id
 
     return false;
   },
@@ -175,6 +173,7 @@ const MonitorView = View.extend({
     show: ['boolean',false,true]
   },
   bindings: {
+    'model.hostname': {hook: 'hostname'},
     'model.type': {hook: 'type'},
     show: {
       type: 'toggle'
@@ -185,7 +184,7 @@ const MonitorView = View.extend({
 
     this.listenTo(this.model.submonitors,'change',this.checkMonitorsState)
   },
-  checkMonitorsState: function () {
+  checkMonitorsState () {
     var submonitors = this.model.get('submonitors');
     if (submonitors.length!==0) {
       const highSeverityMonitor = submonitors
@@ -200,14 +199,14 @@ const MonitorView = View.extend({
       //this.state = highSeverityMonitor.get('state')
       var stateIconEl = this.queryByHook('state-icon')
       stateIconEl.className = highSeverityMonitor.stateIcon
-      stateIconEl.title = highSeverityMonitor.state_severity
+      stateIconEl.title = highSeverityMonitor.state
 
       this.trigger('change',this)
     } else {
       console.warn('this group of monitors is empty, there is nothing to show');
     }
   },
-  setMonitorIcon: function () {
+  setMonitorIcon () {
     var iconClass = 'circle fa'
     var color
     var type = this.model.get('type');
@@ -234,7 +233,8 @@ const MonitorView = View.extend({
         iconClass += ` ${getIconByType(parts[2])} ${parts[2]}-color`
       }
       else { // use value first letter as icon
-        iconClass += ` fa-letter fa-letter-${parts[2][0].toLowerCase()}`
+        let first = parts[2].replace(/[^A-Za-z0-9]/g, ' ').trim()[0].toLowerCase()
+        iconClass += ` fa-letter fa-letter-${first}`
         color = str2rgb(parts[2])
       }
     } else {
@@ -247,7 +247,7 @@ const MonitorView = View.extend({
       iconEl.style.backgroundColor = `#${color}`
     }
   },
-  render: function(){
+  render (){
     this.renderWithTemplate()
 
     this.renderCollection(
@@ -289,6 +289,7 @@ const MonitorsGroupView = MonitorView.extend({
       <th>Hostname</th>
       <th>Type</th>
       <th>Last Update</th>
+      <th></th>
       <th></th>
       `
 
