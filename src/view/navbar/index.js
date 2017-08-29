@@ -140,20 +140,18 @@ export default View.extend({
     }
 
     // on window resize recalculate links container height
-    const recalculateLinksHeight = () => {
-      const innerlauncher = this.queryByHook('innerlauncher-container')
-      const profile = this.queryByHook('profile-container')
+    const recalculateLinksHeight = (event) => {
       const links = this.queryByHook('links-container')
       let height = window.innerHeight - 178
       if (window.innerWidth>768) {
         height -= 75
       }
-
       links.style.height = String(height) + "px"
     }
-    const navbar = this
+
+    const self = this
     window.addEventListener('resize',function(event){
-      recalculateLinksHeight.call(navbar,event)
+      recalculateLinksHeight.call(self,event)
     },false)
     window.dispatchEvent(new Event('resize'))
   },
@@ -190,5 +188,21 @@ export default View.extend({
       },
       this.queryByHook('customers-container')
     )
+
+    // on window resize recalculate links container height
+    const recalculateCustomersHeight = (event) => {
+      const customers = this.queryByHook('customers-container')
+      let height = window.innerHeight - 178
+      if (window.innerWidth>768) {
+        height -= 75
+      }
+
+      customers.style.height = String(height) + "px"
+    }
+    const self = this
+    window.addEventListener('resize',function(event){
+      recalculateCustomersHeight.call(self,event)
+    },false)
+    window.dispatchEvent(new Event('resize'))
   }
 })
