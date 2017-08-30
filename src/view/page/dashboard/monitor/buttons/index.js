@@ -83,7 +83,7 @@ export const LastEvent = View.extend({
 
 export const HostStats = View.extend({
   template: `
-    <button class="btn btn-sm btn-primary tooltiped" title="Host Stats" data-hook="stats">
+    <button class="btn btn-primary tooltiped" title="Host Stats" data-hook="stats">
       <i class="fa fa-bar-chart" aria-hidden="true"></i>
     </button>
   `,
