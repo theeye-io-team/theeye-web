@@ -697,6 +697,7 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
  *
  */
 
+.dashboard .panel-group .monitorRow {background-color: #304269;}
 .dashboard .events-panel { padding-left: 0; padding-right: 0; }
 .dashboard .events-panel.resources-panel { border-right:2px solid #23324C; }
 .dashboard .events-panel.tasks-panel { border-left:2px solid #23324C; }

@@ -13,5 +13,11 @@ export default {
     logger.log('resource updated')
     model.set(data)
     App.state.resources.sort()
+  },
+  edit (id) {
+    window.location = "/admin/monitor#search=" + id
+  },
+  workflow (id) {
+    window.location = '/admin/workflow?node=' + id
   }
 }

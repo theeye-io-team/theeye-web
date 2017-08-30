@@ -89,8 +89,8 @@ const Model = Schema.extend({
     stateSeverity: {
       deps: ['state','failure_severity'],
       fn () {
-        const state = this.get('state') || 'error'
-        const severity = this.get('failure_severity') || 'HIGH'
+        const state = this.state || 'error'
+        const severity = this.failure_severity || 'HIGH'
 
         if (state==='failure') {
           return severity.toLowerCase();
@@ -122,7 +122,10 @@ const Model = Schema.extend({
       fn () {
         return stateIcons.indexOf( this.stateSeverity )
       }
-    }
+    },
+  },
+  hasError () {
+    return this.state === 'failure' || this.state === 'updates_stopped'
   },
   parse (attrs) {
     const monitor = attrs.monitor
@@ -134,25 +137,6 @@ const Model = Schema.extend({
       tags: monitor.tags
     })
   },
-  //stateOrder () {
-  //  return stateIcons.indexOf(this.stateSeverity);
-  //},
-  hasError () {
-    return this.isFailing() || this.isNotReporting();
-  },
-  isFailing () {
-    return this.get('state') === 'failure';
-  },
-  isNotReporting () {
-    return this.get('state') === 'updates_stopped';
-  },
-  submonitorsWithError () {
-    var submons = this.get('submonitors');
-    if (!submons) return null;
-    return submons.filter(function(monitor){
-      return monitor.hasError();
-    }).length > 0;
-  }
 })
 
 const Collection = AppCollection.extend({

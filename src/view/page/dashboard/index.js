@@ -162,14 +162,14 @@ module.exports = View.extend({
     })
 
     const checkUpAndRunningMonitors = () => {
-      if (!(this.monitors.length>0)) return
+
+      if (! (this.monitors.length>0)) return
 
       /** move ok monitors to fold container **/
       const foldMonitors = () => {
         monitorRows.views.forEach(view => {
-          let group = view.model // model is a grouped resources model
-          let hasError = group.hasError() || group.submonitorsWithError()
-          if (!hasError) {
+          let model = view.model
+          if (! model.hasError()) {
             monitorsFolding.append( view.el )
           } else {
             this.$monitorsPanel.prepend( view.el )
@@ -185,13 +185,9 @@ module.exports = View.extend({
       }
 
       const failing = this.monitors.filter(monitor => {
-        // check if monitor is in a group
-        let group = this.groupedResources.find(group => {
-          let sm = group.submonitors.get( monitor.get('id') )
-          return sm !== undefined
-        })
+        let group = this.groupedResources.find(monitor)
         if (!group) return false
-        return monitor.hasError() || monitor.submonitorsWithError()
+        return monitor.hasError()
       })
 
       if (failing.length>0) {
@@ -226,17 +222,8 @@ module.exports = View.extend({
     })
     // events that can change monitors states
     // check state every time and reorganize view
-    this.listenTo(this.groupedResources,'reset change',() => {
-      checkUpAndRunningMonitors()
-    })
-    this.listenTo(this.monitors,'sync change',() => {
-      checkUpAndRunningMonitors()
-    })
-    //for (let i=0; i<monitorRows.views.length; i++) {
-    //  let view = monitorRows.views[i]
-    //  view.on('change', checkUpAndRunningMonitors, this)
-    //}
-
+    this.listenTo(this.groupedResources,'reset change', checkUpAndRunningMonitors)
+    this.listenTo(this.monitors,'sync change', checkUpAndRunningMonitors)
     checkUpAndRunningMonitors()
   },
   /**

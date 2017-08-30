@@ -48,24 +48,7 @@
       class="panel-collapse collapse"
       role="tabpanel"
       aria-labelledby="monitor_{{ model.id }}">
-      <div class="panel-body">
-        <div>
-          <h4>Host <span data-hook="hostname"></span></h4>
-          <table class="table table-stripped">
-            <thead>
-              <tr data-hook="title-cols">
-                <th></th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Last updated</th>
-                <th>Last Event</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody data-hook="submonitors-container"> </tbody>
-          </table>
-        </div>
-      </div>
+      <div class="panel-body" data-hook="collapse-container-body"> </div>
     </div>
   </div>
 </div>

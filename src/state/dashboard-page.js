@@ -7,19 +7,18 @@ import { Collection as ResourceCollection } from 'models/resource'
 import AmpersandState from 'ampersand-state'
 import AmpersandCollection from 'ampersand-collection'
 
-const typesToGroupIntoHostname = ['host','dstat','psaux'] // always group into hostname
-
 /**
  * Resource but with a subresources/submonitors collection
  */
 const GroupedResource = Resource.extend({
   hasError () {
-    return false;
-  },
-  submonitorsWithError () {
-    return this.submonitors.filter((monitor) => {
-      return monitor.hasError()
-    }).length > 0
+    if (!this.submonitors || this.submonitors.length===0) {
+      return false
+    }
+
+    return this.submonitors
+      .filter(m => m.hasError())
+      .length > 0
   },
   collections: {
     submonitors: ResourceCollection
@@ -28,7 +27,25 @@ const GroupedResource = Resource.extend({
 
 const GroupedResourceCollection = ResourceCollection.extend({
   comparator: 'name',
-  model: GroupedResource
+  // is not being used.
+  //model (attrs, options) {
+  //},
+  isModel (model) {
+    return model instanceof Resource || model instanceof GroupedResource
+  },
+  find (resource) {
+    const _find = ResourceCollection.prototype.find
+    // find the resource within a group or theresource alone
+    return _find.call(this, group => {
+      if (group.id === resource.id) return true
+      if (!group.submonitors) return false
+      if (group.submonitors.length===0) return false
+
+      // it is a group , lets search by id
+      const item = group.submonitors.get( resource.id )
+      return item !== undefined
+    })
+  }
 })
 
 export default AmpersandState.extend({
@@ -109,42 +126,40 @@ const parseMonitorsGroupBy = (groupby) => {
  */
 const groupByHost = (resources) => {
   const groupedMonitors = []
-  const hostGroups = {}
+  const hostmonitors = {}
 
   if (!Array.isArray(resources) || resources.length === 0) {
     return
   }
 
-  resources.forEach((resource) => {
-    if (typesToGroupIntoHostname.indexOf(resource.get('type')) !== -1) {
-      if (!hostGroups[resource.get('hostname')]) {
-        hostGroups[resource.get('hostname')] = [];
-      }
-      hostGroups[resource.get('hostname')].push(resource);
-    } else {
-      let grouped = new GroupedResource()
-      grouped.set( resource.serialize() )
-      grouped.submonitors.add(resource) // add itself to the subgroup
+  resources.forEach(resource => {
+    let type = resource.type
+    if (type == 'dstat' || type == 'psaux' || type == 'host') {
+      let hostname = resource.hostname
+      hostmonitors[hostname] || (hostmonitors[hostname] = { resources: [] })
 
-      groupedMonitors.push(grouped)
+      if (type == 'host') {
+        let grouped = new GroupedResource()
+        grouped.set( resource.serialize() )
+        //grouped.type = `groupby-hostname-${hostname}`,
+        //grouped.submonitors.add(resource) // add itself to the subgroup
+        groupedMonitors.push(grouped)
+        // add to hostmonitors
+        hostmonitors[hostname].host = grouped
+      }
+
+      hostmonitors[hostname].resources.push(resource)
+
+    } else {
+      groupedMonitors.push(resource)
     }
   })
 
-  for (let hostname in hostGroups) {
-    let group = hostGroups[hostname]
-    let host = group.find(function(m){ return m.get('type') === 'host' });
-
-    if (host!==undefined) {
-      let groupedHost = new GroupedResource()
-      groupedHost.set(host._values)
-      // add dstat and psaux resources
-      groupedHost.submonitors.add(
-        group.filter((m) => {
-          let type = m.get('type')
-          return type === 'host' || type === 'dstat' || type === 'psaux'
-        })
-      )
-      groupedMonitors.push(groupedHost)
+  for (let hostname in hostmonitors) {
+    let monitors = hostmonitors[hostname]
+    let host = monitors.host
+    if (host !== undefined) {
+      host.submonitors.add(monitors.resources)
     }
     // else data error ??
   }
@@ -210,13 +225,7 @@ const groupByProperty = (resources, prop) => {
 
   resources.forEach(resource => {
     let name = resource[prop]
-    //if (prop == 'type') {
-    //  // group into hostname group
-    //  if (typesToGroupIntoHostname.indexOf(name) !== -1) {
-    //    addToGroup(resource,resource.hostname)
-    //  } else {
-          addToGroup(resource,name)
-    //  }
+    addToGroup(resource,name)
   })
 
   return Object.values(groups)
