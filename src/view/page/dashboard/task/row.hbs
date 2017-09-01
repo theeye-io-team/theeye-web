@@ -1,16 +1,14 @@
 <div class="taskRow">
   <div class="tasks-container panel panel-default">
-    <div class="panel-heading" role="tab">
-      <h4 class="panel-title-icon">
-        <i data-hook="header-icon"></i>
-      </h4>
+    <div class="panel-heading" role="tab" id="{{ collapseHeadingId }}"> <!-- Collapse Heading Container { -->
+      <h4 class="panel-title-icon"><i data-hook="header-icon"></i></h4>
       <h4 class="panel-title">
         <span class="collapsed"
-          data-toggle="collapse"
+          data-hook="collapse-toggle"
           data-parent="#task-accordion"
-          href="#task_{{ model.id }}"
+          href="#{{ collapseContainerId }}"
           aria-expanded="false"
-          aria-controls="task_{{ model.id }}">
+          aria-controls="{{ collapseContainerId }}">
           <div class="panel-title-content">
 
             <span class="panel-item name">
@@ -40,42 +38,15 @@
           </div>
         </span>
       </h4>
-    </div>
-    <!-- COLLAPSE { -->
+    </div> <!-- } END Collapse Heading Container -->
+    <!-- Collapsed Container { -->
     <div data-hook="collapse-container"
-      id="task_{{ model.id }}"
+      id="{{ collapseContainerId }}"
       class="panel-collapse collapse"
       role="tabpanel"
-      aria-labelledby="task_{{ model.id }}">
-      <div class="panel-body">
-        <div>
-          <h4>Host: <i data-hook="hostname"></i></h4>
-          <table class="table table-stripped">
-            <thead>
-              <tr data-hook="title-cols">
-                <th></th>
-                <th>Description</th>
-                <th>Hostname</th>
-                <th>Last Run</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td> <span data-hook="type-icon"></span> </td>
-                <td> <span data-hook="description"></span> </td>
-                <td> <span data-hook="hostname"></span> </td>
-                <td>
-                  <a href="#" data-hook="last_exec" class="btn btn-primary btn-sm fa fa-file-text-o"></a>
-									&nbsp;
-									<i data-hook="last-job-state" class="fa"></i>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="fields" data-hook="job-result-container"></div>
-      </div>
+      aria-labelledby="{{ collapseHeadingId }}">
+      <div class="panel-body" data-hook="collapse-container-body"> </div>
     </div>
-    <!-- } END COLLAPSE -->
+    <!-- } END Collapsed Container -->
   </div>
 </div>

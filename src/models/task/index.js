@@ -34,14 +34,6 @@ const JobResult = State.extend({
     event: 'any',
     event_id: 'string'
   },
-  derived: {
-    success: {
-      deps: ['state'],
-      fn () {
-        return this.state === 'success'
-      }
-    }
-  }
 })
 
 const formattedTags = () => {

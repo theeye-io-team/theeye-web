@@ -3,13 +3,116 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import JobActions from 'actions/job'
+import SearchActions from 'actions/searchbox'
 import bootbox from 'bootbox'
 import JobOutput from '../job-output'
 import ExecButton from './exec-button'
 
 const TaskButtonsView = View.extend({
-  template: require('./buttons.hbs')
+  template: require('./buttons.hbs'),
+  derived: {
+    executed: {
+      deps: ['model.lastjob.result'],
+      fn () {
+        return Boolean(this.model.lastjob.result)
+      }
+    },
+    execution_state: {
+      deps: ['model.lastjob.state'],
+      fn () {
+        const state = this.model.lastjob.state
+        if (!state) return ''
+        if (state === 'new') return 'fa fa-spin fa-refresh'
+        if (state === 'success') return 'fa fa-check remark-success'
+        if (state === 'failure') return 'fa fa-exclamation remark-alert'
+        else return 'fa fa-question remark-warning'
+      }
+    }
+  },
+  bindings: {
+    execution_state: {
+      hook: 'last_job_state',
+      type: 'attribute',
+      name: 'class'
+    },
+    executed: {
+      type: 'booleanAttribute',
+      name: 'disabled',
+      hook: 'last_exec',
+      invert: true
+    }
+  },
+  events: {
+    'click button[data-hook=workflow]':'onClickWorkflow',
+    'click button[data-hook=edit]':'onClickEdit',
+    'click button[data-hook=search]':'onClickSearch',
+    'click button[data-hook=last_exec]':'onClickLastExecution',
+  },
+  onClickSearch (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    SearchActions.search(this.model.name)
+
+    return false
+  },
+  onClickLastExecution (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const getResult = () => {
+      return this.model.lastjob.result
+    }
+
+    const view = new JobOutput({ output: getResult() })
+    view.show()
+
+    this.listenTo(this.model.lastjob, 'change:result', () => {
+      view.output = getResult()
+    })
+
+    return false
+  },
+  onClickWorkflow (event) {
+    event.stopPropagation()
+    event.preventDefault()
+    window.location = '/admin/workflow?node=' + this.model.id
+    return false
+  },
+  onClickEdit (event) {
+    event.stopPropagation()
+    event.preventDefault()
+    window.location = "/admin/task#search=" + this.model.id
+    return false
+  },
 })
+
+//const CollapsedContent = View.extend({
+//  template: `
+//    <div>
+//      <h4>Host: <i data-hook="hostname"></i></h4>
+//      <table class="table table-stripped">
+//        <thead>
+//          <tr data-hook="title-cols">
+//            <th></th>
+//            <th>Description</th>
+//            <th>Hostname</th>
+//            <th>Last Run</th>
+//          </tr>
+//        </thead>
+//        <tbody>
+//          <tr>
+//            <td> <span data-hook="type-icon"></span> </td>
+//            <td> <span data-hook="description"></span> </td>
+//            <td> <span data-hook="hostname"></span> </td>
+//            <td> </td>
+//          </tr>
+//        </tbody>
+//      </table>
+//    </div>
+//    <div class="fields" data-hook="job-result-container"></div>
+//    `
+//})
 
 /**
  * tasks rows
@@ -20,10 +123,16 @@ module.exports = View.extend({
     show: ['boolean',false,true]
   },
   derived: {
-    executed: {
-      deps: ['model.lastjob.result'],
+    collapsedHeaderId: {
+      deps: ['model.id'],
       fn () {
-        return Boolean(this.model.lastjob.result)
+        return `collapse_heading_${this.model.id}`
+      }
+    },
+    collapseContainerId: {
+      deps: ['model.id'],
+      fn () {
+        return `collapse_container_${this.model.id}`
       }
     },
     formatted_hostname: {
@@ -68,19 +177,6 @@ module.exports = View.extend({
   },
   bindings: {
     'model.name': { hook: 'name' },
-    'model.lastjob.success': [
-      {
-        hook: 'last-job-state',
-        type: 'booleanClass',
-        yes: 'fa-check',
-        no: 'fa-remove'
-      },{
-        hook: 'last-job-state',
-        type: 'booleanClass',
-        yes: 'remark-success',
-        no: 'remark-alert'
-      }
-    ],
     type_icon: {
       type: 'attribute',
       name: 'class',
@@ -94,55 +190,17 @@ module.exports = View.extend({
     formatted_type: { hook: 'type' },
     formatted_description: { hook: 'description' },
     formatted_hostname: { hook: 'hostname' },
-    executed: [
-      {
-        type: 'booleanAttribute',
-        name: 'disabled',
-        hook: 'last_exec',
-        invert: true
-      },{
-        type: 'toggle',
-        hook: 'last-job-state'
-      }
-    ],
     show: {
       type: 'toggle'
     }
   },
   events: {
-    'click button[data-hook=workflow]':'onClickWorkflow',
-    'click button[data-hook=edit]':'onClickEdit',
     'click button[data-hook=trigger]':'onClickTrigger',
-    'click a[data-hook=last_exec]':'onClickLastExecution'
+    'click .collapsed[data-hook=collapse-toggle]': 'onClickToggleCollapse'
   },
-  onClickLastExecution (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    const getResult = () => {
-      return this.model.lastjob.result
-    }
-
-    const view = new JobOutput({ output: getResult() })
-    view.show()
-
-    this.listenTo(this.model.lastjob, 'change:result', () => {
-      view.output = getResult()
-    })
-
-    return false
-  },
-  onClickWorkflow (event) {
-    event.stopPropagation()
-    event.preventDefault()
-    window.location = '/admin/workflow?node=' + this.model.id
-    return false
-  },
-  onClickEdit (event) {
-    event.stopPropagation()
-    event.preventDefault()
-    window.location = "/admin/task#search=" + this.model.id
-    return false
+  // capture and handle collapse event 
+  onClickToggleCollapse (event) {
+    return 
   },
   onClickTrigger (event) {
     event.stopPropagation()
@@ -162,6 +220,7 @@ module.exports = View.extend({
   render () {
     this.renderWithTemplate()
     this.renderButtons()
+    //this.renderCollapsedContent()
   },
   renderButtons () {
     this.renderSubview(
@@ -180,5 +239,13 @@ module.exports = View.extend({
     if (!this.model.canExecute) {
       button.disabled = true
     }
-  }
+  },
+  //renderCollapsedContent () {
+  //  this.renderSubview(
+  //    new CollapsedContent({
+  //      model: this.model
+  //    }),
+  //    this.queryByHook('collapse-container-body')
+  //  )
+  //}
 })

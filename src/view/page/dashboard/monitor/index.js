@@ -167,6 +167,20 @@ const MonitorView = View.extend({
   props: {
     show: ['boolean',false,true]
   },
+  derived: {
+    collapsedHeaderId: {
+      deps: ['model.id'],
+      fn () {
+        return `collapse_heading_${this.model.id}`
+      }
+    },
+    collapseContainerId: {
+      deps: ['model.id'],
+      fn () {
+        return `collapse_container_${this.model.id}`
+      }
+    },
+  },
   bindings: {
     'model.hostname': {hook: 'hostname'},
     'model.type': {hook: 'type'},
@@ -183,6 +197,13 @@ const MonitorView = View.extend({
       type: 'toggle'
     }
   },
+  events: {
+    'click .collapsed[data-hook=collapse-toggle]': 'onClickToggleCollapse'
+  },
+  // capture and handle collapse event 
+  onClickToggleCollapse (event) {
+    return
+  },
   render (){
     this.renderWithTemplate()
 
@@ -194,7 +215,7 @@ const MonitorView = View.extend({
 
     const attrs = getMonitorIconAttributesByType(type)
 
-    const iconEl = this.query('h4[data-hook=monitor-icon] i')
+    const iconEl = this.queryByHook('monitor-icon')
     iconEl.className = attrs.className
     if (attrs.style) {
       if (attrs.style.backgroundColor) {
@@ -287,7 +308,12 @@ const MonitorsGroupView = MonitorView.extend({
 
     this.checkMonitorsState()
     this.setMonitorIcon()
-  }
+  },
+  // capture and handle collapse event 
+  onClickToggleCollapse (event) {
+    const collapsed = this.query('#' + this.collapseContainerId) 
+    $(collapsed).collapse('toggle')
+  },
 })
 
 module.exports = function (options) {
