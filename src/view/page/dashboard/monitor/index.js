@@ -2,6 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import assign from 'lodash/assign'
 import MonitorButtonsView from './buttons'
+import FilteredSubcollection from 'ampersand-filtered-subcollection'
 
 const genericTypes = ['scraper','script','host','process','file']
 const iconByType = {
@@ -39,17 +40,6 @@ const str2rgb = (str) => {
 
   return intToRGB(hashCode(str))
 
-}
-
-const higherSeverityMonitor = (submonitors) => {
-  if (!submonitors||submonitors.length===0) return null
-  return submonitors
-    .reduce( (worstMonitor,monitor) => {
-      if (!worstMonitor) return monitor;
-      var m1 = monitor.stateOrder
-      var m2 = worstMonitor.stateOrder
-      return (m1>m2) ? monitor : worstMonitor;
-    }, null )
 }
 
 const getMonitorIconAttributesByType = (type) => {
@@ -182,8 +172,8 @@ const MonitorView = View.extend({
     },
   },
   bindings: {
-    'model.hostname': {hook: 'hostname'},
-    'model.type': {hook: 'type'},
+    'model.hostname': { hook: 'hostname' },
+    'model.type': { hook: 'type' },
     'model.stateIcon': {
       type: 'class',
       hook: 'state-icon'
@@ -197,24 +187,14 @@ const MonitorView = View.extend({
       type: 'toggle'
     }
   },
-  events: {
-    'click .collapsed[data-hook=collapse-toggle]': 'onClickToggleCollapse'
-  },
-  // capture and handle collapse event 
-  onClickToggleCollapse (event) {
-    return
-  },
-  render (){
+  render () {
     this.renderWithTemplate()
-
     this.renderButtons()
     this.setMonitorIcon()
   },
   setMonitorIcon () {
     var type = this.model.type;
-
     const attrs = getMonitorIconAttributesByType(type)
-
     const iconEl = this.queryByHook('monitor-icon')
     iconEl.className = attrs.className
     if (attrs.style) {
@@ -223,19 +203,18 @@ const MonitorView = View.extend({
       }
     }
   },
-  renderButtons: function(){
+  renderButtons () {
     this.renderSubview(
       new MonitorButtonsView({ model: this.model }),
       this.query('div[data-hook=buttons-container]')
     )
-
     this.renderSubview(
       new MonitorButtonsView({ model: this.model }),
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
     )
   },
-  checkMonitorsState () {
-    const monitor = higherSeverityMonitor(this.model.submonitors)
+  checkSubmonitorsState () {
+    const monitor = this.model.submonitors.higherSeverityMonitor()
     if (monitor!==null) {
       var stateIconEl = this.queryByHook('state-icon')
       stateIconEl.className = monitor.stateIcon
@@ -247,18 +226,16 @@ const MonitorView = View.extend({
   }
 })
 
-const HostMonitorView = MonitorView.extend({
+const HostMonitorGroupView = MonitorView.extend({
   initialize () {
     View.prototype.initialize.apply(this,arguments)
-    this.listenTo(this.model.submonitors,'change',this.checkMonitorsState)
+    this.listenTo(this.model.submonitors,'change', this.checkSubmonitorsState)
   },
   render () {
     this.renderWithTemplate()
-
     //this.renderCollapsedTable()
-
     this.renderButtons()
-    this.checkMonitorsState()
+    this.checkSubmonitorsState()
     this.setMonitorIcon()
   },
   //renderCollapsedTable () {
@@ -287,46 +264,54 @@ const HostMonitorView = MonitorView.extend({
   //}
 })
 
+function MonitorViewFactory (options) {
+  const model = options.model;
+  if (model.type === 'host') {
+    return new HostMonitorGroupView(options)
+    //return new MonitorsGroupView(options)
+  } else {
+    return new MonitorView(options)
+  }
+}
+
 /**
  * monitors grouped rows. this works when grouping is applied only
  */
 const MonitorsGroupView = MonitorView.extend({
   initialize () {
     View.prototype.initialize.apply(this,arguments)
-    this.listenTo(this.model.submonitors,'change',this.checkMonitorsState)
+    this.listenTo(this.model.submonitors,'change',this.checkSubmonitorsState)
   },
   render () {
     this.renderWithTemplate()
-
     this.queryByHook('monitor-icons-block').remove()
 
+    // do not render dstat or psaux monitors
+    //const collection = new FilteredSubcollection(this.model.submonitors, {
+    //  filter (model) {
+    //    return model.type !== 'psaux' && model.type !== 'dstat'
+    //  },
+    //  comparator (model) {
+    //    return model.name
+    //  }
+    //})
+
     this.renderCollection(
+      //collection,
       this.model.submonitors,
-      MonitorView,
+      MonitorViewFactory,
       this.queryByHook('collapse-container-body')
     )
-
-    this.checkMonitorsState()
+    this.checkSubmonitorsState()
     this.setMonitorIcon()
-  },
-  // capture and handle collapse event 
-  onClickToggleCollapse (event) {
-    const collapsed = this.query('#' + this.collapseContainerId) 
-    $(collapsed).collapse('toggle')
   },
 })
 
 module.exports = function (options) {
-  var model = options.model;
-
+  const model = options.model
   if ( /group/.test(model.type) ) {
     return new MonitorsGroupView(options)
   } else {
-    if (model.type === 'host') {
-      return new HostMonitorView(options)
-      //return new MonitorsGroupView(options)
-    } else {
-      return new MonitorView(options)
-    }
+    return new MonitorViewFactory(options)
   }
 }

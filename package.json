@@ -11,6 +11,7 @@
     "ampersand-collection-rest-mixin": "^6.0.0",
     "ampersand-dom": "^1.5.0",
     "ampersand-events": "2.0.2",
+    "ampersand-filtered-subcollection": "3.0.0",
     "ampersand-form-view": "^7.0.0",
     "ampersand-input-view": "^7.0.0",
     "ampersand-model": "^8.0.0",
@@ -95,10 +96,10 @@
     "underscore": "~1.8.3",
     "urijs": "1.18.10",
     "url-loader": "^0.5.7",
+    "uuid": "3.1.0",
     "validator": "8.1.0",
     "webpack": "^2.4.1",
-    "webpack-bundle-analyzer": "2.9.0",
-    "uuid": "3.1.0"
+    "webpack-bundle-analyzer": "2.9.0"
   },
   "scripts": {
     "start": "./node_modules/webpack/bin/webpack.js && node .",

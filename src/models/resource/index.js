@@ -165,6 +165,16 @@ const Collection = AppCollection.extend({
   },
   comparator (model) {
     return model.stateOrder
+  },
+  higherSeverityMonitor () {
+    const submonitors = this.models
+    if (!submonitors||submonitors.length===0) return null
+    return submonitors.reduce( (worstMonitor,monitor) => {
+      if (!worstMonitor) return monitor;
+      var m1 = monitor.stateOrder
+      var m2 = worstMonitor.stateOrder
+      return (m1>m2) ? monitor : worstMonitor;
+    }, null )
   }
 })
 

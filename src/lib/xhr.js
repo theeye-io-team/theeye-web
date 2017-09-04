@@ -1,43 +1,30 @@
 /**
  *
- * Simplified XHR wrapper.
- * Implemented options
+ * XMLHttpRequest browser wrapper
  *
- * -------------
- * XHR options
- * -------------
- * method
- * url
- * responseType
- * headers
+ * @namespace Lib/XHR
+ * @summary Simplified XHR wrapper.
  *
- * -------------
- * XHR callbacks
- * -------------
- * done
- * fail
- *
- * -------------
- * XHR Events
- * -------------
- * onload
- * onerror
- * onabort
- * onprogress
- *
- */
-
-var debug = require('debug')('lib:xhr')
-
-/**
- *
- * XMLHttpRequest proxy.
- *
- * @author Facundo
+ * @author Facugon
  * @param {Object} options
+ * @property {String} options.method
+ * @property {String} options.url
+ * @property {Object} options.headers headers object in 'key:value' format
+ * @property {String} options.responseType default to 'json'
+ * @property {Boolean} options.withCredentials default to 'false'
+ * @property {Mixed} options.jsonData the json request body. also set the header "Content-Type: application/json;charset=UTF-8"
+ * @property {Function} options.done success callback
+ * @property {Function} options.fail failure callback
+ * @property {Function} options.onload assign onload event to the xhr
+ * @property {Function} options.error assign onerror event to the xhr
+ * @property {Function} options.abort assign onabort event to the xhr
+ * @property {Function} options.progress assign onprogress event to the xhr
+ *
  * @return {XMLHttpRequest}
  *
  */
+const debug = require('debug')('lib:xhr')
+
 function XHR (options, callback) {
   callback||(callback = function(){})
 
@@ -50,14 +37,14 @@ function XHR (options, callback) {
   // include cookies and accept cross site cookies
   xhr.withCredentials = options.withCredentials || false
 
-  var doneFn = function (ev) {
+  const doneFn = (ev) => {
     var data = xhr.response
     debug('request completed with status %s', xhr.status)
     options.done ? options.done(data, xhr) : null
     callback(null, xhr, xhr.response)
   }
 
-  var failFn = function (ev) {
+  const failFn = (ev) => {
     var error = new Error(ev.description)
     error.xhr = xhr
     debug('request error %s', xhr.status)
@@ -65,7 +52,7 @@ function XHR (options, callback) {
     callback(error, xhr, xhr.response)
   }
 
-  var progressFn = function (ev) { }
+  const progressFn = (ev) => { }
 
   xhr.onload = options.onload || doneFn
   xhr.onerror = options.onerror || failFn
@@ -79,10 +66,10 @@ function XHR (options, callback) {
    * seting up headers
    *
    */
-  var headers = options.headers
+  const headers = options.headers
   if (headers) {
-    for (var name in headers) {
-      var header = headers[name]
+    for (let name in headers) {
+      let header = headers[name]
       if (
         typeof header === 'string' &&
         typeof name === 'string'
@@ -92,7 +79,7 @@ function XHR (options, callback) {
     }
   }
 
-  var data = ''
+  let data = ''
   if (options.jsonData) {
     data = JSON.stringify(options.jsonData)
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')

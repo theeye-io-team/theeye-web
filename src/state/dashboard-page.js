@@ -22,12 +22,20 @@ const GroupedResource = Resource.extend({
   },
   collections: {
     submonitors: ResourceCollection
+  },
+  initialize () {
+    Resource.prototype.initialize.apply(this,arguments)
+
+    this.listenTo(this.submonitors,'change', () => {
+      const monitor = this.submonitors.higherSeverityMonitor()
+      this.state = monitor.state
+    })
   }
 })
 
 const GroupedResourceCollection = ResourceCollection.extend({
   comparator: 'name',
-  // is not being used.
+  // is not being used. this collection works like a subset of the resources collection
   //model (attrs, options) {
   //},
   isModel (model) {
@@ -60,11 +68,8 @@ export default AmpersandState.extend({
   },
   groupResources () {
     const resources = App.state.resources.models
-
-    var groups = applyMonitorsGroupBy(resources, this.monitorsGroupBy)
-    if (!groups) {
-      groups = groupByHost(resources)
-    }
+    // now always group dstat and psaux into host
+    const groups = applyMonitorsGroupBy(groupByHost(resources), this.monitorsGroupBy)
 
     this.groupedResources.reset(groups)
   },
@@ -118,7 +123,8 @@ const parseMonitorsGroupBy = (groupby) => {
 
 /**
  *
- * @summary  given a set of resources attach them to the hosts and turn resources into grouped resource
+ * @summary given a set of resources attach them to the hosts and turn resources into grouped resource.
+ * bind the grouped host resource to the original host model
  *
  * @param {Resource[]} resources
  * @return {GroupedResource[]}
@@ -146,6 +152,9 @@ const groupByHost = (resources) => {
         groupedMonitors.push(grouped)
         // add to hostmonitors
         hostmonitors[hostname].host = grouped
+        resource.on('change',() => {
+          grouped.set( resource.changedAttributes() )
+        })
       }
 
       hostmonitors[hostname].resources.push(resource)
