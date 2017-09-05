@@ -2,11 +2,14 @@
 
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-import JobActions from 'actions/job'
-import SearchActions from 'actions/searchbox'
 import bootbox from 'bootbox'
 import JobOutput from '../job-output'
 import ExecButton from './exec-button'
+import JobActions from 'actions/job'
+import SearchActions from 'actions/searchbox'
+import TaskActions from 'actions/task'
+
+import lang2ext from 'lib/lang2ext'
 
 const TaskButtonsView = View.extend({
   template: require('./buttons.hbs'),
@@ -87,32 +90,49 @@ const TaskButtonsView = View.extend({
   },
 })
 
-//const CollapsedContent = View.extend({
-//  template: `
-//    <div>
-//      <h4>Host: <i data-hook="hostname"></i></h4>
-//      <table class="table table-stripped">
-//        <thead>
-//          <tr data-hook="title-cols">
-//            <th></th>
-//            <th>Description</th>
-//            <th>Hostname</th>
-//            <th>Last Run</th>
-//          </tr>
-//        </thead>
-//        <tbody>
-//          <tr>
-//            <td> <span data-hook="type-icon"></span> </td>
-//            <td> <span data-hook="description"></span> </td>
-//            <td> <span data-hook="hostname"></span> </td>
-//            <td> </td>
-//          </tr>
-//        </tbody>
-//      </table>
-//    </div>
-//    <div class="fields" data-hook="job-result-container"></div>
-//    `
-//})
+const ScriptCollapsedContent = View.extend({
+  template: `
+    <div>
+      <span>This task will be executed on '<i data-hook="hostname"></i>'</span>
+      <h4>Script details</h4>
+      <table class="table table-stripped">
+        <thead>
+          <tr data-hook="title-cols">
+            <th></th>
+            <th>Description</th>
+            <th>Filename</th>
+            <th>Type</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td><span data-hook="script_description"></span></td>
+            <td><span data-hook="script_filename"></span></td>
+            <td><span data-hook="script_language"></span></td>
+            <td><button class="fa fa-edit btn btn-sm btn-primary"></button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    `,
+  derived: {
+    script_language: {
+      deps: ['model.script.extension'],
+      fn () {
+        const ext = this.model.script.extension
+        return lang2ext.langFor[ext]
+      }
+    }
+  },
+  bindings: {
+    'model.hostname': { hook: 'hostname' },
+    'model.script.description': { hook: 'script_description' },
+    'model.script.filename': { hook: 'script_filename' },
+    script_language: { hook: 'script_language' }
+  }
+})
 
 /**
  * tasks rows
@@ -200,6 +220,7 @@ module.exports = View.extend({
   },
   // capture and handle collapse event 
   onClickToggleCollapse (event) {
+    TaskActions.populate(this.model)
     return 
   },
   onClickTrigger (event) {
@@ -220,7 +241,7 @@ module.exports = View.extend({
   render () {
     this.renderWithTemplate()
     this.renderButtons()
-    //this.renderCollapsedContent()
+    this.renderCollapsedContent()
   },
   renderButtons () {
     this.renderSubview(
@@ -240,12 +261,15 @@ module.exports = View.extend({
       button.disabled = true
     }
   },
-  //renderCollapsedContent () {
-  //  this.renderSubview(
-  //    new CollapsedContent({
-  //      model: this.model
-  //    }),
-  //    this.queryByHook('collapse-container-body')
-  //  )
-  //}
+  renderCollapsedContent () {
+    if (this.model.type === 'script') {
+      this.renderSubview(
+        new ScriptCollapsedContent({
+          model: this.model
+        }),
+        this.queryByHook('collapse-container-body')
+      )
+    } else {
+    }
+  }
 })

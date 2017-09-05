@@ -194,7 +194,7 @@ const applyMonitorsGroupBy = (resources, groupBy) => {
   } else if (tags) {
     return groupByTags(resources, tags)
   } else {
-    return null
+    return resources
   }
 }
 

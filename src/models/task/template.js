@@ -1,6 +1,7 @@
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 
+const Script = require('models/file/script').Model
 const Events = require('models/event').Collection
 
 const Schema = AppModel.extend({
@@ -34,16 +35,19 @@ const Schema = AppModel.extend({
 
 const urlRoot = '/api/task-template'
 
-const Script = Schema.extend({
+const ScriptTask = Schema.extend({
   urlRoot: urlRoot,
 	props: {
 		script_id: 'string',
 		script_arguments: 'array',
 		script_runas: 'string',
-	}
+	},
+  children: {
+    script: Script
+  }
 })
 
-const Scraper = Schema.extend({
+const ScraperTask = Schema.extend({
   urlRoot: urlRoot,
   props: {
     url: 'string',
@@ -62,13 +66,13 @@ const Collection = AppCollection.extend({
   url: urlRoot,
   model: function (attrs, options) {
     if ( /ScraperTaskTemplate/.test(attrs._type) === true ) {
-      return new Scraper(attrs,options)
+      return new ScraperTask(attrs,options)
     } else {
-      return new Script(attrs,options)
+      return new ScriptTask(attrs,options)
     }
   }
 })
 
 exports.Collection = Collection
-exports.Scraper = Scraper
-exports.Script = Script
+exports.Scraper = ScraperTask
+exports.Script = ScriptTask
