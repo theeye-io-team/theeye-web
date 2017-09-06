@@ -8,6 +8,7 @@ import ExecButton from './exec-button'
 import JobActions from 'actions/job'
 import SearchActions from 'actions/searchbox'
 import TaskActions from 'actions/task'
+import ScriptActions from 'actions/script'
 
 import lang2ext from 'lib/lang2ext'
 
@@ -90,10 +91,64 @@ const TaskButtonsView = View.extend({
   },
 })
 
+const ScraperCollapsedContent = View.extend({
+  template: `
+    <div>
+      <p>This task will be executed on '<i data-hook="hostname"></i>'</p>
+      <i data-hook="description">no description</i>
+      <h4>Request details</h4>
+      <table class="table table-stripped">
+        <thead>
+          <tr data-hook="title-cols">
+            <th></th>
+            <th>URL</th>
+            <th>Method</th>
+            <th>Timeout</th>
+            <th>Status Code</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td></td>
+            <td><span data-hook="url"></span></td>
+            <td><span data-hook="method"></span></td>
+            <td><span data-hook="timeout"></span></td>
+            <td><span data-hook="status_code"></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  `,
+  derived: {
+    description: {
+      deps: ['model.description'],
+      fn () {
+        return this.model.description || 'no description'
+      }
+    },
+    timeout: {
+      deps: ['model.timeout'],
+      fn () {
+        const time = this.model.timeout
+        return (time / 1000) + ' s'
+      }
+    },
+  },
+  bindings: {
+    'model.hostname': { hook: 'hostname' },
+    'model.url': { hook: 'url' },
+    'model.method': { hook: 'method' },
+    'model.status_code': { hook: 'status_code' },
+    timeout: { hook: 'timeout' },
+    description: { hook: 'description' },
+  }
+})
+
 const ScriptCollapsedContent = View.extend({
   template: `
     <div>
-      <span>This task will be executed on '<i data-hook="hostname"></i>'</span>
+      <p>This task will be executed on '<i data-hook="hostname"></i>'</p>
+      <i data-hook="description">no description</i>
       <h4>Script details</h4>
       <table class="table table-stripped">
         <thead>
@@ -111,12 +166,12 @@ const ScriptCollapsedContent = View.extend({
             <td><span data-hook="script_description"></span></td>
             <td><span data-hook="script_filename"></span></td>
             <td><span data-hook="script_language"></span></td>
-            <td><button class="fa fa-edit btn btn-sm btn-primary"></button></td>
+            <td><button data-hook="edit_script" class="fa fa-edit btn btn-sm btn-primary"></button></td>
           </tr>
         </tbody>
       </table>
     </div>
-    `,
+  `,
   derived: {
     script_language: {
       deps: ['model.script.extension'],
@@ -124,13 +179,39 @@ const ScriptCollapsedContent = View.extend({
         const ext = this.model.script.extension
         return lang2ext.langFor[ext]
       }
+    },
+    description: {
+      deps: ['model.description'],
+      fn () {
+        return this.model.description || 'no description'
+      }
     }
+  },
+  events: {
+    'click button[data-hook=edit_script]': 'onClickEditScript'
+  },
+  onClickEditScript (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    if (!this.model.script || !this.model.script.id) return
+
+    ScriptActions.edit(this.model.script.id)
+
+    return false
   },
   bindings: {
     'model.hostname': { hook: 'hostname' },
     'model.script.description': { hook: 'script_description' },
     'model.script.filename': { hook: 'script_filename' },
-    script_language: { hook: 'script_language' }
+    script_language: { hook: 'script_language' },
+    description: { hook: 'description' },
+    'model.script.id': {
+      hook: 'edit_script',
+      type: 'booleanAttribute',
+      name: 'disabled',
+      invert: true
+    }
   }
 })
 
@@ -155,19 +236,19 @@ module.exports = View.extend({
         return `collapse_container_${this.model.id}`
       }
     },
-    formatted_hostname: {
+    hostname: {
       deps: ['model.hostname'],
       fn () {
         return this.model.hostname || 'Hostname not assigned'
       }
     },
-    formatted_description: {
+    description: {
       deps: ['model.description'],
       fn () {
-        return this.model.description || 'Description is not available'
+        return this.model.description || 'no description'
       }
     },
-    formatted_type: {
+    type: {
       cache: true,
       deps: ['model.type'],
       fn () {
@@ -207,9 +288,9 @@ module.exports = View.extend({
       name: 'class',
       hook: 'header-icon'
     },
-    formatted_type: { hook: 'type' },
-    formatted_description: { hook: 'description' },
-    formatted_hostname: { hook: 'hostname' },
+    type: { hook: 'type' },
+    description: { hook: 'description' },
+    hostname: { hook: 'hostname' },
     show: {
       type: 'toggle'
     }
@@ -262,14 +343,13 @@ module.exports = View.extend({
     }
   },
   renderCollapsedContent () {
+    let content
     if (this.model.type === 'script') {
-      this.renderSubview(
-        new ScriptCollapsedContent({
-          model: this.model
-        }),
-        this.queryByHook('collapse-container-body')
-      )
+      content = new ScriptCollapsedContent({ model: this.model })
     } else {
+      content = new ScraperCollapsedContent({ model: this.model })
     }
+
+    this.renderSubview(content, this.queryByHook('collapse-container-body'))
   }
 })

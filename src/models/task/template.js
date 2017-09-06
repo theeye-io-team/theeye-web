@@ -12,7 +12,7 @@ const Schema = AppModel.extend({
 		public: 'boolean',
 		tags: 'array',
 		name: 'string',
-		description: 'string',
+		description: ['string',false,''],
 		acl: 'array',
 		secret: 'string',
 		grace_time: 'number',

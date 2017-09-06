@@ -3,6 +3,8 @@ import View from 'ampersand-view'
 import assign from 'lodash/assign'
 import MonitorButtonsView from './buttons'
 import FilteredSubcollection from 'ampersand-filtered-subcollection'
+import CollapseContentFactory from './collapse-content'
+import MonitorActions from 'actions/monitor'
 
 const genericTypes = ['scraper','script','host','process','file']
 const iconByType = {
@@ -86,69 +88,6 @@ const getMonitorIconAttributesByType = (type) => {
 
 /**
  *
- * table row items for the collapsed content of the monitor rows.
- *
- */
-//const SubmonitorView = View.extend({
-//  template: require('./submonitor-row.hbs'),
-//  derived: {
-//    isStats: {
-//      deps: ['model.type'],
-//      fn () {
-//        return this.model.type === 'dstat'
-//      }
-//    }
-//  },
-//  bindings: {
-//    'model.type': { hook: 'type' },
-//    'model.state': { hook: 'state' },
-//    'model.last_update_formatted': { hook: 'last_update_formatted' },
-//    'model.stateIcon': {
-//      type: 'class',
-//      hook: 'state-icon'
-//    },
-//    'model.hostname': { hook: 'hostname' },
-//    isStats: {
-//      type: 'toggle',
-//      hook: 'stats-button-container'
-//    }
-//  },
-//  initialize () {
-//    View.prototype.initialize.apply(this,arguments)
-//    this.listenTo(this.model,'change:stateIcon',() => {
-//      this.trigger('change')
-//    })
-//  },
-//  render () {
-//    this.renderWithTemplate()
-//    this.stateIconEl = this.queryByHook('state-icon')
-//    this.$tooltip = $(this.stateIconEl)
-//
-//    this.listenToAndRun(this.model,'change:state',this.updateTooltips)
-//  },
-//  updateTooltips () {
-//    this.stateIconEl.title = this.model.state
-//    this.stateIconEl.attributes.title = this.model.state
-//    this.$tooltip.tooltip('destroy')
-//    this.$tooltip.tooltip()
-//  }
-//})
-
-/**
- * extend submonitors view, change table format and data with template.
- * collapsed content for submonitors group
- */
-//const SubmonitorGroupView = SubmonitorView.extend({
-//  template: require('./submonitor-group-row.hbs'),
-//  bindings: assign({}, SubmonitorView.prototype.bindings, {
-//    'model.name': { hook: 'name' },
-//    'model.hostname': { hook: 'hostname' }
-//  })
-//})
-
-
-/**
- *
  * @summary single monitor row view. trigger events when the monitor state changes
  *
  */
@@ -156,6 +95,14 @@ const MonitorView = View.extend({
   template: require('./monitor-row.hbs'),
   props: {
     show: ['boolean',false,true]
+  },
+  events: {
+    'click .collapsed[data-hook=collapse-toggle]': 'onClickToggleCollapse'
+  },
+  // capture and handle collapse event 
+  onClickToggleCollapse (event) {
+    MonitorActions.populate(this.model.monitor)
+    return 
   },
   derived: {
     collapsedHeaderId: {
@@ -191,6 +138,13 @@ const MonitorView = View.extend({
     this.renderWithTemplate()
     this.renderButtons()
     this.setMonitorIcon()
+    this.renderCollapsedContent()
+  },
+  renderCollapsedContent () {
+    this.renderSubview(
+      new CollapseContentFactory({ model: this.model.monitor }),
+      this.queryByHook('collapse-container-body')
+    )
   },
   setMonitorIcon () {
     var type = this.model.type;
@@ -233,42 +187,23 @@ const HostMonitorGroupView = MonitorView.extend({
   },
   render () {
     this.renderWithTemplate()
-    //this.renderCollapsedTable()
+    this.renderCollapsedContent()
     this.renderButtons()
     this.checkSubmonitorsState()
     this.setMonitorIcon()
   },
-  //renderCollapsedTable () {
-  //  const table = `
-  //    <table class="table table-stripped">
-  //      <thead>
-  //        <tr data-hook="title-cols">
-  //          <th></th>
-  //          <th>Type</th>
-  //          <th>Status</th>
-  //          <th>Last updated</th>
-  //          <th>Last Event</th>
-  //          <th></th>
-  //        </tr>
-  //      </thead>
-  //      <tbody> </tbody>
-  //    </table>
-  //    `
-  //  const container = this.queryByHook('collapse-container-body')
-  //  container.innerHTML = table
-  //  this.renderCollection(
-  //    this.model.submonitors,
-  //    SubmonitorView,
-  //    container.querySelector('tbody')
-  //  )
-  //}
+  renderCollapsedContent () {
+    this.renderSubview(
+      new CollapseContentFactory({ model: this.model.monitor }),
+      this.queryByHook('collapse-container-body')
+    )
+  }
 })
 
 function MonitorViewFactory (options) {
   const model = options.model;
   if (model.type === 'host') {
     return new HostMonitorGroupView(options)
-    //return new MonitorsGroupView(options)
   } else {
     return new MonitorView(options)
   }
@@ -286,18 +221,7 @@ const MonitorsGroupView = MonitorView.extend({
     this.renderWithTemplate()
     this.queryByHook('monitor-icons-block').remove()
 
-    // do not render dstat or psaux monitors
-    //const collection = new FilteredSubcollection(this.model.submonitors, {
-    //  filter (model) {
-    //    return model.type !== 'psaux' && model.type !== 'dstat'
-    //  },
-    //  comparator (model) {
-    //    return model.name
-    //  }
-    //})
-
     this.renderCollection(
-      //collection,
       this.model.submonitors,
       MonitorViewFactory,
       this.queryByHook('collapse-container-body')

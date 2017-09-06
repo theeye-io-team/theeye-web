@@ -1,6 +1,6 @@
 
-export default {
+module.exports = {
   stats (id) {
-    window.location = "/hoststats/" + id
+    window.location = '/hoststats/' + id
   }
 }
