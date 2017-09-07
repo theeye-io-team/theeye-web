@@ -34,6 +34,8 @@ const setStateFromQueryString = (query) => {
 const fetchData = (options) => {
   const { fetchTasks } = options
 
+  App.state.hosts.fetch()
+
   App.state.dashboard.groupedResources.once('reset',() => {
     logger.log('resources synced and grouped resources prepared')
     App.state.dashboard.resourcesDataSynced = true

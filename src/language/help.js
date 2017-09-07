@@ -3,10 +3,10 @@
  * @module En/Help
  */
 module.exports = {
-  looptime: 'Select the check interval in minutes. The shorter the interval, the more CPU and resource usage.',
-  description: 'Use a descriptions to improve teamwork and problem solving.',
-  scripts: 'Which script it has to run?',
-  script_runas: 'Run the selected script using a different username. Use \'%script%\' reserved word to include the script, this will be replaced during execution time with the real script path. Windows users, requires to mimic this action putting the password for the first time.',
+  looptime: 'This is the check interval in minutes. The shorter the interval you choose, the more CPU and resource will consume.',
+  description: 'We recomend to use a descriptions to improve teamwork and problem solving.',
+  scripts: 'Select the script it has to execute.',
+  script_runas: 'Execute the selected script using a different username. You have to use \'%script%\' in the place where the script has to be included. This "keyword" will be replaced during execution with the real script path. This is the perfect place to use "sudo". Windows users, requires to mimic this action putting the password for the first time.',
   script_arguments: 'Put here a comma separated list of arguments.',
   host: 'Where it has to run?',
   tags: 'To help you find your resources quickly.',

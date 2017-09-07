@@ -67,7 +67,9 @@ module.exports = View.extend({
     monitors: 'collection',
     tasks: 'collection',
     renderStats: ['boolean',false,false],
-    renderTasks: ['boolean',false,true]
+    renderTasks: ['boolean',false,true],
+    waitTimeout: ['number',false,null],
+    upandrunningSign: ['boolean',false,true]
   },
   events: {
     'click [data-hook=up-and-running] i':'hideUpAndRunning',
@@ -161,9 +163,11 @@ module.exports = View.extend({
       this.hideUpAndRunning()
     })
 
-    const checkUpAndRunningMonitors = () => {
+    const setUpAndRunningSign = () => {
 
-      if (! (this.monitors.length>0)) return
+      if (!this.upandrunningSign) return // upandrunning is disabled
+      if (this.waitTimeout) return // the user is interacting
+      if (!(this.monitors.length>0)) return
 
       /** move ok monitors to fold container **/
       const foldMonitors = () => {
@@ -209,8 +213,9 @@ module.exports = View.extend({
         clearTimeout(this.waitTimeout)
       }
       this.waitTimeout = setTimeout(() => {
+        this.waitTimeout = null
         if (!App.state.searchbox.search) {
-          checkUpAndRunningMonitors()
+          setUpAndRunningSign()
           monitorsFolding.fold()
         }
       }, 10000) // wait for 10 secs and then fold/unfold again
@@ -222,9 +227,12 @@ module.exports = View.extend({
     })
     // events that can change monitors states
     // check state every time and reorganize view
-    this.listenTo(this.groupedResources,'reset change', checkUpAndRunningMonitors)
-    this.listenTo(this.monitors,'sync change', checkUpAndRunningMonitors)
-    checkUpAndRunningMonitors()
+    //this.listenTo(this.groupedResources,'reset change', () => { setUpAndRunningSign() })
+
+    this.listenToAndRun(this.monitors,'sync change:state',() => {
+      setUpAndRunningSign()
+    })
+    //setUpAndRunningSign()
   },
   /**
    *

@@ -5,6 +5,7 @@ import AppCollection from 'lib/app-collection'
 
 import Schema from 'models/monitor/schema'
 const Template = require('models/monitor/template').Model
+const Host = require('models/host').Model
 
 const urlRoot = '/api/monitor'
 
@@ -20,6 +21,7 @@ const Model = Schema.extend({
   },
   children: {
     template: Template,
+    host: Host
   },
 })
 

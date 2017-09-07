@@ -3,8 +3,8 @@ import View from 'ampersand-view'
 import assign from 'lodash/assign'
 import MonitorButtonsView from './buttons'
 import FilteredSubcollection from 'ampersand-filtered-subcollection'
-import CollapseContentFactory from './collapse-content'
 import MonitorActions from 'actions/monitor'
+const CollapseContentFactory = require('./collapse-content').Factory
 
 const genericTypes = ['scraper','script','host','process','file']
 const iconByType = {
@@ -96,14 +96,6 @@ const MonitorView = View.extend({
   props: {
     show: ['boolean',false,true]
   },
-  events: {
-    'click .collapsed[data-hook=collapse-toggle]': 'onClickToggleCollapse'
-  },
-  // capture and handle collapse event 
-  onClickToggleCollapse (event) {
-    MonitorActions.populate(this.model.monitor)
-    return 
-  },
   derived: {
     collapsedHeaderId: {
       deps: ['model.id'],
@@ -142,9 +134,14 @@ const MonitorView = View.extend({
   },
   renderCollapsedContent () {
     this.renderSubview(
-      new CollapseContentFactory({ model: this.model.monitor }),
+      new CollapseContentFactory({ model: this.model }),
       this.queryByHook('collapse-container-body')
     )
+
+    // capture and handle collapse event 
+    $( this.queryByHook('collapse-container') ).on('show.bs.collapse', () => {
+      MonitorActions.populate(this.model.monitor)
+    })
   },
   setMonitorIcon () {
     var type = this.model.type;
@@ -193,8 +190,23 @@ const HostMonitorGroupView = MonitorView.extend({
     this.setMonitorIcon()
   },
   renderCollapsedContent () {
+
+    // capture and handle collapse event 
+    $( this.queryByHook('collapse-container') ).on('show.bs.collapse', () => {
+      MonitorActions.populate(this.model.monitor)
+    })
+
+    var monitors = this.model.submonitors.models.reduce((acum, item) => {
+      acum[item.type] = item;
+      return acum 
+    }, {})
+
     this.renderSubview(
-      new CollapseContentFactory({ model: this.model.monitor }),
+      new CollapseContentFactory({
+        dstat: monitors['dstat'],
+        psaux: monitors['psaux'],
+        model: this.model
+      }),
       this.queryByHook('collapse-container-body')
     )
   }

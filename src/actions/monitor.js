@@ -20,10 +20,24 @@ const populateMethods = {
   process: null
 }
 
+const callPopulateByType = (monitor) => {
+  const method = populateMethods[monitor.type]
+  if (!method) return
+  method.call(this,monitor)
+}
+
 module.exports = {
   populate (monitor) {
-    const method = populateMethods[monitor.type]
-    if (!method) return
-    method.call(this,monitor)
+    if (!monitor.host.id) {
+      let host = App.state.hosts.get(monitor.host_id)
+      if (!host) {
+        monitor.host.id = monitor.host_id
+        monitor.host.fetch()
+      } else {
+        monitor.host.set( host.serialize() )
+      }
+    }
+
+    callPopulateByType(monitor)
   }
 }

@@ -52,6 +52,12 @@ const stateIcons = {
   }
 }
 
+const stateMessages = {
+  normal: 'Working fine',
+  failure: 'Malfunction detected',
+  updates_stopped: 'Stopped reporting',
+}
+
 const Model = Schema.extend({
   urlRoot: urlRoot,
   props: {
@@ -123,6 +129,12 @@ const Model = Schema.extend({
         return stateIcons.indexOf( this.stateSeverity )
       }
     },
+    stateMessage: {
+      deps: ['state'],
+      fn () {
+        return stateMessages[this.state] || 'Cannot determine'
+      }
+    }
   },
   hasError () {
     return this.state === 'failure' || this.state === 'updates_stopped'

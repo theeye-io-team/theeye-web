@@ -5,7 +5,7 @@ import { Model as Customer } from 'models/customer'
 
 const urlRoot = '/api/host'
 
-export const Model = AppModel.extend({
+const Model = AppModel.extend({
   urlRoot: urlRoot,
 	props: {
     id: 'string',
@@ -22,10 +22,13 @@ export const Model = AppModel.extend({
 	},
   children: {
     customer: Customer,
-  },
+  }
 })
 
-export const Collection = AppCollection.extend({
+const Collection = AppCollection.extend({
   model: Model,
   url: urlRoot
 })
+
+exports.Model = Model
+exports.Collection = Collection
