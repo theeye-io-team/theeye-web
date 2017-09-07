@@ -352,36 +352,42 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
     dstat_state: {
       deps: ['dstat.state'],
       fn () {
+        if (!this.dstat) return
         return this.dstat.stateMessage
       }
     },
     psaux_state: {
       deps: ['psaux.state'],
       fn () {
+        if (!this.psaux) return
         return this.psaux.stateMessage
       }
     },
     cache: {
       deps: ['dstat.monitor.config'],
       fn () {
+        if (!this.dstat) return
         return this.dstat.monitor.config.limit.cache
       }
     },
     cpu: {
       deps: ['dstat.monitor.config'],
       fn () {
+        if (!this.dstat) return
         return this.dstat.monitor.config.limit.cpu
       }
     },
     disk: {
       deps: ['dstat.monitor.config'],
       fn () {
+        if (!this.dstat) return
         return this.dstat.monitor.config.limit.disk
       }
     },
     mem: {
       deps: ['dstat.monitor.config'],
       fn () {
+        if (!this.dstat) return
         return this.dstat.monitor.config.limit.mem
       }
     }
