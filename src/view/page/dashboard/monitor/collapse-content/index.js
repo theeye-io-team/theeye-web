@@ -350,24 +350,28 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
     cache: {
       deps: ['dstat.monitor.config'],
       fn () {
+        if (!this.dstat) return
         return this.dstat.monitor.config.limit.cache
       }
     },
     cpu: {
       deps: ['dstat.monitor.config'],
       fn () {
+        if (!this.dstat) return
         return this.dstat.monitor.config.limit.cpu
       }
     },
     disk: {
       deps: ['dstat.monitor.config'],
       fn () {
+        if (!this.dstat) return
         return this.dstat.monitor.config.limit.disk
       }
     },
     mem: {
       deps: ['dstat.monitor.config'],
       fn () {
+        if (!this.dstat) return
         return this.dstat.monitor.config.limit.mem
       }
     }
