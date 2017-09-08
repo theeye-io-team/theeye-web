@@ -60,7 +60,7 @@ export default AmpersandState.extend({
   props: {
     resourcesDataSynced: ['boolean',false,false],
     tasksDataSynced: ['boolean',false,false],
-    monitorsGroupBy: ['object',false, () => { return { prop: 'type' } }]
+    monitorsGroupBy: ['object',false, () => { return { prop: 'name' } }]
   },
   collections: {
     // representation of the current groups being display

@@ -327,8 +327,6 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
     </div>
   `,
   bindings: Object.assign({}, bindings, {
-    dstat_state: { hook: 'dstat_state' },
-    psaux_state: { hook: 'psaux_state' },
     'dstat.stateIcon': { 
       hook: 'dstat_state',
       type: 'attribute',
@@ -349,18 +347,6 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
     psaux: 'state'
   },
   derived: {
-    dstat_state: {
-      deps: ['dstat.state'],
-      fn () {
-        return this.dstat.stateMessage
-      }
-    },
-    psaux_state: {
-      deps: ['psaux.state'],
-      fn () {
-        return this.psaux.stateMessage
-      }
-    },
     cache: {
       deps: ['dstat.monitor.config'],
       fn () {
