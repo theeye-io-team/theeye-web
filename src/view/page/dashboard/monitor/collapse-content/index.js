@@ -337,50 +337,39 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
       type: 'attribute',
       name: 'class'
     },
-    cache: { hook: 'cache' },
-    mem: { hook: 'mem' },
-    cpu: { hook: 'cpu' },
-    disk: { hook: 'disk' }
+    dstat_cache: { hook: 'cache' },
+    dstat_mem: { hook: 'mem' },
+    dstat_cpu: { hook: 'cpu' },
+    dstat_disk: { hook: 'disk' }
   }),
   props: {
     dstat: 'state',
-    psaux: 'state'
-  },
-  derived: {
-    cache: {
-      deps: ['dstat.monitor.config'],
-      fn () {
-        if (!this.dstat) return
-        return this.dstat.monitor.config.limit.cache
-      }
-    },
-    cpu: {
-      deps: ['dstat.monitor.config'],
-      fn () {
-        if (!this.dstat) return
-        return this.dstat.monitor.config.limit.cpu
-      }
-    },
-    disk: {
-      deps: ['dstat.monitor.config'],
-      fn () {
-        if (!this.dstat) return
-        return this.dstat.monitor.config.limit.disk
-      }
-    },
-    mem: {
-      deps: ['dstat.monitor.config'],
-      fn () {
-        if (!this.dstat) return
-        return this.dstat.monitor.config.limit.mem
-      }
-    }
+    psaux: 'state',
+    dstat_cache: 'string',
+    dstat_mem: 'string',
+    dstat_cpu: 'string',
+    dstat_disk: 'string'
   },
   initialize () {
     GenericCollapsedContent.prototype.initialize.apply(this,arguments)
     this.listenToAndRun(this.monitor,'change:config',this.updateState)
+
+    if (this.dstat && this.dstat.monitor) {
+      this.listenToAndRun(this.dstat.monitor,'change:config',this.updateDstatState)
+    }
   },
   updateState () {
+    return
+  },
+  updateDstatState () {
+    const config = this.dstat.monitor.config
+
+    if (!config||!config.limit) return
+
+    this.dstat_cache = String(config.limit.cache)
+    this.dstat_cpu = String(config.limit.cpu)
+    this.dstat_mem = String(config.limit.mem)
+    this.dstat_disk = String(config.limit.disk)
   }
 })
 
