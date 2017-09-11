@@ -86,9 +86,10 @@ module.exports = View.extend({
         if (this.groupedResources.length>0) {
           this.renderMonitorsPanel()
         } else {
-          this.renderSubview(
-            new MonitoringOboardingPanel(),
-            this.queryByHook('monitors-container')
+          this.registerSubview(
+            new MonitoringOboardingPanel({
+              el: this.queryByHook('monitors-container')
+            }).render()
           )
         }
         this.stopListening(App.state.dashboard,'change:resourcesDataSynced')
@@ -101,9 +102,10 @@ module.exports = View.extend({
           if (this.tasks.length>0) {
             this.renderTasksPanel()
           } else {
-            this.renderSubview(
-              new TasksOboardingPanel(),
-              this.queryByHook('tasks-container')
+            this.registerSubview(
+              new TasksOboardingPanel({
+                el: this.queryByHook('tasks-container')
+              }).render()
             )
           }
           this.stopListening(App.state.dashboard,'change:tasksDataSynced')

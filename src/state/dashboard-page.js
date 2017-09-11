@@ -135,7 +135,7 @@ const groupByHost = (resources) => {
   const hostmonitors = {}
 
   if (!Array.isArray(resources) || resources.length === 0) {
-    return
+    return resources
   }
 
   resources.forEach(resource => {
