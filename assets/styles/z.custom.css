@@ -85,7 +85,6 @@ button {outline:none}
 /*.navbar {max-height:100px;}*/
 .navbar {margin-bottom:0px;}
 .navbar-header {width:100%;}
-.navbar-brand>img {height:32px;}
 .navbar-inverse a {color:#38688a;text-shadow:0 1px 0 rgba(255,255,255,0.8)}
 .navbar-inverse .navbar-toggle .icon-bar {background-color:#144e77}
 .navbar-inverse .navbar-toggle:hover .icon-bar {background-color:#fff}
@@ -93,6 +92,7 @@ button {outline:none}
 .navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover {background-color:#144e77}
 .navbar-collapse {padding:0;}
 .navbar-inverse {background:#eee;border-bottom:3px solid #d88e47}
+.navbar-brand>img {height:32px;}
 .navbar-brand {height:auto;padding:0px 15px;border-right:1px solid #7c98ac;margin: 10px 0}
 .login .navbar-brand {border:none}
 .navbar-right, .navbar-right li {margin:0;padding:0}

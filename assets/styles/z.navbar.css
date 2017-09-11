@@ -44,8 +44,7 @@
 
 /* header styles */
 .navbar-eyemenu {background:#fff}
-.navbar-eyemenu .eyemenu-panel-launcher {color:#003166;font-size:24px;}
-.navbar-eyemenu .eyemenu-panel-launcher i {cursor:pointer;}
+.navbar-eyemenu .eyemenu-panel-launcher {cursor:pointer;color:#003166;font-size:24px;}
 .navbar-eyemenu .eyemenu-panel-innerlauncher {
   height:54px;
   background: #192435;
@@ -60,8 +59,10 @@
   padding-left: 15px;
   padding-bottom: 10px;
 }
+.navbar-eyemenu .eyemenu-panel-innerlauncher i { color: #fff; padding-left:8px; }
 
-.navbar-inverse.navbar-eyemenu .navbar-brand {border:none}
+.navbar-inverse.navbar-eyemenu .navbar-brand {border:none;}
+
 .navbar-eyemenu input::-webkit-input-placeholder {color: #005580}
 .navbar-eyemenu input::-moz-placeholder {color: #005580}
 .navbar-eyemenu input:-ms-input-placeholder {color: #005580}
@@ -73,7 +74,7 @@
 
 /* responsiveness */
 @media (max-width: 767px) { 
-	.navbar-eyemenu .eyemenu-panel-launcher {margin:10px 10px 0 0;}
+	.navbar-eyemenu .eyemenu-panel-launcher {margin:10px; padding-right:15px;padding-left:8px;}
 	.navbar-eyemenu .eyemenu-panel-launcher.eyemenu-panel-innerlauncher {margin:0;}
 
 	.navbar-eyemenu .eyemenu-search-panel-mobile {position:fixed;top:0;left:0;right:0;background:#fff;height:52px;}
@@ -88,7 +89,7 @@
 
 @media (min-width: 768px) {
 	.eyemenu-panel {top:76px}
-	.navbar-eyemenu .eyemenu-panel-launcher {padding:19px 15px;}
+	.navbar-eyemenu .eyemenu-panel-launcher {padding:19px 15px; padding-left:29px;}
 	.navbar-eyemenu .hidden-sm {display:none!important}
 	.navbar-eyemenu .eyemenu-search-panel-clear {right:15%;top:12px}
 	.eyemenu-results-panel {width:85%}

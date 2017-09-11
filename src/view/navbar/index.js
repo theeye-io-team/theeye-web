@@ -100,7 +100,7 @@ export default View.extend({
     }]
   },
   events: {
-    'click i[data-hook=menu-toggle]': function (event) {
+    'click [data-hook=menu-toggle]': function (event) {
       event.preventDefault()
       event.stopPropagation()
 
