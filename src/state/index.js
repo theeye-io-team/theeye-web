@@ -62,6 +62,22 @@ module.exports = function (webType) {
     }
   })
 
+  const ActivateState = State.extend({
+    props: {
+      username: 'string',
+      email: 'string',
+      invitation_token: 'string',
+      finalStep: ['boolean',false,false],
+      errorMessage: ['string',false,'']
+    }
+  })
+
+  const RegisterState = State.extend({
+    props: {
+      result: ['boolean',false,false]
+    }
+  })
+
   const credentials = new AmpersandCollection([
     { id: 'viewer', name: 'viewer', description: 'Viewer' },
     { id: 'owner', name: 'owner', description: 'Owner' },
@@ -80,6 +96,8 @@ module.exports = function (webType) {
     hostGroupPage: new HostGroupPageState(),
     loader: new LoaderState(),
     notify: new NotifyState(),
+    activate: new ActivateState(),
+    register: new RegisterState(),
     schedules: new Schedules(),
     users: new Users([]),
     webhooks: new Webhooks([]),

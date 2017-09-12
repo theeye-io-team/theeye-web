@@ -181,6 +181,18 @@ hr {border:none;border-bottom:1px dotted #fff}
 .loginBox input {color:#304269;height:50px; }
 .loginBox button {color:#fff;background: #d78d47;background: -moz-linear-gradient(top,  #d78d47 0%, #af733a 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d78d47), color-stop(100%,#af733a));background: -webkit-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: -o-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: -ms-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: linear-gradient(to bottom,  #d78d47 0%,#af733a 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d78d47', endColorstr='#af733a',GradientType=0 )}
 .loginBox .or span {background:#415c76;padding:10px;position:absolute;top:-22px;left:48%}
+.loginBox section.license a:hover { color:#ee8e40; }
+.loginBox .login-form form label { width: 100%; }
+.loginBox .forgot-form form label { width: 100%; }
+.loginBox .register-form form label { width: 100%; }
+.loginBox .activate-form form label { width: 100%; }
+.loginBox .customer-form form label { width: 100%; }
+.loginBox .register-link { margin-top: 10px; }
+.loginBox .register-link a { color:#fff; }
+.loginBox .login-toggle { cursor:pointer; }
+.loginBox .result-container h1 {    font-size: 27px; color: #d78d47;}
+.loginBox .result-container h2 {    font-size: 22px; color: #fff;}
+
 .sign {padding:14px 0;color:#fff;border:1px solid #fff;border-radius:4px;width:100%;display:inline-block;font-size:18px;margin-bottom:6px}
 .sign i {font-size:24px;margin-right:6px}
 .sign:hover {color:#fff}
@@ -488,8 +500,6 @@ input[type=checkbox].form-control {
   }
 }
 
-.loginBox section.license a:hover { color:#ee8e40; }
-
 .main-container {
   /*position:absolute; width: 100%;*/
   padding-bottom: 50px;
@@ -542,7 +552,7 @@ input[type=checkbox].form-control {
 /**
  *
  *
- *  new styles stats 
+ *  new styles stats
  *
  *
  *
@@ -845,8 +855,8 @@ a.flowchart-icon {
 /*.admin-container .table-header.admin div.panel-item.icons.dropdown {right:5px;}*/
 .admin-container .table-header.admin div.panel-item.icons.dropdown ul.dropdown-menu {left:inherit;right:0;width:40px;min-width:inherit;background:none;margin:0;padding:0;}
 .admin-container.dashboard .panel-heading .panel-item.name {padding-right:5px;}
-.admin-container.dashboard .panel-item.icons li {display:block;} 
-.admin-container.dashboard .panel-item.icons li .btn {padding:5px 10px; width:36px;} 
+.admin-container.dashboard .panel-item.icons li {display:block;}
+.admin-container.dashboard .panel-item.icons li .btn {padding:5px 10px; width:36px;}
 .admin-container.dashboard .panel-item.state-icon { text-align:right; width:30px; float:right; padding:5px; font-size:20px; }
 .admin-container.dashboard .panel-item.icons .dropdown-menu>li>a {color:inherit;background-color:inherit;}
 .admin-container.dashboard .panel-item.icons .dropdown-menu>li>a:hover {background-image: none;background-color: #286090;}
@@ -888,7 +898,7 @@ a.flowchart-icon {
   min-width: 150px;
 }
 
-.col-nopadding { 
+.col-nopadding {
   padding: 0 !important;
   margin: 0 !important;
 }

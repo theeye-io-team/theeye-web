@@ -7,27 +7,28 @@
         <div class="alert alert-danger"><%= __(errors[0])  %></div>
       <% } %>
       <!-- LOGIN FORM -->
-      <form role="form" action="/auth/local/invite" method="post">
+      <form id="inviteForm">
         <div class="form-group">
           <label>Email</label>
-          <input type="text" class="form-control" name="email" placeholder="Email">
+          <input type="email" class="form-control" name="email" placeholder="Email" required>
         </div>
         <div class="form-group">
           <label>Credential</label>
           <div>
-            <select id="credential" class="form-control" name="credential">
+            <select id="credential" class="form-control" name="credential" required>
               <option value=""> choose credential </option>
               <option value="viewer"> Viewer </option>
               <option value="user"> User </option>
               <option value="admin"> Admin </option>
-              <option value="owner"> Owner </option>
             </select>
           </div>
         </div>
-        <input type="hidden" value="<%= req.session.customer %>" name="customer" />
+        <input type="hidden" value="<%= req.session.customer %>" name="customer" required/>
         <button type="submit" class="btn btn-warning btn-lg">Invite</button>
       </form>
       <hr>
     </div>
   </div>
 </body>
+
+<% block('scripts', '<script> $(document).ready(function(){ new InvitePageInit(); });</script>') %>

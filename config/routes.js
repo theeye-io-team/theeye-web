@@ -15,7 +15,7 @@ module.exports.routes = {
   },
   '/mantenimiento': { view: 'mantenimiento' },
   //AuthController routes
-  //'get /register' : 'AuthController.register',
+  'get    /register' : 'AuthController.register',
   'get    /login' : 'AuthController.login',
   'get    /logout' : 'AuthController.logout',
   'get    /invite' : 'AuthController.invite',
@@ -24,9 +24,14 @@ module.exports.routes = {
   'get    /disconnect/:provider' : 'AuthController.disconnect',
   'get    /auth/:provider' : 'AuthController.provider',
   'get    /auth/:provider/callback' : 'AuthController.callback',
+  'get    /checkusernameactivation'  : 'AuthController.checkUsernameActivation',
   'post   /auth/local/update' : 'AuthController.updateLocalPassport',
   'post   /auth/local' : 'AuthController.callback',
+  'post   /auth/locallogin' : 'AuthController.localLogin',
+  'post   /auth/inviteuser' : 'AuthController.inviteUser',
   'post   /auth/local/:action' : 'AuthController.callback',
+  'post   /auth/activateuser' : 'AuthController.activateUser',
+  'post   /registeruser'  : 'AuthController.registeruser',
   // UserController routes
   'post   /setcustomer/:customer' : 'UserController.setcustomer',
   'get    /admin/user' : 'UserController.index',

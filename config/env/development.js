@@ -25,7 +25,7 @@ module.exports = {
     db:'theeye'
   },
   //
-  // REDIS 
+  // REDIS
   //
   //session: {
   //  adapter: 'connect-redis',

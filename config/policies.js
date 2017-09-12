@@ -2,8 +2,8 @@ module.exports.policies = {
   '/':true,
   '*':[
     'sessionAuth',
-    'passport', 
-    'isAllowed', 
+    'passport',
+    'isAllowed',
     'hasCustomer',
     'supervisorInitializer'
   ],
@@ -11,6 +11,8 @@ module.exports.policies = {
     '*':['noSession'],
   },
   AuthController: {
+    'registeruser':['noSession'],
+    'checkUsernameActivation':['noSession'],
     '*':'passport',
   },
   ContactController: {

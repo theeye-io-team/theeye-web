@@ -145,16 +145,17 @@ function getActivationToken (string){
  */
 exports.inviteToCustomer = function (req, res, next) {
   var email = req.param('email');
+  var username = req.param('username')||req.param('email');
   var customers = req.param('customer') ? [req.param('customer')] : req.param('customers');
   var credential = req.param('credential');
 
   if(!email) {
-    req.flash('error', 'Error.Passport.Email.Missing');
+    debug('No email was entered.');
     return next('No email was entered.');
   }
 
   if(customers.length === 0) {
-    req.flash('error', 'Error.Passport.Customers.Missing');
+    debug('No customers was entered.');
     return next('No customers was entered.');
   }
 
@@ -172,7 +173,7 @@ exports.inviteToCustomer = function (req, res, next) {
       User.create({
         enabled: false,
         invitation_token: token,
-        username: email,
+        username: username,
         email: email,
         customers: customers,
         credential: credential
@@ -201,11 +202,11 @@ exports.inviteToCustomer = function (req, res, next) {
 
       //If the user exists and have perms for the selected customers dont send the activation email
       if(user.customers.length == customers.length) {
-        req.flash('error', 'Error.Passport.User.Exists.Customer');
+        debug("The user already exists and have permissions for this customer");
         //text is error
         //error returning behaviour is somewhat broken
         //if i send here a new Error('message'), front end receives only {}
-        return next("The user allready exists and have permissions for this customer");
+        return next("The user already exists and have permissions for this customer");
       }
 
       User.update({ id: user.id },{ customers: customers },
@@ -230,69 +231,38 @@ exports.inviteToCustomer = function (req, res, next) {
  * @param {Object}   res
  * @param {Function} next
  */
-exports.activate = function (req, res, next) {
-  var username = req.param('username')
-  , password = req.param('password')
-  , invitation_token = req.param('invitation_token');
-
-  if (!username) {
-    debug('No username was entered');
-    req.flash('error', 'Error.Passport.Username.Missing');
-    return next(new Error('No username was entered.'));
-  }
-
-  if (!invitation_token) {
-    debug('No invitation_token was entered');
-    req.flash('error', 'Error.Passport.Password.Missing');
-    return next(new Error('No invitation_token was entered.'));
-  }
-
-  if (!password) {
-    debug('No password was entered');
-    req.flash('error', 'Error.Passport.Password.Missing');
-    return next(new Error('No password was entered.'));
-  }
-
-  User.findOne({
-    invitation_token: invitation_token
-  }, function(err, user){
+exports.activate = function (user, password, customername, next) {
+  debug("Creating user %s local passport", user.id);
+  Passport.create({
+    protocol : 'local',
+    password : password,
+    user : user.id
+  }, function (err, passport) {
     if(err) {
       debug(err);
       return next(err);
     }
 
-    if(!user) {
-      debug('User not found');
-      return next(new Error("No user found"));
+    debug("Enabling user %s", user.id);
+
+    var data = {
+      username: user.username,
+      password: password,
+      enabled: true,
+      invitation_token: ''
     }
 
-    debug("Creating user %s local passport", user.id);
-    Passport.create({
-      protocol : 'local',
-      password : password,
-      user : user.id
-    }, function (err, passport) {
+    if (customername && user.customers.length == 0)
+      data.customers = [customername]
+
+    User.update({
+      invitation_token : user.invitation_token
+    }, data, function (err, users) {
       if(err) {
         debug(err);
         return next(err);
       }
-
-      debug("Enabling user %s", user.id);
-
-      User.update({
-        invitation_token : invitation_token
-      }, {
-        username: username,
-        password: password,
-        enabled: true,
-        invitation_token: ''
-      }, function (err, users) {
-        if(err) {
-          debug(err);
-          return next(err);
-        }
-        return next(null, users[0]);
-      });
+      return next(null, users[0]);
     });
   });
 }
@@ -418,7 +388,6 @@ exports.login = function (req, identifier, password, next) {
   //en login.ejs como paleativo, pero cuando se manda sin password alguien
   //lo esta cortando en el camino (passport?)
   if(!password) {
-    console.log('//////////////////');
     req.flash('error', 'Error.Passport.Password.Empty');
     return next(null, false);
   }

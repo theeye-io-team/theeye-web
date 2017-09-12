@@ -48,7 +48,7 @@ App.extend({
 
     this.bindDocumentEvents()
 
-    this.listenTo(App.state.session, 'change:ready', () => {
+    this.listenToAndRun(App.state.session, 'change:ready', () => {
       if (App.state.session.ready) {
         App.state.loader.visible = false
         const elem = document.querySelector('body #root-container')

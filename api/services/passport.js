@@ -4,6 +4,7 @@
 var path     = require('path')
   , url      = require('url')
   , passport = require('passport')
+  , crypto    = require('crypto')
   , mailer 	 = require("./mailer")
   , TheEyeClient = require('../libs/theeye-client')
   ;
@@ -258,16 +259,27 @@ passport.sendUserActivationEmail = function (inviter, invitee, next){
     invitee: invitee,
     activationLink: activationLink
   };
+  if (data.inviter == null) {
+    mailer.sendRegistrationMail(data, function(err) {
+      if(err) {
+        sails.log.debug('error sending registration email to "%s"', invitee.email);
+        return next(err);
+      }
 
-  mailer.sendActivationMail(data, function(err) {
-    if(err) {
-     sails.log.debug('error sending invitation email to "%s"', invitee.email);
-      return next(err);
-    }
+      sails.log.debug('invitation email sent');
+      return next(null);
+    });
+  } else {
+    mailer.sendActivationMail(data, function(err) {
+      if(err) {
+        sails.log.debug('error sending invitation email to "%s"', invitee.email);
+        return next(err);
+      }
 
-   sails.log.debug('invitation email sent');
-    return next(null);
-  });
+      sails.log.debug('invitation email sent');
+      return next(null);
+    });
+  }
 }
 
 passport.inviteUser = function(req, res, next) {
@@ -277,23 +289,66 @@ passport.inviteUser = function(req, res, next) {
     req, res, function(err, invitee) {
       if(err) return next(err);
 
-      if( invitee.enabled === false ){
+      if( invitee.enabled === false ) {
         passport.sendUserActivationEmail( req.user, invitee, error => {
-          req.flash('error', 'Error.Passport.User.Invite');
-          next(error, invitee)
-        });
-      } else {
-        mailer.sendNewCustomerEMail(invitee, error => {
-          if(error) {
-           sails.log.debug('Error sending email to ' + invitee.email);
-            req.flash('error', 'Error.Passport.User.Invite');
-          }
-
           return next(error, invitee)
         });
+      } else {
+        return next(new Error('User is already active.'));
       }
     });
 };
+
+passport.registerUser = function(req, res, next) {
+  var supervisor = req.supervisor;
+  var email = req.param('email');
+  var username = req.param('username');
+
+  return createRegisterUser(email, username, function(err, invitee) {
+    if(err) return next(err);
+    passport.sendUserActivationEmail( req.user, invitee, error => {
+      next(error, invitee)
+    });
+  });
+};
+
+function createRegisterUser (email, username, next) {
+  var customers = [];
+  var credential = 'owner';
+
+  var token = getActivationToken(email);
+  User.create({
+    enabled: false,
+    invitation_token: token,
+    username: username,
+    email: email,
+    customers: customers,
+    credential: credential
+  }, function (err, user) {
+    if (err) {
+      if (err.code === 'E_VALIDATION') {
+        debug('////////////////// ERROR.DB.VALIDATION ///////////////////');
+        if (err.invalidAttributes.email) {
+          return next(new Error('Invalid email.'));
+        }else if (err.invalidAttributes.username) {
+          return next(new Error('Invalid username.'));
+        } else {
+          return next(err);
+        }
+      }
+      debug(err);
+      return next(err);
+    } else {
+      return next(null, user);
+    }
+  });
+}
+
+function getActivationToken (string){
+  var seed = string + Date.now();
+  var token = crypto.createHmac("sha1",seed).digest("hex");
+  return token;
+}
 
 function activateTheeyeUser (user, next) {
   next||(next=function(){});
@@ -315,7 +370,8 @@ function activateTheeyeUser (user, next) {
       'email':user.email,
       'customers':user.customers,
       'credential':user.credential,
-      'enabled':true
+      'enabled':true,
+      'username': user.username||user.email
     };
 
    sails.log.debug("Creating user %s theeye passport", user.id);
@@ -326,26 +382,155 @@ function activateTheeyeUser (user, next) {
   });
 }
 
-passport.activateUser = function(req, res, next){
-  this.protocols.local.activate(req,res,function(err, user){
+passport.activateUser = function(req, res, next) {
+  var username = req.param('username')
+  , password = req.param('password')
+  , invitation_token = req.param('invitation_token')
+  , customername = req.param('customername');
+
+  if (!username) {
+    sails.log.error('No username was entered');
+    return next(new Error('No username was entered.'));
+  }
+
+  if (!invitation_token) {
+    sails.log.error('No invitation_token was entered');
+    return next(new Error('No invitation_token was entered.'));
+  }
+
+  if (!password) {
+    sails.log.error('No password was entered');
+    return next(new Error('No password was entered.'));
+  }
+
+  User.findOne({
+    invitation_token: invitation_token
+  }, function(err, user){
     if(err) {
-     sails.log.error('Error activating user on local protocol');
-     sails.log.error(err);
+      sails.log.error(err);
       return next(err);
     }
-
     if(!user) {
       var error = new Error('Cannot activate, user does not exist');
      sails.log.error(error);
       return next(error);
     }
 
-    activateTheeyeUser(user,function(error){
-      next(error, user);
-    });
+    user.username = username;
+
+    verifyUsername(user, function(error) {
+      if (error) {
+        sails.log.error('Verify username error');
+        return next(error)
+      }
+
+      if(user.credential == 'owner') {
+        if (!customername) {
+          sails.log.error('No customername was entered');
+          return next(new Error('No customername was entered.'));
+        }
+
+        createTheeyeUserAndCustomer(user, customername, function(error, profile) {
+          if (error) {
+            return next(error);
+          }
+          passport.protocols.local.activate(user, password, customername, function(err, updatedUser){
+            if(err) {
+              sails.log.error('Error activating user on local protocol');
+              sails.log.error(err);
+              return next(err);
+            }
+            next(null, updatedUser);
+          });
+        });
+      } else {
+        activateTheeyeUser(user, function(error, profile){
+          if (error) {
+            return next(error);
+          }
+          passport.protocols.local.activate(user, password, null, function(err, updatedUser){
+            if(err) {
+              sails.log.error('Error activating user on local protocol');
+              sails.log.error(err);
+              return next(err);
+            }
+            next(null, updatedUser);
+          });
+        });
+      }
+    })
   });
 };
 
+function verifyUsername(user, next) {
+  User.findOne({
+    username: user.username
+  }, function(err, prevUser){
+    if(err) {
+      sails.log.error(err);
+      return next(err);
+    }
+    if(!prevUser) {
+      return next(null);
+    } else {
+      if(prevUser.invitation_token == user.invitation_token)
+        return next(null);
+    }
+    return next({statusCode: 400, body: {error: 'Username already in use.'}});
+  });
+}
+
+function createTheeyeUserAndCustomer (user, customername, next) {
+  next||(next=function(){});
+
+  var client = new TheEyeClient({
+    'client_secret': sails.config.supervisor.client_secret,
+    'client_id': sails.config.supervisor.client_id,
+    'api_url': sails.config.supervisor.url
+  });
+
+  client.refreshToken(function(err,token){
+    if(err){
+     sails.log.debug(err);
+      return next(err);
+    }
+
+    var data = {
+      'email': user.email,
+      'username': user.username,
+      'credential': user.credential,
+      'enabled': true,
+      'customername': customername
+    };
+
+    sails.log.debug("Creating user %s theeye passport", user.id);
+
+    client.create({
+      route:'/register',
+      body: data,
+      success: function(profile) {
+        Passport.create({
+          protocol: 'theeye',
+          provider: 'theeye',
+          user: user.id ,
+          token: profile.token,
+          api_user: profile.id,
+          profile: profile
+        }, function (err, passport) {
+          if (err) {
+            sails.log.error(err);
+            return next(err);
+          }
+          return next(null, profile);
+        });
+      },
+      failure: function(err) {
+        sails.log.error(err);
+        return next(err)
+      }
+    });
+  });
+}
 
 function createTheeyeUser (user, input, supervisor, next) {
  sails.log.debug('creating theeye user');
@@ -355,7 +540,8 @@ function createTheeyeUser (user, input, supervisor, next) {
     'credential': input.credential,
     'client_id': input.client_id||null, // supervisor set a random one
     'client_secret': input.client_secret||null, // supervisor set a random one
-    'enabled': input.enabled||true
+    'enabled': input.enabled||true,
+    'username': input.username||input.email
   };
 
   passport
@@ -389,7 +575,8 @@ passport.createmissingtheeyepassports = function(req, res, next) {
             'email':user.email,
             'customers':user.customers,
             'credential':user.credential,
-            'enabled':true
+            'enabled':true,
+            'username': user.username||user.email
           };
           createTheeyeUser(user, data, req.supervisor, function(error, profile) {
             if(error) sails.log.error('user %s passport create error', user.username);
@@ -444,11 +631,6 @@ passport.callback = function (req, res, next) {
     }
     if (action === 'invite' && req.user) {
       return this.inviteUser(req, res, next);
-    }
-    if (action === 'activate') {
-      //force user logout if logged in
-      if(req.user) req.logout();
-      return this.activateUser(req, res, next);
     }
     else if (action === 'connect' && req.user) {
       return this.protocols.local.connect(req, res, next);

@@ -8,6 +8,8 @@ import { Model as Customer } from 'models/customer'
 
 const log = require('debug')('eye:state:session')
 
+const publicpaths = ['/login', '/activate', '/register']
+
 export default AmpersandState.extend({
   props: {
     ready: 'boolean'
@@ -17,8 +19,13 @@ export default AmpersandState.extend({
     user: User
   },
   initialize () {
-    const uid = Cookies.getJSON('theeye').user
+    // hack until full SPA compatibility
+    if ( publicpaths.indexOf(window.location.pathname) !== -1 ) {
+      this.ready = true
+      return
+    }
 
+    const uid = Cookies.getJSON('theeye').user
     const ready = after(2, () => { this.ready = true })
 
     XHR({

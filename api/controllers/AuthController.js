@@ -26,26 +26,27 @@ var AuthController = {
    * @param {Object} res
    */
   login: function (req, res) {
-    if(req.user) return res.redirect('/events');
+    if (req.user) return res.redirect('/events');
 
-    var strategies = sails.config.passport;
-    var providers  = {};
+    return res.view('spa/index',{ layout:'layout-ampersand' });
+    //var strategies = sails.config.passport;
+    //var providers  = {};
 
-    // Get a list of available providers for use in your templates.
-    Object.keys(strategies).forEach(function (key) {
-      if (key === 'local') return;
+    //// Get a list of available providers for use in your templates.
+    //Object.keys(strategies).forEach(function (key) {
+    //  if (key === 'local') return;
 
-      providers[key] = {
-        name: strategies[key].name,
-        slug: key
-      };
-    });
+    //  providers[key] = {
+    //    name: strategies[key].name,
+    //    slug: key
+    //  };
+    //});
 
-    // Render the `auth/login.ext` view
-    res.view({
-      providers: providers,
-      errors: req.flash('error')
-    });
+    //// Render the `auth/login.ext` view
+    //res.view({
+    //  providers: providers,
+    //  errors: req.flash('error')
+    //});
   },
   /**
    * Log out a user and return them to the homepage
@@ -84,9 +85,9 @@ var AuthController = {
    * @param {Object} res
    */
   register: function (req, res) {
-    res.view({
-      errors: req.flash('error')
-    });
+    if (req.user) return res.redirect('/events');
+
+    return res.view('spa/index',{ layout:'layout-ampersand' });
   },
   /**
    * Render the invite page
@@ -115,21 +116,24 @@ var AuthController = {
    * @param {Object} req
    * @param {Object} res
    */
-  activate: function (req, res) {
-    var token = req.query.token;
-    User.findOne({invitation_token: token})
-    .exec(function(err, user) {
-      if(err || !user) {
-        res.redirect('/');
-      } else {
-        res.view({
-          errors: req.flash('error'),
-          token: token,
-          user: user
-        });
-      }
-    });
-  },
+   activate: function (req, res) {
+     if (req.user) return res.redirect('/events');
+     var token = req.query.token;
+     User.findOne({invitation_token: token})
+     .exec(function(err, user) {
+       if(err || !user) {
+         res.redirect('/login');
+       } else {
+         res.cookie(
+           'activate', JSON.stringify({
+             token: token,
+             user: user
+           })
+         );
+         return res.view('spa/index',{ layout:'layout-ampersand' });
+       }
+     });
+   },
   /**
    * Render the update password page
    *
@@ -181,6 +185,10 @@ var AuthController = {
       // We do return a generic error and the original request body.
       var flashError = req.flash('error')[0];
 
+      if(err) {
+        return res.send(err.statusCode||500, err)
+      }
+
       if (err && !flashError ) {
         req.flash('error', 'Error.Passport.Generic');
       } else if (flashError) {
@@ -200,9 +208,6 @@ var AuthController = {
         case 'invite':
           res.redirect('/invite');
           break;
-        case 'activate':
-          res.redirect('/activate?token='+encodeURIComponent(req.query.token));
-          break;
         case 'disconnect':
           res.redirect('back');
           break;
@@ -215,7 +220,7 @@ var AuthController = {
       if(err){
         sails.log.error('fatal error');
         sails.log.error(err);
-        return tryAgain();
+        return tryAgain(err);
       }
 
       if(!user){
@@ -263,6 +268,104 @@ var AuthController = {
   //Link Between Accounts.
   connect: function (req, res) {
     passport.endpoint(req, res);
+  },
+  /**
+   * @param {Object} req
+   * @param {Object} res
+   */
+  localLogin: function (req, res) {
+    passport.callback(req, res, function (err, user){
+      if(err){
+        return res.send(500, err);
+      }
+
+      if(!user){
+        return res.send(400, 'Invalid credentials');
+      }
+
+      sails.log.debug('passport authenticated');
+
+      req.login(user, function (err) {
+        if (err) {
+          debug('LOGIN ERROR:');
+          debug(err);
+          return res.send(500, err);
+        } else {
+          sails.log.debug('user ready!');
+          return res.send(200);
+        }
+      });
+    });
+  },
+  registeruser: function(req, res) {
+    var params = req.params.all();
+    if(!params.username) return res.send(400, 'You must select a username');
+    if(!params.email) return res.send(400, 'You must select an email');
+    User.findOne({
+      or: [
+        {email: params.email},
+        {username: params.username}
+      ]
+    }).exec((error,user) => {
+      if (user) {
+        if(user.username == params.username)
+          return res.send(400, 'The username is taken. Choose another one');
+        if(user.email == params.email)
+          return res.send(400, 'The email is taken. Choose another one');
+      } else {
+        passport.registerUser(req, res, function(err, user) {
+          if(err) {
+            sails.log.error(err);
+            return res.send(400, err);
+          } else return res.json(user);
+        });
+      }
+    });
+  },
+  inviteUser: function(req, res) {
+    return passport.inviteUser(req, res, function(err, user) {
+      if(err) {
+        sails.log.error(err);
+        return res.send(400, err);
+      } else return res.send(201);
+    });
+  },
+  checkUsernameActivation (req, res) {
+    var username = req.query.username;
+    var token = req.query.token;
+    User.findOne({invitation_token: token})
+    .exec(function(err, user) {
+      if (err) return res.send(500, err)
+      if (!user) return res.send(401, 'unauthorized')
+      User.findOne({
+        username: username,
+      }, (err, user) => {
+        if (err) return res.send(500, err)
+        if (user) return res.send(400, 'Username already in use.')
+        return res.send(201)
+      })
+    });
+  },
+  activateUser (req, res) {
+    return passport.activateUser(req, res, function (err, user){
+      if(err) {
+        return res.send(err.statusCode||500, err)
+      }
+      if(!user){
+        return res.send(400, 'Cannot activate user, user not found.');
+      }
+
+      req.login(user, function (err) {
+        if (err) {
+          sails.log.error('LOGIN ERROR:');
+          sails.log.error(err);
+          return res.send(500, err)
+        } else {
+          sails.log.debug('user ready!');
+          return res.send(200)
+        }
+      });
+    });
   }
 };
 

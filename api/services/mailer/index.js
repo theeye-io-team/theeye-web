@@ -26,6 +26,28 @@ module.exports = {
       });
     });
   },
+  sendRegistrationMail: function(input, next) {
+    var data = { locals: input };
+    ejs.renderFile("views/email/registration.ejs", data, function(error, html) {
+      if(error) {
+        sails.log.error('Error parsing "views/email/registration.ejs"');
+        sails.log.error(error);
+        return next(error);
+      }
+
+      var options = {
+        'to': input.invitee.email,
+        'subject': 'The Eye Registration confirmation',
+        'html': html
+      };
+
+      mailer.sendMail(options, function(error, info) {
+        if(error) sails.log.error("Error sending email to " + input.invitee.email);
+        else sails.log.debug('Message sent');
+        return next(error);
+      });
+    });
+  },
   sendPasswordRecoveryEMail: function(data, next) {
     ejs.renderFile("views/email/retrive-password.ejs", {
       locals: data
@@ -33,7 +55,7 @@ module.exports = {
       var options = {
         to: data.user.email,
         subject: 'The Eye Password Restore',
-        html: html 
+        html: html
       };
 
       mailer.sendMail(options, function(error, info) {
@@ -61,7 +83,7 @@ module.exports = {
             var options = {
               to: email,
               subject: 'TheEye Contact',
-              html: html 
+              html: html
             };
 
             mailer.sendMail(options, function(error, info) {
@@ -80,7 +102,7 @@ module.exports = {
       var options = {
         to: user.email,
         subject:'The Eye Invitation',
-        html:html 
+        html:html
       };
       mailer.sendMail(options, error => next(error));
     });
@@ -90,7 +112,7 @@ module.exports = {
       var options = {
         to: user.email,
         subject:'The Eye Profile Alert',
-        html:html 
+        html:html
       };
       mailer.sendMail(options, error => next(error));
     });

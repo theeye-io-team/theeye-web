@@ -1,19 +1,12 @@
 'use strict'
 
-const AmpersandRouter = require('ampersand-router')
+const Router = require('ampersand-router')
+const AuthRoute = require('./auth')
 const UserRoute = require('./user')
 const WebhookRoute = require('./webhook')
 const HostGroupRoute = require('./hostgroup')
 import SchedulerRoute from './scheduler'
 import DashboardRoute from './dashboard'
-
-// https://github.com/AmpersandJS/ampersand-router#execute-routerexecutecallback-args
-const Router = AmpersandRouter.extend({
-//  execute: function(callback, args) {
-//    args.push(parseQueryString(args.pop()));
-//    if (callback) callback.apply(this, args);
-//  }
-})
 
 module.exports = Router.extend({
   routes: {
@@ -28,6 +21,15 @@ module.exports = Router.extend({
     },
     'admin/scheduler': () => {
       new SchedulerRoute().route()
+    },
+    'login': () => {
+      new AuthRoute().login()
+    },
+    'register': () => {
+      new AuthRoute().register()
+    },
+    'activate': () => {
+      new AuthRoute().activate()
     },
     'dashboard': () => {
       new DashboardRoute().route()
