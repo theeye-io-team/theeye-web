@@ -87,7 +87,7 @@ const ScraperCollapsedContent = GenericCollapsedContent.extend({
     if (!this.monitor.config) return
     this.url = this.monitor.config.url
     this.method = this.monitor.config.method
-    this.status_code = this.monitor.config.status_code
+    this.status_code = String(this.monitor.config.status_code)
   },
   derived: {
     timeout: {
