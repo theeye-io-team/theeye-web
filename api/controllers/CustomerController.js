@@ -4,17 +4,7 @@ var CustomerController = module.exports = {
    * @route GET /admin/customer
    */
   index (req, res) {
-    var supervisor = req.supervisor;
-    supervisor.fetch({
-      route:'/customer',
-      success: customers => {
-        res.view({ customers: customers, errors: null });
-      },
-      failure: err => {
-        sails.log.error(err);
-        res.view({ customers: [], errors: err });
-      }
-    });
+    return res.view('spa/index',{ layout:'layout-ampersand' });
   },
   /**
    * @route GET /customer
@@ -34,7 +24,7 @@ var CustomerController = module.exports = {
   },
   /**
    *
-   * GET  /customer/:id 
+   * GET  /customer/:id
    *
    */
   get (req, res) {
@@ -44,13 +34,13 @@ var CustomerController = module.exports = {
       success: customer => res.send(200, {customer: customer}),
       failure: err => res.send(err.statusCode, err)
     });
-  },        
+  },
   //POST  /customer/:id
   create (req, res) {
     var params = req.params.all();
 
     if(!params.name) return res.send(400, "Name can't be empty");
-    if(!params.email) return res.send(400, "Email can't be empty");
+    if(!params.emails) return res.send(400, "Email can't be empty");
 
     req.supervisor.create({
       route:'/customer',
@@ -60,7 +50,7 @@ var CustomerController = module.exports = {
     });
   },
   /**
-   * @method PUT  
+   * @method PUT
    * @route /customer/:id
    * @param {String} id
    */
@@ -76,7 +66,7 @@ var CustomerController = module.exports = {
   },
   /**
    * @method DELETE
-   * @route /customer/:id 
+   * @route /customer/:id
    * @param {String} id
    */
   remove (req, res) {
@@ -123,5 +113,5 @@ var CustomerController = module.exports = {
         return res.send(200, { user: user });
       }
     );
-  }    
+  }
 };

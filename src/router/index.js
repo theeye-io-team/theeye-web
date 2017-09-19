@@ -3,6 +3,7 @@
 const Router = require('ampersand-router')
 const AuthRoute = require('./auth')
 const UserRoute = require('./user')
+const CustomerRoute = require('./customer')
 const WebhookRoute = require('./webhook')
 const HostGroupRoute = require('./hostgroup')
 import SchedulerRoute from './scheduler'
@@ -15,6 +16,9 @@ module.exports = Router.extend({
     },
     'admin/user(/:id/:action)': () => {
       new UserRoute().route()
+    },
+    'admin/customer(/:id/:action)': () => {
+      new CustomerRoute().route()
     },
     'admin/webhook(/:id/:action)': () => {
       new WebhookRoute().route()

@@ -78,15 +78,6 @@ export default FormView.extend({
   focus () {
     this.query('input[name=username]').focus()
   },
-  derived: {
-    showPass: {
-      deps: ['data.enabled'],
-      fn: function () {
-        console.log(this.data.enabled)
-        return true
-      }
-    }
-  },
   events: {
     'change input[name=enabled]': function (event) {
       this.togglePasswordFields(event.target.checked)
