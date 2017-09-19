@@ -101,19 +101,19 @@ export default {
       method: 'get',
       done (response,xhr) {
         if (xhr.status == 400) {
+          bootbox.alert('Username already in use.')
           App.state.activate.finalStep = false
-          App.state.activate.errorMessage = 'Username already in use.'
         } else if (xhr.status !== 201) {
+          bootbox.alert('Account activation error, please try again later.')
           App.state.activate.finalStep = false
-          App.state.activate.errorMessage = 'Account activation error, please try again later.'
         } else {
           App.state.activate.username = username
           App.state.activate.finalStep = true
         }
       },
       fail (err,xhr) {
+        bootbox.alert('Account activation error, please try again later.')
         App.state.activate.finalStep = false
-        App.state.activate.errorMessage = 'Account activation error, please try again later.'
       }
     })
   },

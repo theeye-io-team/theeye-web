@@ -67,8 +67,7 @@ module.exports = function (webType) {
       username: 'string',
       email: 'string',
       invitation_token: 'string',
-      finalStep: ['boolean',false,false],
-      errorMessage: ['string',false,'']
+      finalStep: ['boolean',false,false]
     }
   })
 

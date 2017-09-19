@@ -3,7 +3,6 @@ import FormView from 'ampersand-form-view'
 import InputView from 'ampersand-input-view'
 import NavBar from '../navbar'
 import AuthActions from 'actions/auth'
-import bootbox from 'bootbox'
 
 const ActivateForm = FormView.extend({
   autoRender: true,
@@ -98,12 +97,6 @@ export default View.extend({
     this.listenTo(App.state.activate, 'change:finalStep', () => {
       if(App.state.activate.finalStep) {
         this.toggle('formSwitch')
-      }
-    })
-
-    this.listenTo(App.state.activate, 'change:errorMessage', () => {
-      if(App.state.activate.errorMessage) {
-        bootbox.alert(App.state.activate.errorMessage)
       }
     })
   },

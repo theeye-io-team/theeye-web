@@ -49,7 +49,9 @@ export default FormView.extend({
         validityClassSelector: '.control-label'
       }),
       new SelectView({
-        options: App.state.credentials, 
+        options: App.state.credentials.filter( e => {
+          return (e.name !== 'owner')
+        }),
         styles: 'form-group',
         name: 'credential',
         required: true,
