@@ -19,21 +19,6 @@ export default BaseView.extend({
     selected: ['boolean', false, false],
   },
   derived: {
-    /**
-     *
-     * this derived properties need to be redefined in each particular item list view.
-     *
-     * bind this derived property to the property of the model, so every time the property
-     * value changes, this derived property will have the updated value and the list
-     * will change accordingly
-     *
-     */
-    tags: {
-      fn () {
-        console.warn('(tags) you have to define your own')
-        return '(tags) redefine in the item view'
-      }
-    },
     item_name: {
       fn () {
         console.warn('(name) you have to define your own')

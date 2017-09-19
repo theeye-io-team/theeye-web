@@ -5,19 +5,19 @@ import * as UserButtons from './buttons'
 
 export default ListItem.extend({
   derived: {
-    tags: {
-      deps: ['model.username', 'model.email', 'model.credential', 'model.customers'],
-      fn: function () {
-        return [
-          'user',
-          this.model.username,
-          this.model.email,
-          this.model.credential,
-          this.model.customers,
-          'credential=' + this.model.credential
-        ].join(',')
-      }
-    },
+    //tags: {
+    //  deps: ['model.username', 'model.email', 'model.credential', 'model.customers'],
+    //  fn: function () {
+    //    return [
+    //      'user',
+    //      this.model.username,
+    //      this.model.email,
+    //      this.model.credential,
+    //      this.model.customers,
+    //      'credential=' + this.model.credential
+    //    ].join(',')
+    //  }
+    //},
     item_name: {
       deps: ['model.username'],
       fn () {
