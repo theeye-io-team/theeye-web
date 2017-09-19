@@ -21,3 +21,6 @@ config/env/production.js
 config/env/*
 *.orig
 assets/js/bundles
+assets/main.css
+assets/index.html
+assets/bundles

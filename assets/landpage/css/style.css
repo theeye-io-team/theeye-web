@@ -761,7 +761,7 @@ border-radius:300px
 .termsContainer {padding:50px 0}
 .terms .nav-tabs>li.active>a, .terms .nav-tabs>li.active>a:hover, .terms .nav-tabs>li.active>a:focus, .terms .nav-tabs>li>a:hover, .terms .nav-tabs>li>a:focus {background:#d88e47;color:#fff;border:1px solid #d88e47}
 .terms .nav-tabs>li {padding:0}
-.terms .nav-tabs>li>a {text-align:center} 
+.terms .nav-tabs>li>a {text-align:center}
 .terms .nav-tabs {border-bottom:1px solid #d88e47;padding:0}
 .terms .nav-tabs li a {color:#fff;font-size:1.3em}
 .terms .tab-content>.tab-pane {padding:80px 0 20px}
@@ -783,7 +783,7 @@ border-radius:300px
 .pricing-tabs .nav-tabs>li>a, .pricing-tabs .nav-tabs>li>a:hover, .pricing-tabs .nav-tabs>li>a:focus,
 .pricing-tabs .nav-tabs>li.active>a, .pricing-tabs .nav-tabs>li.active>a:hover, .pricing-tabs .nav-tabs>li.active>a:focus,
 .pricing-tabs .panel-heading {background:#fff;border:none;text-transform:uppercase;font-weight:300}
-.pricing-tabs .panel-group .panel+.panel, .pricing-tabs .panel-group .panel {border-radius:0;border:none;border-bottom:1px solid #f5f5f5} 
+.pricing-tabs .panel-group .panel+.panel, .pricing-tabs .panel-group .panel {border-radius:0;border:none;border-bottom:1px solid #f5f5f5}
 .pricing-tabs .panel-heading {float:left;width:100%;}
 
 .pricing-tabs .nav-tabs>li {width:20%}
@@ -807,7 +807,7 @@ border-radius:300px
 	.pricing-tabs a.devs-link .avatar {background-position:-285px 0}
 	.pricing-tabs a.small-links .avatar {background-position:-213px 0}
 	.pricing-tabs a.medium-links .avatar {background-position:-142px 0}
-	.pricing-tabs a.saas-links .avatar {background-position:-71px 0}	
+	.pricing-tabs a.saas-links .avatar {background-position:-71px 0}
 	.pricing-tabs .data .hidden-xs {display:none}
 	.pricing-tabs .data .fa-bars {display:block;position:absolute;top:24px;right:0;color:#8e8e8e;font-size:24px}
 	.pricing-tabs .navbar-toggle span {background:#ccc}
@@ -815,7 +815,7 @@ border-radius:300px
 	.pricing-tabs a.small-links .data {color:#ff5f00;}
 	.pricing-tabs a.medium-links .data {color:#0728a0}
 	.pricing-tabs a.saas-links .data {color:#84165b}
-	.pricing-tabs a.premise-links .data {color:#000000}	
+	.pricing-tabs a.premise-links .data {color:#000000}
 	.pricing-tabs .data {line-height:1.2em}
 	.pricing-tabs .data .desc {font-style:italic;font-size:0.7em;line-height:1em}
 	.pricing-tabs a .avatar {float:left}
@@ -840,7 +840,7 @@ border-radius:300px
 	#contact {margin:0 15px}
 	.case {margin:0 15px 30px}
 	.videoWrapper {padding-top:0}
-	.way-we-work {padding:0} 
+	.way-we-work {padding:0}
 }
 
 @media only screen and (min-width: 992px) {
@@ -851,16 +851,16 @@ border-radius:300px
 	.pricing-tabs .nav-tabs>li>a .data {padding:20px 10px;height:120px;color:#fff;}
 	.pricing-tabs .nav>li>a {padding-bottom:0}
 	.pricing-tabs .nav-tabs>li {margin-bottom:0;text-align:center}
-	.pricing-tabs .nav-tabs>li.active>a .data {height:148px}	
+	.pricing-tabs .nav-tabs>li.active>a .data {height:148px}
 	.pricing-tabs a .data {padding:10px 20px}
 	.pricing-tabs a.devs-link .data, .devs-tab {background:#489bff}
 	.pricing-tabs a.small-links .data, .small-tab {background:#ff5f00}
 	.pricing-tabs a.medium-links .data, .medium-tab {background:#0728a0}
 	.pricing-tabs a.saas-links .data, .saas-tab {background:#84165b}
-	.pricing-tabs a.premise-links .data, .premise-tab {background:#000000}	
+	.pricing-tabs a.premise-links .data, .premise-tab {background:#000000}
 	.settings-content {padding:15px}
 	.settings-content .border {border-bottom:1px solid rgba(255,255,255,0.2)}
-	.settings-content .col-md-2, .settings-content .col-md-7, .settings-content .col-md-1 {min-height:50px} 
+	.settings-content .col-md-2, .settings-content .col-md-7, .settings-content .col-md-1 {min-height:50px}
 	.pricing-title {font-size:18px;line-height:1em}
 	.pricing-table {padding-top:0}
 }
@@ -1016,16 +1016,35 @@ border-radius:300px
 
 .features .feature {font-size:21px;margin:30px 0 0;padding:0}
 .features .feature h4 {border-bottom:1px solid #fff;padding-bottom:10px;margin-bottom:10px;font-size:24px;font-weight:600}
-.features .feature ul, .features .feature ul li {text-align:left;margin:0} 
+.features .feature ul, .features .feature ul li {text-align:left;margin:0}
 .features .feature ul li {padding:8px 0 8px 32px;position:relative;margin-bottom:10px;border-bottom:1px solid #12263c}
 .features .feature ul li i {position:absolute;top:12px;left:0}
 
 
 
 @media only screen and (min-width: 768px) {
-	.features .feature ul li:last-child {border:none}	
+	.features .feature ul li:last-child {border:none}
 }
 
 @media only screen and (max-width: 767px) {
-	.features .row {margin:0}	
+	.features .row {margin:0}
+}
+
+/*  new styles for small/medium */
+.features-list {margin:0}
+.features-list li {float:left;padding:0 15px 15px 24px;position:relative;font-size:12px;line-height:12px;min-height:50px}
+.features-list li a {color:#fff}
+.features-list li i.fa {font-size:21px;position:absolute;left:0;top:0}
+.features-list li.mobile {padding-left:20px}
+.features-list li.mobile i.fa {font-size:32px;top:-3px}
+.features-list li.monitors {padding-left:28px}
+.features-list li.retention i.fa {font-size:18px}
+.features-list li.external i.fa {font-size:18px;top:-2px}
+.features-list li.external i.fa.fa-info-circle {position:relative;font-size:12px;top:0;left:4px}
+.features-list li.consultancy {padding-left:32px}
+.features-list li.consultancy i.fa {top:-2px;font-size:20px}
+@media only screen and (min-width: 992px) {
+  .settings-content .col-md-10 {
+    min-height: 50px;
+  }
 }

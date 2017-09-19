@@ -12,7 +12,7 @@ $(function(){
     var form = this.form = new FormElement($el) ;
 
     function isValid (values) {
-      return isValidEmail(values.email) && 
+      return isValidEmail(values.email) &&
         (values.message.length > 1) &&
         (values.name.length > 1);
     }
@@ -71,18 +71,6 @@ $(function(){
     return costs[option]||0;
   }
 
-  function retentionTotal (option,agents) {
-    var costs = {
-      '1 week' : 1 * agents ,
-      '1 month' : 2 * agents ,
-      '6 months' : 2 * 6 * agents ,
-      '1 year' : 2 * 12 * agents ,
-      '3 years' : 2 * 36 * agents ,
-      '0 none' : 0
-    };
-    return costs[option]||0;
-  }
-
   function implementationTotal (option) {
     var costs = {
       'Self implementation': 0,
@@ -134,9 +122,6 @@ $(function(){
         case 'support' :
           annualBudget += supportTotal(selections[prop]);
           break;
-        case 'retention' :
-          annualBudget += retentionTotal(selections[prop], servers);
-          break;
         case 'implementation' :
           annualBudget += implementationTotal(selections[prop]);
           break;
@@ -158,7 +143,6 @@ $(function(){
   Calc.prototype.initialize = function (options) {
     this.eventsSection(options.events);
     this.supportSection(options.support);
-    this.retentionSection(options.retention);
     this.implementationSection(options.implementation);
     this.reportsSection(options.reports);
     this.bindSubmitButton();
@@ -229,17 +213,6 @@ $(function(){
     $radio.on('change',function(event){
       var val = $( event.target ).val();
       $section.find('span[data-hook=support-selected]').html( val );
-      self.recalc();
-    });
-  }
-
-  Calc.prototype.retentionSection = function(){
-    var self = this;
-    var $section = this.$el.find('[data-hook=retention]');
-    var $radio = $section.find('input[type=radio]');
-    $radio.on('change',function(event){
-      var val = $( event.target ).val();
-      $section.find('span[data-hook=retention-selected]').html( val );
       self.recalc();
     });
   }
