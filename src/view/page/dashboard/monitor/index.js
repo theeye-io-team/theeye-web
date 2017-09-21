@@ -30,7 +30,7 @@ const str2rgb = (str) => {
       hash = str.charCodeAt(i) + ((hash << 5) - hash);
     }
     return hash;
-  } 
+  }
 
   function intToRGB(i){
     var c = (i & 0x00FFFFFF)
@@ -138,7 +138,7 @@ const MonitorView = View.extend({
       this.queryByHook('collapse-container-body')
     )
 
-    // capture and handle collapse event 
+    // capture and handle collapse event
     $( this.queryByHook('collapse-container') ).on('show.bs.collapse', () => {
       MonitorActions.populate(this.model.monitor)
     })
@@ -164,41 +164,25 @@ const MonitorView = View.extend({
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
     )
   },
-  checkSubmonitorsState () {
-    const monitor = this.model.submonitors.higherSeverityMonitor()
-    if (monitor!==null) {
-      var stateIconEl = this.queryByHook('state-icon')
-      stateIconEl.className = monitor.stateIcon
-      stateIconEl.title = monitor.state
-      this.trigger('change',{ monitor: monitor })
-    } else {
-      console.warn('this group of monitors is empty, there is nothing to show');
-    }
-  }
 })
 
 const HostMonitorGroupView = MonitorView.extend({
-  initialize () {
-    View.prototype.initialize.apply(this,arguments)
-    this.listenTo(this.model.submonitors,'change', this.checkSubmonitorsState)
-  },
   render () {
     this.renderWithTemplate()
     this.renderCollapsedContent()
     this.renderButtons()
-    this.checkSubmonitorsState()
     this.setMonitorIcon()
   },
   renderCollapsedContent () {
 
-    // capture and handle collapse event 
+    // capture and handle collapse event
     $( this.queryByHook('collapse-container') ).on('show.bs.collapse', () => {
       MonitorActions.populate(this.model.monitor)
     })
 
     var monitors = this.model.submonitors.models.reduce((acum, item) => {
       acum[item.type] = item;
-      return acum 
+      return acum
     }, {})
 
     this.renderSubview(
@@ -225,10 +209,6 @@ function MonitorViewFactory (options) {
  * monitors grouped rows. this works when grouping is applied only
  */
 const MonitorsGroupView = MonitorView.extend({
-  initialize () {
-    View.prototype.initialize.apply(this,arguments)
-    this.listenTo(this.model.submonitors,'change',this.checkSubmonitorsState)
-  },
   render () {
     this.renderWithTemplate()
     this.queryByHook('monitor-icons-block').remove()
@@ -238,9 +218,9 @@ const MonitorsGroupView = MonitorView.extend({
       MonitorViewFactory,
       this.queryByHook('collapse-container-body')
     )
-    this.checkSubmonitorsState()
+
     this.setMonitorIcon()
-  },
+  }
 })
 
 module.exports = function (options) {

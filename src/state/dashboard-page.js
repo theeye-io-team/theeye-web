@@ -26,7 +26,8 @@ const GroupedResource = Resource.extend({
   initialize () {
     Resource.prototype.initialize.apply(this,arguments)
 
-    this.listenTo(this.submonitors,'change', () => {
+    this.listenTo(this.submonitors,'change add reset',() => {
+      if (this.submonitors.length===0) return
       const monitor = this.submonitors.higherSeverityMonitor()
       this.state = monitor.state
     })
@@ -46,11 +47,15 @@ const GroupedResourceCollection = ResourceCollection.extend({
     // find the resource within a group or theresource alone
     return _find.call(this, group => {
       if (group.id === resource.id) return true
-      if (!group.submonitors) return false
-      if (group.submonitors.length===0) return false
+      if (!group.submonitors||group.submonitors.length===0) return false
 
-      // it is a group , lets search by id
-      const item = group.submonitors.get( resource.id )
+      const item = group.submonitors.find(m => {
+        if (m.id === resource.id) return true
+        else if (m.type === 'host') {
+          if (!m.submonitors||m.submonitors.length===0) return false
+          return m.submonitors.get(resource.id)
+        }
+      })
       return item !== undefined
     })
   }
@@ -228,7 +233,7 @@ const groupByProperty = (resources, prop) => {
         description: `Grouped monitors by ${prop} property with value ${name}`
       })
     }
-      
+
     groups[name].submonitors.add(resource)
   }
 
@@ -283,7 +288,7 @@ const groupByTags = (resources, tags) => {
       // search for groups with the same tags
       if (tags.indexOf(lctag) !== -1) {
         let group = tagGroups.find((g) => {
-          return g.name == lctag 
+          return g.name == lctag
         })
         group.submonitors.add(resource)
       } else {
