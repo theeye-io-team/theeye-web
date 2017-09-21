@@ -316,7 +316,10 @@ var AuthController = {
         passport.registerUser(req, res, function(err, user) {
           if(err) {
             sails.log.error(err);
-            return res.send(400, err);
+            var errMsg = 'Error registering user.'
+            if(err.code && err.code == 'CredentialsError')
+              errMsg = 'Error sending registration email.'
+            return res.send(400, errMsg);
           } else return res.json(user);
         });
       }
