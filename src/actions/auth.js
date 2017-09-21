@@ -36,6 +36,7 @@ export default {
     })
   },
   resetMail (data) {
+    App.state.loader.visible = true
     XHR({
       url: `/password/resetmail`,
       method: 'post',
@@ -46,6 +47,7 @@ export default {
         Accepts: 'application/json;charset=UTF-8'
       },
       done (response,xhr) {
+        App.state.loader.visible = false
         if (xhr.status == 200){
           bootbox.alert({
             message: 'Password reset link sent',
@@ -63,6 +65,7 @@ export default {
         }
       },
       fail (err,xhr) {
+        App.state.loader.visible = false
         bootbox.alert('Error, please try again')
       }
     })
