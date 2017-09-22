@@ -5,8 +5,9 @@ import Clipboard from 'clipboard'
 import PanelButton from 'components/list/item/panel-button'
 import merge from 'lodash/merge'
 import Modalizer from 'components/modalizer'
+import config from 'config'
 
-export default PanelButton.extend({
+module.exports = PanelButton.extend({
   initialize (options) {
     this.title = 'activation link'
     this.order = 800
@@ -17,7 +18,7 @@ export default PanelButton.extend({
   onclick (event) {
     event.stopPropagation()
 
-    const url = `${window.location.origin}/activate?token=${this.model.invitation_token}`
+    const url = `${config.app_url}/activate?token=${this.model.invitation_token}`
 
     const content = View.extend({
       template: function(){

@@ -29,7 +29,7 @@ module.exports = {
       } else {
         if (resources.indexOf(resource) != -1) {
           var room = roomNameFormat
-            .replace(':customer:', req.session.customer)
+            .replace(':customer:', req.user.current_customer)
             .replace(':hostname:', host.hostname)
             .replace(':resource:', resource);
 

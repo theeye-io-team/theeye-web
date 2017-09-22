@@ -22,7 +22,8 @@ module.exports = {
         const count = (errors===webhooks.length) ? 'all' : 'some of'
         bootbox.alert(
           `Well, ${count} the delete request came back with error. Reloding now...`,() => {
-            window.location.reload()
+            //window.location.reload()
+            App.Router.reload()
           }
         )
       } else {

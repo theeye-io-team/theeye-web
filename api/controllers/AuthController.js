@@ -2,53 +2,6 @@
 var debug = require('debug')('eye:web:controller:auth');
 var AuthController = {
   /**
-   * Render the login page
-   *
-   * The login form itself is just a simple HTML form:
-   *
-   *  <form role="form" action="/auth/local" method="post">
-   *    <input type="text" name="identifier" placeholder="Username or Email">
-   *    <input type="password" name="password" placeholder="Password">
-   *    <button type="submit">Sign in</button>
-   *  </form>
-   *
-   * You could optionally add CSRF-protection as outlined in the documentation:
-   * http://sailsjs.org/#!documentation/config.csrf
-   *
-   * A simple example of automatically listing all available providers in a
-   * Handlebars template would look like this:
-   *
-   *  {{#each providers}}
-   *    <a href="/auth/{{slug}}" role="button">{{name}}</a>
-   *  {{/each}}
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  login: function (req, res) {
-    if (req.user) return res.redirect('/events');
-
-    return res.view('spa/index',{ layout:'layout-ampersand' });
-    //var strategies = sails.config.passport;
-    //var providers  = {};
-
-    //// Get a list of available providers for use in your templates.
-    //Object.keys(strategies).forEach(function (key) {
-    //  if (key === 'local') return;
-
-    //  providers[key] = {
-    //    name: strategies[key].name,
-    //    slug: key
-    //  };
-    //});
-
-    //// Render the `auth/login.ext` view
-    //res.view({
-    //  providers: providers,
-    //  errors: req.flash('error')
-    //});
-  },
-  /**
    * Log out a user and return them to the homepage
    *
    * Passport exposes a logout() function on req (also aliased as logOut()) that
@@ -62,32 +15,10 @@ var AuthController = {
    * @param {Object} req
    * @param {Object} res
    */
-  logout: function (req, res) {
-    //delete the active customer for the session
-    delete(req.session.customer);
-
-    req.logout();
-    res.redirect('/login');
-  },
-  /**
-   * Render the registration page
-   *
-   * Just like the login form, the registration form is just simple HTML:
-   *
-   <form role="form" action="/auth/local/register" method="post">
-   <input type="text" name="username" placeholder="Username">
-   <input type="text" name="email" placeholder="Email">
-   <input type="password" name="password" placeholder="Password">
-   <button type="submit">Sign up</button>
-   </form>
-   *
-   * @param {Object} req
-   * @param {Object} res
-   */
-  register: function (req, res) {
-    if (req.user) return res.redirect('/events');
-
-    return res.view('spa/index',{ layout:'layout-ampersand' });
+  logout (req, res) {
+    if (!req.user) res.redirect('./login')
+    req.logout()
+    res.redirect('/login')
   },
   /**
    * Render the invite page
@@ -108,14 +39,12 @@ var AuthController = {
       customers : req.user.customers
     });
   },
+
   /**
    * Render the activate page
-   *
    * Form for user account activation
-   *
    * @param {Object} req
    * @param {Object} res
-   */
    activate: function (req, res) {
      if (req.user) return res.redirect('/events');
      var token = req.query.token;
@@ -134,6 +63,8 @@ var AuthController = {
        }
      });
    },
+   */
+
   /**
    * Render the update password page
    *
@@ -269,34 +200,6 @@ var AuthController = {
   connect: function (req, res) {
     passport.endpoint(req, res);
   },
-  /**
-   * @param {Object} req
-   * @param {Object} res
-   */
-  localLogin: function (req, res) {
-    passport.callback(req, res, function (err, user){
-      if(err){
-        return res.send(500, err);
-      }
-
-      if(!user){
-        return res.send(400, 'Invalid credentials');
-      }
-
-      sails.log.debug('passport authenticated');
-
-      req.login(user, function (err) {
-        if (err) {
-          debug('LOGIN ERROR:');
-          debug(err);
-          return res.send(500, err);
-        } else {
-          sails.log.debug('user ready!');
-          return res.send(200);
-        }
-      });
-    });
-  },
   registeruser: function(req, res) {
     var params = req.params.all();
     if(!params.username) return res.send(400, 'You must select a username');
@@ -349,6 +252,14 @@ var AuthController = {
       })
     });
   },
+  verifyToken (req, res) {
+    User.findOne({invitation_token: req.query.invitation_token})
+    .exec(function(err, user) {
+      if (err) return res.send(500, err)
+      if (!user) return res.send(401, 'unauthorized')
+      return res.json({username: user.username, email: user.email, invitation_token: user.invitation_token, credential: user.credential})
+    });
+  },
   activateUser (req, res) {
     return passport.activateUser(req, res, function (err, user){
       if(err) {
@@ -369,7 +280,32 @@ var AuthController = {
         }
       });
     });
+  },
+  /**
+   * @route /auth/login
+   * @param {Object} req
+   * @param {Object} res
+   */
+  login (req, res) {
+    passport.authenticate('local', function (err, user) {
+      if (err) return res.send(500, err)
+      if (!user) return res.send(400, 'Invalid credentials')
+      sails.log.debug('passport authenticated')
+      req.login(user, function (err) {
+        if (err) {
+          debug('LOGIN ERROR:')
+          debug(err);
+          return res.send(500, err)
+        } else {
+          debug('user logged in. issuing access token')
+          const accessToken = jwtoken.issue({ user_id: user.id })
+          return res.send(200, {
+            access_token: accessToken
+          })
+        }
+      })
+    })(req,res,req.next)
   }
-};
+}
 
 module.exports = AuthController;

@@ -112,7 +112,7 @@ const CreateTriggerItemView = ItemView.extend({
   })
 })
 
-export default View.extend({
+module.exports = View.extend({
   template: `
     <div class="template-configs" style="padding:10px;">
       <div class="toggle" data-hook="configs-toggler">

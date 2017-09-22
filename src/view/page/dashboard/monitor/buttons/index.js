@@ -99,7 +99,7 @@ export const HostStats = View.extend({
 })
 
 // main buttons view renderer
-export default View.extend({
+module.exports = View.extend({
   template: `<div></div>`,
   render () {
     this.renderWithTemplate()

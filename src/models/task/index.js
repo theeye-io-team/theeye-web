@@ -8,8 +8,9 @@ import isMongoId from 'validator/lib/isMongoId'
 
 const ScriptTemplate = require('./template').Script
 const ScraperTemplate = require('./template').Scraper
+const config = require('config')
 
-const urlRoot = '/api/task'
+const urlRoot = `${config.api_url}/task`
 
 const JobResult = State.extend({
   props: {

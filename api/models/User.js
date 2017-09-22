@@ -6,10 +6,11 @@ var User = {
   attributes: {
     username: { type: 'string', unique: true, required: true, notNull:true, truthy: true },
     email: { type: 'email', unique: true, required: true, notNull:true, truthy: true },
+    current_customer: { type: 'string' },
     customers: { type: 'array', defaultsTo: [] },
     credential: { type: 'string', defaultsTo: 'admin' },
     enabled: { type: 'boolean', defaultsTo: false },
-    invitation_token: { type: 'string', defaultsTo: "" },
+    invitation_token: { type: 'string', defaultsTo: '' },
     passports: { collection: 'Passport', via: 'user' }
   },
   beforeCreate: function(values, next) {

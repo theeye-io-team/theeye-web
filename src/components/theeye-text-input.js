@@ -3,7 +3,7 @@ import mergeWith from 'lodash/mergeWith'
 import compact from 'lodash/compact'
 import concat from 'lodash/concat'
 
-export default InputView.extend({
+module.exports = InputView.extend({
   template: `
     <div class="form-group">
       <label data-hook="label" class="col-sm-3 control-label"></label>

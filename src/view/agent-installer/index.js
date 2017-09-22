@@ -1,5 +1,5 @@
 import View from 'ampersand-view'
 
-export default View.extend({
+module.exports = View.extend({
   template: require('./template.hbs')
 })

@@ -4,9 +4,6 @@ var mailer = require('../services/mailer');
 var underscore = require('underscore');
 
 var UserController = module.exports = {
-  index (req, res) {
-    res.view('spa/index', { layout: 'layout-ampersand' })
-  },
   //Current user home
   profile: function (req, res) {
     var supervisor = req.supervisor;
@@ -29,7 +26,7 @@ var UserController = module.exports = {
 
           var theeye = passport.protocols.theeye;
           theeye.getCustomerAgentCredentials(
-            req.session.customer,
+            req.user.current_customer,
             supervisor,
             function(err, userAgent) {
               if(err) {
@@ -54,13 +51,21 @@ var UserController = module.exports = {
     }
   },
   //Set the customer for the session
-  setcustomer: function(req, res) {
-    var customers = req.user.customers;
+  setcustomer (req, res) {
+    const customer = req.params.customer
+    const user = req.user
 
-    if( customers.indexOf( req.params.customer ) !== -1 ){
-      req.session.customer = req.params.customer;
-      res.send(200,{});
-    } else res.send(403,{});
+    if (user.customers.indexOf(customer) !== -1) {
+      user.current_customer = customer
+      user.save(err => {
+        if (err) {
+          return res.status(500).json('Internal Error')
+        }
+        res.send(200,{})
+      })
+    } else {
+      res.send(403,'Forbidden')
+    }
   },
   sendActivationLink: function(req, res, next) {
     passport.resendInvitation(req, res, next);

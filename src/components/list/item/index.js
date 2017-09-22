@@ -3,7 +3,7 @@ import AmpersandCollection from 'ampersand-collection'
 import CommonButton from 'components/common-button'
 import extend from 'lodash/assign'
 
-export default BaseView.extend({
+module.exports = BaseView.extend({
   autoRender: false,
   template: require('./template.hbs'),
   events: {

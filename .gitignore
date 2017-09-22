@@ -20,7 +20,6 @@ config/env/production.js
 .sailsrc
 config/env/*
 *.orig
-assets/js/bundles
-assets/main.css
+assets/**/bundles
 assets/index.html
-assets/bundles
+misc

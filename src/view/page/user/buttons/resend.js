@@ -2,9 +2,8 @@ import PanelButton from 'components/list/item/panel-button'
 import merge from 'lodash/merge'
 import bootbox from 'bootbox'
 import { fetch, defaultOptions, responseHandler } from 'lib/fetch'
-import loading from 'components/loading'
 
-export default PanelButton.extend({
+module.exports = PanelButton.extend({
   initialize: function (options) {
     this.title = 'resend user invitation'
     this.order = 900
@@ -16,14 +15,12 @@ export default PanelButton.extend({
       event.stopPropagation()
 
       const options = merge({}, defaultOptions, { method: 'PUT' })
-      const waiting = loading()
 
       // TODO FLUX: this is where we should call actions/user/resendInvitation
       // or hook action/user/resendInvitation on some model event
       fetch(`/user/${this.model.id}/reinvite`, options)
         .then(responseHandler)
         .then(parsedResponse => {
-          waiting.modal('hide')
           bootbox.alert({
             title: 'Invitation',
             message: `You have re-sent the invitation to ${this.model.username}`
@@ -31,13 +28,11 @@ export default PanelButton.extend({
         })
         .catch(error => {
           console.log(error)
-          waiting.modal('hide')
           bootbox.alert({
             title: 'Invitation error',
             message: error.message
           })
         })
-        // .finally(() => waiting.modal('hide')) // this doesn't work, it would've been nice though
     }
   }
 })

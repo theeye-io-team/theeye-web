@@ -1,18 +1,20 @@
-var app = require('ampersand-app')
+'use strict'
+
+const App = require('ampersand-app')
 
 module.exports = {
   ajaxConfig: function () {
-    if (!app.state) return {}
-    if (!app.state.session) return {}
-    if (!app.state.session.access_token) return {}
+    if (!App.state) return {}
+    if (!App.state.session) return {}
+    if (!App.state.session.authorization) return {}
 
-    var accessToken = app.state.session.access_token
+    var authorization = App.state.session.authorization
     return {
       headers: {
-        Authorization: accessToken
+        Authorization: authorization
       },
       xhrFields: {
-        withCredentials: true
+        withCredentials: false
       }
     }
   }

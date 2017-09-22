@@ -1,0 +1,43 @@
+
+
+.fa-letter:before {
+	font-family: Arial;
+	font-weight: bold;
+}
+
+.fa-letter.fa-letter-a:before { content: 'A'; }
+.fa-letter.fa-letter-b:before { content: 'B'; }
+.fa-letter.fa-letter-c:before { content: 'C'; }
+.fa-letter.fa-letter-d:before { content: 'D'; }
+.fa-letter.fa-letter-e:before { content: 'E'; }
+.fa-letter.fa-letter-f:before { content: 'F'; }
+.fa-letter.fa-letter-g:before { content: 'G'; }
+.fa-letter.fa-letter-h:before { content: 'H'; }
+.fa-letter.fa-letter-i:before { content: 'I'; }
+.fa-letter.fa-letter-j:before { content: 'J'; }
+.fa-letter.fa-letter-k:before { content: 'K'; }
+.fa-letter.fa-letter-l:before { content: 'L'; }
+.fa-letter.fa-letter-m:before { content: 'M'; }
+.fa-letter.fa-letter-n:before { content: 'N'; }
+.fa-letter.fa-letter-o:before { content: 'O'; }
+.fa-letter.fa-letter-p:before { content: 'P'; }
+.fa-letter.fa-letter-q:before { content: 'Q'; }
+.fa-letter.fa-letter-r:before { content: 'R'; }
+.fa-letter.fa-letter-s:before { content: 'S'; }
+.fa-letter.fa-letter-t:before { content: 'T'; }
+.fa-letter.fa-letter-u:before { content: 'U'; }
+.fa-letter.fa-letter-v:before { content: 'V'; }
+.fa-letter.fa-letter-w:before { content: 'W'; }
+.fa-letter.fa-letter-x:before { content: 'X'; }
+.fa-letter.fa-letter-y:before { content: 'Y'; }
+.fa-letter.fa-letter-z:before { content: 'Z'; }
+.fa-letter.fa-letter-0:before { content: '0'; }
+.fa-letter.fa-letter-1:before { content: '1'; }
+.fa-letter.fa-letter-2:before { content: '2'; }
+.fa-letter.fa-letter-3:before { content: '3'; }
+.fa-letter.fa-letter-4:before { content: '4'; }
+.fa-letter.fa-letter-5:before { content: '5'; }
+.fa-letter.fa-letter-6:before { content: '6'; }
+.fa-letter.fa-letter-7:before { content: '7'; }
+.fa-letter.fa-letter-8:before { content: '8'; }
+.fa-letter.fa-letter-9:before { content: '9'; }

@@ -1,31 +1,31 @@
 module.exports.policies = {
-  '/':true,
-  '*':[
-    'sessionAuth',
+  '/': true,
+  '*': [
+    'hasSession',
     'passport',
     'isAllowed',
-    'hasCustomer',
+    'sessionCustomer',
+    'setCookies',
     'supervisorInitializer'
   ],
-  PasswordController: {
-    '*':['noSession'],
+  ApiV2Controller: {
+    '*': [
+      'passportBearer',
+      'isAllowed',
+      'sessionCustomer',
+      'supervisorInitializer'
+    ]
   },
   AuthController: {
     'registeruser':['noSession'],
     'checkUsernameActivation':['noSession'],
+    'verifyToken':['noSession'],
     '*':'passport',
   },
-  ContactController: {
-    '*':['noSession'],
-  },
+  PasswordController: { '*':['noSession'], },
+  ContactController: { '*':['noSession'], },
   // SNS receivers . will be deprecated soon
-  EventsController: {
-    'update':['noSession'],
-  },
-  PalancaController: {
-    'update':['noSession'],
-  },
-  HostStatsController: {
-    'update':['noSession'],
-  }
+  EventsController: { 'update':['noSession'], },
+  PalancaController: { 'update':['noSession'], },
+  HostStatsController: { 'update':['noSession'], }
 };

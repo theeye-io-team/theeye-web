@@ -3,6 +3,7 @@
 import AmpersandState from 'ampersand-state'
 import AmpersandCollection from 'ampersand-collection'
 import XHR from 'lib/xhr'
+import config from 'config'
 
 const Resources = require('models/resource/index').Collection
 const Tasks = require('models/task/index').Collection
@@ -17,7 +18,7 @@ const TaskEvent = AmpersandState.extend({
 const TaskEvents = AmpersandCollection.extend({ model: TaskEvent })
 
 // representation of the current host group being display
-export default AmpersandState.extend({
+module.exports = AmpersandState.extend({
   collections: {
     configTasks: Tasks,
     configResources: Resources,
@@ -26,9 +27,9 @@ export default AmpersandState.extend({
   fetchConfig (id,next) {
     const self = this
 
-    XHR({
+    XHR.send({
       method: 'get',
-      url: `/api/host/${id}/config`,
+      url: `${config.api_url}/host/${id}/config`,
       withCredentials: true,
       done (data,xhr) {
         self.configTasks.reset(data.tasks)

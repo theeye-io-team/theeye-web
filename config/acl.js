@@ -6,6 +6,7 @@ var viewer = {
   'sockets': ['*'],
   'fileapi':['*'],
   'api':['*'],
+  'apiv2':['*'],
   'dashboard':['index'],
   'events':['index'],
   'password': ['*'],

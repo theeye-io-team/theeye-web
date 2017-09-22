@@ -12,7 +12,7 @@ import HelpIconView from 'components/help-icon'
 import MassiveDeleteButton from './buttons/massive-delete'
 import CreateButton from './buttons/create'
 
-export default List.extend({
+module.exports = List.extend({
   autoRender: true,
   initialize (options) {
     options || (options = {})

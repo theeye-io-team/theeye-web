@@ -4,11 +4,12 @@ import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 //import merge from 'lodash/merge'
+import config from 'config'
 
 import { Collection as Hosts } from 'models/host'
 import { Model as HostGroup } from 'models/hostgroup'
 
-export default {
+module.exports = {
   create (data) {
     const state = App.state.hostGroupPage
     const resources = state.configResources.serialize()
@@ -21,14 +22,14 @@ export default {
       triggers: triggers
     })
 
-    XHR({
-      url: `/api/hostgroup`,
+    XHR.send({
+      url: `${config.api_url}/hostgroup`,
       method: 'post',
       jsonData: body,
       withCredentials: true,
       timeout: 5000,
       headers: {
-        Accepts: 'application/json;charset=UTF-8'
+        Accept: 'application/json;charset=UTF-8'
       },
       done (data,xhr) {
         App.state.hostGroups.add(data)
@@ -42,14 +43,14 @@ export default {
   update (id, data) {
     const body = Object.assign({},data)
 
-    XHR({
-      url: `/api/hostgroup/${id}`,
+    XHR.send({
+      url: `${config.api_url}/hostgroup/${id}`,
       method: 'put',
       jsonData: body,
       withCredentials: true,
       timeout: 5000,
       headers: {
-        Accepts: 'application/json;charset=UTF-8'
+        Accept: 'application/json;charset=UTF-8'
       },
       done (data,xhr) {
         const group = App.state.hostGroups.get(data.id)
@@ -62,10 +63,10 @@ export default {
     })
   },
   remove (id) {
-    XHR({
-      url: `/api/hostgroup/${id}`,
+    XHR.send({
+      url: `${config.api_url}/hostgroup/${id}`,
       method: 'delete',
-      headers: { Accepts:'application/json;charset=UTF-8' },
+      headers: { Accept:'application/json;charset=UTF-8' },
       withCredentials: true,
       done (data,xhr) {
         App.state.hostGroups.remove(id)

@@ -13,7 +13,7 @@ module.exports = {
   subscribe: function(req, res) {
     var socket = req.socket
     var user = req.user
-    var customer = req.session.customer
+    var customer = req.user.current_customer
     var topics = req.params.all().topics
 
     if (user.customers.indexOf( customer ) === -1) {

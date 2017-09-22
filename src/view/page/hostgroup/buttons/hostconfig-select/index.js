@@ -3,7 +3,7 @@ import HostGroupActions from 'actions/hostgroup'
 import extend from 'lodash/assign'
 import ConfigsView from '../../configs'
 
-export default SelectView.extend({
+module.exports = SelectView.extend({
   template: `
     <div class="form-group form-horizontal hostconfig-select">
       <label data-hook="label" class="col-sm-3 control-label"></label>

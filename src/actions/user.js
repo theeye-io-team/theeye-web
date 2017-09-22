@@ -1,9 +1,10 @@
 //import jquery from 'jquery'
 import bootbox from 'bootbox'
+import App from 'app'
 
 const xhr = $.ajax
 
-export default {
+module.exports = {
   create (data) {
     App.state.loader.visible = true
 
@@ -33,7 +34,8 @@ export default {
         title: 'User created',
         message: `You have successfully created ${body.username}`,
         callback: () => {
-          window.location.reload()
+          //window.location.reload()
+          App.Router.reload()
         }
       })
     })

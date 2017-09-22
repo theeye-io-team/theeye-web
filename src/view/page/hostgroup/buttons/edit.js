@@ -5,7 +5,7 @@ import HostGroupActions from 'actions/hostgroup'
 import Modalizer from 'components/modalizer'
 import FormView from '../form'
 
-export default PanelButton.extend({
+module.exports = PanelButton.extend({
   initialize (options) {
     this.title = 'Edit Host Template'
     this.iconClass = 'fa fa-edit'

@@ -1,7 +1,7 @@
 import App from 'ampersand-app'
 const logger = require('lib/logger')('actions:resource')
 
-export default {
+module.exports = {
   update (data) {
     var model = App.state.resources.get(data.id)
     if (!model) {

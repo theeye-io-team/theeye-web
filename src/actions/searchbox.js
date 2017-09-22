@@ -1,6 +1,6 @@
 const logger = require('lib/logger')('actions:searchbox')
 
-export default {
+module.exports = {
   search (pattern) {
     if (pattern===App.state.searchbox.search) {
       return this.clear()

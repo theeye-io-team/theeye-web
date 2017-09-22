@@ -1,31 +1,33 @@
+'use strict'
 
-var TheEyeClient = require('../libs/theeye-client');
+const debug = require('debug')('theeye:policies:supervisor-initializer')
+const TheEyeClient = require('../libs/theeye-client')
 
-module.exports = function supervisorInitializer (req, res, next)
-{
-  var config = {
-    'api_url': sails.config.supervisor.url,
-    'client_customer': req.session.customer,
-    'client_id': req.user.theeye && req.user.theeye.client_id || null,
-    'client_secret': req.user.theeye && req.user.theeye.client_secret || null,
-    'access_token': req.user.theeye && req.user.theeye.access_token || null
-  };
+module.exports = (req, res, next) => {
+  const theeye = req.user.theeye
 
-  if( ! req.user.theeye ) {
-    sails.log.error("User has not got access to the API > %s.", req.user.username);
-    return res.serverError('Internal Error');
+  if (!theeye) {
+    debug('User TheEye Passport not present. %s.', req.user.username)
+    return res.serverError('Internal Error')
   }
 
-  if(
-    ! req.user.theeye.client_id &&
-    ! req.user.theeye.client_secret &&
-    ! req.user.theeye.token
+  if (
+    ! theeye.client_id &&
+    ! theeye.client_secret &&
+    ! theeye.access_token
   ) {
-    sails.log.error("TheEye passport is not properly created for user %s.", req.user.username);
-    return res.serverError('Internal Error');
+    sails.log.error('TheEye passport is not properly created for user %s.', req.user.username)
+    return res.serverError('Internal Error')
   }
 
-  req.supervisor = new TheEyeClient(config);
+  const config = {
+    api_url: sails.config.supervisor.url,
+    client_customer: req.user.current_customer,
+    client_id:  theeye.client_id,
+    client_secret: theeye.client_secret,
+    access_token: theeye.access_token
+  }
 
-  if(next) next();
+  req.supervisor = new TheEyeClient(config)
+  if (next) next()
 }

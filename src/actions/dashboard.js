@@ -1,9 +1,12 @@
 import search from 'lib/query-params'
 
-export default {
+module.exports = {
   setMonitorsGroupByProperty (prop) {
     const query = search.get()
     query.monitorsgroupby = { prop: prop }
-    search.set(query)
+    const qs = search.set(query)
+
+    App.Router.navigate(`dashboard?${qs}`, { replace: true })
+    App.Router.reload()
   }
 }

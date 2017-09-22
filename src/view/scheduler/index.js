@@ -11,7 +11,7 @@ import SimpleClock from 'components/simple-clock.jsx'
 
 import './custom.css'
 
-export default BaseView.extend({
+module.exports = BaseView.extend({
   template: require('./page.hbs'),
   taskTemplate: require('./modal-body.hbs'),
   subviews: {

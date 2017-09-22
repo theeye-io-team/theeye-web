@@ -7,7 +7,7 @@ const HelpView = View.extend({
 
 var ctrlpress = false
 
-export default View.extend({
+module.exports = View.extend({
   autoRender: true,
   template: `<div></div>`,
 	render () {

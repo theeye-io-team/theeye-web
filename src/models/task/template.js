@@ -3,6 +3,7 @@ import AppCollection from 'lib/app-collection'
 
 const Script = require('models/file/script').Model
 const Events = require('models/event').Collection
+const config = require('config')
 
 const Schema = AppModel.extend({
 	props: {
@@ -33,7 +34,7 @@ const Schema = AppModel.extend({
   }
 })
 
-const urlRoot = '/api/task-template'
+const urlRoot = `${config.api_url}/task-template`
 
 const ScriptTask = Schema.extend({
   urlRoot: urlRoot,

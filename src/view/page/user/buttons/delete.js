@@ -2,7 +2,7 @@ import PanelButton from 'components/list/item/panel-button'
 import bootbox from 'bootbox'
 import UserActions from 'actions/user'
 
-export default PanelButton.extend({
+module.exports = PanelButton.extend({
   initialize: function (options) {
     this.title = 'delete user'
     this.iconClass = 'fa fa-trash'

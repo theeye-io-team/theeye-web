@@ -31,7 +31,7 @@ const MassSelectorButton = CommonButton.extend({
   })
 })
 
-export default BaseView.extend({
+module.exports = BaseView.extend({
   autoRender: false,
   template: require('./template.hbs'),
   props: {

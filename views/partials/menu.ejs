@@ -10,7 +10,7 @@
     <a class="navbar-brand" href="/dashboard"><img src="/images/logo-hor.png" alt="The eye"></a>
     <div class="navData">
       <a href="/profile">
-        <span class="clientName"><%= req.session.customer %></span>
+        <span class="clientName"><%= req.user.current_customer %></span>
       </a>
       <div class="client hidden-sm hidden-md hidden-lg">
         <a href="#" class="switcher"><img src="/images/switcher.png" /></a>

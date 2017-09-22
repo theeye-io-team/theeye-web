@@ -11,7 +11,8 @@ const Template = require('models/resource/template').Model
 const Host = require('models/host/index').Model
 const Monitor = require('models/monitor/index').Model
 
-const urlRoot = '/api/resource'
+const config = require('config')
+const urlRoot = `${config.api_url}/resource`
 const stateIcons = {
   unknown: 'icon-nonsense',
   normal: 'icon-check',

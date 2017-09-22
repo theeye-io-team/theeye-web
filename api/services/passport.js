@@ -680,26 +680,25 @@ passport.callback = function (req, res, next) {
  *
  */
 passport.loadStrategies = function () {
-  var self       = this
-    , strategies = sails.config.passport;
+  var self = this
+  var strategies = sails.config.passport;
 
   Object.keys(strategies).forEach(function (key) {
     var options = { passReqToCallback: true }, Strategy;
 
     if (key === 'local') {
-      // Since we need to allow users to login using both usernames as well as
-      // emails, we'll set the username field to something more generic.
-      _.extend(options, { usernameField: 'identifier' });
 
-      // Only load the local strategy if it's enabled in the config
-      if (strategies.local) {
-        Strategy = strategies[key].strategy;
+      _.extend(options, { usernameField: 'identifier' })
+      const Local = require('passport-local').Strategy
+      self.use(new Local(options, self.protocols.local.login))
 
-        self.use(new Strategy(options, self.protocols.local.login));
-      }
+      const Bearer = require('passport-http-bearer').Strategy
+      self.use(new Bearer(self.protocols.local.bearerVerify))
+
     } else {
+
       var protocol = strategies[key].protocol
-        , callback = strategies[key].callback;
+      var callback = strategies[key].callback
 
       if (!callback) {
         callback = path.join('auth', key, 'callback');
@@ -799,10 +798,11 @@ passport.deserializeUser(function (id, next) {
       }
 
       user.theeye = {
-        'client_id' : passport.profile.client_id,
-        'client_secret' : passport.profile.client_secret,
-        'access_token' : passport.token
+        client_id: passport.profile.client_id,
+        client_secret: passport.profile.client_secret,
+        access_token: passport.token
       };
+
       next(error,user);
     });
   });

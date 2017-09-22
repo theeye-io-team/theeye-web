@@ -1,9 +1,10 @@
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
+import config from 'config'
 
 import { Collection as Customers } from 'models/customer'
 
-const urlRoot = '/user' // sails users
+const urlRoot = `${config.app_url}/user` // sails users
 
 export const Model = AppModel.extend({
   //urlRoot: urlRoot,

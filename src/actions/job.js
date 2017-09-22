@@ -4,8 +4,9 @@ import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 const logger = require('lib/logger')('actions:jobs')
+const config = require('config')
 
-export default {
+module.exports = {
   update (job) {
     logger.log('job updates received')
 
@@ -24,14 +25,14 @@ export default {
   create (task) {
     logger.log('creating new job with task %o', task)
 
-    XHR({
+    XHR.send({
       method: 'post',
-      url: `/api/job`,
+      url: `${config.api_url}/job`,
       withCredentials: true,
       jsonData: { task: task.id },
       timeout: 5000,
       headers: {
-        Accepts: 'application/json;charset=UTF-8'
+        Accept: 'application/json;charset=UTF-8'
       },
       done (data,xhr) {
         logger.debug('job created. updating task')

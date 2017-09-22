@@ -4,7 +4,7 @@ import App from 'ampersand-app'
 
 const logger = require('lib/logger')('actions:tasks')
 
-export default {
+module.exports = {
   update (data) {
   },
   populate (task) {

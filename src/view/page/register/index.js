@@ -1,7 +1,6 @@
 import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import InputView from 'ampersand-input-view'
-import NavBar from '../navbar'
 import AuthActions from 'actions/auth'
 import validator from 'validator'
 
@@ -30,7 +29,7 @@ const registerForm = FormView.extend({
   }
 })
 
-export default View.extend({
+module.exports = View.extend({
   autoRender: true,
   props: {
     formSwitch: ['boolean',false,false]
@@ -69,9 +68,6 @@ export default View.extend({
   render() {
     this.renderWithTemplate(this)
     this.registerForm = new registerForm({})
-
-    this.renderSubview(new NavBar({}), this.queryByHook('navbar-container'))
     this.renderSubview(this.registerForm, this.queryByHook('register-form'))
-
   }
 })

@@ -3,7 +3,7 @@ import bootbox from 'bootbox'
 import UserActions from 'actions/user'
 import App from 'ampersand-app'
 
-export default MassiveDeleteButton.extend({
+module.exports = MassiveDeleteButton.extend({
 	initialize () {
 		MassiveDeleteButton.prototype.initialize.apply(this,arguments)
 		this.name = 'user'

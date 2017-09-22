@@ -3,7 +3,7 @@ import View from 'ampersand-view'
 import EditButton from './buttons/edit'
 import DeleteButton from './buttons/delete'
 
-export default ListItem.extend({
+module.exports = ListItem.extend({
   derived: {
     item_name: {
       deps: ['model.name'],

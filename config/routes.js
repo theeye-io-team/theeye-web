@@ -2,9 +2,13 @@
 // against Sails route blueprints.  See `config/blueprints.js` for configuration options
 // and examples.
 
+const spaIndexRoute = (req,res,next) => {
+  res.sendfile(sails.config.appPath + '/assets/index.html')
+}
+
 module.exports.routes = {
-  //Home
-  '/' : function(req, res, next){
+  // Home
+  '/' : function (req, res, next) {
     if (req.user) {
       return res.redirect('/dashboard');
     }
@@ -14,12 +18,10 @@ module.exports.routes = {
     res.sendfile(sails.config.appPath + '/assets/landpage/index.html');
   },
   '/mantenimiento': { view: 'mantenimiento' },
-  //AuthController routes
-  'get    /register' : 'AuthController.register',
-  'get    /login' : 'AuthController.login',
+  // AuthController routes
   'get    /logout' : 'AuthController.logout',
   'get    /invite' : 'AuthController.invite',
-  'get    /activate' : 'AuthController.activate',
+  //'get    /activate' : 'AuthController.activate',
   'get    /connect/:provider' : 'AuthController.provider',
   'get    /disconnect/:provider' : 'AuthController.disconnect',
   'get    /auth/:provider' : 'AuthController.provider',
@@ -27,14 +29,14 @@ module.exports.routes = {
   'get    /checkusernameactivation'  : 'AuthController.checkUsernameActivation',
   'post   /auth/local/update' : 'AuthController.updateLocalPassport',
   'post   /auth/local' : 'AuthController.callback',
-  'post   /auth/locallogin' : 'AuthController.localLogin',
+  'post   /auth/login' : 'AuthController.login',
   'post   /auth/inviteuser' : 'AuthController.inviteUser',
   'post   /auth/local/:action' : 'AuthController.callback',
   'post   /auth/activateuser' : 'AuthController.activateUser',
   'post   /registeruser'  : 'AuthController.registeruser',
+  'get   /verifytoken'  : 'AuthController.verifyToken',
   // UserController routes
   'post   /setcustomer/:customer' : 'UserController.setcustomer',
-  'get    /admin/user' : 'UserController.index',
   'get    /profile' : 'UserController.profile',
   'put    /user/:id/reinvite' : 'UserController.sendActivationLink',
   'get    /user'  : 'UserController.fetch',
@@ -43,88 +45,104 @@ module.exports.routes = {
   'post   /user'  : 'UserController.create',
   'delete /user/:id' : 'UserController.remove',
   'get    /myprofile'  : 'UserController.myprofile',
-  /**
-   * Password Recovery
-   */
+  // Password Recovery
   'post   /password/resetmail':'PasswordController.sendResetMail',
   'get    /password/resetform/:token':'PasswordController.resetForm',
   'put    /password/reset':'PasswordController.reset',
-  /**
-   * CustomerController routes
-   */
-  'get    /admin/customer' : 'CustomerController.index',
+  // most of hereunder routes, probably will be removed after migrating to API calls
+  // CustomerController routes
   'get    /customer' : 'CustomerController.fetch',
   'get    /customer/:id' : 'CustomerController.get',
   'put    /customer/:id' : 'CustomerController.edit',
   'post   /customer' : 'CustomerController.create',
   'delete /customer/:id' : 'CustomerController.remove',
   'get    /customer/:name/agent' : 'CustomerController.getUserAgent',
-  //HostController routes
-  'get    /hoststats/:host' : 'HostStatsController.index',
-  //TaskController routes
-  'get    /admin/task'                    : 'TasksController.index',
-  'post   /task'                          : 'TasksController.create',
-  'post   /task/schedule'                 : 'TasksController.schedule',
-  'get    /task/:id?'                     : 'TasksController.get',
-  'get    /task/:id/schedule'             : 'TasksController.getSchedule',
-  'delete /task/:id/schedule/:scheduleId' : 'TasksController.cancelSchedule',
-  'delete /task/:id?'                     : 'TasksController.destroy',
-  'put    /task/:id?'                     : 'TasksController.update',
-  //ScriptController routes
-  'get    /admin/script' : 'ScriptController.index',
+  // TaskController routes
+  'post   /task': 'TasksController.create',
+  'post   /task/schedule': 'TasksController.schedule',
+  'get    /task/:id?': 'TasksController.get',
+  'get    /task/:id/schedule': 'TasksController.getSchedule',
+  'delete /task/:id/schedule/:scheduleId': 'TasksController.cancelSchedule',
+  'delete /task/:id?': 'TasksController.destroy',
+  'put    /task/:id?': 'TasksController.update',
+  // ScriptController routes
   'post   /admin/script/download' : 'ScriptController.downloadPublicScript',
   'get    /script/:id' : 'ScriptController.get',
   'get    /script' : 'ScriptController.fetch',
   'post   /script' : 'ScriptController.create',
   'delete /script/:id' : 'ScriptController.destroy',
   'put    /script/:id' : 'ScriptController.update',
-  //ResourceController routes
-  'get    /admin/monitor' : 'ResourceController.index',
+  // ResourceController routes.
   'get    /resource/:id' : 'ResourceController.get',
   'post   /resource/:type?' : 'ResourceController.create',
   'put    /resource/:id' : 'ResourceController.update',
   'patch  /resource/:id/alerts' : 'ResourceController.updateAlerts',
   'delete /resource/:id' : 'ResourceController.destroy',
-  //ContactController routes
+  // ContactController routes
   'post   /contact' : 'ContactController.contact',
 
-  // NO MORE
-  ///// // Template-HostGroups routes
-  ///// 'get    /admin/hostgroup' : 'HostGroupController.index',
-  ///// 'post   /admin/hostgroup' : 'HostGroupController.create',
-  ///// 'get    /admin/hostgroup/:id' : 'HostGroupController.get',
-  ///// 'put    /admin/hostgroup/:id' : 'HostGroupController.update',
-  ///// 'delete /admin/hostgroup/:id' : 'HostGroupController.destroy',
-  ///// // TaskTemplate-HostGroups routes
-  ///// 'put    /admin/hostgroup/:groupid/tasktemplate/:taskid' : 'HostGroupTaskTemplateController.update',
-  ///// 'post   /admin/hostgroup/:groupid/tasktemplate' : 'HostGroupTaskTemplateController.create',
-  ///// 'delete /admin/hostgroup/:groupid/tasktemplate/:taskid' : 'HostGroupTaskTemplateController.destroy',
-  ///// // MonitorTemplate-HostGroups routes
-  ///// 'put    /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.update',
-  ///// 'post   /admin/hostgroup/:groupid/monitortemplate' : 'HostGroupMonitorTemplateController.create',
-  ///// 'delete /admin/hostgroup/:groupid/monitortemplate/:monitorid' : 'HostGroupMonitorTemplateController.destroy',
-
-  /**
+  /*
    *
-   * generic api endpoints
+   * need migration to /src structure (SPA)
    *
    */
-  'put /api/file/:id':'FileApiController.upload',
-  'post /api/file':'FileApiController.upload',
-  'get /api/file/:id':'FileApiController.download',
+  'get /admin/monitor': 'ResourceController.index',
+  'get /admin/script': 'ScriptController.index',
+  'get /admin/customer': 'CustomerController.index',
+  'get /hoststats/:host': 'HostStatsController.index',
+  'get /admin/task': 'TasksController.index',
+  /*
+   *
+   * all this endpoints are not handled by Sails at all.
+   * has no policies and do not require credentials.
+   * all must be validated on the UI
+   *
+   * old MVC views migration. return response with SPA index.html only
+   * full javascript render.
+   *
+   */
+  '/events': (req,res,next) => res.redirect('/dashboard'),
+  'get /admin/webhook': spaIndexRoute,
+  'get /admin/workflow': spaIndexRoute,
+  'get /admin/scheduler': spaIndexRoute,
+  'get /admin/hostgroup': spaIndexRoute,
+  'get /admin/user' : spaIndexRoute,
+  'get /dashboard': spaIndexRoute,
+  'get /login': spaIndexRoute,
+  'get /register': spaIndexRoute,
+  'get /activate': spaIndexRoute,
+
+
+  /*
+   *
+   * GENERIC API V2 ENDPOINTS. PROXY TO THE API SUPERVISOR
+   *
+   * USE BEARER AUTHENTICATION METHOD
+   *
+   */
+  'put /apiv2/file/:id':'ApiV2Controller.upload',
+  'post /apiv2/file':'ApiV2Controller.upload',
+  'get /apiv2/file/:id':'ApiV2Controller.download',
+  'put /apiv2/:resource/:id*':'ApiV2Controller.update',
+  'patch /apiv2/:resource/:id*':'ApiV2Controller.patch',
+  'delete /apiv2/:resource/:id*':'ApiV2Controller.remove',
+  'get /apiv2/:resource/:id*':'ApiV2Controller.get',
+  'get /apiv2/:resource*':'ApiV2Controller.fetch',
+  'post /apiv2/:resource*':'ApiV2Controller.create',
+  /*
+   *
+   * GENERIC API V1 ENDPOINTS. PROXY TO THE API SUPERVISOR
+   *
+   * USE COOKIES/SESSION AUTHENTICATION METHOD
+   *
+   */
+  'put /api/file/:id':'ApiController.upload',
+  'post /api/file':'ApiController.upload',
+  'get /api/file/:id':'ApiController.download',
   'put /api/:resource/:id*':'ApiController.update',
   'patch /api/:resource/:id*':'ApiController.patch',
   'delete /api/:resource/:id*':'ApiController.remove',
   'get /api/:resource/:id*':'ApiController.get',
   'get /api/:resource*':'ApiController.fetch',
   'post /api/:resource*':'ApiController.create',
-
-  // Template only renders. Response with SPA entry
-  '/events': (req,res,next) => res.redirect('/dashboard'),
-  'get /dashboard':'DashboardController.index',
-  'get /admin/webhook':'WebhookController.index',
-  'get /admin/workflow':'WorkflowController.index',
-  'get /admin/scheduler':'SchedulerController.index',
-  'get /admin/hostgroup':'HostGroupController.index',
-
 }

@@ -2,7 +2,7 @@ import View from 'ampersand-view'
 import './styles.css'
 import 'bootstrap-tooltip'
 
-export default View.extend({
+module.exports = View.extend({
   template: `
     <div class="notify-component"  data-placement="bottom">
       <i data-hook="icon" class="fa fa-bell-o">

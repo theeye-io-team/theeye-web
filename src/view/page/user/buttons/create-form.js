@@ -5,7 +5,7 @@ import Collection from 'ampersand-collection'
 import TheeyeCheckboxView from 'components/theeye-checkbox-view'
 import App from 'ampersand-app'
 
-export default FormView.extend({
+module.exports = FormView.extend({
   initialize: function (options) {
     this.fields = [
       new InputView({

@@ -1,15 +1,11 @@
 import UserPage from 'view/page/user'
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
+import Route from 'lib/router-route'
+import bootbox from 'bootbox'
 
-function Route () {
-}
-
-Route.prototype = {
-  route () {
-    this.index()
-  },
-  index () {
+class User extends Route {
+  indexRoute () {
     /**
      * @summary note that users collection is retrived from sails and customers from
      * the api via a custom sails endpoint.
@@ -19,13 +15,13 @@ Route.prototype = {
      */
     App.state.customers.fetch({
       success: () => {
-        XHR({
+        XHR.send({
           url: `/user`,
           method: 'get',
           //jsonData: body,
           withCredentials: true,
           timeout: 5000,
-          headers: { Accepts: 'application/json;charset=UTF-8' },
+          headers: { Accept: 'application/json;charset=UTF-8' },
           done (users,xhr) {
 
             users.forEach(user => {
@@ -37,7 +33,6 @@ Route.prototype = {
             })
 
             App.state.users.set(users)
-            renderPage()
           },
           fail (err,xhr) {
             bootbox.alert('Something goes wrong. Please refresh')
@@ -48,17 +43,11 @@ Route.prototype = {
         bootbox.alert('Something goes wrong. Please refresh')
       }
     })
+
+    return new UserPage({
+      collection: App.state.users
+    })
   }
 }
 
-const renderPage = () => {
-  const selector = 'body .main-container [data-hook=page-container]'
-  const container = document.querySelector(selector)
-  const page = new UserPage({
-    el: container,
-    collection: App.state.users
-  })
-  App.currentPage = page
-}
-
-module.exports = Route
+module.exports = User

@@ -59,7 +59,7 @@
         <p> <a download="<%= binname %>" target="_blank" href="<%= binurl %>"> Windows 64bit Self-Extractor </a> </p>
         <p>
           <a download="credentials.json" target="_blank" href="/api/agent/credentials">
-            <%= req.session.customer[0].toUpperCase() + req.session.customer.slice(1,req.session.customer.length) %>
+            <%= req.user.current_customer[0].toUpperCase() + req.user.current_customer.slice(1,req.user.current_customer.length) %>
             Agent Credentials
           </a>
         </p>

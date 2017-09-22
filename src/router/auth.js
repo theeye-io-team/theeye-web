@@ -6,38 +6,47 @@ import ActivatePageView from 'view/page/activate'
 import ActivateOwnerPageView from 'view/page/activate-owner'
 import Cookies from 'js-cookie'
 import App from 'ampersand-app'
+import Route from 'lib/router-route'
+import search from 'lib/query-params'
+import XHR from 'lib/xhr'
 
-function Route () {
-}
+class Auth extends Route {
 
-Route.prototype = {
-  login () {
-    const selector = 'body .main-container [data-hook=page-container]'
-    const container = document.querySelector(selector)
+  loginRoute () {
+    return new LoginPageView()
+  }
 
-    App.currentPage = new LoginPageView({ el: container })
-  },
-  register () {
-    const selector = 'body .main-container [data-hook=page-container]'
-    const container = document.querySelector(selector)
+  registerRoute () {
+    return new RegisterPageView()
+  }
 
-    App.currentPage = new RegisterPageView({ el: container })
-  },
-  activate () {
-    const selector = 'body .main-container [data-hook=page-container]'
-    const container = document.querySelector(selector)
-    var cookie = Cookies.getJSON('activate');
-
-    App.state.activate.username = cookie.user.username;
-    App.state.activate.email = cookie.user.email;
-    App.state.activate.invitation_token = cookie.user.invitation_token;
-
-    if(cookie.user.credential == 'owner') {
-      App.currentPage = new ActivateOwnerPageView({ el: container, token: cookie.token})
-    } else {
-      App.currentPage = new ActivatePageView({ el: container, token: cookie.token})
-    }
+  activateRoute () {
+    const query = search.get()
+    let invitation_token = query.invitation_token
+    XHR({
+      url: '/verifytoken?invitation_token='+encodeURIComponent(invitation_token),
+      method: 'get',
+      done (response,xhr) {
+        if (xhr.status == 200) {
+          App.state.activate.username = response.username;
+          App.state.activate.email = response.email;
+          App.state.activate.invitation_token = response.invitation_token;
+          var page;
+          if (response.credential == 'owner') {
+            page = new ActivateOwnerPageView({ token: response.invitation_token })
+          } else {
+            page = new ActivatePageView({ token: response.invitation_token })
+          }
+          App.state.set('currentPage', page)
+        } else {
+          App.navigate('login')
+        }
+      },
+      fail (err,xhr) {
+        App.navigate('login')
+      }
+    })
   }
 }
 
-module.exports = Route
+module.exports = Auth

@@ -2,7 +2,7 @@ import PanelButton from 'components/list/item/panel-button'
 import HostGroupActions from 'actions/hostgroup'
 import bootbox from 'bootbox'
 
-export default PanelButton.extend({
+module.exports = PanelButton.extend({
   initialize: function (options) {
     this.title = 'Delete Host Template'
     this.iconClass = 'fa fa-trash'

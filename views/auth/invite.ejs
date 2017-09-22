@@ -23,7 +23,7 @@
             </select>
           </div>
         </div>
-        <input type="hidden" value="<%= req.session.customer %>" name="customer" required/>
+        <input type="hidden" value="<%= req.user.current_customer %>" name="customer" required/>
         <button type="submit" class="btn btn-warning btn-lg">Invite</button>
       </form>
       <hr>

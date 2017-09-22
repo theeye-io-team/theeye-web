@@ -7,8 +7,9 @@ const Customer = require('models/customer').Model
 const Hosts = require('models/host').Collection
 const TaskTemplates = require('models/task/template').Collection
 const ResourceTemplates = require('models/resource/template').Collection
+const config = require('config')
 
-const urlRoot = '/api/hostgroup'
+const urlRoot = `${config.api_url}/hostgroup`
 
 const EventTemplate = AmpersandState.extend({
 	props: {

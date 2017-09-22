@@ -61,7 +61,7 @@ const GroupedResourceCollection = ResourceCollection.extend({
   }
 })
 
-export default AmpersandState.extend({
+module.exports = AmpersandState.extend({
   props: {
     resourcesDataSynced: ['boolean',false,false],
     tasksDataSynced: ['boolean',false,false],

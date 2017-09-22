@@ -2,8 +2,6 @@ import View from 'ampersand-view'
 import $ from 'jquery'
 import bootstrap from 'bootstrap'
 
-require('./style.css')
-
 module.exports = View.extend({
   template: `
     <div data-hook="alert-type" role="alert">
@@ -48,17 +46,17 @@ module.exports = View.extend({
   },
   render () {
     this.renderWithTemplate(this)
-    $('body .alerts-container').html(this.el)
 
-    var $alert = this.$alert = $(this.el)
+    const $alert = $(this.el)
+    this.$alert = $alert
+
     $alert.on('closed.bs.alert',() => this.remove())
-    $alert.slideDown()
+    //$alert.slideDown()
+    $alert.show()
 
     window.setTimeout(() => {
       $alert.slideUp({
-        complete: function () {
-          $alert.trigger('closed.bs.alert')
-        }
+        complete: () => $alert.trigger('closed.bs.alert')
       })
     }, this.timeout * 1000)
   },

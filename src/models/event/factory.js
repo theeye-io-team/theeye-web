@@ -37,4 +37,4 @@ class Factory {
   }
 }
 
-export default Factory
+module.exports = Factory

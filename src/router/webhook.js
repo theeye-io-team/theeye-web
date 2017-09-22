@@ -2,28 +2,16 @@
 
 import WebhookPageView from 'view/page/webhook'
 import App from 'ampersand-app'
+import Route from 'lib/router-route'
 
-function Route () {
-}
-
-Route.prototype = {
-  route () {
-    var page = this.index()
-
-    App.currentPage = page
-  },
-  index () {
+class Webhook extends Route {
+  indexRoute () {
     // webhooks collection
     App.state.webhooks.fetch()
-
-    const selector = 'body .main-container [data-hook=page-container]'
-    const container = document.querySelector(selector)
-
     return new WebhookPageView({
-      el: container,
       collection: App.state.webhooks
     })
   }
 }
 
-module.exports = Route
+module.exports = Webhook

@@ -35,7 +35,7 @@
           into the folder where you would like to install TheEye Agent (<code>C:/Program Files/The Eye</code>)
         </li>
         <li>Download and replace the configuration file <code>{installation folder}/config/credentials.js</code> with 
-          <a download="credentials.json" target="_blank" href="/api/agent/credentials">yours <i class="fa fa-download"></i></a>
+          <a download="credentials.json" target="_blank" href="/apiv2/agent/credentials">yours <i class="fa fa-download"></i></a>
         </li>
         <li>Open a <code>cmd.exe</code> <b>as Administrator</b> and change directory to the installation folder
           <pre>cd {installation folder}</pre> </li>
@@ -53,7 +53,7 @@
           <a download="<%= binname %>" target="_blank" href="<%= binurl %>"> Windows 64bit Self-Extractor </a>
         </p>
         <p>
-          <a download="credentials.json" target="_blank" href="/api/agent/credentials">
+          <a download="credentials.json" target="_blank" href="/apiv2/agent/credentials">
             <%= req.session.customer[0].toUpperCase() + req.session.customer.slice(1,req.session.customer.length) %>
             Agent Credentials
           </a>

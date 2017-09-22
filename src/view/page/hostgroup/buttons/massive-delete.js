@@ -1,6 +1,6 @@
 import MassiveDeleteButton from 'components/list/header/buttons/massive-delete'
 
-export default MassiveDeleteButton.extend({
+module.exports = MassiveDeleteButton.extend({
 	initialize () {
 		MassiveDeleteButton.prototype.initialize.apply(this,arguments)
 		this.name = 'name'

@@ -1,9 +1,13 @@
-var State = require('ampersand-state')
-var AlertView = require('./view')
-var extend = require('lodash/extend')
+'use strict'
 
-var ServerErrorType = {
-  set: function (newVal) {
+const State = require('ampersand-state')
+const AlertView = require('./view')
+const extend = require('lodash/extend')
+
+require('./style.css')
+
+const ServerErrorType = {
+  set (newVal) {
     if (newVal instanceof Error) {
       return {
         val: newVal,
@@ -26,7 +30,7 @@ var ServerErrorType = {
       }
     }
   },
-  compare: function (currentVal, newVal, attributeName) {
+  compare (currentVal, newVal, attributeName) {
     if (!currentVal) return false
     if (currentVal !== newVal) return false
     if (!currentVal.footprint || !newVal.footprint) {
@@ -36,14 +40,14 @@ var ServerErrorType = {
   }
 }
 
-var AlertsType = {
-  set: function (newVal) {
+const AlertsType = {
+  set (newVal) {
     return {
       val: newVal,
       type: 'alerts'
     }
   },
-  compare: function (currentVal, newVal, attributeName) {
+  compare (currentVal, newVal, attributeName) {
     if (!currentVal) return false
     if (currentVal.footprint && newVal.footprint) {
       return currentVal.footprint === newVal.footprint
@@ -77,7 +81,7 @@ module.exports = State.extend({
     this.container.appendChild(view.el)
   },
   // constructor
-  initialize: function () {
+  initialize () {
     this.listenTo(this, 'change:serverError', this.showServerError)
     this.listenTo(this, 'change:alerts', this.showAlerts)
     this._renderAlertsContainer()

@@ -1,7 +1,8 @@
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
+import config from 'config'
 
-const urlRoot = '/customer'
+const urlRoot = `${config.app_url}/customer`
 
 const defaultConfig = {
   kibana: null,

@@ -5,7 +5,7 @@ import map from 'lodash/map'
 const confirmTemplate = require('./confirm.hbs')
 const reconfirmTemplate = require('./reconfirm.hbs')
 
-export default MassiveButton.extend({
+module.exports = MassiveButton.extend({
   props: {
     name: 'string', // what is being deleted ?
     displayProperty: 'string' // which property of the item are we going to display

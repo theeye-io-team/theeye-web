@@ -1,31 +1,14 @@
-<div>
-  <!-- menu -->
-  <div data-hook="navbar-container"></div>
-  <!-- Main  -->
-  <div class="mainContainer">
-    <div class="loginBox">
-      <!-- show any messages that come back with authentication -->
-      <!-- <% if ( typeof(errors)!="undefined" && errors.length > 0) { %>
-      <div class="alert alert-danger"><%= __(errors[0])  %></div>
-      <% } %> -->
-      <!--  no por ahora. <a href="#" class="sign facebook"><i class="fa fa-facebook"></i>Facebook</a>
-      <a href="#" class="sign twitter"><i class="fa fa-twitter"></i>Twitter</a> -->
+<div class="loginBox">
+  <div data-hook="register-form-container">
+    <h1>Register on theeye.io</h1>
 
-
-      <!-- <a href="/auth/google"  class="sign google"><i class="fa fa-google-plus"></i>Google+</a>
-      <div class="or"><span>or</span></div> -->
-
-      <div data-hook="register-form-container">
-        <h1>Register on theeye.io</h1>
-
-        <div data-hook="register-form" class="register-form"></div>
-        <button data-hook="start-register">Register</button>
-      </div>
-      <div class="result-container" data-hook="result-container">
-        <h1>Congratulations</h1>
-        <h2>Activation email sent. Please check your inbox to fully activate your account.</h2>
-        <a class='login-back' href='/login'>Back to login</a>
-      </div>
-    </div>
+    <div data-hook="register-form" class="register-form"></div>
+    <button data-hook="start-register">Register</button>
+  </div>
+  <div class="result-container" data-hook="result-container">
+    <h1>Thank You For Registering!</h1>
+    <h2>Please check your inbox, an email is on the way.</h2>
+    <span>We just sent you an email that contains an activation link. All you to do is open it and click the link to complete the registration and start automating with TheEye.</span>
+    <a class='login-back' href='/login'>Back to login</a>
   </div>
 </div>

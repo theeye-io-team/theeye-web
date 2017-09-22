@@ -1,7 +1,6 @@
 import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import InputView from 'ampersand-input-view'
-import NavBar from '../navbar'
 import AuthActions from 'actions/auth'
 
 const LoginForm = FormView.extend({
@@ -46,7 +45,7 @@ const ForgotForm = FormView.extend({
   }
 })
 
-export default View.extend({
+module.exports = View.extend({
   autoRender: true,
   template: require('./template.hbs'),
   props: {
@@ -96,9 +95,7 @@ export default View.extend({
     this.loginForm = new LoginForm({})
     this.forgotForm = new ForgotForm({})
 
-    this.renderSubview(new NavBar({}), this.queryByHook('navbar-container'))
     this.renderSubview(this.loginForm, this.queryByHook('login-form'))
     this.renderSubview(this.forgotForm, this.queryByHook('forgot-form'))
-
   }
 })

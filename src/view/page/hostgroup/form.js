@@ -175,7 +175,7 @@ const HostsPreviewModal = Modalizer.extend({
   }
 })
 
-export default FormView.extend({
+module.exports = FormView.extend({
   initialize (options) {
 
     currentGroup = this.model

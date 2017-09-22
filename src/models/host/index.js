@@ -1,9 +1,10 @@
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
+const config = require('config')
 
 import { Model as Customer } from 'models/customer'
 
-const urlRoot = '/api/host'
+const urlRoot = `${config.api_url}/host`
 
 const Model = AppModel.extend({
   urlRoot: urlRoot,

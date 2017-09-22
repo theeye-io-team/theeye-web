@@ -1,6 +1,6 @@
 import BaseView from 'view/base-view'
 
-export default BaseView.extend({
+module.exports = BaseView.extend({
   template: `
     <button>
       <span data-hook="icon-span"></span>

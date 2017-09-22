@@ -3,7 +3,7 @@ import ListItem from 'components/list/item'
 
 import * as UserButtons from './buttons'
 
-export default ListItem.extend({
+module.exports = ListItem.extend({
   derived: {
     //tags: {
     //  deps: ['model.username', 'model.email', 'model.credential', 'model.customers'],

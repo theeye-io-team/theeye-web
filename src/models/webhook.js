@@ -1,10 +1,14 @@
+import App from 'ampersand-app'
 import BaseModel from 'lib/app-model'
 import BaseCollection from 'lib/app-collection'
 import Cookies from 'js-cookie'
 import { Model as Customer } from './customer'
+const config = require('config')
+
+const urlRoot = `${config.api_url}/webhook`
 
 export const Model = BaseModel.extend({
-  urlRoot: '/api/webhook',
+  urlRoot: urlRoot,
   props: {
     id:'string',
     name:'string',
@@ -17,25 +21,26 @@ export const Model = BaseModel.extend({
   children: {
     customer: Customer
   },
-  parse: function(response){
-    response.hosts = [ response.host_id ];
+  parse: function (response) {
+    response.hosts = [ response.host_id ]
     return response;
   },
-  initialize: function(){
-    Object.defineProperty(this,'triggerUrl',{
-      get: function() {
-        var cookie = Cookies.getJSON('theeye');
-        var url = cookie.supervisor_url;
-        var customer = cookie.customer;
+  derived: {
+    triggerUrl: {
+      deps: ['id','secret','customer'],
+      fn () {
+        const url = config.supervisor_api_url
+        const customer_name = this.customer.name
+        const secret = this.secret
+        const id = this.id
 
-        return url + '/' + customer + '/webhook/' +
-          this.id + '/trigger/secret/' + this.attributes.secret ;
+        return `${url}/${customer_name}/webhook/${id}/trigger/secret/${secret}`
       }
-    });
+    }
   }
 })
 
 export const Collection = BaseCollection.extend({
-  model: Model,
-  url:'/api/webhook'
+  url: urlRoot,
+  model: Model
 })

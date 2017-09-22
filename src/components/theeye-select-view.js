@@ -4,7 +4,7 @@ import compact from 'lodash/compact'
 import concat from 'lodash/concat'
 
 // hay que reescribir el SelectView, es medio mersa
-export default SelectView.extend({
+module.exports = SelectView.extend({
   template: `
     <div class="form-group form-horizontal">
       <label data-hook="label" class="col-sm-3 control-label"></label>

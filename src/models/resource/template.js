@@ -3,7 +3,8 @@ import Schema from 'models/resource/schema'
 import { Model as MonitorTemplate } from 'models/monitor/template'
 //import { Model as HostGroup } from 'models/hostgroup'
 
-const urlRoot = '/api/resource-template'
+const config = require('config')
+const urlRoot = `${config.api_url}/resource-template`
 
 const Model = Schema.extend({
 	props: {

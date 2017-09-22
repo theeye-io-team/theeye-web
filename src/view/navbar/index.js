@@ -3,6 +3,10 @@ import Searchbox from './searchbox'
 import SessionActions from 'actions/session'
 import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
+import Backdrop from 'components/backdrop'
+
+import logo from './logo.png'
+const template = require('./nav.hbs')
 
 const CustomerItemList = View.extend({
   props: {
@@ -74,16 +78,16 @@ const UserProfile = View.extend({
   }
 })
 
-export default View.extend({
-  template: require('./nav.hbs'),
+const Menu = View.extend({
+  template: require('./menu.hbs'),
   props: {
     menu_switch: ['boolean',false,false],
     customers_switch: ['boolean',false,false]
   },
   bindings: {
     menu_switch: {
+      hook: 'menu',
       type: 'toggle',
-      hook: 'menu-container'
     },
     customers_switch: [{
       type: 'toggle',
@@ -93,50 +97,81 @@ export default View.extend({
       hook: 'links-container',
       invert: true
     },{
-      type: 'booleanClass',
       selector: '[data-hook=customers-toggle] i.fa',
+      type: 'booleanClass',
       yes: 'fa-angle-up',
       no: 'fa-angle-down',
     }]
   },
   events: {
+    'click [data-hook=links-container] a': function (event) {
+      this.toggle('menu_switch')
+    },
     'click [data-hook=menu-toggle]': function (event) {
       event.preventDefault()
       event.stopPropagation()
-
       this.toggle('menu_switch')
-
       return false
     },
     'click [data-hook=customers-toggle]': function (event) {
       event.preventDefault()
       event.stopPropagation()
-
       this.toggle('customers_switch')
-
       return false
+    },
+    'click [data-hook=logout]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      App.navigate('logout')
+      return false
+    },
+    'click [data-hook=mvc-link]': function (event) {
+      window.location.href = event.target.href
     }
   },
   render () {
-    this.renderWithTemplate()
+    this.renderWithTemplate(this)
 
-    this.renderSearchbox()
-    this.renderCustomers()
-    this.renderMenuLinks()
+    this.renderProfile()
+
+    this.listenToAndRun(App.state.session.user,'change:credential',() => {
+      this.renderMenuLinks()
+    })
+    this.renderBackdrop()
+  },
+  renderBackdrop () {
+    const backdrop = new Backdrop({
+      zIndex: 998,
+      opacity: 0
+    })
+    this.listenTo(backdrop,'click',() => {
+      this.toggle('menu_switch')
+    })
+    this.on('change:menu_switch',() => {
+      backdrop.visible = this.menu_switch
+    })
   },
   renderMenuLinks () {
     const container = this.query('[data-hook=links-container] span')
-    if ( Acls.hasAccessLevel('admin') ) {
-      container.appendChild( html2dom(`<li><a href="/admin/monitor" class="eyemenu-icon eyemenu-monitors"> Monitors </a></li>`))
-      container.appendChild( html2dom(`<li><a href="/admin/task" class="eyemenu-icon eyemenu-tasks"> Tasks </a></li>`))
-      container.appendChild( html2dom(`<li><a href="/admin/webhook" class="eyemenu-icon eyemenu-webhooks"> Webhooks </a></li>`))
-      container.appendChild( html2dom(`<li><a href="/admin/script" class="eyemenu-icon eyemenu-scripts"> Scripts </a></li>`))
-      container.appendChild( html2dom(`<li><a href="/admin/hostgroup" class="eyemenu-icon eyemenu-templates"> Provisioning </a></li>`))
+
+    // empty container
+    while (container.hasChildNodes()) {
+      container.removeChild(container.lastChild)
     }
 
-    if ( Acls.hasAccessLevel('root') ) {
-      container.appendChild( html2dom(`<li><a href="/admin/user" class="eyemenu-icon eyemenu-users"> Users </a></li>`))
-      container.appendChild( html2dom(`<li><a href="/admin/customer" class="eyemenu-icon eyemenu-organizations"> Organizations </a></li>`))
+    if (App.state.session.user.credential) {
+      if (Acls.hasAccessLevel('admin')) {
+        container.appendChild( html2dom(`<li><a data-hook='mvc-link' href="/admin/monitor" class="eyemenu-icon eyemenu-monitors"> Monitors </a></li>`))
+        container.appendChild( html2dom(`<li><a data-hook='mvc-link' href="/admin/task" class="eyemenu-icon eyemenu-tasks"> Tasks </a></li>`))
+        container.appendChild( html2dom(`<li><a data-hook='mvc-link' href="/admin/script" class="eyemenu-icon eyemenu-scripts"> Scripts </a></li>`))
+        container.appendChild( html2dom(`<li><a href="/admin/webhook" class="eyemenu-icon eyemenu-webhooks"> Webhooks </a></li>`))
+        container.appendChild( html2dom(`<li><a href="/admin/hostgroup" class="eyemenu-icon eyemenu-templates"> Provisioning </a></li>`))
+      }
+
+      if (Acls.hasAccessLevel('root')) {
+        container.appendChild( html2dom(`<li><a href="/admin/user" class="eyemenu-icon eyemenu-users"> Users </a></li>`))
+        container.appendChild( html2dom(`<li><a data-hook='mvc-link' href="/admin/customer" class="eyemenu-icon eyemenu-organizations"> Organizations </a></li>`))
+      }
     }
 
     // on window resize recalculate links container height
@@ -155,14 +190,9 @@ export default View.extend({
     },false)
     window.dispatchEvent(new Event('resize'))
   },
-  renderSearchbox () {
-    this.searchbox = new Searchbox({
-      el: this.queryByHook('searchbox-container')
-    })
-    this.searchbox.render()
-    this.registerSubview( this.searchbox )
-  },
-  renderCustomers () {
+  renderProfile () {
+
+    // in sync with the session
     const customer = new CurrentCustomerItem({
       el: this.queryByHook('session-customer'),
       active: true,
@@ -171,6 +201,7 @@ export default View.extend({
     customer.render()
     this.registerSubview(customer)
 
+    // in sync with the session
     const profile = new UserProfile({
       el: this.queryByHook('session-user'),
       model: App.state.session.user
@@ -178,9 +209,12 @@ export default View.extend({
     profile.render()
     this.registerSubview(profile)
 
+    // in sync with the session
     this.renderCollection(
       App.state.session.user.customers,
       function (options) {
+        // this is not correctly binded.
+        // only works if the session.user.customer is fetched before current session.customer
         if (options.model.id===App.state.session.customer.id) {
           options.active = true
         }
@@ -205,4 +239,40 @@ export default View.extend({
     },false)
     window.dispatchEvent(new Event('resize'))
   }
+})
+
+module.exports = View.extend({
+  autoRender: true,
+  template: () => {
+    return template.call(this,{ logo: logo })
+  },
+  render () {
+    this.renderWithTemplate()
+
+    this.listenToAndRun(App.state.session,'change:access_token',() => {
+      if (App.state.session.access_token) {
+        this.showSearchbox()
+        this.showMenu()
+      } else {
+        this.hideSearchbox()
+        this.hideMenu()
+      }
+    })
+  },
+  showSearchbox () {
+    const container = this.queryByHook('searchbox-container')
+    this.searchbox = new Searchbox()
+    this.renderSubview(this.searchbox, container)
+  },
+  hideSearchbox () {
+    if (this.searchbox) this.searchbox.remove()
+  },
+  showMenu () {
+    const container = this.queryByHook('menu-container')
+    this.menu = new Menu()
+    this.renderSubview(this.menu, container)
+  },
+  hideMenu () {
+    if (this.menu) this.menu.remove()
+  },
 })

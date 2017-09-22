@@ -7,22 +7,19 @@ import SocketsWrapper from 'lib/sockets'
 import ResourceAction from 'actions/resource'
 import JobAction from 'actions/job'
 import search from 'lib/query-params'
+import Route from 'lib/router-route'
 
 const logger = require('lib/logger')('router:dashboard')
 
-function Route () { }
-
-module.exports = Route
-
-Route.prototype = {
-  route () {
+class Dashboard extends Route {
+  indexRoute () {
     const query = search.get()
     setStateFromQueryString(query)
-
-    const page = index(query)
-    App.state.set('currentPage', page)
-  },
+    return index(query)
+  }
 }
+
+module.exports = Dashboard
 
 const setStateFromQueryString = (query) => {
   let groupBy = query.monitorsgroupby

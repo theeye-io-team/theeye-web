@@ -4,7 +4,7 @@ import Modalizer from 'components/modalizer'
 import UserActions from 'actions/user'
 import EditFormView from './edit-form'
 
-export default PanelButton.extend({
+module.exports = PanelButton.extend({
   initialize: function (options) {
     this.title = 'Edit User'
     this.iconClass = 'fa fa-edit'

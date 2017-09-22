@@ -1,7 +1,7 @@
 import CommonButton from 'components/common-button'
 import merge from 'lodash/merge'
 
-export default CommonButton.extend({
+module.exports = CommonButton.extend({
   template: `
     <button data-placement="right">
       <span data-hook="icon-span"></span>

@@ -4,7 +4,7 @@ import FormView from '../form'
 import { Model as HostGroup } from 'models/hostgroup'
 import HostGroupActions from 'actions/hostgroup'
 
-export default CommonButton.extend({
+module.exports = CommonButton.extend({
   initialize (options) {
     this.title = 'New Host Group'
     this.className = 'btn btn-primary tooltiped'

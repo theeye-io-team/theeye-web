@@ -4,25 +4,27 @@ import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 import assign from 'lodash/assign'
+import config from 'config'
 
 const xhr = $.ajax
 
-export default {
+module.exports = {
   login (data) {
-    XHR({
-      url: `/auth/locallogin`,
+    XHR.send({
+      url: `${config.app_url}/auth/login`,
       method: 'post',
       jsonData: data,
       timeout: 5000,
       withCredentials: true,
       headers: {
-        Accepts: 'application/json;charset=UTF-8'
+        Accept: 'application/json;charset=UTF-8'
       },
-      done (response,xhr) {
+      done: (response,xhr) => {
         if (xhr.status == 200){
-          window.location.replace('/events')
-        }
-        else {
+          App.state.session.set({
+            access_token: response.access_token
+          })
+        } else {
           if (xhr.status == 400) {
             bootbox.alert('Login error, invalid credentials')
           } else {
@@ -30,29 +32,48 @@ export default {
           }
         }
       },
-      fail (err,xhr) {
+      fail: (err,xhr) => {
         bootbox.alert('Login error, please try again')
       }
     })
   },
+  logout () {
+    XHR.send({
+      url: `${config.app_url}/logout`,
+      method: 'get',
+      timeout: 5000,
+      withCredentials: true,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done: (response,xhr) => {
+        if (xhr.status == 200) {
+          App.state.session.destroy()
+          App.state.alerts.success('Logged Out.','See you soon')
+        }
+      },
+      fail: (err,xhr) => { bootbox.alert('Error, please try again') }
+    })
+  },
   resetMail (data) {
     App.state.loader.visible = true
-    XHR({
-      url: `/password/resetmail`,
+    XHR.send({
+      url: `${config.app_url}/password/resetmail`,
       method: 'post',
       jsonData: data,
       timeout: 5000,
       withCredentials: true,
       headers: {
-        Accepts: 'application/json;charset=UTF-8'
+        Accept: 'application/json;charset=UTF-8'
       },
-      done (response,xhr) {
+      done: (response,xhr) => {
         App.state.loader.visible = false
         if (xhr.status == 200){
           bootbox.alert({
             message: 'Password reset link sent',
             callback: () => {
-              window.location.reload()
+              //window.location.reload()
+              App.navigate('login')
             }
           })
         }
@@ -64,7 +85,7 @@ export default {
           }
         }
       },
-      fail (err,xhr) {
+      fail: (err,xhr) => {
         App.state.loader.visible = false
         bootbox.alert('Error, please try again')
       }
@@ -78,7 +99,7 @@ export default {
     body.username = data.email
 
     const req = xhr({
-      url: '/registeruser',
+      url: `${config.app_url}/registeruser`,
       type: 'POST',
       data: JSON.stringify(body),
       dataType: 'json',
@@ -99,10 +120,10 @@ export default {
     })
   },
   checkUsernameActivation (username, token) {
-    XHR({
-      url: '/checkusernameactivation?token='+encodeURIComponent(token)+'&username='+encodeURIComponent(username),
+    XHR.send({
+      url: `${config.app_url}/checkusernameactivation?token=` + encodeURIComponent(token) + '&username=' + encodeURIComponent(username),
       method: 'get',
-      done (response,xhr) {
+      done: (response,xhr) => {
         if (xhr.status == 400) {
           bootbox.alert('Username already in use.')
           App.state.activate.finalStep = false
@@ -114,7 +135,7 @@ export default {
           App.state.activate.finalStep = true
         }
       },
-      fail (err,xhr) {
+      fail: (err,xhr) => {
         bootbox.alert('Account activation error, please try again later.')
         App.state.activate.finalStep = false
       }
@@ -124,20 +145,21 @@ export default {
     App.state.loader.visible = true
     var token = encodeURIComponent(token);
 
-    XHR({
-      url: '/auth/activateuser?token='+token,
+    XHR.send({
+      url: `${config.app_url}/auth/activateuser?token=${token}`,
       method: 'post',
       jsonData: data,
       timeout: 5000,
       headers: {
-        Accepts: 'application/json;charset=UTF-8'
+        Accept: 'application/json;charset=UTF-8'
       },
       done (response,xhr) {
         if (xhr.status == 200) {
           bootbox.alert({
-            message: 'Registration complete',
+            message: 'Registration is completed',
             callback: () => {
-              window.location.replace('/dashboard')
+              //window.location.replace('/dashboard')
+              App.navigate('dashboard')
             }
           })
         } else if (response.statusCode == 400) {

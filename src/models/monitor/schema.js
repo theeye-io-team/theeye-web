@@ -2,7 +2,7 @@ import State from 'ampersand-state'
 import AppModel from 'lib/app-model'
 //import { Model as Customer } from 'models/customer'
 
-export default AppModel.extend({
+module.exports = AppModel.extend({
   props: {
     id: 'string',
     customer_id: 'string',

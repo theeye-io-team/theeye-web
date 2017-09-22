@@ -1,27 +1,16 @@
 import SchedulerPageView from 'view/scheduler'
 import App from 'ampersand-app'
+import Route from 'lib/router-route'
 
-function Route () {
-}
-
-Route.prototype = {
-  route () {
-    var page = this.index()
-
-    App.currentPage = page
-  },
-  index () {
+class Scheduler extends Route {
+  indexRoute () {
     // schedules collection
     App.state.schedules.fetch()
 
-    const selector = 'body .main-container [data-hook=page-container]'
-    const container = document.querySelector(selector)
-
     return new SchedulerPageView({
-      el: container,
       collection: App.state.schedules
     })
   }
 }
 
-module.exports = Route
+module.exports = Scheduler

@@ -1,5 +1,6 @@
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
+const config = require('config')
 
 export const Model = AppModel.extend({
   props: {
@@ -16,5 +17,5 @@ export const Model = AppModel.extend({
 
 export const Collection = AppCollection.extend({
   model: Model,
-  url: '/api/schedule'
+  url: `${config.api_url}/schedule`
 })

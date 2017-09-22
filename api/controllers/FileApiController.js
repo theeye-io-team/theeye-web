@@ -14,7 +14,7 @@ module.exports = {
    * @route /api/file
    */
   upload (req, res, next) {
-    var url = req.originalUrl.replace('/api/',`/${req.session.customer}/`);
+    var url = req.originalUrl.replace('/api/',`/${req.user.current_customer}/`);
     var params = req.params.all();
     var buffer = new Buffer(params.file,'base64');
     var source = decodeURIComponent(escape(buffer.toString('ascii')));
@@ -44,7 +44,7 @@ module.exports = {
 		});
   },
   download (req, res, next) {
-    var url = req.originalUrl.replace('/api/',`/${req.session.customer}/`);
+    var url = req.originalUrl.replace('/api/',`/${req.user.current_customer}/`);
     var supervisor = req.supervisor;
 
     supervisor.performRequest({

@@ -1,7 +1,6 @@
 import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import InputView from 'ampersand-input-view'
-import NavBar from '../navbar'
 import AuthActions from 'actions/auth'
 
 const ActivateForm = FormView.extend({
@@ -61,7 +60,7 @@ const ActivateForm = FormView.extend({
   }
 })
 
-export default View.extend({
+module.exports = View.extend({
   initialize () {
     View.prototype.initialize.apply(this,arguments)
     this.username = App.state.activate.username
@@ -87,8 +86,6 @@ export default View.extend({
   render() {
     this.renderWithTemplate(this)
     this.activateForm = new ActivateForm()
-
-    this.renderSubview(new NavBar({}), this.queryByHook('navbar-container'))
     this.renderSubview(this.activateForm, this.queryByHook('activate-form'))
   }
 })

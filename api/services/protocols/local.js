@@ -3,7 +3,7 @@ var validator   = require('validator');
 var crypto      = require("crypto");
 var querystring = require("querystring");
 var underscore  = require("underscore");
-var debug       = require('debug')('eye:web:service:protocol:local');
+var debug       = require('debug')('theeye:service:protocol:local');
 /**
  * Local Authentication Protocol
  *
@@ -121,7 +121,7 @@ exports.resetActivationToken = function (user, next) {
 }
 
 exports.getActivationLink = function (user) {
-  var queryToken = querystring.stringify({ token: user.invitation_token });
+  var queryToken = new Buffer( JSON.stringify({ invitation_token: user.invitation_token }) ).toString('base64')
   var url = sails.config.passport.local.activateUrl;
   return (url + queryToken);
 }
@@ -405,20 +405,14 @@ exports.login = function (req, identifier, password, next) {
 
     if (!user) {
       sails.log.debug('user not found %s@%s', identifier, password);
-      if (isEmail) {
-        req.flash('error', 'Error.Passport.Email.NotFound');
-      } else {
-        req.flash('error', 'Error.Passport.Username.NotFound');
-      }
-
       return next(null, false);
     }
 
     sails.log.debug('validating local passport user %s', user);
 
     Passport.findOne({
-      protocol : 'local'
-    , user     : user.id
+      protocol : 'local',
+      user     : user.id
     }, function (err, passport) {
       sails.log.debug('passport %s', passport);
       if (passport) {
@@ -430,7 +424,6 @@ exports.login = function (req, identifier, password, next) {
 
           if (!res) {
             sails.log.debug('error wrong password');
-            req.flash('error', 'Error.Passport.Password.Wrong');
             return next(null, false);
           } else {
             return next(null, user);
@@ -438,9 +431,68 @@ exports.login = function (req, identifier, password, next) {
         });
       } else {
         sails.log.debug('error password not set');
-        req.flash('error', 'Error.Passport.Password.NotSet');
         return next(null, false);
       }
     });
   });
-};
+}
+
+exports.bearerVerify = (token, next) => {
+  debug('verifying bearer jwtoken')
+  jwtoken.verify(token, (err, decoded) => {
+    if (err) {
+      debug(err.message)
+      if (/expired/i.test(err.message)) {
+        err.status = 401
+      } else {
+        err.status = 400
+      }
+      return next(err)
+    }
+
+    const uid = decoded.user_id
+
+    if (!uid) {
+      const err = new Error('invalid token payload. invalid credentials') 
+      err.status = 400
+      debug(err.message)
+      debug(decoded)
+      return next(err)
+    }
+
+    User.findOne({ id: uid }, (err, user) => {
+      if (err) {
+        debug(err.message)
+        return next(err)
+      }
+
+      if (!user) {
+        const err = new Error('invalid token payload. credentials not found') 
+        debug(err.message)
+        return next(err)
+      }
+
+      Passport.findOne({
+        user: user.id,
+        protocol: 'theeye'
+      }, (err, passport) => {
+        if (err) return next(err)
+
+        if (!passport) {
+          var err = new Error('theeye passport not found')
+          err.status = 500
+          debug(err.message)
+          return next(err)
+        }   
+
+        user.theeye = {
+          client_id: passport.profile.client_id,
+          client_secret: passport.profile.client_secret,                                       
+          access_token: passport.token
+        }
+
+        next(null,user)
+      })
+    })
+  })
+}

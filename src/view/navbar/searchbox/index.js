@@ -1,7 +1,7 @@
 import View from 'ampersand-view'
 import SearchActions from 'actions/searchbox'
 
-export default View.extend({
+module.exports = View.extend({
   autoRender: true,
   template: require('./template.hbs'),
   props: {

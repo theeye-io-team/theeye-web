@@ -2,7 +2,7 @@ import SelectView from 'ampersand-select-view'
 import extend from 'lodash/assign'
 
 // hay que reescribir el SelectView, es medio mersa
-export default SelectView.extend({
+module.exports = SelectView.extend({
   props: {
     styles: ['string',false]
   },

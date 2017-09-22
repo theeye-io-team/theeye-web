@@ -1,14 +1,15 @@
 import XHR from 'lib/xhr'
+const config = require('config')
 
 module.exports = {
   setCustomer (name) {
-    XHR({
+    XHR.send({
       method: 'post',
-      url: `/setcustomer/${name}`,
+      url: `${config.app_url}/setcustomer/${name}`,
       withCredentials: true,
       timeout: 5000,
       headers: {
-        Accepts: 'application/json;charset=UTF-8'
+        Accept: 'application/json;charset=UTF-8'
       },
       done (data,xhr) {
         window.location.reload()

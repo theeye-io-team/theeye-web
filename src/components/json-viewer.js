@@ -94,7 +94,7 @@ module.exports = View.extend({
     json: ['any',true],
     collapsed: ['boolean',false,false]
   },
-  template: `<div class="output-block" style="padding-left:20px;" data-hook="container"></div>`,
+  template: `<div class="json-viewer-component" style="" data-hook="container"></div>`,
   renderJson () {
     const container = this.queryByHook('container')
     const json = this.json

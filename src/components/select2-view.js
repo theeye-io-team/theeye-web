@@ -11,7 +11,7 @@ function getMatches (el, selector) {
   return matches.concat(Array.prototype.slice.call(el.querySelectorAll(selector)))
 }
 
-export default View.extend({
+module.exports = View.extend({
   template: `
     <div class="form-group form-horizontal">
       <label data-hook="label" class="col-sm-3 control-label"></label>

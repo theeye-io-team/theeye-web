@@ -1,6 +1,11 @@
 'use strict'
 
-const Router = require('ampersand-router')
+import App from 'ampersand-app'
+import Router from 'ampersand-router'
+import AuthActions from 'actions/auth'
+const logger = require('lib/logger')('router')
+
+// routes
 const AuthRoute = require('./auth')
 const UserRoute = require('./user')
 const CustomerRoute = require('./customer')
@@ -10,33 +15,62 @@ import SchedulerRoute from './scheduler'
 import DashboardRoute from './dashboard'
 
 module.exports = Router.extend({
+  execute (callback, args) {
+    if (callback) {
+      const isLogin = /login/.test(window.location.pathname) === true || /login/.test(window.location.hash) === true
+      if (!isLogin) {
+        // navigate to login if we dont have an access_token
+        let logged_in = App.state.session.logged_in
+        if (logged_in === undefined) return // wait until it is set
+        if (logged_in === false) {
+          logger.warn('session expired. must login')
+          return false
+        } else {
+          callback.apply(this, args)
+        }
+      } else {
+        callback.apply(this, args)
+      }
+    }
+  },
   routes: {
+    'dashboard': () => {
+      const route = new DashboardRoute()
+      route.route('index')
+    },
     'admin/hostgroup(/:id/:action)': () => {
-      new HostGroupRoute().route()
+      const route = new HostGroupRoute()
+      route.route('index')
     },
     'admin/user(/:id/:action)': () => {
-      new UserRoute().route()
+      const route = new UserRoute()
+      route.route('index')
     },
     'admin/customer(/:id/:action)': () => {
       new CustomerRoute().route()
     },
     'admin/webhook(/:id/:action)': () => {
-      new WebhookRoute().route()
+      const route = new WebhookRoute()
+      route.route('index')
     },
     'admin/scheduler': () => {
-      new SchedulerRoute().route()
+      const route = new SchedulerRoute()
+      route.route('index')
     },
     'login': () => {
-      new AuthRoute().login()
+      const route = new AuthRoute()
+      route.route('login')
+    },
+    'logout': () => {
+      AuthActions.logout()
     },
     'register': () => {
-      new AuthRoute().register()
+      const route = new AuthRoute()
+      route.route('register')
     },
     'activate': () => {
-      new AuthRoute().activate()
-    },
-    'dashboard': () => {
-      new DashboardRoute().route()
+      const route = new AuthRoute()
+      route.activateRoute()
     }
   }
 })
