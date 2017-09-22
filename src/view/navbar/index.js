@@ -170,7 +170,7 @@ const Menu = View.extend({
 
       if (Acls.hasAccessLevel('root')) {
         container.appendChild( html2dom(`<li><a href="/admin/user" class="eyemenu-icon eyemenu-users"> Users </a></li>`))
-        container.appendChild( html2dom(`<li><a data-hook='mvc-link' href="/admin/customer" class="eyemenu-icon eyemenu-organizations"> Organizations </a></li>`))
+        container.appendChild( html2dom(`<li><a href="/admin/customer" class="eyemenu-icon eyemenu-organizations"> Organizations </a></li>`))
       }
     }
 

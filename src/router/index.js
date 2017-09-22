@@ -47,7 +47,8 @@ module.exports = Router.extend({
       route.route('index')
     },
     'admin/customer(/:id/:action)': () => {
-      new CustomerRoute().route()
+      const route = new CustomerRoute()
+      route.route('index')
     },
     'admin/webhook(/:id/:action)': () => {
       const route = new WebhookRoute()

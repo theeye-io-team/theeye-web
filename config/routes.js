@@ -88,7 +88,6 @@ module.exports.routes = {
    */
   'get /admin/monitor': 'ResourceController.index',
   'get /admin/script': 'ScriptController.index',
-  'get /admin/customer': 'CustomerController.index',
   'get /hoststats/:host': 'HostStatsController.index',
   'get /admin/task': 'TasksController.index',
   /*
@@ -107,6 +106,7 @@ module.exports.routes = {
   'get /admin/scheduler': spaIndexRoute,
   'get /admin/hostgroup': spaIndexRoute,
   'get /admin/user' : spaIndexRoute,
+  'get /admin/customer': spaIndexRoute,
   'get /dashboard': spaIndexRoute,
   'get /login': spaIndexRoute,
   'get /register': spaIndexRoute,

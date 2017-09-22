@@ -1,12 +1,6 @@
 
 var CustomerController = module.exports = {
   /**
-   * @route GET /admin/customer
-   */
-  index (req, res) {
-    return res.view('spa/index',{ layout:'layout-ampersand' });
-  },
-  /**
    * @route GET /customer
    */
   fetch (req, res) {
