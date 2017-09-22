@@ -121,10 +121,20 @@ var TasksPageInit = (function(){
         });
       $taskForm.find('select[name=tags]').select2({
         tabindex: 0,
-        placeholder: 'Choose tags', data: Select2Data.PrepareTags(Tags), tags: true });
+        placeholder: 'Choose tags',
+        data: Select2Data.PrepareTags(Tags),
+        tags: true
+      });
+
       $taskForm.find('select[name=triggers]').select2({
         tabindex: 0,
-        placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
+        placeholder: 'Events',
+        data: Select2Data.PrepareEvents(
+          window.Events.filter(function(e){
+            return e.name !== 'updates_stopped'
+          })
+        )
+      });
 
       var usersSelect = new UsersSelect({ collection: _users });
       usersSelect.render();
@@ -212,10 +222,20 @@ var TasksPageInit = (function(){
         });
       $taskForm.find('select[name=tags]').select2({
         tabindex: 0,
-        placeholder:'Tags', tags:true, data: Select2Data.PrepareTags(Tags) });
+        placeholder:'Tags',
+        tags:true,
+        data: Select2Data.PrepareTags(Tags)
+      })
+
       $taskForm.find('select[name=triggers]').select2({
         tabindex: 0,
-        placeholder: 'Events', data: Select2Data.PrepareEvents( window.Events ) });
+        placeholder: 'Events',
+        data: Select2Data.PrepareEvents(
+          window.Events.filter(function(e){
+            return e.name !== 'updates_stopped'
+          })
+        )
+      });
 
       var usersSelect = new UsersSelect({ collection: _users });
       usersSelect.render();
