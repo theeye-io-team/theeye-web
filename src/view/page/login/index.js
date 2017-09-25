@@ -49,26 +49,24 @@ module.exports = View.extend({
   autoRender: true,
   template: require('./template.hbs'),
   props: {
-    formSwitch: ['boolean',false,true]
+    formSwitch: ['boolean',false,false]
   },
   bindings: {
     formSwitch: [
       {
         type: 'toggle',
-        hook: 'login-form-container'
+        hook: 'login-form-container',
+        invert: true
       },
       {
         type: 'toggle',
         hook: 'forgot-form-container',
-        invert: true
       }
     ]
   },
   events: {
     'click [data-hook=form-toggle]': function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-      this.toggle('formSwitch')
+      AuthActions.toggleLoginForm()
     },
     'click button[data-hook=start-login]': function (event) {
       event.preventDefault()
@@ -88,6 +86,12 @@ module.exports = View.extend({
         AuthActions.resetMail(data)
       }
     }
+  },
+  initialize() {
+    this.formSwitch = App.state.login.showRecoverForm
+    this.listenTo(App.state.login, 'change:showRecoverForm', () => {
+      this.toggle('formSwitch')
+    })
   },
   render() {
     this.renderWithTemplate(this)

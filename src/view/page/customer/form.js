@@ -2,6 +2,7 @@ import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import TheeyeCheckboxView from 'components/theeye-checkbox-view'
 import SelectView from 'components/select2-view'
+import isEmail from 'validator/lib/isEmail'
 
 import App from 'ampersand-app'
 
@@ -32,16 +33,10 @@ module.exports = FormView.extend({
         tags: true,
         styles: 'form-group',
         name: 'emails',
-        required: true,
+        required: false,
         label: 'Emails',
-        options: this.model.emails.map( e => {
-          return { id: e, text: e }
-        }),
-        value: this.model.emails.map( e => {
-          return { id: e, text: e }
-        }),
-        idAttribute: 'id',
-        textAttribute: 'text',
+        options: this.model.emails.map( e => { return { id: e, text: e } }),
+        value: this.model.emails.map( e => { return { id: e, text: e } }),
         unselectedText: 'Enter an email',
         requiredMessage: 'Enter at least one email',
         invalidClass: 'text-danger',
@@ -49,9 +44,11 @@ module.exports = FormView.extend({
         allowCreateTags: true,
         type: 'email',
         tests: [
-          function (value) {
-            const regex = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i
-            if (!value.every( e => { return regex.test(e) })) {
+          function (values) {
+            if (!values) return
+            if (values.some(v => {
+              return !isEmail(v) 
+            })) {
               return 'Please provide valid emails'
             }
           }
@@ -80,7 +77,7 @@ module.exports = FormView.extend({
         placeholder: 'Elastic search url',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        required: false,
+        required: true,
         value: this.model.config.elasticsearch.url
       })
 
@@ -109,7 +106,7 @@ module.exports = FormView.extend({
         placeholder: 'Elastic search url',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        required: false,
+        required: true,
         value: urlValue
       })
       this.addField(elasticsearchUrl)

@@ -50,6 +50,10 @@ module.exports = {
 
     data.config = {}
     if (data.elasticsearch_enabled) {
+      if(!data.elasticsearch_url) {
+        bootbox.alert('Please provide an elasticsearch url',function(){})
+        return
+      }
       data.config.elasticsearch = {
         enabled: true,
         url: data.elasticsearch_url
@@ -84,6 +88,10 @@ module.exports = {
 
     data.config = {}
     if (data.elasticsearch_enabled) {
+      if(!data.elasticsearch_url) {
+        bootbox.alert('Please provide an elasticsearch url',function(){})
+        return
+      }
       data.config.elasticsearch = {
         enabled: true,
         url: data.elasticsearch_url

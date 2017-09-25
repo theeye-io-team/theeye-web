@@ -23,7 +23,11 @@ class Auth extends Route {
   activateRoute () {
     const query = search.get()
     let invitation_token = query.invitation_token
-    XHR({
+
+    if(!invitation_token)
+      return App.navigate('login')
+
+    XHR.send({
       url: '/verifytoken?invitation_token='+encodeURIComponent(invitation_token),
       method: 'get',
       done (response,xhr) {

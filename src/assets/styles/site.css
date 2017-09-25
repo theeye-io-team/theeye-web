@@ -178,6 +178,7 @@ hr {border:none;border-bottom:1px dotted #fff}
 .loginBox .register-link { margin-top: 10px; }
 .loginBox .register-link a { color:#fff; }
 .loginBox .login-toggle { cursor:pointer; }
+.loginBox .login-back { cursor:pointer; color: #fff; font-size: 14px; font-weight: 400;}
 .loginBox .result-container h1 {    font-size: 27px; color: #d78d47;}
 .loginBox .result-container h2 {    font-size: 22px; color: #fff;}
 

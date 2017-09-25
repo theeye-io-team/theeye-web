@@ -271,14 +271,17 @@ var AuthController = {
 
       req.login(user, function (err) {
         if (err) {
-          sails.log.error('LOGIN ERROR:');
-          sails.log.error(err);
+          debug('LOGIN ERROR:')
+          debug(err);
           return res.send(500, err)
         } else {
-          sails.log.debug('user ready!');
-          return res.send(200)
+          debug('user logged in. issuing access token')
+          const accessToken = jwtoken.issue({ user_id: user.id })
+          return res.send(200, {
+            access_token: accessToken
+          })
         }
-      });
+      })
     });
   },
   /**

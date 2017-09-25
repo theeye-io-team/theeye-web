@@ -27,10 +27,11 @@ export const Model = AppModel.extend({
     formatted_tags: {
       deps: ['name','description','emails'],
       fn () {
+        const emails = this.emails || []
         return [
           'name=' + this.name,
           'description=' + this.description,
-          'emails=' + this.emails.join(', ')
+          'emails=' + emails.join(', ')
         ]
       }
     }

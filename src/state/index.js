@@ -62,6 +62,12 @@ module.exports = function (webType) {
     }
   })
 
+  const LoginState = State.extend({
+    props: {
+      showRecoverForm: ['boolean',false,false]
+    }
+  })
+
   const ActivateState = State.extend({
     props: {
       username: 'string',
@@ -95,6 +101,7 @@ module.exports = function (webType) {
     hostGroupPage: new HostGroupPageState(),
     loader: new LoaderState(),
     notify: new NotifyState(),
+    login: new LoginState(),
     activate: new ActivateState(),
     register: new RegisterState(),
     schedules: new Schedules(),

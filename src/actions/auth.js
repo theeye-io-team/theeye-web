@@ -72,22 +72,20 @@ module.exports = {
           bootbox.alert({
             message: 'Password reset link sent',
             callback: () => {
-              //window.location.reload()
-              App.navigate('login')
-            }
+              App.state.login.showRecoverForm = !App.state.login.showRecoverForm
+           }
           })
-        }
-        else {
-          if (xhr.status == 400) {
-            bootbox.alert('User email not found')
-          } else {
+        } else {
             bootbox.alert('Error, please try again')
-          }
         }
       },
       fail: (err,xhr) => {
         App.state.loader.visible = false
-        bootbox.alert('Error, please try again')
+        if (xhr.status == 400) {
+          bootbox.alert('User email not found')
+        } else {
+          bootbox.alert('Error, please try again')
+        }
       }
     })
   },
@@ -124,10 +122,7 @@ module.exports = {
       url: `${config.app_url}/checkusernameactivation?token=` + encodeURIComponent(token) + '&username=' + encodeURIComponent(username),
       method: 'get',
       done: (response,xhr) => {
-        if (xhr.status == 400) {
-          bootbox.alert('Username already in use.')
-          App.state.activate.finalStep = false
-        } else if (xhr.status !== 201) {
+        if (xhr.status !== 201) {
           bootbox.alert('Account activation error, please try again later.')
           App.state.activate.finalStep = false
         } else {
@@ -136,8 +131,13 @@ module.exports = {
         }
       },
       fail: (err,xhr) => {
-        bootbox.alert('Account activation error, please try again later.')
-        App.state.activate.finalStep = false
+        if (xhr.status == 400) {
+          bootbox.alert('Username already in use.')
+          App.state.activate.finalStep = false
+        } else if (xhr.status !== 201) {
+          bootbox.alert('Account activation error, please try again later.')
+          App.state.activate.finalStep = false
+        }
       }
     })
   },
@@ -154,39 +154,44 @@ module.exports = {
         Accept: 'application/json;charset=UTF-8'
       },
       done (response,xhr) {
+        App.state.loader.visible = false
         if (xhr.status == 200) {
           bootbox.alert({
             message: 'Registration is completed',
             callback: () => {
-              //window.location.replace('/dashboard')
-              App.navigate('dashboard')
+              App.state.session.set({
+                access_token: response.access_token
+              })
+              // App.navigate('dashboard')
             }
           })
-        } else if (response.statusCode == 400) {
-          bootbox.alert({
-            message: response.body.error,
-            callback: () => {
-              App.state.loader.visible = false
-            }
-          })
-        }
-        else {
+        } else {
           bootbox.alert({
             message: 'Error, please try again',
             callback: () => {
-              window.location.reload()
             }
           })
         }
       },
       fail (err,xhr) {
-        bootbox.alert({
-          message: 'Error, please try again',
-          callback: () => {
-            App.state.loader.visible = false
-          }
-        })
+        App.state.loader.visible = false
+        if (xhr.status == 400) {
+          bootbox.alert({
+            message: xhr.response.body.error,
+            callback: () => {
+            }
+          })
+        } else {
+          bootbox.alert({
+            message: 'Error, please try again',
+            callback: () => {
+            }
+          })
+        }
       }
     })
+  },
+  toggleLoginForm() {
+    App.state.login.showRecoverForm = !App.state.login.showRecoverForm
   }
 }

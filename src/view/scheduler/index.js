@@ -5,9 +5,9 @@ import BaseView from 'view/base-view'
 import CalendarView from 'components/calendar'
 import bootbox from 'bootbox'
 
-import React from 'react'
-import ReactDOM from 'react-dom'
-import SimpleClock from 'components/simple-clock.jsx'
+//import React from 'react'
+//import ReactDOM from 'react-dom'
+//import SimpleClock from 'components/simple-clock.jsx'
 
 import './custom.css'
 
@@ -36,8 +36,8 @@ module.exports = BaseView.extend({
       }
     }
   },
-  render: function () {
-    this.renderWithTemplate(this)
-    ReactDOM.render(<SimpleClock />, this.el.querySelector('.thaClock'))
-  }
+//  render: function () {
+//    this.renderWithTemplate(this)
+//    ReactDOM.render(<SimpleClock />, this.el.querySelector('.thaClock'))
+//  }
 })

@@ -95,7 +95,8 @@ module.exports = View.extend({
     value: {
       deps: ['inputValue'],
       fn: function () {
-        return this.inputValue
+        if (!this.inputValue) return this.inputValue
+        return this.inputValue.map(e => e[this.idAttribute])
       }
     },
     valid: {
@@ -135,7 +136,7 @@ module.exports = View.extend({
     this.tests = spec.tests || []
     var value = spec.value
     this.startingValue = value
-    this.inputValue = value
+    //this.inputValue = value
     this.handleChange = this.handleChange.bind(this)
     this.handleInputChanged = this.handleInputChanged.bind(this)
   },
@@ -181,7 +182,8 @@ module.exports = View.extend({
     // a method on this object
     this.$select.on('change',this.handleInputChanged)
 
-    this.setValues(this.inputValue)
+    //this.setValues(this.inputValue)
+    this.setValues(this.startingValue)
   },
   setValues (items) {
     if (!items) {
@@ -204,6 +206,12 @@ module.exports = View.extend({
     this.$select.trigger('change')
     return
   },
+  //`change` event handler
+  handleInputChanged: function () {
+    this.directlyEdited = true
+    //this.inputValue = this.$select.val()
+    this.inputValue = this.$select.select2('data')
+  },
   validityClassChanged: function (view, newClass) {
     var oldClass = view.previousAttributes().validityClass
     getMatches(this.el, this.validityClassSelector).forEach(function (match) {
@@ -214,16 +222,17 @@ module.exports = View.extend({
     if (this.parent) this.parent.update(this)
   },
   clear: function () {
-    this.$select
-      .val([])
-      .trigger('change')
+    this.$select.val([]).trigger('change')
   },
   getErrorMessage: function () {
     var message = ''
-    if (this.required && !this.value) {
-      return this.requiredMessage
-    } else if (Array.isArray(this.value) && this.value.length === 0) {
-      return this.requiredMessage
+    if (this.required) {
+      if (!this.value) {
+        return this.requiredMessage
+      }
+      if (Array.isArray(this.value) && this.value.length === 0) {
+        return this.requiredMessage
+      }
     } else {
       (this.tests || []).some(function (test) {
         message = test.call(this, this.value) || ''
@@ -231,11 +240,6 @@ module.exports = View.extend({
       }, this)
       return message
     }
-  },
-  //`change` event handler
-  handleInputChanged: function () {
-    this.directlyEdited = true
-    this.inputValue = this.$select.val()
   },
   handleChange: function () {
     if (this.inputValue && this.changed) {
@@ -255,7 +259,8 @@ module.exports = View.extend({
     return message;
   },
   beforeSubmit: function () {
-    this.inputValue = this.$select.val()
+    //this.inputValue = this.$select.val()
+    this.inputValue = this.$select.select2('data')
 
     // at the point where we've tried
     // to submit, we want to validate

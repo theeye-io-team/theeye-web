@@ -17,8 +17,11 @@ import DashboardRoute from './dashboard'
 module.exports = Router.extend({
   execute (callback, args) {
     if (callback) {
-      const isLogin = /login/.test(window.location.pathname) === true || /login/.test(window.location.hash) === true
-      if (!isLogin) {
+      let publicRoute = ['login','register','activate'].find(route => {
+        let routeRegex = new RegExp(route)
+        return (routeRegex.test(window.location.pathname)||routeRegex.test(window.location.hash))
+      })
+      if (!publicRoute) {
         // navigate to login if we dont have an access_token
         let logged_in = App.state.session.logged_in
         if (logged_in === undefined) return // wait until it is set

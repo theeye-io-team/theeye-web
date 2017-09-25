@@ -31,11 +31,7 @@ var CustomerController = module.exports = {
   },
   //POST  /customer/:id
   create (req, res) {
-    var params = req.params.all();
-
-    if(!params.name) return res.send(400, "Name can't be empty");
-    if(!params.emails) return res.send(400, "Email can't be empty");
-
+    var params = req.params.all()
     req.supervisor.create({
       route:'/customer',
       body: params,

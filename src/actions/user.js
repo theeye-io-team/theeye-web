@@ -1,6 +1,6 @@
 //import jquery from 'jquery'
 import bootbox from 'bootbox'
-import App from 'app'
+import App from 'ampersand-app'
 
 const xhr = $.ajax
 
