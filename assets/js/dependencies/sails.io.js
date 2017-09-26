@@ -103,52 +103,52 @@ var SailsIOClient = function(){
      * @constructor
      */
 
-    function TmpSocket() {
-      var boundEvents = {};
-      this.on = function (evName, fn) {
-        boundEvents[evName] = fn;
-        return this;
-      };
-      this.become = function(actualSocket) {
+    //function TmpSocket() {
+    //  var boundEvents = {};
+    //  this.on = function (evName, fn) {
+    //    boundEvents[evName] = fn;
+    //    return this;
+    //  };
+    //  this.become = function(actualSocket) {
 
-        // Pass events and a reference to the request queue
-        // off to the actualSocket for consumption
-        for (var evName in boundEvents) {
-          actualSocket.on(evName, boundEvents[evName]);
-        }
-        actualSocket.requestQueue = this.requestQueue;
+    //    // Pass events and a reference to the request queue
+    //    // off to the actualSocket for consumption
+    //    for (var evName in boundEvents) {
+    //      actualSocket.on(evName, boundEvents[evName]);
+    //    }
+    //    actualSocket.requestQueue = this.requestQueue;
 
-        // Bind a one-time function to run the request queue
-        // when the actualSocket connects.
-        if (!_isConnected(actualSocket)) {
-          var alreadyRanRequestQueue = false;
-          actualSocket.on('connect', function onActualSocketConnect() {
-            if (alreadyRanRequestQueue) return;
-            runRequestQueue(actualSocket);
-            alreadyRanRequestQueue = true;
-          });
-        }
-        // Or run it immediately if actualSocket is already connected
-        else {
-          runRequestQueue(actualSocket);
-        }
+    //    // Bind a one-time function to run the request queue
+    //    // when the actualSocket connects.
+    //    if (!_isConnected(actualSocket)) {
+    //      var alreadyRanRequestQueue = false;
+    //      actualSocket.on('connect', function onActualSocketConnect() {
+    //        if (alreadyRanRequestQueue) return;
+    //        runRequestQueue(actualSocket);
+    //        alreadyRanRequestQueue = true;
+    //      });
+    //    }
+    //    // Or run it immediately if actualSocket is already connected
+    //    else {
+    //      runRequestQueue(actualSocket);
+    //    }
 
-        return actualSocket;
-      };
+    //    return actualSocket;
+    //  };
 
-      // Uses `this` instead of `TmpSocket.prototype` purely
-      // for convenience, since it makes more sense to attach
-      // our extra methods to the `Socket` prototype down below.
-      // This could be optimized by moving those Socket method defs
-      // to the top of this SDK file instead of the bottom.  Will
-      // gladly do it if it is an issue for anyone.
-      this.get = Socket.prototype.get;
-      this.post = Socket.prototype.post;
-      this.put = Socket.prototype.put;
-      this['delete'] = Socket.prototype['delete'];
-      this.request = Socket.prototype.request;
-      this._request = Socket.prototype._request;
-    }
+    //  // Uses `this` instead of `TmpSocket.prototype` purely
+    //  // for convenience, since it makes more sense to attach
+    //  // our extra methods to the `Socket` prototype down below.
+    //  // This could be optimized by moving those Socket method defs
+    //  // to the top of this SDK file instead of the bottom.  Will
+    //  // gladly do it if it is an issue for anyone.
+    //  this.get = Socket.prototype.get;
+    //  this.post = Socket.prototype.post;
+    //  this.put = Socket.prototype.put;
+    //  this['delete'] = Socket.prototype['delete'];
+    //  this.request = Socket.prototype.request;
+    //  this._request = Socket.prototype._request;
+    //}
 
 
 
@@ -613,29 +613,7 @@ var SailsIOClient = function(){
 
     };
 
-
-
-    // io.socket
-    // 
-    // The eager instance of Socket which will automatically try to connect
-    // using the host that this js file was served from.
-    // 
-    // This can be disabled or configured by setting `io.socket.options` within the
-    // first cycle of the event loop.
-    // 
-
-    // In the mean time, this eager socket will be defined as a TmpSocket
-    // so that events bound by the user before the first cycle of the event
-    // loop (using `.on()`) can be rebound on the true socket.
-    io.socket = new TmpSocket();
-
-    setTimeout(function() {
-
-      // If autoConnect is disabled, delete the TmpSocket and bail out.
-      if (!io.sails.autoConnect) {
-        delete io.socket;
-        return io;
-      }
+    io.sails.connect = function(next) {
 
       // If this is an attempt at a cross-origin or cross-port
       // socket connection, send an AJAX request first to ensure
@@ -691,10 +669,11 @@ var SailsIOClient = function(){
       function goAheadAndActuallyConnect() {
 
         // Initiate connection
-        var actualSocket = io.connect(io.sails.url);
+        //var actualSocket = io.connect(io.sails.url);
+        io.socket = io.connect(io.sails.url);
 
         // Replay event bindings from the existing TmpSocket
-        io.socket = io.socket.become(actualSocket);
+        //io.socket = io.socket.become(actualSocket);
 
 
         /**
@@ -703,11 +682,11 @@ var SailsIOClient = function(){
          */
         io.socket.on('connect', function socketConnected() {
 
-          consolog( '`io.socket` connected successfully.' + '\n');
+          //consolog( '`io.socket` connected successfully.' + '\n');
 
           if (!io.socket.$events.disconnect) {
             io.socket.on('disconnect', function() {
-              consolog('io.socket was disconnected');
+              //consolog('io.socket was disconnected');
             });
           }
 
@@ -759,6 +738,8 @@ var SailsIOClient = function(){
           }
         });
 
+        next(null,io.socket) // use callback to ensure io.socket is defined
+
       }
 
       // TODO:
@@ -767,9 +748,29 @@ var SailsIOClient = function(){
       // However, note that the `console.log`s called before and after connection
       // are still forced to rely on our existing heuristics (to disable, tack #production
       // onto the URL used to fetch this file.)
+    }
 
-    }, 0); // </setTimeout>
+    // io.socket
+    // 
+    // The eager instance of Socket which will automatically try to connect
+    // using the host that this js file was served from.
+    // 
+    // This can be disabled or configured by setting `io.socket.options` within the
+    // first cycle of the event loop.
+    // 
 
+    // In the mean time, this eager socket will be defined as a TmpSocket
+    // so that events bound by the user before the first cycle of the event
+    // loop (using `.on()`) can be rebound on the true socket.
+    //io.socket = new TmpSocket();
+
+    // If autoConnect is disabled, delete the TmpSocket and bail out.
+    if (!io.sails.autoConnect) {
+      delete io.socket;
+      return io;
+    }
+
+    setTimeout(io.sails.connect, 0); // </setTimeout>
 
     // Return the `io` object.
     return io;

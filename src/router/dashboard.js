@@ -2,10 +2,6 @@
 
 import PageView from 'view/page/dashboard'
 import App from 'ampersand-app'
-import uniq from 'lodash/uniq'
-import SocketsWrapper from 'lib/sockets'
-import ResourceAction from 'actions/resource'
-import JobAction from 'actions/job'
 import search from 'lib/query-params'
 import Route from 'lib/router-route'
 
@@ -59,9 +55,6 @@ const fetchData = (options) => {
 
 const index = (query) => {
   const credential = App.state.session.user.credential
-
-  subscribeSockets()
-
   const tasksEnabled = Boolean(query.tasks != 'hide' && credential != 'viewer')
   const statsEnabled = Boolean(query.stats == 'show')
 
@@ -70,30 +63,6 @@ const index = (query) => {
   return renderPageView({
     renderTasks: tasksEnabled,
     renderStats: statsEnabled
-  })
-}
-
-const subscribeSockets = () => {
-  // connect sockets and start listening to events
-  App.sockets = new SocketsWrapper({
-    io: window.io,
-    channel: '/sockets/subscribe',
-    query: {
-      customer: App.state.session.customer.name,
-      topics: ['resources','jobs']
-    },
-    onSubscribed (data,jwr) {
-      if (jwr.statusCode === 200) {
-        logger.log('subscribed to resources notifications')
-      } else {
-        logger.error('error subscribing to resources notifications')
-        logger.error(jwr);
-      }
-    },
-    events: {
-      'resource:update': ResourceAction.update,
-      'job:update': JobAction.update,
-    }
   })
 }
 

@@ -121,6 +121,7 @@ module.exports.routes = {
    * USE BEARER AUTHENTICATION METHOD
    *
    */
+  'post /session/customer/:customer':'SpaController.currentCustomer',
   'put /apiv2/file/:id':'ApiV2Controller.upload',
   'post /apiv2/file':'ApiV2Controller.upload',
   'get /apiv2/file/:id':'ApiV2Controller.download',

@@ -37,44 +37,49 @@ function SocketsWrapper (options) {
   assign(this, Events)
 
   const io = options.io
+  const socket = io.socket
   const self = this
 
-  for (let event in options.events) {
-    io.socket.on(event, function(message){
-      options.events[event](message);
-    });
-  }
-
-  function subscribe (socket) {
-    var emit = socket.emit;
-    socket.emit = function() {
-      log('socket emit', Array.prototype.slice.call(arguments));
-      emit.apply(socket, arguments);
-    };
-
-    var $emit = socket.$emit;
-    socket.$emit = function() {
-      log('socket event',Array.prototype.slice.call(arguments));
-      $emit.apply(socket, arguments);
-      self.trigger(arguments[0],arguments[1]);
-    };
+  function subscribe () {
+    log('subscribing')
 
     socket.post(
       options.channel,
       options.query,
       options.onSubscribed
-    );
+    )
   }
 
-  if (io.socket.socket && io.socket.socket.connected) {
-    log('socket already connected, subscribing...');
-    subscribe(io.socket);
-  } else {
-    log('connecting socket server');
-    io.socket.on('connect',function(){
-      log('socket connected! subscribing...');
-      subscribe(io.socket);
+  for (let event in options.events) {
+    socket.on(event, function(message){
+      options.events[event](message);
     });
+  }
+
+  var emit = socket.emit
+  socket.emit = function() {
+    log('socket emit', Array.prototype.slice.call(arguments))
+    emit.apply(socket, arguments)
+  }
+
+  var $emit = socket.$emit
+  socket.$emit = function() {
+    log('socket event',Array.prototype.slice.call(arguments))
+    $emit.apply(socket, arguments)
+    self.trigger(arguments[0],arguments[1])
+  }
+
+  socket.on('connect',function(){
+    log('socket connected')
+    subscribe()
+  })
+
+  socket.on('disconnect',function(){
+    log('socket was disconnected')
+  })
+
+  if (socket.socket && socket.socket.connected) {
+    subscribe()
   }
 
   return this

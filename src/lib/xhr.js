@@ -42,7 +42,7 @@ XHR.send = (options, callback) => {
   xhr.responseType = options.responseType || 'json'
   // include cookies and accept cross site cookies
 
-  const doneFn = (ev) => {
+  const onloadFn = (ev) => {
     var data = xhr.response
     debug('request completed with status %s', xhr.status)
 
@@ -66,7 +66,7 @@ XHR.send = (options, callback) => {
     callback(null, xhr, xhr.response)
   }
 
-  const failFn = (ev) => {
+  const onerrorFn = (ev) => {
     var error = new Error(ev.description)
     error.xhr = xhr
     debug('request error %s', xhr.status)
@@ -76,9 +76,9 @@ XHR.send = (options, callback) => {
 
   const progressFn = (ev) => { }
 
-  xhr.onload = options.onload || doneFn
-  xhr.onerror = options.onerror || failFn
-  xhr.onabort = options.onabort || failFn
+  xhr.onload = options.onload || onloadFn
+  xhr.onerror = options.onerror || onerrorFn
+  xhr.onabort = options.onabort || onerrorFn
   xhr.onprogress = options.onprogress || progressFn
 
   xhr.open(method, url)

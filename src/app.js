@@ -2,7 +2,6 @@
 
 //import 'jquery' // imported by webpack. not required
 import 'bootstrap'
-require('./app/index')
 import config from 'config'
 
 import App from 'ampersand-app'
@@ -14,6 +13,9 @@ import RootContainer from 'view/root-container'
 //import RootContainer from './container'
 import query from 'lib/query-params'
 const logger = require('lib/logger')('app')
+
+require('app/events')
+const sockets = require('app/sockets')
 
 import 'assets/styles'
 
@@ -46,7 +48,7 @@ App.extend({
   EasterEggs: require('components/easter-eggs'),
   Router: new Router(),
   init () {
-    this.state = new AppState()
+    App.state = new AppState()
 
     new Loader()
     new ChatBox.ChatBoxBaloon()
@@ -56,43 +58,13 @@ App.extend({
     bindDocumentEvents()
     new RootContainer({ el: document.getElementById('root') })
 
-    // if has access token, should validate it first? I cannot work offline
-    this.listenToAndRun(App.state.session,'change:logged_in',() => {
-      let logged_in = App.state.session.logged_in
-      if (logged_in === undefined) return // wait until it is set
-
-      if (!App.Router.history.started()) {
-        App.Router.history.start({ pushState: (document.origin!=='null') })
-      }
-
-      let publicRoute = ['login','register','activate','sociallogin'].find(route => {
-        let routeRegex = new RegExp(route)
-        return routeRegex.test(window.location.pathname)
-      })
-
-      if (publicRoute) {
-        if (logged_in) {
-          App.Router.redirectTo('dashboard',{replace: true})
-        }
-      } else {
-        // not publicRoute
-        if (!logged_in) {
-          App.Router.redirectTo('login',{replace: true})
-        } else {
-          if (document.origin=='null') {
-            App.Router.redirectTo('dashboard',{replace: true})
-          }
-        }
-      }
-      // else {
-      //  do nothing
-      //}
-    })
+    authenticate()
+    sockets()
   },
   navigate (page) {
     var url = (page.charAt(0) === '/') ? page.slice(1) : page
     if (window.location.pathname.slice(1) === url) return // cancel if page is current
-    this.Router.history.navigate(url,{ trigger: true })
+    App.Router.history.navigate(url,{ trigger: true })
   },
   reload (params, append=false) {
     let qs
@@ -105,5 +77,40 @@ App.extend({
     App.Router.reload()
   }
 })
+
+const authenticate = () => {
+  // if has access token, should validate it first? it cannot work offline
+  App.listenToAndRun(App.state.session,'change:logged_in',() => {
+    let logged_in = App.state.session.logged_in
+    if (logged_in === undefined) return // wait until it is set
+
+    if (!App.Router.history.started()) {
+      App.Router.history.start({ pushState: (document.origin!=='null') })
+    }
+
+    let publicRoute = ['login','register','activate','sociallogin'].find(route => {
+      let routeRegex = new RegExp(route)
+      return routeRegex.test(window.location.pathname)
+    })
+
+    if (publicRoute) {
+      if (logged_in) {
+        App.Router.redirectTo('dashboard',{replace: true})
+      }
+    } else {
+      // not publicRoute
+      if (!logged_in) {
+        App.Router.redirectTo('login',{replace: true})
+      } else {
+        if (document.origin=='null') {
+          App.Router.redirectTo('dashboard',{replace: true})
+        }
+      }
+    }
+    // else {
+    //  do nothing
+    //}
+  })
+}
 
 App.init()

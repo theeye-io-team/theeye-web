@@ -34,14 +34,5 @@
 
     <script src="/js/dependencies/socket.io.min.js"></script>
     <script src="/js/dependencies/sails.io.js"></script>
-    <script>
-      io.sails={
-        autoConnect: true,
-        useCORSRouteToGetCookie: true,
-        environment: '<%- process.env.NODE_ENV %>',
-        url: '<%- process.env.SOCKET_AUTH_URL || '' %>'
-      };
-      SailsIOClient();
-    </script>
   </body>
 </html>

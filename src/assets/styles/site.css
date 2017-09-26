@@ -49,7 +49,6 @@ pre {
 .switch-wrapper { display: inline-block; position: relative; top: 3px; }
 .slider.demo .switch-button-label { font-size: 40px; }
 
-
 ol.list-group li.red-border { border-color: red; }
 .table>tbody>tr>td { vertical-align:middle; }
 .table-responsive { overflow-x: visible; }

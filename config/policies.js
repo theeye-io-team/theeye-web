@@ -16,6 +16,14 @@ module.exports.policies = {
       'supervisorInitializer'
     ]
   },
+  SpaController: {
+    '*': [
+      'passportBearer',
+      'isAllowed',
+      'sessionCustomer',
+      'supervisorInitializer'
+    ]
+  },
   AuthController: {
     'registeruser':['noSession'],
     'checkUsernameActivation':['noSession'],

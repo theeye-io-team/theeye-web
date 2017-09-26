@@ -7,6 +7,7 @@ var viewer = {
   'fileapi':['*'],
   'api':['*'],
   'apiv2':['*'],
+  'spa':['*'],
   'dashboard':['index'],
   'events':['index'],
   'password': ['*'],

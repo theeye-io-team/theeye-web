@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Searchbox from './searchbox'
 import SessionActions from 'actions/session'
@@ -38,9 +39,7 @@ const CustomerItemList = View.extend({
   onClickCustomer (event) {
     event.preventDefault()
     event.stopPropagation()
-
-    App.state.loader.visible = true
-    SessionActions.setCustomer( this.model.name )
+    SessionActions.changeCustomer( this.model.name )
   }
 })
 

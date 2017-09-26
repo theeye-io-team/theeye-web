@@ -167,5 +167,5 @@ module.exports = {
         res.send(200,file);
       });
     });
-  }
+  },
 }

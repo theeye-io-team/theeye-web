@@ -49,19 +49,6 @@ pre {
 .switch-wrapper { display: inline-block; position: relative; top: 3px; }
 .slider.demo .switch-button-label { font-size: 40px; }
 
-/*
-* Events page
-*/
-.output-block {
-    background: #222;
-    color: #eee;
-    padding:10px;
-    min-height: 100px;
-    font-family: monospace;
-    margin-bottom: 5px;
-    border: 1px solid orange;
-}
-
 ol.list-group li.red-border { border-color: red; }
 .table>tbody>tr>td { vertical-align:middle; }
 .table-responsive { overflow-x: visible; }
