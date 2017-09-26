@@ -3,6 +3,7 @@
 //import 'jquery' // imported by webpack. not required
 import 'bootstrap'
 require('./app/index')
+import config from 'config'
 
 import App from 'ampersand-app'
 import AppState from 'state'
@@ -36,7 +37,9 @@ const bindDocumentEvents = () => {
   document.addEventListener('keydown', onkeydown, false)
 }
 
-window.App = App
+if (config.env !== 'production') {
+  window.App = App
+}
 
 // Extends our main app singleton
 App.extend({
@@ -62,7 +65,7 @@ App.extend({
         App.Router.history.start({ pushState: (document.origin!=='null') })
       }
 
-      let publicRoute = ['login','register','activate'].find(route => {
+      let publicRoute = ['login','register','activate','sociallogin'].find(route => {
         let routeRegex = new RegExp(route)
         return routeRegex.test(window.location.pathname)
       })

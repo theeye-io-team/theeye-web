@@ -17,7 +17,7 @@ import DashboardRoute from './dashboard'
 module.exports = Router.extend({
   execute (callback, args) {
     if (callback) {
-      let publicRoute = ['login','register','activate'].find(route => {
+      let publicRoute = ['login','register','activate','sociallogin'].find(route => {
         let routeRegex = new RegExp(route)
         return (routeRegex.test(window.location.pathname)||routeRegex.test(window.location.hash))
       })
@@ -75,6 +75,10 @@ module.exports = Router.extend({
     'activate': () => {
       const route = new AuthRoute()
       route.activateRoute()
+    },
+    'sociallogin': () => {
+      const route = new AuthRoute()
+      route.socialLoginRoute()
     }
   }
 })

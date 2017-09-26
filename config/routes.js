@@ -25,7 +25,8 @@ module.exports.routes = {
   'get    /connect/:provider' : 'AuthController.provider',
   'get    /disconnect/:provider' : 'AuthController.disconnect',
   'get    /auth/:provider' : 'AuthController.provider',
-  'get    /auth/:provider/callback' : 'AuthController.callback',
+  // 'get    /auth/:provider/callback' : 'AuthController.callback',
+  'get    /auth/:provider/callback' : 'AuthController.socialCallback',
   'get    /checkusernameactivation'  : 'AuthController.checkUsernameActivation',
   'post   /auth/local/update' : 'AuthController.updateLocalPassport',
   'post   /auth/local' : 'AuthController.callback',
@@ -111,7 +112,7 @@ module.exports.routes = {
   'get /login': spaIndexRoute,
   'get /register': spaIndexRoute,
   'get /activate': spaIndexRoute,
-
+  'get /sociallogin': spaIndexRoute,
 
   /*
    *

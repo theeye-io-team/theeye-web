@@ -60,8 +60,7 @@ const CustomerButtons = BaseView.extend({
     this.listenTo(modal,'confirm',function(){
       form.beforeSubmit()
       if (!form.valid) return
-      CustomerActions.update(this.model.id, form.data)
-      modal.hide()
+      CustomerActions.update(this.model.id, form.data, modal)
     })
     modal.show()
   }

@@ -44,8 +44,7 @@ const CreateButton = CommonButton.extend({
     this.listenTo(modal,'confirm',function(){
       form.beforeSubmit()
       if (!form.valid) return
-      CustomerActions.create(form.data)
-      modal.hide()
+      CustomerActions.create(form.data, modal)
     })
     modal.show()
   }

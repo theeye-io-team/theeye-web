@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import InputView from 'ampersand-input-view'

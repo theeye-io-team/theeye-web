@@ -1,5 +1,6 @@
 import View from 'ampersand-view'
 import SearchActions from 'actions/searchbox'
+import App from 'ampersand-app'
 
 module.exports = View.extend({
   autoRender: true,

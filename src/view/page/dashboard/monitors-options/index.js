@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import View from 'ampersand-view'
 import DashboardActions from 'actions/dashboard'
 

@@ -1,4 +1,5 @@
 const Script = require('models/file/script').Model
+import App from 'ampersand-app'
 
 const populateScriptMonitor = (monitor) => {
   if (!monitor.config.script) {

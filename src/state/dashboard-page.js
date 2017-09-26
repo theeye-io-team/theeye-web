@@ -1,5 +1,6 @@
 'use strict'
 
+import App from 'ampersand-app'
 import uuidv4 from 'uuid/v4'
 
 import { Model as Resource } from 'models/resource'

@@ -1,4 +1,5 @@
 import search from 'lib/query-params'
+import App from 'ampersand-app'
 
 module.exports = {
   setMonitorsGroupByProperty (prop) {

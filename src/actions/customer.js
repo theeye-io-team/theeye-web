@@ -45,7 +45,7 @@ module.exports = {
       })
     })
   },
-  update: function(id,data){
+  update: function(id,data, modal){
     var customer = new Customer({ id: id })
 
     data.config = {}
@@ -82,8 +82,9 @@ module.exports = {
         bootbox.alert('Error updating customer',function(){ });
       }
     })
+    modal.hide()
   },
-  create: function(data) {
+  create: function(data, modal) {
     var customer = new Customer()
 
     data.config = {}
@@ -119,5 +120,6 @@ module.exports = {
         bootbox.alert('Error creating customer',function(){ });
       }
     });
+    modal.hide()
   }
 }

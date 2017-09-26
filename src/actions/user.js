@@ -1,7 +1,6 @@
 //import jquery from 'jquery'
 import bootbox from 'bootbox'
 import App from 'ampersand-app'
-
 const xhr = $.ajax
 
 module.exports = {

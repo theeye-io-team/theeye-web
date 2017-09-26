@@ -2,6 +2,7 @@ import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import InputView from 'ampersand-input-view'
 import AuthActions from 'actions/auth'
+import App from 'ampersand-app'
 
 const ActivateForm = FormView.extend({
   autoRender: true,

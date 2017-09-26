@@ -192,6 +192,9 @@ module.exports = {
     })
   },
   toggleLoginForm() {
-    App.state.login.showRecoverForm = !App.state.login.showRecoverForm
+    App.state.login.toggle('showRecoverForm')
+  },
+  providerLogin(provider) {
+    window.location.replace('auth/'+provider)
   }
 }

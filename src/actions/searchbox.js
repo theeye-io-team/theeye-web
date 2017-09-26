@@ -1,4 +1,5 @@
 const logger = require('lib/logger')('actions:searchbox')
+import App from 'ampersand-app'
 
 module.exports = {
   search (pattern) {

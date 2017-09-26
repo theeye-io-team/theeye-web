@@ -113,7 +113,7 @@ module.exports = function (webType) {
     searchbox: new SearchBoxState()
   })
 
-  credentials.listenTo(appState.session, 'change:ready', () => {
+  credentials.listenTo(appState.session,'change:logged_in',() => {
     if (appState.session.user.credential === 'root') {
       credentials.add({
         id: 'root',

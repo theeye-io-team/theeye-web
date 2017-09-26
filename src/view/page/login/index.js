@@ -2,6 +2,7 @@ import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import InputView from 'ampersand-input-view'
 import AuthActions from 'actions/auth'
+import App from 'ampersand-app'
 
 const LoginForm = FormView.extend({
   autoRender: true,
@@ -67,6 +68,11 @@ module.exports = View.extend({
   events: {
     'click [data-hook=form-toggle]': function (event) {
       AuthActions.toggleLoginForm()
+    },
+    'click [data-hook=google-login]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      AuthActions.providerLogin('google')
     },
     'click button[data-hook=start-login]': function (event) {
       event.preventDefault()

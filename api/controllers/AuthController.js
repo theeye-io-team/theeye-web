@@ -308,6 +308,34 @@ var AuthController = {
         }
       })
     })(req,res,req.next)
+  },
+  socialCallback(req, res) {
+    passport.callback(req, res, function (err, user){
+      if(err){
+        debug('SOCIAL LOGIN ERROR:')
+        debug(err);
+        return res.redirect('/login');
+      }
+
+      if(!user){
+        debug('LOGIN ERROR: USER NOT FOUND')
+        return res.redirect('/login');
+      }
+
+      sails.log.debug('passport authenticated');
+      req.login(user, function (err) {
+        if (err) {
+          debug('LOGIN ERROR:');
+          debug(err);
+          return res.redirect('/login');
+        } else {
+          debug('user logged in. issuing access token')
+          const accessToken = jwtoken.issue({ user_id: user.id })
+          var queryToken = new Buffer( JSON.stringify({ access_token: accessToken }) ).toString('base64')
+          res.redirect('/sociallogin?'+queryToken);
+        }
+      });
+    });
   }
 }
 

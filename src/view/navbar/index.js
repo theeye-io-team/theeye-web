@@ -4,6 +4,7 @@ import SessionActions from 'actions/session'
 import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
 import Backdrop from 'components/backdrop'
+import App from 'ampersand-app'
 
 import logo from './logo.png'
 const template = require('./nav.hbs')
@@ -249,8 +250,10 @@ module.exports = View.extend({
   render () {
     this.renderWithTemplate()
 
-    this.listenToAndRun(App.state.session,'change:access_token',() => {
-      if (App.state.session.access_token) {
+    this.listenToAndRun(App.state.session,'change:logged_in',() => {
+      const logged_in = App.state.session.logged_in
+      if (logged_in===undefined) return
+      if (logged_in===true) {
         this.showSearchbox()
         this.showMenu()
       } else {

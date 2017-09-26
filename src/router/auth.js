@@ -24,8 +24,7 @@ class Auth extends Route {
     const query = search.get()
     let invitation_token = query.invitation_token
 
-    if(!invitation_token)
-      return App.navigate('login')
+    if (!invitation_token) return App.navigate('login')
 
     XHR.send({
       url: '/verifytoken?invitation_token='+encodeURIComponent(invitation_token),
@@ -49,6 +48,17 @@ class Auth extends Route {
       fail (err,xhr) {
         App.navigate('login')
       }
+    })
+  }
+
+  socialLoginRoute() {
+    const query = search.get()
+    let access_token = query.access_token
+    if (!access_token) return App.navigate('login')
+
+    //Add validation
+    App.state.session.set({
+      access_token: access_token
     })
   }
 }
