@@ -22,6 +22,7 @@ const connect = (next) => {
 }
 
 const disconnect = () => {
+  if (!io.socket) return
   if (io.socket.socket.connected) {
     io.socket.disconnect()
   }

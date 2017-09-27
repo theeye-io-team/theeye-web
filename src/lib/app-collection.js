@@ -4,5 +4,5 @@ var AuthMixin = require('./app-auth-mixin')
 var extend = require('lodash/assign')
 
 module.exports = AmpersandCollection.extend(
-  FilterMixin, AuthMixin, { }
+  FilterMixin, AuthMixin, { mainIndex: 'id' }
 )

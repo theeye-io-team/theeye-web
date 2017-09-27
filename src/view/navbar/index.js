@@ -5,7 +5,6 @@ import SessionActions from 'actions/session'
 import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
 import Backdrop from 'components/backdrop'
-import App from 'ampersand-app'
 
 import logo from './logo.png'
 const template = require('./nav.hbs')
@@ -38,8 +37,24 @@ const CustomerItemList = View.extend({
   },
   onClickCustomer (event) {
     event.preventDefault()
-    event.stopPropagation()
-    SessionActions.changeCustomer( this.model.name )
+    //event.stopPropagation()
+    SessionActions.changeCustomer( this.model.id )
+  },
+  initialize () {
+    View.prototype.initialize.apply(this,arguments)
+
+    this.listenToAndRun(App.state.session,'change:logged_id',() => {
+      if (!App.state.session.logged_in) return
+
+      this.listenToAndRun(App.state.session.customer,'change:id',() => {
+        const customer = App.state.session.customer
+        if (!customer.id) return
+        if (this.model.id===customer.id) {
+          this.active = true
+        }
+        else if (this.active) this.active = false
+      })
+    })
   }
 })
 
@@ -131,9 +146,7 @@ const Menu = View.extend({
   },
   render () {
     this.renderWithTemplate(this)
-
     this.renderProfile()
-
     this.listenToAndRun(App.state.session.user,'change:credential',() => {
       this.renderMenuLinks()
     })
@@ -212,14 +225,7 @@ const Menu = View.extend({
     // in sync with the session
     this.renderCollection(
       App.state.session.user.customers,
-      function (options) {
-        // this is not correctly binded.
-        // only works if the session.user.customer is fetched before current session.customer
-        if (options.model.id===App.state.session.customer.id) {
-          options.active = true
-        }
-        return new CustomerItemList(options)
-      },
+      CustomerItemList,
       this.queryByHook('customers-container')
     )
 
@@ -250,16 +256,19 @@ module.exports = View.extend({
     this.renderWithTemplate()
 
     this.listenToAndRun(App.state.session,'change:logged_in',() => {
-      const logged_in = App.state.session.logged_in
-      if (logged_in===undefined) return
-      if (logged_in===true) {
-        this.showSearchbox()
-        this.showMenu()
-      } else {
-        this.hideSearchbox()
-        this.hideMenu()
-      }
+      this.updateState(App.state.session)
     })
+  },
+  updateState (state) {
+    const logged_in = state.logged_in
+    if (logged_in===undefined) return
+    if (logged_in===true) {
+      this.showSearchbox()
+      this.showMenu()
+    } else {
+      this.hideSearchbox()
+      this.hideMenu()
+    }
   },
   showSearchbox () {
     const container = this.queryByHook('searchbox-container')
@@ -276,5 +285,5 @@ module.exports = View.extend({
   },
   hideMenu () {
     if (this.menu) this.menu.remove()
-  },
+  }
 })

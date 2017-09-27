@@ -19,109 +19,138 @@ import SessionState from './session'
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
 const AppState = State.extend({
+  //
+  // BEWARE!! only use AppState.props to register
+  // all the states we NEED to clear/reset when the App.state.reset method is called.
+  // Do not include the session state, to avoid application auto logout
+  //
   props: {
-    currentPage: 'state'
+    activate: ['state',false,() => { return new ActivateState() }],
+    alerts: ['state',false,() => { return new Alerts() }],
+    currentPage: 'state',
+    dashboard: ['state',false,() => { return new DashboardPageState() }],
+    hostGroupPage: ['state',false,() => { return new HostGroupPageState() }],
+    login: ['state',false,() => { return new LoginState() }],
+    notify: ['state',false,() => { return new NotifyState() }],
+    register: ['state',false,() => { return new RegisterState() }],
+    searchbox: ['state',false,() => { return new SearchBoxState() }],
+  },
+  init () {
+    this.loader = new LoaderState()
+    this.session = new SessionState()
+
+    _initCollections.call(this)
+
+    this.session.on('change:logged_in',() => {
+      if (this.session.logged_in===undefined) {
+        return
+      }
+      else if (this.session.logged_in===false) {
+        this.credentials.reset()
+      }
+      else if (this.session.logged_in===true) {
+        this.credentials.reset(credentials)
+
+        if (this.session.user.credential === 'root') {
+          this.credentials.add({
+            id: 'root',
+            name: 'root',
+            description: 'Root'
+          })
+        }
+      }
+    })
+  },
+  reset () {
+    this.clear() // will reset all components state
+
+    // call reset on every collections.
+    // do not REPLACE REFERENCES! this will only reset (empty) collections data
+    Object.keys(this).forEach(prop => {
+      let val = this[prop]
+      if (val && val.isCollection) val.reset()
+    })
   }
 })
 
-module.exports = function (webType) {
-  const SearchBoxState = State.extend({
-    props: {
-      search: ['string',false,'']
-    },
-    initialize () {
-      State.prototype.initialize.apply(this,arguments)
+module.exports = AppState
 
-      //const uri = new URI(window.location)
-      //const fragment = uri.fragment()
-      const fragment = uriFragment.get()
+const SearchBoxState = State.extend({
+  props: {
+    search: ['string',false,'']
+  },
+  initialize () {
+    State.prototype.initialize.apply(this,arguments)
 
-      if (fragment.search) {
-        this.search = fragment.search
-      }
+    //const uri = new URI(window.location)
+    //const fragment = uri.fragment()
+    const fragment = uriFragment.get()
 
-      this.listenTo(this,'change:search',() => {
-        uriFragment.set('search', this.search)
-      })
+    if (fragment.search) {
+      this.search = fragment.search
     }
-  })
 
-  const LoaderState = State.extend({
-    props: {
-      visible: ['boolean',false,false],
-      progress: ['number',false,0],
-      message: ['string',false,'']
-    }
-  })
+    this.listenTo(this,'change:search',() => {
+      uriFragment.set('search', this.search)
+    })
+  }
+})
 
-  const NotifyState = State.extend({
-    props: {
-      visible: ['boolean',false,false],
-      message: 'string',
-      badges: ['number',false,0] // notifications count
-    }
-  })
+const LoaderState = State.extend({
+  props: {
+    visible: ['boolean',false,false],
+    progress: ['number',false,0],
+    message: ['string',false,'']
+  }
+})
 
-  const LoginState = State.extend({
-    props: {
-      showRecoverForm: ['boolean',false,false]
-    }
-  })
+const NotifyState = State.extend({
+  props: {
+    visible: ['boolean',false,false],
+    message: 'string',
+    badges: ['number',false,0] // notifications count
+  }
+})
 
-  const ActivateState = State.extend({
-    props: {
-      username: 'string',
-      email: 'string',
-      invitation_token: 'string',
-      finalStep: ['boolean',false,false]
-    }
-  })
+const LoginState = State.extend({
+  props: {
+    showRecoverForm: ['boolean',false,false]
+  }
+})
 
-  const RegisterState = State.extend({
-    props: {
-      result: ['boolean',false,false]
-    }
-  })
+const ActivateState = State.extend({
+  props: {
+    username: 'string',
+    email: 'string',
+    invitation_token: 'string',
+    finalStep: ['boolean',false,false]
+  }
+})
 
-  const credentials = new AmpersandCollection([
-    { id: 'viewer', name: 'viewer', description: 'Viewer' },
-    { id: 'owner', name: 'owner', description: 'Owner' },
-    { id: 'admin', name: 'admin', description: 'Admin' },
-    { id: 'user', name: 'user', description: 'User' }
-  ])
+const RegisterState = State.extend({
+  props: {
+    result: ['boolean',false,false]
+  }
+})
 
-  const appState = new AppState({
-    session: new SessionState(),
-    alerts: new Alerts(),
+const credentials = [
+  { id: 'viewer', name: 'viewer', description: 'Viewer' },
+  { id: 'owner', name: 'owner', description: 'Owner' },
+  { id: 'admin', name: 'admin', description: 'Admin' },
+  { id: 'user', name: 'user', description: 'User' }
+]
+
+const _initCollections = function () {
+  Object.assign(this, {
+    credentials: new AmpersandCollection([]),
     customers: new Customers([]),
-    credentials: credentials,
+    hostGroups: new HostGroups([]),
     hosts: new Hosts([]),
     hostsByRegex: new Hosts([]),
-    hostGroups: new HostGroups([]),
-    hostGroupPage: new HostGroupPageState(),
-    loader: new LoaderState(),
-    notify: new NotifyState(),
-    login: new LoginState(),
-    activate: new ActivateState(),
-    register: new RegisterState(),
+    resources: new Resources([]),
     schedules: new Schedules(),
+    tasks: new Tasks([]),
     users: new Users([]),
     webhooks: new Webhooks([]),
-    resources: new Resources([]),
-    tasks: new Tasks([]),
-    dashboard: new DashboardPageState(),
-    searchbox: new SearchBoxState()
   })
-
-  credentials.listenTo(appState.session,'change:logged_in',() => {
-    if (appState.session.user.credential === 'root') {
-      credentials.add({
-        id: 'root',
-        name: 'root',
-        description: 'Root'
-      })
-    }
-  })
-
-  return appState
 }

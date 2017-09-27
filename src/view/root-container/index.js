@@ -7,6 +7,10 @@ import localLinks from 'local-links'
 
 import Navbar from 'view/navbar'
 
+const EmptyView = View.extend({
+  template: `<div></div>`
+})
+
 module.exports = View.extend({
   autoRender: true,
   props: {
@@ -23,7 +27,14 @@ module.exports = View.extend({
   `,
   initialize () {
     this.title = 'The Eye'
-    this.listenTo(App.state,'change:currentPage',this.onSwitchPage)
+    View.prototype.initialize.apply(this,arguments)
+  },
+  updateState (state) {
+    if (!state.currentPage) {
+      this.pageSwitcher.set( new EmptyView() )
+    } else {
+      this.pageSwitcher.set(state.currentPage)
+    }
   },
   events: {
     'click a[href]': function (event) {
@@ -33,13 +44,10 @@ module.exports = View.extend({
       if (localPath) {
         event.stopPropagation()
         event.preventDefault()
-        App.navigate(localPath)
+        event.localPath = localPath
+        this.trigger('click:localPath', event)
       }
     }
-  },
-  onSwitchPage () {
-    // tell the view switcher to render the new one
-    this.pageSwitcher.set(App.state.currentPage)
   },
   render () {
     // main renderer

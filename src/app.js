@@ -19,47 +19,24 @@ const sockets = require('app/sockets')
 
 import 'assets/styles'
 
-const bindDocumentEvents = () => {
-  const oninput = (event) => {
-    logger.log('document input')
-    App.trigger('document:input', event)
-  }
-  document.addEventListener('input', oninput, false)
-
-  const onclick = (event) => {
-    logger.log('document click')
-    App.trigger('document:click', event)
-  }
-  document.addEventListener('click', onclick, false)
-
-  const onkeydown = (event) => {
-    logger.log('document keydown')
-    App.trigger('document:keydown', event)
-  }
-  document.addEventListener('keydown', onkeydown, false)
-}
-
-if (config.env !== 'production') {
-  window.App = App
-}
+if (config.env !== 'production') { window.App = App }
 
 // Extends our main app singleton
 App.extend({
   EasterEggs: require('components/easter-eggs'),
   Router: new Router(),
+  state: new AppState(),
   init () {
-    App.state = new AppState()
-
-    new Loader()
-    new ChatBox.ChatBoxBaloon()
-
-    //App.state.loader.visible = true
-
-    bindDocumentEvents()
-    new RootContainer({ el: document.getElementById('root') })
-
-    authenticate()
-    sockets()
+    this.bindDocumentEvents()
+    this.initState( () => {
+      this.registerComponents()
+      this.authenticate()
+      sockets()
+    })
+  },
+  initState (next) {
+    this.state.init()
+    next()
   },
   navigate (page) {
     var url = (page.charAt(0) === '/') ? page.slice(1) : page
@@ -75,42 +52,78 @@ App.extend({
     }
     App.Router.navigate(window.location.pathname + `?${qs}`,{replace: true})
     App.Router.reload()
-  }
-})
+  },
+  registerComponents () {
+    const state = App.state
 
-const authenticate = () => {
-  // if has access token, should validate it first? it cannot work offline
-  App.listenToAndRun(App.state.session,'change:logged_in',() => {
-    let logged_in = App.state.session.logged_in
-    if (logged_in === undefined) return // wait until it is set
-
-    if (!App.Router.history.started()) {
-      App.Router.history.start({ pushState: (document.origin!=='null') })
-    }
-
-    let publicRoute = ['login','register','activate','sociallogin'].find(route => {
-      let routeRegex = new RegExp(route)
-      return routeRegex.test(window.location.pathname)
+    const loader = new Loader()
+    state.loader.on('change',() => {
+      loader.updateState(state.loader)
     })
 
-    if (publicRoute) {
-      if (logged_in) {
-        App.Router.redirectTo('dashboard',{replace: true})
+    const chat = new ChatBox.ChatBoxBaloon()
+
+    const root = new RootContainer({ el: document.getElementById('root') })
+    state.on('change:currentPage',() => {
+      root.updateState({ currentPage: state.currentPage })
+    })
+    root.on('click:localPath',(event) => {
+      App.navigate(event.localPath)
+    })
+  },
+  authenticate () {
+    // if has access token, should validate it first? it cannot work offline
+    App.listenToAndRun(App.state.session,'change:logged_in',() => {
+      let logged_in = App.state.session.logged_in
+      if (logged_in === undefined) return // wait until it is set
+
+      if (!App.Router.history.started()) {
+        App.Router.history.start({ pushState: (document.origin!=='null') })
       }
-    } else {
-      // not publicRoute
-      if (!logged_in) {
-        App.Router.redirectTo('login',{replace: true})
-      } else {
-        if (document.origin=='null') {
+
+      let publicRoute = ['login','register','activate','sociallogin'].find(route => {
+        let routeRegex = new RegExp(route)
+        return routeRegex.test(window.location.pathname)
+      })
+
+      if (publicRoute) {
+        if (logged_in) {
           App.Router.redirectTo('dashboard',{replace: true})
         }
+      } else {
+        // not publicRoute
+        if (!logged_in) {
+          App.Router.redirectTo('login',{replace: true})
+        } else {
+          if (document.origin=='null') {
+            App.Router.redirectTo('dashboard',{replace: true})
+          }
+        }
       }
+      // else {
+      //  do nothing
+      //}
+    })
+  },
+  bindDocumentEvents () {
+    const oninput = (event) => {
+      logger.log('document input')
+      App.trigger('document:input', event)
     }
-    // else {
-    //  do nothing
-    //}
-  })
-}
+    document.addEventListener('input', oninput, false)
+
+    const onclick = (event) => {
+      logger.log('document click')
+      App.trigger('document:click', event)
+    }
+    document.addEventListener('click', onclick, false)
+
+    const onkeydown = (event) => {
+      logger.log('document keydown')
+      App.trigger('document:keydown', event)
+    }
+    document.addEventListener('keydown', onkeydown, false)
+  }
+})
 
 App.init()

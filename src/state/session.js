@@ -102,8 +102,7 @@ module.exports = AmpersandState.extend({
   },
   clear () {
     this.unset(['access_token'])
-
-    this.logged_in = false
+    this.logged_in = undefined
 
     // mantein user & customer references
     this.user.customers.reset()

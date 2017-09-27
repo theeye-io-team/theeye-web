@@ -238,8 +238,8 @@ module.exports = View.extend({
         message = test.call(this, this.value) || ''
         return message
       }, this)
-      return message
     }
+    return message
   },
   handleChange: function () {
     if (this.inputValue && this.changed) {

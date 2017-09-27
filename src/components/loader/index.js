@@ -1,5 +1,6 @@
+'use strict'
+
 import extend from 'lodash/assign'
-import App from 'ampersand-app'
 import Backdrop from 'components/backdrop'
 import './style.css'
 import roboto from './roboto_loader.gif'
@@ -26,14 +27,9 @@ module.exports = Backdrop.extend({
   initialize (options) {
     // default props values
     this.color = '#000'
-
     Backdrop.prototype.initialize.apply(this,arguments)
-
-    this.listenTo(App.state.loader,'change',this.updateState)
   },
-  updateState () {
-    const loader = App.state.loader
-
+  updateState (loader) {
     if (!loader.visible) {
       window.setTimeout(() => { // delay to hide
         this.visible = false

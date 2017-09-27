@@ -43,8 +43,7 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       'process.env': {
-        'NODE_ENV': JSON.stringify(IS_PRODUCTION ? 'production' : 'development'),
-        'SOCKET_AUTH_URL': JSON.stringify(IS_PRODUCTION ? 'https://theeye.io' : 'http://localhost:6080')
+        'NODE_ENV': JSON.stringify(IS_PRODUCTION ? 'production' : 'development')
       }
     }),
     (function(){
