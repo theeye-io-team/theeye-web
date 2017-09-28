@@ -461,18 +461,13 @@ span.selectorIcon.glyphicon-check {
 .calendarEvent:hover { border-color: red; }
 
 /*
-no puedo recordar para que estaba esto, pero rompe los input
+no puedo recordar para que estaba esto.... pero rompe los input
 input[type=checkbox], input[type=radio] { margin:0; width:16px;height:16px; margin-top:8px;}
 */
 input[type=checkbox].form-control {
   box-shadow: none;
   -webkit-box-shadow: none;
 }
-/*
- * JSON Viewer custom style
- */
-.json-literal { color:#d4b209; }
-.json-string { color:rgba(0,255,0,1); }
 
 .blurry-text { color: transparent; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
 .cursor-pointer { cursor: pointer; }

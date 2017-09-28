@@ -738,7 +738,7 @@ var SailsIOClient = function(){
           }
         });
 
-        next(null,io.socket) // use callback to ensure io.socket is defined
+        if (next) next(null,io.socket) // use callback to ensure io.socket is defined
 
       }
 
