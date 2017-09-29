@@ -7,6 +7,7 @@ var path     = require('path')
   , crypto    = require('crypto')
   , mailer 	 = require("./mailer")
   , TheEyeClient = require('../libs/theeye-client')
+  , CustomStrategy = require('passport-custom').Strategy
   ;
 
 /**
@@ -35,6 +36,23 @@ var path     = require('path')
 
 // Load authentication protocols
 passport.protocols = require('./protocols');
+
+//set custom authentication for google mobile login
+passport.use('google-mobile', new CustomStrategy(
+  function(req, callback) {
+    if(!req.body.email)
+      return callback({statusCode: 400, message:'Email missing.'})
+    User.findOne({email: req.body.email}, function(err, user){
+      if(err)
+        return callback({statusCode: 500, message:'Error searching for user.'})
+      if(!user)
+        return callback({statusCode: 400, message:'User not found.'})
+      return callback(null, user)
+    });
+  }
+));
+
+
 
 /**
  * Connect a third-party profile to a local user
@@ -807,5 +825,31 @@ passport.deserializeUser(function (id, next) {
     });
   });
 });
+
+
+passport.connectSocialMobile = function (provider, identifier, user,  next) {
+  Passport.findOne({
+    provider   : provider
+  , identifier : identifier
+  }, function (err, passport) {
+    if(err)
+      return next(err);
+    if (!passport) {
+      var query = {
+        identifier: identifier,
+        protocol: 'oauth2',
+        provider: provider,
+        user: user.id
+      }
+      Passport.create(query, function (err, passport) {
+        if(err)
+          return next(err);
+        return next(null, user);
+      });
+    } else {
+      return next(null, user);
+    }
+  });
+}
 
 module.exports = passport;

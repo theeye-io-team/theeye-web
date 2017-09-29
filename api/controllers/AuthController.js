@@ -1,5 +1,9 @@
 /* global passport, sails, User */
 var debug = require('debug')('eye:web:controller:auth');
+var GoogleAuth = require('google-auth-library');
+
+const CLIENT_ID = sails.config.passport.google.options.clientID;
+
 var AuthController = {
   /**
    * Log out a user and return them to the homepage
@@ -335,6 +339,53 @@ var AuthController = {
           res.redirect('/sociallogin?'+queryToken);
         }
       });
+    });
+  },
+  verifySocialToken(req, res) {
+    var params = req.params.all();
+    if(!params.email) return res.send(400,{message:'Missing social credentials.'});
+    if(!params.idToken) return res.send(400,{message:'Missing social credentials.'});
+    var auth = new GoogleAuth;
+    var client = new auth.OAuth2(CLIENT_ID, '', '');
+
+    client.verifyIdToken(params.idToken, CLIENT_ID, function(err, login) {
+      if (err) {
+        debug('LOGIN ERROR:');
+        debug(err);
+        return res.send(400,{message:'Invalid social credentials.'})
+      }
+      var payload = login.getPayload();
+      if(!payload.sub) {
+        debug('LOGIN ERROR:');
+        debug(err);
+        return res.send(400,{message:'Invalid social credentials.'})
+      }
+
+      passport.authenticate('google-mobile', function (err, user) {
+        if (err) return res.send(err.statusCode, err)
+        if (!user) return res.send(400,{message:'Invalid social credentials.'})
+        sails.log.debug('passport authenticated')
+        passport.connectSocialMobile('google-mobile', payload.sub, user, function(err, user){
+          if (err) {
+            debug('LOGIN ERROR:')
+            debug(err);
+            return res.send(500, err)
+          }
+          req.login(user, function (err) {
+            if (err) {
+              debug('LOGIN ERROR:')
+              debug(err);
+              return res.send(500, err)
+            } else {
+              debug('user logged in. issuing access token')
+              const accessToken = jwtoken.issue({ user_id: user.id })
+              return res.send(200, {
+                access_token: accessToken
+              })
+            }
+          })
+        });
+      })(req,res,req.next)
     });
   }
 }
