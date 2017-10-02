@@ -6,7 +6,8 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 //const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
-const IS_PRODUCTION = process.env['NODE_ENV'] == 'production'
+const NODE_ENV = process.env['NODE_ENV'] || 'local'
+const IS_PRODUCTION = NODE_ENV == 'production'
 const PUBLIC_PATH = typeof process.env['PUBLIC_PATH'] == 'string' ? process.env['PUBLIC_PATH'] : '/'
 
 const TARGET_PATH = 'bundles'
@@ -42,9 +43,7 @@ module.exports = {
       filename: 'index.html'
     }),
     new webpack.DefinePlugin({
-      'process.env': {
-        'NODE_ENV': JSON.stringify(IS_PRODUCTION ? 'production' : 'development')
-      }
+      'process.env': { 'NODE_ENV': JSON.stringify(NODE_ENV) }
     }),
     (function(){
       if (IS_PRODUCTION) {

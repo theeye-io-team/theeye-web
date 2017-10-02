@@ -46,7 +46,6 @@ module.exports.routes = {
   'put    /user/:id' : 'UserController.edit',
   'post   /user'  : 'UserController.create',
   'delete /user/:id' : 'UserController.remove',
-  'get    /myprofile'  : 'UserController.myprofile',
   // Password Recovery
   'post   /password/resetmail':'PasswordController.sendResetMail',
   'get    /password/resetform/:token':'PasswordController.resetForm',
@@ -122,8 +121,9 @@ module.exports.routes = {
    * USE BEARER AUTHENTICATION METHOD
    *
    */
-  'post /session/customer/:customer':'AuthController.currentCustomer',
-  'post /session/refresh':'AuthController.refreshAccessToken',
+  'post /session/customer/:customer':'BearerController.currentCustomer',
+  'post /session/refresh':'BearerController.refreshAccessToken',
+  'get  /session/profile': 'BearerController.sessionProfile',
   'put /apiv2/file/:id':'ApiV2Controller.upload',
   'post /apiv2/file':'ApiV2Controller.upload',
   'get /apiv2/file/:id':'ApiV2Controller.download',

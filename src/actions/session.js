@@ -52,5 +52,31 @@ module.exports = {
       fail: (err,xhr) => {
       }
     })
+  },
+  fetchProfile () {
+    const sessionState = App.state.session
+    XHR.send({
+      method: 'get',
+      url: `${config.app_url}/session/profile`,
+      withCredentials: true,
+      done: (user) => {
+        logger.log('user profile data fetch success')
+
+        logger.log('updating profile')
+        sessionState.customer.set(user.current_customer)
+        sessionState.user.set(user)
+        const customers = user.theeye.profile.customers
+        if (customers) {
+          sessionState.user.customers.reset()
+          sessionState.user.customers.set(customers)
+        }
+        sessionState.logged_in = true
+      },
+      fail: (err) => {
+        logger.log('user data fetch failure')
+        sessionState.logged_in = false
+        sessionState.access_token = null
+      }
+    })
   }
 }

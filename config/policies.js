@@ -16,7 +16,8 @@ module.exports.policies = {
       'supervisorInitializer'
     ]
   },
-  SpaController: {
+  // bearer session clients controllers
+  BearerController: {
     '*': [
       'passportBearer',
       'isAllowed',

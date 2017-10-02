@@ -7,7 +7,7 @@ var viewer = {
   'fileapi':['*'],
   'api':['*'],
   'apiv2':['*'],
-  'spa':['*'],
+  'bearer':['*'], // bearer session controller
   'dashboard':['index'],
   'events':['index'],
   'password': ['*'],
