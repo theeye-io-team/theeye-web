@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
+const logger = require('lib/logger')('actions:session')
 const config = require('config')
 
 module.exports = {
@@ -28,6 +29,27 @@ module.exports = {
         App.state.loader.visible = false
         bootbox.alert('Operation failed. Please refresh')
         console.error(arguments)
+      }
+    })
+  },
+  refreshAccessToken () {
+    logger.debug('obtaining new acccess token..')
+
+    XHR.send({
+      method: 'post',
+      url: `${config.app_url}/session/refresh`,
+      withCredentials: true,
+      timeout: 5000,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done: (data,xhr) => {
+        App.state.session.access_token = data.access_token
+        //App.state.session.set({
+        //  access_token: data.access_token
+        //},{ silent: true })
+      },
+      fail: (err,xhr) => {
       }
     })
   }

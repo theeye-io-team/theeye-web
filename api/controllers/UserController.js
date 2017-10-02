@@ -283,8 +283,24 @@ var UserController = module.exports = {
       protocol: 'theeye'
     }, (err, theeye) => {
       if (err) return res.send(500,err)
+
       user.theeye = theeye
-      return res.json(user)
+      const customers = theeye.profile.customers
+      const current_customer = customers.find(c => c.name==user.current_customer)
+
+      req.supervisor.get({
+        route: '/customer',
+        id: current_customer.id,
+        success: customer => {
+          user.current_customer = customer
+          res.send(200, user)
+        },
+        failure: err => {
+          console.error(err)
+          res.send(500,'error fetching profile')
+        }
+      })
+      //return res.json(user)
     })
   }
-};
+}

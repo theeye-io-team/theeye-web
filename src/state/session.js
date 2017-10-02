@@ -11,7 +11,7 @@ import { Model as Customer } from 'models/customer'
 const log = require('debug')('eye:state:session')
 import config from 'config'
 
-//const publicpaths = ['/login', '/activate', '/register']
+//const publicpaths = ['/login','/activate','/register']
 
 module.exports = AmpersandState.extend({
   props: {
@@ -31,24 +31,27 @@ module.exports = AmpersandState.extend({
       storeName: 'session'
     })
 
-    this.listenTo(this,'change:access_token',() => {
-      // reset access token
+    this.on('change:access_token',() => {
 
       if (!this.access_token) {
         XHR.authorization = this.authorization = null
         this.logged_in = false
       } else {
         XHR.authorization = this.authorization = `Bearer ${this.access_token}`
-        this.fetchProfile(err => {
-          if (!err) {
-            this.logged_in = true
-          } else {
-            this.logged_in = false
-            this.access_token = null
-          }
-          this.persist()
-        })
+        if (!this.logged_in) {
+          this.fetchProfile(err => {
+            if (!err) {
+              this.logged_in = true
+            } else {
+              this.logged_in = false
+              this.access_token = null
+            }
+          })
+        }
       }
+
+      // each time the access token changes, persist
+      this.persist()
     })
 
     this.deserialize()
@@ -56,33 +59,23 @@ module.exports = AmpersandState.extend({
   fetchProfile (next) {
     XHR.send({
       method: 'get',
-      url: `${config.api_url}/customer`,
+      url: `${config.app_url}/myprofile`,
       withCredentials: true,
-      done: (customer) => {
-        log('customer data fetch success')
-        this.customer.set(customer)
+      done: (user) => {
+        log('user profile data fetch success')
 
-        XHR.send({
-          method: 'get',
-          url: `${config.app_url}/myprofile`,
-          withCredentials: true,
-          done: (user) => {
-            log('user data fetch success')
-            this.user.set(user)
-            if (user.theeye.profile.customers) {
-              this.user.customers.reset()
-              this.user.customers.set(user.theeye.profile.customers)
-            }
-            next()
-          },
-          fail: (err) => {
-            log('user data fetch failure')
-            next(err)
-          }
-        })
+        log('updating profile')
+        this.customer.set(user.current_customer)
+        this.user.set(user)
+        if (user.theeye.profile.customers) {
+          this.user.customers.reset()
+          this.user.customers.set(user.theeye.profile.customers)
+        }
+
+        next()
       },
-      fail: (err, xhr) => {
-        log('customer data fetch failure')
+      fail: (err) => {
+        log('user data fetch failure')
         next(err)
       }
     })

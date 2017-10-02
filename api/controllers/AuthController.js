@@ -45,31 +45,6 @@ var AuthController = {
   },
 
   /**
-   * Render the activate page
-   * Form for user account activation
-   * @param {Object} req
-   * @param {Object} res
-   activate: function (req, res) {
-     if (req.user) return res.redirect('/events');
-     var token = req.query.token;
-     User.findOne({invitation_token: token})
-     .exec(function(err, user) {
-       if(err || !user) {
-         res.redirect('/login');
-       } else {
-         res.cookie(
-           'activate', JSON.stringify({
-             token: token,
-             user: user
-           })
-         );
-         return res.view('spa/index',{ layout:'layout-ampersand' });
-       }
-     });
-   },
-   */
-
-  /**
    * Render the update password page
    *
    * Form for user account activation
@@ -256,7 +231,7 @@ var AuthController = {
       })
     });
   },
-  verifyToken (req, res) {
+  verifyInvitationToken (req, res) {
     User.findOne({invitation_token: req.query.invitation_token})
     .exec(function(err, user) {
       if (err) return res.send(500, err)
@@ -387,7 +362,36 @@ var AuthController = {
         });
       })(req,res,req.next)
     });
-  }
+  },
+  /**
+   *
+   * bearer authentication access control
+   *
+   */
+  refreshAccessToken (req, res) {
+    const user = req.user
+    const accessToken = jwtoken.issue({ user_id: user.id })
+    return res.send(200, {
+      access_token: accessToken
+    })
+  },
+  // Set the navigation customer for the current user
+  currentCustomer (req, res) {
+    const customer = req.params.customer
+    const user = req.user
+
+    if (user.customers.indexOf(customer) !== -1) {
+      user.current_customer = customer
+      user.save(err => {
+        if (err) {
+          return res.status(500).json('Internal Error')
+        }
+        res.send(200,{})
+      })
+    } else {
+      res.send(403,'Forbidden')
+    }
+  },
 }
 
 module.exports = AuthController;

@@ -21,17 +21,23 @@ module.exports = Router.extend({
         let routeRegex = new RegExp(route)
         return (routeRegex.test(window.location.pathname)||routeRegex.test(window.location.hash))
       })
+
+      let logged_in = App.state.session.logged_in
       if (!publicRoute) {
         // navigate to login if we dont have an access_token
-        let logged_in = App.state.session.logged_in
-        if (logged_in === undefined) return // wait until it is set
-        if (logged_in === false) {
+        if (logged_in===undefined) {
+          return // wait until it is set
+        }
+        if (logged_in===false) {
           logger.warn('session expired. must login')
           return false
         } else {
           callback.apply(this, args)
         }
       } else {
+        if (logged_in===true) {
+          return this.redirectTo('dashboard',{replace: true})
+        }
         callback.apply(this, args)
       }
     }

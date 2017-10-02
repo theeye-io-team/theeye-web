@@ -36,7 +36,7 @@ module.exports.routes = {
   'post   /auth/local/:action' : 'AuthController.callback',
   'post   /auth/activateuser' : 'AuthController.activateUser',
   'post   /registeruser'  : 'AuthController.registeruser',
-  'get   /verifytoken'  : 'AuthController.verifyToken',
+  'get   /verifytoken'  : 'AuthController.verifyInvitationToken',
   // UserController routes
   'post   /setcustomer/:customer' : 'UserController.setcustomer',
   'get    /profile' : 'UserController.profile',
@@ -122,7 +122,8 @@ module.exports.routes = {
    * USE BEARER AUTHENTICATION METHOD
    *
    */
-  'post /session/customer/:customer':'SpaController.currentCustomer',
+  'post /session/customer/:customer':'AuthController.currentCustomer',
+  'post /session/refresh':'AuthController.refreshAccessToken',
   'put /apiv2/file/:id':'ApiV2Controller.upload',
   'post /apiv2/file':'ApiV2Controller.upload',
   'get /apiv2/file/:id':'ApiV2Controller.download',
