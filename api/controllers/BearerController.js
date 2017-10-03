@@ -43,8 +43,7 @@ module.exports = {
       const current_customer = customers.find(c => c.name==user.current_customer)
 
       req.supervisor.get({
-        route: '/customer',
-        id: current_customer.id,
+        route: `${current_customer.name}/customer`,
         success: customer => {
           user.current_customer = customer
           res.send(200, user)

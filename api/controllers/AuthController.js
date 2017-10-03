@@ -221,7 +221,7 @@ var AuthController = {
     User.findOne({invitation_token: token})
     .exec(function(err, user) {
       if (err) return res.send(500, err)
-      if (!user) return res.send(401, 'unauthorized')
+      if (!user) return res.send(400)
       User.findOne({
         username: username,
       }, (err, user) => {
@@ -235,7 +235,7 @@ var AuthController = {
     User.findOne({invitation_token: req.query.invitation_token})
     .exec(function(err, user) {
       if (err) return res.send(500, err)
-      if (!user) return res.send(401, 'unauthorized')
+      if (!user) return res.send(400)
       return res.json({username: user.username, email: user.email, invitation_token: user.invitation_token, credential: user.credential})
     });
   },
