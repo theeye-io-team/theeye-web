@@ -25,15 +25,15 @@ module.exports = {
             access_token: response.access_token
           })
         } else {
-          if (xhr.status == 400) {
-            bootbox.alert('Login error, invalid credentials')
-          } else {
-            bootbox.alert('Login error, please try again')
-          }
+          bootbox.alert('Login error, please try again')
         }
       },
       fail: (err,xhr) => {
-        bootbox.alert('Login error, please try again')
+        if (xhr.status == 400) {
+          bootbox.alert('Login error, invalid credentials')
+        } else {
+          bootbox.alert('Login error, please try again')
+        }
       }
     })
   },
