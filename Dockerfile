@@ -1,20 +1,15 @@
+#Removed temporally, Facu cambio de versión de node FROM interactar/theeye-supervisor:15_09_16
 FROM node:6.11
 MAINTAINER Javier Ailbirt <jailbirt@interactar.com>
 ENV destDir /src/theeye/web
 # Create app directory
 RUN mkdir -p ${destDir}
-# Temporary Move node_modules for avoiding packages reinstallation
-RUN mv ${destDir}/node_modules /tmp/
-# And remove that directory
-RUN rm -rf ${destDir}
 # Install Supervisor
 #RUN npm install supervisor -g
 #Set working Directory
 WORKDIR ${destDir}
 # Bundle app source
 COPY . ${destDir}
-# Move back packages
-RUN mv /tmp/node_modules ${destDir}
 # Install app dependencies
 RUN cd ${destDir};npm install --production
 RUN cd ${destDir};npm install
