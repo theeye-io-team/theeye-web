@@ -36,6 +36,7 @@ module.exports = HeaderButton.extend({
         form.beforeSubmit()
         if (!form.valid) return
         UserActions.create(form.data)
+        modal.hide()
       })
       modal.show()
     }

@@ -3,6 +3,7 @@ import InputView from 'components/input-view'
 import TheeyeCheckboxView from 'components/theeye-checkbox-view'
 import SelectView from 'components/select2-view'
 import isEmail from 'validator/lib/isEmail'
+import isURL from 'validator/lib/isURL'
 
 import App from 'ampersand-app'
 
@@ -47,7 +48,7 @@ module.exports = FormView.extend({
           function (values) {
             if (!values) return
             if (values.some(v => {
-              return !isEmail(v) 
+              return !isEmail(v)
             })) {
               return 'Please provide valid emails'
             }
@@ -78,7 +79,17 @@ module.exports = FormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         required: true,
-        value: this.model.config.elasticsearch.url
+        value: this.model.config.elasticsearch.url,
+        tests: [
+          function (value) {
+            if(!isURL(value,{
+              protocols: ['http','https'],
+              require_protocol: true
+            })) {
+              return "Must be a valid URL (include protocol)"
+            }
+          }
+        ]
       })
 
       this.fields.push(elasticsearchUrl)
@@ -107,7 +118,17 @@ module.exports = FormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         required: true,
-        value: urlValue
+        value: urlValue,
+        tests: [
+          function (value) {
+            if(!isURL(value,{
+              protocols: ['http','https'],
+              require_protocol: true
+            })) {
+              return "Must be a valid URL (include protocol)"
+            }
+          }
+        ]
       })
       this.addField(elasticsearchUrl)
       this.renderField(elasticsearchUrl)

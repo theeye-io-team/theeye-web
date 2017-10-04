@@ -177,7 +177,7 @@ module.exports = {
         App.state.loader.visible = false
         if (xhr.status == 400) {
           bootbox.alert({
-            message: xhr.response.body.error,
+            message: xhr.response.body.error || 'Error, please try again',
             callback: () => {
             }
           })
