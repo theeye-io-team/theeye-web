@@ -4,6 +4,7 @@ import InputView from 'components/input-view'
 import Collection from 'ampersand-collection'
 import TheeyeCheckboxView from 'components/theeye-checkbox-view'
 import App from 'ampersand-app'
+import isEmail from 'validator/lib/isEmail'
 
 module.exports = FormView.extend({
   initialize: function (options) {
@@ -22,8 +23,7 @@ module.exports = FormView.extend({
         value: this.model.email,
         tests: [
           function (value) {
-            const regex = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i
-            if (!regex.test(value)) {
+            if (!isEmail(value)) {
               return 'Please provide a valid email'
             }
           }
@@ -92,7 +92,14 @@ module.exports = FormView.extend({
         value: '',
         required: true,
         invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
+        validityClassSelector: '.control-label',
+        tests: [
+          function (value) {
+            if (value.length < 8) {
+              return "Must have at least 8 characters";
+            }
+          }
+        ]
       })
       const passConfirm = new InputView({
         name: 'confirmPassword',
@@ -107,6 +114,11 @@ module.exports = FormView.extend({
             const passval = pass.value
             if (value != passval) {
               return 'Passwords doesn\'t match'
+            }
+          },
+          function (value) {
+            if (value.length < 8) {
+              return "Must have at least 8 characters";
             }
           }
         ]

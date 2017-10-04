@@ -34,6 +34,7 @@ module.exports = {
         message: `You have successfully created ${body.username}`,
         callback: () => {
           //window.location.reload()
+          App.state.loader.visible = false
           App.Router.reload()
         }
       })

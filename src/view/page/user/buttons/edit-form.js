@@ -4,6 +4,7 @@ import InputView from 'components/input-view'
 import Collection from 'ampersand-collection'
 import TheeyeCheckboxView from 'components/theeye-checkbox-view'
 import App from 'ampersand-app'
+import isEmail from 'validator/lib/isEmail'
 
 module.exports = FormView.extend({
   initialize: function (options) {
@@ -22,8 +23,7 @@ module.exports = FormView.extend({
         value: this.model.email,
         tests: [
           function (value) {
-            const regex = /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i
-            if (!regex.test(value)) {
+            if (!isEmail(value)) {
               return 'Please provide a valid email'
             }
           }
@@ -49,7 +49,7 @@ module.exports = FormView.extend({
         validityClassSelector: '.control-label'
       }),
       new SelectView({
-        options: App.state.credentials, 
+        options: App.state.credentials,
         value: this.model.credential,
         styles: 'form-group',
         name: 'credential',
