@@ -1,4 +1,3 @@
-#Removed temporally, Facu cambio de versión de node FROM interactar/theeye-supervisor:15_09_16
 FROM node:6.11
 MAINTAINER Javier Ailbirt <jailbirt@interactar.com>
 ENV destDir /src/theeye/web
@@ -14,7 +13,10 @@ COPY . ${destDir}
 RUN cd ${destDir};npm install --production
 RUN cd ${destDir};npm install
 # Fix something weird related to sails dependencies.
-RUN cd ${destDir}/node_modules/sails/ && npm install --production && cd ${destDir}
+RUN cd ${destDir}/node_modules/sails/ && npm install --production
+RUN cd ${destDir}/node_modules/sails/node_modules/express && npm install --production
+RUN cd ${destDir}/node_modules/sails/node_modules/socket.io && npm install --production
+RUN cd ${destDir}
 #Fix Permissions.
 RUN mkdir ${destDir}/.tmp
 RUN chmod -R 1777 ${destDir}/.tmp
