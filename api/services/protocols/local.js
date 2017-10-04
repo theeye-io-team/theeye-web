@@ -453,7 +453,7 @@ exports.bearerVerify = (token, next) => {
     const uid = decoded.user_id
 
     if (!uid) {
-      const err = new Error('invalid token payload. invalid credentials') 
+      err = new Error('invalid token payload. invalid credentials') 
       err.status = 400
       debug(err.message)
       debug(decoded)
@@ -467,7 +467,7 @@ exports.bearerVerify = (token, next) => {
       }
 
       if (!user) {
-        const err = new Error('invalid token payload. credentials not found') 
+        err = new Error('invalid token payload. credentials not found') 
         debug(err.message)
         return next(err)
       }
@@ -479,7 +479,7 @@ exports.bearerVerify = (token, next) => {
         if (err) return next(err)
 
         if (!passport) {
-          var err = new Error('theeye passport not found')
+          err = new Error('theeye passport not found')
           err.status = 500
           debug(err.message)
           return next(err)
