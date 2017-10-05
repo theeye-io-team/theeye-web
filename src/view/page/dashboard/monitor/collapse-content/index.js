@@ -296,11 +296,14 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
     <div>
       <p>This is <i data-hook="hostname"></i> keep alive.</p>
 
+      <h4><i class="fa fa-server"></i>
+        Host monitor state: <i data-hook="host_state"></i>
+      </h4>
       <h4><i class="fa fa-cogs"></i>
-        Host processes monitor state: <i data-hook="psaux_state"></i>
+        Processes monitor state: <i data-hook="psaux_state"></i>
       </h4>
       <h4><i class="fa fa-bar-chart"></i>
-        Host health monitor state: <i data-hook="dstat_state"></i>
+        Health monitor state: <i data-hook="dstat_state"></i>
       </h4>
 
       <span>Host health thresholds</span>
@@ -327,6 +330,11 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
     </div>
   `,
   bindings: Object.assign({}, bindings, {
+    'host.stateIcon': { 
+      hook: 'host_state',
+      type: 'attribute',
+      name: 'class'
+    },
     'dstat.stateIcon': { 
       hook: 'dstat_state',
       type: 'attribute',
@@ -343,6 +351,7 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
     dstat_disk: { hook: 'disk' }
   }),
   props: {
+    host: 'state',
     dstat: 'state',
     psaux: 'state',
     dstat_cache: 'string',

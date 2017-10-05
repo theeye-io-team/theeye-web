@@ -2,13 +2,12 @@
 
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-import bootbox from 'bootbox'
 import JobOutput from '../job-output'
 import ExecButton from './exec-button'
-import JobActions from 'actions/job'
 import SearchActions from 'actions/searchbox'
 import TaskActions from 'actions/task'
 import ScriptActions from 'actions/script'
+import LIFECYCLE from 'constants/lifecycle'
 
 import lang2ext from 'lib/lang2ext'
 
@@ -21,21 +20,42 @@ const TaskButtonsView = View.extend({
         return Boolean(this.model.lastjob.result)
       }
     },
-    execution_state: {
-      deps: ['model.lastjob.state'],
+    execution_lifecycle: {
+      deps: ['model.lastjob.lifecycle'],
       fn () {
-        const state = this.model.lastjob.state
-        if (!state) return ''
-        if (state === 'new') return 'fa fa-spin fa-refresh'
-        if (state === 'success') return 'fa fa-check remark-success'
-        if (state === 'failure') return 'fa fa-exclamation remark-alert'
-        else return 'fa fa-question remark-warning'
+        const job = this.model.lastjob
+        const lifecycle = job.lifecycle
+        const state = job.state
+
+        const isCompleted = (lifecycle) => {
+          return [
+            LIFECYCLE.COMPLETED, 
+            LIFECYCLE.TERMINATED,
+            LIFECYCLE.FINISHED,
+          ].indexOf(lifecycle) !== -1
+        }
+
+        if (!lifecycle) return ''
+        if ( lifecycle === LIFECYCLE.READY) return 'fa fa-spin fa-refresh'
+        if (lifecycle === LIFECYCLE.ASSIGNED) return 'fa fa-spin fa-refresh remark-success'
+        if (isCompleted(lifecycle)) {
+          if (state === 'success') return 'fa fa-check remark-success'
+          if (state === 'failure') return 'fa fa-exclamation remark-alert'
+          else return 'fa fa-question remark-warning'
+        }
+        if (lifecycle === LIFECYCLE.CANCELED) {
+          return 'fa fa-ban remark-alert'
+        }
+        if (lifecycle === LIFECYCLE.ASSIGNED) {
+          return 'fa fa-ban remark-alert'
+        }
+        return 'fa fa-question remark-alert'
       }
     }
   },
   bindings: {
-    execution_state: {
-      hook: 'last_job_state',
+    execution_lifecycle: {
+      hook: 'last_job_lifecycle',
       type: 'attribute',
       name: 'class'
     },
@@ -296,28 +316,12 @@ module.exports = View.extend({
     }
   },
   events: {
-    'click button[data-hook=trigger]':'onClickTrigger',
     'click .collapsed[data-hook=collapse-toggle]': 'onClickToggleCollapse'
   },
   // capture and handle collapse event 
   onClickToggleCollapse (event) {
     TaskActions.populate(this.model)
     return 
-  },
-  onClickTrigger (event) {
-    event.stopPropagation()
-    event.preventDefault()
-
-    if (!this.model.canExecute) return
-
-    const message = `You are going to run the task <b>${this.model.name}</b>. Continue?`
-    bootbox.confirm(message, (confirmed) => {
-      if (confirmed) {
-        JobActions.create(this.model)
-      }
-    })
-
-    return false
   },
   render () {
     this.renderWithTemplate()
@@ -334,13 +338,9 @@ module.exports = View.extend({
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
     )
     const button = this.renderSubview(
-      new ExecButton({ model: this.model.lastjob }),
+      new ExecButton({ model: this.model }),
       this.queryByHook('execute-button-container')
     )
-
-    if (!this.model.canExecute) {
-      button.disabled = true
-    }
   },
   renderCollapsedContent () {
     let content

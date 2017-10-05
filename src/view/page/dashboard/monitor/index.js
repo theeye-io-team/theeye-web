@@ -187,6 +187,7 @@ const HostMonitorGroupView = MonitorView.extend({
 
     this.renderSubview(
       new CollapseContentFactory({
+        host: monitors['host'],
         dstat: monitors['dstat'],
         psaux: monitors['psaux'],
         model: this.model

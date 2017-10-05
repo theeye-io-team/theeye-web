@@ -3,7 +3,7 @@ import View from 'ampersand-view'
 module.exports = View.extend({
   props: {
     visible: ['boolean',false,false],
-    disabled: ['boolean',false,false]
+    disabled: ['boolean',false,true]
   },
   bindings: {
     visible: {

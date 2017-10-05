@@ -5,6 +5,7 @@ import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 const logger = require('lib/logger')('actions:jobs')
 const config = require('config')
+import LIFECYCLE from 'constants/lifecycle'
 
 module.exports = {
   update (job) {
@@ -41,6 +42,25 @@ module.exports = {
       },
       fail (err,xhr) {
         bootbox.alert('Job creation failed')
+        console.log(arguments)
+      }
+    })
+  },
+  cancel (job) {
+    XHR.send({
+      method: 'put',
+      url: `${config.api_url}/job/${job.id}/cancel`,
+      withCredentials: true,
+      timeout: 5000,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (data,xhr) {
+        logger.debug('job canceled')
+        task.lastjob.set('lifecycle',LIFECYCLE.CANCELED)
+      },
+      fail (err,xhr) {
+        bootbox.alert('something goes wrong')
         console.log(arguments)
       }
     })

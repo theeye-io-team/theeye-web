@@ -74,6 +74,9 @@ module.exports = View.extend({
   events: {
     'click [data-hook=up-and-running] i':'hideUpAndRunning',
   },
+  initialize () {
+    View.prototype.initialize.apply(this,arguments)
+  },
   hideUpAndRunning () {
     this.$upandrunning.slideUp()
     this.$monitorsPanel.slideDown()
@@ -248,7 +251,9 @@ module.exports = View.extend({
       this.queryByHook('tasks-container')
     )
 
-    const runAllButton = new RunAllTasksButton({ el: this.queryByHook('run-all-tasks') })
+    const runAllButton = new RunAllTasksButton({
+      el: this.queryByHook('run-all-tasks')
+    })
     runAllButton.render()
     this.registerSubview(runAllButton)
 
@@ -277,22 +282,39 @@ module.exports = View.extend({
         searchRows({
           rows: taskRows.views,
           search: App.state.searchbox.search,
-          onrow: (row, hit) => {
-            row.show = hit
+          onrow: (row, isHit) => {
+            row.show = isHit
           },
           onsearchend: () => {
             taskRows.views.forEach(row => row.show = true)
           }
         })
 
-        const showrunall = Boolean(App.state.searchbox.search)
-        runAllButton.visible = showrunall
-        runAllButton.disabled = App.state.searchbox.search.length < 3 ||
-          taskRows.views.find(row => Boolean(row.show === true)) === undefined
+        runAllButton.visible = Boolean(App.state.searchbox.search)
+        
+        if (App.state.searchbox.search.length > 3) {
+          const rows = taskRows.views.filter(row => row.show === true)
+          if (!rows || rows.length===0) {
+            // no rows to show
+            runAllButton.disabled = true
+          } else {
+            // verify that all the tasks are not being executed
+            const jobInProgress = rows
+              .map(row => row.model)
+              .find(task => {
+                if (!task.lastjob.lifecycle) return false
+                return task.lastjob.lifecycle !== 'completed'
+              })
+
+            runAllButton.disabled = (jobInProgress !== undefined)
+          }
+        } else {
+          runAllButton.disabled = true
+        }
       }
     }
 
-    this.listenToAndRun(App.state.searchbox, 'change:search', search)
+    this.listenToAndRun(App.state.searchbox,'change:search',search)
   },
   renderStatsPanel () {
     this.renderSubview(

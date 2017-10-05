@@ -3,6 +3,7 @@ import State from 'ampersand-state'
 import AppCollection from 'lib/app-collection'
 import isURL from 'validator/lib/isURL'
 import isMongoId from 'validator/lib/isMongoId'
+import LIFECYCLE from 'constants/lifecycle'
 
 //import { Model as Host } from 'models/host'
 
@@ -29,12 +30,16 @@ const JobResult = State.extend({
     name: 'string',
     notify: 'boolean',
     state: 'string',
+    lifecycle: 'string',
     result: ['object',false,null],
     creation_date: 'date',
     last_update: 'date',
     event: 'any',
     event_id: 'string'
   },
+  inProgress () {
+    return LIFECYCLE.inProgress(this.lifecycle)
+  }
 })
 
 const formattedTags = () => {

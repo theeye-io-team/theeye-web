@@ -84,10 +84,10 @@ module.exports = AmpersandState.extend({
       .setItem('session', this.toJSON())
       .catch(err => debug('ERROR %j', err))
   },
-  destroy (done) {
-    done || (done = ()=>{})
-    this.clear()
-    //this.persist()
-    return done()
-  }
+  //destroy (done) {
+  //  done || (done = ()=>{})
+  //  this.clear()
+  //  //this.persist()
+  //  return done()
+  //}
 })
