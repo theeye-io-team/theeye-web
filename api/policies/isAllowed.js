@@ -5,9 +5,16 @@ const Acl = sails.config.acl
 
 module.exports = (req, res, next) => {
   if (!req.user) {
-    let err = new Error('req.user is not defined')
+    let err = new Error('unauthorized')
     err.status = 401
-    debug(err.message)
+    debug('req.user is not defined')
+    return next(err)
+  }
+
+  if (!req.user.credential) {
+    let err = new Error('forbidden')
+    err.status = 403
+    debug('user credential is not defined')
     return next(err)
   }
 

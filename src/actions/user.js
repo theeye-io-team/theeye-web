@@ -33,7 +33,6 @@ module.exports = {
         title: 'User created',
         message: `You have successfully created ${body.username}`,
         callback: () => {
-          //window.location.reload()
           App.state.loader.visible = false
           App.Router.reload()
         }
@@ -44,8 +43,8 @@ module.exports = {
         title: 'User creation error - ' + errorThrown,
         message: jqXHR.responseText,
         callback: () => {
-          //window.location.reload()
           App.state.loader.visible = false
+          App.Router.reload()
         }
       })
     })
@@ -59,6 +58,7 @@ module.exports = {
       return App.state.customers.get(id).name
     })
 
+    App.state.loader.visible = true
     const req = xhr({
       url: `/user/${id}`,
       type: 'PUT',
@@ -72,16 +72,18 @@ module.exports = {
         title: 'User created',
         message: `You have successfully updated ${body.username}`,
         callback: () => {
-          window.location.reload()
+          App.Router.reload()
+          App.state.loader.visible = false
         }
       })
     })
+
     req.fail(function(jqXHR, textStatus, errorThrown){
       bootbox.alert({
         title: `User update error - ${errorThrown}`,
         message: jqXHR.responseText,
         callback: () => {
-          //window.location.reload()
+          App.Router.reload()
           App.state.loader.visible = false
         }
       })

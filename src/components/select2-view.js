@@ -93,10 +93,16 @@ module.exports = View.extend({
   },
   derived: {
     value: {
-      deps: ['inputValue'],
+      deps: ['inputValue','multiple'],
       fn: function () {
-        if (!this.inputValue) return this.inputValue
-        return this.inputValue.map(e => e[this.idAttribute])
+        // this is set with $select2 data value.
+        // it contains id and text attributes
+        let input = this.inputValue
+        if (!input) return input
+        if (Array.isArray(input)&&input.length===0) return input
+        let values = input.map(e => e.id)
+        if (this.multiple) return values
+        else return values[0]
       }
     },
     valid: {
@@ -209,7 +215,6 @@ module.exports = View.extend({
   //`change` event handler
   handleInputChanged: function () {
     this.directlyEdited = true
-    //this.inputValue = this.$select.val()
     this.inputValue = this.$select.select2('data')
   },
   validityClassChanged: function (view, newClass) {

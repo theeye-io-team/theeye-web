@@ -1,7 +1,7 @@
 /* global async, Passport, sails, User */
-var passport = require('../services/passport');
-var mailer = require('../services/mailer');
-var underscore = require('underscore');
+var passport = require('../services/passport')
+var mailer = require('../services/mailer')
+var difference = require('lodash/difference')
 
 var UserController = module.exports = {
   //Current user home
@@ -107,9 +107,10 @@ var UserController = module.exports = {
   //POST  /admin/user/:id
   create: function(req, res) {
     var params = req.params.all();
-    if(!params.customers) return res.send(400, 'You must select at least one customer');
-    if(!params.username) return res.send(400, 'You must select a username');
-    if(!params.email) return res.send(400, 'You must select an email');
+    if (!params.customers) return res.send(400, 'at least one customer is required')
+    if (!params.username) return res.send(400, 'username is required')
+    if (!params.email) return res.send(400, 'email is required')
+    if (!params.credential) return res.send(400, 'credential is required')
 
     User.findOne({
       or: [
@@ -164,18 +165,25 @@ var UserController = module.exports = {
     var params = req.params.all();
     var userId = params.id;
 
+    if (!params.credential) {
+      return res.send(400, 'credential is required')
+    }
+    if (typeof params.credential != 'string') {
+      return res.send(400, 'invalid credential. string required')
+    }
+
     if (!params.customers) {
-      return res.send(400, 'select at least one customer');
+      return res.send(400, 'at least one customer is required')
     }
 
     User.findOne({ id: userId },(error,user) => {
-      if (!user) return res.send(404,'user not found');
+      if (!user) return res.send(404,'user not found')
 
       if (params.email!=user.email) {
-        return res.send(403, 'user email can\'t be changed');
+        return res.send(403, 'user email can\'t be changed')
       }
 
-      var customersChanged = underscore.difference(user.customers,params.customers).length !== 0;
+      var customersChanged = difference(user.customers,params.customers).length !== 0
       if (customersChanged && user.enabled) {
         // notify the user customers permissions changed
         mailer.sendCustomerPermissionsChanged(user, error => sails.log.error(error));
