@@ -483,6 +483,7 @@ function StatsPage () {
   })
 
   function onSocketConnected (onConnected) {
+    if (!io.socket) return
     if (io.socket.socket && io.socket.socket.connected) {
       onConnected()
     }

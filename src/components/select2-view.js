@@ -95,14 +95,19 @@ module.exports = View.extend({
     value: {
       deps: ['inputValue','multiple'],
       fn: function () {
-        // this is set with $select2 data value.
+        // this is set with $select2 data array value
         // it contains id and text attributes
         let input = this.inputValue
-        if (!input) return input
-        if (Array.isArray(input)&&input.length===0) return input
-        let values = input.map(e => e.id)
-        if (this.multiple) return values
-        else return values[0]
+        if (this.multiple) {
+          if (!input) return []
+          if (Array.isArray(input)&&input.length===0) return []
+          return input.map(e => e.id)
+        } else {
+          if (!input) return null
+          if (Array.isArray(input)&&input.length===0) return null
+          let values = input.map(e => e.id)
+          return values[0]
+        }
       }
     },
     valid: {
@@ -142,7 +147,6 @@ module.exports = View.extend({
     this.tests = spec.tests || []
     var value = spec.value
     this.startingValue = value
-    //this.inputValue = value
     this.handleChange = this.handleChange.bind(this)
     this.handleInputChanged = this.handleInputChanged.bind(this)
   },
@@ -188,7 +192,6 @@ module.exports = View.extend({
     // a method on this object
     this.$select.on('change',this.handleInputChanged)
 
-    //this.setValues(this.inputValue)
     this.setValues(this.startingValue)
   },
   setValues (items) {
@@ -264,7 +267,6 @@ module.exports = View.extend({
     return message;
   },
   beforeSubmit: function () {
-    //this.inputValue = this.$select.val()
     this.inputValue = this.$select.select2('data')
 
     // at the point where we've tried
