@@ -4,6 +4,7 @@ import PageView from 'view/page/dashboard'
 import App from 'ampersand-app'
 import search from 'lib/query-params'
 import Route from 'lib/router-route'
+import after from 'lodash/after'
 
 const logger = require('lib/logger')('router:dashboard')
 
@@ -27,8 +28,6 @@ const setStateFromQueryString = (query) => {
 const fetchData = (options) => {
   const { fetchTasks } = options
 
-  App.state.hosts.fetch()
-
   App.state.dashboard.groupedResources.once('reset',() => {
     logger.log('resources synced and grouped resources prepared')
     App.state.dashboard.resourcesDataSynced = true
@@ -39,17 +38,35 @@ const fetchData = (options) => {
     App.state.dashboard.tasksDataSynced = true
   })
 
-  if (!fetchTasks) {
-    // fetch only monitors
-    App.state.resources.fetch({
-      success: () => App.state.dashboard.groupResources()
+  App.state.loader.visible = true
+
+  var resourcesToFetch = ['hosts', 'monitors']
+  if (fetchTasks)
+    resourcesToFetch.push('tasks')
+
+  var done = after(resourcesToFetch.length, function(){
+    App.state.loader.visible = false
+  })
+
+  App.state.hosts.fetch({
+    success: () => {
+      done()
+    }
+  })
+
+  App.state.resources.fetch({
+    success: () => {
+      App.state.dashboard.groupResources()
+      done()
+    }
+  })
+
+  if (fetchTasks) {
+    App.state.tasks.fetch({
+      success: () => {
+        done()
+      }
     })
-  } else {
-    // fetch monitors and start page.
-    App.state.resources.fetch({
-      success: () => App.state.dashboard.groupResources()
-    })
-    App.state.tasks.fetch({ })
   }
 }
 
