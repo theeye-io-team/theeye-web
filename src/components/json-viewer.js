@@ -1,4 +1,5 @@
 import View from 'ampersand-view'
+import isURL from 'validator/lib/isURL'
 
 /**
  * Check if arg is either an array with at least 1 element, or a dict with at least 1 key
@@ -9,15 +10,6 @@ function isCollapsable(arg) {
 }
 
 /**
- * Check if a string represents a valid url
- * @return boolean
- */
-function isUrl(string) {
-  var regexp = /^(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
-  return regexp.test(string);
-}
-
-/**
  * Transform a json object into html representation
  * @return string
  */
@@ -25,7 +17,7 @@ function json2html(json) {
   var html = '';
   if (typeof json === 'string') {
     json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    if (isUrl(json))
+    if (isURL(json))
       html += '<a href="' + json + '" class="json-string">' + json + '</a>';
     else
       html += '<span class="json-string">"' + json + '"</span>';

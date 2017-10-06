@@ -21,14 +21,6 @@ module.exports = View.extend({
   `,
   events: {
     'click button[data-hook=trigger]':'onClickTrigger',
-    'mouseover':'onMouseOver',
-    'mouseleave':'onMouseLeave',
-  },
-  onMouseOver (event) {
-    console.log('mouse overed')
-  },
-  onMouseLeave (event) {
-    console.log('mouse leaved')
   },
   onClickTrigger (event) {
     event.stopPropagation()

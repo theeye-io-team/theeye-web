@@ -1,6 +1,6 @@
 'use strict'
 // specified via webpack build process
-const env = process.env.NODE_ENV || 'default'
+const env = process.env.NODE_ENV
 const configs = require('./configs')
 const logger = require('lib/logger')('config')
 
