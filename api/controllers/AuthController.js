@@ -293,12 +293,14 @@ var AuthController = {
       if(err){
         debug('SOCIAL LOGIN ERROR:')
         debug(err);
-        return res.redirect('/login');
+        var query = new Buffer( JSON.stringify({ error: 'Login error, please try again later.' }) ).toString('base64')
+        return res.redirect('/sociallogin?'+query);
       }
 
       if(!user){
         debug('LOGIN ERROR: USER NOT FOUND')
-        return res.redirect('/login');
+        var query = new Buffer( JSON.stringify({ error: 'Login error, invalid credentials.' }) ).toString('base64')
+        return res.redirect('/sociallogin?'+query);
       }
 
       sails.log.debug('passport authenticated');
@@ -311,7 +313,7 @@ var AuthController = {
           debug('user logged in. issuing access token')
           const accessToken = jwtoken.issue({ user_id: user.id })
           var queryToken = new Buffer( JSON.stringify({ access_token: accessToken }) ).toString('base64')
-          res.redirect('/sociallogin?'+queryToken);
+          return res.redirect('/sociallogin?'+queryToken);
         }
       });
     });
