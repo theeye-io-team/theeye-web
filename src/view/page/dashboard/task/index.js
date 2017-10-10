@@ -14,7 +14,7 @@ import lang2ext from 'lib/lang2ext'
 const TaskButtonsView = View.extend({
   template: require('./buttons.hbs'),
   derived: {
-    executed: {
+    execResult: {
       deps: ['model.lastjob.result'],
       fn () {
         return Boolean(this.model.lastjob.result)
@@ -36,7 +36,7 @@ const TaskButtonsView = View.extend({
         }
 
         if (!lifecycle) return ''
-        if ( lifecycle === LIFECYCLE.READY) return 'fa fa-spin fa-refresh'
+        if (lifecycle === LIFECYCLE.READY) return 'fa fa-spin fa-refresh'
         if (lifecycle === LIFECYCLE.ASSIGNED) return 'fa fa-spin fa-refresh remark-success'
         if (isCompleted(lifecycle)) {
           if (state === 'success') return 'fa fa-check remark-success'
@@ -59,12 +59,12 @@ const TaskButtonsView = View.extend({
       type: 'attribute',
       name: 'class'
     },
-    executed: {
-      type: 'booleanAttribute',
-      name: 'disabled',
-      hook: 'last_exec',
-      invert: true
-    }
+    //execResult: {
+    //  type: 'booleanAttribute',
+    //  name: 'disabled',
+    //  hook: 'last_exec',
+    //  invert: true
+    //}
   },
   events: {
     'click button[data-hook=workflow]':'onClickWorkflow',
@@ -85,6 +85,10 @@ const TaskButtonsView = View.extend({
     event.stopPropagation()
 
     const getResult = () => {
+      if (!this.execResult) {
+        return 'execution result is not available'
+      }
+
       return this.model.lastjob.result
     }
 
@@ -311,9 +315,7 @@ module.exports = View.extend({
     type: { hook: 'type' },
     description: { hook: 'description' },
     hostname: { hook: 'hostname' },
-    show: {
-      type: 'toggle'
-    }
+    show: { type: 'toggle' }
   },
   events: {
     'click .collapsed[data-hook=collapse-toggle]': 'onClickToggleCollapse'
