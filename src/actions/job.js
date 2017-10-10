@@ -46,7 +46,8 @@ module.exports = {
       }
     })
   },
-  cancel (job) {
+  cancel (task) {
+    const job = task.lastjob
     XHR.send({
       method: 'put',
       url: `${config.api_url}/job/${job.id}/cancel`,

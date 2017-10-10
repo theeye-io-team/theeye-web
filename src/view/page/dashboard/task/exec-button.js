@@ -32,7 +32,7 @@ module.exports = View.extend({
       const message = `Cancel task <b>${this.model.name}</b> execution? <a href="">Why this happen?</a>`
       bootbox.confirm(message, (confirmed) => {
         if (confirmed) {
-          JobActions.cancel(this.model.lastjob)
+          JobActions.cancel(this.model)
         }
       })
     } else {
