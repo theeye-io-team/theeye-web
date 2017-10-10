@@ -12,6 +12,7 @@ import MonitorRowView from './monitor'
 import RunAllTasksButton from './task/run-all-button'
 import JobActions from 'actions/job'
 import bootbox from 'bootbox'
+import LIFECYCLE from 'constants/lifecycle'
 
 const logger = require('lib/logger')('view:page:dashboard')
 const ItemsFolding = require('./panel-items-fold')
@@ -302,15 +303,15 @@ module.exports = View.extend({
             // no rows to show
             runAllButton.disabled = true
           } else {
-            // verify that all the tasks are not being executed
-            const jobInProgress = rows
+            // verify if all the tasks are not being executed
+            const jobsInProgress = rows
               .map(row => row.model)
               .find(task => {
-                if (!task.lastjob.lifecycle) return false
-                return task.lastjob.lifecycle !== 'completed'
+                const lifecycle = task.lastjob.lifecycle
+                return LIFECYCLE.inProgress(lifecycle)
               })
 
-            runAllButton.disabled = (jobInProgress !== undefined)
+            runAllButton.disabled = (jobsInProgress !== undefined)
           }
         } else {
           runAllButton.disabled = true

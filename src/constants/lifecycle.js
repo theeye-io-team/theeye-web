@@ -14,5 +14,6 @@ exports.EXPIRED = 'expired'
 exports.COMPLETED = 'completed'
 
 exports.inProgress = (lifecycle) => {
-  return lifecycle === READY || lifecycle === ASSIGNED
+  if (!lifecycle) return false
+  return (lifecycle === READY || lifecycle === ASSIGNED)
 }
