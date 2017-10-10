@@ -243,7 +243,7 @@ const groupByProperty = (resources, prop) => {
     addToGroup(resource,name)
   })
 
-  return Object.values(groups)
+  return Object.keys(groups).map(key => groups[key])
 }
 
 /**
