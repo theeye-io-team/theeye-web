@@ -103,7 +103,7 @@ module.exports.routes = {
    */
   '/events': (req,res,next) => res.redirect('/dashboard'),
   'get /admin/webhook': spaIndexRoute,
-  'get /admin/workflow': spaIndexRoute,
+  'get /admin/workflow': 'WorkflowController.index',
   'get /admin/scheduler': spaIndexRoute,
   'get /admin/hostgroup': spaIndexRoute,
   'get /admin/user' : spaIndexRoute,
