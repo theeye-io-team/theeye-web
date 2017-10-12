@@ -32,6 +32,7 @@ module.exports = PanelButton.extend({
         form.beforeSubmit()
         if (!form.valid) return
         UserActions.update(this.model.id, form.data)
+        modal.hide()
       })
       modal.show()
     }

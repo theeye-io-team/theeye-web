@@ -100,7 +100,8 @@ module.exports = {
         title: 'User Removed',
         message: `user has been removed.`,
         callback: () => {
-          window.location.reload()
+          App.Router.reload()
+          App.state.loader.visible = false
         }
       })
     })
