@@ -2,6 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Searchbox from './searchbox'
 import SessionActions from 'actions/session'
+import NavbarActions from 'actions/navbar'
 import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
 import Backdrop from 'components/backdrop'
@@ -38,6 +39,7 @@ const CustomerItemList = View.extend({
   onClickCustomer (event) {
     event.preventDefault()
     //event.stopPropagation()
+    NavbarActions.toggleMenu()
     SessionActions.changeCustomer( this.model.id )
   },
   initialize () {
@@ -120,12 +122,12 @@ const Menu = View.extend({
   },
   events: {
     'click [data-hook=links-container] a': function (event) {
-      this.toggle('menu_switch')
+      NavbarActions.toggleMenu()
     },
     'click [data-hook=menu-toggle]': function (event) {
       event.preventDefault()
       event.stopPropagation()
-      this.toggle('menu_switch')
+      NavbarActions.toggleMenu()
       return false
     },
     'click [data-hook=customers-toggle]': function (event) {
@@ -144,6 +146,14 @@ const Menu = View.extend({
       window.location.href = event.target.href
     }
   },
+  initialize () {
+    this.menu_switch = App.state.navbar.menuSwitch
+    this.listenTo(App.state.navbar,'change:menuSwitch',() => {
+      this.menu_switch = App.state.navbar.menuSwitch
+      if(!this.menu_switch)
+        this.customers_switch = false
+    })
+  },
   render () {
     this.renderWithTemplate(this)
     this.renderProfile()
@@ -158,7 +168,7 @@ const Menu = View.extend({
       opacity: 0
     })
     this.listenTo(backdrop,'click',() => {
-      this.toggle('menu_switch')
+      NavbarActions.toggleMenu()
     })
     this.on('change:menu_switch',() => {
       backdrop.visible = this.menu_switch

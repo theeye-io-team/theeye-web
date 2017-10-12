@@ -38,6 +38,7 @@ const AppState = State.extend({
   init () {
     this.loader = new LoaderState()
     this.session = new SessionState()
+    this.navbar = new NavbarState()
 
     _initCollections.call(this)
 
@@ -115,6 +116,12 @@ const NotifyState = State.extend({
 const LoginState = State.extend({
   props: {
     showRecoverForm: ['boolean',false,false]
+  }
+})
+
+const NavbarState = State.extend({
+  props: {
+    menuSwitch: ['boolean',false,false]
   }
 })
 
