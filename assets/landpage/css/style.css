@@ -890,6 +890,7 @@ border-radius:300px
 .pricing-tabs input[type="radio"] + label {font-size:12px;cursor:pointer;font-weight:300;margin-right:20px}
 .pricing-tabs input[type="radio"] + label span {display:inline-block;width:23px;height:23px;margin:-3px 4px 0 0;vertical-align:middle;background:url(../images/sprite.png) -49px -151px no-repeat;cursor:pointer}
 .pricing-tabs .devs-tab input[type="radio"]:checked + label {font-weight:600}
+.pricing-tabs .devs-tab input[type="radio"]:checked + label .tooltip {font-weight:500}
 .pricing-tabs .devs-tab input[type="radio"]:checked + label, .pricing-tabs .devs-tab .text-bold {color:#03407c}
 .pricing-tabs .devs-tab input[type="radio"]:checked + label span {background-position:-22px -267px}
 .pricing-tabs .small-tab input[type="radio"]:checked + label, .pricing-tabs .small-tab .text-bold {color:#803000}
@@ -1040,9 +1041,9 @@ border-radius:300px
 .features-list li.monitors {padding-left:28px}
 .features-list li.retention i.fa {font-size:18px}
 .features-list li.external i.fa {font-size:18px;top:-2px}
-.features-list li.external i.fa.fa-info-circle {position:relative;font-size:12px;top:0;left:4px}
+.features-list li i.fa.fa-info-circle {position:relative;font-size:12px;top:0;left:4px}
 .features-list li.consultancy {padding-left:32px}
-.features-list li.consultancy i.fa {top:-2px;font-size:20px}
+.features-list li.consultancy i.fa-handshake-o {top:-2px;font-size:20px}
 @media only screen and (min-width: 992px) {
   .settings-content .col-md-10 {
     min-height: 50px;

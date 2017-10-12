@@ -291,9 +291,9 @@
               <a href="#devs" aria-controls="devs" role="tab" data-hook="devs-tab" data-toggle="tab" class="devs-link">
                 <span class="avatar"></span>
                 <div class="data">
-                  Developers / Sysadmins / Devops
+                  Freemium
                   <i class="fa fa-bars" aria-hidden="true"></i>
-                  <span class="desc">1-5 servers</span>
+                  <span class="desc">1 Server / Instance</span>
                 </div>
               </a>
             </li>
@@ -301,7 +301,7 @@
               <a href="#small" aria-controls="small" role="tab" data-hook="small-tab" data-toggle="tab" class="small-links">
                 <span class="avatar"></span>
                 <div class="data">
-                  Small Company
+                  SMB
                   <i class="fa fa-bars" aria-hidden="true"></i>
                   <span class="desc">6-99 servers</span>
                 </div>
@@ -344,7 +344,7 @@
                         <div class="btn-group">
                           <input class="bootstrap-slider" type="text" name="events"/>
                           <div class="valueLabelzero">5</div>
-                          <div class="valueLabel">+500</div>
+                          <div class="valueLabel">25</div>
                         </div>
                       </div>
                     </div>
@@ -366,8 +366,6 @@
                       <label for="dev-radio01"><span></span>5 business day</label>
                       <input type="radio" id="dev-radio02" name="support" value="1 business day" />
                       <label for="dev-radio02"><span></span>1 business day</label>
-                      <input type="radio" id="dev-radio03" name="support" value="24/7" />
-                      <label for="dev-radio03"><span></span>24/7</label>
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
                       <span data-hook="support-selected" class="text-bold">5 business day</span>
@@ -385,19 +383,11 @@
                     <div class="col-md-7 border implementation">
                       <input type="radio" id="dev-self" name="implementation" value="Self implementation" checked />
                       <label for="dev-self" class="dev-self-icon">
-                        <span></span>Self<br>implemented
+                        <span></span>Self<br>implemented <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="You implement by following our documentation or asking for our community support."></i>
                       </label>
                       <input type="radio" id="dev-remote" name="implementation" value="Remotely assisted" />
                       <label for="dev-remote" class="dev-remote-icon">
-                        <span></span>Remotely<br>assisted
-                      </label>
-                      <input type="radio" id="dev-training" name="implementation" value="Consulting imp. remote training" />
-                      <label for="dev-training" class="dev-training-icon">
-                        <span></span>Consulting imp.<br>&amp; remote training
-                      </label>
-                      <input type="radio" id="dev-staff" name="implementation" value="Consulting imp. training staff" />
-                      <label for="dev-staff" class="dev-staff-icon">
-                        <span></span>Consulting imp.<br>&amp; training staff
+                        <span></span>Remotely<br>assisted <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We guide you remotely during your implementation."></i>
                       </label>
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
@@ -415,13 +405,10 @@
                     </div>
                     <div class="col-md-10 trends">
                       <ul class="features-list">
-                        <li class="mobile"><i class="fa fa-mobile" aria-hidden="true"></i>Mobile<br>Application</li>
-                        <li class="monitors"><i class="fa fa-television" aria-hidden="true"></i></i>External monitors<br>(up to X)</li>
-                        <li class="retention"><i class="fa fa-circle-o-notch" aria-hidden="true"></i>Retention<br>(ELK Integration)</li>
-                        <li class="external"><i class="fa fa-eye" aria-hidden="true"></i>External Agents<br>up to X<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="For monitoring or running processes without deploying a server"></i></li>
-                        <li class="whitelabel"><a href="#section-10"><i class="fa fa-tag" aria-hidden="true"></i>Whitelabel</a></li>
-                        <li class="consultancy"><i class="fa fa-handshake-o" aria-hidden="true"></i><a href="#section-10">Consultancy</a></li>
-                        <li class="inhouse"><i class="fa fa-home" aria-hidden="true"></i><a href="#section-10">Inhouse<br>Implementation</a></li>
+                        <li class="mobile"><i class="fa fa-mobile" aria-hidden="true"></i>Mobile<br>Application <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="Go ahead and manage your IT services from your cell phone."></i></li>
+                        <li class="monitors"><i class="fa fa-television" aria-hidden="true"></i>External monitors<br>(up to 1) <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We provide you with external monitors whose run from different regions."></i></li>
+                        <li class="retention"><i class="fa fa-circle-o-notch" aria-hidden="true"></i>Retention<br>(ELK Integration) <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="You can easily centralize all your historical data by configuring elasticsearch."></i></li>
+                        <li class="external"><i class="fa fa-eye" aria-hidden="true"></i>External Agents<br>(up to 1) <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="For monitoring or running processes without deploying a server."></i></li>
                       </ul>
                     </div>
                   </div>
@@ -496,13 +483,17 @@
                     </div>
                     <div class="col-md-7 border implementation">
                       <input type="radio" id="small-self" name="implementation" value="Self implementation" checked />
-                      <label for="small-self" class="dev-self-icon"><span></span>Self<br>implemented</label>
+                      <label for="small-self" class="dev-self-icon">
+                        <span></span>Self<br>implemented <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="You implement by following our documentation or asking for our community support."></i>
+                      </label>
                       <input type="radio" id="small-remote" name="implementation" value="Remotely assisted" />
-                      <label for="small-remote" class="dev-remote-icon"><span></span>Remotely<br>assisted</label>
+                      <label for="small-remote" class="dev-remote-icon">
+                        <span></span>Remotely<br>assisted <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We guide you remotely during your implementation."></i>
+                      </label>
                       <input type="radio" id="small-training" name="implementation" value="Consulting imp. remote training" />
-                      <label for="small-training" class="dev-training-icon"><span></span>Consulting imp.<br>&amp; remote training</label>
-                      <input type="radio" id="small-staff" name="implementation" value="Consulting imp. training staff" />
-                      <label for="small-staff" class="dev-staff-icon"><span></span>Consulting imp.<br>&amp; training staff</label>
+                      <label for="small-training" class="dev-training-icon">
+                        <span></span>Consulting imp.<br>&amp; remote training <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We arrange calls for guiding you during your implementation, We can create scripts and automation for you and finally We explain them to you."></i>
+                      </label>
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
                       <span data-hook="implementation-selected" class="text-bold">Self Implementation</span>
@@ -519,13 +510,10 @@
                     </div>
                     <div class="col-md-10 trends">
                       <ul class="features-list">
-                        <li class="mobile"><i class="fa fa-mobile" aria-hidden="true"></i>Mobile<br>Application</li>
-                        <li class="monitors"><i class="fa fa-television" aria-hidden="true"></i></i>External monitors<br>(up to X)</li>
-                        <li class="retention"><i class="fa fa-circle-o-notch" aria-hidden="true"></i>Retention<br>(ELK Integration)</li>
-                        <li class="external"><i class="fa fa-eye" aria-hidden="true"></i>External Agents<br>up to X<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="For monitoring or running processes without deploying a server"></i></li>
-                        <li class="whitelabel"><a href="#section-10"><i class="fa fa-tag" aria-hidden="true"></i>Whitelabel</a></li>
-                        <li class="consultancy"><i class="fa fa-handshake-o" aria-hidden="true"></i><a href="#section-10">Consultancy</a></li>
-                        <li class="inhouse"><i class="fa fa-home" aria-hidden="true"></i><a href="#section-10">Inhouse<br>Implementation</a></li>
+                        <li class="mobile"><i class="fa fa-mobile" aria-hidden="true"></i>Mobile<br>Application <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="Go ahead and manage your IT services from your cell phone."></i></li>
+                        <li class="monitors"><i class="fa fa-television" aria-hidden="true"></i>External monitors<br>(up to 2-10) <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We provide you with external monitors whose run from different regions."></i></li>
+                        <li class="retention"><i class="fa fa-circle-o-notch" aria-hidden="true"></i>Retention<br>(ELK Integration) <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="You can easily centralize all your historical data by configuring elasticsearch."></i></li>
+                        <li class="external"><i class="fa fa-eye" aria-hidden="true"></i>External Agents<br>(up to 2-10)<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="For monitoring or running processes without deploying a server"></i></li>
                       </ul>
                     </div>
                   </div>
@@ -597,14 +585,18 @@
                       <span class="pricing-title">IMPLEMENTATION</span>
                     </div>
                     <div class="col-md-7 border implementation">
-                      <input type="radio" id="saas-self" name="implementation" value="Self implementation" />
-                      <label for="saas-self" class="dev-self-icon"><span></span>Self<br>implemented</label>
+                      <input type="radio" id="saas-self" name="implementation" value="Self implementation"/>
+                      <label for="saas-self" class="dev-self-icon">
+                        <span></span>Self<br>implemented <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="You implement by following our documentation or asking for our community support."></i>
+                      </label>
                       <input type="radio" id="saas-remote" name="implementation" value="Remotely assisted" />
-                      <label for="saas-remote" class="dev-remote-icon"><span></span>Remotely<br>assisted</label>
+                      <label for="saas-remote" class="dev-remote-icon">
+                        <span></span>Remotely<br>assisted <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We guide you remotely during your implementation."></i>
+                      </label>
                       <input type="radio" id="saas-training" name="implementation" value="Consulting imp. remote training" checked/>
-                      <label for="saas-training" class="dev-training-icon"><span></span>Consulting imp.<br>&amp; remote training</label>
-                      <input type="radio" id="saas-staff" name="implementation" value="Consulting imp. training staff"/>
-                      <label for="saas-staff" class="dev-staff-icon"><span></span>Consulting imp.<br>&amp; training staff</label>
+                      <label for="saas-training" class="dev-training-icon">
+                        <span></span>Consulting imp.<br>&amp; remote training <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We arrange calls for guiding you during your implementation, We can create scripts and automation for you and finally We explain them to you."></i>
+                      </label>
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
                       <span data-hook="implementation-selected" class="text-bold">Consulting imp. remote training</span>
@@ -621,13 +613,12 @@
                     </div>
                     <div class="col-md-10 trends">
                       <ul class="features-list">
-                        <li class="mobile"><i class="fa fa-mobile" aria-hidden="true"></i>Mobile<br>Application</li>
-                        <li class="monitors"><i class="fa fa-television" aria-hidden="true"></i></i>External monitors<br>(up to X)</li>
-                        <li class="retention"><i class="fa fa-circle-o-notch" aria-hidden="true"></i>Retention<br>(ELK Integration)</li>
-                        <li class="external"><i class="fa fa-eye" aria-hidden="true"></i>External Agents<br>up to X<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="For monitoring or running processes without deploying a server"></i></li>
-                        <li class="whitelabel"><a href="#section-10"><i class="fa fa-tag" aria-hidden="true"></i>Whitelabel</a></li>
-                        <li class="consultancy"><i class="fa fa-handshake-o" aria-hidden="true"></i><a href="#section-10">Consultancy</a></li>
-                        <li class="inhouse"><i class="fa fa-home" aria-hidden="true"></i><a href="#section-10">Inhouse<br>Implementation</a></li>
+                        <li class="mobile"><i class="fa fa-mobile" aria-hidden="true"></i>Mobile<br>Application <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="Go ahead and manage your IT services from your cell phone."></i></li>
+                        <li class="monitors"><i class="fa fa-television" aria-hidden="true"></i>External monitors<br>(up to 10-50) <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We provide you with external monitors whose run from different regions."></i></li>
+                        <li class="retention"><i class="fa fa-circle-o-notch" aria-hidden="true"></i>Retention<br>(ELK Integration) <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="You can easily centralize all your historical data by configuring elasticsearch."></i></li>
+                        <li class="external"><i class="fa fa-eye" aria-hidden="true"></i>External Agents<br>(up to 10-50)<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="For monitoring or running processes without deploying a server"></i></li>
+                        <li class="consultancy"><i class="fa fa-handshake-o" aria-hidden="true"></i><a href="#section-10">Consultancy </a><i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We are automation experts, contact us."></i></li>
+                        <li class="inhouse"><i class="fa fa-home" aria-hidden="true"></i><a href="#section-10">Inhouse<br>Implementation </a><i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="Runs on your bare metal, your own cloud or virtualized services."></i></li>
                       </ul>
                     </div>
                   </div>
@@ -658,16 +649,7 @@
                       <span class="pricing-title">EVENTS</span>
                     </div>
                     <div class="col-md-7 border">
-                      <div class="button-slider">
-                        <div class="btn-group">
-                          <input class="bootstrap-slider" type="text" name="events"/>
-                          <div class="valueLabelzero">400</div>
-                          <div class="valueLabel">+4000</div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-2 text-right border mobile-border mobile-center-pad">
-                      <span class="text-bold">Servers average: <span data-hook="servers-average"></span></span>
+                      <span class="pricing-title">UNLIMITED</span>
                     </div>
                     <div class="col-md-1 hidden-sm">
                       <span class="pull-right help-icon" data-toggle="tooltip" data-placement="top" title="As long as you run theeye on your infrastructure the price is just for the license "></span>
@@ -716,14 +698,18 @@
                       <span class="pricing-title">IMPLEMENTATION</span>
                     </div>
                     <div class="col-md-7 border implementation">
-                      <input type="radio" id="premise-self" name="implementation" value="Self implementation" />
-                      <label for="premise-self" class="dev-self-icon"><span></span>Self<br>implementated</label>
                       <input type="radio" id="premise-remote" name="implementation" value="Remotely assisted" />
-                      <label for="premise-remote" class="dev-remote-icon"><span></span>Remotely<br>assisted</label>
+                      <label for="premise-remote" class="dev-remote-icon">
+                        <span></span>Remotely<br>assisted <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We guide you remotely during your implementation."></i>
+                      </label>
                       <input type="radio" id="premise-training" name="implementation" value="Consulting imp. remote training" checked/>
-                      <label for="premise-training" class="dev-training-icon"><span></span>Consulting imp.<br>&amp; remote training</label>
+                      <label for="premise-training" class="dev-training-icon">
+                        <span></span>Consulting imp.<br>&amp; remote training <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We arrange calls for guiding you during your implementation, We can create scripts and automation for you and finally We explain them to you."></i>
+                      </label>
                       <input type="radio" id="premise-staff" name="implementation" value="Consulting imp. training staff" />
-                      <label for="premise-staff" class="dev-staff-icon"><span></span>Consulting imp.<br>&amp; training staff</label>
+                      <label for="premise-staff" class="dev-staff-icon">
+                        <span></span>Consulting imp.<br>&amp; training staff <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We arrange for onsite meetings for guiding you during your implementation, We can create scripts and automation for you and finally We explain them to you."></i>
+                      </label>
                     </div>
                     <div class="col-md-2 text-right border mobile-border hidden-xs">
                       <span data-hook="implementation-selected" class="text-bold">Consulting imp. remote training</span>
@@ -740,13 +726,13 @@
                     </div>
                     <div class="col-md-10 trends">
                       <ul class="features-list">
-                        <li class="mobile"><i class="fa fa-mobile" aria-hidden="true"></i>Mobile<br>Application</li>
-                        <li class="monitors"><i class="fa fa-television" aria-hidden="true"></i></i>External monitors<br>(up to X)</li>
-                        <li class="retention"><i class="fa fa-circle-o-notch" aria-hidden="true"></i>Retention<br>(ELK Integration)</li>
-                        <li class="external"><i class="fa fa-eye" aria-hidden="true"></i>External Agents<br>up to X<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="For monitoring or running processes without deploying a server"></i></li>
-                        <li class="whitelabel"><a href="#section-10"><i class="fa fa-tag" aria-hidden="true"></i>Whitelabel</a></li>
-                        <li class="consultancy"><i class="fa fa-handshake-o" aria-hidden="true"></i><a href="#section-10">Consultancy</a></li>
-                        <li class="inhouse"><i class="fa fa-home" aria-hidden="true"></i><a href="#section-10">Inhouse<br>Implementation</a></li>
+                        <li class="mobile"><i class="fa fa-mobile" aria-hidden="true"></i>Mobile<br>Application <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="Go ahead and manage your IT services from your cell phone."></i></li>
+                        <li class="monitors"><i class="fa fa-television" aria-hidden="true"></i>External monitors<br>(up to 10-50) <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We provide you with external monitors whose run from different regions."></i></li>
+                        <li class="retention"><i class="fa fa-circle-o-notch" aria-hidden="true"></i>Retention<br>(ELK Integration) <i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="You can easily centralize all your historical data by configuring elasticsearch."></i></li>
+                        <li class="external"><i class="fa fa-eye" aria-hidden="true"></i>External Agents<br>(up to 10-50)<i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="For monitoring or running processes without deploying a server"></i></li>
+                        <li class="whitelabel"><a href="#section-10"><i class="fa fa-tag" aria-hidden="true"></i>Whitelabel </a><i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="You want to provide this service using your own logo? contact us."></i></li>
+                        <li class="consultancy"><i class="fa fa-handshake-o" aria-hidden="true"></i><a href="#section-10">Consultancy </a><i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="We are automation experts, contact us."></i></li>
+                        <li class="inhouse"><i class="fa fa-home" aria-hidden="true"></i><a href="#section-10">Inhouse<br>Implementation </a><i class="fa fa-info-circle" data-toggle="tooltip" data-placement="top" title="" data-original-title="Runs on your bare metal, your own cloud or virtualized services."></i></li>
                       </ul>
                     </div>
                   </div>
