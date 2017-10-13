@@ -3,44 +3,16 @@ import State from 'ampersand-state'
 import AppCollection from 'lib/app-collection'
 import isURL from 'validator/lib/isURL'
 import isMongoId from 'validator/lib/isMongoId'
-import LIFECYCLE from 'constants/lifecycle'
 
 //import { Model as Host } from 'models/host'
 
+const ScriptJob = require('./job').ScriptJob
+const ScraperJob = require('./job').ScraperJob
 const ScriptTemplate = require('./template').Script
 const ScraperTemplate = require('./template').Scraper
 const config = require('config')
 
 const urlRoot = `${config.api_url}/task`
-
-const JobResult = State.extend({
-  props: {
-    id: 'string',
-    user_id: 'string',
-    task_id: 'string',
-    host_id: 'string',
-    script_id: 'string',
-    script_arguments: 'array',
-    customer_id: 'string',
-    customer_name: 'string',
-    //script: 'object', // embedded
-    //task: 'object', // embedded
-    //host: 'object',
-    //user: 'object',
-    name: 'string',
-    notify: 'boolean',
-    state: 'string',
-    lifecycle: 'string',
-    result: ['object',false,null],
-    creation_date: 'date',
-    last_update: 'date',
-    event: 'any',
-    event_id: 'string'
-  },
-  inProgress () {
-    return LIFECYCLE.inProgress(this.lifecycle)
-  }
-})
 
 const formattedTags = () => {
   return {
@@ -77,7 +49,7 @@ const Script = ScriptTemplate.extend({
   },
   children: {
     //host: Host,
-    lastjob: JobResult,
+    lastjob: ScriptJob,
     template: ScriptTemplate,
   },
   serialize () {
@@ -112,7 +84,7 @@ const Scraper = ScraperTemplate.extend({
   },
   children: {
     //host: Host,
-    lastjob: JobResult,
+    lastjob: ScraperJob,
     template: ScraperTemplate,
   },
   serialize () {

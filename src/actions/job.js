@@ -7,13 +7,26 @@ const logger = require('lib/logger')('actions:jobs')
 const config = require('config')
 import LIFECYCLE from 'constants/lifecycle'
 
+const updateJob = (job, data) => {
+  // reset
+  job.clear()
+  job.result.clear()
+  job.user.clear()
+
+  // and update
+  job.set(data)
+  job.result.set(data.result)
+  job.user.set(data.user)
+}
+
 module.exports = {
-  update (job) {
+  /** this is being updated via socket event */
+  update (data) {
     logger.log('job updates received')
 
-    const task_id = job.task_id
-
+    const task_id = data.task_id
     const task = App.state.tasks.get(task_id)
+
     if (!task) {
       logger.error('task not found')
       logger.error(task)
@@ -21,7 +34,7 @@ module.exports = {
     }
 
     logger.log('updating task job')
-    task.lastjob.set(job)
+    updateJob(task.lastjob, data)
   },
   create (task) {
     logger.log('creating new job with task %o', task)
@@ -37,7 +50,6 @@ module.exports = {
       },
       done (data,xhr) {
         logger.debug('job created. updating task')
-        task.lastjob.clear()
         task.lastjob.set(data)
       },
       fail (err,xhr) {
@@ -58,6 +70,8 @@ module.exports = {
       },
       done (data,xhr) {
         logger.debug('job canceled')
+        task.lastjob.clear()
+        task.lastjob.result.clear()
         task.lastjob.set('lifecycle',LIFECYCLE.CANCELED)
       },
       fail (err,xhr) {

@@ -1,0 +1,12 @@
+.text-block {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  /*border-radius: 4px;*/
+}
+
+.text-block .table {
+  margin-bottom: 0;
+}
+
+.text-block-default { background: #eee }

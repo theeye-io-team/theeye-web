@@ -2,7 +2,7 @@
 
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-import JobOutput from '../job-output'
+import JobResult from '../job-result'
 import ExecButton from './exec-button'
 import SearchActions from 'actions/searchbox'
 import TaskActions from 'actions/task'
@@ -84,20 +84,8 @@ const TaskButtonsView = View.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    const getResult = () => {
-      if (!this.execResult) {
-        return 'execution result is not available'
-      }
-
-      return this.model.lastjob.result
-    }
-
-    const view = new JobOutput({ output: getResult() })
+    const view = new JobResult({ job: this.model.lastjob })
     view.show()
-
-    this.listenTo(this.model.lastjob, 'change:result', () => {
-      view.output = getResult()
-    })
 
     return false
   },
@@ -118,29 +106,31 @@ const TaskButtonsView = View.extend({
 const ScraperCollapsedContent = View.extend({
   template: `
     <div>
-      <p>This task will be executed on '<i data-hook="hostname"></i>'</p>
-      <i data-hook="description">no description</i>
+      <h4>This task is assigned to '<i data-hook="hostname"></i>'</h4>
+      <p class="text-block" data-hook="description">no description</p>
       <h4>Request details</h4>
-      <table class="table table-stripped">
-        <thead>
-          <tr data-hook="title-cols">
-            <th></th>
-            <th>URL</th>
-            <th>Method</th>
-            <th>Timeout</th>
-            <th>Status Code</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td></td>
-            <td><span data-hook="url"></span></td>
-            <td><span data-hook="method"></span></td>
-            <td><span data-hook="timeout"></span></td>
-            <td><span data-hook="status_code"></span></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="text-block">
+        <table class="table table-stripped">
+          <thead>
+            <tr data-hook="title-cols">
+              <th></th>
+              <th>URL</th>
+              <th>Method</th>
+              <th>Timeout</th>
+              <th>Status Code</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td></td>
+              <td><span data-hook="url"></span></td>
+              <td><span data-hook="method"></span></td>
+              <td><span data-hook="timeout"></span></td>
+              <td><span data-hook="status_code"></span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   `,
   derived: {
@@ -171,29 +161,31 @@ const ScraperCollapsedContent = View.extend({
 const ScriptCollapsedContent = View.extend({
   template: `
     <div>
-      <p>This task will be executed on '<i data-hook="hostname"></i>'</p>
-      <i data-hook="description">no description</i>
+      <h4>This task is assigned to '<i data-hook="hostname"></i>'</h4>
+      <p class="text-block" data-hook="description">no description</p>
       <h4>Script details</h4>
-      <table class="table table-stripped">
-        <thead>
-          <tr data-hook="title-cols">
-            <th></th>
-            <th>Description</th>
-            <th>Filename</th>
-            <th>Type</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td></td>
-            <td><span data-hook="script_description"></span></td>
-            <td><span data-hook="script_filename"></span></td>
-            <td><span data-hook="script_language"></span></td>
-            <td><button data-hook="edit_script" class="fa fa-edit btn btn-sm btn-primary"></button></td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="text-block">
+        <table class="table table-stripped">
+          <thead>
+            <tr data-hook="title-cols">
+              <th></th>
+              <th>Description</th>
+              <th>Filename</th>
+              <th>Type</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td></td>
+              <td><span data-hook="script_description"></span></td>
+              <td><span data-hook="script_filename"></span></td>
+              <td><span data-hook="script_language"></span></td>
+              <td><button data-hook="edit_script" class="fa fa-edit btn btn-sm btn-primary"></button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   `,
   derived: {
