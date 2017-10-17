@@ -1,0 +1,11 @@
+
+.full-page-container {
+  overflow-y: scroll;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  position: absolute;
+  background-color: #FFF;
+}

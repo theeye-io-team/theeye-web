@@ -1,0 +1,346 @@
+/* common */
+.settings-page {
+  /* panel left */
+  /* left tabs bootstrap */
+  /* panel right */
+  /* custom select */
+  /* custom checkbox */
+  /* custom scrollbars */
+}
+.settings-page div {
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 18px;
+  color: #454545;
+}
+.settings-page h1,
+.settings-page h2,
+.settings-page h3,
+.settings-page h4,
+.settings-page label {
+  font-weight: 400;
+}
+.settings-page small {
+  font-weight: 300;
+}
+.settings-page .orange {
+  color: #e88840;
+}
+.settings-page .blue {
+  color: #004d79;
+}
+.settings-page .gray {
+  color: #a09b9b;
+}
+.settings-page a {
+  text-decoration: none;
+}
+.settings-page .bold {
+  font-weight: 500;
+}
+.settings-page hr {
+  margin: 30px 0;
+  border: none;
+}
+.settings-page input[type="text"],
+.settings-page input[type="password"] {
+  border: none;
+  padding: 0 10px;
+}
+.settings-page input[type="text"]:focus,
+.settings-page input[type="password"]:focus {
+  outline: none;
+}
+.settings-page textarea {
+  border: 1px solid #ccc;
+  width: 100%;
+  margin: 5px 0 10px;
+  padding: 15px;
+}
+.settings-page .social-container {
+  position: relative;
+  padding-left: 100px;
+}
+.settings-page ::-webkit-input-placeholder {
+  color: #a09b9b;
+  font-style: italic;
+}
+.settings-page ::-moz-placeholder {
+  color: #a09b9b;
+  font-style: italic;
+}
+.settings-page :-ms-input-placeholder {
+  color: #a09b9b;
+  font-style: italic;
+}
+.settings-page :-moz-placeholder {
+  color: #a09b9b;
+  font-style: italic;
+}
+.settings-page .email {
+  margin-left: 15%;
+}
+.settings-page .circle {
+  display: inline-block;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  position: relative;
+  bottom: -5px;
+  position: absolute;
+  left: 0;
+}
+.settings-page .circle.go {
+  background: #ea4436;
+}
+.settings-page .circle.gi {
+  background: #000;
+}
+.settings-page .circle.li {
+  background: #0077b5;
+}
+.settings-page .go {
+  color: #ea4436;
+}
+.settings-page .gi {
+  color: #000;
+}
+.settings-page .li {
+  color: #0077b5;
+}
+.settings-page .add-account {
+  margin-top: 20px;
+  cursor: pointer;
+}
+.settings-page .header {
+  height: 80px;
+  background: #606060;
+  color: #fff;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding-top: 25px;
+  z-index: 2;
+  box-shadow: 0 0 15px #666;
+}
+.settings-page .panel-left,
+.settings-page .panel-right {
+  padding-top: 120px!important;
+  padding-bottom: 80px!important;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.settings-page .panel-left {
+  box-shadow: 8px 0 8px #eee;
+  height: 100vh;
+  padding: 40px 0 0;
+}
+.settings-page .panel-left h3 {
+  font-size: 24px;
+  margin-left: 102px;
+}
+.settings-page .panel-left h3.orange {
+  font-weight: 500;
+}
+.settings-page .panel-left h3.blue {
+  margin-bottom: 50px;
+}
+.settings-page .tabs-left {
+  border-bottom: none;
+  padding-top: 2px;
+  font-size: 18px;
+}
+.settings-page .tabs-left > li {
+  float: none;
+}
+.settings-page .tabs-left > li {
+  margin-right: -1px;
+}
+.settings-page .tabs-left > li.active > a,
+.settings-page .tabs-left > li.active > a:hover,
+.settings-page .tabs-left > li.active > a:focus,
+.settings-page .tabs-left > li a:hover {
+  background: #e88840;
+  color: #fff;
+  border-left: 102px solid #e88840;
+  margin-left: -102px;
+  padding-left: 102px;
+}
+.settings-page .tabs-left > li > a {
+  border-radius: 0;
+  margin-right: 0;
+  display: block;
+  padding: 15px 0;
+  margin-left: 102px;
+  border-bottom: 1px solid #eee;
+  color: #004d79;
+}
+.settings-page .panel-right {
+  padding: 40px 82px;
+}
+.settings-page .tab-pane h3 {
+  margin-bottom: 30px;
+}
+.settings-page .tab-pane h4 {
+  margin-bottom: 20px;
+  font-size: 20px;
+}
+.settings-page .row.border {
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+  margin-left: 0;
+}
+.settings-page .row.border.social {
+  padding: 15px 0;
+}
+.settings-page select {
+  padding: 4px 38px 4px 4px;
+  margin: 0;
+  background: #fff;
+  border: none;
+  outline: none;
+  display: inline-block;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  border-bottom: 1px solid #ddd;
+  width: 100%;
+}
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  .settings-page select {
+    padding-right: 38px;
+  }
+}
+.settings-page label.select {
+  position: relative;
+  width: 100%;
+}
+.settings-page label.select:after {
+  content: "\f078";
+  font-family: "FontAwesome";
+  font-size: 11px;
+  color: #aaa;
+  right: 8px;
+  top: 9px;
+  padding: 0 0 2px;
+  position: absolute;
+  pointer-events: none;
+}
+.settings-page label.select:before {
+  content: '';
+  right: 4px;
+  top: 0px;
+  width: 23px;
+  height: 18px;
+  background: #fff;
+  position: absolute;
+  pointer-events: none;
+  display: block;
+}
+.settings-page label.select:hover:before {
+  border: none !important;
+}
+.settings-page [type="checkbox"]:not(:checked),
+.settings-page [type="checkbox"]:checked {
+  position: absolute;
+  left: -9999px;
+}
+.settings-page [type="checkbox"]:not(:checked) + label,
+.settings-page [type="checkbox"]:checked + label {
+  position: relative;
+  padding-left: 90px;
+  cursor: pointer;
+}
+.settings-page .row.border [type="checkbox"]:not(:checked) + label,
+.settings-page .row.border [type="checkbox"]:checked + label {
+  line-height: 40px;
+}
+.settings-page [type="checkbox"]:not(:checked) + label:before,
+.settings-page [type="checkbox"]:checked + label:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.25em;
+  height: 1.25em;
+  border: 1px solid #ccc;
+  background: #fff;
+  border-radius: 0;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+.settings-page .row.border [type="checkbox"]:not(:checked) + label:before,
+.settings-page .row.border [type="checkbox"]:checked + label:before {
+  top: 10px;
+}
+.settings-page [type="checkbox"]:not(:checked) + label:after,
+.settings-page [type="checkbox"]:checked + label:after {
+  content: '✔';
+  position: absolute;
+  top: .1em;
+  left: .3em;
+  font-size: 1.3em;
+  line-height: 0.8;
+  color: #09ad7e;
+  transition: all .2s;
+  color: #e88840;
+  left: 3px;
+}
+.settings-page .row.border [type="checkbox"]:not(:checked) + label:after,
+.settings-page .row.border [type="checkbox"]:checked + label:after {
+  top: 12px;
+  left: 3px;
+}
+.settings-page [type="checkbox"]:not(:checked) + label:after {
+  opacity: 0;
+  transform: scale(0);
+}
+.settings-page [type="checkbox"]:checked + label:after {
+  opacity: 1;
+  transform: scale(1);
+}
+.settings-page [type="checkbox"]:checked + label {
+  color: #e88840;
+}
+.settings-page [type="checkbox"]:disabled:not(:checked) + label:before,
+.settings-page [type="checkbox"]:disabled:checked + label:before {
+  box-shadow: none;
+  border-color: #bbb;
+  background-color: #ddd;
+}
+.settings-page [type="checkbox"]:disabled:checked + label:after {
+  color: #999;
+}
+.settings-page [type="checkbox"]:disabled + label {
+  color: #aaa;
+}
+.settings-page label:hover:before {
+  border: 1px solid #e88840!important;
+}
+.settings-page ::-webkit-scrollbar {
+  width: 6px;
+}
+.settings-page ::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+}
+.settings-page ::-webkit-scrollbar-thumb {
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.3);
+  -webkit-box-shadow: inset 0 0 2px rgba(0, 0, 0, 0.3);
+}
+.settings-page ::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(255, 0, 0, 0.2);
+}
+
+.settings-page .header .close-button {
+  font-size:30px;
+  position:absolute;
+  right:30px;
+  cursor:pointer;
+}

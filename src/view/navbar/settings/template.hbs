@@ -1,0 +1,300 @@
+<div class="settings-page">
+   <div class="header text-center">
+      <span>Your preferences for Interactar</span>
+      <span data-hook="close-button" class="close-button fa fa-remove" style=""></span>
+   </div>
+   <div class="col-xs-3 panel-left">
+      <h3 class="blue">SETTINGS</h3>
+      <ul class="nav nav-tabs tabs-left">
+         <li class="active"><a href="#noti" data-toggle="tab">Notifications</a></li>
+         <li><a href="#apps" data-toggle="tab">Apps</a></li>
+         <li><a href="#custom" data-toggle="tab">Custom Integrations</a></li>
+         <li><a href="#members" data-toggle="tab">Members</a></li>
+         <li><a href="#about" data-toggle="tab">About</a></li>
+         <li><a href="#billing" data-toggle="tab">Billing</a></li>
+         <li class="subtitle">
+            <h3 class="orange">MY PROFILE</h3>
+         </li>
+         <li><a href="#accounts" data-toggle="tab">Accounts</a></li>
+         <li><a href="#noti2" data-toggle="tab">Notifications</a></li>
+      </ul>
+   </div>
+   <div class="col-xs-9 panel-right">
+      <div class="tab-content">
+         <!-- Start notifications tab -->
+         <div class="tab-pane fade in active" id="noti">
+            <h3 class="blue bold">NOTIFICATIONS</h3>
+            <h4 class="blue">Notify me about...<a class="pull-right gray" href="#">About notifications &gt;</a></h4>
+            <div class="row border">
+               <div class="col-xs-6">
+                  <div class="check-container">
+                     <input type="checkbox" id="check2" />
+                     <label for="check2">All new messages</label>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <small class="gray">You'll be notified for every new message</small>
+               </div>
+            </div>
+            <div class="row border">
+               <div class="col-xs-6">
+                  <div class="check-container">
+                     <input type="checkbox" id="check3" />
+                     <label for="check3">Direct messages, mentions &amp; keywords</label>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <small class="gray">You'll be notified when a team mate mentions you, sends you a direct message or uses one of your keywords</small>
+               </div>
+            </div>
+            <div class="row border">
+               <div class="col-xs-6">
+                  <div class="check-container">
+                     <input type="checkbox" id="check4" />
+                     <label for="check4">Nothing</label>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <small class="gray">You won't receive notifications from Slack. Note: you will still see badges within Slack.</small>
+               </div>
+            </div>
+            <div class="row border">
+               <div class="col-xs-6">
+                  <div class="check-container">
+                     <input type="checkbox" id="check5" />
+                     <label for="check5">Notify me about replies to threats I'm following</label>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <small class="gray"></small>
+               </div>
+            </div>
+            <div class="row border">
+               <div class="col-xs-6">
+                  <div class="check-container">
+                     <input type="checkbox" id="check6" />
+                     <label for="check6">Use different settings for mobile devices.</label>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <small class="gray"></small>
+               </div>
+            </div>
+            <hr />
+            <h4 class="blue">My Keywords</h4>
+            <p>Show a badge (1) in my channel list when someone uses one of my keywords:</p>
+            <textarea></textarea>
+            <small class="gray">Use commas to separate exach keyword. Keywords are not case sensitive.</small>
+         </div>
+         <!-- end notifications tab -->
+         <!-- Start apps tab -->
+         <div class="tab-pane fade" id="apps">
+            <h3 class="blue">APPS</h3>
+            <div class="row">
+               <div class="col-xs-4">
+                  <h4 class="blue">Title includes</h4>
+               </div>
+               <div class="col-xs-4">
+                  <h4 class="blue">Access type</h4>
+                  <label class="select">
+                  <select id="#">
+                     <option value="all">All</option>
+                  </select>
+                  <label>
+               </div>
+               <div class="col-xs-4">
+                  <h4 class="blue">Added by</h4>
+                  <label class="select">
+                  <select id="#">
+                     <option value="all">Anyone</option>
+                  </select>
+                  <label>                    
+               </div>
+            </div>
+            <h4 class="blue">Connect with:</h4>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle" style="background:#073666"></span>
+                     <span class="legend">Bitbucket</span>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <span class="pull-right">1 configuration</span>
+               </div>
+            </div>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle" style="background:#c70d00"></span>
+                     <span class="legend">Crashlytics</span>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <span class="pull-right">2 configurations</span>
+               </div>
+            </div>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle" style="background:#35fc9f"></span>
+                     <span class="legend">Giphy</span>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <span class="pull-right">1 configuration</span>
+               </div>
+            </div>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle" style="background:#020202"></span>
+                     <span class="legend">Github</span>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <span class="pull-right">1 configuration</span>
+               </div>
+            </div>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle" style="background:#fac945"></span>
+                     <span class="legend">Google Drive</span>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <span class="pull-right">1 configuration</span>
+               </div>
+            </div>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle" style="background:#5fb249"></span>
+                     <span class="legend">Google+ Hangouts</span>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <span class="pull-right">1 configuration</span>
+               </div>
+            </div>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle" style="background:#ec4b32"></span>
+                     <span class="legend">IFTTT</span>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <span class="pull-right">1 configuration</span>
+               </div>
+            </div>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle" style="background:#e96e30"></span>
+                     <span class="legend">RSS</span>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <span class="pull-right">1 configuration</span>
+               </div>
+            </div>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle" style="background:#87ab1f"></span>
+                     <span class="legend">Screenleap</span>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <span class="pull-right">1 configuration</span>
+               </div>
+            </div>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle" style="background:#8ab2e3"></span>
+                     <span class="legend">Slack API Tester</span>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <span class="pull-right">1 configuration</span>
+               </div>
+            </div>
+         </div>
+         <!-- end apps tab -->
+         <!-- Start custom tab -->
+         <div class="tab-pane fade" id="custom">
+            <h3 class="blue">CUSTOM INTEGRATIONS</h3>
+         </div>
+         <!-- end custom tab -->
+         <!-- Start members tab -->
+         <div class="tab-pane fade" id="members">
+            <h3 class="blue">MEMBERS</h3>
+         </div>
+         <!-- end members tab -->
+         <!-- Start about tab -->
+         <div class="tab-pane fade" id="about">
+            <h3 class="blue">ABOUT</h3>
+         </div>
+         <!-- end about tab -->
+         <!-- Start billing tab -->
+         <div class="tab-pane fade" id="billing">
+            <h3 class="blue">BILLING</h3>
+         </div>
+         <!-- end billing tab -->
+         <!-- Start account tab -->
+         <div class="tab-pane fade" id="accounts">
+            <h3 class="blue">ACCOUNTS</h3>
+            <h4 class="blue">Connect with:</h4>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle go"></span>
+                     <span class="legend go">Google+</span>
+                     <input type="text" placeholder="email" class="email"/>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <input type="password" placeholder="password" class="password"/>
+                  <span class="blue pull-right">CONNECT</span>
+               </div>
+            </div>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle gi"></span>
+                     <span class="legend gi">Google+</span>
+                     <input type="text" placeholder="email" class="email"/>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <input type="password" placeholder="password" class="password"/>
+                  <span class="blue pull-right">CONNECT</span>
+               </div>
+            </div>
+            <div class="row border social">
+               <div class="col-xs-6">
+                  <div class="social-container">
+                     <span class="circle li"></span>
+                     <span class="legend li">Google+</span>
+                     <input type="text" placeholder="email" class="email"/>
+                  </div>
+               </div>
+               <div class="col-xs-6">
+                  <input type="password" placeholder="password" class="password"/>
+                  <span class="blue pull-right">CONNECT</span>
+               </div>
+            </div>
+            <span class="blue pull-right add-account">ADD ANOTHER ACCOUNT</span>                              
+         </div>
+         <!-- end account tab -->
+         <!-- Start notifications tab -->
+         <div class="tab-pane fade" id="noti2">
+            <h3 class="blue">NOTIFICATIONS</h3>
+         </div>
+         <!-- end notifications tab -->
+      </div>
+   </div>
+</div>

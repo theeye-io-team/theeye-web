@@ -6,6 +6,7 @@ import NavbarActions from 'actions/navbar'
 import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
 import Backdrop from 'components/backdrop'
+import SettingsMenu from './settings'
 
 import logo from './logo.png'
 const template = require('./nav.hbs')
@@ -121,6 +122,12 @@ const Menu = View.extend({
     }]
   },
   events: {
+    'click a[data-hook=settings-menu]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      NavbarActions.toggleSettingsMenu()
+      return false
+    },
     'click [data-hook=links-container] a': function (event) {
       NavbarActions.toggleMenu()
     },
@@ -147,11 +154,12 @@ const Menu = View.extend({
     }
   },
   initialize () {
-    this.menu_switch = App.state.navbar.menuSwitch
-    this.listenTo(App.state.navbar,'change:menuSwitch',() => {
+    //this.menu_switch = App.state.navbar.menuSwitch
+    this.listenToAndRun(App.state.navbar,'change:menuSwitch',() => {
       this.menu_switch = App.state.navbar.menuSwitch
-      if(!this.menu_switch)
+      if (!this.menu_switch) {
         this.customers_switch = false
+      }
     })
   },
   render () {
@@ -161,6 +169,7 @@ const Menu = View.extend({
       this.renderMenuLinks()
     })
     this.renderBackdrop()
+    this.renderSettingsMenu()
   },
   renderBackdrop () {
     const backdrop = new Backdrop({
@@ -195,6 +204,10 @@ const Menu = View.extend({
         container.appendChild( html2dom(`<li><a href="/admin/user" class="eyemenu-icon eyemenu-users"> Users </a></li>`))
         container.appendChild( html2dom(`<li><a href="/admin/customer" class="eyemenu-icon eyemenu-organizations"> Organizations </a></li>`))
       }
+
+      if (Acls.hasAccessLevel('admin')) {
+        container.appendChild( html2dom(`<li><a data-hook="settings-menu" class="eyemenu-icon eyemenu-templates"> Features </a></li>`))
+      }
     }
 
     // on window resize recalculate links container height
@@ -214,7 +227,6 @@ const Menu = View.extend({
     window.dispatchEvent(new Event('resize'))
   },
   renderProfile () {
-
     // in sync with the session
     const customer = new CurrentCustomerItem({
       el: this.queryByHook('session-customer'),
@@ -254,6 +266,9 @@ const Menu = View.extend({
       recalculateCustomersHeight.call(self,event)
     },false)
     window.dispatchEvent(new Event('resize'))
+  },
+  renderSettingsMenu () {
+    this.settings = new SettingsMenu()
   }
 })
 

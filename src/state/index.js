@@ -15,6 +15,7 @@ import Alerts from 'components/alerts'
 import HostGroupPageState from './hostgroup-page'
 import DashboardPageState from './dashboard-page'
 import SessionState from './session'
+import NavbarState from './navbar'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
@@ -116,12 +117,6 @@ const NotifyState = State.extend({
 const LoginState = State.extend({
   props: {
     showRecoverForm: ['boolean',false,false]
-  }
-})
-
-const NavbarState = State.extend({
-  props: {
-    menuSwitch: ['boolean',false,false]
   }
 })
 

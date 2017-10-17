@@ -85,6 +85,9 @@ module.exports = Router.extend({
     'sociallogin': () => {
       const route = new AuthRoute()
       route.socialLoginRoute()
+    },
+    '(*path)': function () {
+      App.navigate('dashboard')
     }
   }
 })
