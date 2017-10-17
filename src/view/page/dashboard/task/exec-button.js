@@ -28,7 +28,7 @@ module.exports = View.extend({
 
     if (!this.model.canExecute) return
 
-    if (this.model.lastjob.inProgress()) {
+    if (this.model.lastjob.inProgress) {
       const message = `Cancel task <b>${this.model.name}</b> execution?
         <a target="_blank" href="https://github.com/theeye-io/theeye-docs/blob/master/tasks/cancellation">Why this happens?</a>`
 
