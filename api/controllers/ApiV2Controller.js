@@ -1,6 +1,7 @@
 'use strict';
 
 const apibase = '/apiv2/'
+const fs = require('fs')
 
 /**
  *

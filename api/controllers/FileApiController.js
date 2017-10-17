@@ -1,7 +1,6 @@
 'use strict';
 
-var stream = require('stream');
-var fs = require('fs');
+const fs = require('fs')
 
 /**
  *
