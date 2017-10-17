@@ -105,7 +105,9 @@ const Menu = View.extend({
   bindings: {
     menu_switch: {
       hook: 'menu',
-      type: 'toggle',
+      type: 'booleanClass',
+      yes: 'eyemenu-panel-show',
+      no: 'eyemenu-panel-hide'
     },
     customers_switch: [{
       type: 'toggle',
