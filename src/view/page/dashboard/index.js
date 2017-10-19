@@ -263,7 +263,9 @@ module.exports = View.extend({
     this.registerSubview(runAllButton)
 
     this.listenTo(runAllButton,'runall',() => {
-      const rows = taskRows.views.filter(row => row.show === true)
+      const rows = taskRows.views.filter(row => {
+        return row.model.canExecute && row.show === true
+      })
       runAllTasks(rows)
     })
 
@@ -288,7 +290,9 @@ module.exports = View.extend({
           rows: taskRows.views,
           search: App.state.searchbox.search,
           onrow: (row, isHit) => {
-            row.show = isHit
+            if (row.model.canExecute) {
+              row.show = isHit
+            }
           },
           onsearchend: () => {
             taskRows.views.forEach(row => row.show = true)

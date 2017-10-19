@@ -15,7 +15,7 @@ const ScriptJobResult = View.extend({
       <tbody>
         <tr><td>output code</td><td><i data-hook="code"></i></td></tr>
         <tr><td>last line</td><td><i data-hook="lastline"></i></td></tr>
-        <tr><td>stdout</td><td><i data-hook="stdout"></i></td></tr>
+        <tr><td>log</td><td><i data-hook="log"></i></td></tr>
         <tr><td>killed</td><td><i class="fa" data-hook="killed"></i></td></tr>
       </tbody>
     </table>
@@ -23,7 +23,7 @@ const ScriptJobResult = View.extend({
   bindings: {
     'result.code': { hook:'code' },
     'result.lastline': { hook:'lastline' },
-    'result.stdout': { hook:'stdout' },
+    'result.log': { hook:'log' },
     killed: { hook:'killed' }
     //'result.killed': {
     //  hook:'killed',

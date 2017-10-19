@@ -55,9 +55,11 @@ const ScriptJobResult = State.extend({
     code: 'string',
     signal: 'string',
     killed: ['boolean',false,false],
-    lastline: ['string',false,'none'],
-    stdout: ['string',false,'none'],
-    stderr: ['string',false,'none']
+    lastline: ['string',false],
+    stdout: ['string',false],
+    stderr: ['string',false],
+    log: ['string',false],
+    times: ['object',false,()=>{ return {} }]
   }
 })
 
