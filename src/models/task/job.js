@@ -52,8 +52,8 @@ const ScraperJob = BaseJob.extend({
 
 const ScriptJobResult = State.extend({
   props: {
-    code: 'number',
-    signal: 'number',
+    code: 'string',
+    signal: 'string',
     killed: ['boolean',false,false],
     lastline: ['string',false,'none'],
     stdout: ['string',false,'none'],
