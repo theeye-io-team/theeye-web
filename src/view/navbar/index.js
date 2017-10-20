@@ -208,7 +208,7 @@ const Menu = View.extend({
       }
 
       if (Acls.hasAccessLevel('admin')) {
-        container.appendChild( html2dom(`<li><a data-hook="settings-menu" class="eyemenu-icon eyemenu-templates"> Features </a></li>`))
+        //container.appendChild( html2dom(`<li><a data-hook="settings-menu" class="eyemenu-icon eyemenu-templates"> Features </a></li>`))
       }
     }
 
