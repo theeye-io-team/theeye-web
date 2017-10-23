@@ -30,7 +30,9 @@ const GroupedResource = Resource.extend({
     this.listenTo(this.submonitors,'change add reset',() => {
       if (this.submonitors.length===0) return
       const monitor = this.submonitors.higherSeverityMonitor()
+
       this.state = monitor.state
+      this.failure_severity = monitor.failure_severity
     })
   }
 })
