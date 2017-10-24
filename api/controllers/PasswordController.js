@@ -18,13 +18,11 @@ module.exports = {
 
       var secret = sails.config.application.secret ;
       var token = jwt.sign({ user: user }, secret, { expiresIn: "12h" });
-      var link = sails.config.application.baseUrl + '/password/resetform/' + token;
-      sails.log.debug( link );
+      var url = passport.protocols.local.getPasswordResetLink(token)
 
       mailer.sendPasswordRecoveryEMail({
-        url: link,
-        user: user,
-        token: token
+        url: url,
+        user: user
       },function(err){
         if(err) {
           sails.log.error("Error sending email to " + email);
@@ -36,43 +34,39 @@ module.exports = {
       });
     });
   },
-  resetForm: function(req,res,next){
-    var token = req.params.all().token; // every posible param
-    sails.log.debug( token );
+  verifyPasswordResetToken (req, res) {
+    if(!req.query.token)
+      return res.send(400);
 
     var secret = sails.config.application.secret;
-    jwt.verify(token,secret,function(err, decoded){
+    jwt.verify(req.query.token,secret,function(err, decoded){
       if(err){
         sails.log.error(err);
-        return res.send(400,'invalid token');
+        return res.send(400);
       }
 
       var user = decoded.user;
-      var recoveryToken = jwt.sign({user:user},secret,{ expiresIn: "5m" });
-
-      res.view({
-        user: user,
-        token: recoveryToken
-      });
-    });
+      var resetToken = jwt.sign({user:user},secret,{ expiresIn: "5m" });
+      return res.json({resetToken: resetToken})
+    })
   },
   reset: function(req,res,next){
     var params = req.params.all();
-
+    
     if(
       ! params.token ||
-      ! params.password || 
+      ! params.password ||
       ! params.confirmation
     ) return res.send(400);
 
     if( params.password != params.confirmation )
-      return res.send(400,'passwords does not match');
+      return res.send(400,'Passwords does not match');
 
     var secret = sails.config.application.secret;
     jwt.verify(params.token,secret,function(err, decoded){
       if(err){
         sails.log.error(err);
-        return res.send(400,'invalid token');
+        return res.send(400,'Invalid password reset token, try again.');
       }
 
       var user = decoded.user;
@@ -85,7 +79,7 @@ module.exports = {
             return res.send(400, 'The password must have at least 8 characters long');
           }
           sails.log.error( err );
-          return res.send(500, err);
+          return res.send(500, 'Error updating password, try again.');
         }
         res.send(200);
       });

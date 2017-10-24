@@ -126,6 +126,12 @@ exports.getActivationLink = function (user) {
   return (url + queryToken);
 }
 
+exports.getPasswordResetLink = function (token) {
+  var queryToken = new Buffer( JSON.stringify({ token: token }) ).toString('base64')
+  var url = sails.config.application.baseUrl + '/passwordreset?';
+  return (url + queryToken);
+}
+
 function getActivationToken (string){
   var seed = string + Date.now();
   var token = crypto.createHmac("sha1",seed).digest("hex");
@@ -453,7 +459,7 @@ exports.bearerVerify = (token, next) => {
     const uid = decoded.user_id
 
     if (!uid) {
-      err = new Error('invalid token payload. invalid credentials') 
+      err = new Error('invalid token payload. invalid credentials')
       err.status = 400
       debug(err.message)
       debug(decoded)
@@ -467,7 +473,7 @@ exports.bearerVerify = (token, next) => {
       }
 
       if (!user) {
-        err = new Error('invalid token payload. credentials not found') 
+        err = new Error('invalid token payload. credentials not found')
         debug(err.message)
         return next(err)
       }
@@ -483,11 +489,11 @@ exports.bearerVerify = (token, next) => {
           err.status = 500
           debug(err.message)
           return next(err)
-        }   
+        }
 
         user.theeye = {
           client_id: passport.profile.client_id,
-          client_secret: passport.profile.client_secret,                                       
+          client_secret: passport.profile.client_secret,
           access_token: passport.token
         }
 

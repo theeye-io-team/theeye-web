@@ -11,7 +11,7 @@ var viewer = {
   'dashboard':['index'],
   'events':['index'],
   'password': ['*'],
-  'auth': ['login','activate','google','connect','unlink','logout'],
+  'auth': ['login','activate','google','connect','unlink','logout','passwordreset'],
   'user': ['myprofile','profile','setcustomer','ampersand'],
 }
 

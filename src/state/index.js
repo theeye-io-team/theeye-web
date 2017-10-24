@@ -27,6 +27,7 @@ const AppState = State.extend({
   //
   props: {
     activate: ['state',false,() => { return new ActivateState() }],
+    passwordReset: ['state',false,() => { return new PasswordResetState() }],
     alerts: ['state',false,() => { return new Alerts() }],
     currentPage: 'state',
     dashboard: ['state',false,() => { return new DashboardPageState() }],
@@ -126,6 +127,12 @@ const ActivateState = State.extend({
     email: 'string',
     invitation_token: 'string',
     finalStep: ['boolean',false,false]
+  }
+})
+
+const PasswordResetState = State.extend({
+  props: {
+    token: 'string'
   }
 })
 

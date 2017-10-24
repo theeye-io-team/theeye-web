@@ -270,7 +270,7 @@ passport.resendInvitation = function(req, res, next){
  */
 passport.sendUserActivationEmail = function (inviter, invitee, next){
   var activationLink = this.protocols.local.getActivationLink(invitee);
- sails.log.debug('Activation Link is %s', activationLink);
+  sails.log.debug('Activation Link is %s', activationLink);
 
   var data = {
     inviter: inviter,

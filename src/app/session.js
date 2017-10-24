@@ -5,12 +5,12 @@ module.exports = () => {
   let refreshInterval
 
   const isPublicRoute = (pathname) => {
-    return ['login','register','activate','sociallogin'].some(route => {
+    return ['login','register','activate','sociallogin','passwordreset'].some(route => {
       let routeRegex = new RegExp(route)
       return routeRegex.test(pathname)
     })
   }
-  
+
   const isLogginOut = (pathname) => {
     return /logout/.test(pathname) === true
   }

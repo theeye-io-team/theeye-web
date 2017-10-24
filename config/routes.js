@@ -48,8 +48,8 @@ module.exports.routes = {
   'delete /user/:id' : 'UserController.remove',
   // Password Recovery
   'post   /password/resetmail':'PasswordController.sendResetMail',
-  'get    /password/resetform/:token':'PasswordController.resetForm',
   'put    /password/reset':'PasswordController.reset',
+  'get    /verifypasswordresettoken'  : 'PasswordController.verifyPasswordResetToken',
   // most of hereunder routes, probably will be removed after migrating to API calls
   // CustomerController routes
   'get    /customer' : 'CustomerController.fetch',
@@ -113,6 +113,7 @@ module.exports.routes = {
   'get /register': spaIndexRoute,
   'get /activate': spaIndexRoute,
   'get /sociallogin': spaIndexRoute,
+  'get /passwordreset':spaIndexRoute,
 
   /*
    *
