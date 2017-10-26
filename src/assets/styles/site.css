@@ -226,9 +226,6 @@ footer a.image img {margin-top:-4px}
 .container, .container-fluid { padding:15px 15px 0px; }
 .table-responsive { background-color:#EEE;}
 
-.modal-header{ color:#304269;}
-.modal-body{ color:#304269;}
-
 /*.btn {color:#eee;background-color:#304269;}*/
 /* Fin Agregada javi... */
 
@@ -638,17 +635,6 @@ div.js-searchable-box input {border:none;background:#fff;padding:8px 40px 8px 12
 div.js-searchable-box button {color:#fff;background:#d88e47;border:none;padding:8px 12px;position:absolute;top:0;right:0;width:39px;}
 div.js-searchable-box button.clean {right:39px;color:#999;background:#ccc;}
 div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
-
-.modalizer .hosts-list-modal>.modal>.modal-dialog {
-  width: 400px;
-  margin-top: 50px;
-}
-
-.modalizer .hosts-list-modal>.modal .modal-body .items {
-  height: 123px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-}
 
 .chat-box.chat-box-baloon {
   position: fixed;

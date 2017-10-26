@@ -1,0 +1,42 @@
+/**NEW MODAL STYLES**/
+.modal-header{ color:#304269;}
+.modal-body{ color:#304269;}
+
+.modalizer .hosts-list-modal>.modal>.modal-dialog {
+  width: 400px;
+  margin-top: 50px;
+}
+
+.modalizer .hosts-list-modal>.modal .modal-body .items {
+  height: 123px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.modal-dialog .modal-content {
+  font-size: 24px;
+  font-weight: 300;
+}
+
+.modal-dialog .modal-content .modal-footer button.btn {
+  display: block;
+  width: 100%;
+  padding: 10px 16px;
+  font-size: 18px;
+  line-height: 1.3333333;
+  border-radius: 6px;
+}
+
+.modal-dialog .modal-content .modal-footer .btn+.btn {
+    margin-top: 10px;
+    margin-left: 0px;
+}
+
+.modal-dialog .modal-content .modal-footer button.btn.active.focus,
+.modal-dialog .modal-content .modal-footer button.btn.active:focus,
+.modal-dialog .modal-content .modal-footer button.btn.focus,
+.modal-dialog .modal-content .modal-footer button.btn:active.focus,
+.modal-dialog .modal-content .modal-footer button.btn:active:focus,
+.modal-dialog .modal-content .modal-footer button.btn:focus {
+  outline: none;
+}

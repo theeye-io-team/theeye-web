@@ -11,7 +11,7 @@ module.exports = View.extend({
   template: `
     <li class="task-exec-button">
       <button data-hook="trigger"
-        class="ladda-button btn btn-primary tooltiped" 
+        class="ladda-button btn btn-primary tooltiped"
         title="Run this task"
         data-spinner-size="30"
         data-style="zoom-in">
@@ -32,16 +32,24 @@ module.exports = View.extend({
       const message = `Cancel task <b>${this.model.name}</b> execution?
         <a target="_blank" href="https://github.com/theeye-io/theeye-docs/blob/master/tasks/cancellation">Why this happens?</a>`
 
-      bootbox.confirm(message, (confirmed) => {
-        if (confirmed) {
-          JobActions.cancel(this.model)
+      bootbox.confirm({
+        message: message,
+        backdrop: true,
+        callback: (confirmed) => {
+          if (confirmed) {
+            JobActions.cancel(this.model)
+          }
         }
       })
     } else {
       const message = `You are about to run the task <b>${this.model.name}</b>. Are you sure?`
-      bootbox.confirm(message, (confirmed) => {
-        if (confirmed) {
-          JobActions.create(this.model)
+      bootbox.confirm({
+        message: message,
+        backdrop: true,
+        callback: (confirmed) => {
+          if (confirmed) {
+            JobActions.create(this.model)
+          }
         }
       })
     }

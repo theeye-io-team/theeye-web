@@ -33,6 +33,7 @@ const runAllTasks = (rows) => {
 		bootbox.confirm({
 			title: boxTitle,
 			message: boxMessage,
+      backdrop: true,
 			buttons: {
 				confirm: {
 					label: 'Run All',
@@ -300,7 +301,7 @@ module.exports = View.extend({
         })
 
         runAllButton.visible = Boolean(App.state.searchbox.search)
-        
+
         if (App.state.searchbox.search.length > 3) {
           const rows = taskRows.views.filter(row => row.show === true)
           if (!rows || rows.length===0) {
