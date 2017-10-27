@@ -14,8 +14,12 @@
 }
 
 .modal-dialog .modal-content {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 300;
+}
+
+.modal-dialog .modal-content .modal-body {
+  font-size: 14px;
 }
 
 .modal-dialog .modal-content .modal-footer button.btn {
