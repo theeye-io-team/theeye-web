@@ -49,8 +49,8 @@ module.exports = BaseView.extend({
     this.renderWithTemplate(this)
     
     var massSelector = new MassSelectorButton({
-      title: 'Select all',
-      className: 'btn btn-primary rowSelector simple-btn tooltiped',
+      tip: 'Select all',
+      className: 'btn btn-primary rowSelector',
       iconClass: 'glyphicon glyphicon-unchecked'
     })
 

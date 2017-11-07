@@ -192,9 +192,9 @@ module.exports = View.extend({
     // a method on this object
     this.$select.on('change',this.handleInputChanged)
 
-    this.setValues(this.startingValue)
+    this.setValue(this.startingValue)
   },
-  setValues (items) {
+  setValue (items) {
     if (!items) {
       this.$select.val(null)
     } else {
@@ -204,7 +204,18 @@ module.exports = View.extend({
         data = items.map(model => model.get(this.idAttribute))
       } else if (Array.isArray(items)) {
         // items are treated as plain objects
-        data = items.map(item => item[this.idAttribute])
+        if (items.length>0) {
+          data = items.map(item => {
+            if (typeof item == 'string') {
+              return item
+            }
+            if (item.hasOwnProperty(this.idAttribute)) {
+              return item[this.idAttribute]
+            }
+            console.warn(`${item} object properties invalid`)
+            return ''
+          })
+        } else data = []
       } else {
         // items is a single item
         data = items

@@ -69,7 +69,7 @@ module.exports = {
 
     req.done(function(){
       bootbox.alert({
-        title: 'User created',
+        title: 'User update',
         message: `You have successfully updated ${body.username}`,
         callback: () => {
           App.Router.reload()

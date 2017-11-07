@@ -1,6 +1,6 @@
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
-import TheeyeCheckboxView from 'components/theeye-checkbox-view'
+import CheckboxView from 'components/checkbox-view'
 import SelectView from 'components/select2-view'
 import isEmail from 'validator/lib/isEmail'
 import isURL from 'validator/lib/isURL'
@@ -64,7 +64,7 @@ module.exports = FormView.extend({
         validityClassSelector: '.control-label',
         required: false
       }),
-      new TheeyeCheckboxView({
+      new CheckboxView({
         name: 'elasticsearch_enabled',
         label: 'Elasticsearch enabled',
         value: (!isNew ? this.model.config.elasticsearch.enabled : false)

@@ -5,7 +5,12 @@ import ladda from 'ladda'
 const logger = require('lib/logger')('page:dashboard:task:exec-button')
 import LIFECYCLE from 'constants/lifecycle'
 
+import DinamicForm from 'components/dinamic-form'
+import Modalizer from 'components/modalizer'
+
 import './styles.less'
+
+const runTaskWithArgsMessage = require('./run-task-message.hbs')
 
 module.exports = View.extend({
   template: `
@@ -22,11 +27,52 @@ module.exports = View.extend({
   events: {
     'click button[data-hook=trigger]':'onClickTrigger',
   },
+  askDinamicArguments (next) {
+    if (this.model.hasDinamicArguments) {
+      const form = new DinamicForm ({
+        fieldsDefinitions: this.model.taskArguments
+      })
+
+      const modal = new Modalizer({
+        buttons: true,
+        confirmButton: 'Run',
+        title: `${this.model.name} dinamic arguments`,
+        bodyView: form
+      })
+
+      this.listenTo(modal,'shown',() => { form.focus() })
+
+      this.listenTo(modal,'hidden',() => {
+        form.remove()
+        modal.remove()
+      })
+
+      this.listenTo(modal,'confirm',() => {
+        /**
+         * @param {Object} args a {key0: value0, key1: value1, ...} object with each task argument
+         */
+        form.submit( (err,args) => {
+          const labels = Object.keys(args)
+          next(
+            labels.map( (label, index) => {
+              return {
+                order: index,
+                label: label,
+                value: args[label]
+              }
+            })
+          )
+          modal.hide()
+        })
+      })
+      modal.show()
+    } else { // return fixed arguments values
+      next( this.model.taskArguments.models )
+    }
+  },
   onClickTrigger (event) {
     event.stopPropagation()
     event.preventDefault()
-
-    if (!this.model.canExecute) return
 
     if (this.model.lastjob.inProgress) {
       const message = `Cancel task <b>${this.model.name}</b> execution?
@@ -42,15 +88,31 @@ module.exports = View.extend({
         }
       })
     } else {
-      const message = `You are about to run the task <b>${this.model.name}</b>. Are you sure?`
-      bootbox.confirm({
-        message: message,
-        backdrop: true,
-        callback: (confirmed) => {
-          if (confirmed) {
-            JobActions.create(this.model)
-          }
+      if (!this.model.canExecute) return
+
+      this.askDinamicArguments(taskArgs => {
+        let message
+        if (taskArgs.length>0) {
+          message = runTaskWithArgsMessage({
+            name: this.model.name,
+            args: taskArgs
+          })
+        } else {
+          message = `
+            <h2>You are about to run the task <b>${this.model.name}</b></h2>
+            <h2>Continue?</h2>
+            `
         }
+
+        bootbox.confirm({
+          message: message,
+          backdrop: true,
+          callback: (confirmed) => {
+            if (confirmed) {
+              JobActions.create(this.model, taskArgs)
+            }
+          }
+        })
       })
     }
 

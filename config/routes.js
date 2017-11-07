@@ -90,7 +90,7 @@ module.exports.routes = {
   'get /admin/monitor': 'ResourceController.index',
   'get /admin/script': 'ScriptController.index',
   'get /hoststats/:host': 'HostStatsController.index',
-  'get /admin/task': 'TasksController.index',
+  'get /admin/oldtask': 'TasksController.index',
   /*
    *
    * all this endpoints are not handled by Sails at all.
@@ -102,12 +102,13 @@ module.exports.routes = {
    *
    */
   '/events': (req,res,next) => res.redirect('/dashboard'),
-  'get /admin/webhook': spaIndexRoute,
   'get /admin/workflow': 'WorkflowController.index',
+  'get /admin/webhook': spaIndexRoute,
   'get /admin/scheduler': spaIndexRoute,
   'get /admin/hostgroup': spaIndexRoute,
   'get /admin/user' : spaIndexRoute,
   'get /admin/customer': spaIndexRoute,
+  'get /admin/task': spaIndexRoute,
   'get /dashboard': spaIndexRoute,
   'get /login': spaIndexRoute,
   'get /register': spaIndexRoute,

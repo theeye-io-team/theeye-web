@@ -8,6 +8,7 @@ import SearchActions from 'actions/searchbox'
 import TaskActions from 'actions/task'
 import ScriptActions from 'actions/script'
 import LIFECYCLE from 'constants/lifecycle'
+import EditTaskButton from 'view/page/task/buttons/edit'
 
 import lang2ext from 'lib/lang2ext'
 
@@ -68,7 +69,7 @@ const TaskButtonsView = View.extend({
   },
   events: {
     'click button[data-hook=workflow]':'onClickWorkflow',
-    'click button[data-hook=edit]':'onClickEdit',
+    //'click button[data-hook=edit]':'onClickEdit',
     'click button[data-hook=search]':'onClickSearch',
     'click button[data-hook=last_exec]':'onClickLastExecution',
   },
@@ -95,12 +96,17 @@ const TaskButtonsView = View.extend({
     window.location = '/admin/workflow?node=' + this.model.id
     return false
   },
-  onClickEdit (event) {
-    event.stopPropagation()
-    event.preventDefault()
-    window.location = "/admin/task#search=" + this.model.id
-    return false
-  },
+  //onClickEdit (event) {
+  //  event.stopPropagation()
+  //  event.preventDefault()
+  //  window.location = "/admin/task#search=" + this.model.id
+  //  return false
+  //},
+  render () {
+    this.renderWithTemplate(this)
+    var button = new EditTaskButton({ model: this.model })
+    this.renderSubview(button, this.queryByHook('edit-button'))
+  }
 })
 
 const ScraperCollapsedContent = View.extend({

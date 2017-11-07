@@ -1,0 +1,255 @@
+'use strict'
+
+import App from 'ampersand-app'
+import assign from 'lodash/assign'
+import FormView from 'ampersand-form-view'
+import View from 'ampersand-view'
+import TaskActions from 'actions/task'
+import PatternInputView from './pattern-input'
+import SelectView from 'components/select2-view'
+import HelpIcon from 'components/help-icon'
+import TagsSelectView from 'view/tags-select'
+import InputView from 'components/input-view'
+import TextareaView from 'components/input-view/textarea'
+import CheckboxView from 'components/checkbox-view'
+import Buttons from '../buttons'
+
+import isURL from 'validator/lib/isURL'
+
+const WEBHOOKS = require('constants/webhooks')
+const TASK = require('constants/task')
+const HelpTexts = require('language/help')
+
+module.exports = FormView.extend({
+  initialize (options) {
+    const isNewTask = Boolean(this.model.isNew())
+
+    // multiple only if new, allows to create multiple tasks at once
+    let hostsSelection = new SelectView({
+      label: 'Host *',
+      name: (isNewTask?'hosts':'host_id'),
+      multiple: isNewTask,
+      tags: isNewTask,
+      options: App.state.hosts,
+      value: this.model.host_id,
+      styles: 'form-group',
+      required: false,
+      unselectedText: 'select a host',
+      idAttribute: 'id',
+      textAttribute: 'hostname',
+      requiredMessage: 'Selection required',
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label'
+    })
+
+    const jsonBodyCheckbox = new CheckboxView({
+      label: 'JSON Body',
+      name: 'json',
+      value: this.model.json
+    })
+
+    const bodyTextarea = new TextareaView({
+      label: 'Request Body',
+      type: 'textarea',
+      name: 'body',
+      required: false,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      value: this.model.body,
+      tests: [
+        function (value) {
+          if (jsonBodyCheckbox.value===true) {
+            try {
+              JSON.parse(value)
+            } catch (e) {
+              return e.message
+            }
+          }
+        }
+      ]
+    })
+
+    bodyTextarea.listenTo(jsonBodyCheckbox,'change:value',() => {
+      bodyTextarea.beforeSubmit()
+    })
+
+    this.fields = [
+      new InputView({
+        label: 'Name *',
+        name: 'name',
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.name,
+      }),
+      hostsSelection ,
+      new InputView({
+        label: 'URL *',
+        name: 'url',
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.url,
+        tests: [
+          function (value) {
+            if (!isURL(value)) {
+              return 'valid url required'
+            }
+          }
+        ]
+      }),
+      new InputView({
+        label: 'More Info',
+        name: 'description',
+        required: false,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.description,
+      }),
+      new TagsSelectView({
+        name: 'tags',
+        value: this.model.tags
+      }),
+      new SelectView({
+        label: 'Method',
+        name: 'method',
+        multiple: false,
+        tags: false,
+        options: WEBHOOKS.HTTP_METHODS.map(method => {
+          return {
+            id: method,
+            text: method
+          }
+        }),
+        value: this.model.method,
+        styles: 'form-group',
+        required: false,
+        unselectedText: 'Select the HTTP method',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
+      }),
+      jsonBodyCheckbox,
+      bodyTextarea,
+      new CheckboxView({
+        label: 'Use HTTP Compression',
+        name: 'gzip',
+        value: this.model.gzip
+      }),
+      new SelectView({
+        label: 'Req. Timeout',
+        name: 'timeout',
+        multiple: false,
+        tags: false,
+        options: WEBHOOKS.TIMEOUTS.map(time => {
+          return {
+            id: time.ms,
+            text: time.text
+          }
+        }),
+        value: this.model.timeout,
+        styles: 'form-group',
+        required: false,
+        unselectedText: 'Select the Req. Timeout',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
+      }),
+      new SelectView({
+        label: 'Grace Time',
+        name: 'grace_time',
+        multiple: false,
+        tags: false,
+        options: TASK.GRACE_TIME.map(gt => {
+          return {
+            id: gt.secs,
+            text: gt.text
+          }
+        }),
+        value: this.model.grace_time,
+        styles: 'form-group',
+        required: false,
+        unselectedText: 'Select the Grace Time',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
+      }),
+      new InputView({
+        label: 'Success Status Code',
+        name: 'status_code',
+        required: false,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.status_code,
+        tests: [
+          function (value) {
+            let num = Number(value)
+            if (!Number.isInteger(num) || num<0) {
+              return 'a numberic value is required'
+            }
+          }
+        ]
+      }),
+      new PatternInputView({
+        label: 'Success Pattern',
+        name: 'pattern',
+        pattern_value: this.model.pattern,
+        use_parser: this.model.parser
+      }),
+    ]
+
+    FormView.prototype.initialize.apply(this, arguments)
+  },
+  focus () {
+    this.query('input[name=name]').focus()
+  },
+  render () {
+    FormView.prototype.render.apply(this, arguments)
+    this.query('form').classList.add('form-horizontal')
+
+    this.addHelpIcon('name')
+    this.addHelpIcon('description')
+    this.addHelpIcon('host_id')
+    this.addHelpIcon('tags')
+    this.addHelpIcon('method')
+    this.addHelpIcon('url')
+    this.addHelpIcon('grace_time')
+    this.addHelpIcon('timeout')
+    this.addHelpIcon('status_code')
+    this.addHelpIcon('pattern')
+
+    const buttons = new Buttons()
+    this.renderSubview(buttons)
+  },
+  addHelpIcon (field) {
+    const view = this._fieldViews[field]
+    if (!view) return
+    view.renderSubview(
+      new HelpIcon({
+        text: HelpTexts.task.form[field]
+      }),
+      view.query('label')
+    )
+  },
+  remove () {
+    FormView.prototype.remove.apply(this)
+  },
+  submit (next) {
+    this.beforeSubmit()
+    if (!this.valid) return next(null,false)
+
+    let data = this.prepareData(this.data)
+    if (!this.model.isNew()) {
+      TaskActions.update(this.model.id, data)
+    } else {
+      TaskActions.create(data)
+    }
+    next(null,true)
+  },
+  prepareData (data) {
+    let f = assign({}, data)
+    f.type = TASK.TYPE_SCRAPER
+    f.timeout = Number(data.timeout)
+    f.grace_time = Number(data.grace_time)
+    f.status_code = Number(data.status_code)
+    f.parser = this._fieldViews.pattern.use_parser // selected parser
+    return f
+  }
+})

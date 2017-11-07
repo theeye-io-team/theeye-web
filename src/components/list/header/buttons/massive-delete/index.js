@@ -88,6 +88,6 @@ module.exports = MassiveButton.extend({
   },
   deleteItems (items) {
     console.warn('no action defined')
-    bootbox.alert('Hey! I do not know how to delete this items. Please, tell me...')
+    bootbox.alert('Hey! I do not know how to delete this items. I am sorry...')
   }
 })

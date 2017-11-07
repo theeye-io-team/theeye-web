@@ -6,9 +6,9 @@ import EditFormView from './edit-form'
 
 module.exports = PanelButton.extend({
   initialize: function (options) {
-    this.title = 'Edit User'
+    this.tip = 'Edit User'
     this.iconClass = 'fa fa-edit'
-    this.className = 'btn btn-primary editButton simple-btn tooltiped'
+    this.className = 'btn btn-primary editButton'
   },
   events: {
     click: function (event) {

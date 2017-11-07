@@ -2,7 +2,7 @@ import FormView from 'ampersand-form-view'
 import SelectView from 'components/select2-view'
 import InputView from 'components/input-view'
 import Collection from 'ampersand-collection'
-import TheeyeCheckboxView from 'components/theeye-checkbox-view'
+import CheckboxView from 'components/checkbox-view'
 import App from 'ampersand-app'
 import isEmail from 'validator/lib/isEmail'
 
@@ -63,7 +63,7 @@ module.exports = FormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       }),
-      new TheeyeCheckboxView({
+      new CheckboxView({
         name: 'enabled',
         label: 'Enabled',
         value: false

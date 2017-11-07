@@ -1,5 +1,5 @@
 /* global User, Passport, sails */
-var validator   = require('validator');
+var isEmail   = require('validator/lib/isEmail');
 var crypto      = require("crypto");
 var querystring = require("querystring");
 var underscore  = require("underscore");
@@ -397,10 +397,9 @@ exports.login = function (req, identifier, password, next) {
     req.flash('error', 'Error.Passport.Password.Empty');
     return next(null, false);
   }
-  var isEmail = validator.isEmail(identifier)
-    , query   = {};
+  var query   = {};
 
-  if (isEmail) {
+  if (isEmail(identifier)) {
     query.email = identifier;
   } else {
     query.username = identifier;

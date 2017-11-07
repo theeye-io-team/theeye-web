@@ -6,7 +6,7 @@ module.exports = PanelButton.extend({
   initialize: function (options) {
     this.title = 'Delete Host Template'
     this.iconClass = 'fa fa-trash'
-    this.className = 'btn btn-primary simple-btn tooltiped'
+    this.className = 'btn btn-primary'
   },
   events: {
     click: function (event) {

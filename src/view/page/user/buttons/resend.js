@@ -7,7 +7,7 @@ module.exports = PanelButton.extend({
   initialize: function (options) {
     this.title = 'resend user invitation'
     this.order = 900
-    this.className = 'btn btn-primary reSendInvitation simple-btn tooltiped'
+    this.className = 'btn btn-primary reSendInvitation'
     this.iconClass = 'glyphicon glyphicon-share-alt'
   },
   events: {

@@ -13,6 +13,7 @@ const WebhookRoute = require('./webhook')
 const HostGroupRoute = require('./hostgroup')
 import SchedulerRoute from './scheduler'
 import DashboardRoute from './dashboard'
+import TasksRoute from './task'
 
 module.exports = Router.extend({
   execute (callback, args) {
@@ -61,6 +62,10 @@ module.exports = Router.extend({
     },
     'admin/webhook(/:id/:action)': () => {
       const route = new WebhookRoute()
+      route.route('index')
+    },
+    'admin/task(/:id/:action)': () => {
+      const route = new TasksRoute()
       route.route('index')
     },
     'admin/scheduler': () => {

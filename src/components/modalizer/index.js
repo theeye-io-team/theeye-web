@@ -73,15 +73,15 @@ module.exports = View.extend({
   `,
   autoRender: true,
   props: {
-    fade: ['boolean', false, true],
-    removeOnHide: ['boolean', false, false],
-    buttons: ['boolean', false, false],
+    fade: ['boolean',false,true],
+    removeOnHide: ['boolean',false,false],
+    buttons: ['boolean',false,false],
     class: 'string',
     bodyView: 'object',
-    title: ['string', false, 'MODAL TITLE'],
-    confirmButton: ['string', false, 'CONFIRM'],
-    visible: ['boolean', false, false],
-    backdrop: ['boolean', false, true]
+    title: ['string',false,'MODAL TITLE'],
+    confirmButton: ['string',false,'CONFIRM'],
+    visible: ['boolean',false,false],
+    backdrop: ['boolean',false,true]
   },
   bindings: {
     fade: {

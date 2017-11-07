@@ -9,6 +9,8 @@ import { Collection as Hosts } from 'models/host'
 import { Collection as Schedules } from 'models/schedule'
 import { Collection as Resources } from 'models/resource'
 import { Collection as Tasks } from 'models/task'
+import { Collection as Tags } from 'models/tag'
+import { Collection as Scripts } from 'models/file/script'
 import Alerts from 'components/alerts'
 //import URI from 'urijs'
 
@@ -159,6 +161,8 @@ const _initCollections = function () {
     resources: new Resources([]),
     schedules: new Schedules(),
     tasks: new Tasks([]),
+    tags: new Tags([]),
+    scripts: new Scripts([]),
     users: new Users([]),
     webhooks: new Webhooks([]),
   })

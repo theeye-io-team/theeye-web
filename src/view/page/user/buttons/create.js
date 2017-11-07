@@ -2,14 +2,14 @@ import bootbox from 'components/bootbox'
 import $ from 'jquery'
 import { Model as UserModel } from 'models/user'
 import CreateFormView from './create-form'
-import HeaderButton from 'components/list/header/button'
+import CommonButton from 'components/common-button'
 import UserActions from 'actions/user'
 import Modalizer from 'components/modalizer'
 
-module.exports = HeaderButton.extend({
-  initialize: function (options) {
+module.exports = CommonButton.extend({
+  initialize (options) {
     this.title = 'New User'
-    this.className = 'btn btn-primary tooltiped createUser'
+    this.className = 'btn btn-primary createUser'
     this.iconClass = 'fa fa-plus'
   },
   events: {

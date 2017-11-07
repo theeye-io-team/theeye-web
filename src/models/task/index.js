@@ -45,6 +45,12 @@ const Script = ScriptTemplate.extend({
       fn () {
         return isMongoId(this.script_id || '') && isMongoId(this.host_id || '')
       }
+    },
+    hasTemplate: {
+      deps: ['template_id'],
+      fn () {
+        return Boolean(this.template_id) === true
+      }
     }
   },
   children: {
@@ -55,6 +61,9 @@ const Script = ScriptTemplate.extend({
   serialize () {
     var serial = ScriptTemplate.prototype.serialize.apply(this,arguments)
     serial.template = this.template ? this.template.id : null
+    serial.host = this.host_id
+    serial.script = this.script_id
+    delete serial.lastjob
     return serial
   }
 })
@@ -80,6 +89,12 @@ const Scraper = ScraperTemplate.extend({
         })
         return isurl && isMongoId(this.host_id || '')
       }
+    },
+    hasTemplate: {
+      deps: ['template_id'],
+      fn () {
+        return Boolean(this.template_id) === true
+      }
     }
   },
   children: {
@@ -90,6 +105,8 @@ const Scraper = ScraperTemplate.extend({
   serialize () {
     var serial = ScraperTemplate.prototype.serialize.apply(this,arguments)
     serial.template = this.template ? this.template.id : null
+    serial.host = this.host_id
+    delete serial.lastjob
     return serial
   }
 })
@@ -97,15 +114,28 @@ const Scraper = ScraperTemplate.extend({
 const Collection = AppCollection.extend({
   comparator: 'name',
   url: urlRoot,
-  model: function (attrs, options) {
+  model (attrs, options) {
     if ( /ScraperTask/.test(attrs._type) === true ) {
       return new Scraper(attrs,options)
     } else {
       return new Script(attrs,options)
     }
+  },
+  isModel (model) {
+    return model instanceof Scraper || model instanceof Script
   }
 })
 
 exports.Scraper = Scraper
 exports.Script = Script
 exports.Collection = Collection
+
+exports.Factory = function (data) {
+  if (data.type == 'script') {
+    return new Script(data)
+  }
+  if (data.type == 'scraper') {
+    return new Scraper(data)
+  }
+  throw new Error(`unrecognized type ${data.type}`)
+}

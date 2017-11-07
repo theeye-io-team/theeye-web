@@ -1,4 +1,5 @@
 /**NEW MODAL STYLES**/
+.modal { overflow-y: scroll; }
 .modal-header{ color:#304269;}
 .modal-body{ color:#304269;}
 
@@ -43,4 +44,11 @@
 .modal-dialog .modal-content .modal-footer button.btn:active:focus,
 .modal-dialog .modal-content .modal-footer button.btn:focus {
   outline: none;
+}
+
+@media (min-width: 768px) {
+  .modal-dialog {
+    width: 80%;
+    margin: 30px auto;
+  }
 }

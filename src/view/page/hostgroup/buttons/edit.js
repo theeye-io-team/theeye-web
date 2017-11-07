@@ -9,7 +9,7 @@ module.exports = PanelButton.extend({
   initialize (options) {
     this.title = 'Edit Host Template'
     this.iconClass = 'fa fa-edit'
-    this.className = 'btn btn-primary simple-btn tooltiped'
+    this.className = 'btn btn-primary'
   },
   events: {
     click (event) {

@@ -4,6 +4,7 @@ module.exports = BaseView.extend({
   template: `
     <button>
       <span data-hook="icon-span"></span>
+      <i data-hook="title"></i>
     </button>`,
   props: {
     title: 'string',
@@ -12,21 +13,26 @@ module.exports = BaseView.extend({
     show: ['boolean', false, true]
   },
   bindings: {
-    title: {
+    tip: {
+      selector: 'button',
       type: 'attribute',
       name: 'title'
+    },
+    title: {
+      hook: 'title'
     },
     show: {
       type: 'toggle'
     },
     className: {
+      selector: 'button',
       type: 'attribute',
       name: 'class'
     },
     iconClass: {
+      hook: 'icon-span',
       type: 'attribute',
       name: 'class',
-      hook: 'icon-span'
     }
   },
   events: {
@@ -35,6 +41,7 @@ module.exports = BaseView.extend({
   onClickButton (event) {
     event.stopPropagation()
     event.preventDefault()
+    console.warn('no action defined for this button')
     return
   }
 })

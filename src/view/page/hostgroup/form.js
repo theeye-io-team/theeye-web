@@ -217,7 +217,7 @@ module.exports = FormView.extend({
     })
 
     selectedHosts.listenTo(this.model.hosts, 'add', () => {
-      selectedHosts.setValues(this.model.hosts)
+      selectedHosts.setValue(this.model.hosts)
     })
 
     this.fields = [

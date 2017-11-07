@@ -11,12 +11,12 @@ const CustomerButtons = BaseView.extend({
   template: `
     <div>
       <li>
-        <button class="btn btn-primary simple-btn tooltiped" data-hook="edit" title="Edit">
+        <button class="btn btn-primary" data-hook="edit" title="Edit">
           <span class="fa fa-edit"></span>
         </button>
       </li>
       <li>
-        <button class="btn btn-primary simple-btn tooltiped" data-hook="remove" title="Delete">
+        <button class="btn btn-primary" data-hook="remove" title="Delete">
           <span class="fa fa-trash"></span>
         </button>
       </li>

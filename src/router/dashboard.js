@@ -40,33 +40,26 @@ const fetchData = (options) => {
 
   App.state.loader.visible = true
 
-  var resourcesToFetch = ['hosts', 'monitors']
-  if (fetchTasks)
-    resourcesToFetch.push('tasks')
+  var resourcesToFetch = 4
+  if (fetchTasks) resourcesToFetch += 1
 
-  var done = after(resourcesToFetch.length, function(){
+  var done = after(resourcesToFetch, function(){
     App.state.loader.visible = false
   })
 
-  App.state.hosts.fetch({
-    success: () => {
-      done()
-    }
-  })
-
+  App.state.scripts.fetch({ success: done, error: done })
+  App.state.hosts.fetch({ success: done, error: done })
+  App.state.tags.fetch({ success: done, error: done })
   App.state.resources.fetch({
     success: () => {
       App.state.dashboard.groupResources()
       done()
-    }
+    },
+    error: done
   })
 
   if (fetchTasks) {
-    App.state.tasks.fetch({
-      success: () => {
-        done()
-      }
-    })
+    App.state.tasks.fetch({ success: done, error: done })
   }
 }
 

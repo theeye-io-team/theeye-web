@@ -36,14 +36,14 @@ module.exports = {
     logger.log('updating task job')
     updateJob(task.lastjob, data)
   },
-  create (task) {
+  create (task, taskArgs) {
     logger.log('creating new job with task %o', task)
 
     XHR.send({
       method: 'post',
       url: `${config.api_url}/job`,
       withCredentials: true,
-      jsonData: { task: task.id },
+      jsonData: { task: task.id, task_arguments: taskArgs },
       timeout: 5000,
       headers: {
         Accept: 'application/json;charset=UTF-8'

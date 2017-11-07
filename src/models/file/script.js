@@ -7,7 +7,6 @@ const config = require('config')
 const urlRoot = `${config.api_url}/script`
 const Model = Schema.extend({ urlRoot: urlRoot })
 
-
 const Collection = AppCollection.extend({
   comparator: 'name',
   model: Model,

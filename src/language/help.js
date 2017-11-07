@@ -11,26 +11,34 @@ module.exports = {
   host: 'Where it has to run?',
   tags: 'To help you find your resources quickly.',
   triggers: 'Select a task, monitor or webhook event that will trigger this task automagically.',
-  grace_time: 'If you select to Trigger with an event, you can choose a grace time to delay the execution of this action and have some time to cancel it via email if necessary.',
   acls: 'Add permissions to specific users (or emails) that will be able to execute this task and receive notifications.',
   severity: 'You can set a severity to this monitor, which can be LOW, HIGH or CRITICAL.',
-  request: {
-    timeout:'How much time to wait the server\'s response before giving up. Default is 5 seconds.',
-    method: 'Select the request Method.',
-    url: 'The URL of the service, remember to encode it.',
-    body: 'Here can add body parameters to the request. Only available for POST and PUT methods. Default is GET',
-    gzip:'Enable HTTP compression to improve transfer speed and bandwidth utilization. An \'Accept-Encoding: gzip\' header will be added to the request. Default is true.',
-    json:'Tells the server that the data being transferred is actually JSON. A \'Content-type: application/json\' header will be added to the request. Additionally, parses the response body as JSON. Default is false.',
-    status_code:'The expected status code that will be considered ok. Regular Expressions can be used to match a status, for example \'2[0-9][0-9]\' will match 2XX codes in the Success group. Default value is 200.',
-  },
-  scraper_pattern: 'Could be a String or Regular Expression, also could be part of the response, that we have to considered ok.',
   monitor: {
     name: 'Give this monitor a name',
     process: 'Which process it has to search for?',
     copy: 'Select the monitor you want to copy from'
   },
   task: {
-    name: 'Give this task a name',
+    creation: {
+      webhook: 'Select Outgoing Webhook to execute a http requests I.E to call an api remote method',
+      script: 'Select Script to accomplish your task automation'
+    },
+    form: {
+      name: 'Give this task a name',
+      description: 'A description',
+      host_id: 'A registered host',
+      script_id: 'Scripts are sets of instructions writen in a programming language to achive something automatically',
+      tags: 'Adding Tags will help to search and group',
+      grace_time: 'If you select to Trigger with an event, you can choose a grace time to delay the execution of this action and have some time to cancel it via email if necessary.',
+      timeout: 'How much time to wait the server\'s response before giving up. Default is 5 seconds.',
+      method: 'The HTTP request Method.',
+      url: 'The remote API URL you want to call. Sometimes it is required to endcode it.',
+      body: 'Here can add body parameters to the request. Only available for POST and PUT methods. Default is GET',
+      gzip: 'Enable HTTP compression to improve transfer speed and bandwidth utilization. An \'Accept-Encoding: gzip\' header will be added to the request. Default is true.',
+      json: 'Tells the server that the data being transferred is actually JSON. A \'Content-type: application/json\' header will be added to the request. Additionally, parses the response body as JSON. Default is false.',
+      status_code: 'The expected status code that will be considered ok. Regular Expressions can be used to match a status, for example \'2[0-9][0-9]\' will match 2XX codes in the Success group. Default value is 200.',
+      pattern: 'Could be a String or Regular Expression, also could be part of the response, that we have to considered ok.',
+    },
     copy: 'Select the task you want to copy from'
   },
   file: {

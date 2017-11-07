@@ -6,7 +6,7 @@ module.exports = PanelButton.extend({
   initialize: function (options) {
     this.title = 'delete user'
     this.iconClass = 'fa fa-trash'
-    this.className = 'btn btn-primary deleteButton simple-btn tooltiped'
+    this.className = 'btn btn-primary deleteButton'
   },
   events: {
     click: function (event) {
