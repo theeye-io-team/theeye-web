@@ -136,17 +136,17 @@ const ScraperTask = Schema.extend({
   },
 })
 
-//const Collection = AppCollection.extend({
-//  //url: urlRoot,
-//  model: function (attrs, options) {
-//    if ( /ScraperTaskTemplate/.test(attrs._type) === true ) {
-//      return new ScraperTask(attrs,options)
-//    } else {
-//      return new ScriptTask(attrs,options)
-//    }
-//  }
-//})
-//exports.Collection = Collection
+const Collection = AppCollection.extend({
+  //url: urlRoot,
+  model: function (attrs, options) {
+    if ( /ScraperTaskTemplate/.test(attrs._type) === true ) {
+      return new ScraperTask(attrs,options)
+    } else {
+      return new ScriptTask(attrs,options)
+    }
+  }
+})
+exports.Collection = Collection
 
 exports.Scraper = ScraperTask
 exports.Script = ScriptTask
