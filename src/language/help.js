@@ -20,7 +20,7 @@ module.exports = {
   },
   task: {
     creation: {
-      webhook: 'Select Outgoing Webhook to execute a http requests I.E to call an api remote method',
+      webhook: 'Select Outgoing Webhook to execute a HTTP requests i.e. to call an api remote method',
       script: 'Select Script to accomplish your task automation'
     },
     form: {
@@ -34,10 +34,10 @@ module.exports = {
       method: 'The HTTP request Method.',
       url: 'The remote API URL you want to call. Sometimes it is required to endcode it.',
       body: 'Here can add body parameters to the request. Only available for POST and PUT methods. Default is GET',
-      gzip: 'Enable HTTP compression to improve transfer speed and bandwidth utilization. An \'Accept-Encoding: gzip\' header will be added to the request. Default is true.',
-      json: 'Tells the server that the data being transferred is actually JSON. A \'Content-type: application/json\' header will be added to the request. Additionally, parses the response body as JSON. Default is false.',
-      status_code: 'The expected status code that will be considered ok. Regular Expressions can be used to match a status, for example \'2[0-9][0-9]\' will match 2XX codes in the Success group. Default value is 200.',
-      pattern: 'Could be a String or Regular Expression, also could be part of the response, that we have to considered ok.',
+      gzip: 'Include the request header \'Accept-Encoding: gzip\'. This will improve transfer speed and bandwidth usage. Default is true.',
+      json: 'Include the request header \'Content-type: application/json\'. Additionally, parses the response body as JSON. Default is false.',
+      status_code: 'The response status code to consider the request success. Regular Expressions can be used. e.g. \'2[0-9][0-9]\' to match the group of 2XX status codes. Default value is 200.',
+      pattern: 'Useful for matching a string or regular expression againts the HTTP response.',
     },
     copy: 'Select the task you want to copy from'
   },

@@ -20,7 +20,7 @@ var HelpTexts = {
     json:'Tells the server that the data being transferred is actually JSON. A \'Content-type: application/json\' header will be added to the request. Additionally, parses the response body as JSON. Default is false.',
     status_code:'The expected status code that will be considered ok. Regular Expressions can be used to match a status, for example \'2[0-9][0-9]\' will match 2XX codes in the Success group. Default value is 200.',
   },
-  scraper_pattern: 'Could be a String or Regular Expression, also could be part of the response, that we have to considered ok.',
+  scraper_pattern: 'Useful for matching an optional string or regular expression from http response.',
   monitor: {
     name: 'Give this monitor a name',
     process: 'Which process it has to search for?',
