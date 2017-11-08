@@ -5,12 +5,14 @@ import FormView from 'ampersand-form-view'
 import View from 'ampersand-view'
 import TaskActions from 'actions/task'
 import InputView from 'components/input-view'
+import TextareaView from 'components/input-view/textarea'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
 import TagsSelectView from 'view/tags-select'
 import ArgumentsView from './arguments-input'
 import assign from 'lodash/assign'
 import Buttons from '../buttons'
+import CopyTaskSelect from '../copy-task-select'
 
 const HelpTexts = require('language/help')
 const TASK = require('constants/task')
@@ -74,7 +76,7 @@ module.exports = FormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.script_runas,
       }),
-      new InputView({
+      new TextareaView({
         label: 'More Info',
         name: 'description',
         required: false,
@@ -109,6 +111,17 @@ module.exports = FormView.extend({
         value: this.model.taskArguments
       })
     ]
+
+    if (this.model.isNew()) {
+      const copySelect = new CopyTaskSelect({ type: TASK.TYPE_SCRIPT })
+      this.fields.unshift(copySelect)
+      this.listenTo(copySelect,'change',() => {
+        if (copySelect.value) {
+          let task = App.state.tasks.get(copySelect.value)
+          this.setWithTask(task)
+        }
+      })
+    }
 
     FormView.prototype.initialize.apply(this, arguments)
   },
@@ -154,12 +167,25 @@ module.exports = FormView.extend({
     } else {
       TaskActions.createMany(data.hosts, data)
     }
+
     next(null,true)
+    this.trigger('submit')
   },
   prepareData (data) {
     let f = assign({}, data)
     f.type = TASK.TYPE_SCRIPT
     f.grace_time = Number(data.grace_time)
     return f
+  },
+  setWithTask (task) {
+    this.setValues({
+      script_id: task.script_id,
+      name: task.name,
+      script_runas: task.script_runas,
+      description: task.description,
+      tags: task.tags,
+      grace_time: task.grace_time,
+      taskArguments: task.taskArguments
+    })
   }
 })

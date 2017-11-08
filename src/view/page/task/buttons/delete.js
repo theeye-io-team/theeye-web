@@ -4,7 +4,7 @@ import TaskActions from 'actions/task'
 
 module.exports = PanelButton.extend({
   initialize (options) {
-    this.title = 'Delete Task'
+    this.tip = 'Delete Task'
     this.iconClass = 'fa fa-trash'
     this.className = 'btn btn-primary'
   },

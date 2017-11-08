@@ -1,16 +1,18 @@
-import BaseView from 'view/base-view'
+import View from 'ampersand-view'
 
-module.exports = BaseView.extend({
+module.exports = View.extend({
   template: `
     <button>
       <span data-hook="icon-span"></span>
       <i data-hook="title"></i>
-    </button>`,
+    </button>
+  `,
   props: {
+    tip: 'string',
     title: 'string',
-    className: ['string', false, 'btn btn-default'],
+    className: ['string',false,'btn btn-default'],
     iconClass: 'string',
-    show: ['boolean', false, true]
+    show: ['boolean',false,true]
   },
   bindings: {
     tip: {
@@ -43,5 +45,10 @@ module.exports = BaseView.extend({
     event.preventDefault()
     console.warn('no action defined for this button')
     return
+  },
+  render () {
+    this.renderWithTemplate()
+
+    $( this.query('button') ).tooltip({ trigger: 'hover' })
   }
 })

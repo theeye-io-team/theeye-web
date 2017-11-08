@@ -10,6 +10,14 @@ class TasksRoute extends Route {
     App.state.tasks.fetch()
     App.state.hosts.fetch()
     App.state.scripts.fetch()
+    //App.state.users.fetch({
+    //  data:{ where:{
+    //    $and:[
+    //      {credential: { $ne:'agent' }},
+    //      {credential: { $ne:'viewer' }},
+    //    ]
+    //  } }
+    //})
 
     return new TasksPage({ collection: App.state.tasks })
   }

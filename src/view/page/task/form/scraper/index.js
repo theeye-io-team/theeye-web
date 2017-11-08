@@ -13,6 +13,7 @@ import InputView from 'components/input-view'
 import TextareaView from 'components/input-view/textarea'
 import CheckboxView from 'components/checkbox-view'
 import Buttons from '../buttons'
+import CopyTaskSelect from '../copy-task-select'
 
 import isURL from 'validator/lib/isURL'
 
@@ -50,7 +51,6 @@ module.exports = FormView.extend({
 
     const bodyTextarea = new TextareaView({
       label: 'Request Body',
-      type: 'textarea',
       name: 'body',
       required: false,
       invalidClass: 'text-danger',
@@ -98,7 +98,7 @@ module.exports = FormView.extend({
           }
         ]
       }),
-      new InputView({
+      new TextareaView({
         label: 'More Info',
         name: 'description',
         required: false,
@@ -192,8 +192,19 @@ module.exports = FormView.extend({
         name: 'pattern',
         pattern_value: this.model.pattern,
         use_parser: this.model.parser
-      }),
+      })
     ]
+
+    if (this.model.isNew()) {
+      const copySelect = new CopyTaskSelect({ type: TASK.TYPE_SCRAPER })
+      this.fields.unshift(copySelect)
+      this.listenTo(copySelect,'change',() => {
+        if (copySelect.value) {
+          let task = App.state.tasks.get(copySelect.value)
+          this.setWithTask(task)
+        }
+      })
+    }
 
     FormView.prototype.initialize.apply(this, arguments)
   },
@@ -217,6 +228,7 @@ module.exports = FormView.extend({
 
     const buttons = new Buttons()
     this.renderSubview(buttons)
+    buttons.on('click:confirm', () => { this.submit() })
   },
   addHelpIcon (field) {
     const view = this._fieldViews[field]
@@ -233,7 +245,7 @@ module.exports = FormView.extend({
   },
   submit (next) {
     this.beforeSubmit()
-    if (!this.valid) return next(null,false)
+    if (!this.valid) return next(null,false) // cancel submit
 
     let data = this.prepareData(this.data)
     if (!this.model.isNew()) {
@@ -241,6 +253,7 @@ module.exports = FormView.extend({
     } else {
       TaskActions.create(data)
     }
+    this.trigger('submit')
     next(null,true)
   },
   prepareData (data) {
@@ -251,5 +264,21 @@ module.exports = FormView.extend({
     f.status_code = Number(data.status_code)
     f.parser = this._fieldViews.pattern.use_parser // selected parser
     return f
+  },
+  setWithTask (task) {
+    this.setValues({
+      name: task.name,
+      url: task.url,
+      description: task.description,
+      tags: task.tags,
+      method: task.method,
+      json: task.json,
+      body: task.body,
+      gzip: task.json,
+      timeout: task.timeout,
+      grace_time: task.grace_time,
+      status_code: task.status_code,
+      pattern: task.pattern,
+    })
   }
 })

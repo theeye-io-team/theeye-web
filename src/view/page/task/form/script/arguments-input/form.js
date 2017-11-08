@@ -334,8 +334,7 @@ module.exports = FormView.extend({
   submit (next) {
     this.beforeSubmit()
     if (!this.valid) return
-
     if (next) next(true)
-    this.trigger('submitted')
+    this.trigger('submit')
   }
 })

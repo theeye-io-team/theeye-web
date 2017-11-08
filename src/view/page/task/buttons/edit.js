@@ -7,6 +7,7 @@ import FormView from '../form'
 module.exports = PanelButton.extend({
   initialize (options) {
     this.title = 'Edit Task'
+    this.tip = 'Edit Task'
     this.iconClass = 'fa fa-edit'
     this.className = 'btn btn-primary'
   },
@@ -30,8 +31,8 @@ module.exports = PanelButton.extend({
         modal.remove()
       })
 
-      this.listenTo(form,'submitted',() => {
-        if (valid===true) modal.hide()
+      this.listenTo(form,'submit',() => {
+        modal.hide()
       })
 
       modal.show()

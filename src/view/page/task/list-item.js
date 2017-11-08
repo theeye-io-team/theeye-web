@@ -83,10 +83,19 @@ const Item = ListItem.extend({
 const ScriptItem = Item.extend({
   derived: {
     item_description: {
-      deps: ['model.script'],
+      deps: ['model.script','model.hostname'],
       fn () {
-        if (!this.model.script) return ''
-        return this.model.script.filename
+        if (!this.model.script || !this.model.hostname) return ''
+
+        let description = ''
+        if (this.model.hostname) {
+          description += `${this.model.hostname} `
+        }
+        if (this.model.script) {
+          description += `> ${this.model.script.filename}`
+        }
+
+        return description
       }
     }
   },
@@ -95,8 +104,14 @@ const ScriptItem = Item.extend({
 const ScraperItem = Item.extend({
   derived: {
     item_description: {
+      deps: ['model.hostname'],
       fn () {
-        return 'Web Check'
+        let description = ''
+        if (this.model.hostname) {
+          description += `${this.model.hostname} `
+        }
+        description += 'Web Check'
+        return description
       }
     }
   },

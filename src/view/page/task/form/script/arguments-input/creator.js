@@ -88,7 +88,7 @@ module.exports = View.extend({
     this.renderSubview(form, this.queryByHook('form-container'))
 
     form.focus()
-    this.listenTo(form,'submitted',() => { // form submit event
+    this.listenTo(form,'submit',() => { // form submit event
       this.trigger('added',form.data)
     })
     this.form = form

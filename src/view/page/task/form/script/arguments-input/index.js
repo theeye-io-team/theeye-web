@@ -6,6 +6,7 @@ import Modalizer from 'components/modalizer'
 import ArgumentView from './argument'
 import Collection from 'ampersand-collection'
 import { DinamicArgument as ScriptArgument } from 'models/task/dinamic-argument'
+import FIELD from 'constants/field'
 
 module.exports = View.extend({
   template: `
@@ -53,9 +54,13 @@ module.exports = View.extend({
 
     this.listenTo(creator,'added',(argument) => {
       // fixed arguments does not has a label
-      argument.label || (argument.label = `FixedArg${this.scriptArguments.length}`)
       argument.id = this.scriptArguments.length
       argument.order = this.scriptArguments.length
+
+      if (argument.type===FIELD.TYPE_FIXED) {
+        argument.label = `FixedArg${this.scriptArguments.length}`
+        argument.readonly = true
+      }
 
       this.scriptArguments.add(argument)
       this.trigger('change:scriptArguments')
@@ -74,7 +79,11 @@ module.exports = View.extend({
       this.query('ul')
     )
   },
+  /**
+   * @param {Mixed} value array of objects/models or a collection
+   */
   setValue (value) {
+    if (value.isCollection) value = value.serialize()
     this.scriptArguments.reset(value)
   },
   derived: {

@@ -96,7 +96,7 @@ const TaskCreationWizard = View.extend({
 
 module.exports = CommonButton.extend({
   initialize (options) {
-    this.title = 'New Task'
+    this.title = 'Create a New Task'
     this.className = 'btn btn-primary'
     this.iconClass = 'fa fa-plus'
   },

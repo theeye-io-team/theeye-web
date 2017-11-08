@@ -157,6 +157,9 @@ module.exports = View.extend({
       }
     }
   },
+  /**
+   * @summary when this.input value changes it will call this.update method to notify
+   */
   update () {
     this.pattern_value = this.input.value
     this.parent.update.apply(this.parent, arguments)
@@ -164,5 +167,8 @@ module.exports = View.extend({
   remove () {
     this.input.input.removeEventListener('blur',this.onPatternLoseFocus,false)
     View.prototype.remove.apply(this, arguments)
+  },
+  setValue (value) {
+    this.input.setValue(value)
   }
 })
