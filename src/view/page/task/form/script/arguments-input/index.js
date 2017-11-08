@@ -23,7 +23,13 @@ module.exports = View.extend({
       </div>
     </div>
   `,
+  bindings: {
+    visible: {
+      type: 'toggle'
+    }
+  },
   props: {
+    visible: ['boolean',false,true],
     scriptArguments: 'collection',
     name: ['string',false,'scriptArguments']
   },

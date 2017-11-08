@@ -22,9 +22,13 @@ module.exports = InputView.extend({
     </div>
   `,
   props: {
+    visible: ['boolean',false,true ],
     styles: ['string',false,'form-group']
   },
   bindings: assign({}, InputView.prototype.bindings, {
+    visible: {
+      type: 'toggle'
+    },
     styles: {
       type: 'attribute',
       name: 'class'

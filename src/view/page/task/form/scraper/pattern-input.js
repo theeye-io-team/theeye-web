@@ -29,6 +29,7 @@ module.exports = View.extend({
     </div>
   `,
   bindings: {
+    visible: { type: 'toggle' },
     showMessage: [{
       type: 'toggle',
       hook: 'message-container'
@@ -45,6 +46,7 @@ module.exports = View.extend({
     }
   },
   props: {
+    visible: ['boolean',false,true],
     label: 'string',
     name: ['string',false,'pattern'],
     pattern_value: ['string',false,''],

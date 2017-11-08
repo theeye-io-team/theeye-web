@@ -13,7 +13,7 @@ function getMatches (el, selector) {
 
 module.exports = View.extend({
   template: `
-    <div class="form-group form-horizontal">
+    <div>
       <label data-hook="label" class="col-sm-3 control-label"></label>
       <div class="col-sm-9">
         <select class="form-control select" style="width:100%"></select>
@@ -23,6 +23,13 @@ module.exports = View.extend({
       </div>
     </div>`,
   bindings: {
+    visible: {
+      type: 'toggle'
+    },
+    styles: {
+      type: 'attribute',
+      name: 'class'
+    },
     multiple: {
       type: 'booleanAttribute',
       selector: 'select',
@@ -59,6 +66,8 @@ module.exports = View.extend({
     }
   },
   props: {
+    visible: ['boolean',false,true ],
+    styles: ['string',false,'form-group'],
     tokenSeparator: ['array',false,()=>{ return [] }],
     tags: ['boolean',false,false],
     multiple: ['boolean',false,false],

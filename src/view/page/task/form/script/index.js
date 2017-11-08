@@ -12,6 +12,7 @@ import TagsSelectView from 'view/tags-select'
 import ArgumentsView from './arguments-input'
 import assign from 'lodash/assign'
 import Buttons from '../buttons'
+import AdvancedToggle from '../advanced-toggle'
 import CopyTaskSelect from '../copy-task-select'
 
 const HelpTexts = require('language/help')
@@ -29,7 +30,6 @@ module.exports = FormView.extend({
       tags: isNewTask,
       options: App.state.hosts,
       value: this.model.host_id,
-      styles: 'form-group',
       required: false,
       unselectedText: 'select a host',
       idAttribute: 'id',
@@ -49,12 +49,19 @@ module.exports = FormView.extend({
       required: false,
       idAttribute: 'id',
       textAttribute: 'filename',
-      styles: 'form-group',
       unselectedText: 'select a script',
       requiredMessage: 'Selection required',
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label'
     })
+
+    this.advancedFields = [
+      'script_runas',
+      'description',
+      'tags',
+      'grace_time',
+      'taskArguments'
+    ]
 
     this.fields = [
       new InputView({
@@ -67,7 +74,16 @@ module.exports = FormView.extend({
       }),
       hostsSelection ,
       scriptSelection ,
+      // advanced fields starts visible = false
+      new AdvancedToggle({
+        onclick: (event) => {
+          this.advancedFields.forEach(name => {
+            this._fieldViews[name].toggle('visible')
+          })
+        }
+      }),
       new InputView({
+        visible: false,
         label: 'Run As',
         name: 'script_runas',
         placeholder: 'sudo -u the_user %script%',
@@ -77,6 +93,7 @@ module.exports = FormView.extend({
         value: this.model.script_runas,
       }),
       new TextareaView({
+        visible: false,
         label: 'More Info',
         name: 'description',
         required: false,
@@ -85,10 +102,12 @@ module.exports = FormView.extend({
         value: this.model.description,
       }),
       new TagsSelectView({
+        visible: false,
         name: 'tags',
         value: this.model.tags
       }),
       new SelectView({
+        visible: false,
         label: 'Grace Time',
         name: 'grace_time',
         multiple: false,
@@ -100,13 +119,13 @@ module.exports = FormView.extend({
           }
         }),
         value: this.model.grace_time,
-        styles: 'form-group',
         required: false,
         unselectedText: 'Select the Grace Time',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       }),
       new ArgumentsView({
+        visible: false,
         name: 'taskArguments',
         value: this.model.taskArguments
       })

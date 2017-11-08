@@ -13,6 +13,7 @@ import InputView from 'components/input-view'
 import TextareaView from 'components/input-view/textarea'
 import CheckboxView from 'components/checkbox-view'
 import Buttons from '../buttons'
+import AdvancedToggle from '../advanced-toggle'
 import CopyTaskSelect from '../copy-task-select'
 
 import isURL from 'validator/lib/isURL'
@@ -33,7 +34,6 @@ module.exports = FormView.extend({
       tags: isNewTask,
       options: App.state.hosts,
       value: this.model.host_id,
-      styles: 'form-group',
       required: false,
       unselectedText: 'select a host',
       idAttribute: 'id',
@@ -44,12 +44,14 @@ module.exports = FormView.extend({
     })
 
     const jsonBodyCheckbox = new CheckboxView({
+      visible: false,
       label: 'JSON Body',
       name: 'json',
       value: this.model.json
     })
 
     const bodyTextarea = new TextareaView({
+      visible: false,
       label: 'Request Body',
       name: 'body',
       required: false,
@@ -72,6 +74,19 @@ module.exports = FormView.extend({
     bodyTextarea.listenTo(jsonBodyCheckbox,'change:value',() => {
       bodyTextarea.beforeSubmit()
     })
+
+    this.advancedFields = [
+      'json',
+      'body',
+      'description',
+      'tags',
+      'method',
+      'gzip',
+      'timeout',
+      'grace_time',
+      'status_code',
+      'pattern'
+    ]
 
     this.fields = [
       new InputView({
@@ -98,7 +113,16 @@ module.exports = FormView.extend({
           }
         ]
       }),
+      // advanced fields starts visible = false
+      new AdvancedToggle({
+        onclick: (event) => {
+          this.advancedFields.forEach(name => {
+            this._fieldViews[name].toggle('visible')
+          })
+        }
+      }),
       new TextareaView({
+        visible: false,
         label: 'More Info',
         name: 'description',
         required: false,
@@ -107,10 +131,12 @@ module.exports = FormView.extend({
         value: this.model.description,
       }),
       new TagsSelectView({
+        visible: false,
         name: 'tags',
         value: this.model.tags
       }),
       new SelectView({
+        visible: false,
         label: 'Method',
         name: 'method',
         multiple: false,
@@ -122,7 +148,6 @@ module.exports = FormView.extend({
           }
         }),
         value: this.model.method,
-        styles: 'form-group',
         required: false,
         unselectedText: 'Select the HTTP method',
         invalidClass: 'text-danger',
@@ -131,12 +156,14 @@ module.exports = FormView.extend({
       jsonBodyCheckbox,
       bodyTextarea,
       new CheckboxView({
+        visible: false,
         label: 'Use HTTP Compression',
         name: 'gzip',
         value: this.model.gzip
       }),
       new SelectView({
         label: 'Req. Timeout',
+        visible: false,
         name: 'timeout',
         multiple: false,
         tags: false,
@@ -147,13 +174,13 @@ module.exports = FormView.extend({
           }
         }),
         value: this.model.timeout,
-        styles: 'form-group',
         required: false,
         unselectedText: 'Select the Req. Timeout',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       }),
       new SelectView({
+        visible: false,
         label: 'Grace Time',
         name: 'grace_time',
         multiple: false,
@@ -165,13 +192,13 @@ module.exports = FormView.extend({
           }
         }),
         value: this.model.grace_time,
-        styles: 'form-group',
         required: false,
         unselectedText: 'Select the Grace Time',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       }),
       new InputView({
+        visible: false,
         label: 'Success Status Code',
         name: 'status_code',
         required: false,
@@ -188,6 +215,7 @@ module.exports = FormView.extend({
         ]
       }),
       new PatternInputView({
+        visible: false,
         label: 'Success Pattern',
         name: 'pattern',
         pattern_value: this.model.pattern,
