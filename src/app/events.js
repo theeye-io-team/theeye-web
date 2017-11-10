@@ -1,5 +1,3 @@
-'use strict'
-
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 const logger = require('lib/logger')('app:events')

@@ -10,6 +10,7 @@ const config = require('config')
 
 //const urlRoot = `${config.api_url}/task-template`
 const TaskArguments = AmpersandCollection.extend({
+  indexes: ['label'],
   model: DinamicArgument
 })
 
@@ -27,11 +28,12 @@ const Schema = AppModel.extend({
 		secret: 'string',
 		grace_time: 'number',
 		type: 'string',
+		triggers: 'array',
     //_id: 'string',
     _type: 'string' // discriminator
 	},
 	collections: {
-		triggers: Events,
+		//triggers: Events,
 		taskArguments: TaskArguments
 	},
   serialize (options) {
@@ -44,6 +46,10 @@ const Schema = AppModel.extend({
   }
 })
 
+/**
+ * @param {Array} args
+ * @return {Array}
+ */
 const filterScriptArguments = (args) => {
   const parsed = []
   if (Array.isArray(args)) {
@@ -75,11 +81,13 @@ const ScriptTask = Schema.extend({
 
     this.type = 'script'
 
-    this.listenToAndRun(this, 'change:script_arguments', () => {
-      // re-assign
-      let args = filterScriptArguments(this.script_arguments) 
-      this.taskArguments.set(args)
-    })
+    //this.listenToAndRun(this,'change:script_arguments',() => {
+    //  // re-assign existent script_arguments to taskArguments
+    //  if (!this.isNew() && this.script_arguments.length>0) {
+    //    let args = filterScriptArguments(this.script_arguments) 
+    //    this.taskArguments.set(args)
+    //  }
+    //})
 
     this.listenToAndRun(this.taskArguments, 'add remove change reset sync', () => {
       this.hasDinamicArguments = Boolean(
@@ -92,11 +100,18 @@ const ScriptTask = Schema.extend({
       )
     })
   },
+  parse (attrs) {
+    // convert script_arguments into taskArguments
+    if (attrs.script_arguments.length>0) {
+      attrs.taskArguments = filterScriptArguments(attrs.script_arguments)
+    }
+    return attrs
+  },
   //urlRoot: urlRoot,
 	props: {
 		script_id: 'string',
     // this attribute comes from the server and need to be filtered and parsed
-		script_arguments: ['array',false, () => { return [] }],
+		//script_arguments: ['array',false, () => { return [] }],
 		script_runas: 'string'
 	},
   session: {

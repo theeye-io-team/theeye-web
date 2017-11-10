@@ -40,13 +40,14 @@ const fetchData = (options) => {
 
   App.state.loader.visible = true
 
-  var resourcesToFetch = 5
+  var resourcesToFetch = 6
   if (fetchTasks) resourcesToFetch += 1
 
   var done = after(resourcesToFetch, function(){
     App.state.loader.visible = false
   })
 
+  App.state.events.fetch({ success: done, error: done })
   App.state.scripts.fetch({ success: done, error: done })
   App.state.hosts.fetch({ success: done, error: done })
   App.state.tags.fetch({ success: done, error: done })

@@ -1,5 +1,3 @@
-'use strict'
-
 //import 'jquery' // imported by webpack. not required
 import 'bootstrap'
 import config from 'config'
@@ -16,10 +14,11 @@ const logger = require('lib/logger')('app')
 require('app/events')
 const sockets = require('app/sockets')
 const session = require('app/session')
+const models = require('app/models')
 
 import 'assets/styles'
 
-if (config.env !== 'production') { window.App = App }
+if (config.env !== 'production') { window.app = App }
 
 // Extends our main app singleton
 App.extend({
@@ -33,6 +32,7 @@ App.extend({
       this.registerComponents()
       session()
       sockets()
+      models()
     })
   },
   initState (next) {

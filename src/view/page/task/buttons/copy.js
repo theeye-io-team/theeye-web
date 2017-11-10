@@ -1,5 +1,6 @@
 'use strict'
 
+import App from 'ampersand-app'
 import assign from 'lodash/assign'
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
@@ -43,7 +44,12 @@ const CopyForm = FormView.extend({
     this.beforeSubmit()
     if (!this.valid) return
 
-    const data = this.prepareData( assign({},this.model.serialize(),{ name: this.data.name }) )
+    const data = this.prepareData(
+      assign({},this.model.serialize(),{
+        name: this.data.name,
+        taskArguments: this.model.taskArguments.serialize()
+      })
+    )
     TaskActions.createMany(this.data.hosts, data)
     if (next) next()
     this.trigger('submit')

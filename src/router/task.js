@@ -6,6 +6,7 @@ import Route from 'lib/router-route'
 
 class TasksRoute extends Route {
   indexRoute () {
+    App.state.events.fetch()
     App.state.tags.fetch()
     App.state.tasks.fetch()
     App.state.hosts.fetch()

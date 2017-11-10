@@ -12,7 +12,11 @@ const ValueOption = State.extend({
 
 exports.ValueOption = ValueOption
 
-const OptionsCollection = Collection.extend({ model: ValueOption })
+const OptionsCollection = Collection.extend({
+  mainIndex: 'id',
+  indexes: ['id','label'],
+  model: ValueOption
+})
 
 exports.DinamicArgument = Model.extend({
   props: {

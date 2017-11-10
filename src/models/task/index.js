@@ -1,4 +1,3 @@
-//import AppModel from 'lib/app-model'
 import State from 'ampersand-state'
 import AppCollection from 'lib/app-collection'
 import isURL from 'validator/lib/isURL'

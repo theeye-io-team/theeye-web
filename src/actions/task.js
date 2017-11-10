@@ -12,25 +12,34 @@ const logger = require('lib/logger')('actions:tasks')
 
 module.exports = {
   update (id, data) {
-    var task = TaskModel.Factory({ id: id, type: data.type })
+    let task = App.state.tasks.get(id)
     task.set(data)
-    XHR.send({
-      url: `${task.urlRoot}/${id}`,
-      method: 'PUT',
-      jsonData: task.serialize(),
-      timeout: 5000,
-      withCredentials: true,
-      headers: {
-        Accept: 'application/json;charset=UTF-8'
-      },
-      done: (response,xhr) => {
+    task.taskArguments.reset(data.taskArguments)
+    task.save({},{
+      success: () => {
         bootbox.alert('Task Updated')
-        App.state.tasks.get(task.id).set(response)
       },
-      error: (response,xhr) => {
-        bootbox.alert('Something goes wrong')
-      },
+      error: () => {
+        bootbox.alert('Something goes wrong updating the Task')
+      }
     })
+    //XHR.send({
+    //  url: `${task.urlRoot}/${id}`,
+    //  method: 'PUT',
+    //  jsonData: task.serialize(),
+    //  timeout: 5000,
+    //  withCredentials: true,
+    //  headers: {
+    //    Accept: 'application/json;charset=UTF-8'
+    //  },
+    //  done: (response,xhr) => {
+    //    bootbox.alert('Task Updated')
+    //    App.state.tasks.get(task.id).set(response)
+    //  },
+    //  error: (response,xhr) => {
+    //    bootbox.alert('Something goes wrong')
+    //  },
+    //})
   },
   /**
    * @param {MongoID[]} hosts

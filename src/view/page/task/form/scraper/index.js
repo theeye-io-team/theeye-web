@@ -10,6 +10,7 @@ import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
 import TagsSelectView from 'view/tags-select'
 import MembersSelectView from 'view/members-select'
+import EventsSelectView from 'view/events-select'
 import InputView from 'components/input-view'
 import TextareaView from 'components/input-view/textarea'
 import CheckboxView from 'components/checkbox-view'
@@ -85,6 +86,7 @@ module.exports = FormView.extend({
       'method',
       'gzip',
       'timeout',
+      'triggers',
       'grace_time',
       'status_code',
       'pattern'
@@ -144,6 +146,12 @@ module.exports = FormView.extend({
         name: 'acl',
         label: 'ACL\'s',
         value: this.model.acl
+      }),
+      new EventsSelectView({
+        visible: false,
+        label: 'Trigger on',
+        name: 'triggers',
+        value: this.model.triggers
       }),
       new SelectView({
         visible: false,

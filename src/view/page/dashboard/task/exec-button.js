@@ -30,7 +30,7 @@ module.exports = View.extend({
   askDinamicArguments (next) {
     if (this.model.hasDinamicArguments) {
       const form = new DinamicForm ({
-        fieldsDefinitions: this.model.taskArguments
+        fieldsDefinitions: this.model.taskArguments.models
       })
 
       const modal = new Modalizer({
@@ -54,9 +54,9 @@ module.exports = View.extend({
         form.submit( (err,args) => {
           const labels = Object.keys(args)
           next(
-            labels.map( (label, index) => {
+            labels.map( (label) => {
               return {
-                order: index,
+                order: this.model.taskArguments.get(label,'label').order,
                 label: label,
                 value: args[label]
               }
@@ -66,8 +66,9 @@ module.exports = View.extend({
         })
       })
       modal.show()
-    } else { // return fixed arguments values
-      next( this.model.taskArguments.models )
+    } else {
+      //next( this.model.taskArguments.models )
+      next([])
     }
   },
   onClickTrigger (event) {

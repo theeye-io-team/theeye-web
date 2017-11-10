@@ -6,26 +6,27 @@ import HelpIcon from 'components/help-icon'
 
 module.exports = FormView.extend({
   props: {
-    fieldsDefinitions: 'collection'
+    fieldsDefinitions: 'array'
   },
   initialize (options) {
     const fieldsSpecs = options.fieldsDefinitions
     const fields = [ ]
 
     fieldsSpecs.forEach(spec => {
-      if (spec.type === FIELD.TYPE_FIXED) {
-        fields.push(
-          new InputView({
-            readonly: true,
-            label: spec.label,
-            name: spec.label,
-            required: spec.required,
-            invalidClass: 'text-danger',
-            validityClassSelector: '.control-label',
-            value: spec.value
-          })
-        )
-      } else if (spec.type === FIELD.TYPE_INPUT) {
+      //if (spec.type === FIELD.TYPE_FIXED) {
+      //  fields.push(
+      //    new InputView({
+      //      readonly: true,
+      //      label: spec.label,
+      //      name: spec.label,
+      //      required: spec.required,
+      //      invalidClass: 'text-danger',
+      //      validityClassSelector: '.control-label',
+      //      value: spec.value
+      //    })
+      //  )
+      //} else
+      if (spec.type === FIELD.TYPE_INPUT) {
         fields.push(
           new InputView({
             label: spec.label,

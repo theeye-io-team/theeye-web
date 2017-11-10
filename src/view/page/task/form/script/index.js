@@ -10,6 +10,7 @@ import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
 import TagsSelectView from 'view/tags-select'
 import MembersSelectView from 'view/members-select'
+import EventsSelectView from 'view/events-select'
 import ArgumentsView from './arguments-input'
 import assign from 'lodash/assign'
 import Buttons from '../buttons'
@@ -31,7 +32,7 @@ module.exports = FormView.extend({
       tags: isNewTask,
       options: App.state.hosts,
       value: this.model.host_id,
-      required: false,
+      required: true,
       unselectedText: 'select a host',
       idAttribute: 'id',
       textAttribute: 'hostname',
@@ -47,7 +48,7 @@ module.exports = FormView.extend({
       tags: false,
       options: App.state.scripts,
       value: this.model.script_id,
-      required: false,
+      required: true,
       idAttribute: 'id',
       textAttribute: 'filename',
       unselectedText: 'select a script',
@@ -56,19 +57,12 @@ module.exports = FormView.extend({
       validityClassSelector: '.control-label'
     })
 
-    let membersAclSelection = new MembersSelectView({
-      required: false,
-      visible: false,
-      name: 'acl',
-      label: 'ACL\'s',
-      value: this.model.acl
-    })
-
     this.advancedFields = [
       'script_runas',
       'description',
       'tags',
       'acl',
+      'triggers',
       'grace_time',
       'taskArguments'
     ]
@@ -117,7 +111,19 @@ module.exports = FormView.extend({
         name: 'tags',
         value: this.model.tags
       }),
-      membersAclSelection,
+      new MembersSelectView({
+        required: false,
+        visible: false,
+        name: 'acl',
+        label: 'ACL\'s',
+        value: this.model.acl
+      }),
+      new EventsSelectView({
+        label: 'Trigger on',
+        name: 'triggers',
+        visible: false,
+        value: this.model.triggers
+      }),
       new SelectView({
         visible: false,
         label: 'Grace Time',
