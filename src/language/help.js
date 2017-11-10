@@ -20,7 +20,7 @@ module.exports = {
   },
   task: {
     creation: {
-      webhook: 'Select Outgoing Webhook to execute a HTTP requests i.e. to call an api remote method',
+      webhook: 'Select Outgoing Webhook to execute a HTTP requests i.e. to call a remote api method',
       script: 'Select Script to accomplish your task automation'
     },
     form: {
