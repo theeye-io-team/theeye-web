@@ -14,15 +14,19 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 const ButtonsView = View.extend({
   template: `
     <div>
-      <button type="button"
-        class="btn btn-default"
-        data-dismiss="modal">
-        Cancel
-      </button>
-      <button type="button"
-        class="btn btn-primary"
-        data-hook="confirm">
-      </button>
+      <div class="col-xs-12 col-md-6">
+        <button type="button"
+          class="btn btn-default"
+          data-dismiss="modal">
+          Cancel
+        </button>
+      </div>
+      <div class="col-xs-12 col-md-6">
+        <button type="button"
+          class="btn btn-primary"
+          data-hook="confirm">
+        </button>
+      </div>
     </div>
   `,
   props: {
@@ -44,11 +48,11 @@ module.exports = View.extend({
     <div class="modalizer">
       <!-- MODALIZER CONTAINER -->
       <div data-hook="modalizer-class" class="">
-        <div class="modal" 
-          tabindex="-1" 
-          role="dialog" 
-          aria-labelledby="modal" 
-          aria-hidden="true" 
+        <div class="modal"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="modal"
+          aria-hidden="true"
           style="display:none;">
           <div class="modal-dialog">
             <div class="modal-content">
@@ -164,7 +168,7 @@ module.exports = View.extend({
   hide () {
     this.visible = false
   },
-  /** 
+  /**
    * if bootstrap modal is being hided (with click or X) from bootstrap modal itself
    */
   _onBeingHide () {

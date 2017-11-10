@@ -6,7 +6,7 @@ import { Collection as Customers } from 'models/customer'
 
 const urlRoot = `${config.app_url}/user` // sails users
 
-export const Model = AppModel.extend({
+const Model = AppModel.extend({
   //urlRoot: urlRoot,
   props: {
     id: 'string',
@@ -43,7 +43,10 @@ export const Model = AppModel.extend({
   }
 })
 
-export const Collection = AppCollection.extend({
+const Collection = AppCollection.extend({
   //url: urlRoot,
   model: Model
 })
+
+exports.Model = Model
+exports.Collection = Collection

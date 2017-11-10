@@ -9,6 +9,7 @@ import PatternInputView from './pattern-input'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
 import TagsSelectView from 'view/tags-select'
+import MembersSelectView from 'view/members-select'
 import InputView from 'components/input-view'
 import TextareaView from 'components/input-view/textarea'
 import CheckboxView from 'components/checkbox-view'
@@ -80,6 +81,7 @@ module.exports = FormView.extend({
       'body',
       'description',
       'tags',
+      'acl',
       'method',
       'gzip',
       'timeout',
@@ -131,9 +133,17 @@ module.exports = FormView.extend({
         value: this.model.description,
       }),
       new TagsSelectView({
+        required: false,
         visible: false,
         name: 'tags',
         value: this.model.tags
+      }),
+      new MembersSelectView({
+        required: false,
+        visible: false,
+        name: 'acl',
+        label: 'ACL\'s',
+        value: this.model.acl
       }),
       new SelectView({
         visible: false,
@@ -272,6 +282,8 @@ module.exports = FormView.extend({
     FormView.prototype.remove.apply(this)
   },
   submit (next) {
+    next||(next=()=>{})
+
     this.beforeSubmit()
     if (!this.valid) return next(null,false) // cancel submit
 

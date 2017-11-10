@@ -11,6 +11,10 @@ const defaultConfigs = {
   },
   dashboard: {
     upandrunningSign: true
+  },
+  agentBinary:{
+    url: 'https://s3.amazonaws.com/theeye.agent/theEyeInstallerx64.exe',
+    name: 'theEyeInstallerx64.exe'
   }
 }
 

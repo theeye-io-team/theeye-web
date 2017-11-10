@@ -86,7 +86,7 @@ exports.updateUser = function (userId, updates, supervisor, doneFn) {
 
     if (!passport) {
       sails.log.error('passport not found. ' + passport);
-      return doneFn(new Error('theeye passport not found'));
+      return doneFn()
     }
 
     supervisor.patch({
@@ -97,7 +97,84 @@ exports.updateUser = function (userId, updates, supervisor, doneFn) {
         passport.profile = res.user;
         passport.save( (err) => doneFn(err) );
       },
-      failure: (err) => doneFn(err) 
+      failure: (err) => doneFn(err)
+    });
+
+  });
+}
+
+
+/**
+ * @author Tomas
+ * @param {Object} userId , local user id
+ * @param {Array} updates
+ * @param {Object} supervisor , autenticated supervisor client
+ * @param {String} route
+ * @param {Function} doneFn
+ */
+exports.updateMemberCredential = function (userId, updates, supervisor, route, doneFn) {
+  Passport.findOne({
+    user: userId,
+    protocol: 'theeye'
+  }, function(error, passport) {
+
+    if (error) {
+      sails.log.error(error);
+      return doneFn(error);
+    }
+
+    if (!passport) {
+      sails.log.error('passport not found. ' + passport);
+      return doneFn()
+    }
+
+    supervisor.patch({
+      route: route += passport.profile.id + '/credential',
+      body: updates,
+      success: (res) => {
+        passport.profile = res;
+        passport.save( (err) => doneFn(err) );
+      },
+      failure: (err) => doneFn(err)
+    });
+
+  });
+}
+
+
+/**
+ * @author Tomas
+ * @param {Object} userId , local user id
+ * @param {Array} updates
+ * @param {Object} supervisor , autenticated supervisor client
+ * @param {String} route
+ * @param {Function} doneFn
+ */
+exports.removeMemberFromCustomer = function (userId, updates, supervisor, route, doneFn) {
+  Passport.findOne({
+    user: userId,
+    protocol: 'theeye'
+  }, function(error, passport) {
+
+    if (error) {
+      sails.log.error(error);
+      return doneFn(error);
+    }
+
+    if (!passport) {
+      sails.log.error('passport not found. ' + passport);
+      return doneFn()
+    }
+
+    supervisor.remove({
+      route: route,
+      id: passport.profile.id,
+      body: updates,
+      success: (res) => {
+        passport.profile = res;
+        passport.save( (err) => doneFn(err) );
+      },
+      failure: (err) => doneFn(err)
     });
 
   });

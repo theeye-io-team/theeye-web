@@ -4,6 +4,7 @@ import uriFragment from 'lib/uri-fragment'
 import { Collection as Webhooks } from 'models/webhook'
 import { Collection as HostGroups } from 'models/hostgroup'
 import { Collection as Users } from 'models/user'
+import { Collection as Members } from 'models/member'
 import { Collection as Customers } from 'models/customer'
 import { Collection as Hosts } from 'models/host'
 import { Collection as Schedules } from 'models/schedule'
@@ -165,5 +166,6 @@ const _initCollections = function () {
     scripts: new Scripts([]),
     users: new Users([]),
     webhooks: new Webhooks([]),
+    members: new Members([])
   })
 }

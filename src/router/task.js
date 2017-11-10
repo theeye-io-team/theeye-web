@@ -10,6 +10,7 @@ class TasksRoute extends Route {
     App.state.tasks.fetch()
     App.state.hosts.fetch()
     App.state.scripts.fetch()
+    App.state.members.fetch()
     //App.state.users.fetch({
     //  data:{ where:{
     //    $and:[

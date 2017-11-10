@@ -150,19 +150,21 @@ function getActivationToken (string){
  * @return {User}
  */
 exports.inviteToCustomer = function (req, res, next) {
-  var email = req.param('email');
-  var username = req.param('username')||req.param('email');
-  var customers = req.param('customer') ? [req.param('customer')] : req.param('customers');
-  var credential = req.param('credential');
+  var params = req.params.all()
+
+  var email = params.user.email;
+  var username = params.user.username||params.user.email;
+  var customer = req.user.current_customer
+  var credential = params.credential;
 
   if(!email) {
     debug('No email was entered.');
     return next('No email was entered.');
   }
 
-  if(customers.length === 0) {
-    debug('No customers was entered.');
-    return next('No customers was entered.');
+  if(!customer) {
+    debug('No customer was entered.');
+    return next('No customer was entered.');
   }
 
   User.findOne({email: email}, function (err, user) {
@@ -181,7 +183,7 @@ exports.inviteToCustomer = function (req, res, next) {
         invitation_token: token,
         username: username,
         email: email,
-        customers: customers,
+        customers: [customer],
         credential: credential
       }, function (err, user) {
         if (err) {
@@ -204,18 +206,18 @@ exports.inviteToCustomer = function (req, res, next) {
     } else {
       // Scenario: User exist
       // Action: Assign the customer
-      customers = underscore.union(user.customers, customers);
 
       //If the user exists and have perms for the selected customers dont send the activation email
-      if(user.customers.length == customers.length) {
+      if(user.customers.includes(customer)){
         debug("The user already exists and have permissions for this customer");
         //text is error
         //error returning behaviour is somewhat broken
         //if i send here a new Error('message'), front end receives only {}
-        return next("The user already exists and have permissions for this customer");
+        return next("The user already exists and have permissions for this customer.");
       }
+      user.customers.push(customer)
 
-      User.update({ id: user.id },{ customers: customers },
+      User.update({ id: user.id },{ customers: user.customers },
         function(error, users) {
           if(error) {
             debug('Error updating user');
@@ -283,39 +285,53 @@ exports.activate = function (user, password, customername, next) {
  * @param {Function} next
  */
 exports.update = function (req, res, next) {
-  var username        = req.param('username')
+  var id        = req.param('id')
     , password        = req.param('password')
     , newPassword     = req.param('newPassword')
     , confirmPassword = req.param('confirmPassword');
 
-  if (!username)
-    return next(new Error('No username was entered.'));
+  if (!id)
+    return next({error: new Error('No id was entered.'),status: 500});
 
   if (!password || !newPassword || !confirmPassword)
-    return next(new Error('No password was entered.'));
+    return next({error: new Error('No password was entered.'),status: 500});
 
   if (confirmPassword !== newPassword)
-    return next(new Error('Passwords do not match.'));
+    return next({error: new Error('Passwords do not match.'),status: 500});
 
-  User.findOne({username : username},function (err, user) {
-    if (err)
-      return next(err);
+  Passport.findOne({
+    protocol : 'local',
+    user     : id
+  }, function (err, passport) {
+    debug('User passport found.');
+    if (err) {
+      debug(err)
+      return next({error: err,status: 500})
+    }
+    if(!passport){
+      debug('User passport not found.')
+      return next({error: new Error('User not found.'),status: 500})
+    }
 
-    if(!user)
-      return next(new Error('User not found.'));
+    passport.validatePassword(password, function (err, res) {
+      if (err) {
+        debug('validate password error %s', err);
+        return next({error: err,statusCode: 500});
+      }
+      if (!res) {
+        debug('Password validation failed');
+        return next({error: new Error('Incorrect password.'),status: 400});
+      }
 
-    Passport.update( {protocol : 'local', user: user.id},
-    {password: newPassword},
-    function (err, passport) {
-      if(err) {
-        if (err.code === 'E_VALIDATION')
-          return next(new Error("Invalid password"));
-        else
-          return next(err);
-      } else
+      Passport.update( {protocol : 'local', user: id},
+      {password: newPassword},
+      function (err, passport) {
+        if(err)
+          return next({error: err,status: 500});
         return next(null);
-    });
-  });
+      });
+    })
+  })
 }
 
 exports.reset = function (options, next) {

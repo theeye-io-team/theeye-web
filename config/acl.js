@@ -11,14 +11,15 @@ var viewer = {
   'dashboard':['index'],
   'events':['index'],
   'password': ['*'],
-  'auth': ['login','activate','google','connect','unlink','logout','passwordreset'],
-  'user': ['myprofile','profile','setcustomer','ampersand'],
+  'auth': ['login','activate','google','connect','unlink','logout'],
+  'user': ['myprofile','setcustomer','ampersand'],
 }
 
 var user = assign({},viewer,{
   'events': ['*'],
   'hoststats': ['*'],
   'palanca': ['*'],
+  'user': ['myprofile','setcustomer','ampersand','getuserpassport']
 });
 
 var admin = assign({},user,{
@@ -29,15 +30,18 @@ var admin = assign({},user,{
   'resource' : ['*'],
   'hostgroup' : ['*'],
   "scheduler" : ['*'],
+  'user': ['myprofile','setcustomer','ampersand','getuserpassport']
 });
 
 var owner = assign({},admin,{
-  'auth' : ['*']
+  'auth' : ['*'],
+  "member" : ['*']
 });
 
 var root = assign({},admin,{
   'user'     : ['*'],
-  'customer' : ['*']
+  'customer' : ['*'],
+  "member" : ['*']
 });
 
 module.exports.acl = {

@@ -9,6 +9,7 @@ import TextareaView from 'components/input-view/textarea'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
 import TagsSelectView from 'view/tags-select'
+import MembersSelectView from 'view/members-select'
 import ArgumentsView from './arguments-input'
 import assign from 'lodash/assign'
 import Buttons from '../buttons'
@@ -55,10 +56,19 @@ module.exports = FormView.extend({
       validityClassSelector: '.control-label'
     })
 
+    let membersAclSelection = new MembersSelectView({
+      required: false,
+      visible: false,
+      name: 'acl',
+      label: 'ACL\'s',
+      value: this.model.acl
+    })
+
     this.advancedFields = [
       'script_runas',
       'description',
       'tags',
+      'acl',
       'grace_time',
       'taskArguments'
     ]
@@ -102,10 +112,12 @@ module.exports = FormView.extend({
         value: this.model.description,
       }),
       new TagsSelectView({
+        required: false,
         visible: false,
         name: 'tags',
         value: this.model.tags
       }),
+      membersAclSelection,
       new SelectView({
         visible: false,
         label: 'Grace Time',

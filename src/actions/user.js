@@ -2,6 +2,8 @@
 import bootbox from 'bootbox'
 import App from 'ampersand-app'
 const xhr = $.ajax
+import XHR from 'lib/xhr'
+import config from 'config'
 
 module.exports = {
   create (data) {
@@ -69,7 +71,7 @@ module.exports = {
 
     req.done(function(){
       bootbox.alert({
-        title: 'User update',
+        title: 'User updated',
         message: `You have successfully updated ${body.username}`,
         callback: () => {
           App.Router.reload()

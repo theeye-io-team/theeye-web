@@ -2,54 +2,9 @@
 var passport = require('../services/passport')
 var mailer = require('../services/mailer')
 var difference = require('lodash/difference')
+var debug = require('debug')('eye:web:controller:user');
 
 var UserController = module.exports = {
-  //Current user home
-  profile: function (req, res) {
-    var supervisor = req.supervisor;
-    if (typeof req.user !== 'undefined' ) {
-      User
-      .findOne({ id: req.user.id })
-      .populate('passports')
-      .exec(function(err, user) {
-        if(err) {
-          sails.log.error("error en passport ", err);
-          res.view({
-            user : 'Error!',
-            errors : req.flash('error')
-          });
-        } else {
-          var passports = {};
-          user.passports.forEach(function(passport) {
-            passports[passport.protocol] = passport;
-          });
-
-          var theeye = passport.protocols.theeye;
-          theeye.getCustomerAgentCredentials(
-            req.user.current_customer,
-            supervisor,
-            function(err, userAgent) {
-              if(err) {
-                // how to set the error on req.flash?
-                sails.log.error('Error getting customerAgentCredentials', err);
-              }
-              //this here so, err or not, userAgent or not, view doesn't fail
-              res.view({
-                agentBinary : sails.config.application.agentBinary,
-                agent : userAgent || null,
-                user : user,
-                passports : passports,
-                errors : req.flash('error')
-              });
-            }
-          );
-        }
-      });
-    } else {
-      sails.log.debug("cant find user session for %s", req.user.username);
-      res.redirect ("/");
-    }
-  },
   //Set the customer for the session
   setcustomer (req, res) {
     const customer = req.params.customer
@@ -283,4 +238,41 @@ var UserController = module.exports = {
       });
     });
   },
+  getuserpassport: function (req, res) {
+    var supervisor = req.supervisor
+    if (typeof req.user !== 'undefined' ) {
+      User
+      .findOne({ id: req.user.id })
+      .populate('passports')
+      .exec(function(err, user) {
+        if(err) {
+          debug(err)
+          return res.send(500, 'Error fetching user passports.')
+        } else {
+          var passports = {}
+          user.passports.forEach(function(passport) {
+            passports[passport.protocol] = passport;
+          })
+
+          var theeye = passport.protocols.theeye
+          theeye.getCustomerAgentCredentials(
+            req.user.current_customer,
+            supervisor,
+            function(err, userAgent) {
+              if(err) {
+                debug('Error getting customerAgentCredentials', err)
+              }
+              return res.json({
+                agent : userAgent || null,
+                passports : passports
+              })
+            }
+          )
+        }
+      })
+    } else {
+      debug(err)
+      return res.send(500, 'Error fetching user passports.')
+    }
+  }
 }

@@ -10,7 +10,7 @@ module.exports = View.extend({
       <div class="row task-button" style="text-align:center;">
         <div class="col-xs-4">
           <button data-hook="fixed" class="btn btn-default">
-            <i class="icons icons-script fa fa-code"></i>
+            <i class="icons icons-script fa fa-chain"></i>
           </button>
           <h2>Fixed Value
             <span data-hook="script-help"></span>
@@ -18,7 +18,7 @@ module.exports = View.extend({
         </div>
         <div class="col-xs-4">
           <button data-hook="input" class="btn btn-default">
-            <i class="icons icons-scraper fa fa-cloud"></i>
+            <i class="icons icons-scraper fa fa-terminal"></i>
           </button>
           <h2>Text Input
             <span data-hook="webhook-help"></span>
@@ -26,7 +26,7 @@ module.exports = View.extend({
         </div>
         <div class="col-xs-4">
           <button data-hook="select" class="btn btn-default">
-            <i class="icons icons-scraper fa fa-cloud"></i>
+            <i class="icons icons-scraper fa fa-list-ol"></i>
           </button>
           <h2>Options Selection
             <span data-hook="webhook-help"></span>

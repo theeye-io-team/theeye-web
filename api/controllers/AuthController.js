@@ -57,8 +57,12 @@ var AuthController = {
 
     passport.updateLocalPassport(req, res, function(err)
     {
-      if(err)
+      if(err){
+        if(err.status == 400) {
+          return res.send(400, err.error.toString());
+        }
         return res.send(500, err.toString());
+      }
       else
         return res.send(200);
     });
@@ -172,7 +176,7 @@ var AuthController = {
       if(err)
         res.view({ errors: req.flash('error') });
       else
-        res.redirect ("/profile");
+        res.redirect ("/dashboard");
     });
   },
   //Link Between Accounts.
@@ -205,14 +209,6 @@ var AuthController = {
           } else return res.json(user);
         });
       }
-    });
-  },
-  inviteUser: function(req, res) {
-    return passport.inviteUser(req, res, function(err, user) {
-      if(err) {
-        sails.log.error(err);
-        return res.send(400, err);
-      } else return res.send(201);
     });
   },
   checkUsernameActivation (req, res) {

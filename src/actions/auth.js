@@ -201,48 +201,45 @@ module.exports = {
   providerLogin(provider) {
     window.location.replace('auth/'+provider)
   },
-  resetPassword(data) {
+  changePassword (userId, data) {
+    const body = Object.assign({},data)
+    body.id = userId
     App.state.loader.visible = true
 
     XHR.send({
-      url: `${config.app_url}/password/reset`,
-      method: 'put',
-      jsonData: data,
+      url: `/auth/local/update`,
+      method: 'post',
+      jsonData: body,
+      withCredentials: true,
       timeout: 5000,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
-      done (response,xhr) {
+      done: (response,xhr) => {
         App.state.loader.visible = false
-        App.navigate('login')
-        if (xhr.status == 200) {
+        if (xhr.status !== 200) {
           bootbox.alert({
-            message: 'Password reset successful.',
-            callback: () => {
-            }
+            title: 'Error',
+            message: 'Error changing password.'
           })
         } else {
           bootbox.alert({
-            message: 'Error, password reset token expired, try again.',
-            callback: () => {
-            }
+            title: 'Success',
+            message: 'Password updated.'
           })
         }
       },
-      fail (err,xhr) {
+      fail: (err,xhr) => {
         App.state.loader.visible = false
-        App.navigate('login')
         if (xhr.status == 400) {
           bootbox.alert({
-            message: xhr.response.body.error || 'Error, password reset token expired, try again.',
-            callback: () => {
-            }
+            title: 'Error',
+            message: 'Invalid current password.'
           })
         } else {
           bootbox.alert({
-            message: 'Error, please try again',
-            callback: () => {
-            }
+            title: 'Error',
+            message: 'Error changing password.'
           })
         }
       }

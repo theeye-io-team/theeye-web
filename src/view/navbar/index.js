@@ -206,10 +206,6 @@ const Menu = View.extend({
         container.appendChild( html2dom(`<li><a href="/admin/user" class="eyemenu-icon eyemenu-users"> Users </a></li>`))
         container.appendChild( html2dom(`<li><a href="/admin/customer" class="eyemenu-icon eyemenu-organizations"> Organizations </a></li>`))
       }
-
-      if (Acls.hasAccessLevel('admin')) {
-        //container.appendChild( html2dom(`<li><a data-hook="settings-menu" class="eyemenu-icon eyemenu-templates"> Features </a></li>`))
-      }
     }
 
     // on window resize recalculate links container height
@@ -271,6 +267,7 @@ const Menu = View.extend({
   },
   renderSettingsMenu () {
     this.settings = new SettingsMenu()
+    this.registerSubview(this.settings)
   }
 })
 

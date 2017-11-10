@@ -77,7 +77,8 @@
   font-style: italic;
 }
 .settings-page .email {
-  margin-left: 15%;
+  color: #a09b9b;
+  display: block;
 }
 .settings-page .circle {
   display: inline-block;
@@ -113,8 +114,8 @@
 }
 .settings-page .header {
   height: 80px;
-  background: #606060;
-  color: #fff;
+  background: #23324C;
+  color: #FAFAFA;
   position: fixed;
   top: 0;
   left: 0;
@@ -127,8 +128,7 @@
 .settings-page .panel-right {
   padding-top: 120px!important;
   padding-bottom: 80px!important;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 .settings-page .panel-left {
   box-shadow: 8px 0 8px #eee;
@@ -189,6 +189,9 @@
   border-bottom: 1px solid #ddd;
   padding: 10px 0;
   margin-left: 0;
+}
+.settings-page .row.border:last-of-type{
+  border-bottom: none;
 }
 .settings-page .row.border.social {
   padding: 15px 0;
@@ -343,4 +346,25 @@
   position:absolute;
   right:30px;
   cursor:pointer;
+}
+
+.settings-page .row.input-row {
+  margin-bottom: 5px;
+}
+
+.settings-container {
+  z-index: 1030;
+}
+
+.settings-page .action-icons span{
+  cursor: pointer;
+  margin-left: 20px;
+}
+
+.settings-page .action-icons i{
+  font-size: 25px;
+}
+
+.settings-page .input-group .form-control {
+  z-index: 1;
 }

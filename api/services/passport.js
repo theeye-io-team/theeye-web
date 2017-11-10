@@ -301,8 +301,6 @@ passport.sendUserActivationEmail = function (inviter, invitee, next){
 }
 
 passport.inviteUser = function(req, res, next) {
-  var supervisor = req.supervisor;
-
   return this.protocols.local.inviteToCustomer(
     req, res, function(err, invitee) {
       if(err) return next(err);

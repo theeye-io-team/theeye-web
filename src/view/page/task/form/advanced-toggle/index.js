@@ -15,6 +15,9 @@ module.exports = View.extend({
     onclick: 'any',
     name: ['string',false,'advanced-toggler']
   },
+  session: {
+    valid: ['boolean',false,true]
+  },
   events: {
     'click': function (event) {
       if (this.onclick) this.onclick(event)

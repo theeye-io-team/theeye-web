@@ -121,5 +121,24 @@ module.exports = {
       }
     });
     modal.hide()
+  },
+  updateConfig: function(id, config){
+    App.state.loader.visible = true
+
+    var customer = new Customer({ id: id })
+
+    customer.set({config: config})
+    customer.save({},{
+      collection: App.state.customers,
+      success: function(){
+        App.state.loader.visible = false
+        bootbox.alert('Integrations updated.',function(){ });
+        App.state.session.customer.config = customer.config
+      },
+      error: function(err) {
+        App.state.loader.visible = false
+        bootbox.alert('Error updating integrations.',function(){ });
+      }
+    })
   }
 }
