@@ -21,14 +21,15 @@ const Schema = AppModel.extend({
 		user_id: 'string',
 		customer_id: 'string',
 		public: 'boolean',
-		tags: 'array',
 		name: 'string',
 		description: ['string',false,''],
 		acl: 'array',
 		secret: 'string',
 		grace_time: 'number',
 		type: 'string',
-		triggers: 'array',
+    // empty tags and triggers
+		tags: ['array',false, () => { return [] }],
+		triggers: ['array',false, () => { return [] }],
     //_id: 'string',
     _type: 'string' // discriminator
 	},
@@ -38,9 +39,13 @@ const Schema = AppModel.extend({
 	},
   serialize (options) {
     var serial = AppModel.prototype.serialize.call(this,options)
-    serial.triggers = this.triggers.map( trigger => {
-      return trigger ? trigger.id : null
-    })
+    if (!this.triggers) {
+      serial.triggers = []
+    } else {
+      serial.triggers = this.triggers.map( trigger => {
+        return trigger ? trigger.id : null
+      })
+    }
 
     return serial
   }

@@ -80,6 +80,8 @@ const Model = AppModel.extend({
     summary: {
       deps: ['emitter'],
       fn () {
+        if (!this.emitter) return 'Event definition error'
+
         let eventName = this.name
         let emitterType = this.emitter._type
         let summary
@@ -131,6 +133,8 @@ const Model = AppModel.extend({
     displayable: {
       deps: ['emitter','name'],
       fn () {
+        if (!this.emitter) return false
+
         let eventName = this.name
         let emitterType = this.emitter._type
         if (emitterType === EMITTER.WEBHOOK) {
