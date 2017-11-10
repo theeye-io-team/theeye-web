@@ -68,7 +68,8 @@ const Model = AppModel.extend({
     last_update: 'date',
     enable: 'boolean',
     secret: 'string',
-    customer_id: 'string'
+    customer_id: 'string',
+    _type: 'string' // schema internal type
   },
   derived: {
     emitter_type: {
