@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import State from  'ampersand-state'
 import SessionActions from 'actions/session'
 import bootbox from 'bootbox'
