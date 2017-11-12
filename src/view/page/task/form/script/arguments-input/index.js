@@ -7,6 +7,14 @@ import ArgumentView from './argument'
 import Collection from 'ampersand-collection'
 import { DinamicArgument as ScriptArgument } from 'models/task/dinamic-argument'
 import FIELD from 'constants/field'
+import HelpIcon from 'components/help-icon'
+
+//const ArgumentsCollection = Collection.extend({
+//  //mainIndex: 'id',
+//  //indexes: ['order'],
+//  model: ScriptArgument,
+//  comparator: 'order'
+//})
 
 module.exports = View.extend({
   template: `
@@ -19,7 +27,17 @@ module.exports = View.extend({
             class="btn btn-default"> Add arguments <i class="fa fa-plus"></i>
           </button>
         </div>
-  			<ul class="list-group"></ul>
+  			<ul class="list-group">
+          <li class="list-group-item">
+            <div class="row">
+              <span data-hook="order-row-header" class="col-xs-2">#</span>
+              <span class="col-xs-2">Label</span>
+              <span class="col-xs-2">Type</span>
+              <span class="col-xs-3">Value</span>
+              <span class="col-xs-3"></span>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
   `,
@@ -35,7 +53,11 @@ module.exports = View.extend({
   },
   initialize (options) {
     // copy collection
-    this.scriptArguments = new Collection(options.value.serialize(), { model: ScriptArgument })
+    this.scriptArguments = new Collection(options.value.serialize(), {
+      parent: this,
+      model: ScriptArgument,
+      comparator: 'order'
+    })
     View.prototype.initialize.apply(this,arguments)
   },
   events: {
@@ -58,19 +80,7 @@ module.exports = View.extend({
       modal.remove()
     })
 
-    this.listenTo(creator,'added',(argument) => {
-      // fixed arguments does not has a label
-      argument.id = this.scriptArguments.length
-      argument.order = this.scriptArguments.length
-
-      if (argument.type===FIELD.TYPE_FIXED) {
-        argument.label = `FixedArg${this.scriptArguments.length}`
-        argument.readonly = true
-      }
-
-      this.scriptArguments.add(argument)
-      this.trigger('change:scriptArguments')
-    })
+    this.listenTo(creator,'added',this.onArgumentAdded)
 
     modal.show()
 
@@ -84,6 +94,40 @@ module.exports = View.extend({
       ArgumentView,
       this.query('ul')
     )
+
+    // when model removed change all arguments order to its new index
+    this.listenTo(this.scriptArguments,'remove',this.onArgumentRemoved)
+
+    this.renderSubview(
+      new HelpIcon({
+        text: 'Click argument order to swap'
+      }),
+      this.queryByHook('order-row-header')
+    )
+  },
+  onArgumentRemoved (argument) {
+    this.scriptArguments.models.forEach((arg,index) => {
+      arg.order = index
+    })
+  },
+  onArgumentAdded (argument) {
+    // get the last id + 1
+    if (this.scriptArguments.length===0) {
+      argument.id = 1
+    } else {
+      argument.id = this.scriptArguments.models[ this.scriptArguments.length - 1 ].id + 1
+    }
+
+    argument.order = this.scriptArguments.length
+
+    // fixed arguments does not has a label
+    if (argument.type===FIELD.TYPE_FIXED) {
+      argument.label = `FixedArg${this.scriptArguments.length}`
+      argument.readonly = true
+    }
+
+    this.scriptArguments.add(argument)
+    this.trigger('change:scriptArguments')
   },
   /**
    * @param {Mixed} value array of objects/models or a collection
@@ -102,7 +146,12 @@ module.exports = View.extend({
       cache: false,
       deps: ['scriptArguments'],
       fn () {
-        return this.scriptArguments.map(arg => arg.serialize())
+        return this.scriptArguments.map(arg => {
+          // remap id to current order
+          let data = arg.serialize()
+          data.id = data.order
+          return data
+        })
       }
     }
   }

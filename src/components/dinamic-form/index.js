@@ -49,7 +49,7 @@ module.exports = FormView.extend({
             required: spec.required,
             idAttribute: 'id',
             textAttribute: 'label',
-            styles: 'form-group',
+            //styles: 'form-group',
             unselectedText: `Select a ${spec.label}`,
             requiredMessage: 'Selection required',
             invalidClass: 'text-danger',
@@ -72,7 +72,9 @@ module.exports = FormView.extend({
     }
   },
   focus () {
-    this.query('input').focus()
+    const eles = this.queryAll('.form-control')
+    if (eles.length==0) return
+    eles[0].focus()
   },
   render () {
     FormView.prototype.render.apply(this, arguments)
