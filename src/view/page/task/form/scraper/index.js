@@ -104,11 +104,11 @@ module.exports = FormView.extend({
       hostsSelection ,
       new InputView({
         label: 'URL *',
-        name: 'url',
+        name: 'remote_url',
         required: true,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        value: this.model.url,
+        value: this.model.remote_url,
         tests: [
           function (value) {
             if (!isURL(value)) {
@@ -271,7 +271,7 @@ module.exports = FormView.extend({
     this.addHelpIcon('description')
     this.addHelpIcon('tags')
     this.addHelpIcon('method')
-    this.addHelpIcon('url')
+    this.addHelpIcon('remote_url')
     this.addHelpIcon('json')
     this.addHelpIcon('body')
     this.addHelpIcon('grace_time')
@@ -309,7 +309,7 @@ module.exports = FormView.extend({
     if (!this.model.isNew()) {
       TaskActions.update(this.model.id, data)
     } else {
-      TaskActions.create(data)
+      TaskActions.createMany(data.hosts, data)
     }
     this.trigger('submit')
     next(null,true)
@@ -326,7 +326,7 @@ module.exports = FormView.extend({
   setWithTask (task) {
     this.setValues({
       name: task.name,
-      url: task.url,
+      remote_url: task.remote_url,
       description: task.description,
       tags: task.tags,
       method: task.method,

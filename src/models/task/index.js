@@ -78,9 +78,9 @@ const Scraper = ScraperTemplate.extend({
   derived: {
     formatted_tags: formattedTags(),
     canExecute: {
-      deps: ['url','host_id'],
+      deps: ['remote_url','host_id'],
       fn () {
-        const url = this.url || ''
+        const url = this.remote_url || ''
 
         const isurl = /localhost/.test(url) || isURL(url, {
           protocols: ['http','https'],

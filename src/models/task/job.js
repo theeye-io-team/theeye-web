@@ -41,6 +41,40 @@ const BaseJob = State.extend({
 
 const ScraperJobResult = State.extend({
   props: {
+    message: 'string',
+    response: ['object',false,() => { return {} }]
+  },
+  derived: {
+    headers: {
+      deps: ['response'],
+      fn () {
+        const headers = this.response.headers
+        if (!headers || Object.prototype.toString.call(headers) !== '[object Object]')
+          return []
+
+        return Object.keys(headers).map(key => {
+          return { name: key, value: headers[key] }
+        })
+      }
+    },
+    chuncked: {
+      deps: ['response'],
+      fn () {
+        return this.response.chuncked || false
+      }
+    },
+    body: {
+      deps: ['response'],
+      fn () {
+        return this.response.body
+      }
+    },
+    status_code: {
+      deps: ['response'],
+      fn () {
+        return this.response.status_code
+      }
+    }
   }
 })
 

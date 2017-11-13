@@ -104,7 +104,7 @@ const OptionView = View.extend({
     this.idInputView = new SimpleInputView({
       name: 'value',
       value: this.model.id,
-      placeholder: 'ID',
+      placeholder: 'Value',
       required: true
     })
     this.renderSubview( this.idInputView, this.queryByHook('id') )

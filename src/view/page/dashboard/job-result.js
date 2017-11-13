@@ -1,6 +1,8 @@
 'use strict'
 
 import View from 'ampersand-view'
+import State from 'ampersand-state'
+import Collection from 'ampersand-collection'
 import Modalizer from 'components/modalizer'
 import moment from 'moment'
 
@@ -42,11 +44,66 @@ const ScriptJobResult = View.extend({
   }
 })
 
+const Header = State.extend({
+  props: {
+    value: 'string',
+    name: 'string'
+  }
+})
+const HeaderView = View.extend({
+  template: `
+    <div>
+      <b data-hook="name"></b>: <i data-hook="value"></i>
+    </div>
+  `,
+  bindings: {
+    'model.name': { hook: 'name' },
+    'model.value': { hook: 'value' }
+  }
+})
+
 const ScraperJobResult = View.extend({
   props: {
-    result: 'state'
+    result: 'state',
   },
-  template: `<div></div>`
+  template: `
+    <div style='overflow:scroll;max-height: 500px;'>
+      <h2>Remote reponse</h2>
+      <table class="table table-striped">
+        <thead>
+        </thead>
+        <tbody>
+          <tr><td>Message</td><td><i data-hook="message"></i></td></tr>
+          <tr><td>Status Code</td><td><i data-hook="status_code"></i></td></tr>
+          <tr><td>Body</td><td><i data-hook="body"></i></td></tr>
+          <tr><td>Headers</td><td data-hook="headers"></td></tr>
+        </tbody>
+      </table>
+    </div>
+  `,
+  bindings: {
+    'result.status_code': { hook: 'status_code' },
+    'result.message': { hook: 'message' },
+    'result.body': { hook: 'body' },
+  },
+  initialize () {
+    View.prototype.initialize.apply(this,arguments)
+
+    this.collection = new Collection(this.result.headers, { model: Header })
+
+    this.listenTo(this.result, 'change:headers', () => {
+      this.collection.reset( this.result.headers )
+    })
+  },
+  render () {
+    this.renderWithTemplate(this)
+
+    this.renderCollection(
+      this.collection,
+      HeaderView,
+      this.queryByHook('headers')
+    )
+  }
 })
 
 const JobView = View.extend({

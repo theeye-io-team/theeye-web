@@ -129,7 +129,7 @@ const ScraperCollapsedContent = View.extend({
           <tbody>
             <tr>
               <td></td>
-              <td><span data-hook="url"></span></td>
+              <td><span data-hook="remote_url"></span></td>
               <td><span data-hook="method"></span></td>
               <td><span data-hook="timeout"></span></td>
               <td><span data-hook="status_code"></span></td>
@@ -156,7 +156,7 @@ const ScraperCollapsedContent = View.extend({
   },
   bindings: {
     'model.hostname': { hook: 'hostname' },
-    'model.url': { hook: 'url' },
+    'model.remote_url': { hook: 'remote_url' },
     'model.method': { hook: 'method' },
     'model.status_code': { hook: 'status_code' },
     timeout: { hook: 'timeout' },

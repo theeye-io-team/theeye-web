@@ -11,7 +11,6 @@ module.exports = {
   looptime: 'This is the check interval in minutes. The shorter the interval you choose, the more CPU and resource will consume.',
   description: 'We recomend to use a descriptions to improve teamwork and problem solving.',
   scripts: 'Select the script it has to execute.',
-  script_runas: 'Execute the selected script using a different username. You have to use \'%script%\' in the place where the script has to be included. This "keyword" will be replaced during execution with the real script path. This is the perfect place to use "sudo". Windows users, requires to mimic this action putting the password for the first time.',
   script_arguments: 'Put here a comma separated list of arguments.',
   host: 'Where it has to run?',
   tags: 'To help you find your resources quickly.',
@@ -37,7 +36,7 @@ module.exports = {
       tags: 'Adding Tags will help to search and group',
       timeout: 'How much time to wait the server\'s response before giving up. Default is 5 seconds.',
       method: 'The HTTP request Method.',
-      url: 'The remote API URL you want to call. Sometimes it is required to endcode it.',
+      remote_url: 'The remote API URL you want to call. Sometimes it is required to endcode it.',
       body: 'Here can add body parameters to the request. Only available for POST and PUT methods. Default is GET',
       gzip: 'Include the request header \'Accept-Encoding: gzip\'. This will improve transfer speed and bandwidth usage. Default is true.',
       json: 'Include the request header \'Content-type: application/json\'. Additionally, parses the response body as JSON. Default is false.',
@@ -47,7 +46,8 @@ module.exports = {
       triggers: triggers,
       grace_time: grace_time,
       taskArguments: 'Task arguments',
-      copy_task: 'Select the task you want to copy from'
+      copy_task: 'Select the task you want to copy from',
+      script_runas: 'Execute the selected script using a different username. You have to use \'%script%\' in the place where the script has to be included. This "keyword" will be replaced during execution with the real script path. This is the perfect place to use "sudo". Windows users, requires to mimic this action putting the password for the first time.',
     },
   },
   file: {

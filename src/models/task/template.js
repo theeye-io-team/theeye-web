@@ -8,7 +8,6 @@ const Script = require('models/file/script').Model
 const Events = require('models/event').Collection
 const config = require('config')
 
-//const urlRoot = `${config.api_url}/task-template`
 const TaskArguments = AmpersandCollection.extend({
   mainIndex: 'id',
   indexes: ['label','order'],
@@ -113,7 +112,6 @@ const ScriptTask = Schema.extend({
     }
     return attrs
   },
-  //urlRoot: urlRoot,
 	props: {
 		script_id: 'string',
     // this attribute comes from the server and need to be filtered and parsed
@@ -139,13 +137,13 @@ const ScriptTask = Schema.extend({
 })
 
 const ScraperTask = Schema.extend({
-  //urlRoot: urlRoot,
   initialize () {
     Schema.prototype.initialize.apply(this,arguments)
     this.type = 'scraper'
   },
   props: {
-    url: 'string',
+    //url: 'string', /// WARNING !!! replace server url to scraper_url
+    remote_url: 'string',
     method: 'string',
     body: 'string',
     parser: 'string',
@@ -155,10 +153,19 @@ const ScraperTask = Schema.extend({
     status_code: 'number',
     timeout: 'number',
   },
+  parse (args) {
+    args.remote_url = args.url
+    delete args.url
+    return args
+  },
+  serialize () {
+    let data = Schema.prototype.serialize.apply(this,arguments)
+    data.url = data.remote_url
+    return data
+  }
 })
 
 const Collection = AppCollection.extend({
-  //url: urlRoot,
   model: function (attrs, options) {
     if ( /ScraperTaskTemplate/.test(attrs._type) === true ) {
       return new ScraperTask(attrs,options)
