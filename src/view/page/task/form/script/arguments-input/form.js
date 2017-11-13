@@ -251,6 +251,9 @@ const SelectOptionsView = View.extend({
   beforeSubmit () {
     this.optionViews.views.forEach(opt => opt.beforeSubmit())
     this.runTests()
+  },
+  reset () {
+    this.options.reset([])
   }
 })
 

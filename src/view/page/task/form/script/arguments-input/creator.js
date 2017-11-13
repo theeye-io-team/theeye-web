@@ -90,6 +90,7 @@ module.exports = View.extend({
     form.focus()
     this.listenTo(form,'submit',() => { // form submit event
       this.trigger('added',form.data)
+      form.reset()
     })
     this.form = form
   },
