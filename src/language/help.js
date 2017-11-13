@@ -2,6 +2,11 @@
  * @namespace Language
  * @module En/Help
  */
+
+const acl = 'Add permissions to specific users (or emails) that will be able to execute this task and receive notifications.'
+const triggers = 'Select a task, monitor or webhook event that will trigger this task automagically.'
+const grace_time = 'If you select to Trigger with an event, you can choose a grace time to delay the execution of this action and have some time to cancel it via email if necessary.'
+
 module.exports = {
   looptime: 'This is the check interval in minutes. The shorter the interval you choose, the more CPU and resource will consume.',
   description: 'We recomend to use a descriptions to improve teamwork and problem solving.',
@@ -10,8 +15,8 @@ module.exports = {
   script_arguments: 'Put here a comma separated list of arguments.',
   host: 'Where it has to run?',
   tags: 'To help you find your resources quickly.',
-  triggers: 'Select a task, monitor or webhook event that will trigger this task automagically.',
-  acls: 'Add permissions to specific users (or emails) that will be able to execute this task and receive notifications.',
+  acls: acl,
+  triggers: triggers,
   severity: 'You can set a severity to this monitor, which can be LOW, HIGH or CRITICAL.',
   monitor: {
     name: 'Give this monitor a name',
@@ -27,9 +32,9 @@ module.exports = {
       name: 'Give this task a name',
       description: 'A description',
       host_id: 'A registered host',
+      hosts: 'One or more hosts can be selected',
       script_id: 'Scripts are sets of instructions writen in a programming language to achive something automatically',
       tags: 'Adding Tags will help to search and group',
-      grace_time: 'If you select to Trigger with an event, you can choose a grace time to delay the execution of this action and have some time to cancel it via email if necessary.',
       timeout: 'How much time to wait the server\'s response before giving up. Default is 5 seconds.',
       method: 'The HTTP request Method.',
       url: 'The remote API URL you want to call. Sometimes it is required to endcode it.',
@@ -38,8 +43,12 @@ module.exports = {
       json: 'Include the request header \'Content-type: application/json\'. Additionally, parses the response body as JSON. Default is false.',
       status_code: 'The response status code to consider the request success. Regular Expressions can be used. e.g. \'2[0-9][0-9]\' to match the group of 2XX status codes. Default value is 200.',
       pattern: 'Useful for matching a string or regular expression againts the HTTP response.',
+      acl: acl,
+      triggers: triggers,
+      grace_time: grace_time,
+      taskArguments: 'Task arguments',
+      copy_task: 'Select the task you want to copy from'
     },
-    copy: 'Select the task you want to copy from'
   },
   file: {
     path: 'The full path to put the file in',

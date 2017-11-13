@@ -169,11 +169,21 @@ module.exports = FormView.extend({
     FormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
+    if (this.model.isNew()) {
+      this.addHelpIcon('hosts')
+      this.addHelpIcon('copy_task')
+    } else {
+      this.addHelpIcon('host_id')
+    }
     this.addHelpIcon('name')
     this.addHelpIcon('description')
-    this.addHelpIcon('host_id')
     this.addHelpIcon('tags')
-    this.addHelpIcon('runas')
+    this.addHelpIcon('script_runas')
+    this.addHelpIcon('script_id')
+    this.addHelpIcon('acl')
+    this.addHelpIcon('triggers')
+    this.addHelpIcon('grace_time')
+    this.addHelpIcon('taskArguments')
 
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)

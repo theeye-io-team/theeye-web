@@ -36,7 +36,7 @@ module.exports = FormView.extend({
       tags: isNewTask,
       options: App.state.hosts,
       value: this.model.host_id,
-      required: false,
+      required: true,
       unselectedText: 'select a host',
       idAttribute: 'id',
       textAttribute: 'hostname',
@@ -165,7 +165,7 @@ module.exports = FormView.extend({
             text: method
           }
         }),
-        value: this.model.method,
+        value: this.model.method || 'GET',
         required: false,
         unselectedText: 'Select the HTTP method',
         invalidClass: 'text-danger',
@@ -177,7 +177,7 @@ module.exports = FormView.extend({
         visible: false,
         label: 'Use HTTP Compression',
         name: 'gzip',
-        value: this.model.gzip
+        value: this.model.gzip || true
       }),
       new SelectView({
         label: 'Req. Timeout',
@@ -191,7 +191,7 @@ module.exports = FormView.extend({
             text: time.text
           }
         }),
-        value: this.model.timeout,
+        value: this.model.timeout || 5000,
         required: false,
         unselectedText: 'Select the Req. Timeout',
         invalidClass: 'text-danger',
@@ -222,7 +222,7 @@ module.exports = FormView.extend({
         required: false,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        value: this.model.status_code,
+        value: this.model.status_code || 200,
         tests: [
           function (value) {
             let num = Number(value)
@@ -261,16 +261,26 @@ module.exports = FormView.extend({
     FormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
+    if (this.model.isNew()) {
+      this.addHelpIcon('hosts')
+      this.addHelpIcon('copy_task')
+    } else {
+      this.addHelpIcon('host_id')
+    }
     this.addHelpIcon('name')
     this.addHelpIcon('description')
-    this.addHelpIcon('host_id')
     this.addHelpIcon('tags')
     this.addHelpIcon('method')
     this.addHelpIcon('url')
+    this.addHelpIcon('json')
+    this.addHelpIcon('body')
     this.addHelpIcon('grace_time')
     this.addHelpIcon('timeout')
     this.addHelpIcon('status_code')
     this.addHelpIcon('pattern')
+    this.addHelpIcon('acl')
+    this.addHelpIcon('triggers')
+    this.addHelpIcon('gzip')
 
     const buttons = new Buttons()
     this.renderSubview(buttons)
