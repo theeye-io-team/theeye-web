@@ -7,7 +7,7 @@ const GenericCollapsedContent = View.extend({
   template: `<div>no definition</div>`,
   props: {
     monitor: 'state',
-    resource: 'state' 
+    resource: 'state'
   },
   bindings: {
     'monitor.host.hostname': { hook: 'hostname' },
@@ -42,7 +42,7 @@ const bindings = GenericCollapsedContent.prototype.bindings
 
 const ScraperCollapsedContent = GenericCollapsedContent.extend({
   template: `
-    <div>
+    <div class="task-container">
       <p>This monitor is executed on <i data-hook="hostname"></i> every <i data-hook="interval"></i></p>
       <i data-hook="description"></i>
       <h4>Request details</h4>
@@ -103,7 +103,7 @@ const ScraperCollapsedContent = GenericCollapsedContent.extend({
 
 const ProcessCollapsedContent = GenericCollapsedContent.extend({
   template: `
-    <div>
+    <div class="task-container">
       <p>This monitor is executed on <i data-hook="hostname"></i> every <i data-hook="interval"></i></p>
       <i data-hook="description"></i>
       <h4>Process details</h4>
@@ -150,7 +150,7 @@ const ProcessCollapsedContent = GenericCollapsedContent.extend({
 
 const ScriptCollapsedContent = GenericCollapsedContent.extend({
   template: `
-    <div>
+    <div class="task-container">
       <p>This monitor is executed on <i data-hook="hostname"></i> every <i data-hook="interval"></i></p>
       <i data-hook="description"></i>
       <h4>Script details</h4>
@@ -239,7 +239,7 @@ const ScriptCollapsedContent = GenericCollapsedContent.extend({
 
 const FileCollapsedContent =  GenericCollapsedContent.extend({
   template: `
-    <div>
+    <div class="task-container">
       <p>This monitor is executed on <i data-hook="hostname"></i> every <i data-hook="interval"></i></p>
       <i data-hook="description"></i>
       <h4>File details</h4>
@@ -330,12 +330,12 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
     </div>
   `,
   bindings: Object.assign({}, bindings, {
-    'host.stateIcon': { 
+    'host.stateIcon': {
       hook: 'host_state',
       type: 'attribute',
       name: 'class'
     },
-    'dstat.stateIcon': { 
+    'dstat.stateIcon': {
       hook: 'dstat_state',
       type: 'attribute',
       name: 'class'

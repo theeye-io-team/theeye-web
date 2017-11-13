@@ -297,7 +297,8 @@ h3.light { color: #EEE}
       -ms-transition: background-color 300ms linear;
           transition: background-color 300ms linear}
 .admin-container .panel-default.panelActive>.panel-heading {background:#212F48;border-bottom:1px dotted #aaa}
-.admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body {border:none;color:#fff;background:#23324C;overflow-x: scroll; width: 100%;}
+.admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body {border:none;color:#fff;background:#23324C; width: 100%;}
+.admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body>.task-container {overflow-x: scroll}
 .admin-container .panel-default .panel-title-content {min-height:50px; padding:10px;}
 .admin-container .panel-collapse .btn-stats { float:right; margin-top:-12px; }
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body .fields {width:100%;clear:both;}

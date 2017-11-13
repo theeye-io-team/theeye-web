@@ -30,7 +30,7 @@ const TaskButtonsView = View.extend({
 
         const isCompleted = (lifecycle) => {
           return [
-            LIFECYCLE.COMPLETED, 
+            LIFECYCLE.COMPLETED,
             LIFECYCLE.TERMINATED,
             LIFECYCLE.FINISHED,
           ].indexOf(lifecycle) !== -1
@@ -111,7 +111,7 @@ const TaskButtonsView = View.extend({
 
 const ScraperCollapsedContent = View.extend({
   template: `
-    <div>
+    <div class="task-container">
       <h4>This task is assigned to '<i data-hook="hostname"></i>'</h4>
       <p class="text-block" data-hook="description">no description</p>
       <h4>Request details</h4>
@@ -166,7 +166,7 @@ const ScraperCollapsedContent = View.extend({
 
 const ScriptCollapsedContent = View.extend({
   template: `
-    <div>
+    <div class="task-container">
       <h4>This task is assigned to '<i data-hook="hostname"></i>'</h4>
       <p class="text-block" data-hook="description">no description</p>
       <h4>Script details</h4>
@@ -318,10 +318,10 @@ module.exports = View.extend({
   events: {
     'click .collapsed[data-hook=collapse-toggle]': 'onClickToggleCollapse'
   },
-  // capture and handle collapse event 
+  // capture and handle collapse event
   onClickToggleCollapse (event) {
     TaskActions.populate(this.model)
-    return 
+    return
   },
   render () {
     this.renderWithTemplate()
