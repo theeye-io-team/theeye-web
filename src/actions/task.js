@@ -13,8 +13,9 @@ const logger = require('lib/logger')('actions:tasks')
 module.exports = {
   update (id, data) {
     let task = App.state.tasks.get(id)
+    task.taskArguments.reset([])
     task.set(data)
-    task.taskArguments.reset(data.taskArguments)
+    //task.taskArguments.reset(data.taskArguments)
     task.save({},{
       success: () => {
         bootbox.alert('Task Updated')
@@ -23,23 +24,6 @@ module.exports = {
         bootbox.alert('Something goes wrong updating the Task')
       }
     })
-    //XHR.send({
-    //  url: `${task.urlRoot}/${id}`,
-    //  method: 'PUT',
-    //  jsonData: task.serialize(),
-    //  timeout: 5000,
-    //  withCredentials: true,
-    //  headers: {
-    //    Accept: 'application/json;charset=UTF-8'
-    //  },
-    //  done: (response,xhr) => {
-    //    bootbox.alert('Task Updated')
-    //    App.state.tasks.get(task.id).set(response)
-    //  },
-    //  error: (response,xhr) => {
-    //    bootbox.alert('Something goes wrong')
-    //  },
-    //})
   },
   /**
    * @param {MongoID[]} hosts

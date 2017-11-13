@@ -115,7 +115,10 @@ module.exports = View.extend({
     if (this.scriptArguments.length===0) {
       argument.id = 1
     } else {
-      argument.id = this.scriptArguments.models[ this.scriptArguments.length - 1 ].id + 1
+      // scriptArguments is not sorted by id
+      argument.id = this.scriptArguments.reduce((max,arg) => {
+        return (arg.id>=max) ? arg.id : max
+      },1) + 1 // starting from id 1 , get the last + 1
     }
 
     argument.order = this.scriptArguments.length
@@ -126,7 +129,7 @@ module.exports = View.extend({
       argument.readonly = true
     }
 
-    this.scriptArguments.add(argument)
+    this.scriptArguments.add( new ScriptArgument(argument) )
     this.trigger('change:scriptArguments')
   },
   /**
@@ -146,12 +149,7 @@ module.exports = View.extend({
       cache: false,
       deps: ['scriptArguments'],
       fn () {
-        return this.scriptArguments.map(arg => {
-          // remap id to current order
-          let data = arg.serialize()
-          data.id = data.order
-          return data
-        })
+        return this.scriptArguments.map(arg => arg.serialize())
       }
     }
   }

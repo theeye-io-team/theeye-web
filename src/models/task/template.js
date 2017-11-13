@@ -10,7 +10,8 @@ const config = require('config')
 
 //const urlRoot = `${config.api_url}/task-template`
 const TaskArguments = AmpersandCollection.extend({
-  indexes: ['label'],
+  mainIndex: 'id',
+  indexes: ['label','order'],
   model: DinamicArgument
 })
 
