@@ -241,6 +241,8 @@ exports.inviteToCustomer = function (req, res, next) {
                 }
               }
             );
+          } else {
+            return next(null, users[0], false);
           }
         }
       );
