@@ -215,6 +215,7 @@ module.exports = View.extend({
         // items are treated as plain objects
         if (items.length>0) {
           data = items.map(item => {
+            if (!item) return ''
             if (typeof item == 'string') {
               return item
             }

@@ -42,9 +42,7 @@ const Schema = AppModel.extend({
     if (!this.triggers) {
       serial.triggers = []
     } else {
-      serial.triggers = this.triggers.map( trigger => {
-        return trigger ? trigger.id : null
-      })
+      serial.triggers = this.triggers
     }
 
     return serial
