@@ -5,13 +5,13 @@ import SelectView from 'ampersand-select-view'
 module.exports = View.extend({
   template: `
     <li class="list-group-item">
-      <div class="row">
-        <span class="col-xs-2" data-hook="order"></span>
-        <span class="col-xs-2" data-hook="label"></span>
+      <div class="row" style="line-height: 30px;">
+        <span class="col-xs-1" data-hook="order"></span>
         <span class="col-xs-2" data-hook="type"></span>
+        <span class="col-xs-4" data-hook="label"></span>
         <span class="col-xs-3" data-hook="value"></span>
-        <span class="col-xs-3">
-          <div class="fright">
+        <span>
+          <div class="fright" style="padding-right:8px;">
             <button class="btn btn-default btn-sm" data-hook="edit-script-argument">
               <i class="fa fa-edit"></i>
             </button>

@@ -52,17 +52,17 @@
   outline: none;
 }
 
-/**
- *
- * commented on merge
- *
 @media (min-width: 768px) {
-  .modal-dialog {
+  .modalizer .modal-dialog {
     width: 80%;
     margin: 30px auto;
   }
 }
 
+/**
+ *
+ * commented on merge
+ *
 .bootbox-body{
 
 }

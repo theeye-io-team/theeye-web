@@ -29,12 +29,12 @@ module.exports = View.extend({
         </div>
   			<ul class="list-group">
           <li class="list-group-item">
-            <div class="row">
-              <span data-hook="order-row-header" class="col-xs-2">#</span>
-              <span class="col-xs-2">Label</span>
+            <div class="row" style="line-height: 30px;">
+              <span data-hook="order-row-header" class="col-xs-1">#</span>
               <span class="col-xs-2">Type</span>
+              <span class="col-xs-4">Label</span>
               <span class="col-xs-3">Value</span>
-              <span class="col-xs-3"></span>
+              <span></span>
             </div>
           </li>
         </ul>
