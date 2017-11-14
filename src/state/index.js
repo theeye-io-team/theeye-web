@@ -1,5 +1,5 @@
 import AmpersandState from 'ampersand-state'
-import AmpersandCollection from 'ampersand-collection'
+import Collection from 'ampersand-collection'
 import uriFragment from 'lib/uri-fragment'
 import { Collection as Webhooks } from 'models/webhook'
 import { Collection as HostGroups } from 'models/hostgroup'
@@ -23,6 +23,28 @@ import NavbarState from './navbar'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
+const credentials = [
+  { order: 1, id: 'viewer', name: 'viewer', description: 'Viewer' },
+  { order: 2, id: 'user', name: 'user', description: 'User' },
+  { order: 3, id: 'manager', name: 'manager', description: 'Manager' },
+  { order: 4, id: 'admin', name: 'admin', description: 'Admin' },
+  { order: 5, id: 'owner', name: 'owner', description: 'Owner' }
+]
+
+const CredentialsCollection = Collection.extend({
+  reset (models) {
+    const reset = Collection.prototype.reset
+    if (!models) {
+      reset.call(this, credentials) // reset to original state
+    } else {
+      reset.call(this, models)
+    }
+  },
+  clear () {
+    this.reset([])
+  }
+})
+
 const AppState = State.extend({
   //
   // BEWARE!! only use AppState.props to register
@@ -45,26 +67,29 @@ const AppState = State.extend({
     this.loader = new LoaderState()
     this.session = new SessionState()
     this.navbar = new NavbarState()
+    this.credentials = new CredentialsCollection()
 
     _initCollections.call(this)
 
-    this.session.on('change:logged_in',() => {
+    const resetCredentialsCollection = () => {
       if (this.session.logged_in===undefined) {
         return
+      } else if (this.session.logged_in===false) {
+        this.credentials.clear() // empty
+      } else if (this.session.logged_in===true) {
+        this.credentials.reset() // reset to default
       }
-      else if (this.session.logged_in===false) {
-        this.credentials.reset()
-      }
-      else if (this.session.logged_in===true) {
-        this.credentials.reset(credentials)
+    }
 
-        if (this.session.user.credential === 'root') {
-          this.credentials.add({
-            id: 'root',
-            name: 'root',
-            description: 'Root'
-          })
-        }
+    this.session.on('change:logged_in', resetCredentialsCollection)
+
+    this.credentials.on('reset',() => {
+      if (this.session.user.credential === 'root') {
+        this.credentials.add({
+          id: 'root',
+          name: 'root',
+          description: 'Root'
+        })
       }
     })
   },
@@ -146,17 +171,8 @@ const RegisterState = State.extend({
   }
 })
 
-const credentials = [
-  { id: 'viewer', name: 'viewer', description: 'Viewer' },
-  { id: 'owner', name: 'owner', description: 'Owner' },
-  { id: 'admin', name: 'admin', description: 'Admin' },
-  { id: 'user', name: 'user', description: 'User' },
-  { id: 'manager', name: 'manager', description: 'Manager' }
-]
-
 const _initCollections = function () {
   Object.assign(this, {
-    credentials: new AmpersandCollection([]),
     customers: new Customers([]),
     hostGroups: new HostGroups([]),
     hosts: new Hosts([]),

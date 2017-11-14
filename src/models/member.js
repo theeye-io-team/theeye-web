@@ -22,7 +22,7 @@ const Model = BaseModel.extend({
     label: {
       deps: ['user'],
       fn () {
-        return `${this.user.email} (${this.user.credential})`
+        return `${this.user.username}, ${this.user.email} (${this.user.credential})`
       }
     },
     name: {

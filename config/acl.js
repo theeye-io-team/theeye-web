@@ -22,7 +22,7 @@ var user = assign({},viewer,{
 });
 
 var manager = assign({},user,{
-  "member" : ['*']
+  'member' : ['*']
 });
 
 var admin = assign({},user,{
@@ -32,7 +32,8 @@ var admin = assign({},user,{
   'script' : ['*'],
   'resource' : ['*'],
   'hostgroup' : ['*'],
-  "scheduler" : ['*'],
+  'scheduler' : ['*'],
+  'member' : ['fetch'],
   'customer' : ['getuseragent']
 });
 
