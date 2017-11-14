@@ -253,21 +253,7 @@ var UserController = module.exports = {
           user.passports.forEach(function(passport) {
             passports[passport.protocol] = passport;
           })
-
-          var theeye = passport.protocols.theeye
-          theeye.getCustomerAgentCredentials(
-            req.user.current_customer,
-            supervisor,
-            function(err, userAgent) {
-              if(err) {
-                debug('Error getting customerAgentCredentials', err)
-              }
-              return res.json({
-                agent : userAgent || null,
-                passports : passports
-              })
-            }
-          )
+          return res.json(passports)
         }
       })
     } else {

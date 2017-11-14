@@ -3,7 +3,7 @@
 import App from 'ampersand-app'
 
 // order matters
-const credentials = ['viewer','user','admin','owner','root']
+const credentials = ['viewer','user','manager','admin','owner','root']
 
 module.exports = {
   accessLevel (credential) {

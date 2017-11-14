@@ -2,6 +2,8 @@ import App from 'ampersand-app'
 import bootbox from 'bootbox'
 import { Model as Customer } from 'models/customer'
 import after from 'lodash/after'
+const config = require('config')
+import XHR from 'lib/xhr'
 
 module.exports = {
   remove: function(id){
@@ -138,6 +140,28 @@ module.exports = {
       error: function(err) {
         App.state.loader.visible = false
         bootbox.alert('Error updating integrations.',function(){ });
+      }
+    })
+  },
+  getAgentCredentials() {
+    XHR.send({
+      url: `${config.app_url}/customer/agent`,
+      method: 'get',
+      done: (response,xhr) => {
+        if (xhr.status !== 200) {
+          bootbox.alert({
+            title: 'Error',
+            message: 'Error fetching agent credentials, please try again later.'
+          })
+        } else {
+          App.state.navbar.settingsMenu.agent = response.user
+        }
+      },
+      fail: (err,xhr) => {
+        bootbox.alert({
+          title: 'Error',
+          message: 'Error fetching agent credentials, please try again later.'
+        })
       }
     })
   }

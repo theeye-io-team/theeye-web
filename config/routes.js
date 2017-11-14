@@ -57,11 +57,11 @@ module.exports.routes = {
   // most of hereunder routes, probably will be removed after migrating to API calls
   // CustomerController routes
   'get    /customer' : 'CustomerController.fetch',
+  'get    /customer/agent' : 'CustomerController.getuseragent',
   'get    /customer/:id' : 'CustomerController.get',
   'put    /customer/:id' : 'CustomerController.edit',
   'post   /customer' : 'CustomerController.create',
   'delete /customer/:id' : 'CustomerController.remove',
-  'get    /customer/:name/agent' : 'CustomerController.getUserAgent',
   // TaskController routes
   'post   /task': 'TasksController.create',
   'post   /task/schedule': 'TasksController.schedule',

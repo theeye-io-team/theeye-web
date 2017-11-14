@@ -302,15 +302,14 @@ passport.sendUserActivationEmail = function (inviter, invitee, next){
 
 passport.inviteUser = function(req, res, next) {
   return this.protocols.local.inviteToCustomer(
-    req, res, function(err, invitee) {
+    req, res, function(err, invitee, isNew) {
       if(err) return next(err);
-
-      if( invitee.enabled === false ) {
+      if(isNew) {
         passport.sendUserActivationEmail( req.user, invitee, error => {
           return next(error, invitee)
         });
       } else {
-        return next(new Error('User is already active.'));
+        return next(null, invitee)
       }
     });
 };

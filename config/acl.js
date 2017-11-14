@@ -12,14 +12,17 @@ var viewer = {
   'events':['index'],
   'password': ['*'],
   'auth': ['login','activate','google','connect','unlink','logout'],
-  'user': ['myprofile','setcustomer','ampersand'],
+  'user': ['myprofile','setcustomer','ampersand','getuserpassport'],
 }
 
 var user = assign({},viewer,{
   'events': ['*'],
   'hoststats': ['*'],
-  'palanca': ['*'],
-  'user': ['myprofile','setcustomer','ampersand','getuserpassport']
+  'palanca': ['*']
+});
+
+var manager = assign({},user,{
+  "member" : ['*']
 });
 
 var admin = assign({},user,{
@@ -30,18 +33,16 @@ var admin = assign({},user,{
   'resource' : ['*'],
   'hostgroup' : ['*'],
   "scheduler" : ['*'],
-  'user': ['myprofile','setcustomer','ampersand','getuserpassport']
+  'customer' : ['getuseragent']
 });
 
-var owner = assign({},admin,{
-  'auth' : ['*'],
-  "member" : ['*']
+var owner = assign({},admin,manager,{
+  'auth' : ['*']
 });
 
-var root = assign({},admin,{
+var root = assign({},owner,{
   'user'     : ['*'],
-  'customer' : ['*'],
-  "member" : ['*']
+  'customer' : ['*']
 });
 
 module.exports.acl = {
@@ -49,5 +50,6 @@ module.exports.acl = {
   owner: owner,
   admin: admin,
   user: user,
-  viewer: viewer
+  viewer: viewer,
+  manager: manager
 };

@@ -62,14 +62,17 @@ module.exports = {
 
     member.set(data)
     member.save({},{
-      success: function() {
+      success: function(result, response) {
         App.state.loader.visible = false
+        member.set({user_id: member.id})
+        if(response.enabled){
+          member.set({user: {username: response.username, enabled: response.enabled}})
+        }
+        App.state.members.add(member)
         bootbox.alert({
           title: 'Success',
           message: 'Invitation sent.'
         })
-        member.set({user_id: member.id})
-        App.state.members.add(member)
       },
       error: function(err) {
         App.state.loader.visible = false

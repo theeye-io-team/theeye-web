@@ -4,6 +4,7 @@ var crypto      = require("crypto");
 var querystring = require("querystring");
 var underscore  = require("underscore");
 var debug       = require('debug')('theeye:service:protocol:local');
+var theeye  = require("./theeye");
 /**
  * Local Authentication Protocol
  *
@@ -200,7 +201,7 @@ exports.inviteToCustomer = function (req, res, next) {
           debug(err);
           return next(err);
         } else {
-          return next(null, user);
+          return next(null, user, true);
         }
       });
     } else {
@@ -216,15 +217,33 @@ exports.inviteToCustomer = function (req, res, next) {
         return next("The user already exists and have permissions for this customer.");
       }
       user.customers.push(customer)
-
       User.update({ id: user.id },{ customers: user.customers },
         function(error, users) {
           if(error) {
             debug('Error updating user');
             debug(error);
+            return next(error);
           }
-          return next(error, users[0]);
-        });
+          if(users[0].enabled){
+            var route = req.user.current_customer + '/member/';
+            theeye.addMemberToCustomer(
+              users[0].id,
+              {customers: users[0].customers},
+              req.supervisor,
+              route,
+              error => {
+                if (error) {
+                  sails.log.error(error);
+                  return next('The user was updated but with errors.')
+                  res.json(500,'the user was updated but with errors. ' + error.message);
+                } else {
+                  return next(null, users[0], false);
+                }
+              }
+            );
+          }
+        }
+      );
     }
   });
 }

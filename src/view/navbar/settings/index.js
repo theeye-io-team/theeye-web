@@ -38,14 +38,19 @@ module.exports = FullContainer.extend({
   render() {
     FullContainer.prototype.render.apply(this,arguments)
 
-    const linksContainer = this.queryByHook('links-container')
-    const panesContainer = this.queryByHook('panes-container')
+    const settingsLinks = this.queryByHook('settings-links-container')
 
-    if (Acls.hasAccessLevel('admin')) {
-      linksContainer.appendChild( html2dom(`<li class="subtitle"><h3 class="blue">SETTINGS</h3></li>`))
-      linksContainer.appendChild( html2dom(`<li class="tab-item"><a href="#installer" data-toggle="tab">Installer</a></li>`))
-      linksContainer.appendChild( html2dom(`<li class="tab-item"><a href="#credentials" data-toggle="tab">Credentials</a></li>`))
-      linksContainer.appendChild( html2dom(`<li class="tab-item"><a href="#integrations" data-toggle="tab">Integrations</a></li>`))
+    this.accountsTab = new AccountsTab()
+    this.renderSubview(this.accountsTab, this.queryByHook('accounts-tab'))
+
+    if(Acls.hasAccessLevel('manager')) {
+      settingsLinks.appendChild( html2dom(`<li class="subtitle"><h3 class="blue">SETTINGS</h3></li>`))
+    }
+
+    if(Acls.hasAccessLevel('admin')) {
+      settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#installer" data-toggle="tab">Installer</a></li>`))
+      settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#credentials" data-toggle="tab">Credentials</a></li>`))
+      settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#integrations" data-toggle="tab">Integrations</a></li>`))
 
       this.installerTab = new InstallerTab()
       this.renderSubview(this.installerTab, this.queryByHook('installer-tab'))
@@ -53,30 +58,14 @@ module.exports = FullContainer.extend({
       this.renderSubview(this.credentialsTab, this.queryByHook('credentials-tab'))
       this.integrationsTab = new IntegrationsTab({model: App.state.session.customer})
       this.renderSubview(this.integrationsTab, this.queryByHook('integrations-tab'))
-
-      panesContainer.getElementsByClassName('installer-tab')[0].classList.add('in')
-      panesContainer.getElementsByClassName('installer-tab')[0].classList.add('active')
     }
 
-    if (Acls.hasAccessLevel('root')) {
-      linksContainer.appendChild( html2dom(`<li class="tab-item"><a href="#members" data-toggle="tab">Members</a></li>`))
+    if(Acls.hasAccessLevel('manager') && App.state.session.user.credential !=='admin') {
+      settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#members" data-toggle="tab">Members</a></li>`))
 
       this.membersTab = new MembersTab()
       this.renderSubview(this.membersTab, this.queryByHook('members-tab'))
     }
-
-    linksContainer.appendChild( html2dom(`<li class="subtitle"><h3 class="orange">MY PROFILE</h3></li>`))
-    linksContainer.appendChild( html2dom(`<li class="tab-item"><a href="#accounts" data-toggle="tab">Accounts</a></li>`))
-
-    this.accountsTab = new AccountsTab()
-    this.renderSubview(this.accountsTab, this.queryByHook('accounts-tab'))
-
-    if (!Acls.hasAccessLevel('admin')) {
-      panesContainer.getElementsByClassName('accounts-tab')[0].classList.add('in')
-      panesContainer.getElementsByClassName('accounts-tab')[0].classList.add('active')
-    }
-
-    linksContainer.getElementsByClassName('tab-item')[0].classList.add('active')
 
     this.on('change:visible', () => {
       if (this.visible===true) {

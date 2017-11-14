@@ -128,7 +128,7 @@ module.exports = View.extend({
   },
   render() {
     this.renderWithTemplate(this)
-    if(this.model.user.id==App.state.session.user.id)
+    if(this.model.user.id==App.state.session.user.id || ['root','owner'].includes(this.model.credential))
       this.queryByHook('member-icons').remove()
   }
 })

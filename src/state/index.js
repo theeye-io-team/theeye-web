@@ -150,7 +150,8 @@ const credentials = [
   { id: 'viewer', name: 'viewer', description: 'Viewer' },
   { id: 'owner', name: 'owner', description: 'Owner' },
   { id: 'admin', name: 'admin', description: 'Admin' },
-  { id: 'user', name: 'user', description: 'User' }
+  { id: 'user', name: 'user', description: 'User' },
+  { id: 'manager', name: 'manager', description: 'Manager' }
 ]
 
 const _initCollections = function () {

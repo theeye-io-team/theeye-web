@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import isEmail from 'validator/lib/isEmail'

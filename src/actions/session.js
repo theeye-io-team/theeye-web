@@ -91,8 +91,7 @@ module.exports = {
             message: 'Error fetching user profile information, please try again later.'
           })
         } else {
-          App.state.navbar.settingsMenu.agent = response.agent
-          App.state.navbar.settingsMenu.passports = response.passports
+          App.state.navbar.settingsMenu.passports = response
         }
       },
       fail: (err,xhr) => {

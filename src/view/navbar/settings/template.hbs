@@ -4,17 +4,19 @@
       <span data-hook="close-button" class="close-button fa fa-remove" style=""></span>
    </div>
    <div class="col-xs-3 panel-left">
-      <ul class="nav nav-tabs tabs-left" data-hook="links-container">
-      </ul>
+     <ul class="nav nav-tabs tabs-left" data-hook="settings-links-container">
+       <li class="subtitle"><h3 class="orange">MY PROFILE</h3></li>
+       <li class="tab-item active"><a href="#accounts" data-toggle="tab">Accounts</a></li>
+     </ul>
    </div>
    <div class="col-xs-9 panel-right">
       <div class="tab-content" data-hook="panes-container">
         <!-- Start agents tab -->
-         <div class="tab-pane fade installer-tab" id="installer" data-hook="installer-tab"></div>
+        <div class="tab-pane fade in active" id="accounts" data-hook="accounts-tab"></div>
+         <div class="tab-pane fade" id="installer" data-hook="installer-tab"></div>
          <div class="tab-pane fade" id="credentials" data-hook="credentials-tab"></div>
          <div class="tab-pane fade" id="members" data-hook="members-tab"></div>
          <div class="tab-pane fade" id="integrations" data-hook="integrations-tab"></div>
-         <div class="tab-pane fade accounts-tab" id="accounts" data-hook="accounts-tab"></div>
       </div>
    </div>
 </div>

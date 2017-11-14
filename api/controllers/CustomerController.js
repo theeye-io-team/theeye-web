@@ -87,12 +87,11 @@ var CustomerController = module.exports = {
   },
   /**
    * @method GET
-   * @route /customer/:name/agent
+   * @route /customer/agent
    */
-  getUserAgent (req, res) {
+  getuseragent (req, res) {
     var supervisor = req.supervisor;
-    var customer_name = req.params.name;
-
+    var customer_name = req.user.current_customer
     var theeye = passport.protocols.theeye;
     theeye.getCustomerAgentCredentials(
       customer_name,
