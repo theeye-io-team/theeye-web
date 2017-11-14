@@ -11,6 +11,7 @@ var viewer = {
   'dashboard':['index'],
   'events':['index'],
   'password': ['*'],
+  'member' : ['fetch'],
   'auth': ['login','activate','google','connect','unlink','logout'],
   'user': ['myprofile','setcustomer','ampersand','getuserpassport'],
 }
@@ -33,7 +34,6 @@ var admin = assign({},user,{
   'resource' : ['*'],
   'hostgroup' : ['*'],
   'scheduler' : ['*'],
-  'member' : ['fetch'],
   'customer' : ['getuseragent']
 });
 
