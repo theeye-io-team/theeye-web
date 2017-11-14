@@ -1,13 +1,11 @@
 import View from 'ampersand-view'
 import InputView from '../index'
 import Flatpickr from 'flatpickr'
-import FlatpickrI18n from 'flatpickr/src/l10n/es'
+import FlatpickrI18n from './lang/es'
 import extend from 'lodash/extend'
 
 const ClearIcon = View.extend({
-  template: `
-    <i class="fa fa-remove" style="right: 20px; position: relative;"></i>
-  `,
+  template: `<i class="fa fa-remove" style="right:0px;top:10px;position:absolute;"></i>`,
   props: {
     visible: ['boolean',false,false]
   },
@@ -29,6 +27,20 @@ const ClearIcon = View.extend({
   }
 })
 
+
+
+/**
+ *
+ * NOTE: Use AmpersandInputView as a Template, most of the base methods has been replaced.
+ *
+ * Why? The component input element (this.input) is being handled and changed by FlatPickr,
+ * so it cannot be also being modified by AmpersandInputView, because it
+ * produces complicated secuences of changes. it works as it is now.
+ *
+ * Do not trust/use this.input associated logic nor AmpersandInputView base methods.
+ * in most of the cases the parent methods(base behaviour) has been rewrited
+ *
+ */
 module.exports = InputView.extend({
   props: {
     selector: ['string', false, 'input']
@@ -37,24 +49,27 @@ module.exports = InputView.extend({
     InputView.prototype.initialize.apply(this, arguments)
     this.options = options || {}
     this.options.defaultDate = options.value
+    this.options.utc = true
   },
   render () {
     //InputView.prototype.render.apply(this)
     this.renderWithTemplate(this)
+    //const input = this.query('input')
     const input = this.query(this.selector)
-
     const options = this.options
     options.onChange = (e) => this.onDateChange(e)
     options.onReady = (e) => this.onDateChange(e)
 
     Flatpickr.localize(FlatpickrI18n.es);
     this.flatpickr = new Flatpickr(input, this.options)
-
     this.clearBtn = new ClearIcon()
+
     this.listenTo(this.clearBtn,'click',this.onClickClear)
     this.listenTo(this,'change:inputValue',this.onInputValueChanged)
 
-    this.renderSubview(this.clearBtn, this.el)
+    //input.style.paddingRight = '30px'
+
+    this.renderSubview(this.clearBtn, this.queryByHook('input-container'))
     this.onDateChange()
   },
   onInputValueChanged (event) {
@@ -65,9 +80,7 @@ module.exports = InputView.extend({
     }
   },
   onClickClear (event) {
-    this.query('input').value = ''
-    this.setValue([])
-    this.handleChange()
+    this.clear()
   },
   onDateChange (event) {
     if (!this.flatpickr) return // Flatpickr trigger ready before returning the instance
@@ -76,9 +89,13 @@ module.exports = InputView.extend({
     this.setValue(this.flatpickr.selectedDates)
     this.handleChange()
   },
+  beforeSubmit () {
+    this.shouldValidate = true;
+    this.setValue(this.flatpickr.selectedDates)
+    this.runTests();
+  },
   clear () {
-    this.query(this.selector).value = ''
-    this.inputValue = ''
+    this.flatpickr.clear()
   },
   setValue (value) {
     this.inputValue = value
