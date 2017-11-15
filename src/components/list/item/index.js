@@ -35,16 +35,29 @@ module.exports = BaseView.extend({
   addButtons (buttons) {
     const self = this
 
-    if (!Array.isArray(buttons)) {
-      console.error('array required')
-      return
+    if (!buttons) {
+      throw new Error('need buttons to add')
     }
-    if (buttons.length===0) return
+
+    if (!Array.isArray(buttons)) {
+      throw new Error('buttons are not buttons..')
+    }
+
+    if (buttons.length===0) {
+      throw new Error('at least give me one button')
+    }
 
     const mobileContainer = this.query('.panel-item-mobile ul.dropdown-menu[data-hook=action-buttons]')
     const desktopContainer = this.query('div.panel-item.icons.panel-item-desktop[data-hook=action-buttons]')
 
     buttons.forEach(button => {
+      let btn
+      if (typeof button === 'function') {
+        btn = button() // eval button function
+      } else { btn = button }
+
+      if (!btn) return
+
       // render one for each container view
       this.renderSubview(new button.view(button.params), mobileContainer)
       this.renderSubview(new button.view(button.params), desktopContainer)

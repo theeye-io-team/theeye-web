@@ -5,7 +5,7 @@ import UserActions from 'actions/user'
 import EditFormView from './edit-form'
 
 module.exports = PanelButton.extend({
-  initialize: function (options) {
+  initialize (options) {
     this.tip = 'Edit User'
     this.iconClass = 'fa fa-edit'
     this.className = 'btn btn-primary editButton'
@@ -19,7 +19,7 @@ module.exports = PanelButton.extend({
       const modal = new Modalizer({
         confirmButton: 'Save',
         buttons: true,
-        title: this.title,
+        title: this.tip,
         bodyView: form
       })
 

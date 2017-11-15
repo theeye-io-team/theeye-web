@@ -1,6 +1,5 @@
-'use strict'
-
 import App from 'ampersand-app'
+import acls from 'lib/acls'
 import View from 'ampersand-view'
 import JobResult from '../job-result'
 import ExecButton from './exec-button'
@@ -104,8 +103,11 @@ const TaskButtonsView = View.extend({
   //},
   render () {
     this.renderWithTemplate(this)
-    var button = new EditTaskButton({ model: this.model })
-    this.renderSubview(button, this.queryByHook('edit-button'))
+
+    if (acls.hasAccessLevel('admin')) {
+      var button = new EditTaskButton({ model: this.model })
+      this.renderSubview(button, this.queryByHook('edit-button'))
+    }
   }
 })
 
@@ -181,13 +183,12 @@ const ScriptCollapsedContent = View.extend({
               <th></th>
             </tr>
           </thead>
-          <tbody>
+          <tbody data-hook="table-body">
             <tr>
               <td></td>
               <td><span data-hook="script_description"></span></td>
               <td><span data-hook="script_filename"></span></td>
               <td><span data-hook="script_language"></span></td>
-              <td><button data-hook="edit_script" class="fa fa-edit btn btn-sm btn-primary"></button></td>
             </tr>
           </tbody>
         </table>
@@ -233,6 +234,12 @@ const ScriptCollapsedContent = View.extend({
       type: 'booleanAttribute',
       name: 'disabled',
       invert: true
+    }
+  },
+  render () {
+    this.renderWithTemplate(this)
+    if (acls.hasAccessLevel('admin')) {
+      this.query('tbody tr').innerHTML += `<td><button data-hook="edit_script" class="fa fa-edit btn btn-sm btn-primary"></button></td>`
     }
   }
 })
@@ -337,10 +344,13 @@ module.exports = View.extend({
       new TaskButtonsView({ model: this.model }),
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
     )
-    const button = this.renderSubview(
-      new ExecButton({ model: this.model }),
-      this.queryByHook('execute-button-container')
-    )
+
+    if (acls.hasAccessLevel('user')) {
+      const button = this.renderSubview(
+        new ExecButton({ model: this.model }),
+        this.queryByHook('execute-button-container')
+      )
+    }
   },
   renderCollapsedContent () {
     let content

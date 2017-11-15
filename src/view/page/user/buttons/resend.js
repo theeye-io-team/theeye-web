@@ -5,7 +5,7 @@ import { fetch, defaultOptions, responseHandler } from 'lib/fetch'
 
 module.exports = PanelButton.extend({
   initialize: function (options) {
-    this.title = 'resend user invitation'
+    this.tip = 'Resend invitation'
     this.order = 900
     this.className = 'btn btn-primary reSendInvitation'
     this.iconClass = 'glyphicon glyphicon-share-alt'
