@@ -50,6 +50,7 @@ const Header = State.extend({
     name: 'string'
   }
 })
+
 const HeaderView = View.extend({
   template: `
     <div>
