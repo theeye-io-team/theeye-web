@@ -304,16 +304,39 @@ passport.sendUserActivationEmail = function (inviter, invitee, next){
   }
 }
 
+passport.sendNewCustomerEMail = function (invitee, customername, next){
+  var data = {
+    invitee: invitee,
+    customername: customername
+  };
+  mailer.sendNewCustomerEMail(data, function(err) {
+    if(err) {
+      sails.log.debug('error sending Invitation email to "%s"', invitee.email);
+      return next(err);
+    }
+
+    sails.log.debug('Invitation email sent');
+    return next(null);
+  });
+}
+
 passport.inviteUser = function(req, res, next) {
   return this.protocols.local.inviteToCustomer(
-    req, res, function(err, invitee, isNew) {
+    req, res, function(err, invitee) {
       if(err) return next(err);
-      if(isNew) {
+      if(invitee.enabled===false && invitee.invitation_token) {
         passport.sendUserActivationEmail( req.user, invitee, error => {
           return next(error, invitee)
         });
       } else {
-        return next(null, invitee)
+        if(invitee.enabled===true){
+          var customername = req.user.current_customer
+          passport.sendNewCustomerEMail(invitee, customername, error => {
+            return next(error, invitee)
+          });
+        } else {
+          return next('User cannot be invited.')
+        }
       }
     });
 };

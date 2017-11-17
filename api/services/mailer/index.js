@@ -97,10 +97,10 @@ module.exports = {
       });
     });
   },
-  sendNewCustomerEMail: function(user, next) {
-    ejs.renderFile("views/email/customer-invitation.ejs", {locals: user}, function(error, html) {
+  sendNewCustomerEMail: function(data, next) {
+    ejs.renderFile("views/email/customer-invitation.ejs", {locals: data}, function(error, html) {
       var options = {
-        to: user.email,
+        to: data.invitee.email,
         subject:'The Eye Invitation',
         html:html
       };

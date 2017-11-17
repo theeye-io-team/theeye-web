@@ -201,7 +201,7 @@ exports.inviteToCustomer = function (req, res, next) {
           debug(err);
           return next(err);
         } else {
-          return next(null, user, true);
+          return next(null, user);
         }
       });
     } else {
@@ -237,12 +237,12 @@ exports.inviteToCustomer = function (req, res, next) {
                   return next('The user was updated but with errors.')
                   res.json(500,'the user was updated but with errors. ' + error.message);
                 } else {
-                  return next(null, users[0], false);
+                  return next(null, users[0]);
                 }
               }
             );
           } else {
-            return next(null, users[0], false);
+            return next(null, users[0]);
           }
         }
       );

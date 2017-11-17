@@ -79,7 +79,7 @@ var MemberController = module.exports = {
               sails.log.error(error);
               res.json(500,'The user was updated but with errors. ' + error.message);
             } else {
-              res.json(user);
+              res.send(203,{});
             }
           }
         );
@@ -102,12 +102,24 @@ var MemberController = module.exports = {
     User.findOne({ id: userId },(error,user) => {
       if (!user) return res.send(404,'User not found')
 
-      User.update({id: userId}, params).exec((error,user) => {
+      User.update({id: userId}, params).exec((error,users) => {
         if(error){
           sails.log.error(error);
           return res.send(500, 'Internal server error');
         }
-
+        var updatedUser = users[0]
+        var member = {
+          id: updatedUser.id,
+          user_id: updatedUser.id,
+          credential: updatedUser.credential,
+          user: {
+            id: updatedUser.id,
+            username: updatedUser.username,
+            credential: updatedUser.credential,
+            email: updatedUser.email,
+            enabled: updatedUser.enabled
+          }
+        }
         var route = req.user.current_customer + '/member/';
 
         passport.protocols.theeye.updateMemberCredential(
@@ -120,7 +132,7 @@ var MemberController = module.exports = {
               sails.log.error(error);
               res.json(500,'The user was updated but with errors. ' + error.message);
             } else {
-              res.json(user);
+              res.send(200, member);
             }
           }
         );
@@ -133,7 +145,19 @@ var MemberController = module.exports = {
         sails.log.error(err);
         return res.send(500, err);
       } else {
-        return res.send(200, user);
+        var member = {
+          id: user.id,
+          user_id: user.id,
+          credential: user.credential,
+          user: {
+            id: user.id,
+            username: user.username,
+            credential: user.credential,
+            email: user.email,
+            enabled: user.enabled
+          }
+        }
+        return res.send(200, member);
       }
     });
   }

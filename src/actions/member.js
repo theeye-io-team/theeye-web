@@ -31,16 +31,17 @@ module.exports = {
   updateMemberCredential: function(userId, data) {
     App.state.loader.visible = true
     var member = new Member({ id: userId })
+    data.user = {credential: data.credential}
     member.set(data)
     member.save({},{
       collection: App.state.members,
-      success: function(){
+      success: function(result, response){
         App.state.loader.visible = false
         bootbox.alert({
           title: 'Success',
           message: 'Member credentials updated.'
         })
-        App.state.members.add(member, {merge: true})
+        App.state.members.add(response, {merge: true})
       },
       error: function(err) {
         App.state.loader.visible = false
@@ -65,10 +66,7 @@ module.exports = {
       success: function(result, response) {
         App.state.loader.visible = false
         member.set({user_id: member.id})
-        if(response.enabled){
-          member.set({user: {username: response.username, enabled: response.enabled}})
-        }
-        App.state.members.add(member)
+        App.state.members.add(response)
         bootbox.alert({
           title: 'Success',
           message: 'Invitation sent.'
