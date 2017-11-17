@@ -1,13 +1,13 @@
 import View from 'ampersand-view'
 import InputView from '../index'
 import Flatpickr from 'flatpickr'
-import FlatpickrI18n from './lang/es'
-import extend from 'lodash/extend'
+// import FlatpickrI18n from './lang/es'
+import 'flatpickr/dist/flatpickr.css'
 
 const ClearIcon = View.extend({
-  template: `<i class="fa fa-remove" style="right:0px;top:10px;position:absolute;"></i>`,
+  template: `<i class="fa fa-remove" style="right:22px;top:24px;position:absolute;"></i>`,
   props: {
-    visible: ['boolean',false,false]
+    visible: ['boolean', false, false]
   },
   bindings: {
     visible: {
@@ -16,7 +16,7 @@ const ClearIcon = View.extend({
   },
   events: {
     click: function (e) {
-      this.trigger('click') 
+      this.trigger('click')
     }
   },
   show () {
@@ -26,8 +26,6 @@ const ClearIcon = View.extend({
     this.visible = false
   }
 })
-
-
 
 /**
  *
@@ -50,24 +48,21 @@ module.exports = InputView.extend({
     this.options = options || {}
     this.options.defaultDate = options.value
     this.options.utc = true
+    this.shouldValidate = false
   },
   render () {
-    //InputView.prototype.render.apply(this)
     this.renderWithTemplate(this)
-    //const input = this.query('input')
     const input = this.query(this.selector)
     const options = this.options
     options.onChange = (e) => this.onDateChange(e)
     options.onReady = (e) => this.onDateChange(e)
 
-    Flatpickr.localize(FlatpickrI18n.es);
+    // Flatpickr.localize(FlatpickrI18n.es)
     this.flatpickr = new Flatpickr(input, this.options)
     this.clearBtn = new ClearIcon()
 
-    this.listenTo(this.clearBtn,'click',this.onClickClear)
-    this.listenTo(this,'change:inputValue',this.onInputValueChanged)
-
-    //input.style.paddingRight = '30px'
+    this.listenTo(this.clearBtn, 'click', this.onClickClear)
+    this.listenTo(this, 'change:inputValue', this.onInputValueChanged)
 
     this.renderSubview(this.clearBtn, this.queryByHook('input-container'))
     this.onDateChange()
@@ -90,9 +85,9 @@ module.exports = InputView.extend({
     this.handleChange()
   },
   beforeSubmit () {
-    this.shouldValidate = true;
+    this.shouldValidate = true
     this.setValue(this.flatpickr.selectedDates)
-    this.runTests();
+    this.runTests()
   },
   clear () {
     this.flatpickr.clear()
@@ -102,7 +97,7 @@ module.exports = InputView.extend({
     return
   },
   remove () {
-    //InputView.prototype.remove.apply(this)
+    // InputView.prototype.remove.apply(this)
     this.clearBtn.remove()
     this.flatpickr.destroy()
   }

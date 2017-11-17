@@ -432,6 +432,7 @@ button.rowSelector {
 
 .itemRow button.rowSelector > span { color: #bbb; }
 .itemRow.selectedItem button.rowSelector > span { color: #f39b0f; }
+.itemRow button.hilite { border: 1px solid #f39b0f; }
 /*span.selectorIcon.glyphicon-unchecked {
   color: #BBB;
 }

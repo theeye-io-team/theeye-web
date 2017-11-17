@@ -4,23 +4,24 @@ const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-//const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const NODE_ENV = process.env['NODE_ENV'] || 'local'
-const IS_PRODUCTION = (NODE_ENV=='production'||NODE_ENV=='staging')
-const PUBLIC_PATH = typeof process.env['PUBLIC_PATH'] == 'string' ? process.env['PUBLIC_PATH'] : '/'
+const IS_PRODUCTION = (NODE_ENV === 'production' || NODE_ENV === 'staging')
+const PUBLIC_PATH = typeof process.env['PUBLIC_PATH'] === 'string' ? process.env['PUBLIC_PATH'] : '/'
 
+const FILENAME = IS_PRODUCTION ? '[name].[hash:6]' : '[name]'
 const TARGET_PATH = 'bundles'
 
 module.exports = {
   entry: path.join(__dirname, 'src/app.js'),
   devtool: IS_PRODUCTION ? 'source-map' : '#inline-source-map',
   output: {
-    path: path.join( __dirname + '/assets/'),
-    filename: TARGET_PATH + '/js/[name]' + (IS_PRODUCTION ? '.[hash:6]' : '') + '.bundle.js',
-    sourceMapFilename: TARGET_PATH + '/js/[name]' + (IS_PRODUCTION ? '.[hash:6]' : '') + '.bundle.map',
-    chunkFilename: TARGET_PATH + '/js/[id].bundle.js',
-    publicPath: PUBLIC_PATH,
+    path: path.join(__dirname, '/assets/'),
+    filename: TARGET_PATH + '/js/' + FILENAME + '.bundle.js',
+    sourceMapFilename: TARGET_PATH + '/js/' + FILENAME + '.bundle.map',
+    chunkFilename: TARGET_PATH + '/js/' + FILENAME + '.bundle.js',
+    publicPath: PUBLIC_PATH
   },
   resolve: {
     modules: [
@@ -29,23 +30,28 @@ module.exports = {
     ]
   },
   plugins: [
-    //new BundleAnalyzerPlugin(),
+    // new BundleAnalyzerPlugin(),
+    new webpack.DefinePlugin({
+      'process.env': { 'NODE_ENV': JSON.stringify(NODE_ENV) }
+    }),
     new webpack.ProvidePlugin({
       '$': 'jquery',
       'jQuery': 'jquery',
       'window.jQuery': 'jquery'
     }),
-    //new ExtractTextPlugin('css/[name]-[local]-[hash:6].css'),
-    new ExtractTextPlugin(TARGET_PATH + '/styles/[name]' + (IS_PRODUCTION ? '.[hash:6]' : '') + '.css'),
+    new webpack.optimize.CommonsChunkPlugin({
+      filename: TARGET_PATH + '/js/' + FILENAME + '.bundle.js',
+      name: 'common',
+      minChunks: 2
+    }),
+    // new ExtractTextPlugin('css/[name]-[local]-[hash:6].css'),
+    new ExtractTextPlugin(TARGET_PATH + '/styles/' + FILENAME + '.css'),
     new HtmlWebpackPlugin({
       template: 'src/templates/index.html',
       inject: 'body',
       filename: 'index.html'
     }),
-    new webpack.DefinePlugin({
-      'process.env': { 'NODE_ENV': JSON.stringify(NODE_ENV) }
-    }),
-    (function(){
+    (function () {
       if (IS_PRODUCTION) {
         console.log('uglifying')
         return new webpack.optimize.UglifyJsPlugin({
@@ -57,12 +63,7 @@ module.exports = {
           console.log('uglify desactivated')
         }
       }
-    })(),
-    new webpack.optimize.CommonsChunkPlugin({
-      filename: TARGET_PATH + '/js/common' + (IS_PRODUCTION ? '.[hash:6]' : '') + '.bundle.js',
-      name: 'common'
-    })
-    // will generate common.js for shared code
+    })()
   ],
   module: {
     rules: [

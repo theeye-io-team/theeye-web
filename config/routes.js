@@ -134,6 +134,11 @@ module.exports.routes = {
   'put /apiv2/file/:id':'ApiV2Controller.upload',
   'post /apiv2/file':'ApiV2Controller.upload',
   'get /apiv2/file/:id':'ApiV2Controller.download',
+
+  'post /apiv2/task/schedule': 'ApiV2Controller.createSchedule',
+  'get /apiv2/task/:id/schedule': 'ApiV2Controller.getSchedules',
+  'delete /apiv2/task/:id/schedule/:scheduleId': 'ApiV2Controller.cancelSchedule',
+
   'put /apiv2/:resource/:id*':'ApiV2Controller.update',
   'patch /apiv2/:resource/:id*':'ApiV2Controller.patch',
   'delete /apiv2/:resource/:id*':'ApiV2Controller.remove',

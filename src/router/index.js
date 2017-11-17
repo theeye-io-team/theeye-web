@@ -11,9 +11,9 @@ const UserRoute = require('./user')
 const CustomerRoute = require('./customer')
 const WebhookRoute = require('./webhook')
 const HostGroupRoute = require('./hostgroup')
-import SchedulerRoute from './scheduler'
+// import SchedulerRoute from './scheduler'
 import DashboardRoute from './dashboard'
-import TasksRoute from './task'
+// import TasksRoute from './task'
 
 module.exports = Router.extend({
   execute (callback, args) {
@@ -65,12 +65,18 @@ module.exports = Router.extend({
       route.route('index')
     },
     'admin/task(/:id/:action)': () => {
-      const route = new TasksRoute()
-      route.route('index')
+      require.ensure(['./task'], () => {
+        const TasksRoute = require('./task')
+        const route = new TasksRoute()
+        route.route('index')
+      }, 'tasks')
     },
     'admin/scheduler': () => {
-      const route = new SchedulerRoute()
-      route.route('index')
+      require.ensure(['./scheduler'], () => {
+        const SchedulerRoute = require('./scheduler')
+        const route = new SchedulerRoute()
+        route.route('index')
+      }, 'schedulerview')
     },
     'login': () => {
       const route = new AuthRoute()

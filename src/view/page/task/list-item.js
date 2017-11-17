@@ -1,11 +1,15 @@
 'use strict'
-
+import $ from 'jquery'
 import ListItem from 'components/list/item'
 import View from 'ampersand-view'
 import EditButton from './buttons/edit'
 import CopyButton from './buttons/copy'
 import DeleteButton from './buttons/delete'
 import assign from 'lodash/assign'
+import ScheduleButton from './buttons/schedule'
+import './style.css'
+import bootbox from 'bootbox'
+import { getSchedules, cancelSchedule } from 'actions/schedule'
 
 function Factory (options) {
   const model = options.model
@@ -68,6 +72,7 @@ const Item = ListItem.extend({
     ListItem.prototype.render.apply(this,arguments)
 
     this.addButtons([
+      { view: ScheduleButton, params: { model: this.model } },
       { view: CopyButton, params: { model: this.model } },
       { view: EditButton, params: { model: this.model } },
       { view: DeleteButton, params: { model: this.model } },
@@ -77,6 +82,11 @@ const Item = ListItem.extend({
       new Collapsed({ model: this.model }),
       this.queryByHook('collapsed-content')
     )
+
+    const collapse = this.query('.itemRow > .collapse')
+    $(collapse).on('show.bs.collapse', (event) => {
+      getSchedules(this.model)
+    })
   }
 })
 
@@ -118,5 +128,90 @@ const ScraperItem = Item.extend({
 })
 
 const Collapsed = View.extend({
-  template: `<div class="col-sm-12"><h4>Task Information</h4></div>`,
+  template: `
+    <div class="col-sm-12">
+      <h4>Task Information</h4>
+      <div class="row" data-hook="schedule-section"></div>
+    </div>`,
+  render: function () {
+    this.renderWithTemplate(this)
+    this.renderSubview(
+      new ScheduleSection({model: this.model}),
+      this.queryByHook('schedule-section')
+    )
+  }
+})
+
+const ScheduleSection = View.extend({
+  template: `
+    <div class="col-xs-12">
+      <h4 style="border-bottom: 1px solid grey;">Schedules for this task</h4>
+      <div class="scheduleHeader" style="color: #aaa;">
+        <div class="col-sm-4"><h5>Initial date:</h5></div>
+        <div class="col-sm-2"><h5>Repeats every:</h5></div>
+        <div class="col-sm-4"><h5>Next iteration:</h5></div>
+        <div class="col-sm-2"></div>
+      </div>
+      <div data-hook="schedule-list"></div>
+    </div>`,
+  bindings: {
+    'model.hasSchedules': {
+      type: 'toggle',
+      selector: ''
+    }
+  },
+  render: function () {
+    this.renderWithTemplate(this)
+    this.renderCollection(
+      this.model.schedules,
+      ScheduleRow,
+      this.queryByHook('schedule-list'),
+      {
+        viewOptions: {
+          task: this.model
+        }
+      }
+    )
+  }
+})
+const ScheduleRow = View.extend({
+  props: {
+    task: ['state', true]
+  },
+  template: `
+    <div class="scheduleItem row">
+      <div class="col-sm-4"><p data-hook="startDate"></p></div>
+      <div class="col-sm-2"><p data-hook="repeatsEvery"></p></div>
+      <div class="col-sm-4"><p data-hook="nextDate"></p></div>
+      <div class="col-sm-2 text-right">
+        <button type="button" class="btn btn-danger btn-sm deleteSchedule">
+          Delete <span class="fa fa-trash"></span>
+        </button>
+      </div>
+    </div>`,
+  events: {
+    'click button.deleteSchedule': 'deleteSchedule'
+  },
+  deleteSchedule: function (event) {
+    bootbox.confirm(
+      'The schedule will be canceled. Want to continue?',
+      confirmed => {
+        if (!confirmed) {
+          return
+        }
+        cancelSchedule(this.task, this.model)
+      }
+    )
+  },
+  bindings: {
+    'model.data.scheduleData.runDate': {
+      hook: 'startDate'
+    },
+    'model.data.scheduleData.repeatEvery': {
+      hook: 'repeatsEvery'
+    },
+    'model.nextRunAt': {
+      hook: 'nextDate'
+    }
+  }
 })

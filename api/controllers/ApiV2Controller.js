@@ -169,4 +169,60 @@ module.exports = {
       });
     });
   },
+  /**
+   * @method {POST}
+   * @route /apiv2/task/schedule
+   * NOTE: since the schedule endpoint is a custom
+   * one (it handles the agenda/job scheme and relates the
+   * job with the task_id) this api proxy is needed
+   */
+  createSchedule (req, res, next) {
+    // var route = req.originalUrl.replace(apibase, `/${req.user.current_customer}/`)
+    // sorry for the custom route =) -- cg
+    var route = `/${req.user.current_customer}/task/${req.body.task}/schedule`
+    sails.log.debug('post api url ' + route)
+
+    req.supervisor.create({
+      route: route,
+      body: req.body,
+      query: req.query,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body)
+    })
+  },
+  // GET
+  getSchedules: function (req, res, next) {
+    var supervisor = req.supervisor
+    var id = req.param('id', null)
+    if (!id || !id.match(/^[a-fA-F0-9]{24}$/)) {
+      return res.send(400, 'invalid id')
+    } else {
+      supervisor.getTaskSchedule(id, function (err, scheduleData) {
+        if (err) {
+          return res.send(500, err)
+        }
+        res.json(scheduleData)
+      })
+    }
+  },
+  // DELETE
+  cancelSchedule: function (req, res) {
+    var supervisor = req.supervisor
+    var taskId = req.param('id', null)
+    var scheduleId = req.param('scheduleId', null)
+
+    if (!taskId || !taskId.match(/^[a-fA-F0-9]{24}$/)) {
+      return res.send(400, 'invalid id')
+    } else if (!scheduleId || !scheduleId.match(/^[a-fA-F0-9]{24}$/)) {
+      return res.send(400, 'invalid schedule id')
+    } else {
+      supervisor.remove({
+        route: '/:customer/task',
+        id: taskId,
+        child: 'schedule/' + scheduleId,
+        failure: error => res.send(500, error),
+        success: task => res.json(task)
+      })
+    }
+  },
 }

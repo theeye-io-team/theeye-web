@@ -8,6 +8,8 @@ const Script = require('models/file/script').Model
 const Events = require('models/event').Collection
 const config = require('config')
 
+const ScheduleCollection = require('models/schedule').Collection
+
 const TaskArguments = AmpersandCollection.extend({
   mainIndex: 'id',
   indexes: ['label','order'],
@@ -31,14 +33,21 @@ const Schema = AppModel.extend({
 		tags: ['array',false, () => { return [] }],
 		triggers: ['array',false, () => { return [] }],
     //_id: 'string',
-    _type: 'string' // discriminator
+    _type: 'string', // discriminator
+    hasSchedules: ['boolean', true, false]
 	},
 	collections: {
 		//triggers: Events,
-		taskArguments: TaskArguments
+		taskArguments: TaskArguments,
+    schedules: ScheduleCollection
 	},
+  initialize: function () {
+    this.listenToAndRun(this.schedules, 'reset sync remove add', () => {
+      this.hasSchedules = this.schedules.length > 0
+    })
+  },
   serialize (options) {
-    var serial = AppModel.prototype.serialize.call(this,options)
+    var serial = AppModel.prototype.serialize.call(this, options)
     if (!this.triggers) {
       serial.triggers = []
     } else {
@@ -87,7 +96,7 @@ const ScriptTask = Schema.extend({
     //this.listenToAndRun(this,'change:script_arguments',() => {
     //  // re-assign existent script_arguments to taskArguments
     //  if (!this.isNew() && this.script_arguments.length>0) {
-    //    let args = filterScriptArguments(this.script_arguments) 
+    //    let args = filterScriptArguments(this.script_arguments)
     //    this.taskArguments.set(args)
     //  }
     //})

@@ -1,14 +1,13 @@
-'use strict';
 
 const View = require('ampersand-view')
 const $ = require('jquery')
 
 module.exports = View.extend({
-  template: `<span class="fa fa-question-circle"></span>`,
+  template: `<span>&nbsp;<span class="fa fa-question-circle"></span></span>`,
   props: {
     placement: ['string', false, 'top'],
     text: 'string',
-    color: ['array',false,() => { return [48,66,105] }],
+    color: ['array', false, () => { return [48, 66, 105] }],
     link: 'string'
   },
   derived: {
@@ -26,15 +25,15 @@ module.exports = View.extend({
     }
   },
   events: {
-    mouseover: function(e) {
+    mouseover: function (e) {
       this.el.style.color = 'rgba(' + this.colorRGB + ', 1)'
     },
-    mouseout: function(e) {
+    mouseout: function (e) {
       this.el.style.color = 'rgba(' + this.colorRGB + ', 0.2)'
     },
-    click: function(e) {
+    click: function (e) {
       if (!this.link) return
-      window.open(this.link, '_blank');
+      window.open(this.link, '_blank')
     }
   },
   render () {

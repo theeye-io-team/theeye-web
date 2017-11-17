@@ -75,5 +75,11 @@ module.exports = {
       copy_host: 'Select a properly configured host to create the Template.',
     },
     regexp_search: 'All this hosts match the regular expression. If you don\'t add them to the template they will be ignored. To include all this hosts into the Template click on <b style="color:#337ab7">Add All</b>'
+  },
+  scheduler: {
+    taskform: {
+      datetime: 'pick-a-date',
+      frequency: 'Use a "human interval" expression like "1 hour", "3 days", "2 weeks", etc... Leave empty for no repetition'
+    }
   }
 }

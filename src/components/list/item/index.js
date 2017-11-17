@@ -1,7 +1,7 @@
 import BaseView from 'view/base-view'
-import AmpersandCollection from 'ampersand-collection'
-import CommonButton from 'components/common-button'
-import extend from 'lodash/assign'
+// import AmpersandCollection from 'ampersand-collection'
+// import CommonButton from 'components/common-button'
+// import extend from 'lodash/assign'
 
 module.exports = BaseView.extend({
   autoRender: false,
@@ -14,9 +14,9 @@ module.exports = BaseView.extend({
   },
   props: {
     selectable: ['boolean', false, true],
-    buttons: ['array', false, function(){ return [] }],
+    buttons: ['array', false, function () { return [] }],
     show: ['boolean', false, true],
-    selected: ['boolean', false, false],
+    selected: ['boolean', false, false]
   },
   derived: {
     item_name: {
