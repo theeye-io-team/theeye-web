@@ -68,6 +68,18 @@ class Auth extends Route {
     })
   }
 
+  socialConnectRoute() {
+    const query = search.get()
+    App.navigate('dashboard')
+    App.state.navbar.settingsMenu.visible = true
+    if(query.error){
+      bootbox.alert(query.error,function(){ })
+      return false
+    }
+    bootbox.alert(query.message,function(){ })
+    return false
+  }
+
   passwordResetRoute () {
     const query = search.get()
     let token = query.token

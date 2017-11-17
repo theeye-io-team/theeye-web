@@ -69,6 +69,7 @@ module.exports = FullContainer.extend({
 
     this.on('change:visible', () => {
       if (this.visible===true) {
+        window.scrollTo(0,0)
         document.body.style.overflow = 'hidden'
       } else {
         document.body.style.overflow = 'auto'

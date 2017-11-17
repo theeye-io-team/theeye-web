@@ -91,6 +91,10 @@ module.exports = Router.extend({
       const route = new AuthRoute()
       route.socialLoginRoute()
     },
+    'socialconnect': () => {
+      const route = new AuthRoute()
+      route.socialConnectRoute()
+    },
     'passwordreset': () => {
       const route = new AuthRoute()
       route.passwordResetRoute()

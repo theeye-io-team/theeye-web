@@ -118,6 +118,7 @@ module.exports.routes = {
   'get /register': spaIndexRoute,
   'get /activate': spaIndexRoute,
   'get /sociallogin': spaIndexRoute,
+  'get /socialconnect':spaIndexRoute,
   'get /passwordreset':spaIndexRoute,
 
   /*

@@ -190,11 +190,15 @@ passport.connect = function (req, query, profile, next) {
       {
         query.user = req.user.id;
 
-        Passport.create(query, function (err, passport) {
-          // If a passport wasn't created, bail out
-          if (err) return next(err);
-          next(err, req.user);
-        });
+        if(profile.emails.find(email => email.value === req.user.email )) {
+          Passport.create(query, function (err, passport) {
+            // If a passport wasn't created, bail out
+            if (err) return next(err);
+            next(err, req.user);
+          });
+        } else {
+          next(new Error('emailmismatch'))
+        }
       }
       // Scenario: The user is a nutjob or spammed the back-button.
       // Action:   Simply pass along the already established session.
