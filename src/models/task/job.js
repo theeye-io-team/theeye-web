@@ -53,7 +53,9 @@ const ScraperJobResult = State.extend({
           return []
 
         return Object.keys(headers).map(key => {
-          return { name: key, value: headers[key] }
+          let value = headers[key]
+          let fvalue = typeof value === 'string' ? value : JSON.stringify(value)
+          return { name: key, value: fvalue }
         })
       }
     },
