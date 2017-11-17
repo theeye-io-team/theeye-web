@@ -57,7 +57,12 @@ $(document).ready(function() {
     $('#section10').collapse('show');
   });
 
-
+  var scrollAnimationTime = 1200;
+  $('a.scrollto').bind('click', function (event) {
+      event.preventDefault();
+      var target = this.hash;
+      $("html").getNiceScroll(0).doScrollTop($(target).offset().top, scrollAnimationTime);
+  });
 
   /***************************************************************************/
   /* SMOOTH SCROLL / CURRENTLY ENABLED IN niceScroll */
@@ -362,9 +367,9 @@ $('#accordion2').on('shown.bs.collapse', toggleChevron);
   (function($) {
       fakewaffle.responsiveTabs(['xs', 'sm']);
   })(jQuery);
-  
-  
-  
+
+
+
 /* general tooltip init */
 
 $(function () {

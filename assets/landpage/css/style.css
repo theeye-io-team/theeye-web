@@ -835,7 +835,6 @@ border-radius:300px
 	.pricing-tabs .num-radio input[type="radio"] + label, .pricing-tabs .implementation input[type="radio"] + label, .pricing-tabs .trends input[type="radio"] + label {display:inline-block}
 	.mobile-center-pad {text-align:center;padding:15px 0}
 	.pricing-title {margin-bottom:15px;display:block}
-	.pricing-table {padding-top:0}
 	.app-intro {padding-bottom:0}
 	#contact {margin:0 15px}
 	.case {margin:0 15px 30px}
@@ -862,7 +861,6 @@ border-radius:300px
 	.settings-content .border {border-bottom:1px solid rgba(255,255,255,0.2)}
 	.settings-content .col-md-2, .settings-content .col-md-7, .settings-content .col-md-1 {min-height:50px}
 	.pricing-title {font-size:18px;line-height:1em}
-	.pricing-table {padding-top:0}
 }
 /* Large Devices, Wide Screens */
 @media only screen and (min-width: 1200px) {
