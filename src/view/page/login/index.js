@@ -26,6 +26,17 @@ const LoginForm = FormView.extend({
       })
     ]
     FormView.prototype.initialize.apply(this, arguments)
+  },
+  events: {
+    'keyup': onkeyup
+  },
+  onkeyup (event) {
+    if (event.keyCode == 13) { // enter
+      this.submit()
+    }
+  },
+  submit () {
+    this.trigger('submit')
   }
 })
 
@@ -77,11 +88,7 @@ module.exports = View.extend({
     'click button[data-hook=start-login]': function (event) {
       event.preventDefault()
       event.stopPropagation()
-      this.loginForm.beforeSubmit()
-      if (this.loginForm.valid) {
-        var data = this.loginForm.data
-        AuthActions.login(data)
-      }
+      this.submitLogin()
     },
     'click button[data-hook=start-forgot]': function (event) {
       event.preventDefault()
@@ -91,6 +98,13 @@ module.exports = View.extend({
         var data = this.forgotForm.data
         AuthActions.resetMail(data)
       }
+    }
+  },
+  submitLogin () {
+    this.loginForm.beforeSubmit()
+    if (this.loginForm.valid) {
+      var data = this.loginForm.data
+      AuthActions.login(data)
     }
   },
   initialize() {
@@ -104,6 +118,8 @@ module.exports = View.extend({
 
     this.loginForm = new LoginForm({})
     this.forgotForm = new ForgotForm({})
+
+    this.listenTo(this.loginForm, 'submit', () => { this.submitLogin() })
 
     this.renderSubview(this.loginForm, this.queryByHook('login-form'))
     this.renderSubview(this.forgotForm, this.queryByHook('forgot-form'))
