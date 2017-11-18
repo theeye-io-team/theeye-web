@@ -7,6 +7,7 @@ import InputView from 'components/input-view'
 import Datepicker from 'components/input-view/datepicker'
 
 import { create } from 'actions/schedule'
+import bootbox from 'bootbox'
 const HelpTexts = require('language/help')
 
 var humanInterval = require('lib/human-interval')
@@ -202,11 +203,26 @@ module.exports = PanelButton.extend({
       yes: 'hilite',
       no: '',
       selector: 'button'
-    }
+    },
+    // 'model.hasDinamicArguments': {
+    //   type: 'toggle',
+    //   invert: true
+    // }
   }),
   events: {
     click (event) {
       event.stopPropagation()
+
+      // TODO: schedules for dynamically argumented
+      // tasks are not supported
+      if (this.model.hasDinamicArguments) {
+        let deniedMessage = [
+          'Scheduling tasks with dynamic arguments',
+          '(input/select) is not supported'
+        ].join(' ')
+        bootbox.alert(deniedMessage)
+        return
+      }
 
       const form = new ScheduleForm({
         model: this.model

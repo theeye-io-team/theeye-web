@@ -17,6 +17,9 @@ import Buttons from '../buttons'
 import AdvancedToggle from '../advanced-toggle'
 import CopyTaskSelect from '../copy-task-select'
 
+import bootbox from 'bootbox'
+import FIELD from 'constants/field'
+
 const HelpTexts = require('language/help')
 const TASK = require('constants/task')
 
@@ -206,7 +209,25 @@ module.exports = FormView.extend({
     next||(next=()=>{})
 
     this.beforeSubmit()
-    if (!this.valid) return next(null,false)
+    if (!this.valid) return next(null, false)
+
+    // TODO: temporary NON-dynamic arguments validation
+    // for scheduled tasks
+    if (this.model.hasSchedules) {
+      // this evaluation is copied from
+      // model/task/template:hasDinamicArguments
+      const hasDynamicArguments = this.data.taskArguments.find(arg => {
+        return arg.type && (
+          arg.type === FIELD.TYPE_INPUT ||
+          arg.type === FIELD.TYPE_SELECT
+        )
+      })
+      if (hasDynamicArguments) {
+        let msg = 'A Scheduled task cannot have dynamic input/select arguments'
+        bootbox.alert(msg)
+        return next(null, false)
+      }
+    }
 
     let data = this.prepareData(this.data)
     if (!this.model.isNew()) {
