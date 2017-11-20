@@ -3,9 +3,13 @@ import './buttons.less'
 module.exports = View.extend({
   template: `
     <div class="task-form-buttons" data-hook="buttons-container">
-      <div>
-        <button type="button" class="btn btn-default" data-dismiss="modal"> Cancel </button>
-        <button type="button" class="btn btn-primary" data-hook="confirm">
+      <div class="row">
+        <div class="col-xs-12 col-md-6">
+          <button type="button" class="btn btn-default" data-dismiss="modal"> Cancel </button>
+        </div>
+        <div class="col-xs-12 col-md-6">
+          <button type="button" class="btn btn-primary" data-hook="confirm">
+        </div>
         </button>
       </div>
     </div>
