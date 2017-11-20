@@ -36,7 +36,7 @@ module.exports = View.extend({
       const modal = new Modalizer({
         buttons: true,
         confirmButton: 'Run',
-        title: `${this.model.name} dinamic arguments`,
+        title: `Run ${this.model.name} with dynamic arguments`,
         bodyView: form
       })
 
