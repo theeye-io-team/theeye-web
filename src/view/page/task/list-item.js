@@ -85,7 +85,7 @@ const Item = ListItem.extend({
 
     const collapse = this.query('.itemRow > .collapse')
     $(collapse).on('show.bs.collapse', (event) => {
-      getSchedules(this.model)
+      getSchedules(this.model.id)
     })
   }
 })
@@ -199,7 +199,7 @@ const ScheduleRow = View.extend({
         if (!confirmed) {
           return
         }
-        cancelSchedule(this.task, this.model)
+        cancelSchedule(this.task.id, this.model._id)
       }
     )
   },

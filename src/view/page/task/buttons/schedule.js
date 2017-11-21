@@ -8,7 +8,7 @@ import Datepicker from 'components/input-view/datepicker'
 import AmpersandCollection from 'ampersand-collection'
 import AmpersandModel from 'ampersand-model'
 
-import { create } from 'actions/schedule'
+import { createSchedule } from 'actions/schedule'
 import bootbox from 'bootbox'
 const HelpTexts = require('language/help')
 
@@ -212,7 +212,7 @@ const ScheduleForm = FormView.extend({
 
     const data = this.prepareData(this.data)
 
-    create(this.model, data, () => {
+    createSchedule(this.model.id, data, () => {
       if (this.isCron) {
         // FuzzyMessage()
       }
