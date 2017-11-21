@@ -5,6 +5,8 @@ import FormView from 'ampersand-form-view'
 import HelpIcon from 'components/help-icon'
 import InputView from 'components/input-view'
 import Datepicker from 'components/input-view/datepicker'
+import AmpersandCollection from 'ampersand-collection'
+import AmpersandModel from 'ampersand-model'
 
 import { create } from 'actions/schedule'
 import bootbox from 'bootbox'
@@ -41,11 +43,55 @@ const ModalButtons = View.extend({
   }
 })
 
+const DateEntryModel = AmpersandModel.extend({
+  props: {
+    date: 'date'
+  }
+})
+const DateEntry = View.extend({
+  template: '<li></li>',
+  bindings: {
+    'model.date': {
+      type: 'text',
+      selector: ''
+    }
+  }
+})
+const SchedulePreview = View.extend({
+  props: {
+    visible: ['boolean', true, false]
+  },
+  bindings: {
+    visible: {
+      type: 'toggle'
+    }
+  },
+  template: `
+    <div class="schedule-preview row">
+      <div class="col-xs-12">
+        <h4>Next 5 run dates</h4>
+        <ul data-hook="date-list"></ul>
+      </div>
+    </div>`,
+  render: function () {
+    this.renderWithTemplate(this)
+    this.renderCollection(
+      this.collection,
+      DateEntry,
+      this.queryByHook('date-list')
+    )
+
+    this.listenToAndRun(this.collection, 'reset', () => {
+      this.visible = Boolean(this.collection.length)
+    })
+  }
+})
 const ScheduleForm = FormView.extend({
   props: {
     isCron: ['boolean', true, false]
   },
   initialize (options) {
+    this.nextDates = new AmpersandCollection()
     const frequencyInput = new InputView({
       label: 'Then repeat every',
       name: 'frequency',
@@ -77,31 +123,63 @@ const ScheduleForm = FormView.extend({
       ]
     })
 
-    this.fields = [
-      new Datepicker({
-        minDate: 'today',
-        enableTime: true,
-        required: true,
-        altInput: false,
-        label: 'When shall I run? *',
-        name: 'datetime',
-        dateFormat: 'F J, Y at H:i',
-        value: '',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        placeholder: 'click to pick',
-        tests: [
-          item => {
-            if (item.length === 0) {
-              return 'Can\'t schedule without a date, please pick one'
-            }
-            return ''
+    const initialDateInput = new Datepicker({
+      minDate: 'today',
+      enableTime: true,
+      required: true,
+      altInput: false,
+      label: 'When shall I run? *',
+      name: 'datetime',
+      dateFormat: 'F J, Y at H:i',
+      value: '',
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      placeholder: 'click to pick',
+      tests: [
+        item => {
+          if (item.length === 0) {
+            return 'Can\'t schedule without a date, please pick one'
           }
-        ]
-      }),
+          return ''
+        }
+      ]
+    })
+
+    this.fields = [
+      initialDateInput,
       frequencyInput
     ]
     FormView.prototype.initialize.apply(this, arguments)
+    this.listenTo(frequencyInput, 'change:value', this.onFrequencyChange)
+    this.listenTo(initialDateInput, 'change:value', this.onFrequencyChange)
+  },
+  onFrequencyChange: function (inputView, inputValue) {
+    // since this handle serves as listener for both
+    // inputViews don't trust arguments,
+    // get value from input view as a 'this' reference
+    const value = this._fieldViews['frequency'].value
+    if (
+      this._fieldViews['datetime'].valid &&
+      this._fieldViews['frequency'].value &&
+      this._fieldViews['frequency'].valid
+    ) {
+      let initialDate = null
+      try {
+        initialDate = new Date(this._fieldViews['datetime'].value)
+
+        const dates = []
+
+        for (let i = 0; i < 5; i++) {
+          initialDate = new Date(this.computeFromInterval(initialDate, value))
+          dates.push(new DateEntryModel({date: initialDate}))
+        }
+
+        this.nextDates.reset()
+        this.nextDates.reset(dates)
+      } catch (e) {}
+    } else {
+      this.nextDates.reset()
+    }
   },
   render () {
     FormView.prototype.render.apply(this, arguments)
@@ -109,6 +187,9 @@ const ScheduleForm = FormView.extend({
 
     this.addHelpIcon('datetime')
     this.addHelpIcon('frequency')
+
+    const preview = new SchedulePreview({collection: this.nextDates})
+    this.renderSubview(preview)
 
     const buttons = new ModalButtons({action: this.submit.bind(this)})
     this.renderSubview(buttons)
@@ -155,10 +236,10 @@ const ScheduleForm = FormView.extend({
       var nextDate = cronTime._getNextDateFrom(lastRun)
       if (nextDate.valueOf() == lastRun.valueOf()) {
         // Handle cronTime giving back the same date for the next run time
-        nextDate = cronTime._getNextDateFrom(dateForTimezone(new Date(lastRun.valueOf() + 1000)))
+        nextDate = cronTime._getNextDateFrom(dateForTimezone(lastRun.valueOf() + 1000))
       }
       this.isCron = true
-      nextRunAt = nextDate
+      nextRunAt = nextDate.valueOf()
     } catch (e) {
       // Nope, humanInterval then!
       try {
@@ -172,6 +253,7 @@ const ScheduleForm = FormView.extend({
       if (isNaN(nextRunAt)) {
         nextRunAt = undefined
         console.log('failed to calculate nextRunAt due to invalid repeat interval')
+        console.log(lastRun, interval)
       }
     }
     return nextRunAt
@@ -203,11 +285,7 @@ module.exports = PanelButton.extend({
       yes: 'hilite',
       no: '',
       selector: 'button'
-    },
-    // 'model.hasDinamicArguments': {
-    //   type: 'toggle',
-    //   invert: true
-    // }
+    }
   }),
   events: {
     click (event) {
@@ -227,6 +305,7 @@ module.exports = PanelButton.extend({
       const form = new ScheduleForm({
         model: this.model
       })
+
       const modal = new Modalizer({
         buttons: false,
         title: this.title,

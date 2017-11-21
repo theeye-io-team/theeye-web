@@ -14,7 +14,10 @@ a:-webkit-any-link {
 
 h1,h2,h3,h4 { font-size: inherit; }
 
-p { text-align: justify; max-width: 700px; }
+p {
+  text-align: justify;
+  max-width: 700px;
+}
 
 pre {
     margin: 0 2px;
