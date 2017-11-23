@@ -205,13 +205,19 @@ const ScheduleRow = View.extend({
   },
   bindings: {
     'model.data.scheduleData.runDate': {
-      hook: 'startDate'
+      hook: 'startDate',
+      type: function(el, value, previousValue) {
+        el.innerHTML = new Date(value).toString()
+      }
     },
     'model.data.scheduleData.repeatEvery': {
       hook: 'repeatsEvery'
     },
     'model.nextRunAt': {
-      hook: 'nextDate'
+      hook: 'nextDate',
+      type: function(el, value, previousValue) {
+        el.innerHTML = new Date(value).toString()
+      }
     }
   }
 })

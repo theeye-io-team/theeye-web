@@ -11,11 +11,12 @@ const Model = AppModel.extend({
     data: 'object',
     type: 'string',
     priority: 'number',
-    nextRunAt: 'date'
+    nextRunAt: 'string',
+    lastFinishedAt: 'string',
+    lastRunAt: 'string'
     // lastModifiedBy: '' // ???
   }
 })
-
 
 const Collection = AppCollection.extend({
   // url: `${config.api_url}/schedule`,
