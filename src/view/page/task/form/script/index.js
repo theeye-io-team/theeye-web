@@ -23,6 +23,9 @@ import FIELD from 'constants/field'
 const HelpTexts = require('language/help')
 const TASK = require('constants/task')
 
+const cannotBeTriggered = 'A Task with dynamic arguments cannot be automatically triggered by Workflow'
+const cannotBeScheduled = 'A Scheduled Task cannot have dynamic input/select arguments'
+
 module.exports = FormView.extend({
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew())
@@ -125,7 +128,14 @@ module.exports = FormView.extend({
         label: 'Trigger on',
         name: 'triggers',
         visible: false,
-        value: this.model.triggers
+        value: this.model.triggers,
+        tests: [
+          () => {
+            if (this.hasDynamicArguments()) {
+              return cannotBeTriggered
+            }
+          }
+        ]
       }),
       new SelectView({
         visible: false,
@@ -211,20 +221,22 @@ module.exports = FormView.extend({
     this.beforeSubmit()
     if (!this.valid) return next(null, false)
 
+    const hasDynamicArguments = this.hasDynamicArguments()
+
+    //if (this.data.triggers.length>0) {
+    //  if (hasDynamicArguments) {
+    //    bootbox.alert(cannotBeTriggered)
+    //    return next(null, false)
+    //  }
+    //}
+
     // TODO: temporary NON-dynamic arguments validation
     // for scheduled tasks
     if (this.model.hasSchedules) {
       // this evaluation is copied from
       // model/task/template:hasDinamicArguments
-      const hasDynamicArguments = this.data.taskArguments.find(arg => {
-        return arg.type && (
-          arg.type === FIELD.TYPE_INPUT ||
-          arg.type === FIELD.TYPE_SELECT
-        )
-      })
       if (hasDynamicArguments) {
-        let msg = 'A Scheduled task cannot have dynamic input/select arguments'
-        bootbox.alert(msg)
+        bootbox.alert(cannotBeScheduled)
         return next(null, false)
       }
     }
@@ -244,6 +256,14 @@ module.exports = FormView.extend({
     f.type = TASK.TYPE_SCRIPT
     f.grace_time = Number(data.grace_time)
     return f
+  },
+  hasDynamicArguments () {
+    return this.data.taskArguments.find(arg => {
+      return arg.type && (
+        arg.type === FIELD.TYPE_INPUT ||
+        arg.type === FIELD.TYPE_SELECT
+      )
+    })
   },
   setWithTask (task) {
     this.setValues({

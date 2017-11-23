@@ -158,10 +158,7 @@ const Model = AppModel.extend({
           }
         }
         else if (emitterType === EMITTER.TASK_SCRIPT || emitterType === EMITTER.TASK_SCRAPER) {
-          const relatedTask = App.state.tasks.get(this.emitter_id)
-          return Boolean(eventName === EVENT.SUCCESS) &&
-            relatedTask && // just in case
-            relatedTask.hasDinamicArguments !== true
+          return Boolean(eventName === EVENT.SUCCESS)
         }
       }
     }
