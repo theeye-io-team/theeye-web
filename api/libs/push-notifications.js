@@ -78,12 +78,9 @@ function sendDefaultNotification(message) {
 module.exports = {
   sendNotification(message) {
     switch (message.type) {
-      case 'file':
-      break;
-      case 'psaux':
-      break;
-      case 'dstat':
-      break;
+      case 'file': break;
+      case 'psaux': break;
+      case 'dstat': break;
       case 'host':
         sendHostNotification(message)
         break;
