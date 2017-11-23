@@ -11,7 +11,8 @@ var User = {
     credential: { type: 'string', defaultsTo: 'admin' },
     enabled: { type: 'boolean', defaultsTo: false },
     invitation_token: { type: 'string', defaultsTo: '' },
-    passports: { collection: 'Passport', via: 'user' }
+    passports: { collection: 'Passport', via: 'user' },
+    devices: { type: 'array', defaultsTo: [] }
   },
   beforeCreate: function(values, next) {
     var email = values.email;

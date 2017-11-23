@@ -3,6 +3,8 @@ var passport = require('../services/passport')
 var mailer = require('../services/mailer')
 var difference = require('lodash/difference')
 var debug = require('debug')('eye:web:controller:user');
+var AWS = require('aws-sdk');
+var SNS = new AWS.SNS( new AWS.Config( sails.config.aws ) );
 
 var UserController = module.exports = {
   //Set the customer for the session
@@ -260,5 +262,52 @@ var UserController = module.exports = {
       debug(err)
       return res.send(500, 'Error fetching user passports.')
     }
+  },
+  registerdevicetoken: function (req, res) {
+    var params = req.params.all()
+    var userId = params.id
+
+    User.findOne({ id: userId },(error,user) => {
+      if (error) {
+        debug(error);
+        return res.send(500, 'internal server error');
+      }
+      if (user) {
+        SNS.createPlatformEndpoint({
+          PlatformApplicationArn: sails.config.sns.push_notifications.application_arn,
+          Token: params.device_token,
+          CustomUserData: userId
+        }, function(error, data) {
+          if (error) {
+            debug(error);
+            return res.send(500, 'internal server error');
+          }
+
+          var userNotification = user.devices || []
+          var index = userNotification.findIndex(elem => elem.uuid == params.uuid)
+          if (index > -1) {
+            userNotification[index].device_token = params.device_token
+            userNotification[index].endpoint_arn = data.EndpointArn
+          } else {
+            userNotification.push({
+              uuid: params.uuid,
+              device_token: params.device_token,
+              platform: params.platform,
+              endpoint_arn: data.EndpointArn
+            })
+          }
+
+          User.update({id: userId}, {devices: userNotification}).exec((error,user) => {
+            if (error) {
+              debug(error);
+              return res.send(500, 'internal server error');
+            }
+            return res.send(200)
+          })
+        })
+      } else {
+        return res.send(404, 'User not found')
+      }
+    })
   }
 }

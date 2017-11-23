@@ -48,6 +48,7 @@ module.exports.routes = {
   'get    /user'  : 'UserController.fetch',
   'get    /user/:id' : 'UserController.get',
   'put    /user/:id' : 'UserController.edit',
+  'post   /user/:id/registerdevicetoken'  : 'UserController.registerdevicetoken',
   'post   /user'  : 'UserController.create',
   'delete /user/:id' : 'UserController.remove',
   // Password Recovery
@@ -86,6 +87,7 @@ module.exports.routes = {
   // ContactController routes
   'post   /contact' : 'ContactController.contact',
 
+  'post   /notification' : 'NotificationController.sendnotification',
   /*
    *
    * need migration to /src structure (SPA)

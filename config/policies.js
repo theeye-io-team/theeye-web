@@ -36,5 +36,6 @@ module.exports.policies = {
   // SNS receivers . will be deprecated soon
   EventsController: { 'update':['noSession'], },
   PalancaController: { 'update':['noSession'], },
-  HostStatsController: { 'update':['noSession'], }
+  HostStatsController: { 'update':['noSession'], },
+  NotificationController: { 'sendnotification':['noSession'], }
 };

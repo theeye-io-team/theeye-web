@@ -13,7 +13,7 @@ var viewer = {
   'password': ['*'],
   'member' : ['fetch'],
   'auth': ['login','activate','google','connect','unlink','logout'],
-  'user': ['myprofile','setcustomer','ampersand','getuserpassport'],
+  'user': ['myprofile','setcustomer','ampersand','getuserpassport','registerdevicetoken'],
 }
 
 var user = assign({},viewer,{
