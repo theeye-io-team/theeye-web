@@ -13,8 +13,8 @@ const defaultConfigs = {
     upandrunningSign: true
   },
   agentBinary:{
-    url: 'https://s3.amazonaws.com/theeye.agent/theEyeInstallerx64.exe',
-    name: 'theEyeInstallerx64.exe'
+    url: 'https://s3.amazonaws.com/theeye.agent/TheEyeWinServiceInstaller.zip',
+    name: 'TheEyeWinServiceInstaller.zip'
   }
 }
 

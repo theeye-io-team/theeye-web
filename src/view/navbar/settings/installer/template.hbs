@@ -35,17 +35,14 @@
     		<ol>
           <li>
             Download the Agent Binaries
-            <code>
-              <a data-hook="agent-binary-download agent-binary-html"></a>
-            </code>
-            into the folder where you would like to install TheEye Agent (<code>C:/Program Files/The Eye</code>)
+            <code> <a data-hook="agent-binary-download agent-binary-html"></a> </code>
+            and extract it to the folder where you would like to install TheEye Agent (<code>C:/Program Files/The Eye</code>)
           </li>
           <li>Download and replace the configuration file <code>{installation folder}/config/credentials.js</code> with
             <a download="credentials.json" target="_blank" href="/api/agent/credentials">yours <i class="fa fa-download"></i></a>
           </li>
           <li>Open a <code>cmd.exe</code> <b>as Administrator</b> and change directory to the installation folder
             <pre>cd {installation folder}</pre> </li>
-          <li>Run the self-extractor <code>theEyeInstaller.exe</code> <pre data-hook="agent-binary-route"></pre> </li>
           <li>Run <code>installer.bat</code> <b>from console!</b>
             <pre>./installer.bat</pre></li>
           <li>Go to the <a href="/events">Dashboard <i class="fa fa-dashboard"></i></a> and check the status of the Agent</li>
