@@ -114,8 +114,12 @@ const ScriptTask = Schema.extend({
   },
   parse (attrs) {
     // convert script_arguments into taskArguments
-    if (attrs.script_arguments.length>0) {
-      attrs.taskArguments = filterScriptArguments(attrs.script_arguments)
+    if (Array.isArray(attrs.script_arguments)) {
+      if (attrs.script_arguments.length>0) {
+        attrs.taskArguments = filterScriptArguments(attrs.script_arguments)
+      } else {
+        attrs.taskArguments = []
+      }
     }
     return attrs
   },
