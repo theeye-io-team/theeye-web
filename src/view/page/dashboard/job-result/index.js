@@ -5,27 +5,35 @@ import State from 'ampersand-state'
 import Collection from 'ampersand-collection'
 import Modalizer from 'components/modalizer'
 import moment from 'moment'
+import ansi2html from 'ansi-to-html'
+
+import './styles.less'
 
 const ScriptJobResult = View.extend({
   props: {
     result: 'state'
   },
   template: `
-    <table class="table table-striped">
-      <thead>
-      </thead>
-      <tbody>
-        <tr><td>output code</td><td><i data-hook="code"></i></td></tr>
-        <tr><td>last line</td><td><i data-hook="lastline"></i></td></tr>
-        <tr><td>log</td><td><i data-hook="log"></i></td></tr>
-        <tr><td>killed</td><td><i class="fa" data-hook="killed"></i></td></tr>
-      </tbody>
-    </table>
+    <div class="result script-result">
+      <h2>Script execution log</h2>
+      <table class="table">
+        <thead> </thead>
+        <tbody>
+          <tr><td>Output Code</td><td><span data-hook="code"></span></td></tr>
+          <tr><td>Killed</td><td><span class="fa" data-hook="killed"></span></td></tr>
+          <tr><td>Last Line</td><td><div class="output"><pre data-hook="lastline"></pre></div></td></tr>
+          <tr><td>Log</td><td><div class="output"><pre data-hook="log"></pre></td></div></tr>
+        </tbody>
+      </table>
+    </div>
   `,
   bindings: {
     'result.code': { hook:'code' },
     'result.lastline': { hook:'lastline' },
-    'result.log': { hook:'log' },
+    html_log: {
+      type:'innerHTML',
+      hook:'log'
+    },
     killed: { hook:'killed' }
     //'result.killed': {
     //  hook:'killed',
@@ -39,6 +47,14 @@ const ScriptJobResult = View.extend({
       deps: ['result.killed'],
       fn () {
         return this.result.killed ? 'yes' : 'no'
+      }
+    },
+    html_log: {
+      deps: ['result.log'],
+      fn () {
+        if (!this.result||!this.result.log) return ''
+        let converter = new ansi2html()
+        return converter.toHtml(this.result.log)
       }
     }
   }
@@ -68,16 +84,15 @@ const ScraperJobResult = View.extend({
     result: 'state',
   },
   template: `
-    <div style='overflow:scroll;max-height: 500px;'>
+    <div class="result scraper-result">
       <h2>Remote reponse</h2>
-      <table class="table table-striped">
-        <thead>
-        </thead>
+      <table class="table">
+        <thead> </thead>
         <tbody>
           <tr><td>Message</td><td><i data-hook="message"></i></td></tr>
           <tr><td>Status Code</td><td><i data-hook="status_code"></i></td></tr>
-          <tr><td>Body</td><td><i data-hook="body"></i></td></tr>
           <tr><td>Headers</td><td data-hook="headers"></td></tr>
+          <tr><td>Body</td><td><div class="output"><pre data-hook="body"></pre></div></td></tr>
         </tbody>
       </table>
     </div>
@@ -112,7 +127,7 @@ const JobView = View.extend({
     job: 'state'
   },
   template: `
-    <div>
+    <div class="job-result-component">
       <h4>Job execution <b data-hook="lifecycle"></b></h4>
       <h4>Result <b data-hook="state"></b></h4>
       <p><i class="fa fa-user"></i> <span data-hook="user-name"></span></p>

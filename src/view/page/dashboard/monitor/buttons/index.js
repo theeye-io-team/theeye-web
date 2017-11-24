@@ -1,6 +1,6 @@
 import acls from 'lib/acls'
 import View from 'ampersand-view'
-import JobOutput from 'view/page/dashboard/job-output'
+import JobOutput from './job-output'
 import SearchActions from 'actions/searchbox'
 import ResourceActions from 'actions/resource'
 import HostActions from 'actions/host'
