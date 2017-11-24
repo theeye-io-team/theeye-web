@@ -2,9 +2,6 @@
   padding: 15px;
   margin-bottom: 20px;
   border: 1px solid transparent;
-  /*overflow:scroll;*/
-  max-height: 500px;
-  /*border-radius: 4px;*/
 }
 
 .text-block .table {
