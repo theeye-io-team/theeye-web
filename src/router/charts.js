@@ -8,7 +8,7 @@ class Charts extends Route {
   indexRoute () {
     const customer = App.state.session.customer
     return new PageView({
-      iframe: customer.config.kibana
+      url: customer.config.kibana
     })
   }
 }

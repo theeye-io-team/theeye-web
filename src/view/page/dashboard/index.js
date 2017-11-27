@@ -4,7 +4,7 @@ import App from 'ampersand-app'
 import config from 'config'
 import View from 'ampersand-view'
 //import jquery from 'jquery'
-import PanelView from './panel'
+import StatsPanelView from './stats-panel'
 import TaskRowView from './task'
 import MonitorRowView from './monitor'
 import RunAllTasksButton from './task/run-all-button'
@@ -124,7 +124,10 @@ module.exports = View.extend({
     }
 
     if (this.renderStats === true) {
-      this.renderStatsPanel()
+      this.renderSubview(
+        new StatsPanelView(),
+        this.queryByHook('.admin-container.dashboard')
+      )
     }
   },
   /**
@@ -324,14 +327,4 @@ module.exports = View.extend({
 
     this.listenToAndRun(App.state.searchbox,'change:search',search)
   },
-  renderStatsPanel () {
-    this.renderSubview(
-      new PanelView({
-        col_class: 'col-md-6',
-        title: 'Stats',
-        name: 'stats'
-      }),
-      this.queryByHook('.admin-container.dashboard')
-    )
-  }
 })

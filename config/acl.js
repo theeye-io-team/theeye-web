@@ -34,7 +34,7 @@ var admin = assign({},user,{
   'resource' : ['*'],
   'hostgroup' : ['*'],
   'scheduler' : ['*'],
-  'customer' : ['getuseragent']
+  'customer' : ['getuseragent', 'editconfig']
 });
 
 var owner = assign({},admin,manager,{

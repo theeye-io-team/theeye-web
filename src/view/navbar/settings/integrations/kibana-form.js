@@ -9,12 +9,24 @@ module.exports = FormView.extend({
     this.fields = [
       new InputView({
         name: 'kibana',
-        label: 'Kibana iframe',
-        placeholder: 'Kibana iframe',
+        label: 'Kibana URL',
+        placeholder: 'Kibana URL',
         value: this.model.config.kibana,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        required: false
+        required: false,
+        tests: [
+          function (value) {
+            if(value.length > 0) {
+              if(!isURL(value,{
+                protocols: ['http','https'],
+                require_protocol: true
+              })) {
+                return "Must be a valid URL (include protocol)"
+              }
+            }
+          }
+        ]
       }),
     ]
     FormView.prototype.initialize.apply(this, arguments)

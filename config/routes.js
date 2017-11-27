@@ -61,6 +61,7 @@ module.exports.routes = {
   'get    /customer/agent' : 'CustomerController.getuseragent',
   'get    /customer/:id' : 'CustomerController.get',
   'put    /customer/:id' : 'CustomerController.edit',
+  'put    /customer/:id/config' : 'CustomerController.editconfig',
   'post   /customer' : 'CustomerController.create',
   'delete /customer/:id' : 'CustomerController.remove',
   // TaskController routes

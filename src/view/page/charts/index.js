@@ -5,23 +5,31 @@ import './style.less'
 
 module.exports = View.extend({
   props: {
-    iframe: 'string'
+    url: 'string'
   },
-  template: `<div class="charts-page"></div>`,
+  template: `
+    <div class="charts-page">
+      <iframe></iframe>
+    </div>
+  `,
+  bindings: {
+    url: {
+      selector: 'iframe',
+      type: 'attribute',
+      name: 'src',
+    }
+  },
   initialize () {
     View.prototype.initialize.apply(this,arguments)
     this.resize = this.resize.bind(this)
   },
   render () {
     this.renderWithTemplate(this)
-    this.el.appendChild( html2dom(this.iframe) )
-
     window.addEventListener('resize', this.resize, false)
     this.resize()
   },
   remove () {
     View.prototype.remove.apply(this, arguments)
-
     window.removeEventListener('resize', this.resize, false)
   },
   resize () {

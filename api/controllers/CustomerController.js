@@ -55,6 +55,23 @@ var CustomerController = module.exports = {
     });
   },
   /**
+   * @method PUT
+   * @route /customer/:id/config
+   * @param {String} id
+   */
+  editconfig (req, res) {
+    var config = req.body.config;
+    if (!config) {
+      res.send(400, 'Integrations config is missing.')
+    }
+    req.supervisor.patch({
+      route:`/customer/${req.params.id}/config`,
+      body: {config: config},
+      success: customer => res.json(200,customer),
+      failure: err => res.send(err.statusCode,err)
+    });
+  },
+  /**
    * @method DELETE
    * @route /customer/:id
    * @param {String} id
