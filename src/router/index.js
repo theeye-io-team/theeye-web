@@ -11,9 +11,8 @@ const UserRoute = require('./user')
 const CustomerRoute = require('./customer')
 const WebhookRoute = require('./webhook')
 const HostGroupRoute = require('./hostgroup')
-// import SchedulerRoute from './scheduler'
 import DashboardRoute from './dashboard'
-//import TasksRoute from './task'
+import ChartsRoute from './charts'
 
 module.exports = Router.extend({
   execute (callback, args) {
@@ -77,6 +76,10 @@ module.exports = Router.extend({
         const route = new SchedulerRoute()
         route.route('index')
       }, 'schedulerview')
+    },
+    'admin/charts': () => {
+      const route = new ChartsRoute()
+      route.route('index')
     },
     'login': () => {
       const route = new AuthRoute()

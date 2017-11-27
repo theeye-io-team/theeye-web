@@ -115,6 +115,7 @@ module.exports.routes = {
   'get /admin/user' : spaIndexRoute,
   'get /admin/customer': spaIndexRoute,
   'get /admin/task': spaIndexRoute,
+  'get /admin/charts': spaIndexRoute,
   'get /dashboard': spaIndexRoute,
   'get /login': spaIndexRoute,
   'get /register': spaIndexRoute,
