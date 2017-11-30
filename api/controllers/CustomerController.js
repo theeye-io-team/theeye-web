@@ -94,6 +94,21 @@ var CustomerController = module.exports = {
           }
         });
 
+        Passport.find({}, function(error, passports){
+          for (var i=0; i<passports.length; i++) {
+            var passport = passports[i];
+            if(passport.profile) {
+              var idx = passport.profile.customers.findIndex(elem => elem.name == customer.name);
+              if (idx !== -1) {
+                var removed = passport.profile.customers.splice(idx, 1);
+                passport.save(function (error) {
+                  if(error) sails.log.error('unable to update passport "%s" customers', passport.profile.username);
+                });
+              }
+            }
+          }
+        });
+
         return res.send(204);
       },
       failure: err => {
