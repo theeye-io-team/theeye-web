@@ -1,3 +1,4 @@
+/* global sails */
 'use strict';
 
 const apibase = '/apiv2/'
@@ -119,44 +120,51 @@ module.exports = {
    * @method {POST||PUT}
    * @route /api/file
    */
-  upload (req, res, next) {
+  filePut (req, res, next) {
     var url = req.originalUrl.replace(apibase,`/${req.user.current_customer}/`);
     var params = req.params.all();
-    var buffer = new Buffer(params.file,'base64');
+    var buffer = new Buffer(params.data, 'base64');
     var source = decodeURIComponent(escape(buffer.toString('ascii')));
     var fname = '/tmp/' + req.user.id + '_' + Date.now();
 
-		fs.writeFile(fname,source,'ascii',err => {
-			var readstream = fs.createReadStream(fname);
-			params.file = {
-				value: readstream,
-				options: {
-					filename: params.filename
-				}
-			};
-
-			req.supervisor.performRequest({
-				method: req.method, // POST or PUT
-				url: url,
-				formData: params
-			}, function(error, body) {
-				if (error) {
-					sails.log.error(error);
-					res.send(error.statusCode||500, error);
-				} else {
-					res.send(200,body);
-				}
-			});
-		});
+    fs.writeFile(fname, source, 'ascii', err => {
+      if (err) {
+        return res.send(500, err)
+      }
+      // https://github.com/request/request/issues/1761
+      // formData bug? if true/false value is passed into
+      // formData object, request throws:
+      // TypeError: first argument must be a string or Buffer
+      params.public = 0 // fuck this shit!!!!!!!!!!!!!!!!!!!!
+      var readstream = fs.createReadStream(fname)
+      params.file = {
+        value: readstream,
+        options: {
+          filename: params.filename
+        }
+      }
+      req.supervisor.performRequest({
+        method: req.method, // POST or PUT
+        url: url,
+        formData: params
+      }, function (error, body) {
+        if (error) {
+          sails.log.error(error)
+          res.send(error.statusCode || 500, error)
+        } else {
+          res.send(200, body)
+        }
+      })
+    })
   },
-  download (req, res, next) {
+  fileGet (req, res, next) {
     var url = req.originalUrl.replace(apibase,`/${req.user.current_customer}/`);
     var supervisor = req.supervisor;
 
     supervisor.performRequest({
       method: 'GET',
       url: url
-    },function(error,file){
+    }, function(error,file){
       supervisor.performRequest({
         json: false,
         method: 'GET',
@@ -164,7 +172,7 @@ module.exports = {
       },function(error, body){
         if (error) return res.send(500,error);
         var source = unescape(encodeURIComponent(body));
-        file.file = new Buffer(source).toString('base64');
+        file.data = new Buffer(source).toString('base64');
         res.send(200,file);
       });
     });

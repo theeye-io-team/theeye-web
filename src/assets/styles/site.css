@@ -16,22 +16,13 @@ h1,h2,h3,h4 { font-size: inherit; }
 
 p {
   text-align: justify;
-  max-width: 700px;
+  /*max-width: 700px;*/
 }
 
+/*
 pre {
-    margin: 0 2px;
-    padding: 0px 5px;
-    border: 1px solid #EAEAEA;
-    color: rgba(0,255,0,1);
-    background-color: rgba(0,0,0,1);
-    border-radius: 3px;
-    font-size: 12px;
-    font-family: Consolas, "Liberation Mono", Courier, monospace;
-    max-width: 100%;
-    padding: 10px;
-    margin: 20px 0;
 }
+*/
 
 .table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th { padding: 5px; }
 

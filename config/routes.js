@@ -65,20 +65,20 @@ module.exports.routes = {
   'post   /customer' : 'CustomerController.create',
   'delete /customer/:id' : 'CustomerController.remove',
   // TaskController routes
-  'post   /task': 'TasksController.create',
+  //'post   /task': 'TasksController.create',
+  //'get    /task/:id?': 'TasksController.get',
   'post   /task/schedule': 'TasksController.schedule',
-  'get    /task/:id?': 'TasksController.get',
   'get    /task/:id/schedule': 'TasksController.getSchedule',
   'delete /task/:id/schedule/:scheduleId': 'TasksController.cancelSchedule',
-  'delete /task/:id?': 'TasksController.destroy',
-  'put    /task/:id?': 'TasksController.update',
+  //'delete /task/:id?': 'TasksController.destroy',
+  //'put    /task/:id?': 'TasksController.update',
   // ScriptController routes
-  'post   /admin/script/download' : 'ScriptController.downloadPublicScript',
-  'get    /script/:id' : 'ScriptController.get',
-  'get    /script' : 'ScriptController.fetch',
-  'post   /script' : 'ScriptController.create',
-  'delete /script/:id' : 'ScriptController.destroy',
-  'put    /script/:id' : 'ScriptController.update',
+  //'post   /admin/script/download' : 'ScriptController.downloadPublicScript',
+  //'get    /script/:id' : 'ScriptController.get',
+  //'get    /script' : 'ScriptController.fetch',
+  //'post   /script' : 'ScriptController.create',
+  //'delete /script/:id' : 'ScriptController.destroy',
+  //'put    /script/:id' : 'ScriptController.update',
   // ResourceController routes.
   'get    /resource/:id' : 'ResourceController.get',
   'post   /resource/:type?' : 'ResourceController.create',
@@ -95,9 +95,7 @@ module.exports.routes = {
    *
    */
   'get /admin/monitor': 'ResourceController.index',
-  'get /admin/script': 'ScriptController.index',
   'get /hoststats/:host': 'HostStatsController.index',
-  'get /admin/oldtask': 'TasksController.index',
   /*
    *
    * all this endpoints are not handled by Sails at all.
@@ -117,6 +115,7 @@ module.exports.routes = {
   'get /admin/customer': spaIndexRoute,
   'get /admin/task': spaIndexRoute,
   'get /admin/charts': spaIndexRoute,
+  'get /admin/file': spaIndexRoute,
   'get /dashboard': spaIndexRoute,
   'get /login': spaIndexRoute,
   'get /register': spaIndexRoute,
@@ -124,7 +123,6 @@ module.exports.routes = {
   'get /sociallogin': spaIndexRoute,
   'get /socialconnect':spaIndexRoute,
   'get /passwordreset':spaIndexRoute,
-
   /*
    *
    * GENERIC API V2 ENDPOINTS. PROXY TO THE API SUPERVISOR
@@ -132,17 +130,21 @@ module.exports.routes = {
    * USE BEARER AUTHENTICATION METHOD
    *
    */
+  // SESSION
   'post /session/customer/:customer':'BearerController.currentCustomer',
   'post /session/refresh':'BearerController.refreshAccessToken',
   'get  /session/profile': 'BearerController.sessionProfile',
-  'put /apiv2/file/:id':'ApiV2Controller.upload',
-  'post /apiv2/file':'ApiV2Controller.upload',
-  'get /apiv2/file/:id':'ApiV2Controller.download',
-
+  // FILES & SCRIPTS
+  'post /apiv2/file':'ApiV2Controller.filePut',
+  'put /apiv2/file/:id':'ApiV2Controller.filePut',
+  'get /apiv2/file/:id':'ApiV2Controller.fileGet',
+  'delete /apiv2/file/:id': 'ApiV2Controller.remove',
+  //'get /apiv2/file/:id/download':'ApiV2Controller.download',
+  // TASK SCHEDULER
   'post /apiv2/task/schedule': 'ApiV2Controller.createSchedule',
   'get /apiv2/task/:id/schedule': 'ApiV2Controller.getSchedules',
   'delete /apiv2/task/:id/schedule/:scheduleId': 'ApiV2Controller.cancelSchedule',
-
+  // GENERIC PROXIED ENDPOINTS
   'put /apiv2/:resource/:id*':'ApiV2Controller.update',
   'patch /apiv2/:resource/:id*':'ApiV2Controller.patch',
   'delete /apiv2/:resource/:id*':'ApiV2Controller.remove',

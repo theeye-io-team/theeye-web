@@ -60,7 +60,7 @@ module.exports = {
   titles:{
     user_page: 'Users CRUD operations',
     customer_page: 'Customers CRUD operations',
-    script_page: 'Tasks/Monitors Scripts CRUD operations',
+    file_page: 'Scripts and Files CRUD operations',
     task_page: 'Tasks allow\'s you to run Web/APi requests and custom scripts. You can then schedule the tasks.',
     monitor_page: 'Monitors watches your Web/API endpoints, files, processes, hosts health and scripts changes and send alerts to You.',
     webhook_page: 'Webhooks allows you to Trigger tasks automagically, through requests from outside applications.',

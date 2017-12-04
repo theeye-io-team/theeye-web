@@ -1,6 +1,5 @@
 import TasksPage from 'view/page/task'
 import App from 'ampersand-app'
-import XHR from 'lib/xhr'
 import Route from 'lib/router-route'
 //import bootbox from 'bootbox'
 

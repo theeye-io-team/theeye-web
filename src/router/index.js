@@ -64,18 +64,22 @@ module.exports = Router.extend({
       route.route('index')
     },
     'admin/task(/:id/:action)': () => {
-      require.ensure(['./task'], () => {
-        const TasksRoute = require('./task')
+      return import('./task').then(TasksRoute => {
         const route = new TasksRoute()
         route.route('index')
-      }, 'tasks')
+      })
+    },
+    'admin/file(/:id/:action)': () => {
+      return import('./files').then(FilesRoute => {
+        const route = new FilesRoute()
+        route.route('index')
+      })
     },
     'admin/scheduler': () => {
-      require.ensure(['./scheduler'], () => {
-        const SchedulerRoute = require('./scheduler')
+      return import('./scheduler').then(SchedulerRoute => {
         const route = new SchedulerRoute()
         route.route('index')
-      }, 'schedulerview')
+      })
     },
     'admin/charts': () => {
       const route = new ChartsRoute()

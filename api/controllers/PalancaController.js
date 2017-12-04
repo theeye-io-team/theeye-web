@@ -17,8 +17,6 @@ module.exports = {
   update (req, res, next) {
     // sns updates received
     var body = req.body;
-    sails.log.debug('trigger/job update received');
-    sails.log.debug(body);
 
     snsreceiver.handleSubscription(body, function(error, action) {
       if (error||!body.Message) {

@@ -5,18 +5,6 @@ var stream = require('stream');
 
 module.exports = {
   /**
-   * Fetch scripts
-   * GET /script
-   */
-  fetch: function(req, res) {
-    var supervisor = req.supervisor;
-    supervisor.scripts(function(err, scripts) {
-      if(err) return res.send(500, err);
-
-      return res.json({ scripts : scripts });
-    });
-  },
-  /**
    * Get script
    * GET /script/:id
    */
@@ -79,25 +67,6 @@ module.exports = {
 
   },
   /**
-   * Delete script
-   * DEL /script/:id
-   */
-  destroy: function(req, res)
-  {
-    var id = req.param("id", null);
-    var supervisor = req.supervisor;
-
-    if( ! id || ! id.match(/^[a-fA-F0-9]{24}$/) )
-      return res.send(400,'invalid id');
-    else {
-      supervisor.deleteScript( id, function(err) {
-        if(err) return res.send(500, err);
-        res.send(200, "Script %s deleted".replace('%s',id));
-      }
-      );
-    }
-  },
-  /**
    * Create script
    * POST /script
    */
@@ -120,29 +89,6 @@ module.exports = {
         }
       );
     });
-
   },
-  /**
-   * Action blueprints:
-   *    `/script/index`
-   *    `/script`
-   */
-  index: function(req, res) {
-    var supervisor = req.supervisor;
-
-    supervisor.scripts( function(err, scripts) {
-      if (err) {
-        debug(err);
-        return res.serverError("Error getting data from supervisor: " + err);
-      }
-      return res.view({
-        'scripts': scripts
-      });
-    });
-  },
-  /**
-  * Overrides for the settings in `config/controllers.js`
-  * (specific to ScriptController)
-  */
   _config: {}
 };

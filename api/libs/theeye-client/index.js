@@ -1,25 +1,21 @@
 'use strict';
 
-var CLIENT_VERSION = 'v0.9.8' ;
-
-var CLIENT_NAME = 'Golum' ;
-
-var CLIENT_USER_AGENT = CLIENT_NAME + '/' + CLIENT_VERSION ;
-
-var os = require('os');
-var fs = require('fs');
-var path = require('path');
-var util = require('util');
-var request = require('request');
-var debug = require('debug');
-
+var CLIENT_VERSION = 'v0.9.8'
+var CLIENT_NAME = 'Golum'
+var CLIENT_USER_AGENT = CLIENT_NAME + '/' + CLIENT_VERSION
+var os = require('os')
+var fs = require('fs')
+var path = require('path')
+var util = require('util')
+var request = require('request')
+var debug = require('debug')
 var logger = {
   'debug': debug('eye:client:debug'),
   'error': debug('eye:client:error')
-};
+}
 
 
-module.exports = TheEyeClient;
+module.exports = TheEyeClient
 
 /**
  *
@@ -30,7 +26,6 @@ function TheEyeClient (options) {
   this.configure(options);
   return this;
 }
-
 
 /**
  *
@@ -51,8 +46,7 @@ TheEyeClient.prototype = {
    * @param Object options
    *
    */
-  configure: function(options)
-  {
+  configure: function(options) {
     var connection = this;
 
     logger.debug('theeye api client version %s/%s', CLIENT_NAME, CLIENT_VERSION);
@@ -372,144 +366,14 @@ TheEyeClient.prototype = {
     });
     return request;
   },
-  /**
-   *
-   *
-   *
-   * agent methods
-   *
-   *
-   *
-   */
-  getNextPendingJob : function(options,doneFn) {
-
-    var hostname = (options&&options.hostname) ? options.hostname : this.hostname;
-
-    this.performRequest({
-      method: 'GET',
-      url: '/:customer/job',
-      qs: {
-        process_next: 1,
-        hostname: hostname
-      }
-    }, function(error,body){
-      if( ! error ) {
-        if(body&&body.jobs) {
-          if(Array.isArray(body.jobs)&&body.jobs.length>0){
-            doneFn(null, body.jobs[0]);
-          }
-          else doneFn();
-        } else {
-          var error = new Error('api response with empty content.');
-          logger.error(error);
-          doneFn(error);
-        }
-      } else {
-        logger.error('api request error %s.',error);
-        logger.error(error);
-      }
-    });
-  },
-  /**
-   *
-   *
-   */
-  sendAgentKeepAlive : function() {
-    this.performRequest({
-      method:'put',
-      url: '/:customer/agent/:hostname'
-    });
-  },
-  /**
-   *
-   *
-   */
-  submitJobResult : function(jobId,result,next) {
-    this.performRequest({
-      method: 'PUT',
-      url: '/:customer/job/' + jobId,
-      body: {result:result}
-    }, function(error,response){
-      if( error ) {
-        logger.error('unable to update job');
-        if(next) next(error);
-      } else {
-        logger.debug('job updated');
-        if(next) next(null,response);
-      }
-    });
-  },
-  /**
-   *
-   *
-   */
-  getAgentConfig: function(hostname, next) {
-    this.performRequest({
-      method:'get',
-      url:  '/:customer/agent/:hostname/config'
-    },function(error,body){
-      if( error ) {
-        logger.error('request error');
-        logger.error(error.message);
-        next(error,null);
-      } else {
-        if( ! body || ! body instanceof Object ) {
-          logger.error('respose body error. no config found');
-          logger.error(body);
-          next(error,null);
-        } else {
-          logger.debug('agent config fetch success');
-          logger.debug('%j', body);
-          next(null,body);
-        }
-      }
-    });
-  },
   //
   //
-  //
-  //  admin resources operations
-  //
+  // DEPRECATED VERY SOON
   //
   //
   tags: function(callback){
     this.performRequest({ method: 'get', url: this.TAG }, function(error,body){
       callback(error, body);
-    });
-  },
-  /**
-   * Gets a script by its Id
-   *
-   * @param {Number} id - The script id in supervisor
-   * @param {Function} callback - Called with the scripts as second parameter.
-   *   - param {Error} error - Null if nothing bad happened.
-   *   - param {Array} scripts - Array of script objects.
-   */
-  script: function(id, callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/:customer/script/' + id
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body);
-    });
-  },
-  /**
-   *
-   * Gets available scripts for customer and username
-   *
-   * @param {Number} id - The script id in supervisor
-   * @param {Function} callback - Called with the scripts as second parameter.
-   *   - param {Error} error - Null if nothing bad happened.
-   *   - param {Array} scripts - Array of script objects.
-   */
-  scripts: function(callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/:customer/script'
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body);
     });
   },
   /**
@@ -552,7 +416,6 @@ TheEyeClient.prototype = {
       callback(null, body);
     });
   },
-
   /**
    * Creates a Script
    *
@@ -616,65 +479,6 @@ TheEyeClient.prototype = {
     });
   },
   /**
-   * Get a Task
-   *
-   * @param {Number} id - The script id in supervisor
-   * @param {Function} callback - Called with the scripts as second parameter.
-   */
-  task: function(id, callback) {
-    this.performRequest({
-      method: 'get',
-      uri: this.TASK + '/' + id
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body);
-    });
-  },
-  /**
-   * Gets Tasks
-   *
-   * @param {Number} id - The task id in supervisor
-   * @param {Function} callback - Called with the tasks as second parameter.
-   *   - param {Error} error - Null if nothing bad happened.
-   *   - param {Array} tasks - Array of task objects.
-   */
-  tasks: function(callback) {
-    this.performRequest({
-      method: 'get',
-      url: this.TASK,
-    }, function(error, tasks) {
-      if (error) return callback(error);
-      callback(null, tasks);
-    });
-  },
-  /**
-   *
-   *
-   */
-  deleteTask: function(task_id, callback) {
-    this.performRequest({
-      method: 'delete',
-      uri: this.TASK + '/' + task_id
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body);
-    });
-  },
-  /**
-   *
-   *
-   */
-  jobCreate: function(task_id, callback) {
-    this.performRequest({
-      method: 'POST',
-      uri: '/:customer/job',
-      qs: { task: task_id }
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.job);
-    });
-  },
-  /**
    * Task schedule GET
    */
   getTaskSchedule: function(task_id, callback){
@@ -687,8 +491,6 @@ TheEyeClient.prototype = {
     });
   },
   /**
-   *
-   *
    */
   deleteResource : function(id, callback) {
     this.performRequest({
@@ -700,41 +502,6 @@ TheEyeClient.prototype = {
     });
   },
   /**
-   *
-   *
-   */
-  updateResource : function(id,resourceUpdates,next) {
-    this.performRequest({
-      method: 'PUT',
-      url: '/:customer/resource/' + id,
-      body: resourceUpdates
-    }, function(error,response){
-      if( error ) {
-        logger.error('unable to update resource');
-        logger.error(error.message);
-        if(next) next(error);
-      } else {
-        logger.debug('resource updated');
-        if(next) next(null,response);
-      }
-    });
-  },
-  /**
-   *
-   *
-   */
-  resourceTypes: function(callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/:customer/resource/type'
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.types);
-    });
-  },
-  /**
-   *
-   *
    */
   host: function(id, callback){
     this.performRequest({
@@ -746,8 +513,6 @@ TheEyeClient.prototype = {
     });
   },
   /**
-   *
-   *
    */
   hosts: function(callback) {
     this.performRequest({
@@ -759,34 +524,6 @@ TheEyeClient.prototype = {
     });
   },
   /**
-   *
-   *
-   */
-  userGet : function(id, callback) {
-    this.performRequest({
-      method: 'get',
-      url: '/user/' + id
-    }, function(error, body) {
-      if (error) return callback(error);
-      callback(null, body.user);
-    });
-  },
-  /**
-   *
-   *
-   */
-  userReplace : function (id, updates, callback) {
-    this.performRequest({
-      method: 'put',
-      url: '/user/' + id,
-      body:  updates
-    }, function(error, body){
-      if (error) return callback(error);
-      callback(null, body.user);
-    });
-  },
-  /**
-   * @author Facundo
    */
   userDelete : function (id, callback) {
     this.performRequest({
@@ -796,148 +533,5 @@ TheEyeClient.prototype = {
       if (error) return callback(error);
       callback(null, body);
     });
-  },
-  /**
-   *
-   * HostGroup endpoint
-   * @author Facundo
-   *
-   */
-  hostgroupFetch : function(options, callback){
-    this.performRequest({
-      method: 'get',
-      url: '/:customer/hostgroup',
-    }, function(error, body) {
-      if(error) return callback(error);
-      callback(null, body.groups);
-    });
-  },
-  hostgroupCreate : function(data, callback){
-    this.performRequest({
-      method: 'post',
-      url: '/:customer/hostgroup',
-      body: data
-    }, function(error, body) {
-      if(error) return callback(error);
-      callback(null, body.group);
-    });
-  },
-  hostgroupDelete : function(id, callback){
-    this.performRequest({
-      method: 'delete',
-      url: '/:customer/hostgroup/' + id,
-    }, function(error, body) {
-      if(error) return callback(error);
-      callback(null, body);
-    });
-  },
-  hostgroupGet : function(id, callback){
-    this.performRequest({
-      method: 'get',
-      url: '/:customer/hostgroup/' + id,
-    }, function(error, body) {
-      if(error) return callback(error);
-      callback(null, body.group);
-    });
-  },
-  /**
-   * host group subresource task template.
-   *
-   * access and updates a specific group task-template.
-   *
-   * @author Facundo
-   * @method PUT
-   * @param {Integer} groupid
-   * @param {Integer} taskid
-   * @param {Object} updates
-   * @param {Function} callback
-   *
-   **/
-  hostgrouptasktemplateUpdate: function(groupid, taskid, updates, callback){
-    this.performRequest({
-      method: 'put',
-      uri: '/:customer/hostgroup/' + groupid + '/tasktemplate/' + taskid,
-      body: updates
-    },function(error, body){
-      if(error) return callback(error);
-      callback(null, body.task);
-    });
-  },
-  /*
-   * add a new task to a group
-   */
-  hostgrouptasktemplateCreate: function(groupid, task, callback){
-    this.performRequest({
-      method: 'post',
-      uri: '/:customer/hostgroup/' + groupid + '/tasktemplate',
-      body: task
-    },function(error, body){
-      if(error) return callback(error);
-      callback(null, body.task);
-    });
-  },
-  /**
-   *
-   */
-  hostgrouptasktemplateDelete: function(groupid, taskid, callback){
-    this.performRequest({
-      method: 'delete',
-      uri: '/:customer/hostgroup/' + groupid + '/tasktemplate/' + taskid,
-    },function(error){
-      if(error) return callback(error);
-      callback(null);
-    });
-  },
-  /**
-   * host group subresource monitor template.
-   *
-   * access and updates a specific group monitor-template.
-   *
-   * @author Facundo
-   * @method PUT
-   * @param {Integer} groupid
-   * @param {Integer} monitorid
-   * @param {Object} updates
-   * @param {Function} callback
-   *
-   **/
-  hostgroupmonitortemplateUpdate: function(groupid, monitorid, updates, callback){
-    this.performRequest({
-      method: 'put',
-      uri: '/:customer/hostgroup/' + groupid + '/monitortemplate/' + monitorid,
-      body: updates
-    },function(error, body){
-      if(error) return callback(error);
-      callback(null, body.monitor);
-    });
-  },
-  /**
-   * add a new monitor to a group
-   * @method POST
-   * @param {Integer} groupid
-   * @param {Integer} monitor
-   * @param {Function} callback
-   */
-  hostgroupmonitortemplateCreate: function(groupid, monitor, callback){
-    this.performRequest({
-      method: 'post',
-      uri: '/:customer/hostgroup/' + groupid + '/monitortemplate',
-      body: monitor
-    },function(error, body){
-      if(error) return callback(error);
-      callback(null, body.monitor);
-    });
-  },
-  /**
-   *
-   */
-  hostgroupmonitortemplateDelete: function(groupid, monitorid, callback){
-    this.performRequest({
-      method: 'delete',
-      uri: '/:customer/hostgroup/' + groupid + '/monitortemplate/' + monitorid,
-    },function(error){
-      if(error) return callback(error);
-      callback(null);
-    });
-  },
+  }
 }

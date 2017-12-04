@@ -21,7 +21,7 @@ import bootbox from 'bootbox'
 import FIELD from 'constants/field'
 
 const HelpTexts = require('language/help')
-const TASK = require('constants/task')
+const TaskConstants = require('constants/task')
 
 const cannotBeTriggered = 'A Task with dynamic arguments cannot be automatically triggered by Workflow'
 const cannotBeScheduled = 'A Scheduled Task cannot have dynamic input/select arguments'
@@ -143,7 +143,7 @@ module.exports = FormView.extend({
         name: 'grace_time',
         multiple: false,
         tags: false,
-        options: TASK.GRACE_TIME.map(gt => {
+        options: TaskConstants.GRACE_TIME.map(gt => {
           return {
             id: gt.secs,
             text: gt.text
@@ -163,7 +163,7 @@ module.exports = FormView.extend({
     ]
 
     if (this.model.isNew()) {
-      const copySelect = new CopyTaskSelect({ type: TASK.TYPE_SCRIPT })
+      const copySelect = new CopyTaskSelect({ type: TaskConstants.TYPE_SCRIPT })
       this.fields.unshift(copySelect)
       this.listenTo(copySelect,'change',() => {
         if (copySelect.value) {
@@ -253,7 +253,7 @@ module.exports = FormView.extend({
   },
   prepareData (data) {
     let f = assign({}, data)
-    f.type = TASK.TYPE_SCRIPT
+    f.type = TaskConstants.TYPE_SCRIPT
     f.grace_time = Number(data.grace_time)
     return f
   },

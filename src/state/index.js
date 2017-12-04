@@ -12,6 +12,7 @@ import { Collection as Resources } from 'models/resource'
 import { Collection as Tasks } from 'models/task'
 import { Collection as Tags } from 'models/tag'
 import { Collection as Scripts } from 'models/file/script'
+import { Collection as Files } from 'models/file'
 import { Collection as Events } from 'models/event'
 import Alerts from 'components/alerts'
 //import URI from 'urijs'
@@ -182,6 +183,7 @@ const _initCollections = function () {
     tasks: new Tasks([]),
     tags: new Tags([]),
     scripts: new Scripts([]),
+    files: new Files([]),
     users: new Users([]),
     webhooks: new Webhooks([]),
     members: new Members([]),

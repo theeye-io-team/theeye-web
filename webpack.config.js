@@ -14,7 +14,12 @@ const FILENAME = IS_PRODUCTION ? '[name].[hash:6]' : '[name]'
 const TARGET_PATH = 'bundles'
 
 module.exports = {
-  entry: path.join(__dirname, 'src/app.js'),
+  entry: {
+    app: `${__dirname}/src/app.js`,
+    //tasks: `${__dirname}/src/router/task.js`,
+    //files: `${__dirname}/src/router/files.js`,
+    //scheduler: `${__dirname}/src/router/scheduler.js`
+  },
   devtool: IS_PRODUCTION ? 'source-map' : '#inline-source-map',
   output: {
     path: path.join(__dirname, '/assets/'),
@@ -41,8 +46,9 @@ module.exports = {
     }),
     new webpack.optimize.CommonsChunkPlugin({
       filename: TARGET_PATH + '/js/' + FILENAME + '.bundle.js',
-      name: 'common',
-      minChunks: 2
+      name: 'commons',
+      minChunks: 2,
+      //names: ['app','tasks','files','scheduler']
     }),
     // new ExtractTextPlugin('css/[name]-[local]-[hash:6].css'),
     new ExtractTextPlugin(TARGET_PATH + '/styles/' + FILENAME + '.css'),

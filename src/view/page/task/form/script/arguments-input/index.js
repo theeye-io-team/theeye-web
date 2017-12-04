@@ -6,7 +6,7 @@ import Modalizer from 'components/modalizer'
 import ArgumentView from './argument'
 import Collection from 'ampersand-collection'
 import { DinamicArgument as ScriptArgument } from 'models/task/dinamic-argument'
-import FIELD from 'constants/field'
+import FieldConstants from 'constants/field'
 import HelpIcon from 'components/help-icon'
 
 //const ArgumentsCollection = Collection.extend({
@@ -124,7 +124,7 @@ module.exports = View.extend({
     argument.order = this.scriptArguments.length
 
     // fixed arguments does not has a label
-    if (argument.type===FIELD.TYPE_FIXED) {
+    if (argument.type===FieldConstants.TYPE_FIXED) {
       argument.label = `FixedArg${this.scriptArguments.length}`
       argument.readonly = true
     }

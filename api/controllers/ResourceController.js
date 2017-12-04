@@ -23,7 +23,13 @@ module.exports = {
         success: (monitors) => callback(null,monitors),
         failure: (error) => callback(error)
       }),
-      scripts: (callback) => supervisor.scripts(callback),
+      scripts: (callback) => {
+        req.supervisor.fetch({
+          route: `/${req.user.current_customer}/script`,
+          failure: (error) => callback(error),
+          success: (scripts) => callback(null,scripts)
+        })
+      },
       hosts: (callback) => supervisor.hosts(callback),
       //resourceTypes: (callback) => supervisor.resourceTypes(callback),
       tags: (callback) => supervisor.tags(callback)
