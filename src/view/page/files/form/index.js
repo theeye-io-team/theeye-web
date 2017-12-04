@@ -18,12 +18,11 @@ const IntroView = View.extend({
     <span class="label label-success">New</span>&nbsp;
     Use the editor to type/paste your script, or just drag n'drop a file
     <strong>into</strong> the editor. Code highlighting
-    is set when you name your script with extension (<strong>required</strong>)
+    is set when you name your script with extension.
   </p>`
 })
 module.exports = FormView.extend({
   initialize (options) {
-    window.aaa = this
     // needed for codemirror listener
     this.onEditorDrop = this.onEditorDrop.bind(this)
 
@@ -36,14 +35,13 @@ module.exports = FormView.extend({
       value: this.model.filename,
       tests: [
         value => {
-          // console.log(value, this.model.extension)
           if (value && !this.model.extension) {
             return 'Filename needs an extension'
           }
           // hack: when setting before render this.editorView is undef
-          if (this.editorView && !this.editorView.validMode) {
-            return 'You need to use a valid (recognizable) file extension'
-          }
+          //if (this.editorView && !this.editorView.validMode) {
+          //  return 'You need to use a valid (recognizable) file extension'
+          //}
         }
       ]
     })

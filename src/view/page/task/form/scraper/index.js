@@ -149,7 +149,7 @@ module.exports = FormView.extend({
       }),
       new EventsSelectView({
         visible: false,
-        label: 'Trigger on',
+        label: 'Triggered by',
         name: 'triggers',
         value: this.model.triggers
       }),

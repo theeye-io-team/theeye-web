@@ -18,13 +18,12 @@ module.exports = {
   update (id, data) {
     const file = App.state.files.get(id)
     file.set(data)
-    file.data = file.encodeData(file.data)
     file.save()
   },
   create (data) {
-    let file = new File(data)
-    file.data = file.encodeData(data)
+    const file = new File(data)
     file.save()
+    App.state.files.add(file)
   },
   remove (id) {
     const file = App.state.files.get(id)

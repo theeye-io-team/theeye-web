@@ -25,6 +25,11 @@ module.exports = AppModel.extend({
     }
     return args
   },
+  serialize (options) {
+    var serial = AppModel.prototype.serialize.call(this, options)
+    serial.data = this.encodeData(serial.data)
+    return serial
+  },
   encodeData (data) {
     return window.btoa(encodeURIComponent(data).replace(/%([0-9A-F]{2})/g, (match, p1) => {
       return String.fromCharCode('0x' + p1)
@@ -35,4 +40,17 @@ module.exports = AppModel.extend({
       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
     }).join(''))
   },
+  derived: {
+    formatted_tags: {
+      deps: ['name','filename','tags','extension','mimetype'],
+      fn () {
+        return [
+          'name=' + this.name,
+          'filename=' + this.filename,
+          'extension=' + this.extension,
+          'mimetype=' + this.mimetype
+        ].concat(this.tags)
+      }
+    }
+  }
 })
