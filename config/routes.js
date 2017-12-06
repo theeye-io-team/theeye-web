@@ -32,7 +32,6 @@ module.exports.routes = {
   'post   /auth/local' : 'AuthController.callback',
   'post   /auth/login' : 'AuthController.login',
   'post   /auth/verifysocialtoken' : 'AuthController.verifySocialToken',
-  // 'post   /auth/inviteuser' : 'AuthController.inviteUser',
   'post   /auth/local/:action' : 'AuthController.callback',
   'post   /auth/activateuser' : 'AuthController.activateUser',
   'post   /registeruser'  : 'AuthController.registeruser',

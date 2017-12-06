@@ -140,24 +140,68 @@ var MemberController = module.exports = {
     });
   },
   inviteMember: function(req, res) {
-    return passport.inviteUser(req, res, function(err, user) {
-      if(err) {
-        sails.log.error(err);
-        return res.send(500, err);
-      } else {
-        var member = {
-          id: user.id,
-          user_id: user.id,
-          credential: user.credential,
-          user: {
-            id: user.id,
-            username: user.username,
-            credential: user.credential,
-            email: user.email,
-            enabled: user.enabled
-          }
+    var params = req.params.all();
+    if (!params.user.email) return res.send(400, 'email is required')
+    if (!params.credential) return res.send(400, 'credential is required')
+
+    User.findOne({email: params.user.email}).exec((error,user) => {
+      if(error)
+        res.send(500, error)
+      var data = {}
+      var member = {}
+      if(user) {
+        //if user doesnt exist invite him/her to this customer
+        data = {
+          email: user.email,
+          customer: req.user.current_customer
         }
-        return res.send(200, member);
+        passport.inviteMember(req, res, data, function(err, user) {
+          if(err) {
+            sails.log.error(err);
+            return res.send(400, err);
+          }
+          member = {
+            id: user.id,
+            user_id: user.id,
+            credential: user.credential,
+            user: {
+              id: user.id,
+              username: user.username,
+              credential: user.credential,
+              email: user.email,
+              enabled: user.enabled
+            }
+          }
+          return res.send(200, member);
+        });
+      } else {
+        //if user doesnt exist, create one
+        data = {
+          username: params.user.email,
+          email: params.user.email,
+          customers:[req.user.current_customer],
+          credential: params.credential,
+          enabled: false
+        }
+        passport.createUser(req, res, data, function(err, user) {
+          if(err) {
+            sails.log.error(err);
+            return res.send(400, err);
+          }
+          member = {
+            id: user.id,
+            user_id: user.id,
+            credential: user.credential,
+            user: {
+              id: user.id,
+              username: user.username,
+              credential: user.credential,
+              email: user.email,
+              enabled: user.enabled
+            }
+          }
+          return res.send(200, member);
+        });
       }
     });
   }

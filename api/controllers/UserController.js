@@ -69,6 +69,14 @@ var UserController = module.exports = {
     if (!params.email) return res.send(400, 'email is required')
     if (!params.credential) return res.send(400, 'credential is required')
 
+    var data = {
+      username: params.username || params.email,
+      email: params.email,
+      customers: params.customers,
+      credential: params.credential,
+      enabled: !params.sendInvitation
+    }
+
     User.findOne({
       or: [
         {email: params.email},
@@ -81,14 +89,7 @@ var UserController = module.exports = {
         if(user.email == params.email)
           return res.send(400, 'The email is taken. Choose another one');
       } else {
-        if (params.sendInvitation) {
-          passport.inviteUser(req, res, function(err, user) {
-            if(err) {
-              sails.log.error(err);
-              return res.send(400, err);
-            } else return res.json(user);
-          });
-        } else {
+        if (data.enabled) {
           if (!params.password) {
             return res.send(400, 'Need password')
           }
@@ -96,20 +97,15 @@ var UserController = module.exports = {
             return res.send(400, 'Passwords don\'t match');
           if(params.password.length < 8)
             return res.send(400, 'Passwords must be at least 8 characters long');
-
-          passport.createUser(req, res, function(err, user) {
-            if(err) {
-              if (err.code === 'E_VALIDATION') {
-                if (err.invalidAttributes.email)
-                  return res.send(400, 'Invalid email or already exists');
-                if (err.invalidAttributes.username)
-                  return res.send(400, 'Invalid username or already exists');
-              }
-              return res.send(400, 'Invalid params');
-            }
-            return res.json(user);
-          });
+          data.password = params.password
         }
+
+        passport.createUser(req, res, data, function(err, user) {
+          if(err) {
+            sails.log.error(err);
+            return res.send(400, err);
+          } else return res.json(user);
+        });
       }
     });
   },

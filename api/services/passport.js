@@ -304,6 +304,22 @@ passport.sendUserActivationEmail = function (inviter, invitee, next){
   }
 }
 
+passport.sendUserActivatedEMail = function (inviter, invitee, next){
+  var data = {
+    inviter: inviter,
+    invitee: invitee
+  };
+  mailer.sendUserActivatedEMail(data, function(err) {
+    if(err) {
+      sails.log.debug('error sending Invitation email to "%s"', invitee.email);
+      return next(err);
+    }
+
+    sails.log.debug('Invitation email sent');
+    return next(null);
+  });
+}
+
 passport.sendNewCustomerEMail = function (invitee, customername, next){
   var data = {
     invitee: invitee,
@@ -320,25 +336,58 @@ passport.sendNewCustomerEMail = function (invitee, customername, next){
   });
 }
 
-passport.inviteUser = function(req, res, next) {
-  return this.protocols.local.inviteToCustomer(
-    req, res, function(err, invitee) {
-      if(err) return next(err);
-      if(invitee.enabled===false && invitee.invitation_token) {
-        passport.sendUserActivationEmail( req.user, invitee, error => {
-          return next(error, invitee)
+passport.inviteMember = function(req, res, data, next) {
+  return this.protocols.local.inviteMember(data, req.supervisor, function(error, user) {
+    if(error)
+      return next(error)
+    passport.sendNewCustomerEMail( user, data.customer, error => {
+      return next(error, user)
+    });
+  });
+}
+
+passport.createUser = function(req, res, data, next) {
+  return this.protocols.local.createUser(data, function(err, newUser) {
+    if(err) return next(err);
+    //if user is not enabled, send activation email
+    if(newUser.enabled===false && newUser.invitation_token) {
+      passport.sendUserActivationEmail( req.user, newUser, error => {
+        return next(error, newUser)
+      });
+    } else {
+      //if user is enabled, create passports and theeye user, notify the user
+      if(newUser.enabled===true) {
+        Passport.create({
+          protocol : 'local',
+          password : data.password,
+          user : newUser.id
+        }, function (err, userPassport) {
+          if (err) return next(err);
+
+          var supervisor = req.supervisor;
+          var theeyeuser = {
+            email: newUser.email,
+            customers: newUser.customers,
+            credential: newUser.credential,
+            enabled: true,
+            username: newUser.username||newUser.email
+          };
+          createTheeyeUser(
+            newUser, theeyeuser, supervisor, function(err, profile){
+              if(err)
+                return next(err)
+              passport.sendUserActivatedEMail( req.user, newUser, error => {
+                return next(error, newUser)
+              });
+            }
+          );
+          return next(null, newUser);
         });
       } else {
-        if(invitee.enabled===true){
-          var customername = req.user.current_customer
-          passport.sendNewCustomerEMail(invitee, customername, error => {
-            return next(error, invitee)
-          });
-        } else {
-          return next('User cannot be invited.')
-        }
+        return next('User cannot be created.')
       }
-    });
+    }
+  });
 };
 
 passport.registerUser = function(req, res, next) {
@@ -631,24 +680,6 @@ passport.createmissingtheeyepassports = function(req, res, next) {
   });
 };
 
-passport.createUser = function(req, res, next) {
-  var supervisor = req.supervisor;
-  this.protocols.local.createUser(
-    req, res, function(error, user){
-      if(error) next(error);
-      var input = req.params.all();
-
-      createTheeyeUser(
-        user, input, supervisor, function(error,profile){
-          return next(error,{
-            local: user,
-            theeye: profile
-          });
-        }
-      );
-    });
-};
-
 /**
  * Create an authentication callback endpoint
  *
@@ -670,9 +701,6 @@ passport.callback = function (req, res, next) {
   {
     if (action === 'register' && !req.user) {
       return this.protocols.local.register(req, res, next);
-    }
-    if (action === 'invite' && req.user) {
-      return this.inviteUser(req, res, next);
     }
     else if (action === 'connect' && req.user) {
       return this.protocols.local.connect(req, res, next);

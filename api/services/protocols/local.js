@@ -82,25 +82,6 @@ exports.register = function (req, res, next) {
   });
 };
 
-exports.createUser = function(req, res, next) {
-  var params = req.params.all();
-  params.enabled = true;
-
-  User.create(params, function (err, user) {
-    if (err) return next(err);
-
-    Passport.create({
-      protocol : 'local',
-      password : params.password,
-      user : user.id
-    }, function (err, passport) {
-      if (err) return next(err);
-
-      return next(null, user);
-    });
-  });
-};
-
 /**
  * Reset activation link & token for a user
  *
@@ -150,13 +131,9 @@ function getActivationToken (string){
  * @param {Function} next
  * @return {User}
  */
-exports.inviteToCustomer = function (req, res, next) {
-  var params = req.params.all()
-
-  var email = params.user.email;
-  var username = params.user.username||params.user.email;
-  var customer = req.user.current_customer
-  var credential = params.credential;
+exports.inviteMember = function (data, supervisor, next) {
+  var email = data.email;
+  var customer = data.customer;
 
   if(!email) {
     debug('No email was entered.');
@@ -170,83 +147,67 @@ exports.inviteToCustomer = function (req, res, next) {
 
   User.findOne({email: email}, function (err, user) {
     if (err) {
-      debug('//////////////// ERROR.DB ////////////////');
       debug(err);
-      return next('Error.DB');
+      return next('Internal sever error.');
     }
-
     if(!user) {
-      // Scenario: User dont exist
-      // Action: create the user disabled
-      var token = getActivationToken(email);
-      User.create({
-        enabled: false,
-        invitation_token: token,
-        username: username,
-        email: email,
-        customers: [customer],
-        credential: credential
-      }, function (err, user) {
-        if (err) {
-          if (err.code === 'E_VALIDATION') {
-            debug('////////////////// ERROR.DB.VALIDATION ///////////////////');
-            if (err.invalidAttributes.email) {
-              req.flash('error', 'Error.Passport.Email.Exists');
-            }else if (err.invalidAttributes.username) {
-              req.flash('error', 'Error.Passport.User.Exists');
-            } else {
-              req.flash('error', 'Error.Passport.Unknown');
-            }
-          }
-          debug(err);
-          return next(err);
-        } else {
-          return next(null, user);
-        }
-      });
-    } else {
-      // Scenario: User exist
-      // Action: Assign the customer
-
-      //If the user exists and have perms for the selected customers dont send the activation email
-      if(user.customers.includes(customer)){
-        debug("The user already exists and have permissions for this customer");
-        //text is error
-        //error returning behaviour is somewhat broken
-        //if i send here a new Error('message'), front end receives only {}
-        return next("The user already exists and have permissions for this customer.");
-      }
-      user.customers.push(customer)
-      User.update({ id: user.id },{ customers: user.customers },
-        function(error, users) {
-          if(error) {
-            debug('Error updating user');
-            debug(error);
-            return next(error);
-          }
-          if(users[0].enabled){
-            var route = req.user.current_customer + '/member/';
-            theeye.addMemberToCustomer(
-              users[0].id,
-              {customers: users[0].customers},
-              req.supervisor,
-              route,
-              error => {
-                if (error) {
-                  sails.log.error(error);
-                  return next('The user was updated but with errors.')
-                  res.json(500,'the user was updated but with errors. ' + error.message);
-                } else {
-                  return next(null, users[0]);
-                }
-              }
-            );
-          } else {
-            return next(null, users[0]);
-          }
-        }
-      );
+      debug(err);
+      return next('Cannot invite member, user not found.');
     }
+
+    //If the user exists and have perms for the selected customers dont send the activation email
+    if(user.customers.includes(customer)){
+      debug("The user already have permissions for this customer.");
+      return next("The user already have permissions for this customer.");
+    }
+    user.customers.push(customer)
+    User.update({ id: user.id },{ customers: user.customers },
+      function(error, users) {
+        if(error) {
+          debug('Error updating user customers.');
+          debug(error);
+          return next(error);
+        }
+        if(users[0].enabled){
+          var route = customer + '/member/';
+          theeye.addMemberToCustomer(
+            users[0].id,
+            {customers: users[0].customers},
+            supervisor,
+            route,
+            error => {
+              if (error) {
+                sails.log.error(error);
+                return next('The user was updated but with errors.')
+                res.json(500,'the user was updated but with errors. ' + error.message);
+              } else {
+                return next(null, users[0]);
+              }
+            }
+          );
+        } else {
+          return next(null, users[0]);
+        }
+      }
+    );
+  });
+}
+
+/**
+ * create user
+ *
+ * This method creates a new user.
+ *
+ */
+exports.createUser = function (data, next) {
+  var token = getActivationToken(data.email);
+  if(!data.enabled) {
+    delete data.password;
+    data.invitation_token = token;
+  }
+  User.create(data, function (err, user) {
+    if (err) return next(err);
+    return next(null, user);
   });
 }
 
