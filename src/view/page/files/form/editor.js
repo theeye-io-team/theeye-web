@@ -9,7 +9,8 @@ import 'codemirror/theme/3024-night.css'
 
 export const EditorView = View.extend({
   props: {
-    file: 'state',
+    //file: 'state',
+    //data: 'string',
     validMode: ['boolean', false, undefined]
   },
   template: `<div data-hook="editor-container"></div>`,
@@ -30,28 +31,20 @@ export const EditorView = View.extend({
         this.refresh()
       }
     })
-
-    this.listenToAndRun(this.file, 'change:data', () => {
-      this.setEditorContent()
-    })
-
-    this.listenToAndRun(this.file, 'change:extension', () => {
-      this.setEditorMode()
-    })
   },
-  setEditorContent () {
-    if (this.file.data) {
-      this.codemirror.setValue(this.file.data)
+  setEditorContent (data) {
+    if (data) {
+      this.codemirror.setValue(data)
     }
     this.refresh()
   },
-  setEditorMode () {
-    if (this.file.extension) {
-      let info = CodeMirror.findModeByExtension(this.file.extension)
+  setEditorMode (extension) {
+    if (extension) {
+      let info = CodeMirror.findModeByExtension(extension)
       this.validMode = Boolean(info)
       if (info) {
         autoLoadMode(this.codemirror, info.mode, () => {
-          this.file.mimetype = info.mime
+          //this.file.mimetype = info.mime
           this.codemirror.setOption('mode', info.mime)
         })
       }

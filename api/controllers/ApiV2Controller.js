@@ -117,8 +117,8 @@ module.exports = {
     });
   },
   /**
-   * @method {POST||PUT}
-   * @route /api/file
+   * @method POST||PUT
+   * @route /apiv2/file
    */
   filePut (req, res, next) {
     var url = req.originalUrl.replace(apibase,`/${req.user.current_customer}/`);
@@ -157,6 +157,10 @@ module.exports = {
       })
     })
   },
+  /**
+   * @method GET
+   * @route /apiv2/file
+   */
   fileGet (req, res, next) {
     var url = req.originalUrl.replace(apibase,`/${req.user.current_customer}/`);
     var supervisor = req.supervisor;

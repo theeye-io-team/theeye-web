@@ -19,10 +19,12 @@ module.exports = AppModel.extend({
     _type: { type: 'string', default: 'File' },
     data: { type: 'string' }
 	},
+  session: {
+    is_script: { type: 'boolean', default: false },
+  },
   parse (args) {
-    if (args.data) {
-      args.data = this.decodeData(args.data)
-    }
+    if (args.data) args.data = this.decodeData(args.data)
+    args.is_script = (args._type == 'Script')
     return args
   },
   serialize (options) {

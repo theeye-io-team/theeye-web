@@ -13,6 +13,40 @@ import { EditorView } from './editor'
 
 const HelpTexts = require('language/help')
 
+const FilenameInputView = InputView.extend({
+  props: {
+    extension: ['string',false,undefined]
+  },
+  initialize () {
+    this.label = 'Filename *'
+    this.name = 'filename'
+    this.required = true
+    this.invalidClass = 'text-danger'
+    this.validityClassSelector = '.control-label'
+    this.tests = [
+      value => {
+        if (value && !this.extension) {
+          return 'Filename needs an extension'
+        }
+      }
+    ]
+    InputView.prototype.initialize.apply(this,arguments)
+
+    this.listenToAndRun(this,'change:value',() => {
+      this.onFilenameChange()
+    })
+  },
+  onFilenameChange () {
+    let fname = this.value
+
+    function extension (fname) {
+      return fname.slice((fname.lastIndexOf(".") - 1 >>> 0) + 2)
+    }
+
+    this.extension = extension(fname) || null
+  }
+})
+
 const IntroView = View.extend({
   template: `<p class="bg-info" style="padding: 8px;">
     <span class="label label-success">New</span>&nbsp;
@@ -21,31 +55,15 @@ const IntroView = View.extend({
     is set when you name your script with extension.
   </p>`
 })
+
 module.exports = FormView.extend({
   initialize (options) {
     // needed for codemirror listener
     this.onEditorDrop = this.onEditorDrop.bind(this)
 
-    this.filenameInput = new InputView({
-      label: 'Filename *',
-      name: 'filename',
-      required: true,
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label',
-      value: this.model.filename,
-      tests: [
-        value => {
-          if (value && !this.model.extension) {
-            return 'Filename needs an extension'
-          }
-          // hack: when setting before render this.editorView is undef
-          //if (this.editorView && !this.editorView.validMode) {
-          //  return 'You need to use a valid (recognizable) file extension'
-          //}
-        }
-      ]
-    })
+    this.filenameInput = new FilenameInputView({ value: this.model.filename })
 
+    // force check
     this.fields = [
       this.filenameInput,
       new TextareaView({
@@ -66,16 +84,8 @@ module.exports = FormView.extend({
         }
       })
     ]
-    this.listenTo(this.filenameInput, 'change:value', this.onFilenameChange)
-    FormView.prototype.initialize.apply(this, arguments)
-  },
-  onFilenameChange (state, value) {
-    // update model.extension
-    const extension = value.lastIndexOf('.') > -1
-      ? value.substr(value.lastIndexOf('.') + 1)
-      : ''
 
-    this.model.extension = extension
+    FormView.prototype.initialize.apply(this, arguments)
   },
   focus () {
     this.query('input').focus()
@@ -92,10 +102,21 @@ module.exports = FormView.extend({
     intro.render()
     this.el.prepend(intro.el)
 
-    this.editorView = new EditorView({file: this.model})
-    this.renderSubview(this.editorView)
+    this.editorView = new EditorView({
+      data: this.model.data,
+      extension: this.filenameInput.extension
+    })
 
+    this.renderSubview(this.editorView)
     this.editorView.codemirror.on('drop', this.onEditorDrop)
+
+    this.listenToAndRun(this.filenameInput,'change:extension',() => {
+      this.editorView.setEditorMode(this.filenameInput.extension)
+    })
+
+    this.listenToAndRun(this.model,'change:data',() => {
+      this.editorView.setEditorContent(this.model.data)
+    })
 
     const buttons = this.buttons = new FormButtons()
     this.renderSubview(buttons)
@@ -117,32 +138,30 @@ module.exports = FormView.extend({
       view.query('label')
     )
   },
-  remove () {
-    FormView.prototype.remove.apply(this)
-  },
   submit () {
     this.beforeSubmit()
     if (!this.valid) return
 
+    let file
     let data = this.prepareData(this.data)
     if (!this.model.isNew()) {
-      FileActions.update(this.model.id, data)
+      file = FileActions.update(this.model.id, data)
     } else {
-      FileActions.create(data)
+      file = FileActions.create(data)
     }
 
-    this.trigger('submit')
+    this.trigger('submit', file)
   },
-  prepareData (data) {
+  prepareData (args) {
     let f = assign(
       {},
       // most of the data is being directly written to model
       this.model._values,
-      data,
+      args,
       // fixed values
       {
         data: this.editorView.codemirror.getValue(),
-        _type: 'script'
+        is_script: true
       }
     )
     return f

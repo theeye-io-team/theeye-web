@@ -9,6 +9,7 @@ import TextareaView from 'components/input-view/textarea'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
 import TagsSelectView from 'view/tags-select'
+import ScriptSelectView from 'view/script-select'
 import MembersSelectView from 'view/members-select'
 import EventsSelectView from 'view/events-select'
 import ArgumentsView from './arguments-input'
@@ -47,20 +48,9 @@ module.exports = FormView.extend({
       validityClassSelector: '.control-label'
     })
 
-    let scriptSelection = new SelectView({
-      label: 'Script',
-      name: 'script_id',
-      multiple: false,
-      tags: false,
-      options: App.state.scripts,
+    let scriptSelection = new ScriptSelectView({
       value: this.model.script_id,
-      required: true,
-      idAttribute: 'id',
-      textAttribute: 'filename',
-      unselectedText: 'select a script',
-      requiredMessage: 'Selection required',
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label'
+      required: true
     })
 
     this.advancedFields = [
@@ -130,7 +120,8 @@ module.exports = FormView.extend({
         visible: false,
         value: this.model.triggers,
         tests: [
-          () => {
+          (values) => {
+            if (values.length===0) return
             if (this.hasDynamicArguments()) {
               return cannotBeTriggered
             }
@@ -222,13 +213,6 @@ module.exports = FormView.extend({
     if (!this.valid) return next(null, false)
 
     const hasDynamicArguments = this.hasDynamicArguments()
-
-    //if (this.data.triggers.length>0) {
-    //  if (hasDynamicArguments) {
-    //    bootbox.alert(cannotBeTriggered)
-    //    return next(null, false)
-    //  }
-    //}
 
     // TODO: temporary NON-dynamic arguments validation
     // for scheduled tasks

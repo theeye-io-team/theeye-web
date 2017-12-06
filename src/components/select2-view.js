@@ -90,6 +90,7 @@ module.exports = View.extend({
     validityClassSelector: ['string', true, 'select'],
     tabindex: ['number', true, 0],
     allowCreateTags: ['boolean',false,false],
+    allowClear: ['boolean',false,false],
     createTags: ['any',false,() => {
       // default create tags function
       return function(params){
@@ -164,11 +165,25 @@ module.exports = View.extend({
     // trigger change on the select2 element for proper UI update
     this.$select.val(this.startingValue).trigger('change')
   },
-  render: function () {
+  render () {
     this.renderWithTemplate(this)
+
+    this.listenTo(this,'change:valid',this.reportToParent)
+    this.listenTo(this,'change:validityClass',this.validityClassChanged)
+
     this.$select = $(this.query('select')).first()
+    // start select2 component first
+    this.renderSelect2Component(this.startingValue)
+  },
+  renderSelect2Component (value=null) {
+    this.$select
+      .select2({})
+      .select2('destroy')
+      .empty()
+      .html('<option></option>')
 
     const select2setup = {
+      allowClear: this.allowClear,
       placeholder: this.unselectedText,
       tags: this.tags,
       tokenSeparator: this.tokenSeparator,
@@ -194,14 +209,12 @@ module.exports = View.extend({
     // select2 instantiate
     this.$select.select2(select2setup)
 
-    this.listenTo(this,'change:valid',this.reportToParent)
-    this.listenTo(this,'change:validityClass', this.validityClassChanged)
-
     // darn jquery event cannot be handled by
     // a method on this object
     this.$select.on('change',this.handleInputChanged)
 
-    this.setValue(this.startingValue)
+    // then set value
+    this.setValue(value||this.value)
   },
   setValue (items) {
     if (!items) {

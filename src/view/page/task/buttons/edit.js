@@ -2,7 +2,6 @@
 
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
-import FormView from '../form'
 
 module.exports = PanelButton.extend({
   initialize (options) {
@@ -15,27 +14,29 @@ module.exports = PanelButton.extend({
     click (event) {
       event.stopPropagation()
 
-      const form = new FormView({
-        model: this.model
-      })
-      const modal = new Modalizer({
-        buttons: false,
-        title: this.title,
-        bodyView: form
-      })
+      import('../form').then(FormView => {
+        const form = new FormView({
+          model: this.model
+        })
+        const modal = new Modalizer({
+          buttons: false,
+          title: this.title,
+          bodyView: form
+        })
 
-      this.listenTo(modal,'shown',() => { form.focus() })
+        this.listenTo(modal,'shown',() => { form.focus() })
 
-      this.listenTo(modal,'hidden',() => {
-        form.remove()
-        modal.remove()
+        this.listenTo(modal,'hidden',() => {
+          form.remove()
+          modal.remove()
+        })
+
+        this.listenTo(form,'submit',() => {
+          modal.hide()
+        })
+
+        modal.show()
       })
-
-      this.listenTo(form,'submit',() => {
-        modal.hide()
-      })
-
-      modal.show()
     }
   }
 })

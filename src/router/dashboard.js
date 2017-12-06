@@ -49,7 +49,8 @@ const fetchData = (options) => {
   })
 
   App.state.events.fetch({ success: done, error: done })
-  App.state.scripts.fetch({ success: done, error: done })
+  //App.state.scripts.fetch({ success: done, error: done })
+  App.state.files.fetch({ success: done, error: done })
   App.state.hosts.fetch({ success: done, error: done })
   App.state.tags.fetch({ success: done, error: done })
   App.state.members.fetch({ success: done, error: done })
