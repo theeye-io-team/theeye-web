@@ -2,7 +2,6 @@ import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import CheckboxView from 'components/checkbox-view'
 import SelectView from 'components/select2-view'
-import isEmail from 'validator/lib/isEmail'
 import isURL from 'validator/lib/isURL'
 
 import App from 'ampersand-app'
@@ -28,32 +27,6 @@ module.exports = FormView.extend({
         validityClassSelector: '.control-label',
         required: false,
         autofocus:true
-      }),
-      new SelectView({
-        multiple: true,
-        tags: true,
-        styles: 'form-group',
-        name: 'emails',
-        required: false,
-        label: 'Emails',
-        options: this.model.emails.map( e => { return { id: e, text: e } }),
-        value: this.model.emails.map( e => { return { id: e, text: e } }),
-        unselectedText: 'Enter an email',
-        requiredMessage: 'Enter at least one email',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        allowCreateTags: true,
-        type: 'email',
-        tests: [
-          function (values) {
-            if (!values) return
-            if (values.some(v => {
-              return !isEmail(v)
-            })) {
-              return 'Please provide valid emails'
-            }
-          }
-        ]
       }),
       new InputView({
         name: 'kibana',

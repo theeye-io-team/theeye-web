@@ -69,26 +69,13 @@ const CustomerButtons = BaseView.extend({
 const Collapsed = View.extend({
   template: `
       <div class="col-sm-12">
-        <h4>Emails</h4>
-        <span data-hook="emails"></span>
         <h4>description</h4>
         <span data-hook="description"></span>
       </div>
   `,
-  derived: {
-    emails: {
-      deps: ['model.emails'],
-      fn () {
-        return this.model.emails.join(', ')
-      }
-    }
-  },
   bindings: {
     'model.description': {
       hook:'description'
-    },
-    'emails': {
-      hook:'emails'
     }
   }
 })

@@ -18,20 +18,17 @@ const Model = AppModel.extend({
     id: 'string',
     name: 'string',
     description: 'string',
-    emails: ['array', false, () => { return [] }],
     config: ['object', false, () => { return Object.assign({}, defaultConfig) }],
     creation_date: 'date',
 		last_update: 'date'
   },
   derived: {
     formatted_tags: {
-      deps: ['name','description','emails'],
+      deps: ['name','description'],
       fn () {
-        const emails = this.emails || []
         return [
           'name=' + this.name,
-          'description=' + this.description,
-          'emails=' + emails.join(', ')
+          'description=' + this.description
         ]
       }
     }
