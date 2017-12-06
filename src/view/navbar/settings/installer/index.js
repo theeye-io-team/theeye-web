@@ -58,7 +58,9 @@ module.exports = View.extend({
     formatedCustomerName: {
       deps: ['customerName'],
       fn: function(){
-        return this.customerName[0].toUpperCase() + this.customerName.slice(1,this.customerName.length)
+        if(this.customerName && this.customerName.length)
+          return this.customerName[0].toUpperCase() + this.customerName.slice(1,this.customerName.length)
+        return ''
       }
     },
     curlAgent: {
@@ -116,6 +118,9 @@ module.exports = View.extend({
   },
   render() {
     this.renderWithTemplate(this)
+    this.listenToAndRun(App.state.session.customer,'change:name', () => {
+       this.customerName = App.state.session.customer.name
+    })
     new Clipboard( this.query('.clipboard-curl-agent-btn') )
   }
 })

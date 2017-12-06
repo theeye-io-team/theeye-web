@@ -75,6 +75,10 @@ module.exports = FullContainer.extend({
         document.body.style.overflow = 'auto'
       }
     })
+
+    this.listenToAndRun(App.state.session.customer,'change:name', () => {
+       this.queryByHook('customer-name').innerHTML = App.state.session.customer.name
+    })
   },
   updateState (state) {
     if (!state) return
