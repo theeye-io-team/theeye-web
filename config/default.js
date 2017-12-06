@@ -68,12 +68,11 @@ module.exports = {
     }
   },
   supervisor: {
-    client_id: '939e7ad87f616af22325a84b6192ba7974404160',
-    client_secret: '4611b7a50f63c2bb259aa72e0b8b54ae54c326c6',
+    timeout: 60000, // 1 minute
     url: 'http://localhost:60080',
     port: 60080,
-    palancas: {
-      resource: 'job'
-    }
+    // for internal use only.
+    client_id: '939e7ad87f616af22325a84b6192ba7974404160',
+    client_secret: '4611b7a50f63c2bb259aa72e0b8b54ae54c326c6',
   }
 }

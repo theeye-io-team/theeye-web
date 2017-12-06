@@ -22,9 +22,9 @@ module.exports = TheEyeClient
  *
  */
 function TheEyeClient (options) {
-  this.access_token = '';
-  this.configure(options);
-  return this;
+  this.access_token = ''
+  this.configure(options)
+  return this
 }
 
 /**
@@ -46,12 +46,12 @@ TheEyeClient.prototype = {
    * @param Object options
    *
    */
-  configure: function(options) {
+  configure (options) {
     var connection = this;
 
     logger.debug('theeye api client version %s/%s', CLIENT_NAME, CLIENT_VERSION);
 
-    for(var prop in options) connection[prop] = options[prop];
+    for (var prop in options) connection[prop] = options[prop];
 
     connection.api_url = options.api_url||process.env.THEEYE_SUPERVISOR_API_URL ;
     connection.client_id = options.client_id||process.env.THEEYE_SUPERVISOR_CLIENT_ID ;
@@ -60,21 +60,21 @@ TheEyeClient.prototype = {
     connection.access_token = options.access_token||null ;
 
     logger.debug('connection properties => %o', connection);
-    if( ! connection.api_url ) {
+    if (! connection.api_url) {
       return logger.error('ERROR. supervisor API URL required');
     }
 
     connection.request = request.defaults({
       proxy: process.env.http_proxy,
       tunnel: false,
-      timeout: 5000,
+      timeout: options.timeout || 5000,
       json: true,
       gzip: true,
       headers: {
         'User-Agent': CLIENT_USER_AGENT
       },
       baseUrl: connection.api_url
-    });
+    })
   },
   /**
    *
@@ -130,58 +130,69 @@ TheEyeClient.prototype = {
     body,
     next
   ){
-    var connection = this;
+    var connection = this
+    var statusCode = httpResponse ? httpResponse.statusCode : 500
 
-    var callNext = function(error, body){
-      if(next) next(error, body, httpResponse);
+    var callNext = function (err, body) {
+      if (next) next(err, body, httpResponse)
     }
 
-    if( !error && /20./.test(httpResponse.statusCode) ) {
-      return callNext(null,body);
-    } else if( error ){
-      return callNext(error);
-    } else if( httpResponse ) {
-      if( httpResponse.statusCode == 401 ) {
+    if (error || !statusCode) {
+      var err = new Error('Request failed, with status code ' + statusCode)
+      err.error = error
+      err.statusCode = statusCode || 500
+      err.response = httpResponse
+      err.body = body
+      return callNext (err)
+      //if(!body){
+      //  if(error.code && error.code === 'ETIMEDOUT') {
+      //    err = new Error('Request timeout.');
+      //    logger.error(err);
+      //    return callNext({statusCode: 500, message: 'Request timeout.'});
+      //  } else {
+      //    err = new Error('Request error.');
+      //    logger.error(err);
+      //    return callNext({statusCode: 500, message: 'Request error.'});
+      //  }
+      //}
+    }
 
-        // AuthError Unauthorized
-        var msg = 'request authentication error. access denied.';
-        var err = new Error(msg);
-        logger.error(err);
+    if ( /20./.test(statusCode) ) {
+      return callNext(null,body)
+    }
 
-        connection.refreshToken(function(error, token) {
-          if(error) logger.error(error.message);
-          callNext(error, body);
-        });
+    if (statusCode == 401) {
+      // AuthError Unauthorized
+      var msg = 'Request authentication error. Access Denied.'
+      var err = new Error(msg)
+      logger.error(err)
 
+      connection.refreshToken(function(error, token) {
+        if (error) logger.error('%o',error)
+        callNext(error, body)
+      })
+    } else {
+      var msg
+
+      if (/40./.test(statusCode)) {
+        msg = 'theeye api request failure. client error'
+      } else if (/50./.test(statusCode)) {
+        msg = 'theeye api request failure. server error'
       } else {
-        var message ;
+        msg = 'theeye api request failure. unknown error'
 
-        if( /40./.test(httpResponse.statusCode) ) {
-
-          message='client error';
-
-        } else if( /50./.test(httpResponse.statusCode) ){
-
-          message='server error';
-
-        } else {
-
-          message='unknown request error';
-
-          logger.error('############ UNKNOWN ERROR ############');
-          logger.error('REQUEST > %s' , JSON.stringify(request) );
-          logger.error('STATUS  > %s' , httpResponse.statusCode );
-          logger.error('ERROR   > %j' , error );
-          logger.error('BODY    > %j' , JSON.stringify(body) );
-          logger.error('#######################################');
-
-        }
-
-        var error = new Error(!body?message:(body.message||body));
-        error.body = body;
-        error.statusCode = httpResponse.statusCode||504;
-        return callNext(error, body);
+        logger.error('############ UNKNOWN ERROR ############')
+        logger.error('REQUEST > %s' , JSON.stringify(request) )
+        logger.error('STATUS  > %s' , statusCode )
+        logger.error('BODY    > %j' , JSON.stringify(body) )
+        logger.error('#######################################')
       }
+
+      var err = new Error(msg)
+      err.statusCode = statusCode || 504
+      err.response = httpResponse
+      err.body = body
+      return callNext(err, body)
     }
   },
   /**

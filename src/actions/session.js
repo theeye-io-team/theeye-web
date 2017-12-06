@@ -14,7 +14,6 @@ module.exports = {
       method: 'post',
       url: `${config.app_url}/session/customer/${customer.name}`,
       withCredentials: true,
-      timeout: 5000,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -40,7 +39,6 @@ module.exports = {
       method: 'post',
       url: `${config.app_url}/session/refresh`,
       withCredentials: true,
-      timeout: 5000,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },

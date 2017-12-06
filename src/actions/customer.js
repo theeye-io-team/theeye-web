@@ -134,7 +134,6 @@ module.exports = {
       url: `${config.app_url}/customer/${id}/config`,
       method: 'put',
       jsonData: data,
-      timeout: 5000,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },

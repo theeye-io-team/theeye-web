@@ -75,11 +75,13 @@ XHR.send = (options, callback) => {
   }
 
   const progressFn = (ev) => { }
+  const ontimeoutFn = (ev) => { }
 
   xhr.onload = options.onload || onloadFn
   xhr.onerror = options.onerror || onerrorFn
   xhr.onabort = options.onabort || onerrorFn
   xhr.onprogress = options.onprogress || progressFn
+  xhr.ontimeout = options.ontimeout || ontimeoutFn
 
   xhr.open(method, url)
 
@@ -112,7 +114,9 @@ XHR.send = (options, callback) => {
   } else if (XHR.authorization) {
     xhr.setRequestHeader('Authorization', XHR.authorization)
   }
-  xhr.withCredentials = (typeof options.withCredentials === 'boolean') ? options.withCredentials : false
+
+  xhr.withCredentials = (typeof options.withCredentials === 'boolean') ? options.withCredentials : XHR.defaults.withCredentials
+  xhr.timeout = options.timeout || XHR.defaults.timeout
 
   xhr.send(data)
   return xhr
@@ -121,3 +125,7 @@ XHR.send = (options, callback) => {
 // set global authentication token
 XHR.authorization = null
 
+XHR.defaults = {
+  timeout: 0,
+  withCredentials: false
+}

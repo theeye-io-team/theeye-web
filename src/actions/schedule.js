@@ -9,7 +9,6 @@ export const createSchedule = (taskId, data, callback = () => {}) => {
     url: `${config.api_url}/task/schedule`,
     method: 'POST',
     jsonData: data,
-    timeout: 5000,
     withCredentials: true,
     headers: {
       Accept: 'application/json;charset=UTF-8'
@@ -31,7 +30,6 @@ export const getSchedules = taskId => {
   XHR.send({
     url: `${config.api_url}/task/${task.id}/schedule`,
     method: 'GET',
-    timeout: 5000,
     withCredentials: true,
     headers: {
       Accept: 'application/json;charset=UTF-8'
@@ -52,7 +50,6 @@ export const cancelSchedule = (taskId, scheduleId) => {
   XHR.send({
     url: `${config.api_url}/task/${task.id}/schedule/${schedule._id}`,
     method: 'DELETE',
-    timeout: 5000,
     withCredentials: true,
     headers: {
       Accept: 'application/json;charset=UTF-8'

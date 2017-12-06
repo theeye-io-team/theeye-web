@@ -27,7 +27,6 @@ module.exports = {
       method: 'post',
       jsonData: body,
       withCredentials: true,
-      timeout: 5000,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -48,7 +47,6 @@ module.exports = {
       method: 'put',
       jsonData: body,
       withCredentials: true,
-      timeout: 5000,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -75,7 +73,6 @@ module.exports = {
       fail (err,xhr) {
         bootbox.alert('Something goes wrong. Please refresh')
       },
-      timeout: 5000
     })
   },
   fetchHostConfig (id) {

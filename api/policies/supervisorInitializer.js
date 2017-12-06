@@ -12,15 +12,16 @@ module.exports = (req, res, next) => {
   }
 
   if (
-    ! theeye.client_id &&
-    ! theeye.client_secret &&
-    ! theeye.access_token
+    !theeye.client_id &&
+    !theeye.client_secret &&
+    !theeye.access_token
   ) {
     sails.log.error('TheEye passport is not properly created for user %s.', req.user.username)
     return res.serverError('Internal Error')
   }
 
   const config = {
+    timeout: sails.config.supervisor.timeout,
     api_url: sails.config.supervisor.url,
     client_customer: req.user.current_customer,
     client_id:  theeye.client_id,

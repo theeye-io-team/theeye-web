@@ -44,7 +44,6 @@ module.exports = {
       url: `${config.api_url}/job`,
       withCredentials: true,
       jsonData: { task: task.id, task_arguments: taskArgs },
-      timeout: 5000,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -64,7 +63,6 @@ module.exports = {
       method: 'put',
       url: `${config.api_url}/job/${job.id}/cancel`,
       withCredentials: true,
-      timeout: 5000,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },

@@ -14,7 +14,6 @@ module.exports = {
       url: `${config.app_url}/auth/login`,
       method: 'post',
       jsonData: data,
-      timeout: 5000,
       withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
@@ -41,7 +40,6 @@ module.exports = {
     XHR.send({
       url: `${config.app_url}/logout`,
       method: 'get',
-      timeout: 5000,
       withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
@@ -65,7 +63,6 @@ module.exports = {
       url: `${config.app_url}/password/resetmail`,
       method: 'post',
       jsonData: data,
-      timeout: 5000,
       withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
@@ -153,7 +150,6 @@ module.exports = {
       url: `${config.app_url}/auth/activateuser?token=${token}`,
       method: 'post',
       jsonData: data,
-      timeout: 5000,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -208,7 +204,6 @@ module.exports = {
       url: `${config.app_url}/password/reset`,
       method: 'put',
       jsonData: data,
-      timeout: 5000,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -258,7 +253,6 @@ module.exports = {
       method: 'post',
       jsonData: body,
       withCredentials: true,
-      timeout: 5000,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },

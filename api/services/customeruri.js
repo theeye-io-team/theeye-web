@@ -6,7 +6,7 @@ module.exports = {
       supervisor.url ,
       user.customers[0] ,
       ':hostname:',
-      supervisor.palancas.resource
+      'job'
     ];
 
     return parts.join('/');

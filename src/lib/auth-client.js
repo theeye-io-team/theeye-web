@@ -36,8 +36,7 @@ Client.prototype.verifyOAuthCode = function (url, options, doneFn) {
     'fail': function (err, xhr) {
       debug('verification failed')
       doneFn(err, false, xhr)
-    },
-    'timeout': 5000
+    }
   })
 }
 
@@ -59,8 +58,7 @@ Client.prototype.verifyRecaptcha = function (recaptcha, doneFn) {
     'fail': function (err, xhr) {
       debug('verification failed')
       doneFn(err, false, xhr)
-    },
-    'timeout': 5000
+    }
   })
 }
 
@@ -85,8 +83,7 @@ Client.prototype.createSession = function (username, password, callback) {
     'fail': function (err, xhr) {
       debug('refresh failed')
       errorFn(xhr, callback)
-    },
-    'timeout': 5000
+    }
   })
 }
 
@@ -129,8 +126,7 @@ Client.prototype.recoverPassword = function (email, recaptcha, callback) {
     'fail': function (err, xhr) {
       debug('request failed')
       errorFn(xhr, callback)
-    },
-    'timeout': 5000
+    }
   })
 }
 
@@ -163,8 +159,7 @@ Client.prototype.changePassword = function (password, callback) {
     fail: function (err, xhr) {
       debug('request failed')
       errorFn(xhr, callback)
-    },
-    timeout: 5000
+    }
   })
 }
 
@@ -202,8 +197,7 @@ Client.prototype.refreshSession = function (token, session, callback) {
     fail: function (err, xhr) {
       debug('refresh failed')
       errorFn(xhr, callback)
-    },
-    timeout: 5000
+    }
   })
 }
 
@@ -226,8 +220,7 @@ Client.prototype.closeSession = function (token, session, callback) {
     fail: function (err, xhr) {
       debug('close operation failed')
       errorFn(xhr, callback)
-    },
-    timeout: 5000
+    }
   })
 }
 
