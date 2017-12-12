@@ -72,12 +72,12 @@ module.exports.routes = {
   //'delete /task/:id?': 'TasksController.destroy',
   //'put    /task/:id?': 'TasksController.update',
   // ScriptController routes
-  //'post   /admin/script/download' : 'ScriptController.downloadPublicScript',
-  //'get    /script/:id' : 'ScriptController.get',
+  'get    /script/:id' : 'ScriptController.get',
+  'post   /script' : 'ScriptController.create',
+  'put    /script/:id' : 'ScriptController.update',
+  'post   /admin/script/download' : 'ScriptController.downloadPublicScript',
   //'get    /script' : 'ScriptController.fetch',
-  //'post   /script' : 'ScriptController.create',
   //'delete /script/:id' : 'ScriptController.destroy',
-  //'put    /script/:id' : 'ScriptController.update',
   // ResourceController routes.
   'get    /resource/:id' : 'ResourceController.get',
   'post   /resource/:type?' : 'ResourceController.create',

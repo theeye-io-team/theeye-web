@@ -382,6 +382,15 @@ TheEyeClient.prototype = {
   // DEPRECATED VERY SOON
   //
   //
+  script: function(id, callback) {
+    this.performRequest({
+      method: 'get',
+      url: '/:customer/script/' + id
+    }, function(error, body) {
+      if (error) return callback(error);
+      callback(null, body);
+    });
+  },
   tags: function(callback){
     this.performRequest({ method: 'get', url: this.TAG }, function(error,body){
       callback(error, body);

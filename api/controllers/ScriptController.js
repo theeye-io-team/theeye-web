@@ -8,8 +8,7 @@ module.exports = {
    * Get script
    * GET /script/:id
    */
-  get: function(req, res)
-  {
+  get: function(req, res) {
     var id = req.param("id", null);
     var supervisor = req.supervisor;
 
@@ -20,22 +19,6 @@ module.exports = {
           file : scriptFile
         });
       });
-    });
-  },
-  /**
-   * Get script
-   * GET /admin/script/download
-   */
-  downloadPublicScript: function(req, res)
-  {
-    var url = req.param("url", null);
-
-    debug(url);
-
-    var request = require("request");
-    request(url, {}, function(error, response, body) {
-      if(error) return res.send(500, error);
-      else return res.json(body);
     });
   },
   /**
@@ -70,8 +53,7 @@ module.exports = {
    * Create script
    * POST /script
    */
-  create: function(req, res)
-  {
+  create: function(req, res) {
     var params = req.params.all();
     var supervisor = req.supervisor;
 
@@ -90,5 +72,20 @@ module.exports = {
       );
     });
   },
+  /**
+   * Get script
+   * GET /admin/script/download
+   */
+  downloadPublicScript: function(req, res) {
+    var url = req.param("url", null);
+
+    debug(url);
+
+    var request = require("request");
+    request(url, {}, function(error, response, body) {
+      if(error) return res.send(500, error);
+      else return res.json(body);
+    });
+  },
   _config: {}
-};
+}
