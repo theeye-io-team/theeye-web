@@ -153,7 +153,6 @@ const Model = Schema.extend({
 })
 
 const Collection = AppCollection.extend({
-  comparator: 'name',
   model: Model,
   url: urlRoot,
   /**
@@ -176,8 +175,19 @@ const Collection = AppCollection.extend({
       })
     );
   },
-  comparator (model) {
-    return model.stateOrder
+  //comparator: 'name',
+  comparator (m1,m2) { // user javascript array comparator
+    // sort by state order
+    if (m1.stateOrder<m2.stateOrder) return -1
+    else if (m1.stateOrder>m2.stateOrder) return 1
+    // if equal state order, sort by name
+    else {
+      let name1 = m1.name.toLowerCase()
+      let name2 = m2.name.toLowerCase()
+      if (name1<name2) return -1
+      else if (name1>name2) return 1
+      else return 0
+    }
   },
   higherSeverityMonitor () {
     const submonitors = this.models

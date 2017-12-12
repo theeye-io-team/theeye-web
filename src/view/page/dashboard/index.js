@@ -176,7 +176,6 @@ module.exports = View.extend({
     })
 
     const setUpAndRunningSign = () => {
-
       if (!this.upandrunningSign) return // upandrunning is disabled
       if (this.waitTimeout) return // the user is interacting
       if (!(this.monitors.length>0)) return
@@ -219,32 +218,31 @@ module.exports = View.extend({
       }
     }
 
-    const waitUntilStopInteraction = () => {
-      if (!(this.monitors.length>0)) return
-      if (this.waitTimeout) { // is already waiting
-        clearTimeout(this.waitTimeout)
-      }
-      this.waitTimeout = setTimeout(() => {
-        this.waitTimeout = null
-        if (!App.state.searchbox.search) {
-          setUpAndRunningSign()
-          monitorsFolding.fold()
-        }
-      }, 10000) // wait for 10 secs and then fold/unfold again
-    }
+    //const waitUntilStopInteraction = () => {
+    //  if (!(this.monitors.length>0)) return
+    //  if (this.waitTimeout) { // is already waiting
+    //    clearTimeout(this.waitTimeout)
+    //  }
+    //  this.waitTimeout = setTimeout(() => {
+    //    this.waitTimeout = null
+    //    if (!App.state.searchbox.search) {
+    //      setUpAndRunningSign()
+    //      monitorsFolding.fold()
+    //    }
+    //  }, 10000) // wait for 10 secs and then fold/unfold again
+    //}
 
-    this.listenTo(App,'document:input document:click',() => {
-      logger.log('user interacting...')
-      waitUntilStopInteraction()
-    })
-    // events that can change monitors states
-    // check state every time and reorganize view
-    //this.listenTo(this.groupedResources,'reset change', () => { setUpAndRunningSign() })
+    // Will re-check up and running when user stop interacting
+    //this.listenTo(App,'document:input document:click',() => {
+    //  logger.log('user interacting...')
+    //  waitUntilStopInteraction()
+    //})
 
+    // Will re-check up and running when sync or state change
     this.listenToAndRun(this.monitors,'sync change:state',() => {
       setUpAndRunningSign()
     })
-    //setUpAndRunningSign()
+    setUpAndRunningSign()
   },
   /**
    *
@@ -326,5 +324,5 @@ module.exports = View.extend({
     }
 
     this.listenToAndRun(App.state.searchbox,'change:search',search)
-  },
+  }
 })

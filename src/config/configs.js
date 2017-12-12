@@ -24,7 +24,7 @@ const configs = {
   local: Object.assign({}, defaultConfigs, {
     env: 'local',
     dashboard: {
-      upandrunningSign: false
+      //upandrunningSign: false
     }
   }),
 

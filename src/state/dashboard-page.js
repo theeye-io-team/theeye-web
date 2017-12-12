@@ -38,7 +38,6 @@ const GroupedResource = Resource.extend({
 })
 
 const GroupedResourceCollection = ResourceCollection.extend({
-  comparator: 'name',
   // is not being used. this collection works like a subset of the resources collection
   //model (attrs, options) {
   //},
