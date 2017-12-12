@@ -199,7 +199,7 @@ module.exports = FormView.extend({
       }),
       new SelectView({
         visible: false,
-        label: 'Grace Time',
+        label: 'Trigger on-hold time',
         name: 'grace_time',
         multiple: false,
         tags: false,
@@ -211,7 +211,7 @@ module.exports = FormView.extend({
         }),
         value: this.model.grace_time,
         required: false,
-        unselectedText: 'Select the Grace Time',
+        unselectedText: 'Select the Trigger on-hold time',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       }),
