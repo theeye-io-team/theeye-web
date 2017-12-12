@@ -9,9 +9,8 @@
 
     <a class="navbar-brand" href="/dashboard"><img src="/images/logo-hor.png" alt="The eye"></a>
     <div class="navData">
-      <a href="/profile">
-        <span class="clientName"><%= req.user.current_customer %></span>
-      </a>
+      <span class="clientName"><%= req.user.current_customer %></span>
+
       <div class="client hidden-sm hidden-md hidden-lg">
         <a href="#" class="switcher"><img src="/images/switcher.png" /></a>
         <select id="clientSelect" class="hidden " tabindex=-1>
