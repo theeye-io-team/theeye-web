@@ -40,9 +40,14 @@ App.extend({
     next()
   },
   navigate (page) {
+    //var url = (page.charAt(0)==='/')?page.slice(1):page
+    //if (window.location.pathname.slice(1) === url) {
+    //  return // cancel if page is current
+    //}
+    //App.Router.history.navigate(url,{trigger:true})
     var url = (page.charAt(0) === '/') ? page.slice(1) : page
-    if (window.location.pathname.slice(1) === url) return // cancel if page is current
-    App.Router.history.navigate(url,{ trigger: true })
+
+    App.Router.navigate(url)
   },
   reload (params, append=false) {
     let qs

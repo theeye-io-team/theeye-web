@@ -1,6 +1,8 @@
 'use strict'
 
 import App from 'ampersand-app'
+import Events from 'ampersand-events'
+import assign from 'lodash/assign'
 
 class Route {
   /**
@@ -14,17 +16,22 @@ class Route {
 
     const routeName = `${name}Route`
     if (!this[routeName]) {
-      throw new Error(`route ${routeName} is not defined`)
+      throw new Error(`route ${routeName} is not valid`)
     }
 
-    const page = this[routeName]()
+    const page = this[routeName](options)
 
     if (!page) {
-      throw new Error('the route should return a valid page view')
+      if (!App.state.currentPage) {
+        let errmsg = 'the route should return a valid page view'
+        throw new Error(errmsg)
+      } else return
     }
 
     App.state.set('currentPage', page)
   }
 }
+
+assign(Route.prototype, Events)
 
 module.exports = Route

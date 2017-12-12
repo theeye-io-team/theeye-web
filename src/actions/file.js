@@ -2,6 +2,7 @@
 
 import App from 'ampersand-app'
 import { Model as File } from 'models/file'
+import FileRouter from 'router/files'
 
 module.exports = {
   get (id) {
@@ -24,5 +25,10 @@ module.exports = {
   remove (id) {
     const file = App.state.files.get(id)
     file.destroy()
+  },
+  edit (id) {
+    // route edit file action
+    let router = new FileRouter()
+    router.route('edit',{ id: id })
   }
 }

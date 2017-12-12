@@ -1,7 +1,7 @@
 import View from 'ampersand-view'
 import acls from 'lib/acls'
 import lang2ext from 'lib/lang2ext'
-import ScriptActions from 'actions/script'
+import FileActions from 'actions/file'
 import moment from 'moment'
 
 const GenericCollapsedContent = View.extend({
@@ -185,7 +185,7 @@ const ScriptCollapsedContent = GenericCollapsedContent.extend({
 
     if (!this.script_id) return
 
-    ScriptActions.edit(this.script_id)
+    FileActions.edit(this.script_id)
 
     return false
   },

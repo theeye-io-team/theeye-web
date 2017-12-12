@@ -47,29 +47,29 @@ module.exports = Router.extend({
       const route = new DashboardRoute()
       route.route('index')
     },
-    'admin/hostgroup(/:id/:action)': () => {
+    'admin/hostgroup': () => {
       const route = new HostGroupRoute()
       route.route('index')
     },
-    'admin/user(/:id/:action)': () => {
+    'admin/user': () => {
       const route = new UserRoute()
       route.route('index')
     },
-    'admin/customer(/:id/:action)': () => {
+    'admin/customer': () => {
       const route = new CustomerRoute()
       route.route('index')
     },
-    'admin/webhook(/:id/:action)': () => {
+    'admin/webhook': () => {
       const route = new WebhookRoute()
       route.route('index')
     },
-    'admin/task(/:id/:action)': () => {
+    'admin/task': () => {
       return import('./task').then(TasksRoute => {
         const route = new TasksRoute()
         route.route('index')
       })
     },
-    'admin/file(/:id/:action)': () => {
+    'admin/file': () => {
       return import('./files').then(FilesRoute => {
         const route = new FilesRoute()
         route.route('index')

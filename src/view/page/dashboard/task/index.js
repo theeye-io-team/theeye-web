@@ -5,7 +5,7 @@ import JobResult from '../job-result'
 import ExecButton from './exec-button'
 import SearchActions from 'actions/searchbox'
 import TaskActions from 'actions/task'
-import ScriptActions from 'actions/script'
+import FileActions from 'actions/file'
 import LIFECYCLE from 'constants/lifecycle'
 import EditTaskButton from 'view/page/task/buttons/edit'
 
@@ -219,7 +219,7 @@ const ScriptCollapsedContent = View.extend({
 
     if (!this.model.script || !this.model.script.id) return
 
-    ScriptActions.edit(this.model.script.id)
+    FileActions.edit(this.model.script.id)
 
     return false
   },
