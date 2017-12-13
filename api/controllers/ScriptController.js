@@ -2,6 +2,7 @@ var debug = require("debug")("eye:controller:scripts");
 var fs = require('fs');
 var format = require('util').format;
 var stream = require('stream');
+var request = require("request");
 
 module.exports = {
   /**
@@ -83,6 +84,21 @@ module.exports = {
 
     var request = require("request");
     request(url, {}, function(error, response, body) {
+      if(error) return res.send(500, error);
+      else return res.json(body);
+    });
+  },
+  /**
+   * Get example
+   * GET /script/example/:extension
+   */
+  getExample: function(req, res) {
+    var params = req.params.all();
+    var scriptsPath = 'https://raw.githubusercontent.com/theeye-io/theeye-docs/master/scripts/examples/'
+    var url = scriptsPath + 'example.' + params.extension
+
+    request(url, {}, function(error, response, body) {
+      if(response && response.statusCode!==200) return res.send(response.statusCode, error);
       if(error) return res.send(500, error);
       else return res.json(body);
     });

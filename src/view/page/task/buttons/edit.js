@@ -14,7 +14,7 @@ module.exports = PanelButton.extend({
     click (event) {
       event.stopPropagation()
 
-      import('../form').then(FormView => {
+      return import(/* webpackChunkName: "task-form" */ '../form').then(FormView => {
         const form = new FormView({
           model: this.model
         })

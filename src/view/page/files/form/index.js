@@ -1,17 +1,17 @@
+import App from 'ampersand-app'
 import assign from 'lodash/assign'
 import FormView from 'ampersand-form-view'
 import View from 'ampersand-view'
 import FileActions from 'actions/file'
+import ScriptActions from 'actions/script'
 import InputView from 'components/input-view'
 import TextareaView from 'components/input-view/textarea'
-import HelpIcon from 'components/help-icon'
 import FormButtons from 'components/form/buttons'
 // const FileModeConst = require('constants/file-input-mode')
 import FileInputView from 'components/input-view/file'
-
+import bootbox from 'bootbox'
+import CommonButton from 'components/common-button'
 import { EditorView } from './editor'
-
-const HelpTexts = require('language/help')
 
 const FilenameInputView = InputView.extend({
   props: {
@@ -56,10 +56,19 @@ const IntroView = View.extend({
   </p>`
 })
 
+const ExampleBtn = CommonButton.extend({
+  initialize (options) {
+    this.title = 'Load Example'
+    this.className = 'btn btn-primary example-btn'
+    this.onClickButton = options.onClickButton
+  }
+})
+
 module.exports = FormView.extend({
   initialize (options) {
     // needed for codemirror listener
     this.onEditorDrop = this.onEditorDrop.bind(this)
+    this.loadExample = this.loadExample.bind(this)
 
     this.filenameInput = new FilenameInputView({ value: this.model.filename })
 
@@ -94,13 +103,14 @@ module.exports = FormView.extend({
     FormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
-    this.addHelpIcon('name')
-
     // new editor and modal behavior info, added 1/12/17
     // remove when everybody knows how to use it?
     let intro = new IntroView()
     intro.render()
     this.el.prepend(intro.el)
+
+    this.exampleBtnView = new ExampleBtn({onClickButton: this.loadExample})
+    this.renderSubview(this.exampleBtnView)
 
     this.editorView = new EditorView({
       data: this.model.data,
@@ -118,6 +128,14 @@ module.exports = FormView.extend({
       this.editorView.setEditorContent(this.model.data)
     })
 
+    this.listenTo(App.state.editor,'change:value',() => {
+      if(App.state.editor.value)
+        this.editorView.setEditorContent(App.state.editor.value)
+      else {
+        this.editorView.clearEditorContent()
+      }
+    })
+
     const buttons = this.buttons = new FormButtons()
     this.renderSubview(buttons)
     buttons.on('click:confirm', () => { this.submit() })
@@ -128,15 +146,10 @@ module.exports = FormView.extend({
       this.filenameInput.setValue(dt.files[0].name)
     }
   },
-  addHelpIcon (field) {
-    const view = this._fieldViews[field]
-    if (!view) return
-    view.renderSubview(
-      new HelpIcon({
-        text: HelpTexts.task.form[field]
-      }),
-      view.query('label')
-    )
+  loadExample(event) {
+    event.stopPropagation()
+    event.preventDefault()
+    ScriptActions.getExampleScript(this.filenameInput.extension)
   },
   submit () {
     this.beforeSubmit()

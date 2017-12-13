@@ -1,4 +1,5 @@
 import View from 'ampersand-view'
+import HelpIcon from 'components/help-icon'
 
 import CodeMirror from 'codemirror/lib/codemirror'
 window.CodeMirror = CodeMirror
@@ -6,6 +7,8 @@ window.CodeMirror = CodeMirror
 import 'codemirror/mode/meta'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/3024-night.css'
+
+const HelpTexts = require('language/help')
 
 export const EditorView = View.extend({
   props: {
@@ -31,11 +34,22 @@ export const EditorView = View.extend({
         this.refresh()
       }
     })
+
+    this.renderSubview(
+      new HelpIcon({
+        text: HelpTexts.file.editor
+      }),
+      this.queryByHook('editor-container')
+    )
   },
   setEditorContent (data) {
     if (data) {
       this.codemirror.setValue(data)
     }
+    this.refresh()
+  },
+  clearEditorContent () {
+    this.codemirror.setValue('')
     this.refresh()
   },
   setEditorMode (extension) {

@@ -64,19 +64,19 @@ module.exports = Router.extend({
       route.route('index')
     },
     'admin/task': () => {
-      return import('./task').then(TasksRoute => {
+      return import(/* webpackChunkName: "router-task" */ './task').then(TasksRoute => {
         const route = new TasksRoute()
         route.route('index')
       })
     },
     'admin/file': () => {
-      return import('./files').then(FilesRoute => {
+      return import(/* webpackChunkName: "router-files" */ './files').then(FilesRoute => {
         const route = new FilesRoute()
         route.route('index')
       })
     },
     'admin/scheduler': () => {
-      return import('./scheduler').then(SchedulerRoute => {
+      return import(/* webpackChunkName: "router-scheduler" */ './scheduler').then(SchedulerRoute => {
         const route = new SchedulerRoute()
         route.route('index')
       })

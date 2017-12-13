@@ -63,6 +63,7 @@ const AppState = State.extend({
     notify: ['state',false,() => { return new NotifyState() }],
     register: ['state',false,() => { return new RegisterState() }],
     searchbox: ['state',false,() => { return new SearchBoxState() }],
+    editor: ['state',false,() => { return new EditorState() }],
   },
   init () {
     this.loader = new LoaderState()
@@ -169,6 +170,12 @@ const PasswordResetState = State.extend({
 const RegisterState = State.extend({
   props: {
     result: ['boolean',false,false]
+  }
+})
+
+const EditorState = State.extend({
+  props: {
+    value: ['string',false,null]
   }
 })
 

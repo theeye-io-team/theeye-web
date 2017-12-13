@@ -55,7 +55,8 @@ module.exports = {
     uid: 'The user id for the file',
     gid: 'The group id for the file',
     permissions: 'Permissions in octal format. Default is 0755',
-    select: 'Select a file'
+    select: 'Select a file',
+    editor: "Print 'ok', 'success' or 'normal' for successful execution, otherwise print 'fail', 'failure' or 'error'."
   },
   titles:{
     user_page: 'Users CRUD operations',

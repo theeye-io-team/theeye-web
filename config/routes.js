@@ -63,22 +63,14 @@ module.exports.routes = {
   'put    /customer/:id/config' : 'CustomerController.editconfig',
   'post   /customer' : 'CustomerController.create',
   'delete /customer/:id' : 'CustomerController.remove',
-  // TaskController routes
-  //'post   /task': 'TasksController.create',
-  //'get    /task/:id?': 'TasksController.get',
   'post   /task/schedule': 'TasksController.schedule',
   'get    /task/:id/schedule': 'TasksController.getSchedule',
   'delete /task/:id/schedule/:scheduleId': 'TasksController.cancelSchedule',
-  //'delete /task/:id?': 'TasksController.destroy',
-  //'put    /task/:id?': 'TasksController.update',
-  // ScriptController routes
   'get    /script/:id' : 'ScriptController.get',
   'post   /script' : 'ScriptController.create',
   'put    /script/:id' : 'ScriptController.update',
   'post   /admin/script/download' : 'ScriptController.downloadPublicScript',
-  //'get    /script' : 'ScriptController.fetch',
-  //'delete /script/:id' : 'ScriptController.destroy',
-  // ResourceController routes.
+  'get   /script/example/:extension' : 'ScriptController.getExample',
   'get    /resource/:id' : 'ResourceController.get',
   'post   /resource/:type?' : 'ResourceController.create',
   'put    /resource/:id' : 'ResourceController.update',
@@ -106,19 +98,10 @@ module.exports.routes = {
    *
    */
   // admin routes
-  'get /events':(req,res,next) => res.redirect('/dashboard'),
-  'get /dashboard*':spaIndexRoute,
   'get /admin/workflow/*':'WorkflowController.index',
   'get /admin/*':spaIndexRoute,
-  //'get /admin/webhook/*':spaIndexRoute,
-  //'get /admin/scheduler/*':spaIndexRoute,
-  //'get /admin/hostgroup/*':spaIndexRoute,
-  //'get /admin/user/*':spaIndexRoute,
-  //'get /admin/customer/*':spaIndexRoute,
-  //'get /admin/task/*':spaIndexRoute,
-  //'get /admin/charts/*':spaIndexRoute,
-  //'get /admin/file/*':spaIndexRoute,
-  // public routes
+  'get /events':(req,res,next) => res.redirect('/dashboard'),
+  'get /dashboard*':spaIndexRoute,
   'get /login':spaIndexRoute,
   'get /register':spaIndexRoute,
   'get /activate':spaIndexRoute,
