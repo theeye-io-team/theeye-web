@@ -13,7 +13,6 @@ import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 
 class Auth extends Route {
-
   loginRoute () {
     return new LoginPageView()
   }
@@ -55,17 +54,14 @@ class Auth extends Route {
 
   socialLoginRoute() {
     const query = search.get()
-    if(query.error){
+    if (query.error) {
       App.navigate('login')
       bootbox.alert(query.error,function(){ })
       return false
     }
     let access_token = query.access_token
     if (!access_token) return App.navigate('login')
-
-    App.state.session.set({
-      access_token: access_token
-    })
+    App.state.session.access_token = access_token
   }
 
   socialConnectRoute() {

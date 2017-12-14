@@ -1,6 +1,7 @@
 import App from 'ampersand-app'
 import SessionActions from 'actions/session'
 import config from 'config'
+
 module.exports = () => {
   let refreshInterval
 
@@ -15,8 +16,7 @@ module.exports = () => {
     return /logout/.test(pathname) === true
   }
 
-  // if has access token, should validate it first? it cannot work offline
-  App.state.session.on('change:logged_in',() => {
+  App.listenToAndRun(App.state.session,'change:logged_in',() => {
     let logged_in = App.state.session.logged_in
     if (logged_in === undefined) return // wait until it is set
 
@@ -44,24 +44,24 @@ module.exports = () => {
     //}
   })
 
+  const refreshIntervalMs = config.session.refresh_interval
+  App.listenToAndRun(App.state.session,'change:logged_in',() => {
+    if (App.state.session.logged_in===true) {
+      refreshInterval = setInterval(() => {
+        SessionActions.refreshAccessToken()
+      }, refreshIntervalMs)
+    } else {
+      if (refreshInterval) {
+        clearInterval(refreshInterval)
+      }
+    }
+  })
+
   App.Router.on('route',()=>{
     if (App.state.session.logged_in===true) {
       let path = window.location.pathname
       if (!isPublicRoute(path) && !isLogginOut(path)) {
         SessionActions.refreshAccessToken()
-      }
-    }
-  })
-
-  const refreshTntervalMs = config.session.refresh_interval
-  App.state.session.on('change:logged_in',() => {
-    if (App.state.session.logged_in===true) {
-      refreshInterval = setInterval(() => {
-        SessionActions.refreshAccessToken()
-      }, refreshTntervalMs)
-    } else {
-      if (refreshInterval) {
-        clearInterval(refreshInterval)
       }
     }
   })

@@ -65,11 +65,16 @@ const AppState = State.extend({
     searchbox: ['state',false,() => { return new SearchBoxState() }],
     editor: ['state',false,() => { return new EditorState() }],
   },
-  init () {
-    this.loader = new LoaderState()
+  initialize () {
+    State.prototype.initialize.apply(this,arguments)
+
     this.session = new SessionState()
+    this.loader = new LoaderState()
     this.navbar = new NavbarState()
     this.credentials = new CredentialsCollection()
+  },
+  appInit () {
+    this.session.appInit()
 
     _initCollections.call(this)
 

@@ -23,46 +23,55 @@ module.exports = AmpersandState.extend({
     user: ['state',false,() => { return new User() }],
     customer: ['state',false,() => { return new Customer() }],
     logged_in: 'boolean',
-    authorization: 'string'
+    authorization: 'string',
+    restored: 'boolean'
   },
-  initialize () {
+  appInit () {
     this.storage = localforage.createInstance({
       name: 'theeye',
       storeName: 'session'
     })
 
-    this.on('change:access_token',() => {
-      const token = this.access_token
-      const hasValidAccessToken = Boolean(token)
-
-      this.authorization = hasValidAccessToken ? `Bearer ${token}` : ''
-      XHR.authorization = this.authorization
-
-      if (!hasValidAccessToken) {
-        this.logged_in = false
-      } else {
-        if (!this.logged_in) {
-          SessionActions.fetchProfile()
-        }
-      }
-
-      // each time the access token changes, persist it's value
-      this.persist()
+    this.restoreFromStorage( () => {
+      // once session determines if the current access token is valid or not
+      // trigger restored event to continue app initialization
+      this.on('change:access_token',(event) => { this.validateAccessToken() })
+      this.trigger('restored')
     })
-
-    this.deserialize()
   },
-  deserialize () {
+  validateAccessToken (next) {
+    const token = this.access_token
+    const isValidFormat = Boolean(token)
+    this.authorization = isValidFormat ? `Bearer ${token}` : ''
+    XHR.authorization = this.authorization
+
+    const done = () => {
+      this.persist()
+      if (next) next()
+    }
+
+    if (!isValidFormat) { // empty or not set
+      this.logged_in = false
+      done()
+    } else {
+      if (!this.logged_in) { // valid access token
+        // try to login by fetching the profile with the access_token
+        SessionActions.fetchProfile(done)
+      }
+    }
+  },
+  restoreFromStorage (next) {
     this.storage
       .getItem('session')
-      .then( data => {
+      .then(data => {
         data || (data={})
 
         if (!data.access_token) {
-          this.trigger('change:access_token')
+          data.access_token = null
         }
 
-        this.set(data)
+        this.set(data,{ silent: true })
+        this.validateAccessToken(next)
       })
   },
   clear () {

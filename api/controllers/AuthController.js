@@ -73,8 +73,20 @@ var AuthController = {
    * @param {Object} req
    * @param {Object} res
    */
-  provider: function (req, res) {
-    passport.endpoint(req, res);
+  socialAuth: function (req, res) {
+    var strategies = sails.config.passport
+      , provider   = req.param('provider')
+      , options    = {};
+
+    if (!strategies.hasOwnProperty(provider)) {
+      return res.send(400, 'Strategy not found.')
+    }
+
+    if (strategies[provider].hasOwnProperty('scope')) {
+      options.scope = strategies[provider].scope;
+    }
+
+    passport.authenticate(provider, options)(req, res, req.next);
   },
   /**
    * Create a authentication callback endpoint
@@ -182,10 +194,6 @@ var AuthController = {
 
     });
   },
-  //Link Between Accounts.
-  connect: function (req, res) {
-    passport.endpoint(req, res);
-  },
   registeruser: function(req, res) {
     var params = req.params.all();
     if(!params.username) return res.send(400, 'You must select a username');
@@ -288,15 +296,16 @@ var AuthController = {
     })(req,res,req.next)
   },
   socialCallback(req, res) {
-    passport.callback(req, res, function (err, user){
-      //if user is logged in, use socialconnect
-      if(req.user) {
+    var provider = req.param('provider')
+    passport.authenticate(provider, function (err, response){
+      //if social passport exists, use socialconnect
+      if(response.isNew) {
         var query
         if(err){
           debug('SOCIAL CONNECT ERROR:')
           debug(err);
           var msg = "Error connecting account."
-          if(err.message == 'emailmismatch') {
+          if(err.message == 'emailmissmatch') {
             msg = "Error connecting account, email does not match."
           }
           query = new Buffer( JSON.stringify({ error: msg }) ).toString('base64')
@@ -313,27 +322,27 @@ var AuthController = {
           return res.redirect('/sociallogin?'+query);
         }
 
-        if(!user){
+        if(!response.user){
           debug('LOGIN ERROR: USER NOT FOUND')
           var query = new Buffer( JSON.stringify({ error: 'Login error, invalid credentials.' }) ).toString('base64')
           return res.redirect('/sociallogin?'+query);
         }
 
         sails.log.debug('passport authenticated');
-        req.login(user, function (err) {
+        req.login(response.user, function (err) {
           if (err) {
             debug('LOGIN ERROR:');
             debug(err);
             return res.redirect('/login');
           } else {
             debug('user logged in. issuing access token')
-            const accessToken = jwtoken.issue({ user_id: user.id })
+            const accessToken = jwtoken.issue({ user_id: response.user.id })
             var queryToken = new Buffer( JSON.stringify({ access_token: accessToken }) ).toString('base64')
             return res.redirect('/sociallogin?'+queryToken);
           }
         });
       }
-    });
+    })(req, res, req.next);
   },
   verifySocialToken(req, res) {
     var params = req.params.all();

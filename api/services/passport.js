@@ -88,122 +88,52 @@ passport.use('google-mobile', new CustomStrategy(
  * @param {Function} next
  */
 passport.connect = function (req, query, profile, next) {
-  var user = {}
-    , provider;
+  var provider = req.param('provider');
+  var profileEmail;
+  query.provider = provider;
 
-  // Get the authentication provider from the query.
-  query.provider = req.param('provider');
+  if (profile.hasOwnProperty('emails')) {
+    profileEmail = profile.emails[0].value;
+  }
 
-  // Use profile.provider or fallback to the query.provider if it is undefined
-  // as is the case for OpenID, for example
-  provider = profile.provider || query.provider;
-
-  // If the provider cannot be identified we cannot match it to a passport so
-  // throw an error and let whoever's next in line take care of it.
   if (!provider){
     return next(new Error('No authentication provider was identified.'));
   }
 
-  // If the profile object contains a list of emails, grab the first one and
-  // add it to the user.
-  if (profile.hasOwnProperty('emails')) {
-    user.email = profile.emails[0].value;
-  }
-  // If the profile object contains a username, add it to the user.
-  if (profile.hasOwnProperty('username')) {
-    user.username = profile.username;
-  }
-
-  // If neither an email or a username was available in the profile, we don't
-  // have a way of identifying the user in the future. Throw an error and let
-  // whoever's next in the line take care of it.
-  if (!user.username && !user.email) {
-    return next(new Error('Neither a username nor email was available'));
+  if (!profileEmail) {
+    return next(new Error('Profile email not found.'));
   }
 
   Passport.findOne({
     provider   : provider
   , identifier : query.identifier.toString()
   }, function (err, passport) {
-    if (err) return next(err);
+    if(err)
+      return next(err);
 
-    if (!req.user) {
-      User.findOne({email: user.email}, function(err, usr){
-        if(usr)
-        {
-          // Scenario: An existing user is attempting to sign up using a third-party
-          //           authentication provider.
-          // Action:   Find the user and assign them a passport.
-          if (err) return next(err);
+    User.findOne({email: profileEmail}, function(err, usr){
+      if(err)
+        return next(err);
+      if(!usr) {
+        return next(new Error('User not found.'))
+      }
 
+      if (!passport) {
+        if(profile.emails.find(email => email.value === profileEmail )) {
           query.user = usr.id;
 
-          if( usr.invitation_token !== '' )
-          {
-            // Scenario: An existing user is attempting to sign up using a third-party
-            //           authentication provider for the first time
-            // Action:   Find the user, set the status to enable, clear the invitation_token,
-            //			 and assign them a passport.
-            User.update(
-              {email: usr.email},
-              {enabled : true, invitation_token : ''},
-              function(err, user) {
-                if(err) return next(err);
-                else {
-                  Passport.create(query, function (err, passport) {
-                    // If a passport wasn't created, bail out
-                    if (err) return next(err);
-
-                    activateTheeyeUser(user[0],function(error){
-                      return next(error,user[0]);
-                    });
-                  });
-                }
-              });
-          }
-          else if( ! passport )
-          {
-            // Scenario: An existing user is attempting to sign up using a third-party
-            //           authentication provider for the first time
-            // Action:   Find the user and assign them a passport.
-            Passport.create(query, function (err, passport) {
-              // If a passport wasn't created, bail out
-              if (err) return next(err);
-              return next(null, usr);
-            });
-          }
-          else return next(null, usr);
-        }
-        else
-        {
-          //Scenario: Someone is attempting to login and dont have an user account.
-          req.flash('error', 'Error.Passport.User.Dont.Exists');
-          return next(err);
-        }
-      });
-
-    } else {
-      // Scenario: A user is currently logged in and trying to connect a new
-      //           passport.
-      // Action:   Create and assign a new passport to the user.
-      if(!passport)
-      {
-        query.user = req.user.id;
-
-        if(profile.emails.find(email => email.value === req.user.email )) {
           Passport.create(query, function (err, passport) {
-            // If a passport wasn't created, bail out
-            if (err) return next(err);
-            next(err, req.user);
+            if(err)
+            return next(err);
+            return next(null, {user: usr, isNew: true});
           });
         } else {
-          next(new Error('emailmismatch'))
+          return next(new Error('emailmissmatch'))
         }
+      } else {
+        return next(null, {user: usr, isNew: false});
       }
-      // Scenario: The user is a nutjob or spammed the back-button.
-      // Action:   Simply pass along the already established session.
-      else next(null, req.user);
-    }
+    });
   });
 };
 

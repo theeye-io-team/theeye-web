@@ -20,9 +20,7 @@ module.exports = {
       },
       done: (response,xhr) => {
         if (xhr.status == 200){
-          App.state.session.set({
-            access_token: response.access_token
-          })
+          App.state.session.access_token = response.access_token
         } else {
           bootbox.alert('Login error, please try again')
         }
@@ -159,10 +157,7 @@ module.exports = {
           bootbox.alert({
             message: 'Registration is completed',
             callback: () => {
-              App.state.session.set({
-                access_token: response.access_token
-              })
-              // App.navigate('dashboard')
+              App.state.session.access_token = response.access_token
             }
           })
         } else {

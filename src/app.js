@@ -36,8 +36,9 @@ App.extend({
     })
   },
   initState (next) {
-    this.state.init()
-    next()
+    this.state.appInit()
+    // listen session restored
+    this.listenToOnce(this.state.session,'restored',next)
   },
   navigate (page) {
     //var url = (page.charAt(0)==='/')?page.slice(1):page

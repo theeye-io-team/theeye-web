@@ -52,7 +52,8 @@ module.exports = {
       }
     })
   },
-  fetchProfile () {
+  fetchProfile (next) {
+    next||(next=function(){})
     const sessionState = App.state.session
     XHR.send({
       method: 'get',
@@ -70,11 +71,13 @@ module.exports = {
           sessionState.user.customers.set(customers)
         }
         sessionState.logged_in = true
+        next()
       },
       fail: (err) => {
         logger.log('user data fetch failure')
-        sessionState.logged_in = false
         sessionState.access_token = null
+        sessionState.logged_in = false
+        next(err)
       }
     })
   },
