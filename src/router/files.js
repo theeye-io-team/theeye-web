@@ -24,7 +24,6 @@ class FilesRoute extends Route {
       success: () => {
         const editView = new EditModalizer({ model: file })
         editView.show()
-        editView.on('hidden', () => { App.closeSubpath() })
       }
     })
 
