@@ -9,7 +9,7 @@ class Route {
    * @property {String} name
    * @param {Object} options
    */
-  route (name, options={}) {
+  route (name, options = {}) {
     if (!name) {
       throw new Error('need a route name')
     }
@@ -34,4 +34,4 @@ class Route {
 
 assign(Route.prototype, Events)
 
-module.exports = Route
+export default Route
