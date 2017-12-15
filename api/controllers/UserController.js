@@ -262,6 +262,11 @@ var UserController = module.exports = {
   registerdevicetoken: function (req, res) {
     var params = req.params.all()
     var userId = params.id
+    
+    if(!params.package_name)
+      return res.send(400, 'Missing package information.');
+
+    var application_arn = params.platform === 'Android' ? sails.config.sns.push_notifications.android : sails.config.sns.push_notifications.ios[params.package_name]
 
     User.findOne({ id: userId },(error,user) => {
       if (error) {
@@ -270,7 +275,7 @@ var UserController = module.exports = {
       }
       if (user) {
         SNS.createPlatformEndpoint({
-          PlatformApplicationArn: sails.config.sns.push_notifications.application_arn,
+          PlatformApplicationArn: application_arn,
           Token: params.device_token,
           CustomUserData: userId
         }, function(error, data) {
