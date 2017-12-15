@@ -20,7 +20,8 @@ const OptionsCollection = Collection.extend({
 
 exports.DinamicArgument = Model.extend({
   props: {
-    id: 'number',
+    id: ['number',true], // incremental id
+    _id: 'string',
     order: ['number',true],
     type: ['string',true],
     label: ['string',true],
@@ -32,5 +33,9 @@ exports.DinamicArgument = Model.extend({
   },
   collections: {
     options: OptionsCollection
-  }
+  },
+  //parse (attrs) {
+  //  attrs.id = Number(attrs.id)
+  //  return attrs
+  //}
 })

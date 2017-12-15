@@ -98,7 +98,7 @@ module.exports.routes = {
    *
    */
   // admin routes
-  'get /admin/workflow/*':'WorkflowController.index',
+  'get /admin/workflow':'WorkflowController.index',
   'get /admin/*':spaIndexRoute,
   'get /events':(req,res,next) => res.redirect('/dashboard'),
   'get /dashboard*':spaIndexRoute,
@@ -136,11 +136,20 @@ module.exports.routes = {
   'get /apiv2/:resource/:id*':'ApiV2Controller.get',
   'get /apiv2/:resource*':'ApiV2Controller.fetch',
   'post /apiv2/:resource*':'ApiV2Controller.create',
+  //
+  //
+  // new Generic Proxied Endpoints. Supervisor API V3. without customer in the route
+  //
+  //
+  'get /apiv3/:resource/:id*':'ApiV3Controller.get',
+  'get /apiv3/:resource*':'ApiV3Controller.fetch',
   /*
    *
    * GENERIC API V1 ENDPOINTS. PROXY TO THE API SUPERVISOR
    *
-   * USE COOKIES/SESSION AUTHENTICATION METHOD
+   * USE COOKIES/SESSION AUTHENTICATION METHOD.
+   *
+   * OLD AND DEPRECATED
    *
    */
   'put /api/file/:id':'ApiController.upload',

@@ -8,23 +8,6 @@ module.exports.policies = {
     'setCookies',
     'supervisorInitializer'
   ],
-  ApiV2Controller: {
-    '*': [
-      'passportBearer',
-      'isAllowed',
-      'sessionCustomer',
-      'supervisorInitializer'
-    ]
-  },
-  // bearer session clients controllers
-  BearerController: {
-    '*': [
-      'passportBearer',
-      'isAllowed',
-      'sessionCustomer',
-      'supervisorInitializer'
-    ]
-  },
   AuthController: {
     'registeruser':['noSession'],
     'checkUsernameActivation':['noSession'],
@@ -37,5 +20,32 @@ module.exports.policies = {
   EventsController: { 'update':['noSession'], },
   PalancaController: { 'update':['noSession'], },
   HostStatsController: { 'update':['noSession'], },
-  NotificationController: { 'sendnotification':['noSession'], }
-};
+  NotificationController: { 'sendnotification':['noSession'], },
+  //
+  // bearer session clients controllers
+  //
+  BearerController: {
+    '*': [
+      'passportBearer',
+      'isAllowed',
+      'sessionCustomer',
+      'supervisorInitializer'
+    ]
+  },
+  ApiV2Controller: {
+    '*': [
+      'passportBearer',
+      'isAllowed',
+      'sessionCustomer',
+      'supervisorInitializer'
+    ]
+  },
+  ApiV3Controller: {
+    '*': [
+      'passportBearer',
+      'isAllowed',
+      'sessionCustomer',
+      'supervisorInitializer'
+    ]
+  }
+}

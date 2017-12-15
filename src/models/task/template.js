@@ -53,8 +53,19 @@ const Schema = AppModel.extend({
     if (!this.triggers) {
       serial.triggers = []
     } else {
-      let events = new Events(this.triggers)
-      serial.triggers = events.map(ev => ev.id)
+      serial.triggers = this.triggers
+        .filter(eve => {
+          if (!eve) return false
+          if (typeof eve === 'object') {
+            return Boolean(!eve._id)
+          }
+          return typeof eve === 'string'
+        })
+        .map(eve => {
+          if (typeof eve === 'object') {
+            return eve._id
+          } else return eve // the id
+        })
     }
 
     return serial

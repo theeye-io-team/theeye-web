@@ -8,7 +8,7 @@ import config from 'config'
 import { Collection as Hosts } from 'models/host'
 import { Model as HostGroup } from 'models/hostgroup'
 
-module.exports = {
+const Actions = {
   create (data) {
     const state = App.state.hostGroupPage
     const resources = state.configResources.serialize()
@@ -74,9 +74,32 @@ module.exports = {
       },
     })
   },
-  fetchHostConfig (id) {
-    App.state.hostGroupPage.fetchConfig(id, (err) => {
-      if (err) bootbox.alert(err)
+  fetchHostConfig (id,next) {
+    XHR.send({
+      method: 'get',
+      url: `${config.api_url}/host/${id}/config`,
+      withCredentials: true,
+      done: (data,xhr) => {
+        App.state.hostGroupPage.setConfigs(data)
+        //next(null,data)
+      },
+      fail (err,xhr) {
+        bootbox.alert('Fail to fetch host config')
+      }
+    })
+  },
+  fetchRecipe (id, next) {
+    XHR.send({
+      method: 'get',
+      url: `${config.api_v3_url}/recipe/${id}`,
+      withCredentials: true,
+      done: (data,xhr) => {
+        App.state.hostGroupPage.setConfigs(data.instructions)
+        //next(null,data)
+      },
+      fail (err,xhr) {
+        bootbox.alert('Fail to fetch recipe')
+      }
     })
   },
   //
@@ -101,3 +124,5 @@ module.exports = {
     })
   }
 }
+
+export default Actions

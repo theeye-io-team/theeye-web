@@ -61,7 +61,7 @@ module.exports = {
  * @param {Object} data
  * @param {Function} next
  */
-const create = function (data,next) {
+const create = (data,next) => {
   const task = TaskModel.Factory(data)
   XHR.send({
     url: task.urlRoot,
