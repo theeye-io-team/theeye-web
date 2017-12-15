@@ -48,22 +48,6 @@ module.exports = View.extend({
     this.renderWithTemplate()
     const self = this
 
-    // anywere keypress event focus on search
-    // this event listener will remains until the application refresh
-    document.addEventListener('keypress', (event) => {
-      if (
-        document.activeElement.tagName === 'TEXTAREA' ||
-        document.activeElement.tagName === 'INPUT'
-      ) return
-
-      const inputs = self.queryAll('input')
-      inputs.forEach(input => {
-        if (input.offsetParent !== null) {
-          input.focus()
-        }
-      })
-    }, false)
-
     document.addEventListener('keydown', (event) => {
       const inputs = self.queryAll('input')
       if (
