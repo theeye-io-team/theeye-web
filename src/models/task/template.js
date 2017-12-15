@@ -18,30 +18,32 @@ const TaskArguments = AmpersandCollection.extend({
 
 const Schema = AppModel.extend({
   idAttribute: 'id',
-	props: {
+  props: {
     id: 'string',
-		user_id: 'string',
-		customer_id: 'string',
-		public: 'boolean',
-		name: 'string',
-		description: ['string',false,''],
-		acl: 'array',
-		secret: 'string',
-		grace_time: 'number',
-		type: 'string',
+    user_id: 'string',
+    customer_id: 'string',
+    public: 'boolean',
+    name: 'string',
+    description: ['string',false,''],
+    acl: 'array',
+    secret: 'string',
+    grace_time: 'number',
+    type: 'string',
     // empty tags and triggers
-		tags: ['array',false, () => { return [] }],
-		triggers: ['array',false, () => { return [] }],
+    tags: ['array',false, () => { return [] }],
+    triggers: ['array',false, () => { return [] }],
     //_id: 'string',
     _type: 'string', // discriminator
     hasSchedules: ['boolean', true, false]
-	},
-	collections: {
-		//triggers: Events,
-		taskArguments: TaskArguments,
+  },
+  collections: {
+    //triggers: Events,
+    taskArguments: TaskArguments,
     schedules: ScheduleCollection
-	},
+  },
   initialize: function () {
+    AppModel.prototype.initialize.apply(this,arguments)
+
     this.listenToAndRun(this.schedules, 'reset sync remove add', () => {
       this.hasSchedules = this.schedules.length > 0
     })
@@ -51,7 +53,8 @@ const Schema = AppModel.extend({
     if (!this.triggers) {
       serial.triggers = []
     } else {
-      serial.triggers = this.triggers
+      let events = new Events(this.triggers)
+      serial.triggers = events.map(ev => ev.id)
     }
 
     return serial
@@ -112,7 +115,8 @@ const ScriptTask = Schema.extend({
       )
     })
   },
-  parse (attrs) {
+  parse () {
+    var attrs = Schema.prototype.parse.apply(this,arguments)
     // convert script_arguments into taskArguments
     if (Array.isArray(attrs.script_arguments)) {
       if (attrs.script_arguments.length>0) {
@@ -123,12 +127,12 @@ const ScriptTask = Schema.extend({
     }
     return attrs
   },
-	props: {
-		script_id: 'string',
+  props: {
+    script_id: 'string',
     // this attribute comes from the server and need to be filtered and parsed
-		//script_arguments: ['array',false, () => { return [] }],
-		script_runas: 'string'
-	},
+    //script_arguments: ['array',false, () => { return [] }],
+    script_runas: 'string'
+  },
   session: {
     hasDinamicArguments: 'boolean'
   },
@@ -164,10 +168,11 @@ const ScraperTask = Schema.extend({
     status_code: 'number',
     timeout: 'number',
   },
-  parse (args) {
-    args.remote_url = args.url
-    delete args.url
-    return args
+  parse () {
+    var attrs = Schema.prototype.parse.apply(this,arguments)
+    attrs.remote_url = attrs.url
+    delete attrs.url
+    return attrs
   },
   serialize () {
     let data = Schema.prototype.serialize.apply(this,arguments)

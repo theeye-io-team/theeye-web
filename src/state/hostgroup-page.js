@@ -32,9 +32,9 @@ module.exports = AmpersandState.extend({
       url: `${config.api_url}/host/${id}/config`,
       withCredentials: true,
       done (data,xhr) {
-        self.configTasks.reset(data.tasks)
-        self.configResources.reset(data.resources)
-        self.configTriggers.reset(data.triggers)
+        self.configTasks.reset(data.tasks,{ parse: true })
+        self.configResources.reset(data.resources,{ parse: true })
+        self.configTriggers.reset(data.triggers,{ parse: true })
         next(null,data)
       },
       fail (err,xhr) {

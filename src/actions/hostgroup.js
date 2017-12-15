@@ -3,7 +3,6 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
-//import merge from 'lodash/merge'
 import config from 'config'
 
 import { Collection as Hosts } from 'models/host'
