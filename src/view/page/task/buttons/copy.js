@@ -52,7 +52,7 @@ const CopyForm = FormView.extend({
     )
     TaskActions.createMany(this.data.hosts, data)
     if (next) next()
-    this.trigger('submit')
+    this.trigger('submitted')
   },
   prepareData (data) {
     delete data.id

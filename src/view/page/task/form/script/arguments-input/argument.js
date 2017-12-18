@@ -101,7 +101,7 @@ module.exports = View.extend({
       modal.remove()
     })
 
-    this.listenTo(form,'submit', () => {
+    this.listenTo(form,'submitted', () => {
       this.model.set( form.data )
       modal.hide()
     })

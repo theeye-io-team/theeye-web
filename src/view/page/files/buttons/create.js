@@ -33,7 +33,7 @@ module.exports = CommonButton.extend({
         form.remove()
         modal.remove()
       })
-      this.listenTo(form,'submit',() => { modal.hide() })
+      this.listenTo(form,'submitted',() => { modal.hide() })
       modal.show()
     }
   }

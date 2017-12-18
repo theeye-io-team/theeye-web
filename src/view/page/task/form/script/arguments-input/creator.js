@@ -53,6 +53,17 @@ module.exports = View.extend({
     'click [data-hook=fixed]':'onClickFixed',
     'click [data-hook=input]':'onClickInput',
     'click [data-hook=select]':'onClickSelect',
+    keydown: 'onKeyEvent',
+    keypress: 'onKeyEvent'
+  },
+  onKeyEvent (event) {
+    if(event.target.nodeName.toUpperCase()=='INPUT') {
+      if (event.keyCode == 13) {
+        event.preventDefault()
+        event.stopPropagation()
+        return false
+      }
+    }
   },
   onClickFixed (event) {
     event.preventDefault()
@@ -88,7 +99,7 @@ module.exports = View.extend({
     this.renderSubview(form, this.queryByHook('form-container'))
 
     form.focus()
-    this.listenTo(form,'submit',() => { // form submit event
+    this.listenTo(form,'submitted',() => { // form submit event
       this.trigger('added',form.data)
       form.reset()
     })

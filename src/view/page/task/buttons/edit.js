@@ -31,7 +31,7 @@ module.exports = PanelButton.extend({
           modal.remove()
         })
 
-        this.listenTo(form,'submit',() => {
+        this.listenTo(form,'submitted',() => {
           modal.hide()
         })
 

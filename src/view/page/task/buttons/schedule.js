@@ -217,7 +217,7 @@ const ScheduleForm = FormView.extend({
         // FuzzyMessage()
       }
     })
-    this.trigger('submit')
+    this.trigger('submitted')
   },
   computeFromInterval (initialDate, interval) {
     var lastRun = initialDate || new Date()
@@ -316,7 +316,7 @@ module.exports = PanelButton.extend({
         modal.remove()
       })
 
-      this.listenTo(form, 'submit', modal.hide.bind(modal))
+      this.listenTo(form, 'submitted', modal.hide.bind(modal))
 
       modal.show()
     }

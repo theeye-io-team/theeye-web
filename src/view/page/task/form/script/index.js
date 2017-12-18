@@ -166,6 +166,19 @@ module.exports = FormView.extend({
 
     FormView.prototype.initialize.apply(this, arguments)
   },
+  events: {
+    keydown: 'onKeyEvent',
+    keypress: 'onKeyEvent'
+  },
+  onKeyEvent (event) {
+    if(event.target.nodeName.toUpperCase()=='INPUT') {
+      if (event.keyCode == 13) {
+        event.preventDefault()
+        event.stopPropagation()
+        return false
+      }
+    }
+  },
   focus () {
     this.query('input[name=name]').focus()
   },
@@ -233,7 +246,7 @@ module.exports = FormView.extend({
     }
 
     next(null,true)
-    this.trigger('submit')
+    this.trigger('submitted')
   },
   prepareData (data) {
     let f = assign({}, data)

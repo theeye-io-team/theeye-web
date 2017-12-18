@@ -84,7 +84,7 @@ const TaskCreationWizard = View.extend({
     //form.render()
     this.renderSubview(form,this.queryByHook('form-container'))
     this.form = form
-    this.listenTo(form,'submit',() => { this.trigger('submit') })
+    this.listenTo(form,'submitted',() => { this.trigger('submitted') })
   },
   remove () {
     if (this.form) this.form.remove()
@@ -115,7 +115,7 @@ module.exports = CommonButton.extend({
         wizard.remove()
         modal.remove()
       })
-      this.listenTo(wizard,'submit',() => { modal.hide() })
+      this.listenTo(wizard,'submitted',() => { modal.hide() })
       modal.show()
     }
   }

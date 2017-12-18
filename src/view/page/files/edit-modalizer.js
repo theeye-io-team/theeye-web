@@ -19,7 +19,7 @@ module.exports = Modalizer.extend({
       this.form.remove()
       this.remove()
     })
-    this.listenTo(this.form, 'submit', () => {
+    this.listenTo(this.form, 'submitted', () => {
       this.hide()
     })
   }

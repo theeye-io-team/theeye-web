@@ -96,6 +96,19 @@ module.exports = FormView.extend({
 
     FormView.prototype.initialize.apply(this, arguments)
   },
+  events: {
+    keydown: 'onKeyEvent',
+    keypress: 'onKeyEvent'
+  },
+  onKeyEvent (event) {
+    if(event.target.nodeName.toUpperCase()=='INPUT') {
+      if (event.keyCode == 13) {
+        event.preventDefault()
+        event.stopPropagation()
+        return false
+      }
+    }
+  },
   focus () {
     this.query('input').focus()
   },
@@ -138,7 +151,7 @@ module.exports = FormView.extend({
 
     const buttons = this.buttons = new FormButtons()
     this.renderSubview(buttons)
-    buttons.on('click:confirm', () => { this.submit() })
+    buttons.on('click:confirm', () => { this.submitForm() })
   },
   onEditorDrop (instance, event) {
     const dt = event.dataTransfer
@@ -151,19 +164,21 @@ module.exports = FormView.extend({
     event.preventDefault()
     ScriptActions.getExampleScript(this.filenameInput.extension)
   },
-  submit () {
+  submitForm () {
     this.beforeSubmit()
     if (!this.valid) return
-
+    this.submitCallback(this.data)
+  },
+  submitCallback (obj) {
     let file
-    let data = this.prepareData(this.data)
+    let data = this.prepareData(obj)
     if (!this.model.isNew()) {
       file = FileActions.update(this.model.id, data)
     } else {
       file = FileActions.create(data)
     }
 
-    this.trigger('submit', file)
+    this.trigger('submitted', file)
   },
   prepareData (args) {
     let f = assign(

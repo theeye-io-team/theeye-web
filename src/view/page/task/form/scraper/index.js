@@ -311,7 +311,7 @@ module.exports = FormView.extend({
     } else {
       TaskActions.createMany(data.hosts, data)
     }
-    this.trigger('submit')
+    this.trigger('submitted')
     next(null,true)
   },
   prepareData (data) {

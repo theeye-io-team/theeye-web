@@ -19,7 +19,7 @@ module.exports = InputView.extend({
       <label data-hook="label" class="col-sm-3 control-label"></label>
       <div class="col-sm-9">
         <span data-hook="counter" style="position: absolute; right: 26px; bottom: 7px; color: #888;"></span>
-        <textarea class="form-input form-control" style="height:100px"> </textarea>
+        <textarea class="form-input form-control" style="height:100px; resize:none;"> </textarea>
         <div data-hook="message-container" class="message message-below message-error">
           <p data-hook="message-text"></p>
         </div>

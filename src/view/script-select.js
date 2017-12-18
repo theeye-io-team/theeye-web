@@ -79,7 +79,7 @@ module.exports = SelectView.extend({
       modal.remove()
     })
 
-    this.listenTo(form,'submit',file => {
+    this.listenTo(form,'submitted',file => {
       // wait until file change/set id to use as selected
       this.listenToAndRun(file,'change:id',() => {
         if (!file.id) return
