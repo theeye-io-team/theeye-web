@@ -25,7 +25,6 @@ const Actions = {
       url: `${config.api_url}/hostgroup`,
       method: 'post',
       jsonData: body,
-      withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -45,7 +44,6 @@ const Actions = {
       url: `${config.api_url}/hostgroup/${id}`,
       method: 'put',
       jsonData: body,
-      withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -64,7 +62,6 @@ const Actions = {
       url: `${config.api_url}/hostgroup/${id}`,
       method: 'delete',
       headers: { Accept:'application/json;charset=UTF-8' },
-      withCredentials: true,
       done (data,xhr) {
         App.state.hostGroups.remove(id)
         bootbox.alert('Host Template removed')
@@ -78,7 +75,6 @@ const Actions = {
     XHR.send({
       method: 'get',
       url: `${config.api_url}/host/${id}/config`,
-      withCredentials: true,
       done: (data,xhr) => {
         App.state.hostGroupPage.setConfigs(data)
         //next(null,data)
@@ -92,7 +88,6 @@ const Actions = {
     XHR.send({
       method: 'get',
       url: `${config.api_v3_url}/recipe/${id}`,
-      withCredentials: true,
       done: (data,xhr) => {
         App.state.hostGroupPage.setConfigs(data.instructions)
         //next(null,data)

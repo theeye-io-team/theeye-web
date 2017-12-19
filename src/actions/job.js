@@ -42,7 +42,6 @@ module.exports = {
     XHR.send({
       method: 'post',
       url: `${config.api_url}/job`,
-      withCredentials: true,
       jsonData: { task: task.id, task_arguments: taskArgs },
       headers: {
         Accept: 'application/json;charset=UTF-8'
@@ -62,7 +61,6 @@ module.exports = {
     XHR.send({
       method: 'put',
       url: `${config.api_url}/job/${job.id}/cancel`,
-      withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },

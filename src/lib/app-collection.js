@@ -17,7 +17,7 @@ module.exports = AmpersandCollection.extend(FilterMixin, {
       },
       xhrFields: {
         //timeout: 1000,
-        withCredentials: false
+        withCredentials: true
       }
     }
   }

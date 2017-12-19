@@ -32,6 +32,22 @@ module.exports.policies = {
       'supervisorInitializer'
     ]
   },
+  MemberController: {
+    '*': [
+      'passportBearer',
+      'isAllowed',
+      'sessionCustomer',
+      'supervisorInitializer'
+    ]
+  },
+  CustomerController: {
+    '*': [
+      'passportBearer',
+      'isAllowed',
+      'sessionCustomer',
+      'supervisorInitializer'
+    ]
+  },
   ApiV2Controller: {
     '*': [
       'passportBearer',

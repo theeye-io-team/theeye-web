@@ -67,7 +67,6 @@ const create = (data,next) => {
     url: task.urlRoot,
     method: 'POST',
     jsonData: task.serialize(),
-    withCredentials: true,
     headers: {
       Accept: 'application/json;charset=UTF-8'
     },

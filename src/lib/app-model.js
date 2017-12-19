@@ -27,7 +27,7 @@ module.exports = AmpersandModel.extend({
       },
       xhrFields: {
         //timeout: 1000,
-        withCredentials: false
+        withCredentials: true
       }
     }
   }

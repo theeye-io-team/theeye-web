@@ -14,7 +14,6 @@ module.exports = {
       url: `${config.app_url}/auth/login`,
       method: 'post',
       jsonData: data,
-      withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -38,7 +37,6 @@ module.exports = {
     XHR.send({
       url: `${config.app_url}/logout`,
       method: 'get',
-      withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -61,7 +59,6 @@ module.exports = {
       url: `${config.app_url}/password/resetmail`,
       method: 'post',
       jsonData: data,
-      withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -247,7 +244,6 @@ module.exports = {
       url: `/auth/local/update`,
       method: 'post',
       jsonData: body,
-      withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },

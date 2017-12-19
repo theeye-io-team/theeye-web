@@ -8,7 +8,6 @@ module.exports = {
     XHR.send({
       method: 'get',
       url: `${config.app_url}/script/example/${extension}`,
-      withCredentials: true,
       done: (response) => {
         if (!response) {
           bootbox.alert('Example not found.')

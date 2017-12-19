@@ -20,9 +20,9 @@ var AuthController = {
    * @param {Object} res
    */
   logout (req, res) {
-    if (!req.user) res.redirect('./login')
+    if (!req.user) res.send(400)
     req.logout()
-    res.redirect('/login')
+    res.send(200)
   },
   /**
    * Render the invite page
@@ -43,7 +43,6 @@ var AuthController = {
       customers : req.user.customers
     });
   },
-
   /**
    * Render the update password page
    *

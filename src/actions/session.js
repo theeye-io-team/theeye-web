@@ -13,7 +13,6 @@ module.exports = {
     XHR.send({
       method: 'post',
       url: `${config.app_url}/session/customer/${customer.name}`,
-      withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -38,7 +37,6 @@ module.exports = {
     XHR.send({
       method: 'post',
       url: `${config.app_url}/session/refresh`,
-      withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -58,7 +56,6 @@ module.exports = {
     XHR.send({
       method: 'get',
       url: `${config.app_url}/session/profile`,
-      withCredentials: true,
       done: (user) => {
         logger.log('user profile data fetch success')
 

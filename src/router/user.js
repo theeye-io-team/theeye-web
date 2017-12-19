@@ -19,7 +19,6 @@ class User extends Route {
           url: `/user`,
           method: 'get',
           //jsonData: body,
-          withCredentials: true,
           timeout: 5000,
           headers: { Accept: 'application/json;charset=UTF-8' },
           done (users,xhr) {

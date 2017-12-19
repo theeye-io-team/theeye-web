@@ -127,5 +127,5 @@ XHR.authorization = null
 
 XHR.defaults = {
   timeout: 0,
-  withCredentials: false
+  withCredentials: true
 }
