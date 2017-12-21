@@ -155,6 +155,24 @@ module.exports = FormView.extend({
       }),
       new SelectView({
         visible: false,
+        label: 'Trigger on-hold time',
+        name: 'grace_time',
+        multiple: false,
+        tags: false,
+        options: TASK.GRACE_TIME.map(gt => {
+          return {
+            id: gt.secs,
+            text: gt.text
+          }
+        }),
+        value: this.model.grace_time,
+        required: false,
+        unselectedText: 'Select the Trigger on-hold time',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
+      }),
+      new SelectView({
+        visible: false,
         label: 'Method',
         name: 'method',
         multiple: false,
@@ -194,24 +212,6 @@ module.exports = FormView.extend({
         value: this.model.timeout || 5000,
         required: false,
         unselectedText: 'Select the Req. Timeout',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
-      }),
-      new SelectView({
-        visible: false,
-        label: 'Trigger on-hold time',
-        name: 'grace_time',
-        multiple: false,
-        tags: false,
-        options: TASK.GRACE_TIME.map(gt => {
-          return {
-            id: gt.secs,
-            text: gt.text
-          }
-        }),
-        value: this.model.grace_time,
-        required: false,
-        unselectedText: 'Select the Trigger on-hold time',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       }),
