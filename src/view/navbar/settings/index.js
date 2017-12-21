@@ -79,15 +79,22 @@ module.exports = FullContainer.extend({
     this.listenToAndRun(App.state.session.customer,'change:name', () => {
        this.queryByHook('customer-name').innerHTML = App.state.session.customer.name
     })
+
+    this.listenTo(App.state.navbar.settingsMenu,'change:current_tab', () => {
+      let selector = `[data-hook=settings-links-container] a[href="#${App.state.navbar.settingsMenu.current_tab}"]`
+      $( this.query(selector) ).tab('show')
+    })
   },
   updateState (state) {
     if (!state) return
+
     this.visible = state.visible
   },
   events: {
     'click [data-hook=close-button]':'onClickCloseButton',
     keydown: 'onKeyEvent',
-    keypress: 'onKeyEvent'
+    keypress: 'onKeyEvent',
+    'click .tab-item': 'setCurrentTab'
   },
   onClickCloseButton (event) {
     event.preventDefault()
@@ -102,5 +109,8 @@ module.exports = FullContainer.extend({
 
       NavbarActions.hideSettingsMenu()
     }
+  },
+  setCurrentTab (event) {
+    NavbarActions.toggleTab(event.target.hash.substring(1))
   }
 })

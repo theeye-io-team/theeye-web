@@ -1,5 +1,6 @@
 import View from 'ampersand-view'
 import acls from 'lib/acls'
+import NavbarActions from 'actions/navbar'
 const howto = require('./howto.hbs')
 
 module.exports = View.extend({
@@ -11,6 +12,13 @@ module.exports = View.extend({
       </div>
     </section>
   `,
+  events: {
+    'click [data-hook=show-installer]': 'showInstaller',
+  },
+  showInstaller() {
+    NavbarActions.toggleSettingsMenu()
+    NavbarActions.toggleTab('installer')
+  },
   render () {
     this.renderWithTemplate(this)
 

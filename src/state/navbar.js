@@ -14,7 +14,8 @@ module.exports = State.extend({
       props: {
         visible: ['boolean',false,undefined],
         agent: ['object',false,undefined],
-        passports: ['object',false,undefined]
+        passports: ['object',false,undefined],
+        current_tab: ['string',false,undefined]
       },
       initialize () {
         State.prototype.initialize.apply(this,arguments)

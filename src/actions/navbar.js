@@ -11,5 +11,8 @@ module.exports = {
   },
   toggleSettingsMenu () {
     App.state.navbar.settingsMenu.toggle('visible')
+  },
+  toggleTab (tabId) {
+    App.state.navbar.settingsMenu.current_tab = tabId
   }
 }
