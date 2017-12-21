@@ -297,30 +297,33 @@ var AuthController = {
   socialCallback(req, res) {
     var provider = req.param('provider')
     passport.authenticate(provider, function (err, response){
-      //if social passport exists, use socialconnect
-      if(response.isNew) {
-        var query
-        if(err){
-          debug('SOCIAL CONNECT ERROR:')
-          debug(err);
-          var msg = "Error connecting account."
-          if(err.message == 'emailmissmatch') {
-            msg = "Error connecting account, email does not match."
-          }
+      var query
+      var msg = "Error, please try again later."
+      if(err) {
+        debug('SOCIAL ERROR:')
+        debug(err)
+
+        if(err.message == 'loginusernotfound') {
+          msg = "Login error, email does not match an existant account."
           query = new Buffer( JSON.stringify({ error: msg }) ).toString('base64')
-        } else {
-          query = new Buffer( JSON.stringify({ message: 'Success connecting accounts.' }) ).toString('base64')
-        }
-        return res.redirect('/socialconnect?'+query);
-      } else {
-        //if user is not logged in, use sociallogin
-        if(err){
-          debug('SOCIAL LOGIN ERROR:')
-          debug(err);
-          var query = new Buffer( JSON.stringify({ error: 'Login error, please try again later.' }) ).toString('base64')
           return res.redirect('/sociallogin?'+query);
         }
 
+        if(err.message == 'connectusernotfound') {
+          msg = "Account connection error, accounts emails doesn't match."
+          query = new Buffer( JSON.stringify({ error: msg }) ).toString('base64')
+          return res.redirect('/socialconnect?'+query);
+        }
+
+        query = new Buffer( JSON.stringify({ error: msg }) ).toString('base64')
+        return res.redirect('/sociallogin?'+query);
+      }
+      //if social passport exists, use socialconnect
+      if(!response.isLogin) {
+        query = new Buffer( JSON.stringify({ message: 'Success connecting accounts.' }) ).toString('base64')
+        return res.redirect('/socialconnect?'+query);
+      } else {
+        //if user is not logged in, use sociallogin
         if(!response.user){
           debug('LOGIN ERROR: USER NOT FOUND')
           var query = new Buffer( JSON.stringify({ error: 'Login error, invalid credentials.' }) ).toString('base64')

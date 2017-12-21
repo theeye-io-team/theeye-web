@@ -88,6 +88,7 @@ passport.use('google-mobile', new CustomStrategy(
  * @param {Function} next
  */
 passport.connect = function (req, query, profile, next) {
+  var isLogin = (typeof req.user == "undefined")
   var provider = req.param('provider');
   var profileEmail;
   query.provider = provider;
@@ -104,34 +105,34 @@ passport.connect = function (req, query, profile, next) {
     return next(new Error('Profile email not found.'));
   }
 
-  Passport.findOne({
-    provider   : provider
-  , identifier : query.identifier.toString()
-  }, function (err, passport) {
+  User.findOne({email: profileEmail}, function(err, usr){
     if(err)
       return next(err);
 
-    User.findOne({email: profileEmail}, function(err, usr){
+    if(!usr) {
+      if(isLogin) {
+        return next(new Error('loginusernotfound'))
+      } else {
+        return next(new Error('connectusernotfound'))
+      }
+    }
+
+    Passport.findOne({
+      provider   : provider
+    , identifier : query.identifier.toString()
+    }, function (err, passport) {
       if(err)
         return next(err);
-      if(!usr) {
-        return next(new Error('User not found.'))
-      }
 
       if (!passport) {
-        if(profile.emails.find(email => email.value === profileEmail )) {
-          query.user = usr.id;
-
-          Passport.create(query, function (err, passport) {
-            if(err)
-            return next(err);
-            return next(null, {user: usr, isNew: true});
-          });
-        } else {
-          return next(new Error('emailmissmatch'))
-        }
+        query.user = usr.id;
+        Passport.create(query, function (err, passport) {
+          if(err)
+          return next(err);
+          return next(null, {user: usr, isLogin: isLogin});
+        });
       } else {
-        return next(null, {user: usr, isNew: false});
+        return next(null, {user: usr, isLogin: isLogin});
       }
     });
   });
