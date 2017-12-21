@@ -181,7 +181,7 @@ module.exports = FormView.extend({
     currentGroup = this.model
 
     const regexInput = new RegexInputView({
-      label: 'Hostname Regular Expression',
+      label: 'Auto provision hostnames matching this pattern',
       name: 'hostname_regex',
       required: false,
       invalidClass: 'text-danger',
@@ -200,7 +200,7 @@ module.exports = FormView.extend({
     })
 
     const selectedHosts = new SelectView({
-      label: 'Hosts to add to the Template',
+      label: 'Destination Hosts',
       name: 'hosts',
       multiple: true,
       tags: true,
@@ -243,7 +243,7 @@ module.exports = FormView.extend({
 
     if (this.model.isNew()) {
       const hostSelect = new HostConfigSelect({
-        label: 'Template base Host *',
+        label: 'Source Host (role model) *',
         name: 'copy_host',
         multiple: false,
         tags: false,
