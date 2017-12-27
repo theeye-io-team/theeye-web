@@ -41,7 +41,7 @@ var FileSelect = (function(){
       this.trigger('change');
     },
     updateMode: function(id){
-      this.label = 'Update File';
+      this.label = 'Edit File';
       this.mode = App.Constants.FILE_UPDATE;
       this.trigger('change');
     },
@@ -62,7 +62,7 @@ var FileSelect = (function(){
 
       Object.defineProperty(this,'value',{
         get: function(){
-          return this.find('select').val(); 
+          return this.find('select').val();
         },
         set: function(value){
           var select = this.find('select');
@@ -156,7 +156,7 @@ var FileSelect = (function(){
      *
      * listen to diferent file store events and react to them.
      * basically, there are other views(childs) that depends on this one,
-     * so this view interactar directly with the store and 
+     * so this view interactar directly with the store and
      * change the behaviour of the childs.
      */
     onFilesChange:function(action){
