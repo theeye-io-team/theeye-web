@@ -37,7 +37,7 @@ module.exports = {
           return
         }
 
-        debug.log(data)
+        debug(data)
       })
     }
   }
