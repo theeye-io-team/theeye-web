@@ -45,32 +45,25 @@ module.exports = {
     });
   },
   // sns updates received
-  update: function(req, res) {
-    var body = req.body;
-    debug('host stat update received');
-
-    snsreceiver.handleSubscription(body, function(error,action){
-      if (action == 'continue') {
-        var message = JSON.parse(body.Message);
-
-        var room = roomNameFormat
-          .replace(':customer:', message.customer_name)
-          .replace(':hostname:', message.hostname)
-          .replace(':resource:', message.type);
-
-        var io = sails.io;
-
-        var eventName = eventNameFormat
-          .replace(':resource:', message.type)
-          .replace(':action:', 'update');
-
-        debug('sending "%s" via socket to room "%s"', eventName, room);
-
-        io.sockets.in(room).emit(eventName, message);
-
-        res.json({ message: 'host stats updates sent' });
-      }
-      else res.json();
-    });
-  },
+  //update: function(req, res) {
+  //  var body = req.body;
+  //  debug('host stat update received');
+  //  snsreceiver.handleSubscription(body, function(error,action){
+  //    if (action == 'continue') {
+  //      var message = JSON.parse(body.Message);
+  //      var room = roomNameFormat
+  //        .replace(':customer:', message.customer_name)
+  //        .replace(':hostname:', message.hostname)
+  //        .replace(':resource:', message.type);
+  //      var io = sails.io;
+  //      var eventName = eventNameFormat
+  //        .replace(':resource:', message.type)
+  //        .replace(':action:', 'update');
+  //      debug('sending "%s" via socket to room "%s"', eventName, room);
+  //      io.sockets.in(room).emit(eventName, message);
+  //      res.json({ message: 'host stats updates sent' });
+  //    }
+  //    else res.json();
+  //  });
+  //},
 };

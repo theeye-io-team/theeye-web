@@ -1,20 +1,20 @@
 import AppModel from 'lib/app-model'
 
 module.exports = AppModel.extend({
-	props: {
+  props: {
     id: 'string',
-		customer_id: { type: 'string' },
-		customer_name: { type: 'string' },
-		user_id: { type: 'string' },
-		filename: { type: 'string' },
-		keyname: { type: 'string' },
-		mimetype: { type: 'string' },
-		extension: { type: 'string' },
-		size: { type: 'number' },
-		description: { type: 'string' },
-		md5: { type: 'string' },
-		public: { type: 'boolean', default: false },
-		tags: { type: 'array', default: () => { return [] } },
+    customer_id: { type: 'string' },
+    customer_name: { type: 'string' },
+    user_id: { type: 'string' },
+    filename: { type: 'string' },
+    keyname: { type: 'string' },
+    mimetype: { type: 'string' },
+    extension: { type: 'string' },
+    size: { type: 'number' },
+    description: { type: 'string' },
+    md5: { type: 'string' },
+    public: { type: 'boolean', default: false },
+    tags: { type: 'array', default: () => { return [] } },
     input_mode: { type: 'string', default: 'editor' },
     _type: { type: 'string', default: 'File' },
     data: { type: 'string' }
@@ -38,13 +38,13 @@ module.exports = AppModel.extend({
     }))
   },
   decodeData (data) {
-    return decodeURIComponent(Array.prototype.map.call(atob(data), (c) => {
+    return decodeURIComponent(Array.prototype.map.call(window.atob(data), (c) => {
       return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
     }).join(''))
   },
   derived: {
     formatted_tags: {
-      deps: ['name','filename','tags','extension','mimetype'],
+      deps: ['name', 'filename', 'tags', 'extension', 'mimetype'],
       fn () {
         return [
           'name=' + this.name,

@@ -19,7 +19,14 @@ const Model = AppModel.extend({
 		//creation_date: 'date',
 		//last_update: 'date',
     createdAt: 'date',
-    updatedAt: 'date'
+    updatedAt: 'date',
+    notifications: ['object', true, () => {
+      return {
+        push: true,
+        email: true,
+        desktop: true
+      }
+    }]
   },
   derived: {
     formatted_tags: {

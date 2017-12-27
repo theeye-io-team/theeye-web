@@ -14,6 +14,7 @@ import { Collection as Tags } from 'models/tag'
 import { Collection as Scripts } from 'models/file/script'
 import { Collection as Files } from 'models/file'
 import { Collection as Events } from 'models/event'
+import { Collection as Notifications } from 'models/notification'
 import Alerts from 'components/alerts'
 //import URI from 'urijs'
 
@@ -199,6 +200,7 @@ const _initCollections = function () {
     users: new Users([]),
     webhooks: new Webhooks([]),
     members: new Members([]),
-    events: new Events([])
+    events: new Events([]),
+    notifications: new Notifications([])
   })
 }

@@ -12,7 +12,15 @@ var User = {
     enabled: { type: 'boolean', defaultsTo: false },
     invitation_token: { type: 'string', defaultsTo: '' },
     passports: { collection: 'Passport', via: 'user' },
-    devices: { type: 'array', defaultsTo: [] }
+    devices: { type: 'array', defaultsTo: [] },
+    notifications: {
+      type: 'json',
+      defaultsTo: {
+        push: true,
+        email: true,
+        desktop: true
+      }
+    }
   },
   beforeCreate: function(values, next) {
     var email = values.email;

@@ -29,7 +29,11 @@ const ScriptJobResult = View.extend({
   `,
   bindings: {
     'result.code': { hook:'code' },
-    'result.lastline': { hook:'lastline' },
+    //html_lastline: {
+    //  type:'innerHTML',
+    //  hook:'lastline'
+    //},
+    'result.lastline': { hook: 'lastline' },
     html_log: {
       type:'innerHTML',
       hook:'log'
@@ -55,6 +59,14 @@ const ScriptJobResult = View.extend({
         if (!this.result||!this.result.log) return ''
         let converter = new ansi2html()
         return converter.toHtml(this.result.log)
+      }
+    },
+    html_lastline: {
+      deps: ['result.lastline'],
+      fn () {
+        if (!this.result||!this.result.lastline) return ''
+        let converter = new ansi2html()
+        return converter.toHtml(this.result.lastline)
       }
     }
   }

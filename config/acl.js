@@ -15,6 +15,7 @@ var viewer = {
   'member' : ['fetch'],
   'auth': ['login','activate','google','connect','unlink','logout'],
   'user': ['myprofile','setcustomer','ampersand','getuserpassport','registerdevicetoken'],
+  'inbox': ['*']
 }
 
 var user = assign({},viewer,{

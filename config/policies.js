@@ -20,7 +20,6 @@ module.exports.policies = {
   EventsController: { 'update':['noSession'], },
   PalancaController: { 'update':['noSession'], },
   HostStatsController: { 'update':['noSession'], },
-  NotificationController: { 'sendnotification':['noSession'], },
   //
   // bearer session clients controllers
   //
@@ -41,6 +40,23 @@ module.exports.policies = {
     ]
   },
   CustomerController: {
+    '*': [
+      'passportBearer',
+      'isAllowed',
+      'sessionCustomer',
+      'supervisorInitializer'
+    ]
+  },
+  NotificationController: {
+    '*': [
+      'passportBearer',
+      'isAllowed',
+      'sessionCustomer',
+      'supervisorInitializer'
+    ],
+    'create':['noSession']
+  },
+  InboxController: {
     '*': [
       'passportBearer',
       'isAllowed',

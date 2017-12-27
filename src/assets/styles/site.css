@@ -63,7 +63,6 @@ button {outline:none}
 .fright {float:right}
 .big-icon{ font-size: 10em }
 /* header */
-/*.navbar {max-height:100px;}*/
 .navbar {margin-bottom:0px;}
 .navbar-header {width:100%;}
 .navbar-inverse a {color:#38688a;text-shadow:0 1px 0 rgba(255,255,255,0.8)}
@@ -73,9 +72,6 @@ button {outline:none}
 .navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover {background-color:#144e77}
 .navbar-collapse {padding:0;}
 .navbar-inverse {background:#eee;border-bottom:3px solid #d88e47}
-.navbar-brand>img {height:32px;}
-.navbar-brand {height:auto;padding:0px 15px;border-right:1px solid #7c98ac;margin: 10px 0}
-.login .navbar-brand {border:none}
 .navbar-right, .navbar-right li {margin:0;padding:0}
 .navbar-right li {list-style-type:none;border-bottom:1px solid #ccc}
 .navbar-right li a {display:block;font-weight:700;color:#144e77;padding:8px 12px;height:42px;}
@@ -103,10 +99,10 @@ button {outline:none}
 body {
   margin: 0;
   padding: 0;
-  font-family: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+  font-family: 'Lato', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
   font-size: 14px;
   background-color: #EFEFEF;
-  background:#304269;font-family: 'Lato', sans-serif;
+  background:#304269;
   position:absolute;
   width:100%;
   height:100%;
@@ -351,7 +347,6 @@ ol.list-group.tasks { color:#34495E }
     line-height: 52px;
   }
   .navData .user span {font-size:18px}
-  .navbar-brand>img {height:52px}
   .navbar-right { margin:31px 0 0 0; float: right; }
   .navbar-right li { font-size: 18px; }
   /* searchbox searcher */
@@ -488,7 +483,6 @@ input[type=checkbox].form-control {
 @media (max-width:767px) {
   .main-container { padding-top:55px; }
   .navbar-right li a {height:36px;padding:2px 5px;}
-  .navbar-brand {padding:0px 5px;}
 }
 
 #workflow {

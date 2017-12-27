@@ -47,7 +47,7 @@ module.exports.routes = {
   'put    /member/:id' : 'MemberController.updatemembercredential',
   'get    /user'  : 'UserController.fetch',
   'get    /user/:id' : 'UserController.get',
-  'put    /user/:id' : 'UserController.edit',
+  'put    /user/:id' : 'UserController.update',
   'post   /user/:id/registerdevicetoken'  : 'UserController.registerdevicetoken',
   'post   /user'  : 'UserController.create',
   'delete /user/:id' : 'UserController.remove',
@@ -80,7 +80,12 @@ module.exports.routes = {
   // ContactController routes
   'post   /contact' : 'ContactController.contact',
 
-  'post   /notification' : 'NotificationController.sendnotification',
+  'post   /notification' : 'NotificationController.create',
+
+  // INBOX
+  'get    /inbox': 'InboxController.index',
+  'get    /inbox/unread/count': 'InboxController.unreadCount',
+  'put    /inbox/:id': 'InboxController.update',
   /*
    *
    * need migration to /src structure (SPA)
@@ -120,6 +125,7 @@ module.exports.routes = {
   'post /session/customer/:customer':'BearerController.currentCustomer',
   'post /session/refresh':'BearerController.refreshAccessToken',
   'get  /session/profile': 'BearerController.sessionProfile',
+  'put  /session/profile/settings': 'BearerController.updateSettings',
   // FILES & SCRIPTS
   'post /apiv2/file':'ApiV2Controller.filePut',
   'put /apiv2/file/:id':'ApiV2Controller.filePut',

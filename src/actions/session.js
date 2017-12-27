@@ -3,6 +3,7 @@ import XHR from 'lib/xhr'
 const logger = require('lib/logger')('actions:session')
 const config = require('config')
 import bootbox from 'bootbox'
+import assign from 'lodash/assign'
 
 module.exports = {
   changeCustomer (id) {
@@ -96,6 +97,37 @@ module.exports = {
         bootbox.alert({
           title: 'Error',
           message: 'Error fetching user profile information, please try again later.'
+        })
+      }
+    })
+  },
+  updateSettings (notif) {
+    const user = App.state.session.user
+
+    var body = {}
+    body.notifications = assign({}, user.notifications, notif)
+
+    App.state.loader.visible = true
+    XHR.send({
+      url: `/session/profile/settings`,
+      method: 'PUT',
+      jsonData: body,
+      fail: (err) => {
+        bootbox.alert({
+          title: `Settings update error`,
+          message: err.message,
+          callback: () => {
+            App.state.loader.visible = false
+          }
+        })
+      },
+      done: () => {
+        bootbox.alert({
+          title: 'Settings',
+          message: `Settings successfully updated`,
+          callback: () => {
+            App.state.loader.visible = false
+          }
         })
       }
     })

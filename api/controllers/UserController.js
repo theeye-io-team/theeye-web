@@ -114,7 +114,7 @@ var UserController = module.exports = {
    * PUT  /admin/user/:id
    *
    */
-  edit (req, res) {
+  update (req, res) {
     var params = req.params.all();
     var userId = params.id;
 

@@ -6,21 +6,28 @@ import AuthActions from 'actions/auth'
 import '../settings.css'
 
 const SocialConnection = View.extend({
-  template: `<div class="row border social">
-               <div class="col-xs-6">
-                  <div class="social-container">
-                     <span class="circle go"></span>
-                     <span class="legend go" data-hook="social-connection-name"></span>
-                  </div>
-               </div>
-               <div class="col-xs-6">
-                <div data-hook="social-connection-status-connected"><span class="gray">CONNECTED</span><a href="/disconnect/google" class="blue pull-right">DISCONNECT</a></div>
-                <div data-hook="social-connection-status-disconnected"><span class="gray">DISCONNECTED</span><a href="/connect/google" class="blue pull-right">CONNECT</a></div>
-               </div>
-            </div>`,
+  template: `
+    <div class="row border social">
+      <div class="col-xs-6">
+        <div class="social-container">
+          <span class="circle go"></span>
+          <span class="legend go" data-hook="social-connection-name"></span>
+        </div>
+      </div>
+      <div class="col-xs-6">
+        <div data-hook="social-connection-status-connected">
+          <span class="gray">CONNECTED</span>
+          <a href="/disconnect/google" class="blue pull-right">DISCONNECT</a>
+        </div>
+        <div data-hook="social-connection-status-disconnected">
+          <span class="gray">DISCONNECTED</span>
+          <a href="/connect/google" class="blue pull-right">CONNECT</a>
+        </div>
+      </div>
+    </div>`,
   props: {
-    name: ['string',false, ''],
-    passports: ['object',false,() => { return {} }]
+    name: ['string', false, ''],
+    passports: ['object', false, () => { return {} }]
   },
   bindings: {
     'name': {
@@ -31,7 +38,7 @@ const SocialConnection = View.extend({
       {
         type: 'toggle',
         hook: 'social-connection-status-connected'
-      },{
+      }, {
         type: 'toggle',
         hook: 'social-connection-status-disconnected',
         invert: true
@@ -41,19 +48,20 @@ const SocialConnection = View.extend({
   derived: {
     status: {
       deps: ['passports'],
-      fn: function(){
-        if(this.passports && this.passports.oauth2)
+      fn: function () {
+        if (this.passports && this.passports.oauth2) {
           return true
+        }
         return false
       }
     }
   },
-  initialize() {
-    this.listenToAndRun(App.state.navbar.settingsMenu,'change',() => {
+  initialize () {
+    this.listenToAndRun(App.state.navbar.settingsMenu, 'change', () => {
       this.updateState(App.state.navbar.settingsMenu)
     })
   },
-  updateState(state) {
+  updateState (state) {
     this.passports = state.passports
   }
 })
@@ -61,8 +69,8 @@ const SocialConnection = View.extend({
 module.exports = View.extend({
   template: require('./template.hbs'),
   props: {
-    email: ['string',false,''],
-    username: ['string',false,'']
+    email: ['string', false, ''],
+    username: ['string', false, '']
   },
   bindings: {
     'email': {
@@ -74,7 +82,7 @@ module.exports = View.extend({
       hook: 'account-username'
     }
   },
-  initialize() {
+  initialize () {
     this.email = App.state.session.user.email
     this.username = App.state.session.user.username
   },
@@ -94,12 +102,12 @@ module.exports = View.extend({
       class: 'settings-modal'
     })
 
-    this.listenTo(modal,'shown',function(){ form.focus() })
-    this.listenTo(modal,'hidden',function(){
+    this.listenTo(modal, 'shown', function () { form.focus() })
+    this.listenTo(modal, 'hidden', function () {
       form.remove()
       modal.remove()
     })
-    this.listenTo(modal,'confirm',function(){
+    this.listenTo(modal, 'confirm', function () {
       form.beforeSubmit()
       if (!form.valid) return
       AuthActions.changePassword(App.state.session.user.id, form.data)
@@ -107,7 +115,7 @@ module.exports = View.extend({
     })
     modal.show()
   },
-  render() {
+  render () {
     this.renderWithTemplate(this)
 
     const googleConnection = new SocialConnection({

@@ -6,6 +6,7 @@ import InstallerTab from './installer'
 import CredentialsTab from './credentials'
 import AccountsTab from './accounts'
 import MembersTab from './members'
+import NotificationsTab from './notifications'
 import IntegrationsTab from './integrations'
 import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
@@ -35,36 +36,41 @@ module.exports = FullContainer.extend({
       this.updateState(App.state.navbar.settingsMenu)
     })
   },
-  render() {
+  render () {
     FullContainer.prototype.render.apply(this,arguments)
 
     const settingsLinks = this.queryByHook('settings-links-container')
 
-    this.accountsTab = new AccountsTab()
-    this.renderSubview(this.accountsTab, this.queryByHook('accounts-tab'))
+    const accountsTab = new AccountsTab()
+    this.renderSubview(accountsTab, this.queryByHook('accounts-tab'))
 
-    if(Acls.hasAccessLevel('manager')) {
+    const notificationsTab = new NotificationsTab()
+    this.renderSubview(notificationsTab, this.queryByHook('notifications-tab'))
+
+    if (Acls.hasAccessLevel('manager')) {
       settingsLinks.appendChild( html2dom(`<li class="subtitle"><h3 class="blue">SETTINGS</h3></li>`))
     }
 
-    if(Acls.hasAccessLevel('admin')) {
+    if (Acls.hasAccessLevel('admin')) {
       settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#installer" data-toggle="tab">Installer</a></li>`))
       settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#credentials" data-toggle="tab">Credentials</a></li>`))
       settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#integrations" data-toggle="tab">Integrations</a></li>`))
 
-      this.installerTab = new InstallerTab()
-      this.renderSubview(this.installerTab, this.queryByHook('installer-tab'))
-      this.credentialsTab = new CredentialsTab()
-      this.renderSubview(this.credentialsTab, this.queryByHook('credentials-tab'))
-      this.integrationsTab = new IntegrationsTab({model: App.state.session.customer})
-      this.renderSubview(this.integrationsTab, this.queryByHook('integrations-tab'))
+      const installerTab = new InstallerTab()
+      this.renderSubview(installerTab, this.queryByHook('installer-tab'))
+
+      const credentialsTab = new CredentialsTab()
+      this.renderSubview(credentialsTab, this.queryByHook('credentials-tab'))
+
+      const integrationsTab = new IntegrationsTab({ model: App.state.session.customer })
+      this.renderSubview(integrationsTab, this.queryByHook('integrations-tab'))
     }
 
-    if(Acls.hasAccessLevel('manager') && App.state.session.user.credential !=='admin') {
+    if (Acls.hasAccessLevel('manager') && App.state.session.user.credential !=='admin') {
       settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#members" data-toggle="tab">Members</a></li>`))
 
-      this.membersTab = new MembersTab()
-      this.renderSubview(this.membersTab, this.queryByHook('members-tab'))
+      const membersTab = new MembersTab()
+      this.renderSubview(membersTab, this.queryByHook('members-tab'))
     }
 
     this.on('change:visible', () => {
@@ -77,7 +83,7 @@ module.exports = FullContainer.extend({
     })
 
     this.listenToAndRun(App.state.session.customer,'change:name', () => {
-       this.queryByHook('customer-name').innerHTML = App.state.session.customer.name
+      this.queryByHook('customer-name').innerHTML = App.state.session.customer.name
     })
 
     this.listenTo(App.state.navbar.settingsMenu,'change:current_tab', () => {

@@ -7,13 +7,14 @@ import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
 import Backdrop from 'components/backdrop'
 import SettingsMenu from './settings'
+import Notify from './notify'
 
 import logo from './logo.png'
 const template = require('./nav.hbs')
 
 const CustomerItemList = View.extend({
   props: {
-    active: ['boolean',false,false]
+    active: ['boolean', false, false]
   },
   template: `
     <li data-hook="active" class="eyemenu-client">
@@ -39,23 +40,22 @@ const CustomerItemList = View.extend({
   },
   onClickCustomer (event) {
     event.preventDefault()
-    //event.stopPropagation()
+    // event.stopPropagation()
     NavbarActions.toggleMenu()
-    SessionActions.changeCustomer( this.model.id )
+    SessionActions.changeCustomer(this.model.id)
   },
   initialize () {
-    View.prototype.initialize.apply(this,arguments)
+    View.prototype.initialize.apply(this, arguments)
 
-    this.listenToAndRun(App.state.session,'change:logged_id',() => {
+    this.listenToAndRun(App.state.session, 'change:logged_id', () => {
       if (!App.state.session.logged_in) return
 
-      this.listenToAndRun(App.state.session.customer,'change:id',() => {
+      this.listenToAndRun(App.state.session.customer, 'change:id', () => {
         const customer = App.state.session.customer
         if (!customer.id) return
-        if (this.model.id===customer.id) {
+        if (this.model.id === customer.id) {
           this.active = true
-        }
-        else if (this.active) this.active = false
+        } else if (this.active) this.active = false
       })
     })
   }
@@ -99,8 +99,8 @@ const UserProfile = View.extend({
 const Menu = View.extend({
   template: require('./menu.hbs'),
   props: {
-    menu_switch: ['boolean',false,false],
-    customers_switch: ['boolean',false,false]
+    menu_switch: ['boolean', false, false],
+    customers_switch: ['boolean', false, false]
   },
   bindings: {
     menu_switch: {
@@ -112,15 +112,15 @@ const Menu = View.extend({
     customers_switch: [{
       type: 'toggle',
       hook: 'customers-container'
-    },{
+    }, {
       type: 'toggle',
       hook: 'links-container',
       invert: true
-    },{
+    }, {
       selector: '[data-hook=customers-toggle] i.fa',
       type: 'booleanClass',
       yes: 'fa-angle-up',
-      no: 'fa-angle-down',
+      no: 'fa-angle-down'
     }]
   },
   events: {
@@ -156,8 +156,8 @@ const Menu = View.extend({
     }
   },
   initialize () {
-    //this.menu_switch = App.state.navbar.menuSwitch
-    this.listenToAndRun(App.state.navbar,'change:menuSwitch',() => {
+    // this.menu_switch = App.state.navbar.menuSwitch
+    this.listenToAndRun(App.state.navbar, 'change:menuSwitch', () => {
       this.menu_switch = App.state.navbar.menuSwitch
       if (!this.menu_switch) {
         this.customers_switch = false
@@ -167,7 +167,7 @@ const Menu = View.extend({
   render () {
     this.renderWithTemplate(this)
     this.renderProfile()
-    this.listenToAndRun(App.state.session.user,'change:credential',() => {
+    this.listenToAndRun(App.state.session.user, 'change:credential', () => {
       this.renderMenuLinks()
     })
     this.renderBackdrop()
@@ -178,10 +178,10 @@ const Menu = View.extend({
       zIndex: 998,
       opacity: 0
     })
-    this.listenTo(backdrop,'click',() => {
+    this.listenTo(backdrop, 'click', () => {
       NavbarActions.toggleMenu()
     })
-    this.on('change:menu_switch',() => {
+    this.on('change:menu_switch', () => {
       backdrop.visible = this.menu_switch
     })
   },
@@ -195,16 +195,16 @@ const Menu = View.extend({
 
     if (App.state.session.user.credential) {
       if (Acls.hasAccessLevel('admin')) {
-        container.appendChild( html2dom(`<li><a data-hook='mvc-link' href="/admin/monitor" class="eyemenu-icon eyemenu-monitors"> Monitors </a></li>`))
-        container.appendChild( html2dom(`<li><a href="/admin/task" class="eyemenu-icon eyemenu-tasks"> Tasks </a></li>`))
-        container.appendChild( html2dom(`<li><a href="/admin/file" class="eyemenu-icon eyemenu-scripts"> Files & Scripts </a></li>`))
-        container.appendChild( html2dom(`<li><a href="/admin/webhook" class="eyemenu-icon eyemenu-webhooks"> Webhooks </a></li>`))
-        container.appendChild( html2dom(`<li><a href="/admin/hostgroup" class="eyemenu-icon eyemenu-templates"> Provisioning </a></li>`))
+        container.appendChild(html2dom(`<li><a data-hook='mvc-link' href="/admin/monitor" class="eyemenu-icon eyemenu-monitors"> Monitors </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/task" class="eyemenu-icon eyemenu-tasks"> Tasks </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/file" class="eyemenu-icon eyemenu-scripts"> Files & Scripts </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/webhook" class="eyemenu-icon eyemenu-webhooks"> Webhooks </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/hostgroup" class="eyemenu-icon eyemenu-templates"> Provisioning </a></li>`))
       }
 
       if (Acls.hasAccessLevel('root')) {
-        container.appendChild( html2dom(`<li><a href="/admin/user" class="eyemenu-icon eyemenu-users"> Users </a></li>`))
-        container.appendChild( html2dom(`<li><a href="/admin/customer" class="eyemenu-icon eyemenu-organizations"> Organizations </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/user" class="eyemenu-icon eyemenu-users"> Users </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/customer" class="eyemenu-icon eyemenu-organizations"> Organizations </a></li>`))
       }
     }
 
@@ -212,17 +212,17 @@ const Menu = View.extend({
     const recalculateLinksHeight = (event) => {
       const links = this.queryByHook('links-container')
       let height = window.innerHeight - 178
-      if (window.innerWidth>768) {
+      if (window.innerWidth > 768) {
         height -= 75
       }
-      links.style.height = String(height) + "px"
+      links.style.height = String(height) + 'px'
     }
 
     const self = this
-    window.addEventListener('resize',function(event){
-      recalculateLinksHeight.call(self,event)
-    },false)
-    window.dispatchEvent(new Event('resize'))
+    window.addEventListener('resize', function (event) {
+      recalculateLinksHeight.call(self, event)
+    }, false)
+    window.dispatchEvent(new window.Event('resize'))
   },
   renderProfile () {
     // in sync with the session
@@ -253,17 +253,17 @@ const Menu = View.extend({
     const recalculateCustomersHeight = (event) => {
       const customers = this.queryByHook('customers-container')
       let height = window.innerHeight - 178
-      if (window.innerWidth>768) {
+      if (window.innerWidth > 768) {
         height -= 75
       }
 
-      customers.style.height = String(height) + "px"
+      customers.style.height = String(height) + 'px'
     }
     const self = this
-    window.addEventListener('resize',function(event){
-      recalculateCustomersHeight.call(self,event)
-    },false)
-    window.dispatchEvent(new Event('resize'))
+    window.addEventListener('resize', function (event) {
+      recalculateCustomersHeight.call(self, event)
+    }, false)
+    window.dispatchEvent(new window.Event('resize'))
   },
   renderSettingsMenu () {
     this.settings = new SettingsMenu()
@@ -274,40 +274,49 @@ const Menu = View.extend({
 module.exports = View.extend({
   autoRender: true,
   template: () => {
-    return template.call(this,{ logo: logo })
+    return template.call(this, { logo: logo })
   },
   render () {
     this.renderWithTemplate()
 
-    this.listenToAndRun(App.state.session,'change:logged_in',() => {
+    this.listenToAndRun(App.state.session, 'change:logged_in', () => {
       this.updateState(App.state.session)
     })
   },
   updateState (state) {
     const logged_in = state.logged_in
-    if (logged_in===undefined) return
-    if (logged_in===true) {
-      this.showSearchbox()
-      this.showMenu()
+    if (logged_in === undefined) return
+    if (logged_in === true) {
+      this.renderLoggedInComponents()
     } else {
-      this.hideSearchbox()
-      this.hideMenu()
+      this.destroyLoggedInComponents()
     }
   },
-  showSearchbox () {
-    const container = this.queryByHook('searchbox-container')
+  renderLoggedInComponents () {
+    // search box
     this.searchbox = new Searchbox()
-    this.renderSubview(this.searchbox, container)
-  },
-  hideSearchbox () {
-    if (this.searchbox) this.searchbox.remove()
-  },
-  showMenu () {
-    const container = this.queryByHook('menu-container')
+    this.renderSubview(
+      this.searchbox,
+      this.queryByHook('searchbox-container')
+    )
+
+    // menu
     this.menu = new Menu()
-    this.renderSubview(this.menu, container)
+    this.renderSubview(
+      this.menu,
+      this.queryByHook('menu-container')
+    )
+
+    // notify
+    this.notify = new Notify()
+    this.renderSubview(
+      this.notify,
+      this.queryByHook('buttons-container')
+    )
   },
-  hideMenu () {
+  destroyLoggedInComponents () {
+    if (this.searchbox) this.searchbox.remove()
     if (this.menu) this.menu.remove()
+    if (this.notify) this.notify.remove()
   }
 })

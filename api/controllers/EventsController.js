@@ -1,8 +1,9 @@
+/* global sails */
 'use strict'
 
-var debug = require('debug')('eye:web:events');
-var snsreceiver = require('../services/snshandler');
-var socketsNotifications = require('../libs/sockets-notifications')
+const debug = require('debug')('eye:web:events')
+const snsreceiver = require('../services/snshandler')
+// const socketsNotifications = require('../libs/sockets-notifications')
 
 module.exports = {
   /**
@@ -19,38 +20,51 @@ module.exports = {
    *
    */
   update (req, res) {
-    var body = req.body;
-    debug('event update received');
-    debug(body);
+    var body = req.body
+    debug('sns event received')
+    debug(body)
 
-    snsreceiver.handleSubscription(body, function(error, action) {
-      if (error || ! body.Message) {
-        debug('Error Invalid request');
-        debug(body);
-        res.json({
+    snsreceiver.parseMessage(body, (err, message) => {
+      if (err) {
+        debug(err)
+        return res.json({
           status: 400,
           error: { message: 'invalid request' }
-        });
-      } else {
-        var message = snsreceiver.parseSNSMessage(body.Message);
-        if (!message) {
-          return res.json({
-            status: 400,
-            error: {
-              message: "SNS body.Message Couldn't be parsed" ,
-              received : body.Message
-            }
-          });
-        } else {
-          if (action == 'continue') {
-            var customer = message.customer_name
-            //message.last_update_moment = moment(message.last_update).startOf('second').fromNow();
-            socketsNotifications.emit(customer,'resources','resource:update',message)
-          }
-
-          return res.json({ message: 'ok' });
-        }
+        })
       }
-    });
+
+      if (!message) {
+        return res.json({
+          status: 400,
+          error: {
+            message: 'SNS Message Couldn\'t be parsed',
+            received: body.Message
+          }
+        })
+      }
+
+      if (!message.topic) {
+        return res.json({
+          status: 400,
+          error: {
+            message: 'SNS Message topic is required',
+            received: body.Message
+          }
+        })
+      }
+
+      if (message.topic === 'notification-crud') {
+        message.data.model.forEach(notification => {
+          const room = `${notification.organization}:${notification.user_id}:${message.topic}`
+          sails.io.sockets.in(room).emit(message.topic, notification.data)
+        })
+      } else {
+        const room = `${message.data.organization}:${message.topic}`
+        // we're sending the whole message again, not just it's .data prop ?
+        sails.io.sockets.in(room).emit(message.topic, message)
+      }
+
+      return res.json('ok')
+    })
   }
 }

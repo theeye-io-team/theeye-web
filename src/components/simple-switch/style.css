@@ -1,0 +1,39 @@
+.simple-switch input[type=checkbox]{
+  display: none;
+}
+
+.simple-switch label {
+  cursor: pointer;
+	text-indent: -9999px;
+	width: 50px;
+	height: 25px;
+	background: grey;
+	display: inline-block;
+	border-radius: 25px;
+	position: relative;
+}
+
+.simple-switch label:after {
+  content: '';
+	position: absolute;
+	top: 2px;
+	left: 2px;
+	width: 21px;
+	height: 21px;
+	background: #fff;
+	border-radius: 21px;
+	transition: 0.2s;
+}
+
+.simple-switch input:checked + label {
+  background: #014d79;
+}
+
+.simple-switch input:checked + label:after {
+  left: calc(100% - 2px);
+  transform: translateX(-100%);
+}
+
+.simple-switch label:active:after {
+  width: 30px;
+}

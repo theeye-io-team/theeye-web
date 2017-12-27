@@ -1,4 +1,5 @@
 module.exports = {
+	is_cluster: true, // is this the only web instance or there is more
   application: {
     baseUrl: "http://localhost:6080",
     port: 6080,
@@ -20,7 +21,7 @@ module.exports = {
   connections: {
     mongo: {
       adapter: 'sails-mongo',
-      host: 'localhost',
+      host: '127.0.0.1',
       port: 27017,
       database: 'theeye'
     }
@@ -28,17 +29,11 @@ module.exports = {
   session: {
     secret: '692fc164a0c06a9fd02575cf17688c9e',
     adapter: 'mongo',
-    host: 'localhost',
+    host: '127.0.0.1',
     port: 27017,
     db: 'theeye',
     collection: 'web_session'
   },
-  //sockets: {
-  //  adapter: 'redis',
-  //  host: 'redis-prod.theeye.io',
-  //  port: 6379,
-  //  db: 'theeye-web'
-  //},
   mailer: {
     from: 'TheEye.io <support@theeye.io>',
     replyTo: 'Support <support@theeye.io>',
@@ -69,11 +64,30 @@ module.exports = {
     }
   },
   supervisor: {
-    timeout: 60000, // 1 minute
-    url: 'http://localhost:60080',
-    port: 60080,
-    // for internal use only.
     client_id: '939e7ad87f616af22325a84b6192ba7974404160',
     client_secret: '4611b7a50f63c2bb259aa72e0b8b54ae54c326c6',
-  }
+    url: 'http://127.0.0.1:60080',
+    port: 60080,
+    palancas: {
+      resource: 'job'
+    }
+  },
+	aws: {
+		username: '',
+		accessKeyId: '',
+		secretAccessKey: '',
+		region: ''
+	},
+  sns: {
+		sockets_arn: '',
+    push_notifications: {
+      application_arn: ''
+    }
+  },
+  //sockets: {
+  //  adapter: 'redis',
+  //  host: 'redis-prod.theeye.io',
+  //  port: 6379,
+  //  db: 'theeye-web'
+  //},
 }

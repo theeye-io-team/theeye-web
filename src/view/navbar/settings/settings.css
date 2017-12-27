@@ -247,6 +247,7 @@
 .settings-page label.select:hover:before {
   border: none !important;
 }
+/*
 .settings-page [type="checkbox"]:not(:checked),
 .settings-page [type="checkbox"]:checked {
   position: absolute;
@@ -323,6 +324,7 @@
 .settings-page label:hover:before {
   border: 1px solid #e88840!important;
 }
+*/
 .settings-page ::-webkit-scrollbar {
   width: 6px;
 }

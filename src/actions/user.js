@@ -1,8 +1,7 @@
-//import jquery from 'jquery'
 import bootbox from 'bootbox'
 import App from 'ampersand-app'
+import $ from 'jquery'
 const xhr = $.ajax
-import XHR from 'lib/xhr'
 import config from 'config'
 
 module.exports = {

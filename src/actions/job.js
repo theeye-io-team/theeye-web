@@ -20,7 +20,12 @@ const updateJob = (job, data) => {
 }
 
 module.exports = {
-  /** this is being updated via socket event */
+  /** 
+   *
+   * @summary this is being updated via socket event
+   * @param {Object} data job model properties
+   *
+   */
   update (data) {
     logger.log('job updates received')
 

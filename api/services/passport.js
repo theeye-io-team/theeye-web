@@ -1,14 +1,14 @@
 "use strict";
 
 /* global Passport, User, sails, _ */
-var path     = require('path')
-  , url      = require('url')
-  , passport = require('passport')
-  , crypto    = require('crypto')
-  , mailer 	 = require("./mailer")
-  , TheEyeClient = require('../libs/theeye-client')
-  , CustomStrategy = require('passport-custom').Strategy
-  ;
+var path = require('path')
+var url = require('url')
+var passport = require('passport')
+var crypto = require('crypto')
+var mailer = require("./mailer")
+var TheEyeClient = require('../libs/theeye-client')
+var CustomStrategy = require('passport-custom').Strategy
+var debug = require('debug')('eye:services:passport')
 
 /**
  * Passport Service
@@ -171,7 +171,7 @@ passport.resendInvitation = function(req, res, next){
 
   User.findOne({ id: userId }, function(err, invitee){
     if(err) {
-      sails.log.error(err);
+      debug(err);
       return res.send(500);
     }
     if( ! invitee ) return res.send(404,'User not found');
@@ -181,7 +181,7 @@ passport.resendInvitation = function(req, res, next){
       invitee.invitation_token = token;
       passport.sendUserActivationEmail(req.user, invitee, function(error){
         if(error){
-          sails.log.error(error);
+          debug(error);
           return res.send(500);
         }
         return res.send(200, invitee);
@@ -200,7 +200,7 @@ passport.resendInvitation = function(req, res, next){
  */
 passport.sendUserActivationEmail = function (inviter, invitee, next){
   var activationLink = this.protocols.local.getActivationLink(invitee);
-  sails.log.debug('Activation Link is %s', activationLink);
+  debug('Activation Link is %s', activationLink);
 
   var data = {
     inviter: inviter,
@@ -210,21 +210,21 @@ passport.sendUserActivationEmail = function (inviter, invitee, next){
   if (data.inviter == null) {
     mailer.sendRegistrationMail(data, function(err) {
       if(err) {
-        sails.log.debug('error sending registration email to "%s"', invitee.email);
+        debug('error sending registration email to "%s"', invitee.email);
         return next(err);
       }
 
-      sails.log.debug('invitation email sent');
+      debug('invitation email sent');
       return next(null);
     });
   } else {
     mailer.sendActivationMail(data, function(err) {
       if(err) {
-        sails.log.debug('error sending invitation email to "%s"', invitee.email);
+        debug('error sending invitation email to "%s"', invitee.email);
         return next(err);
       }
 
-      sails.log.debug('invitation email sent');
+      debug('invitation email sent');
       return next(null);
     });
   }
@@ -253,11 +253,11 @@ passport.sendNewCustomerEMail = function (invitee, customername, next){
   };
   mailer.sendNewCustomerEMail(data, function(err) {
     if(err) {
-      sails.log.debug('error sending Invitation email to "%s"', invitee.email);
+      debug('error sending Invitation email to "%s"', invitee.email);
       return next(err);
     }
 
-    sails.log.debug('Invitation email sent');
+    debug('Invitation email sent');
     return next(null);
   });
 }
@@ -378,11 +378,11 @@ function activateTheeyeUser (user, next) {
 
   client.refreshToken(function(err,token){
     if(err){
-     sails.log.debug(err);
+     debug(err);
       return next(err);
     }
 
-   sails.log.debug('supervisor access token refresh success');
+   debug('supervisor access token refresh success');
     var data = {
       'email':user.email,
       'customers':user.customers,
@@ -391,7 +391,7 @@ function activateTheeyeUser (user, next) {
       'username': user.username||user.email
     };
 
-   sails.log.debug("Creating user %s theeye passport", user.id);
+   debug("Creating user %s theeye passport", user.id);
     createTheeyeUser(user, data, client, function(err, profile){
       if(err) return next(err);
       return next(null, profile);
@@ -406,17 +406,17 @@ passport.activateUser = function(req, res, next) {
   , customername = req.param('customername');
 
   if (!username) {
-    sails.log.error('No username was entered');
+    debug('No username was entered');
     return next(new Error('No username was entered.'));
   }
 
   if (!invitation_token) {
-    sails.log.error('No invitation_token was entered');
+    debug('No invitation_token was entered');
     return next(new Error('No invitation_token was entered.'));
   }
 
   if (!password) {
-    sails.log.error('No password was entered');
+    debug('No password was entered');
     return next(new Error('No password was entered.'));
   }
 
@@ -424,12 +424,12 @@ passport.activateUser = function(req, res, next) {
     invitation_token: invitation_token
   }, function(err, user){
     if(err) {
-      sails.log.error(err);
+      debug(err);
       return next(err);
     }
     if(!user) {
       var error = new Error('Cannot activate, user does not exist');
-     sails.log.error(error);
+     debug(error);
       return next(error);
     }
 
@@ -437,13 +437,13 @@ passport.activateUser = function(req, res, next) {
 
     verifyUsername(user, function(error) {
       if (error) {
-        sails.log.error('Verify username error');
+        debug('Verify username error');
         return next(error)
       }
 
       if(user.credential == 'owner') {
         if (!customername) {
-          sails.log.error('No customername was entered');
+          debug('No customername was entered');
           return next(new Error('No customername was entered.'));
         }
 
@@ -453,8 +453,8 @@ passport.activateUser = function(req, res, next) {
           }
           passport.protocols.local.activate(user, password, customername, function(err, updatedUser){
             if(err) {
-              sails.log.error('Error activating user on local protocol');
-              sails.log.error(err);
+              debug('Error activating user on local protocol');
+              debug(err);
               return next(err);
             }
             next(null, updatedUser);
@@ -467,8 +467,8 @@ passport.activateUser = function(req, res, next) {
           }
           passport.protocols.local.activate(user, password, null, function(err, updatedUser){
             if(err) {
-              sails.log.error('Error activating user on local protocol');
-              sails.log.error(err);
+              debug('Error activating user on local protocol');
+              debug(err);
               return next(err);
             }
             next(null, updatedUser);
@@ -484,7 +484,7 @@ function verifyUsername(user, next) {
     username: user.username
   }, function(err, prevUser){
     if(err) {
-      sails.log.error(err);
+      debug(err);
       return next(err);
     }
     if(!prevUser) {
@@ -508,7 +508,7 @@ function createTheeyeUserAndCustomer (user, customername, next) {
 
   client.refreshToken(function(err,token){
     if(err){
-     sails.log.debug(err);
+     debug(err);
       return next(err);
     }
 
@@ -520,7 +520,7 @@ function createTheeyeUserAndCustomer (user, customername, next) {
       'customername': customername
     };
 
-    sails.log.debug("Creating user %s theeye passport", user.id);
+    debug("Creating user %s theeye passport", user.id);
 
     client.create({
       route:'/register',
@@ -535,14 +535,14 @@ function createTheeyeUserAndCustomer (user, customername, next) {
           profile: profile
         }, function (err, passport) {
           if (err) {
-            sails.log.error(err);
+            debug(err);
             return next(err);
           }
           return next(null, profile);
         });
       },
       failure: function(err) {
-        sails.log.error(err);
+        debug(err);
         return next(err)
       }
     });
@@ -550,7 +550,7 @@ function createTheeyeUserAndCustomer (user, customername, next) {
 }
 
 function createTheeyeUser (user, input, supervisor, next) {
- sails.log.debug('creating theeye user');
+ debug('creating theeye user');
   var client = {
     'email': input.email,
     'customers': input.customers,
@@ -571,7 +571,7 @@ function createTheeyeUser (user, input, supervisor, next) {
 }
 
 function searchpassport (user, next){
-  sails.log.debug('searching passport theeye for user "%s"', user.username);
+  debug('searching passport theeye for user "%s"', user.username);
   Passport.findOne({
     user: user.id,
     protocol: 'theeye'
@@ -596,11 +596,11 @@ passport.createmissingtheeyepassports = function(req, res, next) {
             'username': user.username||user.email
           };
           createTheeyeUser(user, data, req.supervisor, function(error, profile) {
-            if(error) sails.log.error('user %s passport create error', user.username);
-            else sails.log.debug('passport created user %s', user.username);
+            if(error) debug('user %s passport create error', user.username);
+            else debug('passport created user %s', user.username);
           });
         }
-        else sails.log.debug('passport found. skipping user %s', user.username);
+        else debug('passport found. skipping user %s', user.username);
       });
     }
   });
@@ -643,7 +643,7 @@ passport.callback = function (req, res, next) {
     if (action === 'disconnect' && req.user) {
       this.disconnect(req, res, next) ;
     } else {
-      sails.log.debug('authenticate provider %s', provider);
+      debug('authenticate provider %s', provider);
       // The provider will redirect the user to this URL after approval. Finish
       // the authentication process by attempting to obtain an access token. If
       // access was granted, the user will be logged in. Otherwise, authentication
@@ -767,17 +767,17 @@ passport.updateLocalPassport = function (req, res, next) {
 };
 
 passport.serializeUser(function (user, next) {
-  sails.log.debug('serializing user %j', user);
+  debug('serializing user %j', user);
   next(null, user.id);
 });
 
 passport.deserializeUser(function (id, next) {
-  sails.log.debug('deserializing user');
+  debug('deserializing user');
   User.findOne(id, function(error,user){
     if(error) return next(error);
 
     if(!user) {
-      sails.log.error('serialized user not found!');
+      debug('serialized user not found!');
       return next();
     }
 
@@ -788,7 +788,7 @@ passport.deserializeUser(function (id, next) {
       if(error) return next(error);
 
       if(!passport) {
-        sails.log.error('theeye passport not found!');
+        debug('theeye passport not found!');
         user.theeye = {};
         return next(null,user);
       }
