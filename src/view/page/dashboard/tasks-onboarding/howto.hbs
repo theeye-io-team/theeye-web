@@ -3,17 +3,9 @@
   <div class="instructions-list-container">
     <div class="instructions-list">
       <ol>
-        <li>Click on <strong><i><button class="tooltiped" title="Top left navigation button" style="border:none;background:none;color:#144e77;"><span class="fa fa-bars"></span></button>> Tasks</i></strong> , to open <a class="tooltiped" title="or click me!" href="/admin/task/" target="_blank">Tasks Administration<span class="glyphicon glyphicon-link"></span></a> panel</li>
-        <li>Click on <button class="btn btn-primary"><span class="glyphicon glyphicon-plus"></span>New Task</button> and select <code>Script (second option)</code>.</li>
-        <li>Click on <button class="btn btn-primary">Create script</button> a new popup window will appear</li>
-        <li>Select <code>bash (.sh)</code> as interpreter, then in <code>Live editor</code> mode copy and paste this <a href="https://gist.github.com/jailbirt/12343dc435f0cc686ac4" target="_blank">helloWorld Gist<span class="glyphicon glyphicon-link"></span></a> script, and save the script</li>
-        <li>
-          Copy and paste the following arguments in the <strong><i>`Advanced` > `Script Arguments`</i></strong> input : 
-          <br><strong id="script-arguments"><i><%= user.username %>, user</i></strong>
-          <button class="clipboard-btn" data-clipboard-target="#script-arguments">
-            <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
-          </button>
-        </li>
+        <li>Click on <strong><i><button class="tooltiped" title="Top left navigation button" style="border:none;background:none;color:#144e77;"><span class="fa fa-bars"></span></button>> Tasks</i></strong> , to open <a class="tooltiped" title="or click me!" href="/admin/task">Tasks Administration<span class="glyphicon glyphicon-link"></span></a> panel</li>
+        <li>Click on <div data-hook="create-task" style="display:inline-block"></div> and select <code>Script</code>.</li>
+        <li>Follow this <a class="tooltiped" title="or click me!" href="https://github.com/theeye-io/theeye-docs/tree/master/tasks#create-a-script-task" target="_blank">documentation<span class="glyphicon glyphicon-link"></span></a> on how to create an script based task.</li>
       </ol>
     </div>
   </div>

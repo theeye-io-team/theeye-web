@@ -1,6 +1,7 @@
 import View from 'ampersand-view'
 import acls from 'lib/acls'
 const howto = require('./howto.hbs')
+import CreateButton from 'view/page/task/buttons/create'
 
 module.exports = View.extend({
   template: `
@@ -17,5 +18,7 @@ module.exports = View.extend({
     if (acls.hasAccessLevel('admin')) {
       this.queryByHook('howto-container').innerHTML = howto()
     }
+
+    this.renderSubview(new CreateButton(), this.queryByHook('create-task'))
   }
 })

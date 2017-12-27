@@ -828,7 +828,7 @@ a.flowchart-icon {
 .admin-container.dashboard .panel-item.icons .dropdown-menu>li>a:hover {background-image: none;background-color: #286090;}
 
 .admin-container.dashboard .instructions-list-container { color:#555;padding:20px;  }
-.admin-container.dashboard .instructions-list-container .instructions-list { padding:20px; background-color:#fff; }
+.admin-container.dashboard .instructions-list-container .instructions-list { padding:20px; background-color:#fff; text-align:left; }
 .admin-container.dashboard .instructions-list-container .instructions-list li { padding:10px; }
 
 @media (max-width: 767px) {

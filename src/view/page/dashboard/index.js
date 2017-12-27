@@ -109,10 +109,11 @@ module.exports = View.extend({
           if (this.tasks.length>0) {
             this.renderTasksPanel()
           } else {
+            this.TasksOboardingPanel = new TasksOboardingPanel({
+              el: this.queryByHook('tasks-onboarding-container')
+            })
             this.registerSubview(
-              new TasksOboardingPanel({
-                el: this.queryByHook('tasks-container')
-              }).render()
+              this.TasksOboardingPanel.render()
             )
           }
           this.stopListening(App.state.dashboard,'change:tasksDataSynced')
@@ -122,6 +123,17 @@ module.exports = View.extend({
       // remove panel container
       this.queryByHook('tasks-panel').remove()
     }
+
+    this.listenToAndRun(App.state.tasks,'add',() => {
+      if(App.state.tasks.length>0) {
+        this.tasks = App.state.tasks
+        if(this.TasksOboardingPanel) {
+          this.TasksOboardingPanel.remove()
+          delete this['TasksOboardingPanel']
+          this.renderTasksPanel()
+        }
+      }
+    })
 
     if (this.renderStats === true) {
       this.renderSubview(
