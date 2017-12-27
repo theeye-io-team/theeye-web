@@ -142,7 +142,7 @@ module.exports = FormView.extend({
     })
 
     this.listenTo(App.state.editor,'change:value',() => {
-      if(App.state.editor.value)
+      if(App.state.editor.value && App.state.editor.value.length)
         this.editorView.setEditorContent(App.state.editor.value)
       else {
         this.editorView.clearEditorContent()

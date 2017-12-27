@@ -181,7 +181,7 @@ const RegisterState = State.extend({
 
 const EditorState = State.extend({
   props: {
-    value: ['string',false,null]
+    value: ['string',false,'']
   }
 })
 
