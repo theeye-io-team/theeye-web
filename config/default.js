@@ -63,7 +63,8 @@ module.exports = {
       options: {
         clientID: '714923395260-9jd45ige6gg86mffrvf419dvuh85360t.apps.googleusercontent.com',
         clientSecret: 'k6eNjkeiRriseEUgPBWlGiHr',
-        callbackURL: "http://localhost:6080/auth/google/callback"
+        callbackURLLogin: "http://localhost:6080/auth/google/callback",
+        callbackURLConnect: "http://localhost:6080/auth/google/connectcallback"
       }
     }
   },

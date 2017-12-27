@@ -1,6 +1,6 @@
 module.exports = {
   application: {
-    baseUrl : "http://0.0.0.0:6080",
+    baseUrl : "http://localhost:6080",
     port : 6080,
     environment : 'development',
     secret : '692fc164a0c06a9fd02575cf17688c9e',
@@ -35,12 +35,12 @@ module.exports = {
   //  prefix: 'sess:',
   //},
   mailer: {
-    from: 'TheEye.io <jailbirt@interactar.com>',
-    replyTo: 'Support <jailbirt@interactar.com>',
+    from: 'TheEye.io <development@theeye.io>',
+    replyTo: 'Support <development@theeye.io>',
     only_support: false,
     include_support_bcc: false,
     support: [],
-    invitation: 'contact@theeye.io',
+    invitation: 'development@theeye.io',
     transport: {
       /**
        * use aws email service
@@ -104,7 +104,7 @@ module.exports = {
   passport: {
     local: {
       strategy: require('passport-local').Strategy,
-      activateUrl: 'http://0.0.0.0:6080/activate?'
+      activateUrl: 'http://localhost:6080/activate?'
     },
     google: {
       name: 'Google',
@@ -114,7 +114,8 @@ module.exports = {
       options: {
         clientID : '718619105306-bhgv1ue1r2disr47pvm492r3fust0qee.apps.googleusercontent.com',
         clientSecret : 'bbeYqPLu6wxTWunGIBx-IPuP',
-        callbackURL : "http://0.0.0.0:6080/auth/google/callback"
+        callbackURLLogin: "http://localhost:6080/auth/google/callback",
+        callbackURLConnect: "http://localhost:6080/auth/google/connectcallback"
       }
     },
   },
@@ -127,4 +128,4 @@ module.exports = {
       resource : 'job'
     }
   }
-};
+}

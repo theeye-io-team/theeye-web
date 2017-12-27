@@ -88,7 +88,6 @@ passport.use('google-mobile', new CustomStrategy(
  * @param {Function} next
  */
 passport.connect = function (req, query, profile, next) {
-  var isLogin = (typeof req.user == "undefined")
   var provider = req.param('provider');
   var profileEmail;
   query.provider = provider;
@@ -110,11 +109,7 @@ passport.connect = function (req, query, profile, next) {
       return next(err);
 
     if(!usr) {
-      if(isLogin) {
-        return next(new Error('loginusernotfound'))
-      } else {
-        return next(new Error('connectusernotfound'))
-      }
+      return next(new Error('usernotfound'))
     }
 
     Passport.findOne({
@@ -129,10 +124,10 @@ passport.connect = function (req, query, profile, next) {
         Passport.create(query, function (err, passport) {
           if(err)
           return next(err);
-          return next(null, {user: usr, isLogin: isLogin});
+          return next(null, {user: usr});
         });
       } else {
-        return next(null, {user: usr, isLogin: isLogin});
+        return next(null, {user: usr});
       }
     });
   });
