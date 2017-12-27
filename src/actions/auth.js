@@ -35,7 +35,7 @@ module.exports = {
   },
   logout () {
     XHR.send({
-      url: `${config.app_url}/logout`,
+      url: `${config.app_url}/session/logout`,
       method: 'get',
       headers: {
         Accept: 'application/json;charset=UTF-8'

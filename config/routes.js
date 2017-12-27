@@ -19,7 +19,6 @@ module.exports.routes = {
   },
   '/mantenimiento': { view: 'mantenimiento' },
   // AuthController routes
-  'get    /logout' : 'AuthController.logout',
   // 'get    /invite' : 'AuthController.invite',
   //'get    /activate' : 'AuthController.activate',
   'get    /connect/:provider' : 'AuthController.socialConnect',
@@ -108,6 +107,7 @@ module.exports.routes = {
   'get /admin/*':spaIndexRoute,
   'get /events':(req,res,next) => res.redirect('/dashboard'),
   'get /dashboard*':spaIndexRoute,
+  'get /logout':spaIndexRoute,
   'get /login':spaIndexRoute,
   'get /register':spaIndexRoute,
   'get /activate':spaIndexRoute,
@@ -122,6 +122,7 @@ module.exports.routes = {
    *
    */
   // SESSION
+  'get  /session/logout': 'AuthController.logout',
   'post /session/customer/:customer':'BearerController.currentCustomer',
   'post /session/refresh':'BearerController.refreshAccessToken',
   'get  /session/profile': 'BearerController.sessionProfile',

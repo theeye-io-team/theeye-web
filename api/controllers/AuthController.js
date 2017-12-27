@@ -20,7 +20,7 @@ var AuthController = {
    * @param {Object} res
    */
   logout (req, res) {
-    if (!req.user) res.send(400)
+    if (!req.user) return res.send(400)
     req.logout()
     res.send(200)
   },
