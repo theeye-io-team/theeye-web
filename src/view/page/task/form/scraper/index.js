@@ -151,6 +151,11 @@ module.exports = FormView.extend({
         visible: false,
         label: 'Triggered by',
         name: 'triggers',
+        filterOptions: [
+          item => {
+            return item.emitter_id !== this.model.id
+          }
+        ],
         value: this.model.triggers
       }),
       new SelectView({

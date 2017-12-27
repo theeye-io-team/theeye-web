@@ -7,13 +7,20 @@ import FilteredCollection from 'ampersand-filtered-subcollection'
 
 module.exports = SelectView.extend({
   initialize (options) {
+    var filters = [
+      item => {
+        return item.displayable == true
+      }
+    ]
+
+    if(Array.isArray(options.filterOptions) && options.filterOptions.length) {
+      filters = filters.concat(options.filterOptions)
+    }
 
     this.options = new FilteredCollection(
       App.state.events,
       {
-        where: {
-          displayable: true
-        }
+        filters: filters
       }
     )
 
