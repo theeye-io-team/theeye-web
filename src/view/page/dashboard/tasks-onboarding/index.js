@@ -17,8 +17,7 @@ module.exports = View.extend({
 
     if (acls.hasAccessLevel('admin')) {
       this.queryByHook('howto-container').innerHTML = howto()
+      this.renderSubview(new CreateButton(), this.queryByHook('create-task'))
     }
-
-    this.renderSubview(new CreateButton(), this.queryByHook('create-task'))
   }
 })
