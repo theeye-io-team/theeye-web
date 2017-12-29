@@ -26,6 +26,7 @@ module.exports = {
 
     snsreceiver.parseMessage(body, (err, message) => {
       if (err) {
+        debug('ERROR: Message parse error')
         debug(err.message)
         return res.json({
           status: 400,
@@ -45,20 +46,34 @@ module.exports = {
       }
 
       if (!message.topic) {
+        debug('ERROR: NO topic in Message')
         return res.json({
           status: 400,
           error: {
-            message: 'SNS Message topic is required',
+            message: 'SNS Message.topic is required',
             received: body.Message
           }
         })
       }
 
+      debug('processing message.topic %s', message.topic)
+
       if (message.topic === 'notification-crud') {
-        message.data.model.forEach(notification => {
-          const room = `${notification.organization}:${notification.user_id}:${message.topic}`
-          sails.io.sockets.in(room).emit(message.topic, notification.data)
-        })
+        if (Array.isArray(message.data.model) {
+          message.data.model.forEach(notification => {
+            const room = `${notification.organization}:${notification.user_id}:${message.topic}`
+            sails.io.sockets.in(room).emit(message.topic, notification.data)
+          })
+        } else {
+          debug('ERROR: invalid notification structure. Array expected, received', message.date.model)
+          return res.json({
+            status: 400,
+            error: {
+              message: 'Invalid notification message structure.',
+              received: body.Message
+            }
+          })
+        }
       } else {
         const room = `${message.data.organization}:${message.topic}`
         // we're sending the whole message again, not just it's .data prop ?
