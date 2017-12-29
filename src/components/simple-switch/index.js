@@ -6,17 +6,17 @@ module.exports = View.extend({
     <span class="simple-switch">
       <input type="checkbox" />
       <label></label>
-    </span>`,
+    </span>
+  `,
   props: {
-    initialValue: ['boolean', true, false],
-    onChange: ['any', true, function () {}]
+    value: ['boolean', true, false]
   },
   bindings: {
-    initialValue: {
-      type: 'booleanAttribute',
-      selector: 'input',
-      name: 'checked'
-    },
+    //value: {
+    //  type: 'booleanAttribute',
+    //  selector: 'input',
+    //  name: 'checked'
+    //},
     cid: [
       {
         type: 'attribute',
@@ -32,17 +32,12 @@ module.exports = View.extend({
   },
   events: {
     'change input': function (event) {
-      this.toggle('initialValue')
+      this.toggle('value')
     }
-  },
-  initialize () {
-    window.aaa = this
-    this.onChange = this.onChange.bind(this)
-    this.on('change:initialValue', this.onChange)
   },
   render () {
     this.renderWithTemplate(this)
-    if (this.initialValue) {
+    if (this.value===true) {
       this.query('input').setAttribute('checked', true)
     }
   }

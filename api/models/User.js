@@ -16,6 +16,7 @@ var User = {
     notifications: {
       type: 'json',
       defaultsTo: {
+        mute: false,
         push: true,
         email: true,
         desktop: true

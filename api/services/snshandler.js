@@ -19,8 +19,8 @@ module.exports = {
       }
     } else {
       debug('No information received')
-      error = new Error('invalid request')
-      next(error)
+      var err = new Error('invalid request')
+      next(err)
     }
   }
 }

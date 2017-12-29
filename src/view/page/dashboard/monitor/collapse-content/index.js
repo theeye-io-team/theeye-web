@@ -292,8 +292,8 @@ const FileCollapsedContent =  GenericCollapsedContent.extend({
     const config = this.monitor.config
     this.dirname = config.dirname
     this.basename = config.basename
-    this.os_username = config.os_username || 'none'
-    this.os_groupname = config.os_groupname || 'none'
+    this.os_username = config.os_username || 'not specified'
+    this.os_groupname = config.os_groupname || 'not specified'
   },
 })
 

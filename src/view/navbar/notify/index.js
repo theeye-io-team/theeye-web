@@ -1,6 +1,7 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import NotificationActions from 'actions/notifications'
+import NavbarActions from 'actions/navbar'
 
 import moment from 'moment'
 
@@ -137,7 +138,7 @@ module.exports = View.extend({
     inboxOpen: ['boolean',false,false],
     showBadge: ['boolean',false,false],
     isEmpty: ['boolean',true,true],
-    showSettings: ['boolean',true,false]
+    //showSettings: ['boolean',true,false]
   },
   bindings: {
     inboxOpen: {
@@ -171,14 +172,14 @@ module.exports = View.extend({
         hook: 'badge'
       }
     ],
-    showSettings: {
-      type: 'booleanClass',
-      name: 'visible',
-      hook: 'inbox-settings-container'
-    }
+    //showSettings: {
+    //  type: 'booleanClass',
+    //  name: 'visible',
+    //  hook: 'inbox-settings-container'
+    //}
   },
-  initialize () {
-    this.collection = App.state.notifications
+  initialize (options) {
+    this.collection || (this.collection = App.state.notifications)
 
     this.listenToAndRun(this.collection, 'change sync reset remove', this.updateCounts)
     this.listenToAndRun(this.collection, 'add', this.handleAdd)
@@ -213,7 +214,9 @@ module.exports = View.extend({
       this.toggle('inboxOpen')
     },
     'click [data-hook=inbox-settings-switch]': function (event) {
-      this.toggle('showSettings')
+      //this.toggle('showSettings')
+      NavbarActions.toggleSettingsMenu()
+      NavbarActions.toggleTab('notifications')
     },
     'click [data-hook=inbox-notifications-empty]': function (event) {
       NotificationActions.removeAllRead()
@@ -223,11 +226,6 @@ module.exports = View.extend({
     if (this.inboxOpen === true) {
       NotificationActions.markAllRead()
     }
-    //if (this.inboxOpen === true) {
-    //} else {
-    //  this.list.remove()
-    //  delete this.list
-    //}
   },
   handleAdd (model) {
     if (this.inboxOpen) {
@@ -247,11 +245,12 @@ module.exports = View.extend({
     this.renderWithTemplate(this)
 
     this.list = this.renderCollection(
-      //App.state.notifications,
       this.collection,
       InboxPopupRow,
       this.queryByHook('inbox-popup-container'),
-      { emptyView: EmptyView }
+      {
+        emptyView: EmptyView
+      }
     )
 
     // special handler for dialog-like popup behavior

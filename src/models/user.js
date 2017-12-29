@@ -22,9 +22,10 @@ const Model = AppModel.extend({
     updatedAt: 'date',
     notifications: ['object', true, () => {
       return {
+        mute: false,
         push: true,
         email: true,
-        desktop: true
+        desktop: true 
       }
     }]
   },

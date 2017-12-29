@@ -1,5 +1,5 @@
 module.exports = {
-	is_cluster: true, // is this the only web instance or there is more
+	is_cluster: true, // is this the only web instance or there are more instances?
   application: {
     baseUrl: "http://localhost:6080",
     port: 6080,

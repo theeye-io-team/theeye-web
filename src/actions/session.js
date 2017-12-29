@@ -121,7 +121,8 @@ module.exports = {
           }
         })
       },
-      done: () => {
+      done: (settings) => {
+        user.set(settings)
         bootbox.alert({
           title: 'Settings',
           message: `Settings successfully updated`,

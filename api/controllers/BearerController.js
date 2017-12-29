@@ -60,21 +60,14 @@ module.exports = {
     const user = req.user
     const params = req.params.all()
 
-    const settings = { notifications: params.notifications }
+    user.notifications = params.notifications
+    user.save(err => {
+      if (err) {
+        sails.log.error(err)
+        return res.send(500, 'internal server error')
+      }
 
-    User
-      .update({ id: user.id }, settings)
-      .exec((err, updated) => {
-        if (err) {
-          sails.log.error(err)
-          return res.send(500, 'internal server error')
-        }
-
-        if (updated.length === 0) {
-          return res.send(404, 'user not found')
-        }
-
-        res.send(200, updated)
-      })
+      res.send(200, { notifications: user.notifications })
+    })
   }
 }

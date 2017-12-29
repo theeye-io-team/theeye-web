@@ -5,39 +5,22 @@ import SessionActions from 'actions/session'
 
 export default View.extend({
   template: require('./template.hbs'),
-  //template: `
-  //  <div>
-  //    <h4 class="blue">
-  //      <i class="fa fa-bell"></i>
-  //      Notifications
-  //    </h4>
-  //    <div class="row">
-  //      <div class="col-sm-6"> Email </div>
-  //      <div class="col-sm-6 text-right" data-hook="email-switch"></div>
-  //    </div>
-  //    <div class="row">
-  //      <div class="col-sm-6"> Push </div>
-  //      <div class="col-sm-6 text-right" data-hook="push-switch"></div>
-  //    </div>
-  //  </div>`,
   render () {
     this.renderWithTemplate(this)
-    const state = App.state.session.user.notifications
 
-    const emailSwitch = new SimpleSwitch({
-      value: state.email,
-      onChange: (state, value) => {
-        SessionActions.updateSettings({ email: value })
-      }
+    const notify = App.state.session.user.notifications
+    this.renderSwitch('push', notify.push)
+    //this.renderSwitch('mute', notify.mute)
+    //this.renderSwitch('email', notify.email)
+    //this.renderSwitch('desktop', notify.desktop)
+  },
+  renderSwitch (name, value) {
+    const btn = new SimpleSwitch({ value: value || false })
+    btn.on('change:value', () => {
+      let settings = {}
+      settings[name] = btn.value
+      SessionActions.updateSettings(settings)
     })
-    this.renderSubview(emailSwitch, this.queryByHook('email-switch'))
-
-    const pushSwitch = new SimpleSwitch({
-      value: state.push,
-      onChange: (state, value) => {
-        SessionActions.updateSettings({ push: value })
-      }
-    })
-    this.renderSubview(pushSwitch, this.queryByHook('push-switch'))
+    this.renderSubview(btn, this.queryByHook(name))
   }
 })

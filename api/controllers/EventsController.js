@@ -26,7 +26,7 @@ module.exports = {
 
     snsreceiver.parseMessage(body, (err, message) => {
       if (err) {
-        debug(err)
+        debug(err.message)
         return res.json({
           status: 400,
           error: { message: 'invalid request' }
