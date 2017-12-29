@@ -5,9 +5,9 @@ const SNS = new AWS.SNS(new AWS.Config(sails.config.aws))
 const debug = require('debug')('eye:libs:notifications:sns')
 
 module.exports = {
-  send (input) {
-    const topic = input.topic
-    const message = input.data
+  send (event) {
+    const topic = event.topic
+    const message = event.data
 
     if (!sails.config.is_cluster) {
       debug('Submit SNS information via local sockets')
@@ -28,11 +28,10 @@ module.exports = {
     } else {
       debug('Submit SNS information')
       const sockets_arn = sails.config.sns.sockets_arn
-      const params = { form: { Message: message } }
 
       SNS.publish({
         TopicArn: sockets_arn,
-        Message: JSON.stringify(message),
+        Message: JSON.stringify(event),
         //Subject: subject
       }, (err,data) => {
         if (err) {

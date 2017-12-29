@@ -55,7 +55,7 @@ module.exports = {
         // push and mail here !important
         Notifications.push.send(event, users)
 
-        Notifications.email.send('TO-DO', users)
+        //Notifications.email.send('TO-DO', users)
       })
     }
 

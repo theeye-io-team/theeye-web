@@ -34,6 +34,7 @@ module.exports = {
       }
 
       if (!message) {
+        debug('ERROR: NO SNS Message')
         return res.json({
           status: 400,
           error: {
