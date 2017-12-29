@@ -65,7 +65,7 @@ module.exports = {
             sails.io.sockets.in(room).emit(message.topic, notification.data)
           })
         } else {
-          debug('ERROR: invalid notification structure. Array expected, received', message.date.model)
+          debug('ERROR: invalid notification structure. Array expected, received', message.data.model)
           return res.json({
             status: 400,
             error: {
@@ -77,7 +77,7 @@ module.exports = {
       } else {
         const room = `${message.data.organization}:${message.topic}`
         // we're sending the whole message again, not just it's .data prop ?
-        sails.io.sockets.in(room).emit(message.topic, message)
+        sails.io.sockets.in(room).emit(message.topic, message.data)
       }
 
       return res.json('ok')
