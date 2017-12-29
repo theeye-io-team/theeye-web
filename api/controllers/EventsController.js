@@ -59,7 +59,7 @@ module.exports = {
       debug('processing message.topic %s', message.topic)
 
       if (message.topic === 'notification-crud') {
-        if (Array.isArray(message.data.model) {
+        if (Array.isArray(message.data.model)) {
           message.data.model.forEach(notification => {
             const room = `${notification.organization}:${notification.user_id}:${message.topic}`
             sails.io.sockets.in(room).emit(message.topic, notification.data)
