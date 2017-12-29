@@ -4,12 +4,13 @@ var Notification = {
   schema: true,
   tableName: 'web_notification',
   attributes: {
-    user_id: {type: 'string', required: true, notNull: true},
-    //event_id: {type: 'string', required: true, notNull: true},
-    topic: {type: 'string', required: true, notNull: true, truthy: true},
-    notified: {type: 'boolean', defaultsTo: false},
-    read: {type: 'boolean', defaultsTo: false},
-    data: {type: 'json'}
+    //customer_id: { type: 'string', required: true, notNull: true },
+    customer_name: { type: 'string', required: true, notNull: true },
+    user_id: { type: 'string', required: true, notNull: true },
+    topic: { type: 'string' },
+    event_id: { type: 'string' },
+    read: { type: 'boolean', defaultsTo: false },
+    data: { type: 'json' }
   }
 }
 

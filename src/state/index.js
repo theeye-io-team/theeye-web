@@ -100,6 +100,11 @@ const AppState = State.extend({
         })
       }
     })
+
+    this.listenToAndRun(this.session.customer,'change:id', () => {
+      if (!this.session.customer.id) return
+      this.notifications.fetch({ reset: true })
+    })
   },
   reset () {
     this.clear() // will reset all components state

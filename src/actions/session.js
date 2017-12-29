@@ -109,7 +109,7 @@ module.exports = {
 
     App.state.loader.visible = true
     XHR.send({
-      url: `/session/profile/settings`,
+      url: `${config.app_url}/session/profile/settings`,
       method: 'PUT',
       jsonData: body,
       fail: (err) => {

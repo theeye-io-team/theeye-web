@@ -30,8 +30,6 @@ module.exports = State.extend({
 
             if(Acls.hasAccessLevel('manager') && App.state.session.user.credential !== 'admin'){
               App.state.members.fetch({
-                success: () => {
-                },
                 error (err,xhr) {
                   bootbox.alert('Something goes wrong. Please refresh')
                 }

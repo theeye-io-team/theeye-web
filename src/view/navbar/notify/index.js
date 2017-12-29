@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
+import NotificationActions from 'actions/notifications'
 
 import moment from 'moment'
 
@@ -25,9 +26,11 @@ const icons = {
   recovered: 'fa fa-check-circle',
   updates_stopped: 'fa fa-exclamation-triangle'
 }
+
 const EmptyView = View.extend({
-  template: `<div data-hook="no-notifications">No notifications</div>`
+  template: `<div class="no-notifications" data-hook="no-notifications">No notifications</div>`
 })
+
 const InboxPopupRow = View.extend({
   props: {
     severity: 'string',
@@ -119,11 +122,11 @@ module.exports = View.extend({
               <h3>Your notifications preferences</h3>
             </div>
           </div>
+          <span data-hook="inbox-settings-switch" class="left-0 fa fa-cog"></span>
           <h3>Notifications</h3>
-          <span data-hook="inbox-settings-switch" class="fa fa-cog"></span>
+          <span data-hook="inbox-notifications-empty" class="right-0 fa fa-trash-o"></span>
         </div>
         <div>
-          <div data-hook="no-notifications">No notifications</div>
           <div class="inbox-popup-body" data-hook="inbox-popup-container"></div>
         </div>
       </div>
@@ -148,15 +151,15 @@ module.exports = View.extend({
         yes: 'fa-bell-o',
         hook: 'bell'
       },
-      {
-        type: 'toggle',
-        hook: 'no-notifications'
-      },
-      {
-        type: 'toggle',
-        hook: 'inbox-popup-container',
-        invert: true
-      }
+      //{
+      //  type: 'toggle',
+      //  hook: 'no-notifications'
+      //},
+      //{
+      //  type: 'toggle',
+      //  hook: 'inbox-popup-container',
+      //  invert: true
+      //}
     ],
     unread: [
       {
@@ -175,11 +178,12 @@ module.exports = View.extend({
     }
   },
   initialize () {
-    this.listenToAndRun(App.state.notifications, 'change sync reset remove', this.updateCounts)
-    this.listenToAndRun(App.state.notifications, 'add', this.handleAdd)
+    this.collection = App.state.notifications
+
+    this.listenToAndRun(this.collection, 'change sync reset remove', this.updateCounts)
+    this.listenToAndRun(this.collection, 'add', this.handleAdd)
     this.on('change:inboxOpen', this.onInboxToggle)
     this.clickHandler = this.onClick.bind(this)
-    App.state.notifications.fetch()
   },
   onClick (event) {
     // if inbox is closed this is not our business and the
@@ -191,7 +195,6 @@ module.exports = View.extend({
     // the only thing we want to do is close the inbox
     // whenever the click is outside
     if (!this.isDescendant(this.el, event.target)) {
-      console.log('click outside')
       this.inboxOpen = false
     }
   },
@@ -211,28 +214,20 @@ module.exports = View.extend({
     },
     'click [data-hook=inbox-settings-switch]': function (event) {
       this.toggle('showSettings')
+    },
+    'click [data-hook=inbox-notifications-empty]': function (event) {
+      NotificationActions.removeAllRead()
     }
   },
-  onInboxToggle (state) {
-    if (state.inboxOpen) {
-      this.list = this.renderCollection(
-        App.state.notifications,
-        InboxPopupRow,
-        this.queryByHook('inbox-popup-container'),
-        {
-          emptyView: EmptyView
-        }
-      )
-      App.state.notifications.forEach(notification => {
-        if (notification.read === false) {
-          notification.read = true
-          notification.save()
-        }
-      })
-    } else {
-      this.list.remove()
-      delete this.list
+  onInboxToggle () {
+    if (this.inboxOpen === true) {
+      NotificationActions.markAllRead()
     }
+    //if (this.inboxOpen === true) {
+    //} else {
+    //  this.list.remove()
+    //  delete this.list
+    //}
   },
   handleAdd (model) {
     if (this.inboxOpen) {
@@ -244,12 +239,20 @@ module.exports = View.extend({
   },
   updateCounts () {
     const reducer = (acc, cur) => acc + (cur.read ? 0 : 1)
-    this.isEmpty = App.state.notifications.isEmpty()
-    this.unread = App.state.notifications.toJSON().reduce(reducer, 0)
+    this.isEmpty = this.collection.isEmpty()
+    this.unread = this.collection.toJSON().reduce(reducer, 0)
     this.showBadge = this.unread !== 0
   },
   render () {
     this.renderWithTemplate(this)
+
+    this.list = this.renderCollection(
+      //App.state.notifications,
+      this.collection,
+      InboxPopupRow,
+      this.queryByHook('inbox-popup-container'),
+      { emptyView: EmptyView }
+    )
 
     // special handler for dialog-like popup behavior
     document.body.addEventListener('click', this.clickHandler, true)

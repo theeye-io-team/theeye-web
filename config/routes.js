@@ -82,9 +82,11 @@ module.exports.routes = {
   'post   /notification' : 'NotificationController.create',
 
   // INBOX
-  'get    /inbox': 'InboxController.index',
-  'get    /inbox/unread/count': 'InboxController.unreadCount',
-  'put    /inbox/:id': 'InboxController.update',
+  'get /inbox': 'InboxController.index',
+  'get /inbox/unread/count': 'InboxController.unreadCount',
+  'put /inbox/:id': 'InboxController.update',
+  'delete /inbox/removeallread': 'InboxController.removeAllRead',
+  'patch /inbox/markallread': 'InboxController.markAllRead',
   /*
    *
    * need migration to /src structure (SPA)

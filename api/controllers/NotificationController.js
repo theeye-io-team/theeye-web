@@ -36,7 +36,7 @@ module.exports = {
         if (error) return debug(error)
 
         // create a profile (web, mobile) notification
-        createNotifications(event, users, (err2, notifications) => {
+        createNotifications(event, users, data.organization, (err2, notifications) => {
           if (err2) {
             return debug(err2)
           }
@@ -80,7 +80,7 @@ const getUsers = (customerName, callback) => {
 }
 
 // Persist notifications
-const createNotifications = (event, users, callback) => {
+const createNotifications = (event, users, customerName, callback) => {
   if (!users || !Array.isArray(users) || !users.length) {
     return callback(null, [])
   }
@@ -97,7 +97,8 @@ const createNotifications = (event, users, callback) => {
       topic: event.topic,
       data: event.data,
       event_id: event.id,
-      user_id: user.id
+      user_id: user.id,
+      customer_name: customerName
     }
   })
 

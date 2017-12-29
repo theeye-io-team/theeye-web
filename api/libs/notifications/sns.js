@@ -13,10 +13,14 @@ module.exports = {
       debug('Submit SNS information via local sockets')
 
       if (topic === 'notification-crud') {
-        message.model.forEach(notification => {
-          const room = `${notification.data.organization}:${notification.user_id}:${topic}`
-          sails.io.sockets.in(room).emit(topic, notification)
-        })
+        if (Array.isArray(message.model)) {
+          message.model.forEach(notification => {
+            const room = `${notification.data.organization}:${notification.user_id}:${topic}`
+            sails.io.sockets.in(room).emit(topic, notification)
+          })
+        } else {
+          throw new Error('invalid notification-crud payload. array of notifications was expected')
+        }
       } else {
         const room = `${message.organization}:${topic}`
         sails.io.sockets.in(room).emit(topic, message)
