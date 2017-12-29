@@ -86,7 +86,7 @@ var AuthController = {
     }
 
     if (strategies[provider].options.hasOwnProperty('callbackURLLogin')) {
-      options.callbackURL = strategies[provider].callbackURLLogin;
+      options.callbackURL = strategies[provider].options.callbackURLLogin;
     }
 
     passport.authenticate(provider, options)(req, res, req.next);
@@ -325,9 +325,15 @@ var AuthController = {
   },
   //callback for login
   socialCallback(req, res) {
+    var strategies = sails.config.passport;
     var provider = req.param('provider');
+    var options = {}
 
-    passport.authenticate(provider, function (err, response){
+    if (strategies[provider].options.hasOwnProperty('callbackURLLogin')) {
+      options.callbackURL = strategies[provider].options.callbackURLLogin;
+    }
+
+    passport.authenticate(provider, options, function (err, response){
       var query
       var msg = "Login error, please try again later."
       if(err) {
@@ -361,9 +367,15 @@ var AuthController = {
   },
   //callback for connect
   socialConnectCallback(req, res) {
+    var strategies = sails.config.passport;
     var provider = req.param('provider');
+    var options = {}
 
-    passport.authenticate(provider, function (err, response){
+    if (strategies[provider].options.hasOwnProperty('callbackURLConnect')) {
+      options.callbackURL = strategies[provider].options.callbackURLConnect;
+    }
+
+    passport.authenticate(provider, options, function (err, response){
       var query
       var msg = "Error connecting accounts, please try again later."
       if(err) {

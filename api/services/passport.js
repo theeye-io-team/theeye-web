@@ -705,10 +705,6 @@ passport.loadStrategies = function () {
       var baseUrl = sails.getBaseurl();
 
       switch (protocol) {
-        case 'oauth':
-        case 'oauth2':
-          options.callbackURL = url.resolve(baseUrl, callback);
-          break;
 
         case 'openid':
           options.returnURL = url.resolve(baseUrl, callback);
