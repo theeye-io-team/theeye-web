@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
   passport.initialize()(req, res, function(){
     // Use the built-in sessions
     debug('authenticating bearer')
-    passport.authenticate('bearer')(req, res, function(err, user){
+    passport.authenticate('bearer',{ session: false })(req, res, function(err, user){
       if (err) {
         debug(`${err.name}: ${err.message}`)
         if (err.status===401) {
