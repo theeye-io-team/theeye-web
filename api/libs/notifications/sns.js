@@ -5,25 +5,27 @@ const SNS = new AWS.SNS(new AWS.Config(sails.config.aws))
 const debug = require('debug')('eye:libs:notifications:sns')
 
 module.exports = {
-  send (event) {
-    const topic = event.topic
-    const message = event.data
+  send (message) {
+    const topic = message.topic
 
     if (!sails.config.is_cluster) {
       debug('Submit SNS information via local sockets')
 
+      /** @todo unify with ../controllers/EventsController.js **/
       if (topic === 'notification-crud') {
-        if (Array.isArray(message.model)) {
-          message.model.forEach(notification => {
+        if (Array.isArray(message.data.model)) {
+          message.data.model.forEach(notification => {
             const room = `${notification.data.organization}:${notification.user_id}:${topic}`
+            debug(`sending message to ${room}`)
             sails.io.sockets.in(room).emit(topic, notification)
           })
         } else {
           throw new Error('invalid notification-crud payload. array of notifications was expected')
         }
       } else {
-        const room = `${message.organization}:${topic}`
-        sails.io.sockets.in(room).emit(topic, message)
+        const room = `${message.data.organization}:${topic}`
+        debug(`sending message to ${room}`)
+        sails.io.sockets.in(room).emit(topic, message.data)
       }
     } else {
       debug('Submit SNS information')
@@ -31,7 +33,7 @@ module.exports = {
 
       SNS.publish({
         TopicArn: sockets_arn,
-        Message: JSON.stringify(event),
+        Message: JSON.stringify(message),
         //Subject: subject
       }, (err,data) => {
         if (err) {

@@ -58,10 +58,12 @@ module.exports = {
 
       debug('processing message.topic %s', message.topic)
 
+      /** @todo unify with ../libs/notifications/sns.js **/
       if (message.topic === 'notification-crud') {
         if (Array.isArray(message.data.model)) {
           message.data.model.forEach(notification => {
-            const room = `${notification.organization}:${notification.user_id}:${message.topic}`
+            const room = `${notification.data.organization}:${notification.user_id}:${message.topic}`
+            debug(`sending message to ${room}`)
             sails.io.sockets.in(room).emit(message.topic, notification.data)
           })
         } else {
@@ -76,6 +78,7 @@ module.exports = {
         }
       } else {
         const room = `${message.data.organization}:${message.topic}`
+        debug(`sending message to ${room}`)
         // we're sending the whole message again, not just it's .data prop ?
         sails.io.sockets.in(room).emit(message.topic, message.data)
       }
