@@ -54,3 +54,11 @@ module.exports = {
     }
   }
 }
+
+const parseJsonMessageString = (msg) => {
+  try {
+    return JSON.parse(msg)
+  } catch (e) {
+    return null
+  }
+}
