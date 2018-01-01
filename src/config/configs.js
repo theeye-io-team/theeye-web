@@ -52,10 +52,10 @@ const configs = {
   // cloud production enviroment
   production : Object.assign({}, defaultConfigs, {
     env: 'production',
-    app_url: 'https://theeye.io',
-    socket_url: 'https://theeye.io',
-    api_url: 'https://theeye.io/apiv2',
-    api_v3_url: 'https://theeye.io/apiv3',
+    app_url: 'https://app.theeye.io',
+    socket_url: 'https://app.theeye.io',
+    api_url: 'https://app.theeye.io/apiv2',
+    api_v3_url: 'https://app.theeye.io/apiv3',
     supervisor_api_url: 'https://supervisor.theeye.io',
   })
 }
