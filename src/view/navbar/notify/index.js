@@ -15,7 +15,9 @@ const meaning = {
   ready: 'executed, waiting for result',
   finished: 'finished running',
   updates_stopped: 'has gone silent',
-  recovered: 'came back to life'
+  updates_started: 'came back to life',
+  failure: 'is not working properly',
+  recovered: 'came back to normal'
 }
 const icons = {
   ready: 'fa fa-clock-o',

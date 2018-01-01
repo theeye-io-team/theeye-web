@@ -36,10 +36,10 @@ module.exports = {
         if (error) return debug(error)
 
         // create a profile (web, mobile) notification
-        createNotifications(event, users, data.organization, (err2, notifications) => {
-          if (err2) {
-            return debug(err2)
-          }
+        createNotifications(event, users, data.organization, (err, notifications) => {
+          if (err) return debug(err)
+          if (notifications.length===0) return
+
           // send extra notification event via sns topic
           Notifications.sns.send({
             topic: 'notification-crud',
@@ -88,7 +88,21 @@ const createNotifications = (event, users, customerName, callback) => {
   // skip ScriptJobs 'assigned' lifecycle
   if (
     event.data.model_type === 'ScriptJob' &&
-    event.data.model.lifecycle === LIFECYCLE.ASSIGNED) {
+    event.data.model.lifecycle === LIFECYCLE.ASSIGNED
+  ) {
+    return callback(null, [])
+  }
+
+  // rulez for updates stopped/updates started.
+  // only create notification for host
+  if (
+    event.topic == 'monitor-state' &&
+    (
+      event.data.monitor_event == 'updates_stopped' ||
+      event.data.monitor_event == 'updates_started'
+    ) &&
+    event.data.model.type !== 'host'
+  ) {
     return callback(null, [])
   }
 
