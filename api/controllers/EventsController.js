@@ -2,8 +2,8 @@
 'use strict'
 
 const debug = require('debug')('eye:web:events')
-const snsreceiver = require('../services/snshandler')
-// const socketsNotifications = require('../libs/sockets-notifications')
+const sns = require('../libs/notifications/sns')
+const sockets = require('../libs/notifications/sockets')
 
 module.exports = {
   /**
@@ -24,7 +24,7 @@ module.exports = {
     debug('sns event received')
     debug(body)
 
-    snsreceiver.parseMessage(body, (err, message) => {
+    sns.receive(body, (err, message) => {
       if (err) {
         debug('ERROR: Message parse error')
         debug(err.message)
@@ -58,30 +58,17 @@ module.exports = {
 
       debug('processing message.topic %s', message.topic)
 
-      /** @todo unify with ../libs/notifications/sns.js **/
-      if (message.topic === 'notification-crud') {
-        if (Array.isArray(message.data.model)) {
-          message.data.model.forEach(notification => {
-            const room = `${notification.data.organization}:${notification.user_id}:${message.topic}`
-            debug(`sending message to ${room}`)
-            sails.io.sockets.in(room).emit(message.topic, notification.data)
-          })
-        } else {
-          debug('ERROR: invalid notification structure. Array expected, received', message.data.model)
+      sockets.emit(message.topic, message, (err) => {
+        if (err) {
           return res.json({
             status: 400,
             error: {
-              message: 'Invalid notification message structure.',
+              message: err.message,
               received: body.Message
             }
           })
         }
-      } else {
-        const room = `${message.data.organization}:${message.topic}`
-        debug(`sending message to ${room}`)
-        // we're sending the whole message again, not just it's .data prop ?
-        sails.io.sockets.in(room).emit(message.topic, message.data)
-      }
+      })
 
       return res.json('ok')
     })

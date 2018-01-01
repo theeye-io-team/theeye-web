@@ -69,7 +69,7 @@ module.exports = () => {
             },
             events: {
               'notification-crud': event => {
-                App.state.notifications.add(new Notification(event))
+                App.state.notifications.add(new Notification(event.model))
               },
               'monitor-state': (event) => {
                 ResourceAction.update(event.model)
