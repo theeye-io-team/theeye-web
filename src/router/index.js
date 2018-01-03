@@ -112,6 +112,13 @@ module.exports = Router.extend({
       const route = new AuthRoute()
       route.passwordResetRoute()
     },
+    'admin/hoststats/:id': function (id) {
+      return import(/* webpackChunkName: "router-host-stats" */ './host-stats')
+        .then(HostStatsRouter => {
+          const route = new HostStatsRouter()
+          route.route('index', {id: id})
+        })
+    },
     '(*path)': function () {
       App.navigate('dashboard')
     }

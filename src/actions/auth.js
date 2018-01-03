@@ -10,6 +10,7 @@ const xhr = $.ajax
 
 module.exports = {
   login (data) {
+    App.state.loader.visible = true
     XHR.send({
       url: `${config.app_url}/auth/login`,
       method: 'post',
@@ -22,6 +23,7 @@ module.exports = {
           App.state.session.access_token = response.access_token
         } else {
           bootbox.alert('Login error, please try again')
+          App.state.loader.visible = false
         }
       },
       fail: (err,xhr) => {
@@ -30,6 +32,7 @@ module.exports = {
         } else {
           bootbox.alert('Login error, please try again')
         }
+        App.state.loader.visible = false
       }
     })
   },

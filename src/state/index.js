@@ -22,6 +22,7 @@ import HostGroupPageState from './hostgroup-page'
 import DashboardPageState from './dashboard-page'
 import SessionState from './session'
 import NavbarState from './navbar'
+import HostStatsState from './host-stats'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
@@ -65,6 +66,7 @@ const AppState = State.extend({
     register: ['state',false,() => { return new RegisterState() }],
     searchbox: ['state',false,() => { return new SearchBoxState() }],
     editor: ['state',false,() => { return new EditorState() }],
+    hoststatsPage: ['state', true, () => new HostStatsState()]
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)

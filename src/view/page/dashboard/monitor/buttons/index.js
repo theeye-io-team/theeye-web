@@ -1,9 +1,10 @@
+import App from 'ampersand-app'
 import acls from 'lib/acls'
 import View from 'ampersand-view'
 import JobOutput from './job-output'
 import SearchActions from 'actions/searchbox'
 import ResourceActions from 'actions/resource'
-import HostActions from 'actions/host'
+// import HostActions from 'actions/host'
 
 const Edit = View.extend({
   template: `
@@ -94,7 +95,9 @@ const HostStats = View.extend({
   onClickStats (event) {
     event.stopPropagation();
     event.preventDefault();
-    HostActions.stats(this.model.host_id)
+    // esto no es un action, deberia ser un navigate nomas
+    // HostActions.stats(this.model.host_id)
+    App.navigate('/admin/hoststats/' + this.model.host_id)
     return false;
   },
 })

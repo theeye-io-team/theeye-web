@@ -1,8 +1,4 @@
-'use strict'
-
-import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
-import Collect from 'ampersand-collection'
 import moment from 'moment'
 import merge from 'lodash/merge'
 

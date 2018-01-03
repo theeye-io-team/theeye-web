@@ -1,0 +1,371 @@
+/**
+ *
+ *
+ *  new styles stats
+ *
+ *
+ *
+ **/
+
+.stats-container h3 {
+  color: #EEE;
+}
+
+.stats-container .stats-section {
+  margin-bottom: 30px;
+}
+
+.stats-container .breadcrumbs {
+  background: #23324c;
+  margin-bottom: 30px;
+}
+
+.stats-container .breadcrumbs h4 {
+  display: inline-block;
+  margin-top: 15px
+}
+
+.stats-container .breadcrumbs .back {
+  font-size: 30px;
+  color: #fff;
+  float: left
+}
+
+.stats-container .breadcrumbs .item-icon {
+  border-radius: 50%;
+  background: #5bc4e8;
+  color: #fff;
+  text-align: center;
+  width: 26px;
+  height: 26px;
+  line-height: 26px;
+  float: left;
+  margin: 10px 20px;
+  font-size: 11px
+}
+
+.stats-container .cyan-progress {
+  background: #158df9
+}
+
+.stats-container .orange-progress {
+  background: #ff8f43
+}
+
+.stats-container .green-progress {
+  background: #06b777
+}
+
+.stats-container .red-progress {
+  background: #f94b4b
+}
+
+.stats-container .pink-progress {
+  background: #f73c89
+}
+
+.stats-container .stats-icon-container {
+  position: relative;
+  padding-left: 60px
+}
+
+.stats-container .stats-icon-container .icons {
+  position: absolute;
+  top: 0;
+  right: 0
+}
+
+.stats-container .stats-icon-container .icons span {
+  margin-left: 15px;
+  display: inline-block;
+  width: 25px;
+  height: 25px;
+  color: #fff;
+  background: #192435;
+  text-align: center;
+  border-radius: 50%;
+  line-height: 24px;
+  font-size: 12px;
+  cursor: pointer
+}
+
+.stats-container .stats-icon-container .icons span.ok {
+  background: #50d841
+}
+
+.stats-container .stats-icon-container .icons span.error {
+  background: #d60922
+}
+
+.stats-container .stats-icon-container .stats-icon {
+  position: absolute;
+  top: 0;
+  left: 0px;
+  width: 38px;
+  height: 38px;
+  text-align: center;
+  line-height: 38px;
+  color: #fff;
+  background: #ea7526;
+  border-radius: 50%;
+  font-size: 24px
+}
+
+.stats-container .stats-icon-container h3 {
+  margin: 0;
+  font-size: 18px;
+  padding: 10px;
+  padding-left: 0;
+}
+
+.stats-container .stats-icon-container h4 {
+  margin-top: 0;
+  font-size: 14px
+}
+
+.stats-container .stats-icon-container small {
+  color: #c4c4c4
+}
+
+.stats-container .stats-icon-container p {
+  display: inline-block;
+  margin: 0;
+  font-size: 0.9em
+}
+
+.stats-container .disk-usage .progress {
+  height: 24px;
+  margin-bottom: 0
+}
+
+.stats-container .disk-usage hr {
+  border-bottom: 1px solid #1f2b43;
+  margin: 10px 0
+}
+
+.stats-container .disk-usage h3 {
+  text-transform: uppercase;
+  font-weight: normal;
+  font-size: 18px;
+  margin-bottom: 30px
+}
+
+.stats-container .disk-usage h4 {
+  font-size: 18px;
+  font-weight: normal;
+  margin: 0
+}
+
+.stats-container .psaux-container #psaux-search {
+  margin-bottom: 20px;
+}
+
+.stats-container .psaux-container #psaux-search button, #psaux-search input {
+  background: none;
+  border: none;
+  box-shadow: none;
+  font-size: 21px;
+  border-bottom: 1px solid #c4c4c4;
+  border-radius: 0
+}
+
+.stats-container .psaux-container #psaux-search input {
+  color: #c4c4c4;
+  padding-left: 0;
+  font-size: 14px
+}
+
+
+/** Input Placeholder Color **/
+
+.stats-container .psaux-container #psaux-search input::-webkit-input-placeholder {
+  /* WebKit, Blink, Edge */
+  color: #c4c4c4;
+}
+
+.stats-container .psaux-container #psaux-search input:-moz-placeholder {
+  /* Mozilla Firefox 4 to 18 */
+  color: #c4c4c4;
+  opacity: 1;
+}
+
+.stats-container .psaux-container #psaux-search input::-moz-placeholder {
+  /* Mozilla Firefox 19+ */
+  color: #c4c4c4;
+  opacity: 1;
+}
+
+.stats-container .psaux-container #psaux-search input:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: #c4c4c4;
+}
+
+.stats-container .psaux-container #psaux-search input::-ms-input-placeholder {
+  /* Microsoft Edge */
+  color: #c4c4c4;
+}
+
+.stats-container .psaux-container #psaux-search button {
+  height: 34px;
+  padding: 0;
+  color: #c4c4c4
+}
+
+.stats-container .psaux-container #psaux-search ::-webkit-input-placeholder {
+  color: #0e151e
+}
+
+.stats-container .psaux-container #psaux-search :-moz-placeholder {
+  color: #0e151e
+}
+
+.stats-container .psaux-container #psaux-search ::-moz-placeholder {
+  color: #0e151e
+}
+
+.stats-container .psaux-container #psaux-search :-ms-input-placeholder {
+  color: #0e151e
+}
+
+.stats-container .psaux-container #psaux-div {
+  height: 400px;
+  overflow: auto;
+}
+
+.stats-container #psaux-table {
+  color: #304269;
+  font-family: monospace;
+}
+
+.stats-container #psaux-table th[data-sort] {
+  cursor: pointer;
+}
+
+.stats-container #psaux-table th {
+  background: #0e151e;
+  color: #fff;
+  border-right: 1px solid #fff;
+  font-weight: normal;
+  text-transform: uppercase;
+  text-align: center;
+  border-bottom: 0
+}
+
+.stats-container #psaux-table {
+  background: #fff
+}
+
+.main-stats, .disk-usage {
+  float: left;
+  width: 100%
+}
+
+.disk-usage {
+  margin-top: 20px
+}
+
+.disk-usage .progress .progress-bar, .vertical span {
+  font-size: 16px
+}
+
+.progress {
+  background: none;
+  box-shadow: none;
+  border-radius: 0
+}
+
+.progress-bar-vertical {
+  width: 50px;
+  min-height: 100px;
+  display: flex;
+  align-items: flex-end;
+  float: left;
+  position: relative
+}
+
+.progress-bar-vertical .progress-bar {
+  width: 100%;
+  height: 0;
+  font-size: 16px
+}
+
+.progress-bar-vertical span {
+  top: -20px;
+  position: absolute;
+  left: 0;
+  width: 100%
+}
+
+.progress-bar-vertical {
+  overflow: visible
+}
+
+.progress-bar-vertical .progress-bar {
+  position: relative
+}
+
+.main-stats .pull-left {
+  position: relative
+}
+
+.main-stats .pull-left .title {
+  position: absolute;
+  bottom: -30px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-weight: bold
+}
+
+.main-stats {
+  background: url('/images/bg-stats.png');
+  height: 180px;
+  padding: 80px 0 0;
+  margin: 30px 0
+}
+
+.filterable {
+  margin-top: 15px;
+}
+
+.filterable .panel-heading .pull-right {
+  margin-top: -20px;
+}
+
+.filterable .filters input[disabled] {
+  background-color: transparent;
+  border: none;
+  cursor: auto;
+  box-shadow: none;
+  padding: 0;
+  height: auto;
+}
+
+.filterable .filters input[disabled]::-webkit-input-placeholder {
+  color: #333;
+}
+
+.filterable .filters input[disabled]::-moz-placeholder {
+  color: #333;
+}
+
+.filterable .filters input[disabled]:-ms-input-placeholder {
+  color: #333;
+}
+
+@media all and (max-width: 991px) and (min-width: 768px) {
+  .progress-vertical-item span.title {
+    bottom: -90px
+  }
+}
+
+
+/**
+ *
+ *
+ *
+ * stats page end
+ *
+ *
+ *
+ */

@@ -6,7 +6,7 @@ module.exports = {
     var model = App.state.resources.get(data.id)
     if (!model) {
       logger.error('resource not found')
-      logger.error(model)
+      logger.error(data)
       return
     }
 

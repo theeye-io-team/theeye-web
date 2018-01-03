@@ -4,6 +4,7 @@
 import App from 'ampersand-app'
 import SocketsWrapper from 'lib/sockets'
 import ResourceAction from 'actions/resource'
+import HostStatsAction from 'actions/hoststats'
 import JobAction from 'actions/job'
 import config from 'config'
 const logger = require('lib/logger')('app:sockets')
@@ -68,6 +69,12 @@ module.exports = () => {
               }
             },
             events: {
+              'host-stats': event => {
+                HostStatsAction.update('dstat',event.model)
+              },
+              'host-processes': event => {
+                HostStatsAction.update('psaux',event.model)
+              },
               'notification-crud': event => {
                 App.state.notifications.add(new Notification(event.model))
               },

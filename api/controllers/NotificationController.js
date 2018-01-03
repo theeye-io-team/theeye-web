@@ -106,6 +106,10 @@ const createNotifications = (event, users, customerName, callback) => {
     return callback(null, [])
   }
 
+  if (event.topic == 'job-crud') {
+    return callback(null, [])
+  }
+
   const notifications = users.map(user => {
     return {
       topic: event.topic,
