@@ -5,7 +5,6 @@ import config from 'config'
 import App from 'ampersand-app'
 import AppState from 'state'
 import Router from 'router'
-import Loader from 'components/loader'
 import ChatBox from 'components/chat'
 import RootContainer from 'view/root-container'
 import query from 'lib/query-params'
@@ -29,6 +28,7 @@ App.extend({
   init () {
     this.bindDocumentEvents()
     this.initState( () => {
+      App.state.loader.visible = false // app finish loading.
       this.registerComponents()
       session()
       sockets()
@@ -41,43 +41,32 @@ App.extend({
     this.state.appInit()
   },
   navigate (page) {
-    //var url = (page.charAt(0)==='/')?page.slice(1):page
-    //if (window.location.pathname.slice(1) === url) {
-    //  return // cancel if page is current
-    //}
-    //App.Router.history.navigate(url,{trigger:true})
     var url = (page.charAt(0) === '/') ? page.slice(1) : page
-
+    //App.state.loader.visible = true
     App.Router.navigate(url)
-  },
-  reload (params, append=false) {
-    let qs
-    if (!append) {
-      qs = query.set(params)
-    } else {
-      qs = query.set( Object.assign({}, query.get(), params) )
-    }
-    App.Router.navigate(window.location.pathname + `?${qs}`,{replace: true})
-    App.Router.reload()
   },
   registerComponents () {
     const state = App.state
 
-    const loader = new Loader()
-    state.loader.on('change',() => {
-      loader.updateState(state.loader)
-    })
-
     const chat = new ChatBox.ChatBoxBaloon()
 
     const root = new RootContainer({ el: document.getElementById('root') })
-    state.on('change:currentPage',() => {
+    state.on('change:currentPage', () => {
+      //this.listenToAndRun(App.state.currentPage, 'change:rendered', this.togglePageLoader)
       root.updateState({ currentPage: state.currentPage })
     })
-    root.on('click:localPath',(event) => {
+    root.on('click:localPath', (event) => {
+      // skip navigation when on same page
+      // TODO: check this behavior on all pages
+      if (event.localPath === window.location.pathname) return
       App.navigate(event.localPath)
     })
   },
+  //togglePageLoader: function (state, prevValue) {
+  //  App.state.loader.visible = App.state.currentPage
+  //    ? !App.state.currentPage.rendered
+  //    : false
+  //},
   bindDocumentEvents () {
     const oninput = (event) => {
       //logger.log('document input')

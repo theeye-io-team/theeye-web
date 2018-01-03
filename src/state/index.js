@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import AmpersandState from 'ampersand-state'
 import Collection from 'ampersand-collection'
 import uriFragment from 'lib/uri-fragment'
@@ -72,7 +73,8 @@ const AppState = State.extend({
     State.prototype.initialize.apply(this,arguments)
 
     this.session = new SessionState()
-    this.loader = new LoaderState()
+    App.loader.screenblock = true
+    this.loader = App.loader
     this.navbar = new NavbarState()
     this.credentials = new CredentialsCollection()
   },
@@ -140,14 +142,6 @@ const SearchBoxState = State.extend({
     this.listenTo(this,'change:search',() => {
       uriFragment.set('search', this.search)
     })
-  }
-})
-
-const LoaderState = State.extend({
-  props: {
-    visible: ['boolean',false,false],
-    progress: ['number',false,0],
-    message: ['string',false,'']
   }
 })
 

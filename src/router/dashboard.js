@@ -10,6 +10,7 @@ const logger = require('lib/logger')('router:dashboard')
 
 class Dashboard extends Route {
   indexRoute () {
+    App.state.loader.visible = true
     const query = search.get()
     setStateFromQueryString(query)
     return index(query)
@@ -43,32 +44,35 @@ const fetchData = (options) => {
   var resourcesToFetch = 6
   if (fetchTasks) resourcesToFetch += 1
 
-  App.state.loader.visible = true
-  var done = after(resourcesToFetch, function(){
+  var done = after(resourcesToFetch, function () {
     App.state.loader.visible = false
   })
+  var step = function () {
+    App.state.loader.step()
+    done()
+  }
 
-  App.state.events.fetch({ success: done, error: done })
-  //App.state.scripts.fetch({ success: done, error: done })
-  App.state.files.fetch({ success: done, error: done })
-  App.state.hosts.fetch({ success: done, error: done })
-  App.state.tags.fetch({ success: done, error: done })
-  App.state.members.fetch({ success: done, error: done })
+  App.state.events.fetch({ success: step, error: step })
+  // App.state.scripts.fetch({ success: step, error: step })
+  App.state.files.fetch({ success: step, error: step })
+  App.state.hosts.fetch({ success: step, error: step })
+  App.state.tags.fetch({ success: step, error: step })
+  App.state.members.fetch({ success: step, error: step })
   App.state.resources.fetch({
     success: () => {
       App.state.dashboard.groupResources()
-      done()
+      step()
     },
-    error: done
+    error: step
   })
 
   if (fetchTasks) {
-    App.state.tasks.fetch({ success: done, error: done })
+    App.state.tasks.fetch({ success: step, error: step })
   }
 }
 
 const index = (query) => {
-  const credential = App.state.session.user.credential
+  // const credential = App.state.session.user.credential
   const tasksEnabled = Boolean(query.tasks != 'hide')
   const statsEnabled = Boolean(query.stats == 'show')
 

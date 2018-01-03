@@ -4,6 +4,7 @@ const path = require('path')
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 const NODE_ENV = process.env['NODE_ENV'] || 'local'
@@ -15,10 +16,7 @@ const TARGET_PATH = 'bundles'
 
 module.exports = {
   entry: {
-    app: `${__dirname}/src/app.js`,
-    //tasks: `${__dirname}/src/router/task.js`,
-    //files: `${__dirname}/src/router/files.js`,
-    //scheduler: `${__dirname}/src/router/scheduler.js`
+    app: `${__dirname}/src/main.js`
   },
   devtool: IS_PRODUCTION ? 'source-map' : '#inline-source-map',
   output: {
@@ -45,24 +43,28 @@ module.exports = {
       'window.jQuery': 'jquery'
     }),
     new webpack.optimize.CommonsChunkPlugin({
-      filename: TARGET_PATH + '/js/' + FILENAME + '.bundle.js',
-      name: 'commons',
+      // filename: TARGET_PATH + '/js/' + FILENAME + '.bundle.js',
+      // name: 'commons',
       minChunks: 2,
-      //names: ['app','tasks','files','scheduler']
+      async: 'commons'
+      // names: ['app','tasks','files','scheduler']
     }),
-    // new ExtractTextPlugin('css/[name]-[local]-[hash:6].css'),
     new ExtractTextPlugin(TARGET_PATH + '/styles/' + FILENAME + '.css'),
     new HtmlWebpackPlugin({
       template: 'src/templates/index.html',
       inject: 'body',
       filename: 'index.html'
     }),
+    new ScriptExtHtmlWebpackPlugin(),
     (function () {
       if (IS_PRODUCTION) {
         console.log('uglifying')
         return new webpack.optimize.UglifyJsPlugin({
           compress: { warnings: false },
-          output: { comments: false }
+          output: {
+            comments: false,
+            beautify: false
+          }
         })
       } else {
         return function () {
@@ -120,7 +122,7 @@ module.exports = {
         //loaders: ['style-loader', 'css-loader']
       },
       {
-        test: /\.(png|jpg|gif)$/,
+        test: /\.(svg|png|jpg|gif)$/,
         use: [
           {
             loader: 'file-loader',
@@ -129,15 +131,7 @@ module.exports = {
             }
           }
         ]
-      },
-      //{
-      //  test: /\.(svg|jpg|png|gif)$/,
-      //  loader: 'url-loader?limit=4000&name=images/[name].[ext]'
-      //},
-      //{
-      //  test: /\.(eot|ttf|woff|woff2)$/,
-      //  loader: 'file-loader?name=fonts/[name].[ext]'
-      //}
+      }
     ]
   }
 }

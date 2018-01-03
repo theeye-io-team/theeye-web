@@ -123,5 +123,6 @@ module.exports = View.extend({
 
     this.renderSubview(this.loginForm, this.queryByHook('login-form'))
     this.renderSubview(this.forgotForm, this.queryByHook('forgot-form'))
+    App.state.loader.visible = false
   }
 })
