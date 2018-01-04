@@ -87,7 +87,10 @@ const createNotifications = (event, users, customerName, callback) => {
 
   // skip ScriptJobs 'assigned' lifecycle
   if (
-    event.data.model_type === 'ScriptJob' &&
+    (
+      event.data.model_type === 'ScriptJob' || 
+      event.data.model_type === 'ScraperJob'
+    ) &&
     event.data.model.lifecycle === LIFECYCLE.ASSIGNED
   ) {
     return callback(null, [])
@@ -103,10 +106,6 @@ const createNotifications = (event, users, customerName, callback) => {
     ) &&
     event.data.model.type !== 'host'
   ) {
-    return callback(null, [])
-  }
-
-  if (event.topic == 'job-crud') {
     return callback(null, [])
   }
 
