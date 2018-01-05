@@ -236,5 +236,5 @@ module.exports = {
         success: task => res.json(task)
       })
     }
-  },
+  }
 }

@@ -40,7 +40,22 @@ module.exports = {
       route: route,
       query: req.query,
       failure: (error, apiRes) => res.send(error.statusCode, error),
-      success: (body, apiRes) => res.json(body),
+      success: (body, apiRes) => res.json(body)
+    })
+  },
+  // GET
+  getFileLinkedModels (req, res) {
+    const supervisor = req.supervisor
+    const file_id = req.param('id')
+    if (!file_id) return res.send(400, 'File id required.')
+
+    var route = req.originalUrl.replace(apibase,'')
+
+    supervisor.fetch({
+      route: `/file/${file_id}/linkedmodels`,
+      method: 'GET',
+      failure: (error, apires) => res.send(error.statusCode, error) ,
+      success: (body, apires) => res.json(body)
     })
   },
   ////**

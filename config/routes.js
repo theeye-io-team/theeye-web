@@ -134,6 +134,7 @@ module.exports.routes = {
   'put /apiv2/file/:id':'ApiV2Controller.filePut',
   'get /apiv2/file/:id':'ApiV2Controller.fileGet',
   'delete /apiv2/file/:id': 'ApiV2Controller.remove',
+  'get /apiv3/file/:id/linkedmodels' : 'ApiV3Controller.getFileLinkedModels',
   //'get /apiv2/file/:id/download':'ApiV2Controller.download',
   // TASK SCHEDULER
   'post /apiv2/task/schedule': 'ApiV2Controller.createSchedule',

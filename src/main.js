@@ -10,5 +10,5 @@ window.addEventListener('load', () => {
     // initialized it can find the loader somewhere
     App.extend({ loader: loader })
     require('./app')
-  }, 'app-loader')
+  }, 'app')
 })

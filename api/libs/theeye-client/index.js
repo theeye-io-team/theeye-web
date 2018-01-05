@@ -17,10 +17,16 @@ var logger = {
 
 module.exports = TheEyeClient
 
-/**
- *
- *
- */
+//
+//
+// DO NOT ADD MORE CUSTOM METHODS !!!
+//
+// REMOVE UNUSED
+//
+// REMOVE UNUSED. THIS MODULE IS NECESSARY TO AUTHENTICATE REQUEST
+//
+//
+
 function TheEyeClient (options) {
   this.access_token = ''
   this.configure(options)
@@ -377,11 +383,6 @@ TheEyeClient.prototype = {
     });
     return request;
   },
-  //
-  //
-  // DEPRECATED VERY SOON
-  //
-  //
   script: function(id, callback) {
     this.performRequest({
       method: 'get',
@@ -554,4 +555,13 @@ TheEyeClient.prototype = {
       callback(null, body);
     });
   }
+  //
+  //
+  // DO NOT ADD MORE CUSTOM METHODS !!!
+  //
+  // REMOVE UNUSED
+  //
+  // REMOVE UNUSED. THIS MODULE IS NECESSARY TO AUTHENTICATE REQUEST
+  //
+  //
 }

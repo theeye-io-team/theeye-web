@@ -94,10 +94,17 @@ const prepareMonitorStateChangeNotification = (monitor) => {
     case 'dstat': break;
     case 'host':
       msg = prepareHostNotification(monitor)
-      break;
-    default:
+      break
+    case 'script':
+    case 'process':
+    case 'scraper':
       msg = prepareDefaultNotification(monitor)
-      break;
+      break
+    default:
+      debug('ERROR. type not defined or not handled')
+      debug('%o',monitor)
+      break
+      
   }
   return msg
 }

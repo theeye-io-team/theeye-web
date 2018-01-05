@@ -11,7 +11,7 @@ module.exports = PanelButton.extend({
   events: {
     click: function (event) {
       event.stopPropagation()
-      const msg = 'The File will be removed and all the tasks and monitors that depends on it will be desactivated. Do you want to continue?'
+      const msg = 'The File will be removed and the information on it will be lost forever. Do you want to continue?'
       bootbox.confirm(msg, (confirmed) => {
         if (!confirmed) { return }
         FileActions.remove(this.model.id)
