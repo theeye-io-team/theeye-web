@@ -12,8 +12,7 @@ module.exports = {
     agentBinary:{
       url: 'https://s3.amazonaws.com/theeye.agent/theEyeInstallerx64.exe',
       name: 'theEyeInstallerx64.exe'
-    },
-    landingPage: false
+    }
   },
   auth: {
     secret: '692fc164a0c06a9fd02575cf17688c9e',

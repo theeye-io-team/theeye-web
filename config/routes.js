@@ -7,16 +7,6 @@ const spaIndexRoute = (req,res,next) => {
 }
 
 module.exports.routes = {
-  // Home
-  '/' : function (req, res, next) {
-    if (req.user) {
-      return res.redirect('/dashboard');
-    }
-    if (sails.config.application.landingPage === false) {
-      return res.redirect('/login');
-    }
-    res.sendfile(sails.config.appPath + '/assets/landpage/index.html');
-  },
   '/mantenimiento': { view: 'mantenimiento' },
   // AuthController routes
   // 'get    /invite' : 'AuthController.invite',
@@ -105,6 +95,7 @@ module.exports.routes = {
    *
    */
   // admin routes
+  'get /':spaIndexRoute,
   'get /admin/workflow':'WorkflowController.index',
   'get /admin/*':spaIndexRoute,
   'get /events':(req,res,next) => res.redirect('/dashboard'),
