@@ -238,6 +238,13 @@ exports.getCustomerAgentCredentials = function (customer,supervisor,done) {
         user.client_secret,
         user.customers[0].name // agents MUST have only one customer
       );
+      user.windowsCurl = format(
+        'powershell -command "& {&"Invoke-WebRequest" -uri "%s" -outFile agent-installer.ps1}" && powershell.exe -ExecutionPolicy ByPass -File agent-installer.ps1 "%s" "%s" "%s" ',
+        sails.config.application.agentInstallerUrl.windows,
+        user.client_id,
+        user.client_secret,
+        user.customers[0].name // agents MUST have only one customer
+      );
       return done(null, user);
     },
     failure: err => done(err)

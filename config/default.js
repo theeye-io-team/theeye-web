@@ -3,16 +3,17 @@ module.exports = {
   application: {
     baseUrl: "http://localhost:6080",
     port: 6080,
-    environment: 'localdev',
+    environment: 'localdev', // local development
     secret: '692fc164a0c06a9fd02575cf17688c9e',
     agentInstallerUrl: {
       linux: 'https://s3.amazonaws.com/theeye.agent/linux/setup.sh',
+      windows: 'https://s3.amazonaws.com/theeye.agent/windows/agent-installer.ps1'
     },
     agentBinary:{
       url: 'https://s3.amazonaws.com/theeye.agent/theEyeInstallerx64.exe',
       name: 'theEyeInstallerx64.exe'
     },
-    landingPage: true
+    landingPage: false
   },
   auth: {
     secret: '692fc164a0c06a9fd02575cf17688c9e',

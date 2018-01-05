@@ -29,12 +29,18 @@ module.exports = View.extend({
         type: 'toggle',
         hook: 'agent-not-set',
         invert: true
-      },{
+      },
+      {
         type: 'attribute',
         name: 'value',
         hook: 'curl-agent'
       }
     ],
+    'windowsCurlAgent': {
+      type: 'attribute',
+      name: 'value',
+      hook: 'windows-curl-agent'
+    },
     'agentBinaryUrl': {
       type: 'attribute',
       name: 'href',
@@ -69,6 +75,14 @@ module.exports = View.extend({
         if(!this.agent)
           return
         return this.agent.curl
+      }
+    },
+    windowsCurlAgent: {
+      deps: ['agent'],
+      fn: function(){
+        if(!this.agent)
+          return
+        return this.agent.windowsCurl
       }
     },
     agentBinaryUrl : {
@@ -122,5 +136,6 @@ module.exports = View.extend({
        this.customerName = App.state.session.customer.name
     })
     new Clipboard( this.query('.clipboard-curl-agent-btn') )
+    new Clipboard( this.query('.clipboard-windows-curl-agent-btn') )
   }
 })

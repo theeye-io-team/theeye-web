@@ -30,22 +30,27 @@
     <div class="row border">
       <div class="col-xs-12">
         <h4 class="blue"><i class="fa fa-windows"></i> Windows Agent Installer</h4>
-        <div class="alert" style="background:#EEEEEE">The Agent was tested on Windows 2008+</div>
         <h4 class="blue">To install the agent on Windows</h4>
     		<ol>
           <li>
-            Download the Agent Binaries
-            <code> <a data-hook="agent-binary-download agent-binary-html"></a> </code>
-            and extract it to the folder where you would like to install TheEye Agent (<code>C:/Program Files/The Eye</code>)
+            Open a CMD as administrator.
           </li>
-          <li>Download and replace the configuration file <code>{installation folder}/config/credentials.js</code> with
-            <a download="credentials.json" target="_blank" href="/api/agent/credentials">yours <i class="fa fa-download"></i></a>
+          <li>
+            <i>NOTE: The installation script assumes that administrator access is granted and that Powershell V5.0 or greater is installed.</i>
           </li>
-          <li>Open a <code>cmd.exe</code> <b>as Administrator</b> and change directory to the installation folder
-            <pre>cd {installation folder}</pre> </li>
-          <li>Run <code>installer.bat</code> <b>from console!</b>
-            <pre>./installer.bat</pre></li>
-          <li>Go to the <a href="/events">Dashboard <i class="fa fa-dashboard"></i></a> and check the status of the Agent</li>
+          <li>
+            Copy and paste the following line into the console to begin the installation.
+            <div class="input-group">
+              <input readonly type="text" id="windowsAgentCurl" class="form-control" data-hook="windows-curl-agent">
+              <span class="input-group-btn">
+                <button class="btn btn-primary clipboard-windows-curl-agent-btn" type="button" data-clipboard-target="#windowsAgentCurl">
+                  <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+                </button>
+              </span>
+            </div><!-- /input-group -->
+          </li>
+          <li>Wait for the installer to complete all actions.</li>
+          <li>Check you Dashboard, you should see the host reporting.</li>
   	    </ol>
       </div>
     </div>
