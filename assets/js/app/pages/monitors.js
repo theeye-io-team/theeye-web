@@ -11,6 +11,12 @@ MonitorSelect, _, ScraperModal, TagsSelect, bootbox, Tags, $searchbox, debug */
 
 var MonitorsPageInit = (function(){
 
+  const templateWarningMessage = `<div>
+    <p>This task was created from a <b>template</b>.</p>
+    <p>Modifying this task will not deploy changes to the hosts that share this <b>template</b>.</p>
+    <p>If you want to make these changes available to all the hosts, please create a new <b>template</b> from this host and add all the hostnames from the old template as destination hosts.</p>
+  </div>`;
+
   var log = debug('eye:web:admin:resources');
   var _users = new App.Collections.Users();
   _users.fetch({
@@ -27,7 +33,7 @@ var MonitorsPageInit = (function(){
   new HelpIcon({
     color:[255,255,255],
     category:'title_help',
-    text: HelpTexts.titles.monitor_page 
+    text: HelpTexts.titles.monitor_page
   }).$el.appendTo(
     $('.table-header.admin span.title i[data-hook=help]')
   );
@@ -461,11 +467,11 @@ var MonitorsPageInit = (function(){
           .trigger('change');
         $form
           .find('select[name=tags]')
-          .select2({ 
+          .select2({
             tabindex: 0,
             placeholder:"Tags",
-            data: Select2Data.PrepareTags(Tags), 
-            tags:true 
+            data: Select2Data.PrepareTags(Tags),
+            tags:true
           });
 
         var $firstInput = $(this).find('input[type!=hidden]').first().focus();
@@ -548,13 +554,13 @@ var MonitorsPageInit = (function(){
     function handleResourceAction(event){
       event.preventDefault();
       event.stopPropagation();
-      $.blockUI();
 
       var id = event.currentTarget.getAttribute('data-resource_id');
       var type = event.currentTarget.getAttribute('data-resource-type');
       var host = event.currentTarget.getAttribute('data-host_id');
       var action = event.currentTarget.getAttribute('data-action');
       var hostname = event.currentTarget.getAttribute('data-hostname');
+      var hasTemplate = event.currentTarget.getAttribute('data-resource-template');
 
       var data = window.resourceActionData = {
         'type': type,
@@ -564,7 +570,19 @@ var MonitorsPageInit = (function(){
         'id': id
       };
 
-      setupResourceAction(data);
+      if(action === 'edit' && hasTemplate !== 'undefined') {
+        bootbox.alert({
+          title: 'Warning',
+          message: templateWarningMessage,
+          callback: function() {
+            $.blockUI();
+            setupResourceAction(data);
+          }
+        })
+      } else {
+        $.blockUI();
+        setupResourceAction(data);
+      }
     }
 
     $('[data-hook=edit-process-monitor]').on('click', handleResourceAction);
@@ -847,7 +865,19 @@ var MonitorsPageInit = (function(){
       event.preventDefault();
       event.stopPropagation();
       var scraper_id = event.currentTarget.getAttribute('data-resource_id');
-      scraperModal.edit(scraper_id);
+      var hasTemplate = event.currentTarget.getAttribute('data-resource-template');
+
+      if(hasTemplate !== 'undefined') {
+        bootbox.alert({
+          title: 'Warning',
+          message: templateWarningMessage,
+          callback: function() {
+            scraperModal.edit(scraper_id);
+          }
+        })
+      } else {
+        scraperModal.edit(scraper_id);
+      }
     }
 
     // create and edit triggers
@@ -861,8 +891,8 @@ var MonitorsPageInit = (function(){
       monitors: _monitors,
       users: _users,
       files: _files,
-      looptimes: window.Looptimes,                                                        
-      hosts: window.Hosts,                                                                
+      looptimes: window.Looptimes,
+      hosts: window.Hosts,
       tags: window.Tags
     });
 
@@ -877,7 +907,19 @@ var MonitorsPageInit = (function(){
       event.preventDefault();
       event.stopPropagation();
       var _id = event.currentTarget.getAttribute('data-resource_id');
-      file.edit(_id);
+      var hasTemplate = event.currentTarget.getAttribute('data-resource-template');
+
+      if(hasTemplate !== 'undefined') {
+        bootbox.alert({
+          title: 'Warning',
+          message: templateWarningMessage,
+          callback: function() {
+            file.edit(_id);
+          }
+        })
+      } else {
+        file.edit(_id);
+      }
     }
 
     // create and edit triggers

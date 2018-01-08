@@ -2,6 +2,7 @@
 
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
+import bootbox from 'bootbox'
 
 module.exports = PanelButton.extend({
   initialize (options) {
@@ -36,6 +37,13 @@ module.exports = PanelButton.extend({
         })
 
         modal.show()
+
+        if(this.model.hasTemplate) {
+          bootbox.alert({
+            title:'Warning',
+            message: require('./template-warning.hbs')
+          })
+        }
       })
     }
   }
