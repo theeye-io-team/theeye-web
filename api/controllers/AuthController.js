@@ -346,6 +346,12 @@ var AuthController = {
           return res.redirect('/sociallogin?'+query);
         }
 
+        if(err.message == 'userinactive') {
+          msg = "Login error, user account is not activated."
+          query = new Buffer( JSON.stringify({ error: msg }) ).toString('base64')
+          return res.redirect('/sociallogin?'+query);
+        }
+
         query = new Buffer( JSON.stringify({ error: msg }) ).toString('base64')
         return res.redirect('/sociallogin?'+query);
       }

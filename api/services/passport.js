@@ -112,6 +112,10 @@ passport.connect = function (req, query, profile, next) {
       return next(new Error('usernotfound'))
     }
 
+    if(!usr.enabled) {
+      return next(new Error('userinactive'))
+    }
+
     Passport.findOne({
       provider   : provider
     , identifier : query.identifier.toString()
