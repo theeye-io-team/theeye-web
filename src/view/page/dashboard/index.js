@@ -3,7 +3,7 @@
 import App from 'ampersand-app'
 import config from 'config'
 import View from 'ampersand-view'
-//import jquery from 'jquery'
+import $ from 'jquery'
 import StatsPanelView from './stats-panel'
 import TaskRowView from './task'
 import MonitorRowView from './monitor'
@@ -142,6 +142,48 @@ module.exports = View.extend({
       )
     }
   },
+  setUpAndRunningSign: function () {
+    if (!this.upandrunningSign) return // upandrunning is disabled
+    if (this.waitTimeout) return // the user is interacting
+    if (!(this.monitors.length > 0)) return
+
+    /** move ok monitors to fold container **/
+    const foldMonitors = () => {
+      this.monitorRows.views.forEach(view => {
+        let model = view.model
+        if (!model.hasError()) {
+          this.monitorsFolding.append(view.el)
+        } else {
+          this.$monitorsPanel.prepend(view.el)
+        }
+      })
+    }
+
+    /** restore to default **/
+    const unfoldMonitors = () => {
+      this.monitorRows.views.forEach(view => {
+        this.$monitorsPanel.append(view.el)
+      })
+    }
+
+    const failing = this.monitors.filter(monitor => {
+      let group = this.groupedResources.find(monitor)
+      if (!group) return false
+      return monitor.hasError()
+    })
+
+    if (failing.length > 0) {
+      foldMonitors()
+      this.$upandrunning.slideUp()
+      this.$monitorsPanel.slideDown()
+      this.monitorsFolding.showButton()
+    } else {
+      unfoldMonitors()
+      this.$upandrunning.slideDown()
+      this.$monitorsPanel.slideUp()
+      this.monitorsFolding.hideButton()
+    }
+  },
   /**
    *
    * should be converted into a Monitors Panel View
@@ -156,7 +198,7 @@ module.exports = View.extend({
       this.queryByHook('monitors-panel-header')
     )
 
-    const monitorRows = this.renderCollection(
+    this.monitorRows = this.renderCollection(
       this.groupedResources,
       MonitorRowView,
       this.queryByHook('monitors-container')
@@ -165,70 +207,76 @@ module.exports = View.extend({
     const rowtooltips = this.query('[data-hook=monitors-container] .tooltiped')
     $(rowtooltips).tooltip()
 
-    const monitorsFolding = this.renderSubview(
+    this.monitorsFolding = this.renderSubview(
       new ItemsFolding({}),
       this.queryByHook('monitors-fold-container')
     )
 
     /** bind searchbox **/
-    this.listenToAndRun(App.state.searchbox,'change:search',() => {
-      if (monitorRows) {
+    this.listenToAndRun(App.state.searchbox, 'change:search', () => {
+      if (this.monitorRows) {
         searchRows({
-          rows: monitorRows.views,
+          rows: this.monitorRows.views,
           search: App.state.searchbox.search,
           onrow: (row, hit) => {
             row.show = Boolean(hit)
           },
           onsearchend: () => {
-            monitorRows.views.forEach(row => row.show = true)
+            this.monitorRows.views.forEach(row => row.show = true)
           }
         })
       }
-      this.hideUpAndRunning()
+      if (App.state.searchbox.search) {
+        this.hideUpAndRunning()
+        this.monitorsFolding.unfold()
+      } else {
+        this.monitorsFolding.fold()
+        this.setUpAndRunningSign()
+      }
     })
 
-    const setUpAndRunningSign = () => {
-      if (!this.upandrunningSign) return // upandrunning is disabled
-      if (this.waitTimeout) return // the user is interacting
-      if (!(this.monitors.length>0)) return
-
-      /** move ok monitors to fold container **/
-      const foldMonitors = () => {
-        monitorRows.views.forEach(view => {
-          let model = view.model
-          if (! model.hasError()) {
-            monitorsFolding.append( view.el )
-          } else {
-            this.$monitorsPanel.prepend( view.el )
-          }
-        })
-      }
-
-      /** restore to default **/
-      const unfoldMonitors = () => {
-        monitorRows.views.forEach(view => {
-          this.$monitorsPanel.append( view.el )
-        })
-      }
-
-      const failing = this.monitors.filter(monitor => {
-        let group = this.groupedResources.find(monitor)
-        if (!group) return false
-        return monitor.hasError()
-      })
-
-      if (failing.length>0) {
-        foldMonitors()
-        this.$upandrunning.slideUp()
-        this.$monitorsPanel.slideDown()
-        monitorsFolding.showButton()
-      } else {
-        unfoldMonitors()
-        this.$upandrunning.slideDown()
-        this.$monitorsPanel.slideUp()
-        monitorsFolding.hideButton()
-      }
-    }
+    // const setUpAndRunningSign = () => {
+    //   if (!this.upandrunningSign) return // upandrunning is disabled
+    //   if (this.waitTimeout) return // the user is interacting
+    //   if (!(this.monitors.length>0)) return
+    //
+    //   /** move ok monitors to fold container **/
+    //   const foldMonitors = () => {
+    //     monitorRows.views.forEach(view => {
+    //       let model = view.model
+    //       if (! model.hasError()) {
+    //         monitorsFolding.append( view.el )
+    //       } else {
+    //         this.$monitorsPanel.prepend( view.el )
+    //       }
+    //     })
+    //   }
+    //
+    //   /** restore to default **/
+    //   const unfoldMonitors = () => {
+    //     monitorRows.views.forEach(view => {
+    //       this.$monitorsPanel.append( view.el )
+    //     })
+    //   }
+    //
+    //   const failing = this.monitors.filter(monitor => {
+    //     let group = this.groupedResources.find(monitor)
+    //     if (!group) return false
+    //     return monitor.hasError()
+    //   })
+    //
+    //   if (failing.length>0) {
+    //     foldMonitors()
+    //     this.$upandrunning.slideUp()
+    //     this.$monitorsPanel.slideDown()
+    //     monitorsFolding.showButton()
+    //   } else {
+    //     unfoldMonitors()
+    //     this.$upandrunning.slideDown()
+    //     this.$monitorsPanel.slideUp()
+    //     monitorsFolding.hideButton()
+    //   }
+    // }
 
     //const waitUntilStopInteraction = () => {
     //  if (!(this.monitors.length>0)) return
@@ -251,10 +299,9 @@ module.exports = View.extend({
     //})
 
     // Will re-check up and running when sync or state change
-    this.listenToAndRun(this.monitors,'sync change:state',() => {
-      setUpAndRunningSign()
-    })
-    setUpAndRunningSign()
+    this.listenToAndRun(this.monitors,'sync change:state', this.setUpAndRunningSign)
+    // comment out double run, not fully tested, remove when ready
+    // setUpAndRunningSign()
   },
   /**
    *
