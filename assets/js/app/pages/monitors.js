@@ -12,9 +12,9 @@ MonitorSelect, _, ScraperModal, TagsSelect, bootbox, Tags, $searchbox, debug */
 var MonitorsPageInit = (function(){
 
   const templateWarningMessage = `<div>
-    <p>This task was created from a <b>template</b>.</p>
-    <p>Modifying this task will not deploy changes to the hosts that share this <b>template</b>.</p>
-    <p>If you want to make these changes available to all the hosts, please create a new <b>template</b> from this host and add all the hostnames from the old template as destination hosts.</p>
+    <p>Warning!</p>
+    <p>You are customizing a monitor that belongs to a template, changes will be only applied to this monitor. </p>
+    <p>Please update your template to make changes available for all.</p>
   </div>`;
 
   var log = debug('eye:web:admin:resources');
@@ -570,7 +570,7 @@ var MonitorsPageInit = (function(){
         'id': id
       };
 
-      if(action === 'edit' && hasTemplate !== 'undefined') {
+      if(action === 'edit' && hasTemplate !== 'undefined' && hasTemplate !== 'null') {
         bootbox.alert({
           title: 'Warning',
           message: templateWarningMessage,
@@ -867,7 +867,7 @@ var MonitorsPageInit = (function(){
       var scraper_id = event.currentTarget.getAttribute('data-resource_id');
       var hasTemplate = event.currentTarget.getAttribute('data-resource-template');
 
-      if(hasTemplate !== 'undefined') {
+      if(hasTemplate !== 'undefined' && hasTemplate !== 'null') {
         bootbox.alert({
           title: 'Warning',
           message: templateWarningMessage,
@@ -909,7 +909,7 @@ var MonitorsPageInit = (function(){
       var _id = event.currentTarget.getAttribute('data-resource_id');
       var hasTemplate = event.currentTarget.getAttribute('data-resource-template');
 
-      if(hasTemplate !== 'undefined') {
+      if(hasTemplate !== 'undefined' && hasTemplate !== 'null') {
         bootbox.alert({
           title: 'Warning',
           message: templateWarningMessage,
