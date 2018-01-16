@@ -38,7 +38,7 @@ export default {
         if (xhr.status == 200) {
           if (Array.isArray(models)) {
             if (models.length > 0) {
-              bootbox.alert('This File cannot be deleted. It is linked to monitors or tasks.')
+              bootbox.alert("The file is being used by a Monitor or Task and can't be deleted.")
             } else {
               file.destroy()
             }
