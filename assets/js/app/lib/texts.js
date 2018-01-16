@@ -5,7 +5,7 @@ var HelpTexts = {
   scripts: 'Which script it has to run?',
   script_runas: 'Run the selected script using a different username. Use \'%script%\' reserved word to include the script, this will be replaced during execution time with the real script path. Windows users, requires to mimic this action putting the password for the first time.',
   script_arguments: 'Put here a comma separated list of arguments.',
-  host: 'Where it has to run?',
+  host: 'Where will the file be hosted?',
   tags: 'To help you find your resources quickly.',
   triggers: 'Select a task, monitor or webhook event that will trigger this task automagically.',
   grace_time: 'If you select to Trigger with an event, you can choose a grace time to delay the execution of this action and have some time to cancel it via email if necessary.',

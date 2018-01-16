@@ -12,7 +12,7 @@ module.exports = {
   description: 'We recomend to use a descriptions to improve teamwork and problem solving.',
   scripts: 'Select the script it has to execute.',
   script_arguments: 'Put here a comma separated list of arguments.',
-  host: 'Where it has to run?',
+  host: 'Where will the file be hosted?',
   tags: 'To help you find your resources quickly.',
   acls: acl,
   triggers: triggers,
