@@ -106,7 +106,7 @@ module.exports = {
     const user = App.state.session.user
 
     var body = {}
-    body.notifications = assign({}, user.notifications, notif)
+    body.notifications = assign({}, user.notifications.serialize(), notif)
 
     App.state.loader.step()
     XHR.send({
@@ -142,13 +142,12 @@ module.exports = {
     App.state.loader.step()
     const notifications = App.state.session.user.notifications
     const excludes = notifications.desktopExcludes || []
+
     // remove from filters so it doesn't dupe
     const newSettings = reject(excludes, filter)
-    if (add) {
-      newSettings.push(filter)
-    }
-    notifications.desktopExcludes = newSettings
-    this.updateSettings(notifications, () => {
+    if (add) newSettings.push(filter)
+
+    this.updateSettings({ desktopExcludes: newSettings }, () => {
       App.state.session.user.trigger('change:notifications')
     })
   }

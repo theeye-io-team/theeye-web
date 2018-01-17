@@ -7,7 +7,7 @@ import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
 import Backdrop from 'components/backdrop'
 import SettingsMenu from './settings'
-import Notify from './notify'
+import InboxView from 'view/inbox'
 
 import logo from './logo.png'
 const template = require('./nav.hbs')
@@ -307,16 +307,16 @@ module.exports = View.extend({
       this.queryByHook('menu-container')
     )
 
-    // notify
-    this.notify = new Notify()
+    // notifications inbox 
+    this.inbox = new InboxView()
     this.renderSubview(
-      this.notify,
+      this.inbox,
       this.queryByHook('buttons-container')
     )
   },
   destroyLoggedInComponents () {
     if (this.searchbox) this.searchbox.remove()
     if (this.menu) this.menu.remove()
-    if (this.notify) this.notify.remove()
+    if (this.inbox) this.inbox.remove()
   }
 })
