@@ -3,13 +3,13 @@
 
 import App from 'ampersand-app'
 import SocketsWrapper from 'lib/sockets'
-import ResourceAction from 'actions/resource'
-import HostStatsAction from 'actions/hoststats'
-import JobAction from 'actions/job'
+import ResourceActions from 'actions/resource'
+import HostStatsActions from 'actions/hoststats'
+import JobActions from 'actions/job'
+import NotificationActions from 'actions/notifications'
 import config from 'config'
 const logger = require('lib/logger')('app:sockets')
 import OperationsConstants from 'constants/operations'
-import { Model as Notification } from 'models/notification'
 
 const connect = (next) => {
   // first time connect is called it is autoconnected
@@ -70,16 +70,16 @@ module.exports = () => {
             },
             events: {
               'host-stats': event => {
-                HostStatsAction.update('dstat',event.model)
+                HostStatsActions.update('dstat',event.model)
               },
               'host-processes': event => {
-                HostStatsAction.update('psaux',event.model)
+                HostStatsActions.update('psaux',event.model)
               },
               'notification-crud': event => {
-                App.state.notifications.add(new Notification(event.model))
+                NotificationActions.add(event.model)
               },
               'monitor-state': (event) => {
-                ResourceAction.update(event.model)
+                ResourceActions.update(event.model)
               },
               'job-crud': (event) => {
                 if (
@@ -87,7 +87,7 @@ module.exports = () => {
                   event.operation === OperationsConstants.CREATE ||
                   event.operation === OperationsConstants.REPLACE
                 ) {
-                  JobAction.update(event.model)
+                  JobActions.update(event.model)
                 }
               }
             }

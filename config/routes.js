@@ -75,7 +75,7 @@ module.exports.routes = {
   'get /inbox': 'InboxController.index',
   'get /inbox/unread/count': 'InboxController.unreadCount',
   'put /inbox/:id': 'InboxController.update',
-  'delete /inbox/removeallread': 'InboxController.removeAllRead',
+  'delete /inbox': 'InboxController.remove',
   'patch /inbox/markallread': 'InboxController.markAllRead',
   /*
    *

@@ -9,6 +9,11 @@ exports.GRACE_TIME = Object.freeze([
     text: 'No Wait / No cancelation'
   },
   {
+    secs: 60,
+    mins: 1,
+    text: '1 Minutes'
+  },
+  {
     secs: 300,
     mins: 5,
     text: '5 Minutes'

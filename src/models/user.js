@@ -1,13 +1,28 @@
+import some from 'lodash/some'
+
+import State from 'ampersand-state'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
-import config from 'config'
+// import config from 'config'
 
 import { Collection as Customers } from 'models/customer'
 
-const urlRoot = `${config.app_url}/user` // sails users
+// const urlRoot = `${config.app_url}/user` // sails users
+
+const NotificationSettings = State.extend({
+  props: {
+    mute: ['boolean',false,false],
+    push: ['boolean',false,true],
+    email: ['boolean',false,true],
+    desktop: ['boolean',false,true],
+    desktopExcludes: ['array',false,() => { return [] }]
+  },
+  getExclusionFilter (FILTER) {
+    return some(this.desktopExcludes, FILTER)
+  }
+})
 
 const Model = AppModel.extend({
-  //urlRoot: urlRoot,
   props: {
     id: 'string',
     username: 'string',
@@ -15,19 +30,15 @@ const Model = AppModel.extend({
     email: 'string',
     enabled: ['boolean', false, false],
     invitation_token: 'string',
-    //customers: ['array', false, () => []],
-		//creation_date: 'date',
-		//last_update: 'date',
     createdAt: 'date',
     updatedAt: 'date',
-    notifications: ['object', true, () => {
-      return {
-        mute: false,
-        push: true,
-        email: true,
-        desktop: true 
-      }
-    }]
+    //notifications: ['object', true, () => {
+    //  return {
+    //  }
+    //}]
+  },
+  children: {
+    notifications: NotificationSettings
   },
   derived: {
     formatted_tags: {
@@ -48,7 +59,7 @@ const Model = AppModel.extend({
   },
   collections: {
     customers: Customers
-  }
+  },
 })
 
 const Collection = AppCollection.extend({

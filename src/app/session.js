@@ -12,7 +12,7 @@ module.exports = () => {
     })
   }
 
-  const isLogginOut = (pathname) => {
+  const isLoggingOut = (pathname) => {
     return /logout/.test(pathname) === true
   }
 
@@ -60,7 +60,7 @@ module.exports = () => {
   App.Router.on('route',()=>{
     if (App.state.session.logged_in===true) {
       let path = window.location.pathname
-      if (!isPublicRoute(path) && !isLogginOut(path)) {
+      if (!isPublicRoute(path) && !isLoggingOut(path)) {
         SessionActions.refreshAccessToken()
       }
     }

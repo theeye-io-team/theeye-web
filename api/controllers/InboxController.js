@@ -28,10 +28,10 @@ module.exports = {
           res.send(400, err)
           return
         }
-        res.send(200)
+        res.send(200, updated)
       })
   },
-  unreadCount: function (req, res) {
+  unreadCount (req, res) {
     Notification.count({
       customer_name: req.user.current_customer,
       user_id: req.user.id,
@@ -44,14 +44,19 @@ module.exports = {
       res.send(200, count)
     })
   },
-  removeAllRead (req, res) {
-    Notification.destroy({
+  remove (req, res) {
+    const query = {
       customer_name: req.user.current_customer,
-      user_id: req.user.id,
-      read: true
-    }).exec(err => {
-      if (err) return res.send(500,err)
-      res.send(200)
+      user_id: req.user.id
+    }
+
+    if ( !(req.query.remove_all==='true') ) {
+      query.read = true
+    }
+
+    Notification.destroy(query).exec(err => {
+      if (err) return res.send(500, err)
+      res.send(200, null)
     })
   },
   markAllRead (req, res) {

@@ -14,16 +14,16 @@ export default function (options) {
 
   this.step = function () {
     if (!this._visible) {
-      this.visible = true
-    } else {
-      this.nprogress.inc()
+      this._visible = true
+    // } else {
+    //   this.nprogress.inc()
     }
+    this.nprogress.inc()
   }
 
   Object.defineProperty(this, 'visible', {
     get: function () { return this._visible },
     set: function (value) {
-      if (value && this._visible) return
       if (!value) {
         this._visible = false
         this.backdrop.hide()

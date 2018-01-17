@@ -5,7 +5,7 @@ module.exports = View.extend({
   template: `
     <span class="simple-switch">
       <input type="checkbox" />
-      <label></label>
+      <label>&nbsp;</label>
     </span>
   `,
   props: {

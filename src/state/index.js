@@ -24,6 +24,7 @@ import DashboardPageState from './dashboard-page'
 import SessionState from './session'
 import NavbarState from './navbar'
 import HostStatsState from './host-stats'
+import InboxState from './inbox'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
@@ -67,21 +68,24 @@ const AppState = State.extend({
     register: ['state',false,() => { return new RegisterState() }],
     searchbox: ['state',false,() => { return new SearchBoxState() }],
     editor: ['state',false,() => { return new EditorState() }],
-    hoststatsPage: ['state', true, () => new HostStatsState()]
+    hoststatsPage: ['state', true, () => new HostStatsState()],
+    inbox: ['state', true, () => new InboxState()]
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)
 
-    this.session = new SessionState()
+    // init empty collections
+    _initCollections.call(this)
+
     App.loader.screenblock = true
     this.loader = App.loader
+
+    this.session = new SessionState()
     this.navbar = new NavbarState()
     this.credentials = new CredentialsCollection()
   },
   appInit () {
     this.session.appInit()
-
-    _initCollections.call(this)
 
     const resetCredentialsCollection = () => {
       if (this.session.logged_in===undefined) {
