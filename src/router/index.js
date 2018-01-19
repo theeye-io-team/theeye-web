@@ -10,7 +10,6 @@ const AuthRoute = require('./auth')
 const UserRoute = require('./user')
 const CustomerRoute = require('./customer')
 const WebhookRoute = require('./webhook')
-const HostGroupRoute = require('./hostgroup')
 import DashboardRoute from './dashboard'
 import ChartsRoute from './charts'
 
@@ -47,10 +46,6 @@ module.exports = Router.extend({
       const route = new DashboardRoute()
       route.route('index')
     },
-    'admin/hostgroup': () => {
-      const route = new HostGroupRoute()
-      route.route('index')
-    },
     'admin/user': () => {
       const route = new UserRoute()
       route.route('index')
@@ -62,6 +57,12 @@ module.exports = Router.extend({
     'admin/webhook': () => {
       const route = new WebhookRoute()
       route.route('index')
+    },
+    'admin/hostgroup': () => {
+      return import(/* webpackChunkName: "router-hostgroup" */ './hostgroup').then(HostGroupRoute => {
+        const route = new HostGroupRoute()
+        route.route('index')
+      })
     },
     'admin/task': () => {
       return import(/* webpackChunkName: "router-task" */ './task').then(TasksRoute => {

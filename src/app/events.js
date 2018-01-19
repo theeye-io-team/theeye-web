@@ -9,11 +9,15 @@ App.listenTo(XHR, 'unauthorized', () => {
   if (!App.state.session.logged_in) return
   logger.log('session expired')
 
-  bootbox.alert({
-    title: 'Session has expired.',
-    message: 'Please, login again',
-    callback: () => {
-      App.navigate('logout')
-    }
-  })
+  if (!App.state.session.relogin_message) {
+    App.state.session.relogin_message = true
+    bootbox.alert({
+      title: 'Session has expired.',
+      message: 'Please, login again',
+      callback: () => {
+        App.navigate('logout')
+        App.state.session.relogin_message = false
+      }
+    })
+  }
 })

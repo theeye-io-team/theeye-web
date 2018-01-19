@@ -14,7 +14,8 @@ module.exports = SelectView.extend({
         </div>
       </div>
         <section class="col-sm-12" data-hook="configs-container"> </section>
-    </div>`,
+    </div>
+  `,
   derived: {
     has_config: {
       deps: ['inputValue'],

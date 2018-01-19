@@ -75,7 +75,7 @@ const Actions = {
     XHR.send({
       method: 'get',
       url: `${config.api_url}/host/${id}/config`,
-      done: (data,xhr) => {
+      done (data,xhr) {
         App.state.hostGroupPage.setConfigs(data)
         //next(null,data)
       },
@@ -84,18 +84,29 @@ const Actions = {
       }
     })
   },
+  importTemplateConfigFromRecipe (recipeId) {
+    this.fetchRecipe(recipeId, (err,recipe) => {
+      if (!err) {
+        this.createTemplateFromRecipe(recipe)
+      }
+    })
+  },
   fetchRecipe (id, next) {
     XHR.send({
       method: 'get',
       url: `${config.api_v3_url}/recipe/${id}`,
       done: (data,xhr) => {
-        App.state.hostGroupPage.setConfigs(data.instructions)
-        //next(null,data)
+        next(null, data.instructions)
       },
       fail (err,xhr) {
-        bootbox.alert('Fail to fetch recipe')
+        let msg = 'Sorry, we fail to fetch the recipe'
+        bootbox.alert(msg)
+        return next(new Error(msg))
       }
     })
+  },
+  readRecipeConfig (recipe) {
+    App.state.hostGroupPage.setConfigs(recipe)
   },
   //
   // remove this config before create the template.

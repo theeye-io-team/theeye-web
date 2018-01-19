@@ -249,7 +249,7 @@ module.exports = FormView.extend({
         tags: false,
         options: App.state.hosts,
         styles: 'form-group',
-        required: true,
+        required: false,
         //value: null,
         unselectedText: 'select a host',
         idAttribute: 'id',

@@ -24,7 +24,8 @@ module.exports = AmpersandState.extend({
     customer: ['state',false,() => { return new Customer() }],
     logged_in: 'boolean',
     authorization: 'string',
-    restored: 'boolean'
+    restored: 'boolean',
+    relogin_message: ['boolean',false,false]
   },
   appInit () {
     this.storage = localforage.createInstance({
