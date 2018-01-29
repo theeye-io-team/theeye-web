@@ -231,9 +231,6 @@ module.exports = View.extend({
     })
   },
   updateState (state) {
-    console.log('inbox state change')
-    console.log(state)
-
     this.inboxOpen = state.isOpen
   },
   onAnywereClick (event) {

@@ -7,6 +7,7 @@ import ResourceActions from 'actions/resource'
 import HostStatsActions from 'actions/hoststats'
 import JobActions from 'actions/job'
 import NotificationActions from 'actions/notifications'
+import DashboardActions from 'actions/dashboard'
 import config from 'config'
 const logger = require('lib/logger')('app:sockets')
 import OperationsConstants from 'constants/operations'
@@ -57,6 +58,7 @@ module.exports = () => {
                 'monitor-state',
                 'job-crud',
                 'host-stats',
+                'host-registered',
                 'host-processes'
               ]
             },
@@ -69,6 +71,9 @@ module.exports = () => {
               }
             },
             events: {
+              'host-registered': event => {
+                DashboardActions.loadNewRegisteredHostAgent(event.model)
+              },
               'host-stats': event => {
                 HostStatsActions.update('dstat',event.model)
               },

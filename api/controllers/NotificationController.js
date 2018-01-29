@@ -22,7 +22,7 @@ module.exports = {
     if (!data) return res.send(400, 'Data is required.')
     if (!topic) return res.send(400, 'Topic is required.')
 
-    debug('topic %s , model_type %s , model.name %s', topic, data.model_type, data.model.name)
+    debug('topic %s , model_type %s , model.name %s', topic, data.model_type, data.model.name||'no name property')
 
     // only selected topics which need:
     //   - persist to db
@@ -71,8 +71,10 @@ module.exports = {
 // Returns a user collection for a given customer
 const getUsers = (customerName, callback) => {
   if (!customerName) {
-    return callback(new Error('Need customer to find users'))
+    const err = new Error('I need a customer to find the users')
+    return callback(err)
   }
+
   User.find({
     username: { $ne: null },
     customers: customerName

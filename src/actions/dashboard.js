@@ -9,5 +9,8 @@ module.exports = {
 
     App.Router.navigate(`dashboard?${qs}`, { replace: true })
     App.Router.reload()
+  },
+  loadNewRegisteredHostAgent (host) {
+    App.Router.reload()
   }
 }
