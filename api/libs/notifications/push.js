@@ -11,7 +11,7 @@ const _send = (message,users) => {
   var params = {
     MessageStructure: 'json',
     Message: JSON.stringify({
-      "GCM": "{ \"data\": { \"message\": \"" + message + "\" } }"
+      "GCM": "{ \"data\": { \"message\": \"" + message + "\", \"style\": \"inbox\", \"summaryText\": \"%n% New notifications\"} }"
     })
   }
 
@@ -104,7 +104,7 @@ const prepareMonitorStateChangeNotification = (monitor) => {
       debug('ERROR. type not defined or not handled')
       debug('%o',monitor)
       break
-      
+
   }
   return msg
 }
