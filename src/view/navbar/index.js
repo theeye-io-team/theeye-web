@@ -307,7 +307,7 @@ module.exports = View.extend({
       this.queryByHook('menu-container')
     )
 
-    // notifications inbox 
+    // notifications inbox
     this.inbox = new InboxView()
     this.renderSubview(
       this.inbox,
