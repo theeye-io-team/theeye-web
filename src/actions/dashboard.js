@@ -11,6 +11,7 @@ module.exports = {
     App.Router.reload()
   },
   loadNewRegisteredHostAgent (host) {
+    App.state.navbar.settingsMenu.visible = false
     App.Router.reload()
   }
 }

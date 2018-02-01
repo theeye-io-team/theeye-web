@@ -20,6 +20,7 @@ import CopyTaskSelect from '../copy-task-select'
 
 import bootbox from 'bootbox'
 import FIELD from 'constants/field'
+import OnBoarding from 'view/taskOnboarding'
 
 const HelpTexts = require('language/help')
 const TaskConstants = require('constants/task')
@@ -210,6 +211,20 @@ module.exports = FormView.extend({
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)
     buttons.on('click:confirm', () => { this.submit() })
+
+    if (this.model.isNew()) {
+      if(App.state.onboarding.onboardingActive) {
+        var onBoarding = new OnBoarding({parent: this})
+        onBoarding.step2()
+
+        this.listenTo(App.state.onboarding,'change:showTaskLastStep',() => {
+          if (App.state.onboarding.showTaskLastStep) {
+            onBoarding.step4()
+            App.state.onboarding.showTaskLastStep = false
+          }
+        })
+      }
+    }
   },
   addHelpIcon (field) {
     const view = this._fieldViews[field]

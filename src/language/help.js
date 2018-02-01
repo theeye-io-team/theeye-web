@@ -82,5 +82,10 @@ module.exports = {
       datetime: 'pick-a-date',
       frequency: 'Use a "human interval" expression like "1 hour", "3 days", "2 weeks", etc... Leave empty for no repetition'
     }
+  },
+  onboarding: {
+    installer: 'Show installer tutorial.',
+    task: 'Show task tutorial.',
+    script: 'Show script tutorial'
   }
 }

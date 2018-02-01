@@ -21,7 +21,8 @@ var User = {
         email: true,
         desktop: true
       }
-    }
+    },
+    onboardingCompleted: { type: 'boolean', defaultsTo: false }
   },
   beforeCreate: function(values, next) {
     var email = values.email;

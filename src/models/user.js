@@ -32,6 +32,7 @@ const Model = AppModel.extend({
     invitation_token: 'string',
     createdAt: 'date',
     updatedAt: 'date',
+    onboardingCompleted: ['boolean', false, false]
     //notifications: ['object', true, () => {
     //  return {
     //  }

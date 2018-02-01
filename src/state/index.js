@@ -25,6 +25,7 @@ import SessionState from './session'
 import NavbarState from './navbar'
 import HostStatsState from './host-stats'
 import InboxState from './inbox'
+import OnboardingState from './onboarding'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
@@ -69,7 +70,8 @@ const AppState = State.extend({
     searchbox: ['state',false,() => { return new SearchBoxState() }],
     editor: ['state',false,() => { return new EditorState() }],
     hoststatsPage: ['state', true, () => new HostStatsState()],
-    inbox: ['state', true, () => new InboxState()]
+    inbox: ['state', true, () => new InboxState()],
+    onboarding: ['state', false, () => new OnboardingState()]
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)

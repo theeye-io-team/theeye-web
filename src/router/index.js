@@ -12,10 +12,15 @@ const CustomerRoute = require('./customer')
 const WebhookRoute = require('./webhook')
 import DashboardRoute from './dashboard'
 import ChartsRoute from './charts'
+import hopscotch from 'hopscotch'
 
 module.exports = Router.extend({
   execute (callback, args) {
     if (callback) {
+      if (hopscotch.getCurrTour()) {
+        hopscotch.endTour(true)
+      }
+
       let publicRoute = ['login','register','activate','sociallogin', 'passwordreset'].find(route => {
         let routeRegex = new RegExp(route)
         return (routeRegex.test(window.location.pathname)||routeRegex.test(window.location.hash))

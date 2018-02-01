@@ -120,6 +120,7 @@ module.exports.routes = {
   'post /session/refresh':'BearerController.refreshAccessToken',
   'get  /session/profile': 'BearerController.sessionProfile',
   'put  /session/profile/settings': 'BearerController.updateSettings',
+  'put  /session/profile/onboarding': 'BearerController.updateOnboarding',
   // FILES & SCRIPTS
   'post /apiv2/file':'ApiV2Controller.filePut',
   'put /apiv2/file/:id':'ApiV2Controller.filePut',

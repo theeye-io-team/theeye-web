@@ -9,9 +9,10 @@ import TextareaView from 'components/input-view/textarea'
 import FormButtons from 'components/form/buttons'
 // const FileModeConst = require('constants/file-input-mode')
 import FileInputView from 'components/input-view/file'
-import bootbox from 'bootbox'
 import CommonButton from 'components/common-button'
 import { EditorView } from './editor'
+import OnBoarding from 'view/taskOnboarding'
+import OnboardingActions from 'actions/onboarding'
 
 const FilenameInputView = InputView.extend({
   props: {
@@ -152,6 +153,16 @@ module.exports = FormView.extend({
     const buttons = this.buttons = new FormButtons()
     this.renderSubview(buttons)
     buttons.on('click:confirm', () => { this.submitForm() })
+
+    if (!this.model.filename) {
+      if(App.state.onboarding.onboardingActive) {
+        var onBoarding = new OnBoarding({parent: this})
+        this.registerSubview(onBoarding)
+        onBoarding.step3()
+
+        buttons.on('click:confirm', () => { OnboardingActions.showTaskLastStep() })
+      }
+    }
   },
   onEditorDrop (instance, event) {
     const dt = event.dataTransfer
@@ -160,8 +171,10 @@ module.exports = FormView.extend({
     }
   },
   loadExample(event) {
-    event.stopPropagation()
-    event.preventDefault()
+    if(event){
+      event.stopPropagation()
+      event.preventDefault()
+    }
     ScriptActions.getExampleScript(this.filenameInput.extension)
   },
   submitForm () {

@@ -1,5 +1,6 @@
 'use strict'
 
+import App from 'ampersand-app'
 import View from 'ampersand-view'
 import CommonButton from 'components/common-button'
 import Modalizer from 'components/modalizer'
@@ -7,6 +8,7 @@ import TaskFormView from '../form'
 import TaskActions from 'actions/task'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
+import OnBoarding from 'view/taskOnboarding'
 
 import { Script as ScriptTask } from 'models/task'
 import { Scraper as ScraperTask } from 'models/task'
@@ -72,6 +74,12 @@ const TaskCreationWizard = View.extend({
       }),
       this.queryByHook('script-help')
     )
+
+    if(App.state.onboarding.onboardingActive) {
+      var onBoarding = new OnBoarding({parent: this})
+      this.registerSubview(onBoarding)
+      onBoarding.step1()
+    }
   },
   /**
    * @param {Task} task a models/task instance
@@ -95,28 +103,29 @@ const TaskCreationWizard = View.extend({
 module.exports = CommonButton.extend({
   initialize (options) {
     this.title = 'Create a New Task'
-    this.className = 'btn btn-primary'
+    this.className = (options && options.className) || 'btn btn-primary'
     this.iconClass = 'fa fa-plus'
   },
   events: {
-    click (event) {
-      event.preventDefault()
-      event.stopPropagation()
+    'click':'onClick'
+  },
+  onClick(event) {
+    event.preventDefault()
 
-      const wizard = new TaskCreationWizard()
-      const modal = new Modalizer({
-        buttons: false,
-        title: 'Create Task',
-        bodyView: wizard
-      })
+    const wizard = new TaskCreationWizard()
+    wizard.render()
+    const modal = new Modalizer({
+      buttons: false,
+      title: 'Create Task',
+      bodyView: wizard
+    })
 
-      //this.listenTo(modal,'shown',() => { select.focus() })
-      this.listenTo(modal,'hidden',() => {
-        wizard.remove()
-        modal.remove()
-      })
-      this.listenTo(wizard,'submitted',() => { modal.hide() })
-      modal.show()
-    }
+    //this.listenTo(modal,'shown',() => { select.focus() })
+    this.listenTo(modal,'hidden',() => {
+      wizard.remove()
+      modal.remove()
+    })
+    this.listenTo(wizard,'submitted',() => { modal.hide() })
+    modal.show()
   }
 })

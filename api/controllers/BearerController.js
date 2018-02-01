@@ -69,5 +69,20 @@ module.exports = {
 
       res.send(200, { notifications: user.notifications })
     })
+  },
+  updateOnboarding (req, res) {
+    const user = req.user
+    const params = req.params.all()
+
+    user.onboardingCompleted = params.onboardingCompleted
+
+    user.save(err => {
+      if (err) {
+        sails.log.error(err)
+        return res.send(500, 'internal server error')
+      }
+
+      res.send(200, { onboardingCompleted: user.onboardingCompleted })
+    })
   }
 }

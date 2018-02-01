@@ -29,7 +29,7 @@ module.exports = List.extend({
       new HelpIconView({
         color: [255,255,255],
         category: 'title_help',
-        text: HelpTexts.titles.task_page 
+        text: HelpTexts.titles.task_page
       }),
       this.queryByHook('title-help')
     )

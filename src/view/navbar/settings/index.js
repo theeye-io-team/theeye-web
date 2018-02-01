@@ -18,7 +18,7 @@ const Content = View.extend({
 })
 
 module.exports = FullContainer.extend({
-  template: `<div class="full-page-container settings-container"></div>`,
+  template: `<div id="settings-container" class="full-page-container settings-container"></div>`,
   autoRender: true,
   props: {
     visible: ['boolean',false,false]

@@ -2,6 +2,10 @@ import View from 'ampersand-view'
 import App from 'ampersand-app'
 import Clipboard from 'clipboard'
 import NavbarActions from 'actions/navbar'
+import onboarding from './onboarding'
+import hopscotch from 'hopscotch'
+import HelpTexts from 'language/help'
+import HelpIconView from 'components/help-icon'
 
 const config = require('config')
 
@@ -111,7 +115,8 @@ module.exports = View.extend({
     }
   },
   events: {
-    'click [data-hook=go-to-dashboard]':'onClickGoToDashboard'
+    'click [data-hook=go-to-dashboard]':'onClickGoToDashboard',
+    'click [data-hook=start-onboarding]':'onClickStartOnboarding'
   },
   onClickGoToDashboard (event) {
     event.preventDefault()
@@ -119,12 +124,24 @@ module.exports = View.extend({
 
     NavbarActions.hideSettingsMenu()
   },
+  onClickStartOnboarding() {
+    onboarding.start()
+  },
   initialize() {
     this.customerName = App.state.session.customer.name
     this.agentBinary = config.agentBinary
 
     this.listenToAndRun(App.state.navbar.settingsMenu,'change',() => {
       this.updateState(App.state.navbar.settingsMenu)
+    })
+
+    this.listenTo(App.state.navbar.settingsMenu,'change:current_tab change:visible',() => {
+      if (hopscotch.getCurrTour()) {
+        hopscotch.endTour(true)
+      }
+      if(App.state.navbar.settingsMenu.visible === true && App.state.navbar.settingsMenu.current_tab === 'installer' && App.state.onboarding.onboardingActive) {
+        onboarding.start()
+      }
     })
   },
   updateState(state) {
@@ -137,5 +154,13 @@ module.exports = View.extend({
     })
     new Clipboard( this.query('.clipboard-curl-agent-btn') )
     new Clipboard( this.query('.clipboard-windows-curl-agent-btn') )
+
+    this.renderSubview(
+      new HelpIconView({
+        color: [0,77,121],
+        text: HelpTexts.onboarding.installer
+      }),
+      this.queryByHook('start-onboarding')
+    )
   }
 })

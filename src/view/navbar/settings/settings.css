@@ -180,6 +180,7 @@
 }
 .settings-page .tab-pane h3 {
   margin-bottom: 30px;
+  display: inline-block;
 }
 .settings-page .tab-pane h4 {
   margin-bottom: 20px;
@@ -369,4 +370,10 @@
 
 .settings-page .input-group .form-control {
   z-index: 1;
+}
+
+.settings-page .tooltip-inner {
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 300;
 }

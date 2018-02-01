@@ -20,6 +20,8 @@ import MonitorsOptions from './monitors-options'
 import MonitoringOboardingPanel from './monitoring-onboarding'
 import TasksOboardingPanel from './tasks-onboarding'
 
+import onBoarding from './onboarding'
+
 const runAllTasks = (rows) => {
   // doble check here
   if (rows.length>0) {
@@ -141,6 +143,8 @@ module.exports = View.extend({
         this.queryByHook('.admin-container.dashboard')
       )
     }
+
+    this.onBoarding = new onBoarding()
   },
   setUpAndRunningSign: function () {
     if (!this.upandrunningSign) return // upandrunning is disabled
