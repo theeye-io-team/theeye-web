@@ -72,10 +72,13 @@ module.exports = {
         sessionState.logged_in = true
         next()
       },
-      fail: (err) => {
+      fail: (err,xhr) => {
         logger.log('user data fetch failure')
         sessionState.access_token = null
         sessionState.logged_in = false
+        if(!err)
+          err = xhr.statusText
+        bootbox.alert(err)
         next(err)
       }
     })

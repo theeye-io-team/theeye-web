@@ -23,8 +23,8 @@ module.exports = {
           App.state.session.access_token = response.access_token
         } else {
           bootbox.alert('Login error, please try again')
-          App.state.loader.visible = false
         }
+        App.state.loader.visible = false
       },
       fail: (err,xhr) => {
         if (xhr.status == 400) {
