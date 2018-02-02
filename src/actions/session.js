@@ -76,9 +76,6 @@ module.exports = {
         logger.log('user data fetch failure')
         sessionState.access_token = null
         sessionState.logged_in = false
-        if(!err)
-          err = xhr.statusText
-        bootbox.alert(err)
         next(err)
       }
     })
