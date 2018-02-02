@@ -22,7 +22,6 @@ module.exports = {
   update (req, res) {
     var body = req.body
     debug('sns event received')
-    debug(body)
 
     sns.receive(body, (err, message) => {
       if (err) {
