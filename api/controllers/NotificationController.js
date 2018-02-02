@@ -1,4 +1,3 @@
-var AclService = require('../services/acl')
 
 /* global sails, User */
 const LIFECYCLE = require('../../src/constants/lifecycle')
@@ -26,18 +25,13 @@ module.exports = {
 
     debug('topic %s , model_type %s , model.name %s', topic, data.model_type, data.model.name||'no name property')
 
-    // only selected topics which need:
-    //   - persist to db
-    //   - handle topics locally (push & mail)
-    //   - broadcast to another webs
     if (handledTopics.indexOf(event.topic) > -1) {
-      var acl = data.model.task ? data.model.task.acl : data.model.acl
-      // get the users that should be notified
-      // we get the users here, so each notification lib doesn't
-      // have to do the users query/fetch all over again
-      getUsers(data.organization, acl, (error, users) => {
+      var acls = (data.model.task?data.model.task.acl:data.model.acl)||[]
+
+      getUsers(data.organization, acls, (error, users) => {
         if (error) return debug(error)
-        // create a profile (web, mobile) notification
+
+        // create a notification for each user
         createNotifications(event, users, data.organization, (err, notifications) => {
           if (err) return debug(err)
           if (notifications.length===0) return
@@ -71,7 +65,7 @@ module.exports = {
 }
 
 // Returns a user collection for a given customer
-const getUsers = (customerName, acl, callback) => {
+const getUsers = (customerName, acls, callback) => {
   if (!customerName) {
     const err = new Error('I need a customer to find the users')
     return callback(err)
@@ -79,11 +73,16 @@ const getUsers = (customerName, acl, callback) => {
 
   User.find({
     username: { $ne: null },
-    customers: customerName
+    customers: customerName,
+    $or: [
+      { credential: { $in: ['admin','owner','root'] } },
+      { nmail: { $in: acls } }
+    ]
   }, function(error, users) {
-    if(users && users.length) {
-      users = users.filter(user => AclService.isAdmin(user) || acl.includes(user.email))
+    if (!users || !Array.isArray(users) || !users.length) {
+      return callback(null, [])
     }
+
     callback(error, users)
   })
 }
