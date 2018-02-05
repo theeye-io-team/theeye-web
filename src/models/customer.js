@@ -1,6 +1,8 @@
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import config from 'config'
+import merge from 'lodash/merge'
+//import State from 'ampersand-state'
 
 const urlRoot = `${config.app_url}/customer`
 
@@ -18,7 +20,9 @@ const Model = AppModel.extend({
     id: 'string',
     name: 'string',
     description: 'string',
-    config: ['object', false, () => { return Object.assign({}, defaultConfig) }],
+    config: ['object', false, () => {
+      return Object.assign({}, defaultConfig)
+    }],
     creation_date: 'date',
 		last_update: 'date'
   },
@@ -34,7 +38,7 @@ const Model = AppModel.extend({
     }
   },
   parse(attrs) {
-    attrs.config = Object.assign({}, defaultConfig, attrs.config)
+    attrs.config = merge({}, defaultConfig, attrs.config)
     return attrs
   }
 })
