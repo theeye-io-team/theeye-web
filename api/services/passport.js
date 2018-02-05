@@ -267,12 +267,23 @@ passport.sendNewCustomerEMail = function (invitee, customername, next){
 }
 
 passport.inviteMember = function(req, res, data, next) {
-  return this.protocols.local.inviteMember(data, req.supervisor, function(error, user) {
+  return this.protocols.local.inviteMember(data, req.supervisor, function(error, newMember) {
     if(error)
       return next(error)
-    passport.sendNewCustomerEMail( user, data.customer, error => {
-      return next(error, user)
-    });
+    if(newMember.enabled) {
+      passport.sendNewCustomerEMail( newMember, data.customer, error => {
+        return next(error, newMember)
+      });
+    } else {
+      passport.protocols.local.resetActivationToken(newMember, function(error, token){
+        if(error)
+          return next(error)
+        newMember.invitation_token = token;
+        passport.sendUserActivationEmail( req.user, newMember, error => {
+          return next(error, newMember)
+        });
+      })
+    }
   });
 }
 
