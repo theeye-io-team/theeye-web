@@ -11,7 +11,9 @@ const _send = (message,users) => {
   var params = {
     MessageStructure: 'json',
     Message: JSON.stringify({
-      "GCM": "{ \"data\": { \"message\": \"" + message + "\", \"style\": \"inbox\", \"summaryText\": \"%n% New notifications\"} }"
+      "GCM": "{ \"data\": { \"message\": \"" + message + "\", \"style\": \"inbox\", \"summaryText\": \"%n% New notifications\"} }",
+      "APNS_SANDBOX": "{ \"aps\": { \"alert\": \"" + message + "\" } }",
+      "APNS": "{ \"aps\": { \"alert\": \"" + message + "\" } }"
     })
   }
 
@@ -37,39 +39,37 @@ const _send = (message,users) => {
   }
 }
 
-const prepareHostNotification = (monitor) => {
+const prepareHostNotification = (monitor, monitor_event) => {
   var msg = ''
-  if (monitor.state == 'recovered' || (monitor.state == 'normal' && monitor.last_event.event == 'recovered')) {
-    msg = `[HIGH] ${monitor.hostname}. ${monitor.name} recovered.`
-  }
 
-  if (monitor.state == 'updates_stopped') {
-    msg = `[HIGH] ${monitor.hostname}. ${monitor.name} stopped reporting updates.`
+  switch (monitor_event) {
+    case 'updates_started':
+      msg = `${monitor.name} started reporting again.`
+      break
+    case 'updates_stopped':
+      msg = `${monitor.name} stopped reporting updates.`
+      break
+    default:
+      debug('ERROR. event not defined or not handled')
+      break
   }
 
   return msg
 }
 
-const prepareDefaultNotification = (monitor) => {
+const prepareDefaultNotification = (monitor, monitor_event) => {
   var msg = ''
-  var severity = monitor.failure_severity || monitor.last_event.failure_severity
-  if (severity == 'HIGH' || severity == 'CRITICAL') {
-    if(monitor.state == 'recovered' || (monitor.state == 'normal' && monitor.last_event.event == 'recovered'))
-      msg = `[HIGH] ${monitor.hostname}. ${monitor.name} recovered.`
-    else {
-      switch (monitor.state) {
-        case 'updates_stopped':
-          msg = `[HIGH] ${monitor.hostname}. ${monitor.name} stopped reporting updates.`
-          break;
-        case 'agent_stopped':
-          msg = `[HIGH] ${monitor.hostname} host agent stopped reporting updates.`
-          break;
-        case 'agent:worker:error':
-        case 'failure':
-        default:
-          msg = `[HIGH] ${monitor.hostname}. ${monitor.name} checks failed.`
-      }
-    }
+
+  switch (monitor_event) {
+    case 'recovered':
+      msg = `${monitor.name} recovered.`
+      break
+    case 'failure':
+      msg = `${monitor.name} checks failed.`
+      break
+    default:
+      debug('ERROR. event not defined or not handled')
+      break
   }
 
   return msg
@@ -80,25 +80,27 @@ module.exports = {
   send (event, users) {
     if (event.topic === 'monitor-state') {
       const model = event.data.model
-      let msg = prepareMonitorStateChangeNotification(model)
-      _send(msg, users)
+      let monitor_event = event.data.monitor_event
+      let severity = model.failure_severity || model.last_event.failure_severity
+
+      if (severity == 'HIGH' || severity == 'CRITICAL') {
+        let msg = prepareMonitorStateChangeNotification(model, monitor_event)
+        if (msg) _send(msg, users)
+      }
     }
   }
 }
 
-const prepareMonitorStateChangeNotification = (monitor) => {
+const prepareMonitorStateChangeNotification = (monitor, monitor_event) => {
   let msg
   switch (monitor.type) {
-    case 'file': break;
-    case 'psaux': break;
-    case 'dstat': break;
     case 'host':
-      msg = prepareHostNotification(monitor)
+      msg = prepareHostNotification(monitor, monitor_event)
       break
     case 'script':
     case 'process':
     case 'scraper':
-      msg = prepareDefaultNotification(monitor)
+      msg = prepareDefaultNotification(monitor, monitor_event)
       break
     default:
       debug('ERROR. type not defined or not handled')
