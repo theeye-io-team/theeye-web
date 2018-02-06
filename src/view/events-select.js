@@ -13,16 +13,11 @@ module.exports = SelectView.extend({
       }
     ]
 
-    if(Array.isArray(options.filterOptions) && options.filterOptions.length) {
+    if (Array.isArray(options.filterOptions) && options.filterOptions.length) {
       filters = filters.concat(options.filterOptions)
     }
 
-    this.options = new FilteredCollection(
-      App.state.events,
-      {
-        filters: filters
-      }
-    )
+    this.options = new FilteredCollection(App.state.events, { filters })
 
     this.multiple = true
     this.tags = true

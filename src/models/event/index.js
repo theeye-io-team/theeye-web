@@ -10,13 +10,13 @@ import MONITOR from 'constants/monitor'
 
 const displayType = (emitter) => {
   const type = emitter.type
-  if (type===MONITOR.TYPE_FILE) return 'File'
-  if (type===MONITOR.TYPE_PROCESS) return 'Process'
-  if (type===MONITOR.TYPE_SCRAPER) return 'WebCheck'
-  if (type===MONITOR.TYPE_HOST) return 'Host'
-  if (type===MONITOR.TYPE_SCRIPT) return 'Script'
-  if (type===MONITOR.TYPE_DSTAT) return 'Health'
-  if (type===MONITOR.TYPE_PSAUX) return 'Processes'
+  if (type===MONITOR.TYPE_FILE) return 'file'
+  if (type===MONITOR.TYPE_PROCESS) return 'process'
+  if (type===MONITOR.TYPE_SCRAPER) return 'webcheck'
+  if (type===MONITOR.TYPE_HOST) return 'host'
+  if (type===MONITOR.TYPE_SCRIPT) return 'script'
+  if (type===MONITOR.TYPE_DSTAT) return 'health'
+  if (type===MONITOR.TYPE_PSAUX) return 'processes'
 }
 
 //import { Script as ScriptTask } from 'models/task'
@@ -86,44 +86,51 @@ const Model = AppModel.extend({
         let eventName = this.name
         let emitterType = this.emitter._type
         let summary
+        let hostname
+        if (this.emitter.host) {
+          hostname = this.emitter.host.hostname.toLowerCase()
+        }
 
         switch (emitterType) {
           case EMITTER.WEBHOOK:
             summary = `Incomming Webhook ${this.emitter.name} trigger`
             break;
+
           case EMITTER.MONITOR:
             let typeStr = displayType(this.emitter)
             if (eventName === EVENT.RECOVERED) {
               if (this.emitter.type===MONITOR.TYPE_FILE) {
-                summary = `${typeStr} monitor ${this.emitter.name} created`
+                summary = `Monitor ${typeStr}, ${this.emitter.name}, ${hostname}  created`
               } else {
-                summary = `${typeStr} monitor ${this.emitter.name} recovered`
+                summary = `Monitor ${typeStr}, ${this.emitter.name}, ${hostname}  recovered`
               }
             }
             else if (eventName === EVENT.FAILURE) {
-              summary = `${typeStr} monitor ${this.emitter.name} failure`
+              summary = `Monitor ${typeStr}, ${this.emitter.name}, ${hostname} failure`
             }
             else if (eventName === EVENT.STOPPED) {
-              summary = `${typeStr} monitor ${this.emitter.name} stopped`
+              summary = `Monitor ${typeStr}, ${this.emitter.name}, ${hostname} stopped`
             }
             else if (eventName === EVENT.CHANGED) {
-              summary = `${typeStr} monitor ${this.emitter.name} changed`
+              summary = `Monitor ${typeStr}, ${this.emitter.name}, ${hostname} changed`
             }
             break;
+
           case EMITTER.TASK_SCRIPT:
             if (eventName === EVENT.SUCCESS) {
-              summary = `Script task ${this.emitter.name} success`
+              summary = `Task script, ${this.emitter.name}, ${hostname} success`
             }
             if (eventName === EVENT.FAILURE) {
-              summary = `Script task ${this.emitter.name} failure`
+              summary = `Task script, ${this.emitter.name}, ${hostname} failure`
             }
             break
+
           case EMITTER.TASK_SCRAPER:
             if (eventName === EVENT.SUCCESS) {
-              summary = `WebCheck task ${this.emitter.name} success`
+              summary = `Task webcheck, ${this.emitter.name}, ${hostname} success`
             }
             if (eventName === EVENT.FAILURE) {
-              summary = `WebCheck task ${this.emitter.name} failure`
+              summary = `Task webcheck, ${this.emitter.name}, ${hostname} failure`
             }
             break;
         }
