@@ -10,7 +10,7 @@ import acls from 'lib/acls'
 module.exports = State.extend({
   initialize() {
     var self = this
-    if(app.state.session.user.onboardingCompleted===true) {
+    if (App.state.session.user.onboardingCompleted===true) {
       return
     }
 

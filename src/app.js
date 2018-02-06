@@ -18,8 +18,6 @@ const experimentalFeatures = require('app/experimental')
 
 import 'assets/styles'
 
-if (config.env !== 'production') { window.app = App }
-
 // Extends our main app singleton
 App.extend({
   config: config,
