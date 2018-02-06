@@ -11,11 +11,7 @@ MonitorSelect, _, ScraperModal, TagsSelect, bootbox, Tags, $searchbox, debug */
 
 var MonitorsPageInit = (function(){
 
-  const templateWarningMessage = `<div>
-    <p>Warning!</p>
-    <p>You are customizing a monitor that belongs to a template, changes will be only applied to this monitor. </p>
-    <p>Please update your template to make changes available for all.</p>
-  </div>`;
+  const templateWarningMessage = '<div> <p>Warning!</p> <p>You are customizing a monitor that belongs to a template, changes will be only applied to this monitor. </p> <p>Please update your template to make changes available for all.</p> </div>';
 
   var log = debug('eye:web:admin:resources');
   var _users = new App.Collections.Users();
