@@ -76,7 +76,7 @@ const getUsers = (customerName, acls, callback) => {
     customers: customerName,
     $or: [
       { credential: { $in: ['admin','owner','root'] } },
-      { nmail: { $in: acls } }
+      { email: { $in: acls } }
     ]
   }, function(error, users) {
     if (!users || !Array.isArray(users) || !users.length) {
