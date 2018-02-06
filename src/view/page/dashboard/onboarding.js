@@ -77,6 +77,7 @@ module.exports = State.extend({
           showCTAButton: true,
           ctaLabel: 'Done',
           onCTA: function() {
+            OnboardingActions.showOnboarding()
             NavbarActions.toggleSettingsMenu()
             NavbarActions.toggleTab('installer')
             hopscotch.endTour(true)

@@ -110,6 +110,7 @@ var showOnboarding = function(platform) {
     }
   }
 
+  hopscotch.endTour(true)
   hopscotch.startTour(installerTour)
 }
 
