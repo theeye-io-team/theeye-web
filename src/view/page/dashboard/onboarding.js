@@ -5,6 +5,7 @@ import State from 'ampersand-state'
 import NavbarActions from 'actions/navbar'
 import hopscotch from 'hopscotch'
 import 'hopscotch/dist/css/hopscotch.min.css'
+import acls from 'lib/acls'
 
 module.exports = State.extend({
   initialize() {
@@ -17,6 +18,11 @@ module.exports = State.extend({
       if (App.state.dashboard.resourcesDataSynced===true && App.state.dashboard.tasksDataSynced===true) {
         this.stopListening(App.state.dashboard,'change:tasksDataSynced')
         this.stopListening(App.state.dashboard,'change:resourcesDataSynced')
+
+        if (!acls.hasAccessLevel('admin')) {
+          return
+        }
+
         if(App.state.resources.length > 0 && App.state.tasks.length > 0) {
           return
         }
