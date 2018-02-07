@@ -17,6 +17,8 @@ const _send = (message,users) => {
     })
   }
 
+  debug('Sending push notification to users with message: ' + message)
+
   if (users.length) {
     users.forEach(function (user) {
       if (user.notifications && user.notifications['push'] !== true) {
@@ -26,6 +28,8 @@ const _send = (message,users) => {
       if (user.devices) {
         user.devices.forEach(function (device) {
           params.TargetArn = device.endpoint_arn
+          debug('Sending notification to target arn: ' + params.TargetArn)
+
           SNS.publish(params, function (error, data) {
             if (error) {
               debug(error)
