@@ -262,11 +262,8 @@ var UserController = module.exports = {
   registerdevicetoken: function (req, res) {
     var params = req.params.all()
     var userId = params.id
-    
-    if(!params.package_name)
-      return res.send(400, 'Missing package information.');
 
-    var application_arn = params.platform === 'Android' ? sails.config.sns.push_notifications.android : sails.config.sns.push_notifications.ios[params.package_name]
+    var application_arn = params.platform === 'Android' ? sails.config.sns.push_notifications.android : sails.config.sns.push_notifications.ios
 
     User.findOne({ id: userId },(error,user) => {
       if (error) {
