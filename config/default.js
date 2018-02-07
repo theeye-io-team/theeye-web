@@ -18,6 +18,17 @@ module.exports = {
     secret: '692fc164a0c06a9fd02575cf17688c9e',
     expires: 2 * 60 * 60 // in seconds
   },
+  /**
+   *
+   * redis options to pass directly to node redis client
+   * https://www.npmjs.com/package/redis
+   *
+   */
+  redis: {
+    prefix: 'app_',
+    host: '127.0.0.1',
+    port: 6379
+  },
   connections: {
     mongo: {
       adapter: 'sails-mongo',
@@ -79,6 +90,7 @@ module.exports = {
 		region: ''
 	},
   sns: {
+    debug: false,
 		sockets_arn: '',
     push_notifications: {
       application_arn: ''

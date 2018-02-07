@@ -7,9 +7,13 @@
  * For more information on bootstrapping your app, check out:
  * http://sailsjs.org/#documentation
  */
+const redis = require('redis')
 
 module.exports.bootstrap = function (cb) {
-   sails.services.passport.loadStrategies();
+  sails.services.passport.loadStrategies();
+
+  const client = sails.redis = redis.createClient(sails.config.redis)
+
   // It's very important to trigger this callack method when you are finished 
   // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
   cb();

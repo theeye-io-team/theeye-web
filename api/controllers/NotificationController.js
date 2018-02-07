@@ -23,7 +23,7 @@ module.exports = {
     if (!data) return res.send(400, 'Data is required.')
     if (!topic) return res.send(400, 'Topic is required.')
 
-    debug('topic %s , model_type %s , model.name %s', topic, data.model_type, data.model.name||'no name property')
+    debug('topic %s , model_type %s , model.name %s', topic, data.model_type, data.model.name || 'no name property')
 
     if (handledTopics.indexOf(event.topic) > -1) {
       var acls = (data.model.task?data.model.task.acl:data.model.acl)||[]

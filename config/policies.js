@@ -9,17 +9,17 @@ module.exports.policies = {
     'supervisorInitializer'
   ],
   AuthController: {
-    'registeruser':['noSession'],
-    'checkUsernameActivation':['noSession'],
-    'verifyToken':['noSession'],
-    '*':'passport',
+    'registeruser': ['noSession'],
+    'checkUsernameActivation': ['noSession'],
+    'verifyToken': ['noSession'],
+    '*': 'passport'
   },
-  PasswordController: { '*':['noSession'], },
-  ContactController: { '*':['noSession'], },
+  PasswordController: { '*': ['noSession'] },
+  ContactController: { '*': ['noSession'] },
   // SNS receivers . will be deprecated soon
-  EventsController: { 'update':['noSession'], },
-  PalancaController: { 'update':['noSession'], },
-  HostStatsController: { 'update':['noSession'], },
+  EventsController: { 'update': ['noSession'] },
+  // PalancaController: { 'update':['noSession'], },
+  // HostStatsController: { 'update':['noSession'], },
   //
   // bearer session clients controllers
   //
@@ -54,7 +54,7 @@ module.exports.policies = {
       'sessionCustomer',
       'supervisorInitializer'
     ],
-    'create':['noSession']
+    'create': ['noSession']
   },
   InboxController: {
     '*': [
