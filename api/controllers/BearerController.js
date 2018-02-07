@@ -42,6 +42,10 @@ module.exports = {
       const customers = theeye.profile.customers
       const current_customer = customers.find(c => c.name==user.current_customer)
 
+      if(!current_customer) {
+        return res.send(500,'error fetching profile. Profile customer not found.')
+      }
+
       req.supervisor.get({
         route: `${current_customer.name}/customer`,
         success: customer => {
