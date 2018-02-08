@@ -119,7 +119,7 @@ module.exports = {
       fail: (err) => {
         bootbox.alert({
           title: `Settings update error`,
-          message: err.message,
+          message: err.message || 'Request failed',
           callback: () => {
             App.state.loader.visible = false
             if (done) done()
@@ -152,6 +152,33 @@ module.exports = {
 
     this.updateSettings({ desktopExcludes: newSettings }, () => {
       App.state.session.user.trigger('change:notifications')
+    })
+  },
+  updateCustomerIntegrations (settings) {
+    var id = App.state.session.customer.id
+    var data = assign({}, App.state.session.customer.config, settings)
+    App.state.loader.visible = true
+
+    XHR.send({
+      url: `${config.app_url}/customer/${id}/config`,
+      method: 'put',
+      jsonData: data,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (config, xhr) {
+        App.state.loader.visible = false
+        if (xhr.status == 200) {
+          bootbox.alert('Integrations updated.')
+          App.state.session.customer.config = config // || data.config
+        } else {
+          bootbox.alert('Error updating integrations.')
+        }
+      },
+      fail (err, xhr) {
+        App.state.loader.visible = false
+        bootbox.alert('Error updating integrations.')
+      }
     })
   }
 }

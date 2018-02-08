@@ -1,13 +1,13 @@
 import View from 'ampersand-view'
 import App from 'ampersand-app'
-import CustomerActions from 'actions/customer'
-import ElasticsearchFormView from './elasticsearch-form'
-import KibanaFormView from './kibana-form'
-
+import SessionActions from 'actions/session'
 import Modalizer from 'components/modalizer'
 
-import '../settings.css'
+import ElasticsearchFormView from './elasticsearch-form'
+import KibanaFormView from './kibana-form'
+import Ngrok from './ngrok'
 
+import '../settings.css'
 
 module.exports = View.extend({
   template: require('./template.hbs'),
@@ -54,7 +54,9 @@ module.exports = View.extend({
   editElasticsearchUrl: function (event) {
     event.stopPropagation()
 
-    const form = new ElasticsearchFormView({ model: App.state.session.customer })
+    const form = new ElasticsearchFormView({
+      model: App.state.session.customer
+    })
 
     const modal = new Modalizer({
       confirmButton: 'Save',
@@ -72,7 +74,13 @@ module.exports = View.extend({
       form.beforeSubmit()
       if (!form.valid) return
 
-      CustomerActions.updateConfig(App.state.session.customer.id, {kibana: App.state.session.customer.config.kibana, elasticsearch: {enabled: form.data.elasticsearch_enabled, url:form.data.elasticsearch_url}})
+      let data = form.data
+      SessionActions.updateCustomerIntegrations({
+        elasticsearch: {
+          enabled: data.elasticsearch_enabled,
+          url: data.elasticsearch_url
+        }
+      })
       modal.hide()
     })
     modal.show()
@@ -80,7 +88,9 @@ module.exports = View.extend({
   editKibana: function (event) {
     event.stopPropagation()
 
-    const form = new KibanaFormView({ model: App.state.session.customer })
+    const form = new KibanaFormView({
+      model: App.state.session.customer
+    })
 
     const modal = new Modalizer({
       confirmButton: 'Save',
@@ -98,9 +108,22 @@ module.exports = View.extend({
       form.beforeSubmit()
       if (!form.valid) return
 
-      CustomerActions.updateConfig(App.state.session.customer.id, {kibana: form.data.kibana, elasticsearch: App.state.session.customer.config.elasticsearch})
+      SessionActions.updateCustomerIntegrations({
+        kibana: form.data.kibana
+      })
       modal.hide()
     })
     modal.show()
+  },
+  render () {
+    this.renderWithTemplate()
+    this.renderIntegrations()
+  },
+  renderIntegrations () {
+    const ngrok = new Ngrok()
+    this.listenToAndRun(App.state.session.customer, 'change:config', () => {
+      ngrok.updateState(App.state.session.customer.config)
+    })
+    this.renderSubview(ngrok, this.queryByHook('integrations-container'))
   }
 })

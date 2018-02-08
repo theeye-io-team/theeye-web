@@ -3,8 +3,6 @@ import InputView from 'components/input-view'
 import CheckboxView from 'components/checkbox-view'
 import isURL from 'validator/lib/isURL'
 
-import App from 'ampersand-app'
-
 module.exports = FormView.extend({
   initialize: function (options) {
     this.fields = [

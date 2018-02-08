@@ -8,6 +8,7 @@ import HostStatsActions from 'actions/hoststats'
 import JobActions from 'actions/job'
 import NotificationActions from 'actions/notifications'
 import DashboardActions from 'actions/dashboard'
+import HostActions from 'actions/host'
 import config from 'config'
 const logger = require('lib/logger')('app:sockets')
 import OperationsConstants from 'constants/operations'
@@ -57,6 +58,7 @@ module.exports = () => {
               topics: [
                 'monitor-state',
                 'job-crud',
+                'host-integrations-crud',
                 'host-stats',
                 'host-registered',
                 'host-processes'
@@ -75,16 +77,19 @@ module.exports = () => {
                 DashboardActions.loadNewRegisteredHostAgent(event.model)
               },
               'host-stats': event => {
-                HostStatsActions.update('dstat',event.model)
+                HostStatsActions.update('dstat', event.model)
               },
               'host-processes': event => {
-                HostStatsActions.update('psaux',event.model)
+                HostStatsActions.update('psaux', event.model)
               },
               'notification-crud': event => {
                 NotificationActions.add(event.model)
               },
               'monitor-state': (event) => {
                 ResourceActions.update(event.model)
+              },
+              'host-integrations-crud': (event) => {
+                HostActions.update(event.model.id, event.model)
               },
               'job-crud': (event) => {
                 if (
@@ -93,6 +98,7 @@ module.exports = () => {
                   event.operation === OperationsConstants.REPLACE
                 ) {
                   JobActions.update(event.model)
+                  HostStatsActions.updateIntegrationsJobs(event.model)
                 }
               }
             }

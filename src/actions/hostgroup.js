@@ -23,7 +23,7 @@ const Actions = {
 
     XHR.send({
       url: `${config.api_url}/hostgroup`,
-      method: 'post',
+      method: 'POST',
       jsonData: body,
       headers: {
         Accept: 'application/json;charset=UTF-8'
@@ -42,7 +42,7 @@ const Actions = {
 
     XHR.send({
       url: `${config.api_url}/hostgroup/${id}`,
-      method: 'put',
+      method: 'PUT',
       jsonData: body,
       headers: {
         Accept: 'application/json;charset=UTF-8'
@@ -60,7 +60,7 @@ const Actions = {
   remove (id) {
     XHR.send({
       url: `${config.api_url}/hostgroup/${id}`,
-      method: 'delete',
+      method: 'DELETE',
       headers: { Accept:'application/json;charset=UTF-8' },
       done (data,xhr) {
         App.state.hostGroups.remove(id)
@@ -73,7 +73,7 @@ const Actions = {
   },
   fetchHostConfig (id,next) {
     XHR.send({
-      method: 'get',
+      method: 'GET',
       url: `${config.api_url}/host/${id}/config`,
       done (data,xhr) {
         App.state.hostGroupPage.setConfigs(data)
@@ -93,7 +93,7 @@ const Actions = {
   },
   fetchRecipe (id, next) {
     XHR.send({
-      method: 'get',
+      method: 'GET',
       url: `${config.api_v3_url}/recipe/${id}`,
       done: (data,xhr) => {
         next(null, data.instructions)

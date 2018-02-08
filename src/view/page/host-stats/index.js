@@ -5,7 +5,9 @@ import View from 'ampersand-view'
 import $ from 'jquery'
 import each from 'lodash/each'
 import debounce from 'lodash/debounce'
-import './styles.css'
+import './styles.less'
+
+import NgrokIntegrationActions from 'actions/integrations/ngrok'
 
 export default View.extend({
   template: `
@@ -23,25 +25,35 @@ export default View.extend({
       <div class="row">
         <div class="col-xs-12 col-md-6 stats-section">
           <div data-hook="host-container" class="stats-icon-container"> </div>
+        </div>
+
+        <div class="col-xs-12 col-md-6 stats-section">
+          <div class="stats-icon-container">
+            <span class="stats-icon">
+              <i class="fa fa-bar-chart" aria-hidden="true"></i>
+            </span>
+            <h3>Resources Usage</h3>
+          </div>
           <div data-hook="stat-graph-container" class="main-stats gray-zebra"> </div>
         </div>
 
-        <div class="col-xs-12 col-md-6 stats-icon-container">
-          <span class="stats-icon">
-            <i class="fa fa-puzzle-piece" aria-hidden="true"></i>
-          </span>
-          <h3>Host Interfaces</h3>
+        <div class="col-xs-12 col-md-6 stats-section">
+          <div class="stats-icon-container">
+            <span class="stats-icon">
+              <i class="fa fa-puzzle-piece" aria-hidden="true"></i>
+            </span>
+            <h3>Host Interfaces</h3>
+          </div>
           <div data-hook="interfaces-container"></div>
         </div>
-      </div>
 
-      <div class="row">
-        <div class="col-xs-12 stats-section">
+        <div class="col-xs-12 col-md-6 stats-section">
           <div data-hook="processes-container"> </div>
         </div>
       </div>
 
-    </div>`,
+    </div>
+  `,
   props: {
     hostId: ['string', true],
     host: ['state'],
@@ -49,7 +61,7 @@ export default View.extend({
     dstat: ['object'],
     psaux: ['object']
   },
-  initialize: function (options) {
+  initialize (options) {
     this.host = App.state.hoststatsPage.host
     this.resource = App.state.hoststatsPage.resource
     this.listenToAndRun(App.state.hoststatsPage, 'change:dstat', this.updateDstat)
@@ -459,7 +471,7 @@ const HostView = View.extend({
       </span>
       <h3>Server</h3>
       <section data-hook="server">
-        <i data-hook="name"></i>
+        <span class="fa fa-server"></span> <i data-hook="name"></i>
         <br>
         Agent Version <small data-hook="agent_version"></small>
         <p>
@@ -477,6 +489,11 @@ const HostView = View.extend({
             <span data-hook="load_average_15" class="loadAverage" id="lavg15"></span>
           </p>
         </div>
+      </section>
+      <section class="integrations">
+        <br/>
+        <h3>Integrations</h3>
+        <div data-hook="integrations"></div>
       </section>
     </div>`,
   props: {
@@ -567,5 +584,93 @@ const HostView = View.extend({
   },
   update: function () {
     this.dstat = this.parent.dstat
+  },
+  render () {
+    this.renderWithTemplate(this)
+
+    this.renderIntegrations()
+  },
+  renderIntegrations () {
+    let ngrok = App.state.session.customer.config.ngrok
+    if (ngrok.enabled === true) {
+      let view = new NgrokIntegrationsView({
+        model: this.host.integrations.ngrok,
+        host: this.host
+      })
+      this.renderSubview(view, this.queryByHook('integrations'))
+    }
+  }
+})
+
+const NgrokIntegrationsView = View.extend({
+  template: `
+    <div class="ngrok">
+      <span style="cursor:pointer;">
+        <div>Ngrok tunnel</div>
+        <div>
+          <i class="ngrok-switch fa" data-hook="start-ngrok"></i>
+          <span data-hook="tunnel_url"></span>
+        </div>
+      </span>
+    </div>
+  `,
+  props: {
+    host: 'state'
+  },
+  derived: {
+    ngrok_switch: {
+      deps: ['model.active'],
+      fn () {
+        return this.model.active
+      }
+    },
+    ngrok_switch_html: {
+      deps: ['model.active'],
+      fn () {
+        return this.model.active ? 'Stop' : 'Start'
+      }
+    },
+    tunnel_url: {
+      deps: ['model.last_job.result.url'],
+      fn () {
+        return this.model.last_job.result.url
+      }
+    }
+  },
+  bindings: {
+    ngrok_switch: [{
+      hook: 'start-ngrok',
+      type: 'booleanClass',
+      yes: 'fa-stop',
+      no: 'fa-play'
+    },{
+      hook: 'start-ngrok',
+      type: 'booleanClass',
+      yes: 'red',
+      no: 'green'
+    }],
+    ngrok_switch_html: {
+      hook: 'start-ngrok',
+      type: 'innerHTML',
+    },
+    tunnel_url: {
+      hook: 'tunnel_url'
+    }
+  },
+  events: {
+    'click [data-hook=start-ngrok]':'onClickStartNgrokTunnel',
+    'click [data-hook=ngrok-settings]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      App.state.navbar.settingsMenu.visible = true
+      App.state.navbar.settingsMenu.current_tab = 'integrations'
+    }
+  },
+  onClickStartNgrokTunnel (event) {
+    if (this.model.active===true) {
+      NgrokIntegrationActions.stopTunnel(this.host.id)
+    } else {
+      NgrokIntegrationActions.startTunnel(this.host.id)
+    }
   }
 })

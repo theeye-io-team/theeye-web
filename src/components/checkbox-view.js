@@ -17,6 +17,7 @@ module.exports = CheckboxView.extend({
   `,
   props: {
     visible: ['boolean',false,true],
+    value: 'boolean'
   },
   bindings: assign({}, CheckboxView.prototype.bindings, {
     visible: { type: 'toggle' },

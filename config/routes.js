@@ -111,7 +111,7 @@ module.exports.routes = {
    *
    * GENERIC API V2 ENDPOINTS. PROXY TO THE API SUPERVISOR
    *
-   * USE BEARER AUTHENTICATION METHOD
+   * USE BEARER AUTHENTICATION METHOD. COOKIES & SESSION ARE DISABLED
    *
    */
   // SESSION
@@ -126,7 +126,6 @@ module.exports.routes = {
   'put /apiv2/file/:id':'ApiV2Controller.filePut',
   'get /apiv2/file/:id':'ApiV2Controller.fileGet',
   'delete /apiv2/file/:id': 'ApiV2Controller.remove',
-  'get /apiv3/file/:id/linkedmodels' : 'ApiV3Controller.getFileLinkedModels',
   //'get /apiv2/file/:id/download':'ApiV2Controller.download',
   // TASK SCHEDULER
   'post /apiv2/task/schedule': 'ApiV2Controller.createSchedule',
@@ -144,8 +143,11 @@ module.exports.routes = {
   // new Generic Proxied Endpoints. Supervisor API V3. without customer in the route
   //
   //
-  'get /apiv3/:resource/:id*':'ApiV3Controller.get',
-  'get /apiv3/:resource*':'ApiV3Controller.fetch',
+  'get /apiv3/file/:id/linkedmodels':'ApiV3Controller.getFileLinkedModels',
+  'patch /apiv3/:route*':'ApiV3Controller.patch',
+  'put /apiv3/:route*':'ApiV3Controller.update',
+  'get /apiv3/:route*':'ApiV3Controller.get',
+  'get /apiv3/:route*':'ApiV3Controller.fetch',
   /*
    *
    * GENERIC API V1 ENDPOINTS. PROXY TO THE API SUPERVISOR

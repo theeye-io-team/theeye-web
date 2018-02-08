@@ -5,8 +5,8 @@ var Notification = {
   tableName: 'web_notification',
   attributes: {
     //customer_id: { type: 'string', required: true, notNull: true },
-    customer_name: { type: 'string', required: true, notNull: true },
-    user_id: { type: 'string', required: true, notNull: true },
+    customer_name: { type: 'string', required: true, notNull: true, index: true },
+    user_id: { type: 'string', required: true, notNull: true, index: true },
     topic: { type: 'string' },
     event_id: { type: 'string' },
     read: { type: 'boolean', defaultsTo: false },

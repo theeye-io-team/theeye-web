@@ -23,7 +23,7 @@ import HostGroupPageState from './hostgroup-page'
 import DashboardPageState from './dashboard-page'
 import SessionState from './session'
 import NavbarState from './navbar'
-import HostStatsState from './host-stats'
+import HostStatsPageState from './hoststats-page'
 import InboxState from './inbox'
 import OnboardingState from './onboarding'
 
@@ -69,9 +69,9 @@ const AppState = State.extend({
     register: ['state',false,() => { return new RegisterState() }],
     searchbox: ['state',false,() => { return new SearchBoxState() }],
     editor: ['state',false,() => { return new EditorState() }],
-    hoststatsPage: ['state', true, () => new HostStatsState()],
-    inbox: ['state', true, () => new InboxState()],
-    onboarding: ['state', false, () => new OnboardingState()]
+    onboarding: ['state', false, () => new OnboardingState()],
+    hoststatsPage: ['state', true, () => new HostStatsPageState()],
+    inbox: ['state', true, () => new InboxState()]
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)

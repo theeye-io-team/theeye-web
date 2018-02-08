@@ -119,7 +119,7 @@ module.exports = Router.extend({
       route.passwordResetRoute()
     },
     'admin/hoststats/:id': function (id) {
-      return import(/* webpackChunkName: "router-host-stats" */ './host-stats')
+      return import(/* webpackChunkName: "router-hoststats" */ './hoststats')
         .then(HostStatsRouter => {
           const route = new HostStatsRouter()
           route.route('index', {id: id})

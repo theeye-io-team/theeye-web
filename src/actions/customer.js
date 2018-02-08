@@ -124,34 +124,6 @@ module.exports = {
     });
     modal.hide()
   },
-  updateConfig (id, specs) {
-    var data = { config: specs }
-    App.state.loader.visible = true
-
-    var customer = new Customer({ id: id })
-    customer.set(data)
-    XHR.send({
-      url: `${config.app_url}/customer/${id}/config`,
-      method: 'put',
-      jsonData: data,
-      headers: {
-        Accept: 'application/json;charset=UTF-8'
-      },
-      done (response,xhr) {
-        App.state.loader.visible = false
-        if (xhr.status == 200) {
-          bootbox.alert('Integrations updated.',function(){ });
-          App.state.session.customer.config = customer.config
-        } else {
-          bootbox.alert('Error updating integrations.',function(){ });
-        }
-      },
-      fail (err,xhr) {
-        App.state.loader.visible = false
-        bootbox.alert('Error updating integrations.',function(){ });
-      }
-    })
-  },
   getAgentCredentials () {
     XHR.send({
       url: `${config.app_url}/customer/agent`,

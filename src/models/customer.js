@@ -11,6 +11,12 @@ const defaultConfig = {
   elasticsearch: {
     enabled: false,
     url: ''
+  },
+  ngrok: {
+    enabled: false,
+    address: '',
+    authtoken: '',
+    protocol: ''
   }
 }
 

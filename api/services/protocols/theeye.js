@@ -228,25 +228,28 @@ exports.getCustomerAgentCredentials = function (customer,supervisor,done) {
     },
     success: users => {
       if (!users||users.length===0) {
-        return done(null,[]);
+        return done(null,[])
       }
-      var user = users[0];
+      var user = users[0]
+
       user.curl = format(
         'curl -s "%s" | bash -s "%s" "%s" "%s" ',
         sails.config.application.agentInstallerUrl.linux,
         user.client_id,
         user.client_secret,
         user.customers[0].name // agents MUST have only one customer
-      );
+      )
+
       user.windowsCurl = format(
         'powershell -command "& {&"Invoke-WebRequest" -uri "%s" -outFile agent-installer.ps1}" && powershell.exe -ExecutionPolicy ByPass -File agent-installer.ps1 "%s" "%s" "%s" ',
         sails.config.application.agentInstallerUrl.windows,
         user.client_id,
         user.client_secret,
         user.customers[0].name // agents MUST have only one customer
-      );
-      return done(null, user);
+      )
+
+      return done(null, user)
     },
     failure: err => done(err)
-  });
+  })
 }

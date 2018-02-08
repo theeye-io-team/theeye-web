@@ -12,13 +12,13 @@ const apibase = '/apiv3/'
 module.exports = {
   /**
    * @method GET
-   * @route /apiv3/:resource/:id
+   * @route /apiv3/:route*
    *
    * @param {String} resource
    * @param {String} id
    */
   get (req, res, next) {
-    sails.log.debug('get api url ' + req.originalUrl)
+    sails.log.debug('getting api url ' + req.originalUrl)
     var route = req.originalUrl.replace(apibase,'')
     req.supervisor.get({
       route: route,
@@ -29,12 +29,12 @@ module.exports = {
   },
   /**
    * @method GET
-   * @route /apiv3/:resource
+   * @route /apiv3/:route*
    *
    * @param {String} resource
    */
   fetch (req, res, next) {
-    sails.log.debug('fetch api url ' + req.originalUrl)
+    sails.log.debug('fetching api url ' + req.originalUrl)
     var route = req.originalUrl.replace(apibase,'')
     req.supervisor.fetch({
       route: route,
@@ -42,6 +42,42 @@ module.exports = {
       failure: (error, apiRes) => res.send(error.statusCode, error),
       success: (body, apiRes) => res.json(body)
     })
+  },
+  /**
+   * @method PATCH
+   * @route /apiv3/:route
+   *
+   * @param {String} resource
+   * @param {String} id
+   */
+  patch (req, res, next) {
+    sails.log.debug('patching api url ' + req.originalUrl);
+    var route = req.originalUrl.replace(apibase,'')
+    req.supervisor.patch({
+      route: route,
+      query: req.query,
+      body: req.body,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
+    });
+  },
+  /**
+   * @method PUT
+   * @route /apiv3/:route
+   *
+   * @param {String} resource
+   * @param {String} id
+   */
+  update (req, res, next) {
+    sails.log.debug('putting api url ' + req.originalUrl);
+    var route = req.originalUrl.replace(apibase,'')
+    req.supervisor.update({
+      route: route,
+      query: req.query,
+      body: req.body,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
+    });
   },
   // GET
   getFileLinkedModels (req, res) {

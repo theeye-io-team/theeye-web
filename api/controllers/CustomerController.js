@@ -60,14 +60,14 @@ var CustomerController = module.exports = {
    * @param {String} id
    */
   editconfig (req, res) {
-    var config = req.body.config;
+    var config = req.body
     if (!config) {
       res.send(400, 'Integrations config is missing.')
     }
     req.supervisor.patch({
       route:`/customer/${req.params.id}/config`,
-      body: {config: config},
-      success: customer => res.json(200,customer),
+      body: config,
+      success: config => res.json(200, config),
       failure: err => res.send(err.statusCode,err)
     });
   },

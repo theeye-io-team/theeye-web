@@ -21,15 +21,10 @@ module.exports = {
       res.send(403, JSON.stringify({ message: 'forbiden' }))
     }
 
-    // if (!Array.isArray(topics) || topics.length===0) {
-    //   res.send(400, JSON.stringify({
-    //     message: 'please provide some topics to subscribe'
-    //   }))
-    // }
-
     if (!Array.isArray(topics)) {
       topics = []
     }
+
     // force notification-crud subscription
     socket.join(customer + ':' + req.user.id + ':notification-crud')
     sails.log.debug('client subscribed to', customer + ':' + req.user.id + ':notification-crud')
@@ -41,5 +36,15 @@ module.exports = {
     }
 
     res.json({ message: 'subscription success' })
+  },
+  /**
+   *
+   * unsubscribe all
+   *
+   */
+  unsubscribe (req, res) {
+    const socket = req.socket
+    const user = req.user
+    const customer = req.user.current_customer
   }
 }

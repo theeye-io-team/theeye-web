@@ -5,8 +5,7 @@ import isMongoId from 'validator/lib/isMongoId'
 
 //import { Model as Host } from 'models/host'
 
-const ScriptJob = require('./job').ScriptJob
-const ScraperJob = require('./job').ScraperJob
+const JobModel = require('models/job')
 const ScriptTemplate = require('./template').Script
 const ScraperTemplate = require('./template').Scraper
 const config = require('config')
@@ -54,7 +53,7 @@ const Script = ScriptTemplate.extend({
   },
   children: {
     //host: Host,
-    lastjob: ScriptJob,
+    lastjob: JobModel.ScriptJob,
     template: ScriptTemplate,
   },
   serialize () {
@@ -98,7 +97,7 @@ const Scraper = ScraperTemplate.extend({
   },
   children: {
     //host: Host,
-    lastjob: ScraperJob,
+    lastjob: JobModel.ScraperJob,
     template: ScraperTemplate,
   },
   serialize () {

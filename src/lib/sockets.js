@@ -52,8 +52,8 @@ function SocketsWrapper (options) {
 
   for (let event in options.events) {
     socket.on(event, function(message){
-      options.events[event](message);
-    });
+      options.events[event](message)
+    })
   }
 
   var emit = socket.emit

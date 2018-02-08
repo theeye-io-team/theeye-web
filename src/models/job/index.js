@@ -1,8 +1,13 @@
 import State from 'ampersand-state'
+import AppModel from 'lib/app-model'
 import LIFECYCLE from 'constants/lifecycle'
 import { Model as User } from 'models/user'
+const config = require('config')
 
-const BaseJob = State.extend({
+const urlRoot = `${config.api_url}/job`
+
+const BaseJob = AppModel.extend({
+  urlRoot: urlRoot,
   props: {
     id: 'string',
     user_id: 'string',
@@ -36,6 +41,19 @@ const BaseJob = State.extend({
         return LIFECYCLE.inProgress(this.lifecycle)
       }
     }
+  }
+})
+
+const ScriptJobResult = State.extend({
+  props: {
+    code: 'any',
+    signal: 'any',
+    killed: ['boolean',false,false],
+    lastline: ['string',false],
+    stdout: ['string',false],
+    stderr: ['string',false],
+    log: ['string',false],
+    times: ['object',false,()=>{ return {} }]
   }
 })
 
@@ -80,30 +98,32 @@ const ScraperJobResult = State.extend({
   }
 })
 
-const ScraperJob = BaseJob.extend({
-  children: {
-    result: ScraperJobResult
-  }
-})
-
-const ScriptJobResult = State.extend({
+const NgrokIntegrationResult = State.extend({
   props: {
-    code: 'any',
-    signal: 'any',
-    killed: ['boolean',false,false],
-    lastline: ['string',false],
-    stdout: ['string',false],
-    stderr: ['string',false],
-    log: ['string',false],
-    times: ['object',false,()=>{ return {} }]
+    url: 'string'
   }
 })
 
-const ScriptJob = BaseJob.extend({
+exports.ScriptJob = BaseJob.extend({
   children: {
     result: ScriptJobResult
   }
 })
 
-exports.ScriptJob = ScriptJob
-exports.ScraperJob = ScraperJob
+exports.ScraperJob = BaseJob.extend({
+  children: {
+    result: ScraperJobResult
+  }
+})
+
+exports.NgrokIntegrationJob = BaseJob.extend({
+  props: {
+    address: 'string',
+    protocol: 'string',
+    //authtoken: 'string', // private
+    operation: 'string'
+  },
+  children: {
+    result: NgrokIntegrationResult
+  }
+})
