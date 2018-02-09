@@ -610,6 +610,7 @@ const NgrokIntegrationsView = View.extend({
         <div>
           <i class="ngrok-switch fa" data-hook="start-ngrok"></i>
           <span data-hook="tunnel_url"></span>
+          <span data-hook="ngrok_error"></span>
         </div>
       </span>
     </div>
@@ -635,6 +636,15 @@ const NgrokIntegrationsView = View.extend({
       fn () {
         return this.model.last_job.result.url
       }
+    },
+    ngrok_error: {
+      deps: ['model.last_job.result.details','model.last_job.state'],
+      fn () {
+        if (this.model.last_job.state==='failure') {
+          return this.model.last_job.result.details.err
+        }
+        return ''
+      }
     }
   },
   bindings: {
@@ -655,6 +665,9 @@ const NgrokIntegrationsView = View.extend({
     },
     tunnel_url: {
       hook: 'tunnel_url'
+    },
+    ngrok_error: {
+      hook: 'ngrok_error'
     }
   },
   events: {

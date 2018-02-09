@@ -100,7 +100,11 @@ const ScraperJobResult = State.extend({
 
 const NgrokIntegrationResult = State.extend({
   props: {
-    url: 'string'
+    url: 'string',
+    details: 'object',
+    status_code: 'number',
+    error_code: 'number',
+    message: 'string'
   }
 })
 
