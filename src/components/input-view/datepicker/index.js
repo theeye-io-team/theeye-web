@@ -44,18 +44,26 @@ module.exports = InputView.extend({
     selector: ['string', false, 'input']
   },
   initialize (options) {
-    InputView.prototype.initialize.apply(this, arguments)
     this.options = options || {}
     this.options.defaultDate = options.value
     this.options.utc = true
-    this.shouldValidate = false
+
+    InputView.prototype.initialize.apply(this, arguments)
   },
   render () {
     this.renderWithTemplate(this)
     const input = this.query(this.selector)
     const options = this.options
-    options.onChange = (e) => this.onDateChange(e)
-    options.onReady = (e) => this.onDateChange(e)
+    options.onChange = [
+      (selectedDates, dateStr, instance) => {
+        this.onDateChange()
+      }
+    ]
+    //options.onReady = [
+    //  (selectedDates, dateStr, instance) => {
+    //    this.onDateChange()
+    //  }
+    //]
 
     // Flatpickr.localize(FlatpickrI18n.es)
     this.flatpickr = new Flatpickr(input, this.options)
@@ -65,7 +73,7 @@ module.exports = InputView.extend({
     this.listenTo(this, 'change:inputValue', this.onInputValueChanged)
 
     this.renderSubview(this.clearBtn, this.queryByHook('input-container'))
-    this.onDateChange()
+    //this.onDateChange()
   },
   onInputValueChanged (event) {
     if (this.inputValue.length > 0) {
@@ -77,23 +85,30 @@ module.exports = InputView.extend({
   onClickClear (event) {
     this.clear()
   },
-  onDateChange (event) {
+  onDateChange () {
     if (!this.flatpickr) return // Flatpickr trigger ready before returning the instance
-
-    this.shouldValidate = true
+    //this.shouldValidate = true
     this.setValue(this.flatpickr.selectedDates)
     this.handleChange()
   },
   beforeSubmit () {
-    this.shouldValidate = true
     this.setValue(this.flatpickr.selectedDates)
+    this.shouldValidate = true
     this.runTests()
   },
   clear () {
     this.flatpickr.clear()
   },
-  setValue (value) {
+  setValue (value, skipValidation) {
     this.inputValue = value
+
+    this.trigger('change:inputValue') // force change. value is always the same array 
+
+    if (!skipValidation && !this.getErrorMessage()) {
+      this.shouldValidate = true;
+    } else if (skipValidation) {
+      this.shouldValidate = false;
+    }
     return
   },
   remove () {

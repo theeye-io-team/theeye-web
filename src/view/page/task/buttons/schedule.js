@@ -7,14 +7,15 @@ import InputView from 'components/input-view'
 import Datepicker from 'components/input-view/datepicker'
 import AmpersandCollection from 'ampersand-collection'
 import AmpersandModel from 'ampersand-model'
+import MinMaxTimePlugin from 'flatpickr/dist/plugins/minMaxTimePlugin'
 
 import { createSchedule } from 'actions/schedule'
 import bootbox from 'bootbox'
 const HelpTexts = require('language/help')
 
-var humanInterval = require('lib/human-interval')
-var CronTime = require('cron').CronTime
-var moment = require('moment-timezone')
+const humanInterval = require('lib/human-interval')
+const CronTime = require('cron').CronTime
+const moment = require('moment-timezone')
 
 const ModalButtons = View.extend({
   template: `
@@ -92,6 +93,7 @@ const ScheduleForm = FormView.extend({
   },
   initialize (options) {
     this.nextDates = new AmpersandCollection()
+
     const frequencyInput = new InputView({
       label: 'Then repeat every',
       name: 'frequency',
@@ -123,24 +125,43 @@ const ScheduleForm = FormView.extend({
       ]
     })
 
+    let minMaxTable = {}
+    let now = moment().add(5, 'minutes')
+    minMaxTable[ now.format('YYYY-MM-DD') ] = {
+      minTime: now.format('HH:mm')
+    }
+
     const initialDateInput = new Datepicker({
       minDate: 'today',
       enableTime: true,
+      plugins: [
+        new MinMaxTimePlugin({ minMaxTable })
+      ],
       required: true,
       altInput: false,
-      label: 'When shall I run? *',
+      label: 'When shall I run first? *',
       name: 'datetime',
       dateFormat: 'F J, Y at H:i',
-      value: '',
+      value: new Date( moment().add(5, 'minutes').format() ),
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label',
       placeholder: 'click to pick',
       tests: [
-        item => {
-          if (item.length === 0) {
+        items => {
+          if (items.length === 0) {
             return 'Can\'t schedule without a date, please pick one'
           }
-          return ''
+          return
+        },
+        items => {
+          let now = moment(new Date())
+          let picked = moment(items[0])
+
+          if (picked.isBefore(now) === true) {
+            return 'Can\t schedule a task to run in the past'
+          }
+
+          return
         }
       ]
     })
@@ -208,7 +229,9 @@ const ScheduleForm = FormView.extend({
     event.preventDefault()
 
     this.beforeSubmit()
-    if (!this.valid) return
+    if (!this.isValid()) {
+      return
+    }
 
     const data = this.prepareData(this.data)
 
