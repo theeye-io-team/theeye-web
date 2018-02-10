@@ -39,9 +39,8 @@ const TaskButtonsView = View.extend({
         if (lifecycle === LIFECYCLE.READY) return 'fa fa-spin fa-refresh'
         if (lifecycle === LIFECYCLE.ASSIGNED) return 'fa fa-spin fa-refresh remark-success'
         if (isCompleted(lifecycle)) {
-          if (state === 'success') return 'fa fa-check remark-success'
           if (state === 'failure') return 'fa fa-exclamation remark-alert'
-          else return 'fa fa-question remark-warning'
+          return 'fa fa-check remark-success'
         }
         if (lifecycle === LIFECYCLE.CANCELED) {
           return 'fa fa-ban remark-alert'
