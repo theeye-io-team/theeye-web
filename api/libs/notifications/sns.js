@@ -75,6 +75,9 @@ module.exports = {
       } else {
         debug('Processing SNS message')
         deserializeMessage(data.Message, (err, originalMessage) => {
+          if (err) {
+            return next( new Error('message retrieval failed') )
+          }
           return next(null, originalMessage)
         })
       }
@@ -140,8 +143,15 @@ const deserializeMessage = (data, next) => {
 
     let cmpBuffer = Buffer.from(data, 'base64')
     zlib.unzip(cmpBuffer, (err, uncmpBuffer) => {
-      let msg = uncmpBuffer.toString('ascii')
-      next(err, JSON.parse(msg))
+      try {
+        let msg = uncmpBuffer.toString('ascii')
+        let data = JSON.parse(msg)
+      } catch (e) {
+        debug(e)
+        return next(e)
+      }
+
+      next(null, data)
     })
   })
 }
