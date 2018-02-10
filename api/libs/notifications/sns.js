@@ -146,12 +146,11 @@ const deserializeMessage = (data, next) => {
       try {
         let msg = uncmpBuffer.toString('ascii')
         let data = JSON.parse(msg)
+        return next(null, data)
       } catch (e) {
         debug(e)
         return next(e)
       }
-
-      next(null, data)
     })
   })
 }
