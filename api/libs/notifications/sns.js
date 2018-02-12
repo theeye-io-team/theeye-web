@@ -107,23 +107,32 @@ const parseJsonMessageString = (msg) => {
  *
  */
 const serializeMessage = (msg, next) => {
-  zlib.gzip( JSON.stringify(msg), (err, cmpBuffer) => {
-    if (err) {
-      debug('%o',err)
-      return next(err)
-    }
-
-    // result in base 64
-    let uid = uuidv1()
+  let uid = uuidv1()
+  compressMessage(msg, (err, data) => {
     sails.redis.set(
-      uid, cmpBuffer.toString('base64'),
+      uid, data,
       'EX', redisExpires,
-      function () {
-        //if (err) debug('%o',err)
+      function (err) {
+        if (err) debug('%o',err)
+
         next(err, uid)
       }
     )
   })
+}
+
+const compressMessage = (msg, next) => {
+  var data = JSON.stringify(msg) // convert to json string before compress
+
+  return next(null, data) // return uncompressed. we have to handle charset before, or deserialization will fail
+
+  //zlib.gzip(data, (err, cmpBuffer) => {
+  //  if (err) {
+  //    debug('%o',err)
+  //    return next(err)
+  //  }
+  //  next(err, cmpBuffer.toString('base64'))
+  //})
 }
 
 const deserializeMessage = (data, next) => {
@@ -141,16 +150,29 @@ const deserializeMessage = (data, next) => {
       return next(err)
     }
 
-    let cmpBuffer = Buffer.from(data, 'base64')
-    zlib.unzip(cmpBuffer, (err, uncmpBuffer) => {
-      try {
-        let msg = uncmpBuffer.toString('ascii')
-        let data = JSON.parse(msg)
-        return next(null, data)
-      } catch (e) {
-        debug(e)
-        return next(e)
-      }
-    })
+    uncompressMessage(data, next)
   })
+}
+
+const uncompressMessage = (data, next) => {
+
+  try {
+    let msg = JSON.parse(data)
+    return next(null, msg)
+  } catch (e) {
+    debug(e)
+    return next(e)
+  }
+
+  //let cmpBuffer = Buffer.from(data, 'base64')
+  //zlib.unzip(cmpBuffer, (err, uncmpBuffer) => {
+  //  try {
+  //    let msg = uncmpBuffer.toString('utf8') // <<< this is not always utf8, also could be ascii , in which case JSON.parse will fail
+  //    let data = JSON.parse(msg)
+  //    return next(null, data)
+  //  } catch (e) {
+  //    debug(e)
+  //    return next(e)
+  //  }
+  //})
 }
