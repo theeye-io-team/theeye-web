@@ -128,14 +128,15 @@ const ScheduleForm = FormView.extend({
     let minMaxTable = {}
     let now = moment().add(5, 'minutes')
     minMaxTable[ now.format('YYYY-MM-DD') ] = {
-      minTime: now.format('HH:mm')
+      minTime: now.format('HH:mm'),
+      maxTime: "23:59"
     }
 
     const initialDateInput = new Datepicker({
       minDate: 'today',
       enableTime: true,
       plugins: [
-        new MinMaxTimePlugin({ minMaxTable })
+        new MinMaxTimePlugin({ table: minMaxTable })
       ],
       required: true,
       altInput: false,
@@ -158,7 +159,7 @@ const ScheduleForm = FormView.extend({
           let picked = moment(items[0])
 
           if (picked.isBefore(now) === true) {
-            return 'Can\t schedule a task to run in the past'
+            return 'Can\'t schedule a task to run in the past'
           }
 
           return
@@ -229,9 +230,7 @@ const ScheduleForm = FormView.extend({
     event.preventDefault()
 
     this.beforeSubmit()
-    if (!this.isValid()) {
-      return
-    }
+    if (!this.valid) return
 
     const data = this.prepareData(this.data)
 

@@ -14,7 +14,7 @@ var showOnboarding = function(platform) {
       {
         target: document.querySelectorAll('[data-tutorial=linux-onboarding]')[0],
         title: "Linux Agent installation",
-        content: "First of all, open a CMD console.",
+        content: "First of all, open a Terminal.",
         placement: "left",
         yOffset: -20,
         xOffset: -20
@@ -22,7 +22,7 @@ var showOnboarding = function(platform) {
       {
         target: document.querySelectorAll('[data-tutorial=linux-onboarding]')[1],
         title: "Linux Agent installation",
-        content: "Make sure you got administration privilegies in order to run the installation.",
+        content: "Make sure you have got administrator privileges in order to run the installation.",
         placement: "left",
         yOffset: -20,
         xOffset: -20
@@ -30,7 +30,7 @@ var showOnboarding = function(platform) {
       {
         target: document.querySelectorAll('[data-tutorial=linux-onboarding]')[2],
         title: "Linux Agent installation",
-        content: "Copy and paste and run the installation script.",
+        content: "Copy/paste and run the installation script.",
         placement: "left",
         yOffset: -20,
         xOffset: -20
@@ -46,7 +46,7 @@ var showOnboarding = function(platform) {
       {
         target: document.querySelectorAll('[data-tutorial=linux-onboarding]')[4],
         title: "Linux Agent installation",
-        content: "Once installation is completed, you'll see a new monitor on your dashboard.",
+        content: "Once installation is completed, you'll see it appears in your dashboard.",
         placement: "left",
         yOffset: -20,
         xOffset: -20
@@ -69,7 +69,7 @@ var showOnboarding = function(platform) {
       {
         target: document.querySelectorAll('[data-tutorial=windows-onboarding]')[1],
         title: "Windows Agent installation",
-        content: "Make sure you got administration privilegies in order to run the installation.",
+        content: "Make sure you have got administrator privileges in order to run the installation.",
         placement: "left",
         yOffset: -20,
         xOffset: -20
@@ -93,7 +93,7 @@ var showOnboarding = function(platform) {
       {
         target: document.querySelectorAll('[data-tutorial=windows-onboarding]')[4],
         title: "Windows Agent installation",
-        content: "Once installation is completed, you'll see a new monitor on your dashboard.",
+        content: "Once installation is completed, you'll see it appears in your dashboard.",
         placement: "left",
         yOffset: -20,
         xOffset: -20
