@@ -281,13 +281,27 @@ var UserController = module.exports = {
             return res.send(500, 'internal server error');
           }
 
-          var userNotification = user.devices || []
-          var index = userNotification.findIndex(elem => elem.uuid == params.uuid)
+          user.devices = user.devices || []
+          var index = user.devices.findIndex(elem => elem.uuid == params.uuid)
           if (index > -1) {
-            userNotification[index].device_token = params.device_token
-            userNotification[index].endpoint_arn = data.EndpointArn
+            if(user.devices[index].endpoint_arn !== data.EndpointArn) {
+              //if new endpoint arn for an existant uuid, delete previous endpoint arn
+              SNS.deleteEndpoint({
+                EndpointArn: user.devices[index].endpoint_arn
+              }, function(error, data) {
+                if (error) {
+                  debug('Error deleting previous Endpoint Arn.')
+                  debug(error);
+                } else {
+                  debug('Deleted previous Endpoint Arn.')
+                }
+              })
+            }
+
+            user.devices[index].device_token = params.device_token
+            user.devices[index].endpoint_arn = data.EndpointArn
           } else {
-            userNotification.push({
+            user.devices.push({
               uuid: params.uuid,
               device_token: params.device_token,
               platform: params.platform,
@@ -295,7 +309,7 @@ var UserController = module.exports = {
             })
           }
 
-          User.update({id: userId}, {devices: userNotification}).exec((error,user) => {
+          User.update({id: userId}, {devices: user.devices}).exec((error,user) => {
             if (error) {
               debug(error);
               return res.send(500, 'internal server error');

@@ -33,7 +33,8 @@ const _send = (message,users) => {
           SNS.publish(params, function (error, data) {
             if (error) {
               debug(error)
-              retryNotification(user, device, params)
+              debug('Error sending notification, deleting endpoint arn: ' + params.TargetArn)
+              errorHandler(user, device)
             } else {
               debug('Push notification sent.')
             }
@@ -44,53 +45,29 @@ const _send = (message,users) => {
   }
 }
 
-const retryNotification = (user, device, params) => {
-  //If error, create a new arn endpoint for the device and retry send notification.
-  debug('Retrying notification for user: ' + user.id)
-  //delete previous device endpoint
+const errorHandler = (user, device) => {
   SNS.deleteEndpoint({
     EndpointArn: device.endpoint_arn
   }, function(error, data) {
     if (error) {
-      debug('Error deleting previous Endpoint Arn')
+      debug('Error deleting previous Endpoint Arn.')
       debug(error);
       return
     }
 
-    //create new device endpoint
-    var application_arn = device.platform === 'Android' ? sails.config.sns.push_notifications.android : sails.config.sns.push_notifications.ios
-    SNS.createPlatformEndpoint({
-      PlatformApplicationArn: application_arn,
-      Token: device.device_token,
-      CustomUserData: user.id
-    }, function(error, data) {
+    //remove user device on db
+    user.devices = user.devices || []
+    var index = user.devices.findIndex(elem => elem.uuid == device.uuid)
+    if (index > -1) {
+      user.devices.splice(index, 1)
+    }
+    User.update({id: user.id}, {devices: user.devices}).exec((error,user) => {
       if (error) {
-        debug('Error creating new Endpoint Arn')
+        debug('Error updating user devices.')
         debug(error);
         return
       }
-
-      //update user device on db
-      var index = user.devices.findIndex(elem => elem.uuid == device.uuid)
-      if (index > -1) {
-        user.devices[index].endpoint_arn = data.EndpointArn
-        params.TargetArn = data.EndpointArn
-      }
-      User.update({id: user.id}, {devices: user.devices}).exec((error,user) => {
-        if (error) {
-          debug('Error updating user devices.')
-          debug(error);
-          return
-        }
-        //retry send notification to new endpoint
-        SNS.publish(params, function (error, data) {
-          if (error) {
-            debug(error)
-          } else {
-            debug('Push notification sent.')
-          }
-        })
-      })
+      debug('Successfully removed Endpoint Arn.')
     })
   })
 }
