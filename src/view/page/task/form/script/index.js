@@ -20,7 +20,7 @@ import CopyTaskSelect from '../copy-task-select'
 
 import bootbox from 'bootbox'
 import FIELD from 'constants/field'
-import OnBoarding from 'view/taskOnboarding'
+import TaskOnBoarding from '../../taskOnboarding'
 
 const HelpTexts = require('language/help')
 const TaskConstants = require('constants/task')
@@ -214,12 +214,12 @@ module.exports = FormView.extend({
 
     if (this.model.isNew()) {
       if(App.state.onboarding.onboardingActive) {
-        var onBoarding = new OnBoarding({parent: this})
-        onBoarding.step2()
+        var taskOnBoarding = new TaskOnBoarding({parent: this})
+        taskOnBoarding.step2()
 
         this.listenTo(App.state.onboarding,'change:showTaskLastStep',() => {
           if (App.state.onboarding.showTaskLastStep) {
-            onBoarding.step4()
+            taskOnBoarding.step4()
             App.state.onboarding.showTaskLastStep = false
           }
         })

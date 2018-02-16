@@ -11,7 +11,7 @@ const SimpleBackdrop = function () {
     bottom: 0,
     left: 0,
     // opacity: 0.75,
-    'z-index': 1040,
+    'z-index': 1051,
     'background-color': 'rgba(0, 0, 0, 0.5)',
     'text-align': 'center'
   }

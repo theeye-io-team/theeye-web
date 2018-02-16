@@ -7,6 +7,7 @@ import bootbox from 'bootbox'
 import TaskModel from 'models/task'
 import assign from 'lodash/assign'
 import after from 'lodash/after'
+import OnboardingActions from 'actions/onboarding'
 
 const logger = require('lib/logger')('actions:tasks')
 
@@ -32,7 +33,11 @@ module.exports = {
    */
   createMany (hosts,data) {
     const done = after(hosts.length,() => {
-      bootbox.alert('All tasks created')
+      App.state.alerts.success('Success', 'Tasks created.')
+      if(App.state.onboarding.onboardingActive) {
+        bootbox.alert('Congratulations!, Your first task has been created Successfully!')
+        OnboardingActions.updateOnboarding(true)
+      }
     })
     hosts.forEach(host => {
       let taskData = assign({},data,{ host_id: host })

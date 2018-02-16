@@ -27,9 +27,16 @@ module.exports = State.extend({
           return
         }
 
+        var message = ''
+        if(App.state.resources.length == 0) {
+          message = "You don't have any monitors, do you wan't to see the agent installation tutorial?"
+        } else {
+          message = "Your agent is up and running!, would you like to see the task creation tutorial next?"
+        }
+
         bootbox.confirm({
           title: 'Tutorial',
-          message: "Hello! I see you don't have any monitors or tasks, do you wan't to see the tutorial?",
+          message: message,
           closeButton: false,
           buttons: {
             confirm: {

@@ -135,12 +135,15 @@ module.exports = View.extend({
       this.updateState(App.state.navbar.settingsMenu)
     })
 
-    this.listenTo(App.state.navbar.settingsMenu,'change:current_tab change:visible',() => {
+    this.listenTo(App.state.navbar.settingsMenu,'change:current_tab change:visible change:agent',() => {
       if (hopscotch.getCurrTour()) {
         hopscotch.endTour(true)
       }
-      if(App.state.navbar.settingsMenu.visible === true && App.state.navbar.settingsMenu.current_tab === 'installer' && App.state.onboarding.onboardingActive) {
-        onboarding.start()
+      if(App.state.navbar.settingsMenu.visible === true &&
+        App.state.navbar.settingsMenu.current_tab === 'installer' &&
+        App.state.onboarding.onboardingActive &&
+        App.state.navbar.settingsMenu.agent !== undefined) {
+          onboarding.start()
       }
     })
   },

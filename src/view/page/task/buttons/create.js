@@ -8,7 +8,7 @@ import TaskFormView from '../form'
 import TaskActions from 'actions/task'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
-import OnBoarding from 'view/taskOnboarding'
+import TaskOnBoarding from '../taskOnboarding'
 
 import { Script as ScriptTask } from 'models/task'
 import { Scraper as ScraperTask } from 'models/task'
@@ -76,9 +76,9 @@ const TaskCreationWizard = View.extend({
     )
 
     if(App.state.onboarding.onboardingActive) {
-      var onBoarding = new OnBoarding({parent: this})
-      this.registerSubview(onBoarding)
-      onBoarding.step1()
+      var taskOnBoarding = new TaskOnBoarding({parent: this})
+      this.registerSubview(taskOnBoarding)
+      taskOnBoarding.step1()
     }
   },
   /**

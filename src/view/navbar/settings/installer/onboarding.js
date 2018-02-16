@@ -3,6 +3,7 @@ import NavbarActions from 'actions/navbar'
 import OnboardingActions from 'actions/onboarding'
 import hopscotch from 'hopscotch'
 import 'hopscotch/dist/css/hopscotch.min.css'
+import disableScroll from 'disable-scroll'
 
 var showOnboarding = function(platform) {
   var steps = []
@@ -105,7 +106,19 @@ var showOnboarding = function(platform) {
     id: "installerTour",
    steps: steps,
     showCloseButton: true,
+    onStart: function() {
+      disableScroll.on()
+    },
     onClose: function() {
+      disableScroll.off()
+      return
+    },
+    onEnd: function() {
+      disableScroll.off()
+      return
+    },
+    onError: function() {
+      disableScroll.off()
       return
     }
   }

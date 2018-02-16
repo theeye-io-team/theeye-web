@@ -5,10 +5,12 @@ import bootbox from 'bootbox'
 
 module.exports = {
   getExampleScript(extension) {
+    App.state.loader.visible = true
     XHR.send({
       method: 'get',
       url: `${config.app_url}/script/example/${extension}`,
       done: (response) => {
+        App.state.loader.visible = false
         if (!response) {
           bootbox.alert('Example not found.')
         } else {
@@ -17,6 +19,7 @@ module.exports = {
         }
       },
       fail: (err, xhr) => {
+        App.state.loader.visible = false
         App.state.editor.value = ''
         App.state.editor.trigger('change:value')
         if(xhr.status==404)

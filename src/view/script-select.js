@@ -6,6 +6,7 @@ import FileForm from 'view/page/files/form'
 import Modalizer from 'components/modalizer'
 import { Model as FileModel } from 'models/file'
 import FileActions from 'actions/file'
+import OnboardingActions from 'actions/onboarding'
 import SubCollection from 'ampersand-filtered-subcollection'
 
 module.exports = SelectView.extend({
@@ -87,6 +88,10 @@ module.exports = SelectView.extend({
         // if edit/create script, the id should be set
         // then re-render select2 component
         this.renderSelect2Component(file.id)
+        if(App.state.onboarding.onboardingActive) {
+          OnboardingActions.showTaskLastStep()
+        }
+
         modal.hide()
       })
     })

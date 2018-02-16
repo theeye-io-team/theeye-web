@@ -11,7 +11,7 @@ import FormButtons from 'components/form/buttons'
 import FileInputView from 'components/input-view/file'
 import CommonButton from 'components/common-button'
 import { EditorView } from './editor'
-import OnBoarding from 'view/taskOnboarding'
+import ScriptOnBoarding from '../scriptOnboarding'
 import OnboardingActions from 'actions/onboarding'
 
 const FilenameInputView = InputView.extend({
@@ -156,11 +156,9 @@ module.exports = FormView.extend({
 
     if (!this.model.filename) {
       if(App.state.onboarding.onboardingActive) {
-        var onBoarding = new OnBoarding({parent: this})
-        this.registerSubview(onBoarding)
-        onBoarding.step3()
-
-        buttons.on('click:confirm', () => { OnboardingActions.showTaskLastStep() })
+        var scriptOnBoarding = new ScriptOnBoarding({parent: this})
+        this.registerSubview(scriptOnBoarding)
+        scriptOnBoarding.step3()
       }
     }
   },
