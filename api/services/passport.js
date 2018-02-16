@@ -8,7 +8,7 @@ var crypto = require('crypto')
 var mailer = require("./mailer")
 var TheEyeClient = require('../libs/theeye-client')
 var CustomStrategy = require('passport-custom').Strategy
-var debug = require('debug')('eye:services:passport')
+var logger = require('../libs/logger')('services:passport')
 
 /**
  * Passport Service
@@ -175,7 +175,7 @@ passport.resendInvitation = function(req, res, next){
 
   User.findOne({ id: userId }, function(err, invitee){
     if(err) {
-      debug(err);
+      logger.error('%o',err);
       return res.send(500);
     }
     if( ! invitee ) return res.send(404,'User not found');
@@ -185,7 +185,7 @@ passport.resendInvitation = function(req, res, next){
       invitee.invitation_token = token;
       passport.sendUserActivationEmail(req.user, invitee, function(error){
         if(error){
-          debug(error);
+          logger.error('%o',error);
           return res.send(500);
         }
         return res.send(200, invitee);
@@ -204,7 +204,7 @@ passport.resendInvitation = function(req, res, next){
  */
 passport.sendUserActivationEmail = function (inviter, invitee, next){
   var activationLink = this.protocols.local.getActivationLink(invitee);
-  debug('Activation Link is %s', activationLink);
+  logger.debug('Activation Link is %s', activationLink);
 
   var data = {
     inviter: inviter,
@@ -214,21 +214,21 @@ passport.sendUserActivationEmail = function (inviter, invitee, next){
   if (data.inviter == null) {
     mailer.sendRegistrationMail(data, function(err) {
       if(err) {
-        debug('error sending registration email to "%s"', invitee.email);
+        logger.error('error sending registration email to "%s"', invitee.email);
         return next(err);
       }
 
-      debug('invitation email sent');
+      logger.debug('invitation email sent');
       return next(null);
     });
   } else {
     mailer.sendActivationMail(data, function(err) {
       if(err) {
-        debug('error sending invitation email to "%s"', invitee.email);
+        logger.error('error sending invitation email to "%s"', invitee.email);
         return next(err);
       }
 
-      debug('invitation email sent');
+      logger.debug('invitation email sent');
       return next(null);
     });
   }
@@ -241,11 +241,11 @@ passport.sendUserActivatedEMail = function (inviter, invitee, next){
   };
   mailer.sendUserActivatedEMail(data, function(err) {
     if(err) {
-      sails.log.debug('error sending Invitation email to "%s"', invitee.email);
+      logger.error('error sending Invitation email to "%s"', invitee.email);
       return next(err);
     }
 
-    sails.log.debug('Invitation email sent');
+    logger.debug('Invitation email sent');
     return next(null);
   });
 }
@@ -257,11 +257,11 @@ passport.sendNewCustomerEMail = function (invitee, customername, next){
   };
   mailer.sendNewCustomerEMail(data, function(err) {
     if(err) {
-      debug('error sending Invitation email to "%s"', invitee.email);
+      logger.error('error sending Invitation email to "%s"', invitee.email);
       return next(err);
     }
 
-    debug('Invitation email sent');
+    logger.debug('Invitation email sent');
     return next(null);
   });
 }
@@ -359,7 +359,7 @@ function createRegisterUser (email, username, next) {
   }, function (err, user) {
     if (err) {
       if (err.code === 'E_VALIDATION') {
-        debug('////////////////// ERROR.DB.VALIDATION ///////////////////');
+        logger.error('////////////////// ERROR.DB.VALIDATION ///////////////////');
         if (err.invalidAttributes.email) {
           return next(new Error('Invalid email.'));
         }else if (err.invalidAttributes.username) {
@@ -368,7 +368,7 @@ function createRegisterUser (email, username, next) {
           return next(err);
         }
       }
-      debug(err);
+      logger.error(err);
       return next(err);
     } else {
       return next(null, user);
@@ -393,11 +393,11 @@ function activateTheeyeUser (user, next) {
 
   client.refreshToken(function(err,token){
     if(err){
-     debug(err);
+     logger.error('%o',err);
       return next(err);
     }
 
-   debug('supervisor access token refresh success');
+   logger.debug('supervisor access token refresh success');
     var data = {
       'email':user.email,
       'customers':user.customers,
@@ -406,7 +406,7 @@ function activateTheeyeUser (user, next) {
       'username': user.username||user.email
     };
 
-   debug("Creating user %s theeye passport", user.id);
+   logger.debug("Creating user %s theeye passport", user.id);
     createTheeyeUser(user, data, client, function(err, profile){
       if(err) return next(err);
       return next(null, profile);
@@ -421,17 +421,17 @@ passport.activateUser = function(req, res, next) {
   , customername = req.param('customername');
 
   if (!username) {
-    debug('No username was entered');
+    logger.error('No username was entered');
     return next(new Error('No username was entered.'));
   }
 
   if (!invitation_token) {
-    debug('No invitation_token was entered');
+    logger.error('No invitation_token was entered');
     return next(new Error('No invitation_token was entered.'));
   }
 
   if (!password) {
-    debug('No password was entered');
+    logger.error('No password was entered');
     return next(new Error('No password was entered.'));
   }
 
@@ -439,12 +439,12 @@ passport.activateUser = function(req, res, next) {
     invitation_token: invitation_token
   }, function(err, user){
     if(err) {
-      debug(err);
+      logger.error('%o',err);
       return next(err);
     }
     if(!user) {
       var error = new Error('Cannot activate, user does not exist');
-     debug(error);
+     logger.error('%o',error);
       return next(error);
     }
 
@@ -452,13 +452,13 @@ passport.activateUser = function(req, res, next) {
 
     verifyUsername(user, function(error) {
       if (error) {
-        debug('Verify username error');
+        logger.error('Verify username error');
         return next(error)
       }
 
       if(user.credential == 'owner') {
         if (!customername) {
-          debug('No customername was entered');
+          logger.error('No customername was entered');
           return next(new Error('No customername was entered.'));
         }
 
@@ -468,8 +468,8 @@ passport.activateUser = function(req, res, next) {
           }
           passport.protocols.local.activate(user, password, customername, function(err, updatedUser){
             if(err) {
-              debug('Error activating user on local protocol');
-              debug(err);
+              logger.error('Error activating user on local protocol');
+              logger.error('%o',err);
               return next(err);
             }
             next(null, updatedUser);
@@ -482,8 +482,8 @@ passport.activateUser = function(req, res, next) {
           }
           passport.protocols.local.activate(user, password, null, function(err, updatedUser){
             if(err) {
-              debug('Error activating user on local protocol');
-              debug(err);
+              logger.error('Error activating user on local protocol');
+              logger.error('%o',err);
               return next(err);
             }
             next(null, updatedUser);
@@ -499,7 +499,7 @@ function verifyUsername(user, next) {
     username: user.username
   }, function(err, prevUser){
     if(err) {
-      debug(err);
+      logger.error('%o',err);
       return next(err);
     }
     if(!prevUser) {
@@ -523,7 +523,7 @@ function createTheeyeUserAndCustomer (user, customername, next) {
 
   client.refreshToken(function(err,token){
     if(err){
-     debug(err);
+     logger.error('%o',err);
       return next(err);
     }
 
@@ -535,7 +535,7 @@ function createTheeyeUserAndCustomer (user, customername, next) {
       'customername': customername
     };
 
-    debug("Creating user %s theeye passport", user.id);
+    logger.debug("Creating user %s theeye passport", user.id);
 
     client.create({
       route:'/register',
@@ -550,14 +550,14 @@ function createTheeyeUserAndCustomer (user, customername, next) {
           profile: profile
         }, function (err, passport) {
           if (err) {
-            debug(err);
+            logger.error('%o',err);
             return next(err);
           }
           return next(null, profile);
         });
       },
       failure: function(err) {
-        debug(err);
+        logger.error('%o',err);
         return next(err)
       }
     });
@@ -565,7 +565,7 @@ function createTheeyeUserAndCustomer (user, customername, next) {
 }
 
 function createTheeyeUser (user, input, supervisor, next) {
- debug('creating theeye user');
+ logger.debug('creating theeye user');
   var client = {
     'email': input.email,
     'customers': input.customers,
@@ -586,7 +586,7 @@ function createTheeyeUser (user, input, supervisor, next) {
 }
 
 function searchpassport (user, next){
-  debug('searching passport theeye for user "%s"', user.username);
+  logger.debug('searching passport theeye for user "%s"', user.username);
   Passport.findOne({
     user: user.id,
     protocol: 'theeye'
@@ -611,11 +611,11 @@ passport.createmissingtheeyepassports = function(req, res, next) {
             'username': user.username||user.email
           };
           createTheeyeUser(user, data, req.supervisor, function(error, profile) {
-            if(error) debug('user %s passport create error', user.username);
-            else debug('passport created user %s', user.username);
+            if(error) logger.error('user %s passport create error', user.username);
+            else logger.debug('passport created user %s', user.username);
           });
         }
-        else debug('passport found. skipping user %s', user.username);
+        else logger.debug('passport found. skipping user %s', user.username);
       });
     }
   });
@@ -658,7 +658,7 @@ passport.callback = function (req, res, next) {
     if (action === 'disconnect' && req.user) {
       this.disconnect(req, res, next) ;
     } else {
-      debug('authenticate provider %s', provider);
+      logger.debug('authenticate provider %s', provider);
       // The provider will redirect the user to this URL after approval. Finish
       // the authentication process by attempting to obtain an access token. If
       // access was granted, the user will be logged in. Otherwise, authentication
@@ -778,17 +778,17 @@ passport.updateLocalPassport = function (req, res, next) {
 };
 
 passport.serializeUser(function (user, next) {
-  debug('serializing user %j', user);
+  logger.debug('serializing user %j', user);
   next(null, user.id);
 });
 
 passport.deserializeUser(function (id, next) {
-  debug('deserializing user');
+  logger.debug('deserializing user');
   User.findOne(id, function(error,user){
     if(error) return next(error);
 
     if(!user) {
-      debug('serialized user not found!');
+      logger.error('serialized user not found!');
       return next();
     }
 
@@ -799,7 +799,7 @@ passport.deserializeUser(function (id, next) {
       if(error) return next(error);
 
       if(!passport) {
-        debug('theeye passport not found!');
+        logger.error('theeye passport not found!');
         user.theeye = {};
         return next(null,user);
       }

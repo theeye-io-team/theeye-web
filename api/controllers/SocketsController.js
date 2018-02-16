@@ -1,5 +1,5 @@
 /* global sails */
-'use strict'
+const logger = require('../libs/logger')('controllers:sockets')
 
 /**
  *
@@ -27,12 +27,12 @@ module.exports = {
 
     // force notification-crud subscription
     socket.join(customer + ':' + req.user.id + ':notification-crud')
-    sails.log.debug('client subscribed to', customer + ':' + req.user.id + ':notification-crud')
+    logger.debug('client subscribed to', customer + ':' + req.user.id + ':notification-crud')
 
     for (let i = 0; i < topics.length; i++) {
       let room = customer + ':' + topics[i]
       socket.join(room)
-      sails.log.debug(`client subscribed to ${room}`)
+      logger.debug(`client subscribed to ${room}`)
     }
 
     res.json({ message: 'subscription success' })

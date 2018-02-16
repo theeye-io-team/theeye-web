@@ -1,6 +1,7 @@
 'use strict'
 
 const fs = require('fs')
+const logger = require('../libs/logger')('controllers:api')
 
 /**
  *
@@ -15,7 +16,7 @@ module.exports = {
    * @param {String} resource
    */
   fetch (req, res, next) {
-    sails.log.debug('fetch api url ' + req.originalUrl);
+    logger.debug('fetch api url ' + req.originalUrl);
     var route = req.originalUrl.replace('/api/',`/${req.user.current_customer}/`);
     req.supervisor.fetch({
       route: route,
@@ -31,7 +32,7 @@ module.exports = {
    * @param {String} resource
    */
   create (req, res, next){
-    sails.log.debug('post api url ' + req.originalUrl);
+    logger.debug('post api url ' + req.originalUrl);
     var route = req.originalUrl.replace('/api/',`/${req.user.current_customer}/`);
     req.supervisor.create({
       route: route,
@@ -49,14 +50,14 @@ module.exports = {
    * @param {String} id
    */
   update (req, res, next){
-    sails.log.debug('put api url ' + req.originalUrl);
+    logger.debug('put api url ' + req.originalUrl);
     var route = req.originalUrl.replace('/api/',`/${req.user.current_customer}/`);
     req.supervisor.update({
       route: route,
       query: req.query,
       body: req.body,
       failure: (error, apiRes) => {
-        sails.log.debug(error);
+        logger.error('%o',error);
         res.send(error.statusCode, error)
       },
       success: (body, apiRes) => res.json(body),
@@ -70,7 +71,7 @@ module.exports = {
    * @param {String} id
    */
   patch (req, res, next) {
-    sails.log.debug('patch api url ' + req.originalUrl);
+    logger.debug('patch api url ' + req.originalUrl);
     var route = req.originalUrl.replace('/api/',`/${req.user.current_customer}/`);
     req.supervisor.patch({
       route: route,
@@ -88,7 +89,7 @@ module.exports = {
    * @param {String} id
    */
   get (req, res, next) {
-    sails.log.debug('get api url ' + req.originalUrl);
+    logger.debug('get api url ' + req.originalUrl);
     var route = req.originalUrl.replace('/api/',`/${req.user.current_customer}/`);
     req.supervisor.get({
       route: route,
@@ -105,7 +106,7 @@ module.exports = {
    * @param {String} id
    */
   remove (req, res, next){
-    sails.log.debug('remove api url ' + req.originalUrl);
+    logger.debug('remove api url ' + req.originalUrl);
     var route = req.originalUrl.replace('/api/',`/${req.user.current_customer}/`);
     req.supervisor.remove({
       route: route,
@@ -140,7 +141,7 @@ module.exports = {
 				formData: params
 			}, function(error, body) {
 				if (error) {
-					sails.log.error(error);
+					logger.error('%o',error);
 					res.send(error.statusCode||500, error);
 				} else {
 					res.send(200,body);

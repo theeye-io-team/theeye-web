@@ -3,6 +3,8 @@ var mailer = require("../services/mailer");
 var jwt = require('jsonwebtoken');
 var crypto = require('crypto');
 
+const logger = require('../libs/logger')('controllers:password')
+
 module.exports = {
   /**
    *
@@ -11,7 +13,7 @@ module.exports = {
    */
   sendResetMail: function(req,res,next) {
     var email = req.params.all().email; // every posible param
-    sails.log.debug('searching ' + email);
+    logger.debug('searching ' + email);
     User.findOne({ email: email },function(err,user){
       if( err ) return res.send(500,err);
       if( ! user ) return res.send(400,"User not found");
@@ -25,8 +27,8 @@ module.exports = {
         user: user
       },function(err){
         if(err) {
-          sails.log.error("Error sending email to " + email);
-          sails.log.error(err);
+          logger.error("Error sending email to " + email);
+          logger.error('%o',err);
           return res.send(500,err);
         }
 
@@ -41,7 +43,7 @@ module.exports = {
     var secret = sails.config.application.secret;
     jwt.verify(req.query.token,secret,function(err, decoded){
       if(err){
-        sails.log.error(err);
+        logger.error('%o',err);
         return res.send(400);
       }
 
@@ -65,7 +67,7 @@ module.exports = {
     var secret = sails.config.application.secret;
     jwt.verify(params.token,secret,function(err, decoded){
       if(err){
-        sails.log.error(err);
+        logger.error('%o',err);
         return res.send(400,'Invalid password reset token, try again.');
       }
 
@@ -78,7 +80,7 @@ module.exports = {
           if(err.message == 'Invalid password'){
             return res.send(400, 'The password must have at least 8 characters long');
           }
-          sails.log.error( err );
+          logger.error('%o', err);
           return res.send(500, 'Error updating password, try again.');
         }
         res.send(200);

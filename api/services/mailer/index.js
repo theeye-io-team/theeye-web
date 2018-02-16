@@ -2,14 +2,15 @@
 var ejs = require('ejs');
 var config = sails.config.mailer;
 var mailer = require('./lib');
+var logger = require('../../libs/logger')('services:mailer')
 
 module.exports = {
   sendActivationMail: function(input, next) {
     var data = { locals: input };
     ejs.renderFile("views/email/activation.ejs", data, function(error, html) {
       if(error) {
-        sails.log.error('Error parsing "views/email/activation.ejs"');
-        sails.log.error(error);
+        logger.error('Error parsing "views/email/activation.ejs"');
+        logger.error(error);
         return next(error);
       }
 
@@ -20,8 +21,8 @@ module.exports = {
       };
 
       mailer.sendMail(options, function(error, info) {
-        if(error) sails.log.error("Error sending email to " + input.invitee.email);
-        else sails.log.debug('Message sent');
+        if(error) logger.error("Error sending email to " + input.invitee.email);
+        else logger.debug('Message sent');
         return next(error);
       });
     });
@@ -30,8 +31,8 @@ module.exports = {
     var data = { locals: input };
     ejs.renderFile("views/email/activated.ejs", data, function(error, html) {
       if(error) {
-        sails.log.error('Error parsing "views/email/activated.ejs"');
-        sails.log.error(error);
+        logger.error('Error parsing "views/email/activated.ejs"');
+        logger.error(error);
         return next(error);
       }
 
@@ -42,8 +43,8 @@ module.exports = {
       };
 
       mailer.sendMail(options, function(error, info) {
-        if(error) sails.log.error("Error sending email to " + input.invitee.email);
-        else sails.log.debug('Message sent');
+        if(error) logger.error("Error sending email to " + input.invitee.email);
+        else logger.debug('Message sent');
         return next(error);
       });
     });
@@ -52,8 +53,8 @@ module.exports = {
     var data = { locals: input };
     ejs.renderFile("views/email/registration.ejs", data, function(error, html) {
       if(error) {
-        sails.log.error('Error parsing "views/email/registration.ejs"');
-        sails.log.error(error);
+        logger.error('Error parsing "views/email/registration.ejs"');
+        logger.error(error);
         return next(error);
       }
 
@@ -64,8 +65,8 @@ module.exports = {
       };
 
       mailer.sendMail(options, function(error, info) {
-        if(error) sails.log.error("Error sending email to " + input.invitee.email);
-        else sails.log.debug('Message sent');
+        if(error) logger.error("Error sending email to " + input.invitee.email);
+        else logger.debug('Message sent');
         return next(error);
       });
     });
@@ -81,8 +82,8 @@ module.exports = {
       };
 
       mailer.sendMail(options, function(error, info) {
-        if(error) sails.log.error("Error sending email to " + email);
-        else sails.log.debug('Message sent');
+        if(error) logger.error("Error sending email to " + email);
+        else logger.debug('Message sent');
         return next(error);
       });
     });
@@ -95,12 +96,12 @@ module.exports = {
         html: html
       };
 
-      sails.log.debug('sending contact notification email...');
+      logger.debug('sending contact notification email...');
       mailer.sendMail(options, function(error, info) {
         if (error) {
           return next(error);
         } else {
-          sails.log.debug('Contact message sent');
+          logger.debug('Contact message sent');
           ejs.renderFile("views/email/contact-confirmation.ejs", { locals: data }, function(error, html) {
             var options = {
               to: email,
@@ -110,7 +111,7 @@ module.exports = {
 
             mailer.sendMail(options, function(error, info) {
               if (error) {
-                sails.log.error("Error sending email to " + email);
+                logger.error("Error sending email to " + email);
               }
               return next(error);
             });

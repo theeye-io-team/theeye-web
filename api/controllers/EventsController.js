@@ -1,7 +1,5 @@
 /* global sails */
-'use strict'
-
-const debug = require('debug')('eye:web:events')
+const logger = require('../libs/logger')('controllers:events')
 const sns = require('../libs/notifications/sns')
 const sockets = require('../libs/notifications/sockets')
 
@@ -21,12 +19,11 @@ module.exports = {
    */
   update (req, res) {
     var body = req.body
-    debug('sns event received')
+    logger.debug('sns event received')
 
     sns.receive(body, (err, message) => {
       if (err) {
-        debug('ERROR: Message parse error')
-        debug(err.message)
+        logger.error('Message parse error %s', err.message)
         return res.json({
           status: 400,
           error: { message: 'invalid request' }
@@ -34,7 +31,7 @@ module.exports = {
       }
 
       if (!message) {
-        debug('ERROR: NO SNS Message')
+        logger.error('NO SNS Message')
         return res.json({
           status: 400,
           error: {
@@ -45,7 +42,7 @@ module.exports = {
       }
 
       if (!message.topic) {
-        debug('ERROR: NO topic in Message')
+        logger.error('NO topic in Message')
         return res.json({
           status: 400,
           error: {
@@ -55,7 +52,7 @@ module.exports = {
         })
       }
 
-      debug('processing message.topic %s', message.topic)
+      logger.debug('processing message.topic %s', message.topic)
 
       sockets.emit(message.topic, message, (err) => {
         if (err) {

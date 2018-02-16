@@ -1,7 +1,7 @@
 'use strict'
 
 const request = require('request')
-const debug = require('debug')('eye:web:services:snshandler')
+const logger = require('../libs/logger')('services:snshandler')
 
 module.exports = {
   parseMessage (data, next) {
@@ -9,16 +9,16 @@ module.exports = {
       if (data.Type && data.Type=='SubscriptionConfirmation') {
         //request(data.SubscribeURL, (err, res, body) 
         request(data.SubscribeURL, (/** args... **/) => {
-          debug('SNS auto-subscription done')
-          debug('Topic ARN ' + data.TopicArn)
+          logger.debug('SNS auto-subscription done')
+          logger.debug('Topic ARN ' + data.TopicArn)
           return next(null,false)
         })
       } else {
-        debug('Processing SNS message')
+        logger.debug('Processing SNS message')
         return next(null, parseJsonMessageString(data.Message))
       }
     } else {
-      debug('No information received')
+      logger.error('No information received')
       var err = new Error('invalid request')
       next(err)
     }

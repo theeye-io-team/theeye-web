@@ -1,4 +1,4 @@
-var debug = require('debug')('eye:libs:notifications:sockets')
+var logger = require('../logger')('libs:notifications:sockets')
 
 module.exports = {
   emit (topic, message, next) {
@@ -10,7 +10,7 @@ module.exports = {
         for (let idx in data.model) {
           let notification = data.model[idx]
           const room = `${notification.data.organization}:${notification.user_id}:${topic}`
-          debug(`sending message to ${room}`)
+          logger.debug(`sending message to ${room}`)
 
           sails.io.sockets.in(room).emit(topic, {
             model: notification,
@@ -22,11 +22,12 @@ module.exports = {
         return next()
       } else {
         let msg = `ERROR: invalid notification structure. Array expected, received ${message.data.model}`
+        logger.error(msg)
         return next( new Error(msg) )
       }
     } else {
       const room = `${data.organization}:${topic}`
-      debug(`sending message to ${room}`)
+      logger.debug(`sending message to ${room}`)
       sails.io.sockets.in(room).emit(topic, data)
       next()
     }

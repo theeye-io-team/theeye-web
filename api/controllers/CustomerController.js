@@ -1,4 +1,6 @@
 
+const logger = require('../libs/logger')('controllers:apiv2')
+
 var CustomerController = module.exports = {
   /**
    * @route GET /customer
@@ -11,7 +13,7 @@ var CustomerController = module.exports = {
         res.send(200, customers)
       },
       failure: err => {
-        sails.log.error(err);
+        logger.error('%o',err);
         res.send(err.statusCode,err);
       }
     });
@@ -88,7 +90,7 @@ var CustomerController = module.exports = {
             if (idx !== -1) {
               var removed = user.customers.splice(idx, 1);
               user.save(function (error) {
-                if(error) sails.log.error('unable to update user "%s" customers', user.username);
+                if(error) logger.error('unable to update user "%s" customers', user.username);
               });
             }
           }
@@ -102,7 +104,7 @@ var CustomerController = module.exports = {
               if (idx !== -1) {
                 var removed = passport.profile.customers.splice(idx, 1);
                 passport.save(function (error) {
-                  if(error) sails.log.error('unable to update passport "%s" customers', passport.profile.username);
+                  if(error) logger.error('unable to update passport "%s" customers', passport.profile.username);
                 });
               }
             }
@@ -112,7 +114,7 @@ var CustomerController = module.exports = {
         return res.send(204);
       },
       failure: err => {
-        sails.log.error(err);
+        logger.error('%o',err);
         return res.json(err.statusCode, err);
       }
     });

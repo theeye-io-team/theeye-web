@@ -2,6 +2,7 @@
 'use strict'
 
 const apibase = '/apiv3/'
+const logger = require('../libs/logger')('controllers:apiv3')
 //const fs = require('fs')
 
 /**
@@ -18,7 +19,7 @@ module.exports = {
    * @param {String} id
    */
   get (req, res, next) {
-    sails.log.debug('getting api url ' + req.originalUrl)
+    logger.debug('getting api url ' + req.originalUrl)
     var route = req.originalUrl.replace(apibase,'')
     req.supervisor.get({
       route: route,
@@ -34,7 +35,7 @@ module.exports = {
    * @param {String} resource
    */
   fetch (req, res, next) {
-    sails.log.debug('fetching api url ' + req.originalUrl)
+    logger.debug('fetching api url ' + req.originalUrl)
     var route = req.originalUrl.replace(apibase,'')
     req.supervisor.fetch({
       route: route,
@@ -51,7 +52,7 @@ module.exports = {
    * @param {String} id
    */
   patch (req, res, next) {
-    sails.log.debug('patching api url ' + req.originalUrl);
+    logger.debug('patching api url ' + req.originalUrl);
     var route = req.originalUrl.replace(apibase,'')
     req.supervisor.patch({
       route: route,
@@ -69,7 +70,7 @@ module.exports = {
    * @param {String} id
    */
   update (req, res, next) {
-    sails.log.debug('putting api url ' + req.originalUrl);
+    logger.debug('putting api url ' + req.originalUrl);
     var route = req.originalUrl.replace(apibase,'')
     req.supervisor.update({
       route: route,
@@ -101,7 +102,7 @@ module.exports = {
   /// * @param {String} resource
   /// */
   ///create (req, res, next){
-  ///  sails.log.debug('post api url ' + req.originalUrl);
+  ///  logger.debug('post api url ' + req.originalUrl);
   ///  var route = req.originalUrl.replace(apibase,'')
   ///  req.supervisor.create({
   ///    route: route,
@@ -119,14 +120,14 @@ module.exports = {
   /// * @param {String} id
   /// */
   ///update (req, res, next){
-  ///  sails.log.debug('put api url ' + req.originalUrl);
+  ///  logger.debug('put api url ' + req.originalUrl);
   ///  var route = req.originalUrl.replace(apibase,'')
   ///  req.supervisor.update({
   ///    route: route,
   ///    query: req.query,
   ///    body: req.body,
   ///    failure: (error, apiRes) => {
-  ///      sails.log.debug(error);
+  ///      logger.debug(error);
   ///      res.send(error.statusCode, error)
   ///    },
   ///    success: (body, apiRes) => res.json(body),
@@ -140,7 +141,7 @@ module.exports = {
   /// * @param {String} id
   /// */
   ///patch (req, res, next) {
-  ///  sails.log.debug('patch api url ' + req.originalUrl);
+  ///  logger.debug('patch api url ' + req.originalUrl);
   ///  var route = req.originalUrl.replace(apibase,'')
   ///  req.supervisor.patch({
   ///    route: route,
@@ -158,7 +159,7 @@ module.exports = {
   /// * @param {String} id
   /// */
   ///remove (req, res, next){
-  ///  sails.log.debug('remove api url ' + req.originalUrl);
+  ///  logger.debug('remove api url ' + req.originalUrl);
   ///  var route = req.originalUrl.replace(apibase,'')
   ///  req.supervisor.remove({
   ///    route: route,
@@ -199,7 +200,7 @@ module.exports = {
   ///      formData: params
   ///    }, function (error, body) {
   ///      if (error) {
-  ///        sails.log.error(error)
+  ///        logger.error(error)
   ///        res.send(error.statusCode || 500, error)
   ///      } else {
   ///        res.send(200, body)

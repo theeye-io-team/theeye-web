@@ -2,8 +2,7 @@
 const AWS = require('aws-sdk')
 const request = require('request')
 const SNS = new AWS.SNS(new AWS.Config(sails.config.aws))
-// const SocketsNotifications = require('../sockets-notifications')
-const debug = require('debug')('eye:libs:notifications:sns')
+const logger = require('../logger')('libs:notifications:sns')
 const sockets = require('./sockets')
 const zlib = require('zlib')
 const uuidv1 = require('uuid/v1')
@@ -16,17 +15,17 @@ module.exports = {
     serializeMessage(message, (err,uid) => {
 
       if (err) {
-        debug('Error serializing sns message %o', err)
+        logger.error('Error serializing sns message %o', err)
         return
       }
 
       if (!sails.config.is_cluster) {
-        debug('[DEBUG ENABLED] Submit message to EventsHandler (directly)')
+        logger.debug('[DEBUG ENABLED] Submit message to EventsHandler (directly)')
 
         if (sails.config.sns.debug!==true) {
-          debug('Submiting message via Socket')
+          logger.debug('Submiting message via Socket')
           sockets.emit(message.topic, message, (err) => {
-            if (err) debug(err)
+            if (err) logger.error('%o',err)
           })
         } else {
           const eventsHandlerUri = sails.config.application.baseUrl + '/events/update'
@@ -41,24 +40,24 @@ module.exports = {
             }
           }, (error, response, body) => {
             if (error) {
-              debug('upload failed:', error)
+              logger.error('upload failed: %o', error)
             }
           })
         }
       } else {
-        debug('Submit message via AWS-SNS')
+        logger.debug('Submit message via AWS-SNS')
 
         SNS.publish({
           TopicArn: sockets_arn,
           Message: JSON.stringify({ message_id: uid })
         }, (err,data) => {
           if (err) {
-            debug('error. aws sns submit failed')
-            debug(err)
+            logger.error('error. aws sns submit failed')
+            logger.error('%o',err)
             return
           }
 
-          debug(data)
+          logger.debug(data)
         })
       }
     })
@@ -68,12 +67,12 @@ module.exports = {
       if (data.Type && data.Type=='SubscriptionConfirmation') {
         //request(data.SubscribeURL, (err, res, body) 
         request(data.SubscribeURL, (/** args... **/) => {
-          debug('SNS auto-subscription done')
-          debug('Topic ARN ' + data.TopicArn)
+          logger.debug('SNS auto-subscription done')
+          logger.debug('Topic ARN ' + data.TopicArn)
           return next(null,false)
         })
       } else {
-        debug('Processing SNS message')
+        logger.debug('Processing SNS message')
         deserializeMessage(data.Message, (err, originalMessage) => {
           if (err) {
             return next( new Error('message retrieval failed') )
@@ -82,7 +81,7 @@ module.exports = {
         })
       }
     } else {
-      debug('No information received')
+      logger.error('No information received')
       var err = new Error('invalid request')
       next(err)
     }
@@ -113,7 +112,7 @@ const serializeMessage = (msg, next) => {
       uid, data,
       'EX', redisExpires,
       function (err) {
-        if (err) debug('%o',err)
+        if (err) logger.error('%o',err)
 
         next(err, uid)
       }
@@ -128,7 +127,7 @@ const compressMessage = (msg, next) => {
 
   //zlib.gzip(data, (err, cmpBuffer) => {
   //  if (err) {
-  //    debug('%o',err)
+  //    logger.debug('%o',err)
   //    return next(err)
   //  }
   //  next(err, cmpBuffer.toString('base64'))
@@ -140,13 +139,13 @@ const deserializeMessage = (data, next) => {
 
   sails.redis.get(uid, function (err, data) {
     if (err) {
-      debug('%o',err)
+      logger.error('%o',err)
       return next(err)
     }
 
     if (!data) {
       let err = new Error('internal SNS message not found in cache')
-      debug('%o',err)
+      logger.error('%o',err)
       return next(err)
     }
 
@@ -160,7 +159,7 @@ const uncompressMessage = (data, next) => {
     let msg = JSON.parse(data)
     return next(null, msg)
   } catch (e) {
-    debug(e)
+    logger.error(e)
     return next(e)
   }
 
@@ -171,7 +170,7 @@ const uncompressMessage = (data, next) => {
   //    let data = JSON.parse(msg)
   //    return next(null, data)
   //  } catch (e) {
-  //    debug(e)
+  //    logger.debug(e)
   //    return next(e)
   //  }
   //})

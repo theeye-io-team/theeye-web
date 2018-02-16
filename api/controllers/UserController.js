@@ -2,9 +2,10 @@
 var passport = require('../services/passport')
 var mailer = require('../services/mailer')
 var difference = require('lodash/difference')
-var debug = require('debug')('eye:web:controller:user');
 var AWS = require('aws-sdk');
 var SNS = new AWS.SNS( new AWS.Config( sails.config.aws ) );
+
+const logger = require('../libs/logger')('controllers:apiv2')
 
 var UserController = module.exports = {
   //Set the customer for the session
@@ -102,7 +103,7 @@ var UserController = module.exports = {
 
         passport.createUser(req, res, data, function(err, user) {
           if(err) {
-            sails.log.error(err);
+            logger.error(err);
             return res.send(400, err);
           } else return res.json(user);
         });
@@ -139,12 +140,12 @@ var UserController = module.exports = {
       var customersChanged = difference(user.customers,params.customers).length !== 0
       if (customersChanged && user.enabled) {
         // notify the user customers permissions changed
-        mailer.sendCustomerPermissionsChanged(user, error => sails.log.error(error));
+        mailer.sendCustomerPermissionsChanged(user, error => logger.error(error));
       }
 
       User.update({id: userId}, params).exec((error,user) => {
         if(error){
-          sails.log.error(error);
+          logger.error(error);
           return res.send(500, 'internal server error');
         }
 
@@ -154,7 +155,7 @@ var UserController = module.exports = {
           req.supervisor,
           error => {
             if (error) {
-              sails.log.error(error);
+              logger.error(error);
               res.json(500,'the user was updated but with errors. ' + error.message);
             } else {
               res.json(user);
@@ -187,20 +188,20 @@ var UserController = module.exports = {
         user: userId
       }, function(error2, passports){
         if(error2) {
-          sails.log.error('//////////////// ERROR.DB ////////////////');
-          sails.log.error(error2);
+          logger.error('//////////////// ERROR.DB ////////////////');
+          logger.error(error2);
           return res.send(500, 'Internal passport error');
         }
         for(var i=0; i<passports.length; i++) {
           var passport = passports[i];
 
           if(passport.protocol == 'theeye') {
-            sails.log.debug('destroying supervisor user %s', passport.profile.id);
+            logger.debug('destroying supervisor user %s', passport.profile.id);
             supervisor.userDelete( passport.profile.id, function(error3){
               if(error3) {
-                sails.log.error('//////////////// WARN.DB ////////////////');
-                sails.log.error(arguments);
-                sails.log.error(
+                logger.error('//////////////// WARN.DB ////////////////');
+                logger.error('%o',arguments);
+                logger.error(
                   'error removing supervisor user %s error %s',
                   passport.profile.id,
                   error3
@@ -209,12 +210,12 @@ var UserController = module.exports = {
             });
           }
 
-          sails.log.debug('destroying passport %s', passport.protocol);
+          logger.debug('destroying passport %s', passport.protocol);
           passport.destroy(function(error4){
             if(error4) {
-              sails.log.error('//////////////// WARN.PASSPORT ////////////////');
-              sails.log.error(error4);
-              sails.log.error(
+              logger.error('//////////////// WARN.PASSPORT ////////////////');
+              logger.error('%o',error4);
+              logger.error(
                 'error removing user %s passport %s',
                 user.id,
                 passport.protocol
@@ -223,12 +224,12 @@ var UserController = module.exports = {
           });
         }
 
-        sails.log.debug('destroying user %s', user.id);
+        logger.debug('destroying user %s', user.id);
         user.destroy(function(error5) {
           if(error5) {
-            sails.log.error('//////////////// ERROR.DB ////////////////');
-            sails.log.error(error5);
-            sails.log.error('error removing user %s', user.id);
+            logger.error('//////////////// ERROR.DB ////////////////');
+            logger.error('%o',error5);
+            logger.error('error removing user %s', user.id);
             return res.send(500, 'internal error');
           }
           return res.json(204, 'User deleted');
@@ -244,7 +245,7 @@ var UserController = module.exports = {
       .populate('passports')
       .exec(function(err, user) {
         if(err) {
-          debug(err)
+          logger.error('%o',err)
           return res.send(500, 'Error fetching user passports.')
         } else {
           var passports = {}
@@ -255,7 +256,7 @@ var UserController = module.exports = {
         }
       })
     } else {
-      debug(err)
+      logger.error('%o',err)
       return res.send(500, 'Error fetching user passports.')
     }
   },
@@ -267,7 +268,7 @@ var UserController = module.exports = {
 
     User.findOne({ id: userId },(error,user) => {
       if (error) {
-        debug(error);
+        logger.error('%o',error);
         return res.send(500, 'internal server error');
       }
       if (user) {
@@ -277,7 +278,7 @@ var UserController = module.exports = {
           CustomUserData: userId
         }, function(error, data) {
           if (error) {
-            debug(error);
+            logger.error('%o',error);
             return res.send(500, 'internal server error');
           }
 
@@ -311,7 +312,7 @@ var UserController = module.exports = {
 
           User.update({id: userId}, {devices: user.devices}).exec((error,user) => {
             if (error) {
-              debug(error);
+              logger.error('%o',error);
               return res.send(500, 'internal server error');
             }
             return res.send(200)

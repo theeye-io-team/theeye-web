@@ -1,10 +1,10 @@
 /* global User, Passport, sails */
-var isEmail   = require('validator/lib/isEmail');
-var crypto      = require("crypto");
+var isEmail = require('validator/lib/isEmail');
+var crypto = require("crypto");
 var querystring = require("querystring");
 var underscore  = require("underscore");
-var debug       = require('debug')('theeye:service:protocol:local');
-var theeye  = require("./theeye");
+var logger = require('../../libs/logger')('service:protocols:local');
+var theeye = require("./theeye");
 /**
  * Local Authentication Protocol
  *
@@ -94,7 +94,7 @@ exports.resetActivationToken = function (user, next) {
   var updates = { invitation_token: token };
   User.update(query, updates, function (error, user) {
     if(error) {
-      debug('Error updating user');
+      logger.error('Error updating user');
       return next(error);
     }
 
@@ -136,36 +136,36 @@ exports.inviteMember = function (data, supervisor, next) {
   var customer = data.customer;
 
   if(!email) {
-    debug('No email was entered.');
+    logger.error('No email was entered.');
     return next('No email was entered.');
   }
 
   if(!customer) {
-    debug('No customer was entered.');
+    logger.error('No customer was entered.');
     return next('No customer was entered.');
   }
 
   User.findOne({email: email}, function (err, user) {
     if (err) {
-      debug(err);
+      logger.error('%o',err);
       return next('Internal sever error.');
     }
     if(!user) {
-      debug(err);
+      logger.error('%o',err);
       return next('Cannot invite member, user not found.');
     }
 
     //If the user exists and have perms for the selected customers dont send the activation email
     if(user.customers.includes(customer)){
-      debug("The user already have permissions for this customer.");
+      logger.error("The user already have permissions for this customer.");
       return next("The user already have permissions for this customer.");
     }
     user.customers.push(customer)
     User.update({ id: user.id },{ customers: user.customers },
       function(error, users) {
         if(error) {
-          debug('Error updating user customers.');
-          debug(error);
+          logger.error('Error updating user customers.');
+          logger.error('%o',error);
           return next(error);
         }
         if(users[0].enabled){
@@ -177,7 +177,7 @@ exports.inviteMember = function (data, supervisor, next) {
             route,
             error => {
               if (error) {
-                sails.log.error(error);
+                logger.error('%o',error);
                 return next('The user was updated but with errors.')
                 res.json(500,'the user was updated but with errors. ' + error.message);
               } else {
@@ -222,18 +222,18 @@ exports.createUser = function (data, next) {
  * @param {Function} next
  */
 exports.activate = function (user, password, customername, next) {
-  debug("Creating user %s local passport", user.id);
+  logger.debug("Creating user %s local passport", user.id);
   Passport.create({
     protocol : 'local',
     password : password,
     user : user.id
   }, function (err, passport) {
     if(err) {
-      debug(err);
+      logger.error('%o',err);
       return next(err);
     }
 
-    debug("Enabling user %s", user.id);
+    logger.debug("Enabling user %s", user.id);
 
     var data = {
       username: user.username,
@@ -249,7 +249,7 @@ exports.activate = function (user, password, customername, next) {
       invitation_token : user.invitation_token
     }, data, function (err, users) {
       if(err) {
-        debug(err);
+        logger.error('%o',err);
         return next(err);
       }
       return next(null, users[0]);
@@ -285,23 +285,23 @@ exports.update = function (req, res, next) {
     protocol : 'local',
     user     : id
   }, function (err, passport) {
-    debug('User passport found.');
+    logger.debug('User passport found.');
     if (err) {
-      debug(err)
+      logger.error('%o',err)
       return next({error: err,status: 500})
     }
     if(!passport){
-      debug('User passport not found.')
+      logger.error('User passport not found.')
       return next({error: new Error('User not found.'),status: 500})
     }
 
     passport.validatePassword(password, function (err, res) {
       if (err) {
-        debug('validate password error %s', err);
+        logger.error('validate password error %o', err);
         return next({error: err,statusCode: 500});
       }
       if (!res) {
-        debug('Password validation failed');
+        logger.error('Password validation failed');
         return next({error: new Error('Incorrect password.'),status: 400});
       }
 
@@ -407,33 +407,33 @@ exports.login = function (req, identifier, password, next) {
     if (err) return next(err);
 
     if (!user) {
-      sails.log.debug('user not found %s@%s', identifier, password);
+      logger.debug('user not found %s@%s', identifier, password);
       return next(null, false);
     }
 
-    sails.log.debug('validating local passport user %s', user);
+    logger.debug('validating local passport user %s', user);
 
     Passport.findOne({
       protocol : 'local',
       user     : user.id
     }, function (err, passport) {
-      sails.log.debug('passport %s', passport);
+      logger.debug('passport %s', passport);
       if (passport) {
         passport.validatePassword(password, function (err, res) {
           if (err) {
-            sails.log.error('validate password error %s', err);
+            logger.error('validate password error %s', err);
             return next(err);
           }
 
           if (!res) {
-            sails.log.debug('error wrong password');
+            logger.debug('error wrong password');
             return next(null, false);
           } else {
             return next(null, user);
           }
         });
       } else {
-        sails.log.debug('error password not set');
+        logger.debug('error password not set');
         return next(null, false);
       }
     });
@@ -441,10 +441,10 @@ exports.login = function (req, identifier, password, next) {
 }
 
 exports.bearerVerify = (token, next) => {
-  debug('verifying bearer jwtoken')
+  logger.debug('verifying bearer jwtoken')
   jwtoken.verify(token, (err, decoded) => {
     if (err) {
-      debug(err.message)
+      logger.error(err.message)
       if (/expired/i.test(err.message)) {
         err.status = 401
       } else {
@@ -458,20 +458,20 @@ exports.bearerVerify = (token, next) => {
     if (!uid) {
       err = new Error('invalid token payload. invalid credentials')
       err.status = 400
-      debug(err.message)
-      debug(decoded)
+      logger.error(err.message)
+      logger.error(decoded)
       return next(err)
     }
 
     User.findOne({ id: uid }, (err, user) => {
       if (err) {
-        debug(err.message)
+        logger.error(err.message)
         return next(err)
       }
 
       if (!user) {
         err = new Error('invalid token payload. credentials not found')
-        debug(err.message)
+        logger.error(err.message)
         return next(err)
       }
 
@@ -484,7 +484,7 @@ exports.bearerVerify = (token, next) => {
         if (!passport) {
           err = new Error('theeye passport not found')
           err.status = 500
-          debug(err.message)
+          logger.error(err.message)
           return next(err)
         }
 

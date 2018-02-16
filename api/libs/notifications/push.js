@@ -1,11 +1,11 @@
 /* global sails */
 
-var debug = require('debug')('eye:libs:push-notifications')
+var logger = require('../logger')('eye:libs:push-notifications')
 var AWS = require('aws-sdk')
 var SNS = new AWS.SNS(new AWS.Config(sails.config.aws))
 
 const _send = (message,users) => {
-  if (!message) return debug('Error. invalid message, undefined condition')
+  if (!message) return logger.error('Error. invalid message, undefined condition')
   message = message.replace(/['"]+/g, '')
 
   var params = {
@@ -17,7 +17,7 @@ const _send = (message,users) => {
     })
   }
 
-  debug('Sending push notification to users with message: ' + message)
+  logger.debug('Sending push notification to users with message: ' + message)
 
   if (users.length) {
     users.forEach(function (user) {
@@ -28,15 +28,15 @@ const _send = (message,users) => {
       if (user.devices) {
         user.devices.forEach(function (device) {
           params.TargetArn = device.endpoint_arn
-          debug('Sending notification to target arn: ' + params.TargetArn)
+          logger.debug('Sending notification to target arn: ' + params.TargetArn)
 
           SNS.publish(params, function (error, data) {
             if (error) {
-              debug(error)
-              debug('Error sending notification, deleting endpoint arn: ' + params.TargetArn)
+              logger.error('%o',error)
+              logger.error('Error sending notification, deleting endpoint arn: ' + params.TargetArn)
               errorHandler(user, device)
             } else {
-              debug('Push notification sent.')
+              logger.debug('Push notification sent.')
             }
           })
         })
@@ -50,8 +50,8 @@ const errorHandler = (user, device) => {
     EndpointArn: device.endpoint_arn
   }, function(error, data) {
     if (error) {
-      debug('Error deleting previous Endpoint Arn.')
-      debug(error);
+      logger.error('Error deleting previous Endpoint Arn')
+      logger.error('%o',error);
       return
     }
 
@@ -63,8 +63,8 @@ const errorHandler = (user, device) => {
     }
     User.update({id: user.id}, {devices: user.devices}).exec((error,user) => {
       if (error) {
-        debug('Error updating user devices.')
-        debug(error);
+        logger.error('Error creating new Endpoint Arn')
+        logger.error('%o',error);
         return
       }
       debug('Successfully removed Endpoint Arn.')
@@ -83,7 +83,7 @@ const prepareHostNotification = (monitor, monitor_event) => {
       msg = `${monitor.name} stopped reporting updates.`
       break
     default:
-      debug('ERROR. event not defined or not handled')
+      logger.error('ERROR. event not defined or not handled')
       break
   }
 
@@ -101,7 +101,7 @@ const prepareDefaultNotification = (monitor, monitor_event) => {
       msg = `${monitor.name} checks failed.`
       break
     default:
-      debug('ERROR. event not defined or not handled')
+      logger.error('ERROR. event not defined or not handled')
       break
   }
 
@@ -136,8 +136,8 @@ const prepareMonitorStateChangeNotification = (monitor, monitor_event) => {
       msg = prepareDefaultNotification(monitor, monitor_event)
       break
     default:
-      debug('ERROR. type not defined or not handled')
-      debug('%o',monitor)
+      logger.error('ERROR. type not defined or not handled')
+      logger.error('%o',monitor)
       break
 
   }

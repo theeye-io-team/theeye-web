@@ -1,8 +1,9 @@
 /* global passport, sails, User */
-var debug = require('debug')('eye:web:controller:auth');
 var GoogleAuth = require('google-auth-library');
 
 const CLIENT_ID = sails.config.passport.google.options.clientID;
+
+const logger = require('../libs/logger')('controllers:auth')
 
 var AuthController = {
   /**
@@ -52,7 +53,7 @@ var AuthController = {
    * @param {Object} res
    */
   updateLocalPassport: function (req, res) {
-    sails.log.debug("update local passport password");
+    logger.debug("update local passport password");
 
     passport.updateLocalPassport(req, res, function(err)
     {
@@ -172,30 +173,30 @@ var AuthController = {
 
     passport.callback(req, res, function (err, user){
       if(err){
-        sails.log.error('fatal error');
-        sails.log.error(err);
+        logger.error('fatal error');
+        logger.error(err);
         return tryAgain(err);
       }
 
       if(!user){
-        sails.log.debug('authentication error %s user %s', err, user);
+        logger.debug('authentication error %s user %s', err, user);
         return tryAgain();
       }
 
-      sails.log.debug('passport authenticated');
+      logger.debug('passport authenticated');
 
       var action = req.param('action');
-      sails.log.debug('processing action %s', action);
+      logger.debug('processing action %s', action);
       if(action == 'invite') {
         res.redirect('/events');
       } else {
         req.login(user, function (err) {
           if (err) {
-            debug('LOGIN ERROR:');
-            debug(err);
+            logger.debug('LOGIN ERROR:');
+            logger.debug(err);
             return tryAgain();
           } else {
-            sails.log.debug('user ready!');
+            logger.debug('user ready!');
             res.redirect('/events');
           }
         });
@@ -209,7 +210,7 @@ var AuthController = {
    * @param {Object} res
    */
   disconnect: function (req, res) {
-    sails.log.debug("disconnect %s passport for current user", req.param('provider'));
+    logger.debug("disconnect %s passport for current user", req.param('provider'));
 
     passport.disconnect(req, res, function(err, user)
     {
@@ -240,7 +241,7 @@ var AuthController = {
       } else {
         passport.registerUser(req, res, function(err, user) {
           if(err) {
-            sails.log.error(err);
+            logger.error(err);
             var errMsg = 'Error registering user.'
             if(err.code && err.code == 'CredentialsError')
               errMsg = 'Error sending registration email.'
@@ -285,11 +286,11 @@ var AuthController = {
 
       req.login(user, function (err) {
         if (err) {
-          debug('LOGIN ERROR:')
-          debug(err);
+          logger.error('LOGIN ERROR:')
+          logger.error('%o',err);
           return res.send(500, err)
         } else {
-          debug('user logged in. issuing access token')
+          logger.debug('user logged in. issuing access token')
           const accessToken = jwtoken.issue({ user_id: user.id })
           return res.send(200, {
             access_token: accessToken
@@ -307,14 +308,14 @@ var AuthController = {
     passport.authenticate('local', function (err, user) {
       if (err) return res.send(500, err)
       if (!user) return res.send(400, 'Invalid credentials')
-      sails.log.debug('passport authenticated')
+      logger.debug('passport authenticated')
       req.login(user, function (err) {
         if (err) {
-          debug('LOGIN ERROR:')
-          debug(err);
+          logger.error('LOGIN ERROR:')
+          logger.error('%o',err);
           return res.send(500, err)
         } else {
-          debug('user logged in. issuing access token')
+          logger.debug('user logged in. issuing access token')
           const accessToken = jwtoken.issue({ user_id: user.id })
           return res.send(200, {
             access_token: accessToken
@@ -337,8 +338,8 @@ var AuthController = {
       var query
       var msg = "Login error, please try again later."
       if(err) {
-        debug('SOCIAL LOGIN ERROR:')
-        debug(err)
+        logger.error('SOCIAL LOGIN ERROR:')
+        logger.error(err)
 
         if(err.message == 'usernotfound') {
           msg = "Login error, email does not match an existent account."
@@ -356,14 +357,14 @@ var AuthController = {
         return res.redirect('/sociallogin?'+query);
       }
 
-      sails.log.debug('passport authenticated');
+      logger.debug('passport authenticated');
       req.login(response.user, function (err) {
         if (err) {
-          debug('LOGIN ERROR:');
-          debug(err);
+          logger.error('LOGIN ERROR:');
+          logger.error(err);
           return res.redirect('/login');
         } else {
-          debug('user logged in. issuing access token')
+          logger.debug('user logged in. issuing access token')
           const accessToken = jwtoken.issue({ user_id: response.user.id })
           var queryToken = new Buffer( JSON.stringify({ access_token: accessToken }) ).toString('base64')
           return res.redirect('/sociallogin?'+queryToken);
@@ -385,8 +386,8 @@ var AuthController = {
       var query
       var msg = "Error connecting accounts, please try again later."
       if(err) {
-        debug('SOCIAL CONNECT ERROR:')
-        debug(err)
+        logger.error('SOCIAL CONNECT ERROR:')
+        logger.error('%o',err)
 
         if(err.message == 'usernotfound') {
           msg = "Error connecting accounts, accounts emails doesn't match."
@@ -412,34 +413,34 @@ var AuthController = {
 
     client.verifyIdToken(params.idToken, CLIENT_ID, function(err, login) {
       if (err) {
-        debug('LOGIN ERROR:');
-        debug(err);
+        logger.error('LOGIN ERROR:');
+        logger.error(err);
         return res.send(400,{message:'Invalid social credentials.'})
       }
       var payload = login.getPayload();
       if(!payload.sub) {
-        debug('LOGIN ERROR:');
-        debug(err);
+        logger.error('LOGIN ERROR:');
+        logger.error('%o',err);
         return res.send(400,{message:'Invalid social credentials.'})
       }
 
       passport.authenticate('google-mobile', function (err, user) {
         if (err) return res.send(err.statusCode, err)
         if (!user) return res.send(400,{message:'Invalid social credentials.'})
-        sails.log.debug('passport authenticated')
+        logger.debug('passport authenticated')
         passport.connectSocialMobile('google-mobile', payload.sub, user, function(err, user){
           if (err) {
-            debug('LOGIN ERROR:')
-            debug(err);
+            logger.error('LOGIN ERROR:')
+            logger.error(err);
             return res.send(500, err)
           }
           req.login(user, function (err) {
             if (err) {
-              debug('LOGIN ERROR:')
-              debug(err);
+              logger.error('LOGIN ERROR:')
+              logger.error(err);
               return res.send(500, err)
             } else {
-              debug('user logged in. issuing access token')
+              logger.debug('user logged in. issuing access token')
               const accessToken = jwtoken.issue({ user_id: user.id })
               return res.send(200, {
                 access_token: accessToken

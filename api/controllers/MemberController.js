@@ -2,7 +2,8 @@
 var passport = require('../services/passport')
 var mailer = require('../services/mailer')
 var difference = require('lodash/difference')
-var debug = require('debug')('eye:web:controller:member');
+
+const logger = require('../libs/logger')('controllers:member')
 
 var MemberController = module.exports = {
   //GET  /member
@@ -63,7 +64,7 @@ var MemberController = module.exports = {
 
       User.update({id: userId}, params).exec((error,user) => {
         if(error){
-          sails.log.error(error);
+          logger.error('%o',error);
           return res.send(500, 'Internal server error');
         }
 
@@ -76,7 +77,7 @@ var MemberController = module.exports = {
           route,
           error => {
             if (error) {
-              sails.log.error(error);
+              logger.error('%o',error);
               res.json(500,'The user was updated but with errors. ' + error.message);
             } else {
               res.send(203,{});
@@ -104,7 +105,7 @@ var MemberController = module.exports = {
 
       User.update({id: userId}, params).exec((error,users) => {
         if(error){
-          sails.log.error(error);
+          logger.error('%o',error);
           return res.send(500, 'Internal server error');
         }
         var updatedUser = users[0]
@@ -129,7 +130,7 @@ var MemberController = module.exports = {
           route,
           error => {
             if (error) {
-              sails.log.error(error);
+              logger.error('%o',error);
               res.json(500,'The user was updated but with errors. ' + error.message);
             } else {
               res.send(200, member);
@@ -157,7 +158,7 @@ var MemberController = module.exports = {
         }
         passport.inviteMember(req, res, data, function(err, user) {
           if(err) {
-            sails.log.error(err);
+            logger.error('%o',err);
             return res.send(400, err);
           }
           member = {
@@ -185,7 +186,7 @@ var MemberController = module.exports = {
         }
         passport.createUser(req, res, data, function(err, user) {
           if(err) {
-            sails.log.error(err);
+            logger.error('%o',err);
             return res.send(400, err);
           }
           member = {

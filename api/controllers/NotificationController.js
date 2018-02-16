@@ -1,7 +1,7 @@
 
 /* global sails, User */
 const LIFECYCLE = require('../../src/constants/lifecycle')
-const debug = require('debug')('eye:web:controller:notification')
+const logger = require('../libs/logger')('controllers:notification')
 const Notifications = require('../libs/notifications')
 
 const handledTopics = [
@@ -23,17 +23,17 @@ module.exports = {
     if (!data) return res.send(400, 'Data is required.')
     if (!topic) return res.send(400, 'Topic is required.')
 
-    debug('topic %s , model_type %s , model.name %s', topic, data.model_type, data.model.name || 'no name property')
+    logger.debug('topic %s , model_type %s , model.name %s', topic, data.model_type, data.model.name || 'no name property')
 
     if (handledTopics.indexOf(event.topic) > -1) {
       var acls = (data.model.task?data.model.task.acl:data.model.acl)||[]
 
       getUsers(data.organization, acls, (error, users) => {
-        if (error) return debug(error)
+        if (error) return logger.error('%o',error)
 
         // create a notification for each user
         createNotifications(event, users, data.organization, (err, notifications) => {
-          if (err) return debug(err)
+          if (err) return logger.error('%o',err)
           if (notifications.length===0) return
 
           // send extra notification event via sns topic

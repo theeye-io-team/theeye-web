@@ -1,12 +1,11 @@
 /* global sails */
 const AWS = require('aws-sdk')
 const SNS = new AWS.SNS(new AWS.Config(sails.config.aws))
-// const SocketsNotifications = require('../sockets-notifications')
-const debug = require('debug')('eye:libs:notifications:sns')
+const logger = require('../logger')('libs:notifications:sns')
 
 module.exports = {
   send (event, users) {
-    debug('NOT IMPLEMENTED!!!')
+    logger.error('NOT IMPLEMENTED!!!')
     // const topic = input.topic
     // const message = input.data
     //

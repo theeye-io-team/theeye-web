@@ -4,8 +4,7 @@
  *
  */
 var format = require('util').format;
-var debug = require('debug')('eye:web:service:protocol:theeye');
-
+var logger = require('../../libs/logger')('service:protocols:theeye');
 
 /**
  * @author Facundo
@@ -43,14 +42,14 @@ exports.createUser = function (localUser, params, supervisor, next) {
         profile: profile
       }, function (err, passport) {
         if (err) {
-          sails.log.error(err);
+          logger.error('%o',err);
           return next(err);
         }
         return next(null, profile);
       });
     },
     failure:(err) => {
-      sails.log.error(err);
+      logger.error('%o',err);
       return next(err);
     }
   })
@@ -80,12 +79,12 @@ exports.updateUser = function (userId, updates, supervisor, doneFn) {
   }, function(error, passport) {
 
     if (error) {
-      sails.log.error(error);
+      logger.error('%o',error);
       return doneFn(error);
     }
 
     if (!passport) {
-      sails.log.error('passport not found. ' + passport);
+      logger.error('passport not found. ' + passport);
       return doneFn()
     }
     supervisor.patch({
@@ -118,12 +117,12 @@ exports.updateMemberCredential = function (userId, updates, supervisor, route, d
   }, function(error, passport) {
 
     if (error) {
-      sails.log.error(error);
+      logger.error('%o',error);
       return doneFn(error);
     }
 
     if (!passport) {
-      sails.log.error('passport not found. ' + passport);
+      logger.error('passport not found. ' + passport);
       return doneFn()
     }
 
@@ -156,12 +155,12 @@ exports.removeMemberFromCustomer = function (userId, updates, supervisor, route,
   }, function(error, passport) {
 
     if (error) {
-      sails.log.error(error);
+      logger.error('%o',error);
       return doneFn(error);
     }
 
     if (!passport) {
-      sails.log.error('passport not found. ' + passport);
+      logger.error('passport not found. ' + passport);
       return doneFn()
     }
 
@@ -194,12 +193,12 @@ exports.addMemberToCustomer = function (userId, updates, supervisor, route, done
   }, function(error, passport) {
 
     if (error) {
-      sails.log.error(error);
+      logger.error('%o',error);
       return doneFn(error);
     }
 
     if (!passport) {
-      sails.log.error('passport not found. ' + passport);
+      logger.error('passport not found. ' + passport);
       return doneFn()
     }
 
