@@ -67,7 +67,7 @@ const errorHandler = (user, device) => {
         logger.error('%o',error);
         return
       }
-      debug('Successfully removed Endpoint Arn.')
+      logger.debug('Successfully removed Endpoint Arn.')
     })
   })
 }
