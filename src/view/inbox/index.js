@@ -5,6 +5,7 @@ import moment from 'moment'
 import Modalizer from 'components/modalizer'
 import FormView from 'ampersand-form-view'
 import SettingsView from './settings-pane'
+import StateConstants from 'constants/states'
 //import bootbox from 'bootbox'
 
 const DeleteNotificationsView = View.extend({
@@ -29,24 +30,29 @@ const resourceType = {
   Resource: 'Resource',
   ScriptJob: 'Task'
 }
+
 const meaning = {
-  ready: 'executed, waiting for result',
+  ready: 'queued, waiting for result',
   finished: 'finished running',
   updates_stopped: 'has gone silent',
   updates_started: 'came back to life',
   failure: 'is not working properly',
+  canceled: 'has been canceled',
   recovered: 'came back to normal'
 }
+
 const icons = {
   ready: 'fa fa-clock-o',
   assigned: 'fa fa-clock-o',
   finished: 'fa fa-check-circle',
-  terminated: 'fa fa-check-circle',
   completed: 'fa fa-check-circle',
+  terminated: 'fa fa-question-circle',
+  canceled: 'fa fa-minus-circle',
   normal: 'fa fa-check-circle',
+  failure: 'fa fa-exclamation-circle',
   recovered: 'fa fa-check-circle',
   updates_started: 'fa fa-check-circle',
-  updates_stopped: 'fa fa-exclamation-triangle'
+  updates_stopped: 'fa fa-exclamation-circle'
 }
 
 const EmptyView = View.extend({
@@ -74,62 +80,63 @@ const InboxPopupRow = View.extend({
     </div>
   `,
   bindings: {
-    message: {
-      hook: 'message'
-    },
+    message: { hook: 'message' },
+    time: { hook: 'time' },
+    modelName: { hook: 'modelName' },
+    modelType: { hook: 'modelType' },
+    severity: { type: 'class' },
     icon: {
       type: 'attribute',
       name: 'class',
       hook: 'icon'
-    },
-    time: {
-      hook: 'time'
-    },
-    modelName: {
-      hook: 'modelName'
-    },
-    modelType: {
-      hook: 'modelType'
-    },
-    severity: {
-      type: 'class'
     }
   },
   initialize () {
     this.inboxify()
   },
   inboxify () {
-    this.modelName = this.model.data.model.name
-    this.modelType = resourceType[this.model.data.model_type]
-    this.icon = ''
-    this.severity = ''
     let format = 'L [at] LT'
     if (new Date().toDateString() === new Date(this.model.createdAt).toDateString()) {
       format = '[Today at] LT'
     }
-    this.time = moment(this.model.createdAt).format(format)
-    switch (this.model.data.model._type) {
-      case 'ScriptJob':
-        // state: unknown, success, failure
-        // lifecycle:
-        //    inProgress: ready, assigned
-        //    isCompleted: finished, terminated, completed
-        //    isTerminated?: canceled, expired
 
-        this.message = meaning[this.model.data.model.lifecycle] ||
-          `${this.model.data.model.lifecycle}:${this.model.data.model.state}`
-        this.severity = this.model.data.model.state
-        this.icon = icons[this.model.data.model.lifecycle]
-        break
-      case 'Resource':
-        this.message = meaning[this.model.data.monitor_event] ||
-          `${this.model.data.monitor_event}:${this.model.data.model.state}`
-        this.severity = this.model.data.model.state
-        this.icon = icons[this.model.data.monitor_event]
-        break
+    const state = sanitizeState(this.model.data.model.state)
+    const type = this.model.data.model._type
+
+    this.time = moment(this.model.createdAt).format(format)
+    this.modelName = this.model.data.model.name
+    this.modelType = resourceType[this.model.data.model_type]
+    this.icon = ''
+
+    this.severity = stateToSeverity(state)
+
+    if (type === 'Resource') { // it is resources notification
+      let monitor_event = this.model.data.monitor_event
+      this.message = meaning[monitor_event] || `${monitor_event}:${state}`
+      this.icon = icons[monitor_event]
+
+      // monitor execution always failure, unless used a recognized state
+      if (!this.severity) this.severity = StateConstants.FAILURE
+
+    } else if (/Job/.test(type)===true) { // it is a task execution
+      let lifecycle = this.model.data.model.lifecycle
+      this.message = meaning[lifecycle] || `${lifecycle}:${state}`
+      this.icon = icons[lifecycle]
+
+      // task execution always success, unless declared a failure
+      if (!this.severity) this.severity = StateConstants.SUCCESS
+
+    } else {
+      console.warning(this.model)
+      this.icon = icons[state]
+      this.message = `${state}`
     }
   }
 })
+
+const sanitizeState = (state) => state.toLowerCase().replace(/ /g,"_")
+
+const stateToSeverity = (state) => (StateConstants.STATES.indexOf(state)!==-1) ? state : null
 
 module.exports = View.extend({
   template: `

@@ -19,32 +19,44 @@ const ScriptJobResult = View.extend({
       <table class="table">
         <thead> </thead>
         <tbody>
-          <tr><td>Output Code</td><td><span data-hook="code"></span></td></tr>
-          <tr><td>Killed</td><td><span class="fa" data-hook="killed"></span></td></tr>
-          <tr><td>Last Line</td><td><div class="output"><pre data-hook="lastline"></pre></div></td></tr>
-          <tr><td>Log</td><td><div class="output"><pre data-hook="log"></pre></td></div></tr>
+          <tr>
+            <td>Output Code</td>
+            <td><span data-hook="code"></span></td>
+          </tr>
+          <tr>
+            <td>Killed</td>
+            <td>
+              <span class="fa" data-hook="killed"></span>
+            </td>
+          </tr>
+          <tr>
+            <td>Last Line</td>
+            <td>
+              <div class="output">
+                <pre data-hook="lastline"></pre>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Log</td>
+            <td>
+              <div class="output">
+                <pre data-hook="log"></pre>
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>
   `,
   bindings: {
     'result.code': { hook:'code' },
-    //html_lastline: {
-    //  type:'innerHTML',
-    //  hook:'lastline'
-    //},
     'result.lastline': { hook: 'lastline' },
     html_log: {
       type:'innerHTML',
       hook:'log'
     },
     killed: { hook:'killed' }
-    //'result.killed': {
-    //  hook:'killed',
-    //  type:'booleanClass',
-    //  yes:'fa-check',
-    //  no:'fa-remove'
-    //},
   },
   derived: {
     killed: {
