@@ -19,11 +19,11 @@ const SettingsMenuState = State.extend({
       if (this.visible===true) {
         SessionActions.getUserPassport()
 
-        if(Acls.hasAccessLevel('admin')){
+        if (Acls.hasAccessLevel('admin')) {
           CustomerActions.getAgentCredentials()
         }
 
-        if(Acls.hasAccessLevel('manager') && App.state.session.user.credential !== 'admin'){
+        if (Acls.hasAccessLevel('manager') && App.state.session.user.credential !== 'admin') {
           App.state.members.fetch({
             error (err,xhr) {
               bootbox.alert('Something goes wrong. Please refresh')

@@ -1,27 +1,28 @@
-import App from 'ampersand-app'
+//import App from 'ampersand-app' // CANNOT BE USED HERE. IT IS NOT PRESENT UNTIL APP COMPLETE INITIALIZATION
 import State from  'ampersand-state'
 import { Collection as Notifications } from 'models/notification'
 import FilteredSubcollection from 'lib/filtered-subcollection'
 
 export default State.extend({
   props: {
+    appState: 'state',
     isOpen: ['boolean',false,false]
   },
   collections: {
     filteredNotifications: Notifications
   },
-  initialize () {
-    State.prototype.initialize.apply(this,arguments)
+  initialize (options) {
+    State.prototype.initialize.apply(this, arguments)
 
     this.filteredNotifications = new FilteredSubcollection(
-      App.state.notifications, {
-        filters: buildFilterArray(),
+      this.appState.notifications, {
+        filters: buildFilterArray(this.appState),
         comparator: sortOnCreatedAt
       }
     )
 
     this.listenTo(
-      App.state.session.user.notifications,
+      this.appState.session.user.notifications,
       'change:desktopExcludes',
       this.updateFilters
     )
@@ -29,15 +30,15 @@ export default State.extend({
   updateFilters () {
     this.filteredNotifications.configure({
       comparator: sortOnCreatedAt,
-      filters: buildFilterArray()
+      filters: buildFilterArray(this.appState)
     }, true)
   },
 })
 
 const sortOnCreatedAt = (model) => -model.createdAt
 
-const buildFilterArray = () => {
-  const excludes = App.state.session.user.notifications.desktopExcludes
+const buildFilterArray = (appState) => {
+  const excludes = appState.session.user.notifications.desktopExcludes
   return excludes.map(filter => {
     return (model) => {
       // every prop has to match, including those in data

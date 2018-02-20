@@ -6,6 +6,7 @@ import Modalizer from 'components/modalizer'
 import FormView from 'ampersand-form-view'
 import SettingsView from './settings-pane'
 import StateConstants from 'constants/states'
+import LifecycleConstants from 'constants/lifecycle'
 //import bootbox from 'bootbox'
 
 const DeleteNotificationsView = View.extend({
@@ -48,11 +49,12 @@ const icons = {
   completed: 'fa fa-check-circle',
   terminated: 'fa fa-question-circle',
   canceled: 'fa fa-minus-circle',
+  success: 'fa fa-check-circle',
   normal: 'fa fa-check-circle',
   failure: 'fa fa-exclamation-circle',
   recovered: 'fa fa-check-circle',
   updates_started: 'fa fa-check-circle',
-  updates_stopped: 'fa fa-exclamation-circle'
+  updates_stopped: 'fa fa-times-circle'
 }
 
 const EmptyView = View.extend({
@@ -61,7 +63,7 @@ const EmptyView = View.extend({
 
 const InboxPopupRow = View.extend({
   props: {
-    severity: 'string',
+    colorClass: 'string',
     modelType: 'string',
     modelName: 'string',
     message: 'string',
@@ -71,7 +73,6 @@ const InboxPopupRow = View.extend({
   },
   template: `
     <div class="inbox-entry">
-      <span data-hook="severity"></span>
       <span data-hook="icon"></span>
       <span data-hook="time"></span>
       <span data-hook="modelType"></span>
@@ -84,7 +85,7 @@ const InboxPopupRow = View.extend({
     time: { hook: 'time' },
     modelName: { hook: 'modelName' },
     modelType: { hook: 'modelType' },
-    severity: { type: 'class' },
+    colorClass: { type: 'class' },
     icon: {
       type: 'attribute',
       name: 'class',
@@ -108,7 +109,7 @@ const InboxPopupRow = View.extend({
     this.modelType = resourceType[this.model.data.model_type]
     this.icon = ''
 
-    this.severity = stateToSeverity(state)
+    this.colorClass = stateToColorClass(state)
 
     if (type === 'Resource') { // it is resources notification
       let monitor_event = this.model.data.monitor_event
@@ -116,16 +117,27 @@ const InboxPopupRow = View.extend({
       this.icon = icons[monitor_event]
 
       // monitor execution always failure, unless used a recognized state
-      if (!this.severity) this.severity = StateConstants.FAILURE
-
+      if (!this.colorClass) {
+        this.colorClass = StateConstants.FAILURE
+      }
     } else if (/Job/.test(type)===true) { // it is a task execution
       let lifecycle = this.model.data.model.lifecycle
       this.message = meaning[lifecycle] || `${lifecycle}:${state}`
-      this.icon = icons[lifecycle]
+
+      if (lifecycle===LifecycleConstants.FINISHED) {
+        if (state===StateConstants.FAILURE) {
+          this.icon = icons[state]
+        } else {
+          this.icon = icons[StateConstants.SUCCESS]
+        }
+      } else {
+        this.icon = icons[lifecycle]
+      }
 
       // task execution always success, unless declared a failure
-      if (!this.severity) this.severity = StateConstants.SUCCESS
-
+      if (!this.colorClass) {
+        this.colorClass = StateConstants.SUCCESS
+      }
     } else {
       console.warning(this.model)
       this.icon = icons[state]
@@ -136,7 +148,7 @@ const InboxPopupRow = View.extend({
 
 const sanitizeState = (state) => state.toLowerCase().replace(/ /g,"_")
 
-const stateToSeverity = (state) => (StateConstants.STATES.indexOf(state)!==-1) ? state : null
+const stateToColorClass = (state) => (StateConstants.STATES.indexOf(state)!==-1) ? state : null
 
 module.exports = View.extend({
   template: `

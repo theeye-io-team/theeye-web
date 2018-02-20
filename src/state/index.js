@@ -70,8 +70,7 @@ const AppState = State.extend({
     searchbox: ['state',false,() => { return new SearchBoxState() }],
     editor: ['state',false,() => { return new EditorState() }],
     onboarding: ['state', false, () => new OnboardingState()],
-    hoststatsPage: ['state', true, () => new HostStatsPageState()],
-    inbox: ['state', true, () => new InboxState()]
+    hoststatsPage: ['state', true, () => new HostStatsPageState()]
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)
@@ -85,6 +84,8 @@ const AppState = State.extend({
     this.session = new SessionState()
     this.navbar = new NavbarState()
     this.credentials = new CredentialsCollection()
+
+    this.inbox = new InboxState({ appState: this })
   },
   appInit () {
     this.session.appInit()
@@ -111,6 +112,11 @@ const AppState = State.extend({
       }
     })
 
+    /**
+     *
+     * customer switch
+     *
+     */
     this.listenToAndRun(this.session.customer,'change:id', () => {
       if (!this.session.customer.id) return
       this.notifications.fetch({ reset: true })

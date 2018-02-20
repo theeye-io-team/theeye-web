@@ -11,10 +11,14 @@ module.exports = {
     shortcurts: false,
     rest: false
   },
+  /**
+   * subscribe
+   */
   subscribe (req, res) {
     const socket = req.socket
     const user = req.user
     const customer = req.user.current_customer
+
     let topics = req.params.all().topics
 
     if (user.customers.indexOf(customer) === -1) {
@@ -38,13 +42,49 @@ module.exports = {
     res.json({ message: 'subscription success' })
   },
   /**
-   *
-   * unsubscribe all
-   *
+   * unsubscribe
    */
   unsubscribe (req, res) {
     const socket = req.socket
     const user = req.user
     const customer = req.user.current_customer
+
+    var logops = []
+
+    let topics = req.params.all().topics
+
+    if (!topics) { // unsubscribe all
+      let myRooms = socket.manager.roomClients[socket.id]
+      for (var roomName in myRooms) {
+        if (myRooms[roomName]===true) {
+          let trueName = roomName.substring(1)
+          // remove leading / from roomName, dont know why it has a leading /
+          socket.leave(trueName, function(){
+            let msg = `client leave room ${trueName}`
+            logops.push(msg)
+            logger.debug(msg)
+          })
+        }
+      }
+    } else {
+      topics.forEach(topic => {
+        let roomName = `${customer}:${topic}`
+        socket.leave(roomName, function(){
+          let msg = `client leave room ${roomName}`
+          logops.push(msg)
+          logger.debug(msg)
+        })
+      })
+    }
+
+    res.send(200, logops)
+  },
+  /**
+   * query subscriptions
+   */
+  subscriptions (req, res) {
+    const socket = req.socket
+    let myRooms = socket.manager.roomClients[socket.id]
+    res.json(Object.keys(myRooms))
   }
 }

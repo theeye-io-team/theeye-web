@@ -6,6 +6,21 @@ import config from 'config'
 
 class HostStats extends Route {
   indexRoute (options) {
+    let topics = {
+      query: {
+        topics: ['host-stats','host-processes']
+      }
+    }
+
+    this.listenToAndRun(App.state,'change:currentPage',() => {
+      if (!this.page) return
+      if (App.state.currentPage == this.page) {
+        App.sockets.subscribe(topics)
+      } else {
+        App.sockets.unsubscribe(topics)
+      }
+    })
+
     App.state.hoststatsPage.resource.clear()
     App.state.hoststatsPage.host.clear()
     App.state.hoststatsPage.dstat = {}
@@ -53,7 +68,10 @@ class HostStats extends Route {
         App.state.hoststatsPage.dstat = data.find(d => d.type === 'dstat')
         App.state.hoststatsPage.psaux = data.find(d => d.type === 'psaux')
       })
-    return new StatsView({hostId: options.id})
+
+    this.page = new StatsView({ hostId: options.id })
+
+    return this.page
   }
 }
 

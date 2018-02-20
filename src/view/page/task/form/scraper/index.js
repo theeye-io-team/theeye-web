@@ -20,7 +20,7 @@ import CopyTaskSelect from '../copy-task-select'
 
 import isURL from 'validator/lib/isURL'
 
-const WEBHOOKS = require('constants/webhooks')
+const WebhooksConstants = require('constants/webhooks')
 const TASK = require('constants/task')
 const HelpTexts = require('language/help')
 
@@ -182,7 +182,7 @@ module.exports = FormView.extend({
         name: 'method',
         multiple: false,
         tags: false,
-        options: WEBHOOKS.HTTP_METHODS.map(method => {
+        options: WebhooksConstants.HTTP_METHODS.map(method => {
           return {
             id: method,
             text: method
@@ -208,7 +208,7 @@ module.exports = FormView.extend({
         name: 'timeout',
         multiple: false,
         tags: false,
-        options: WEBHOOKS.TIMEOUTS.map(time => {
+        options: WebhooksConstants.TIMEOUTS.map(time => {
           return {
             id: time.ms,
             text: time.text

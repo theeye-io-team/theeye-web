@@ -19,20 +19,20 @@ module.exports = {
         Accept: 'application/json;charset=UTF-8'
       },
       done: (response,xhr) => {
+        App.state.loader.visible = false
         if (xhr.status == 200){
           App.state.session.access_token = response.access_token
         } else {
           bootbox.alert('Login error, please try again')
         }
-        App.state.loader.visible = false
       },
       fail: (err,xhr) => {
+        App.state.loader.visible = false
         if (xhr.status == 400) {
           bootbox.alert('Login error, invalid credentials')
         } else {
           bootbox.alert('Login error, please try again')
         }
-        App.state.loader.visible = false
       }
     })
   },
