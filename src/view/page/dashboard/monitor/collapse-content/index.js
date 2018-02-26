@@ -257,6 +257,7 @@ const FileCollapsedContent =  GenericCollapsedContent.extend({
             <th>Filename</th>
             <th>Username</th>
             <th>Groupname</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -276,25 +277,53 @@ const FileCollapsedContent =  GenericCollapsedContent.extend({
     basename: { hook: 'basename' },
     os_username: { hook: 'os_username' },
     os_groupname: { hook: 'os_groupname' },
+    file_id: {
+      hook: 'edit_file',
+      type: 'booleanAttribute',
+      name: 'disabled',
+      invert: true
+    }
   }),
   props: {
     dirname: 'string',
     basename: 'string',
     os_username: 'string',
     os_groupname: 'string',
+    file_id: 'string'
   },
   initialize () {
     GenericCollapsedContent.prototype.initialize.apply(this,arguments)
+
     this.listenToAndRun(this.monitor,'change:config',this.updateState)
   },
   updateState () {
     if (!this.monitor.config) return
     const config = this.monitor.config
+    this.file_id = config.file
     this.dirname = config.dirname
     this.basename = config.basename
     this.os_username = config.os_username || 'not specified'
     this.os_groupname = config.os_groupname || 'not specified'
   },
+  events: {
+    'click button[data-hook=edit_file]': 'onClickEditFile'
+  },
+  onClickEditFile (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    if (!this.file_id) return
+
+    FileActions.edit(this.file_id)
+
+    return false
+  },
+  render () {
+    this.renderWithTemplate(this)
+    if ( acls.hasAccessLevel('admin') ) {
+      this.query('tbody tr').innerHTML += `<td><button title="edit the script" data-hook="edit_file" class="fa fa-edit btn btn-sm btn-primary"></button></td>`
+    }
+  }
 })
 
 const HostCollapsedContent =  GenericCollapsedContent.extend({
