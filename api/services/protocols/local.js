@@ -155,11 +155,17 @@ exports.inviteMember = function (data, supervisor, next) {
       return next('Cannot invite member, user not found.');
     }
 
-    //If the user exists and have perms for the selected customers dont send the activation email
     if(user.customers.includes(customer)){
-      logger.error("The user already have permissions for this customer.");
-      return next("The user already have permissions for this customer.");
+      if(user.enabled) {
+        //If the user is member and is active, dont sent activation/invitation email
+        logger.error("The user already has permissions for this customer.");
+        return next("activeMember");
+      } else {
+        //If the user is member but is inactive, resend invitation email
+        return next(null, user)
+      }
     }
+
     user.customers.push(customer)
     User.update({ id: user.id },{ customers: user.customers },
       function(error, users) {
@@ -409,6 +415,11 @@ exports.login = function (req, identifier, password, next) {
     if (!user) {
       logger.debug('user not found %s@%s', identifier, password);
       return next(null, false);
+    }
+
+    if(!user.enabled) {
+      logger.debug('inactive user found %s', user);
+      return next(null, user);
     }
 
     logger.debug('validating local passport user %s', user);

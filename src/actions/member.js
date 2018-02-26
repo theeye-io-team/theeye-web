@@ -72,11 +72,14 @@ module.exports = {
           message: 'Invitation sent.'
         })
       },
-      error: function(err) {
+      error: function(err, response) {
         App.state.loader.visible = false
+        var message = 'Error sending user invitation.'
+        if(response.body === 'activeMember')
+          message = 'The user is already a member of this organization.'
         bootbox.alert({
           title: 'Error',
-          message: 'Error sending user invitation.'
+          message: message
         })
       }
     });

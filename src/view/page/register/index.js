@@ -33,7 +33,8 @@ const registerForm = FormView.extend({
 module.exports = View.extend({
   autoRender: true,
   props: {
-    formSwitch: ['boolean',false,false]
+    formSwitch: ['boolean',false,false],
+    message: ['string',false,'']
   },
   bindings: {
     formSwitch: [
@@ -46,12 +47,19 @@ module.exports = View.extend({
         type: 'toggle',
         hook: 'result-container',
       }
-    ]
+    ],
+    'message': {
+      type: 'text',
+      hook: 'result-message'
+    }
   },
   initialize () {
     this.formSwitch = App.state.register.result
     this.listenTo(App.state.register, 'change:result', () => {
-    this.formSwitch = App.state.register.result
+      this.formSwitch = App.state.register.result
+    })
+    this.listenTo(App.state.register, 'change:message', () => {
+      this.message = App.state.register.message
     })
   },
   template: require('./template.hbs'),

@@ -291,10 +291,10 @@ var UserController = module.exports = {
                 EndpointArn: user.devices[index].endpoint_arn
               }, function(error, data) {
                 if (error) {
-                  debug('Error deleting previous Endpoint Arn.')
-                  debug(error);
+                  logger.debug('Error deleting previous Endpoint Arn.')
+                  logger.debug(error);
                 } else {
-                  debug('Deleted previous Endpoint Arn.')
+                  logger.debug('Deleted previous Endpoint Arn.')
                 }
               })
             }

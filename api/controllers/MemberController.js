@@ -151,7 +151,7 @@ var MemberController = module.exports = {
       var data = {}
       var member = {}
       if(user) {
-        //if user doesnt exist invite him/her to this customer
+        //if user exist invite him/her to this customer
         data = {
           email: user.email,
           customer: req.user.current_customer

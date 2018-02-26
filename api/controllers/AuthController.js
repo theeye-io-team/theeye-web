@@ -234,10 +234,19 @@ var AuthController = {
       ]
     }).exec((error,user) => {
       if (user) {
-        if(user.username == params.username)
-          return res.send(400, 'The username is taken. Choose another one');
-        if(user.email == params.email)
-          return res.send(400, 'The email is taken. Choose another one');
+        if(user.enabled) {
+          if(user.username == params.username)
+          return res.send(400, 'The username is taken. Please use another one.');
+          if(user.email == params.email)
+          return res.send(400, 'The email is taken. Please use another one.');
+        } else {
+          passport.sendUserActivationEmail( req.user, user, err => {
+            if(err) {
+              logger.error(err);
+              return res.send(400, 'Error re sending activation email.');
+            } else return res.json({message: 'The email is in use by an inactive account, a new account activation email has been sent.'});
+          });
+        }
       } else {
         passport.registerUser(req, res, function(err, user) {
           if(err) {
@@ -246,7 +255,7 @@ var AuthController = {
             if(err.code && err.code == 'CredentialsError')
               errMsg = 'Error sending registration email.'
             return res.send(400, errMsg);
-          } else return res.json(user);
+          } else return res.json({message: 'Account activation email sent. Follow the email instructions to complete the registration and start automating with TheEye.'});
         });
       }
     });
@@ -308,20 +317,31 @@ var AuthController = {
     passport.authenticate('local', function (err, user) {
       if (err) return res.send(500, err)
       if (!user) return res.send(400, 'Invalid credentials')
-      logger.debug('passport authenticated')
-      req.login(user, function (err) {
-        if (err) {
-          logger.error('LOGIN ERROR:')
-          logger.error('%o',err);
-          return res.send(500, err)
-        } else {
-          logger.debug('user logged in. issuing access token')
-          const accessToken = jwtoken.issue({ user_id: user.id })
-          return res.send(200, {
-            access_token: accessToken
-          })
-        }
-      })
+      if(!user.enabled) {
+        passport.sendUserActivationEmail( req.user, user, err => {
+          if(err) {
+            logger.error(err);
+            return res.send(400, 'Error re sending activation email.');
+          } else {
+            return res.send(400, {error: 'inactiveUser'})
+          }
+        });
+      } else {
+        logger.debug('passport authenticated')
+        req.login(user, function (err) {
+          if (err) {
+            logger.error('LOGIN ERROR:')
+            logger.error('%o',err);
+            return res.send(500, err)
+          } else {
+            logger.debug('user logged in. issuing access token')
+            const accessToken = jwtoken.issue({ user_id: user.id })
+            return res.send(200, {
+              access_token: accessToken
+            })
+          }
+        })
+      }
     })(req,res,req.next)
   },
   //callback for login

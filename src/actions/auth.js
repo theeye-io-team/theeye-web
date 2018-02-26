@@ -28,11 +28,14 @@ module.exports = {
       },
       fail: (err,xhr) => {
         App.state.loader.visible = false
+        var errorMsg = 'Login error, please try again'
         if (xhr.status == 400) {
-          bootbox.alert('Login error, invalid credentials')
-        } else {
-          bootbox.alert('Login error, please try again')
+          errorMsg = 'Login error, invalid credentials'
+          if(xhr.response && xhr.response.error == 'inactiveUser') {
+            errorMsg = 'The account you are trying to use is not verified yet. <br> We sent you a new account verification email. <br> Follow the instructions to complete this account registration.'
+          }
         }
+        bootbox.alert(errorMsg)
       }
     })
   },
@@ -103,9 +106,10 @@ module.exports = {
       contentType: 'application/json; charset=utf-8',
     })
 
-    req.done(function(){
+    req.done(function(response){
       App.state.loader.visible = false
       App.state.register.result = true
+      if(response.message) App.state.register.message = response.message
     })
     req.fail(function(jqXHR, textStatus, errorThrown){
       App.state.loader.visible = false

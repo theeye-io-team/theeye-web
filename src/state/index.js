@@ -188,7 +188,8 @@ const PasswordResetState = State.extend({
 
 const RegisterState = State.extend({
   props: {
-    result: ['boolean',false,false]
+    result: ['boolean',false,false],
+    message: ['string',false,'']
   }
 })
 
