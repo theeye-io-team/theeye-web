@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import AmpersandCollection from 'ampersand-collection'
@@ -69,6 +70,17 @@ const Schema = AppModel.extend({
     }
 
     return serial
+  },
+  hostResource () {
+    let col = App.state.resources
+    return col.models.find(resource => {
+      return resource.host_id == this.host_id && resource.type == 'host'
+    })
+  },
+  hostIsReporting () {
+    let resource = this.hostResource()
+    if (!resource) return null
+    return resource.state === 'normal'
   }
 })
 
@@ -201,6 +213,7 @@ const Collection = AppCollection.extend({
     }
   }
 })
+
 exports.Collection = Collection
 
 exports.Scraper = ScraperTask
