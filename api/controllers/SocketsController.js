@@ -25,19 +25,17 @@ module.exports = {
       res.send(403, JSON.stringify({ message: 'forbiden' }))
     }
 
-    if (!Array.isArray(topics)) {
-      topics = []
-    }
-
-    // force notification-crud subscription
-    socket.join(customer + ':' + req.user.id + ':notification-crud')
-    logger.debug('client subscribed to', customer + ':' + req.user.id + ':notification-crud')
-
-    for (let i = 0; i < topics.length; i++) {
-      let room = customer + ':' + topics[i]
+    const joinRoom = (room) => {
       socket.join(room)
-      logger.debug(`client subscribed to ${room}`)
+      logger.debug('client subscribed to %s', room)
     }
+
+    // forced subscriptions
+    joinRoom(`${customer}:${req.user.id}:notification-crud`)
+    joinRoom(`${req.user.id}:session-customer-changed`)
+
+    if (!Array.isArray(topics)) topics = []
+    topics.forEach(topic => joinRoom(`${customer}:${topic}`))
 
     res.json({ message: 'subscription success' })
   },

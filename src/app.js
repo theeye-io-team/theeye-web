@@ -85,6 +85,15 @@ App.extend({
       App.trigger('document:keydown', event)
     }
     document.addEventListener('keydown', onkeydown, false)
+  },
+  /**
+   * @summary replace current session customer
+   */
+  customerChange (customer) {
+    this.state.session.customer.clear()
+    this.state.session.customer.set( customer.serialize() )
+    this.state.reset()
+    this.Router.reload()
   }
 })
 

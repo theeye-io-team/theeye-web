@@ -9,6 +9,7 @@ import JobActions from 'actions/job'
 import NotificationActions from 'actions/notifications'
 import DashboardActions from 'actions/dashboard'
 import HostActions from 'actions/host'
+import SessionActions from 'actions/session'
 import config from 'config'
 const logger = require('lib/logger')('app:sockets')
 import OperationsConstants from 'constants/operations'
@@ -101,6 +102,12 @@ const createWrapper = ({ io }) => {
     io,
     events: {
       // socket events handlers
+      'notification-crud': event => {
+        NotificationActions.add(event.model)
+      },
+      'session-customer-changed': event => { // temporal fix
+        SessionActions.verifyCustomerChange(event.organization)
+      },
       'host-registered': event => {
         DashboardActions.loadNewRegisteredHostAgent(event.model)
       },
@@ -109,9 +116,6 @@ const createWrapper = ({ io }) => {
       },
       'host-processes': event => {
         HostStatsActions.update('psaux', event.model)
-      },
-      'notification-crud': event => {
-        NotificationActions.add(event.model)
       },
       'monitor-state': (event) => {
         ResourceActions.update(event.model)

@@ -1,3 +1,4 @@
+const Notifications = require('../libs/notifications')
 
 module.exports = {
   /**
@@ -23,7 +24,18 @@ module.exports = {
         if (err) {
           return res.status(500).json('Internal Error')
         }
-        res.send(200,{})
+
+        Notifications.sns.send({
+          topic: 'session-customer-changed',
+          data: {
+            model: user,
+            model_type: 'User',
+            operation: 'update',
+            organization: user.current_customer // customer name
+          }
+        })
+
+        res.send(200, {})
       })
     } else {
       res.send(403,'Forbidden')

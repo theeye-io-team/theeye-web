@@ -5,6 +5,7 @@ module.exports = {
     const data = message.data
 
     if (topic === 'notification-crud') {
+
       if (Array.isArray(data.model)) {
         // send a socket event for each user notification
         for (let idx in data.model) {
@@ -25,11 +26,24 @@ module.exports = {
         logger.error(msg)
         return next( new Error(msg) )
       }
+
+    } else if (topic === 'session-customer-changed') {
+
+      const room = `${data.model.id}:${topic}`
+      sails.io.sockets.in(room).emit(topic, {
+        //model: data.model,
+        //model_type: 'Notification',
+        //operation: 'create',
+        organization: data.organization
+      })
+
     } else {
+
       const room = `${data.organization}:${topic}`
       logger.debug(`sending message to ${room}`)
       sails.io.sockets.in(room).emit(topic, data)
       next()
+
     }
   }
 }

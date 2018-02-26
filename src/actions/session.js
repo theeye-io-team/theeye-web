@@ -22,11 +22,7 @@ module.exports = {
       },
       done: (data,xhr) => {
         App.state.loader.visible = false
-        // replace current customer
-        App.state.session.customer.clear()
-        App.state.session.customer.set( customer.serialize() )
-        App.state.reset()
-        App.Router.reload()
+        App.customerChange(customer)
       },
       fail: (err,xhr) => {
         App.state.loader.visible = false
@@ -34,6 +30,24 @@ module.exports = {
         console.error(arguments)
       }
     })
+  },
+  verifyCustomerChange (customerName) {
+    if (App.state.session.customer.name != customerName) {
+      let msg = 'Your organization preferences has been changed from another session. Click OK to refresh'
+      bootbox.alert(msg, () => {
+        App.state.loader.visible = true
+
+        const customer = App.state.session.user.customers.get(customerName, 'name')
+        if (!customer) { // error , customer not found in session. need refresh
+          window.location.reload()
+          return
+        }
+
+        if (customer.id != App.state.session.customer.id) {
+          App.customerChange(customer)
+        }
+      })
+    }
   },
   refreshAccessToken () {
     logger.debug('obtaining new acccess token..')
