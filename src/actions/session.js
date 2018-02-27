@@ -13,6 +13,8 @@ module.exports = {
     const customer = App.state.session.user.customers.get(id)
     if (customer.id==App.state.session.customer.id) return
 
+    App.state.session.customer.name = customer.name
+
     App.state.loader.visible = true
     XHR.send({
       method: 'post',
