@@ -162,7 +162,7 @@ exports.inviteMember = function (data, supervisor, next) {
         return next("activeMember");
       } else {
         //If the user is member but is inactive, resend invitation email
-        return next(null, user)
+        return next(null, {member: user, resend: true})
       }
     }
 
@@ -187,12 +187,12 @@ exports.inviteMember = function (data, supervisor, next) {
                 return next('The user was updated but with errors.')
                 res.json(500,'the user was updated but with errors. ' + error.message);
               } else {
-                return next(null, users[0]);
+                return next(null,{member: users[0], resend: false});
               }
             }
           );
         } else {
-          return next(null, users[0]);
+          return next(null,{member: users[0], resend: false});
         }
       }
     );

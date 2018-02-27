@@ -267,20 +267,20 @@ passport.sendNewCustomerEMail = function (invitee, customername, next){
 }
 
 passport.inviteMember = function(req, res, data, next) {
-  return this.protocols.local.inviteMember(data, req.supervisor, function(error, newMember) {
+  return this.protocols.local.inviteMember(data, req.supervisor, function(error, result) {
     if(error)
       return next(error)
-    if(newMember.enabled) {
-      passport.sendNewCustomerEMail( newMember, data.customer, error => {
-        return next(error, newMember)
+    if(result.member.enabled) {
+      passport.sendNewCustomerEMail( result.member, data.customer, error => {
+        return next(error, result)
       });
     } else {
-      passport.protocols.local.resetActivationToken(newMember, function(error, token){
+      passport.protocols.local.resetActivationToken(result.member, function(error, token){
         if(error)
           return next(error)
-        newMember.invitation_token = token;
-        passport.sendUserActivationEmail( req.user, newMember, error => {
-          return next(error, newMember)
+        result.member.invitation_token = token;
+        passport.sendUserActivationEmail( req.user, result.member, error => {
+          return next(error, result)
         });
       })
     }

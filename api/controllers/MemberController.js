@@ -156,24 +156,24 @@ var MemberController = module.exports = {
           email: user.email,
           customer: req.user.current_customer
         }
-        passport.inviteMember(req, res, data, function(err, user) {
+        passport.inviteMember(req, res, data, function(err, result) {
           if(err) {
             logger.error('%o',err);
             return res.send(400, err);
           }
           member = {
-            id: user.id,
-            user_id: user.id,
-            credential: user.credential,
+            id: result.member.id,
+            user_id: result.member.id,
+            credential: result.member.credential,
             user: {
-              id: user.id,
-              username: user.username,
-              credential: user.credential,
-              email: user.email,
-              enabled: user.enabled
+              id: result.member.id,
+              username: result.member.username,
+              credential: result.member.credential,
+              email: result.member.email,
+              enabled: result.member.enabled
             }
           }
-          return res.send(200, member);
+          return res.send(200, {member:member, resend:result.resend});
         });
       } else {
         //if user doesnt exist, create one
@@ -201,7 +201,7 @@ var MemberController = module.exports = {
               enabled: user.enabled
             }
           }
-          return res.send(200, member);
+          return res.send(200, {member:member, resend: false});
         });
       }
     });

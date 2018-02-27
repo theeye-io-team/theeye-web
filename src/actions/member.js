@@ -65,11 +65,14 @@ module.exports = {
     member.save({},{
       success: function(result, response) {
         App.state.loader.visible = false
+        var message = 'Invitation sent.'
+        if(response.resend)
+          message = 'The user is already a member of this organization. <br> A new invitation email has been sent.'
         member.set({user_id: member.id})
-        App.state.members.add(response)
+        App.state.members.add(response.member)
         bootbox.alert({
           title: 'Success',
-          message: 'Invitation sent.'
+          message: message
         })
       },
       error: function(err, response) {
