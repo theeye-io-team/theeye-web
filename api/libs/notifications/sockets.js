@@ -1,6 +1,10 @@
 var logger = require('../logger')('libs:notifications:sockets')
 
 module.exports = {
+  send (message, next) {
+    next || (next = ()=>{})
+    return this.emit(message.topic, message, next)
+  },
   emit (topic, message, next) {
     const data = message.data
 

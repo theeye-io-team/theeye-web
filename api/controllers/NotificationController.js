@@ -37,7 +37,7 @@ module.exports = {
           if (notifications.length===0) return
 
           // send extra notification event via sns topic
-          Notifications.sns.send({
+          Notifications.sockets.send({
             topic: 'notification-crud',
             data: {
               model: notifications,
@@ -58,7 +58,7 @@ module.exports = {
     // notify other webs (even self) to handle
     // socket notifications via SNS post to http
     // endpoint (EventsController.update)
-    Notifications.sns.send(event)
+    Notifications.sockets.send(event)
 
     return res.send(200)
   }

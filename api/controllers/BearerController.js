@@ -25,7 +25,7 @@ module.exports = {
           return res.status(500).json('Internal Error')
         }
 
-        Notifications.sns.send({
+        Notifications.sockets.send({
           topic: 'session-customer-changed',
           data: {
             model: user,
