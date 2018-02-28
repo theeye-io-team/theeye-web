@@ -73,14 +73,15 @@ const Schema = AppModel.extend({
   },
   hostResource () {
     let col = App.state.resources
-    return col.models.find(resource => {
+    let host = col.models.find(resource => {
       return resource.host_id == this.host_id && resource.type == 'host'
     })
+    return host
   },
   hostIsReporting () {
-    let resource = this.hostResource()
-    if (!resource) return null
-    return resource.state === 'normal'
+    let host = this.hostResource()
+    if (!host) return true // I cannot determine, so go ahead
+    return host.state === 'normal'
   }
 })
 

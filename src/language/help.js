@@ -56,9 +56,10 @@ module.exports = {
     gid: 'The group id for the file',
     permissions: 'Permissions in octal format. Default is 0755',
     select: 'Select a file',
-    state: "Print 'ok', 'success' or 'normal' for successful execution, otherwise print 'fail', 'failure' or 'error'.",
+    state: "Error Handling. Print 'fail', 'failure' or 'error' for unsuccessful execution.",
     shebang: 'Keep in mind that the  shebang (#!) is required when writing a Linux/Unix script.',
-    env: 'Workflow. You can get the result of the previous task execution by inquiring the env variable THEEYE_WF_LASTLINE. Check in advance that the env variable THEEYE_WF is defined'
+    //env: 'Workflow. You can get the result of the previous task execution by inquiring the env variable THEEYE_WF_LASTLINE. Check in advance that the env variable THEEYE_WF is defined'
+    env: 'Workflow. You can get the result of the previous task execution by inquiring the env variable THEEYE_WF_LASTLINE.'
   },
   titles:{
     user_page: 'Users CRUD operations',
