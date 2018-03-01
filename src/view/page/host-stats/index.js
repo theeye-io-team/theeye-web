@@ -592,7 +592,7 @@ const HostView = View.extend({
   },
   renderIntegrations () {
     let ngrok = App.state.session.customer.config.ngrok
-    if (ngrok.enabled === true) {
+    if (ngrok&&ngrok.enabled===true) {
       let view = new NgrokIntegrationsView({
         model: this.host.integrations.ngrok,
         host: this.host
