@@ -33,16 +33,22 @@ const resourceType = {
 }
 
 const meaning = {
-  ready: 'queued, waiting for result',
-  finished: 'finished running',
-  updates_stopped: 'has gone silent',
-  updates_started: 'came back to life',
-  failure: 'is not working properly',
-  canceled: 'has been canceled',
-  recovered: 'came back to normal'
+  ready: 'Queued, waiting for result',
+  finished: 'Finished running',
+  updates_stopped: 'Has gone silent',
+  updates_started: 'Came back to life',
+  failure: 'Is not working properly',
+  canceled: 'Has been canceled',
+  recovered: 'Came back to normal',
+  'file:restored': 'file restored',
+  'host:stats:normal': 'Host stats back to normal',
+  'host:stats:cpu:high': 'Host CPU high',
+  'host:stats:mem:high': 'Host memory high',
+  'host:stats:disk:high': 'Host disk high',
+  'host:stats:cache:high': 'Host cache high'
 }
 
-const icons = {
+const eventIcons = {
   ready: 'fa fa-clock-o',
   assigned: 'fa fa-clock-o',
   finished: 'fa fa-check-circle',
@@ -54,7 +60,13 @@ const icons = {
   failure: 'fa fa-exclamation-circle',
   recovered: 'fa fa-check-circle',
   updates_started: 'fa fa-check-circle',
-  updates_stopped: 'fa fa-times-circle'
+  updates_stopped: 'fa fa-times-circle',
+  'file:restored': 'fa fa-refresh',
+  'host:stats:normal': 'fa fa-check-circle',
+  'host:stats:cpu:high': 'fa fa-bar-chart',
+  'host:stats:mem:high': 'fa fa-bar-chart',
+  'host:stats:disk:high': 'fa fa-bar-chart',
+  'host:stats:cache:high': 'fa fa-bar-chart'
 }
 
 const EmptyView = View.extend({
@@ -109,16 +121,19 @@ const InboxPopupRow = View.extend({
     this.modelType = resourceType[this.model.data.model_type]
     this.icon = ''
 
-    this.colorClass = stateToColorClass(state)
-
     if (type === 'Resource') { // it is resources notification
       let monitor_event = this.model.data.monitor_event
       this.message = meaning[monitor_event] || `${monitor_event}:${state}`
-      this.icon = icons[monitor_event]
+      this.icon = eventIcons[monitor_event]
 
       // monitor execution always failure, unless used a recognized state
-      if (!this.colorClass) {
-        this.colorClass = StateConstants.FAILURE
+      if (state!=='normal') {
+        this.colorClass = severityToColorClass(this.model.data.model.failure_severity)
+        if (!this.colorClass) {
+          this.colorClass = StateConstants.FAILURE
+        }
+      } else {
+        this.colorClass = StateConstants.SUCCESS
       }
     } else if (/Job/.test(type)===true) { // it is a task execution
       let lifecycle = this.model.data.model.lifecycle
@@ -126,21 +141,22 @@ const InboxPopupRow = View.extend({
 
       if (lifecycle===LifecycleConstants.FINISHED) {
         if (state===StateConstants.FAILURE) {
-          this.icon = icons[state]
+          this.icon = eventIcons[state]
         } else {
-          this.icon = icons[StateConstants.SUCCESS]
+          this.icon = eventIcons[StateConstants.SUCCESS]
         }
       } else {
-        this.icon = icons[lifecycle]
+        this.icon = eventIcons[lifecycle]
       }
 
       // task execution always success, unless declared a failure
+      this.colorClass = stateToColorClass(state)
       if (!this.colorClass) {
         this.colorClass = StateConstants.SUCCESS
       }
     } else {
       console.warning(this.model)
-      this.icon = icons[state]
+      this.icon = eventIcons[state]
       this.message = `${state}`
     }
   }
@@ -149,6 +165,8 @@ const InboxPopupRow = View.extend({
 const sanitizeState = (state) => state.toLowerCase().replace(/ /g,"_")
 
 const stateToColorClass = (state) => (StateConstants.STATES.indexOf(state)!==-1) ? state : null
+
+const severityToColorClass = sev => `severity-${sev.toLowerCase()}`
 
 module.exports = View.extend({
   template: `

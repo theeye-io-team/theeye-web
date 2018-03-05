@@ -56,6 +56,7 @@
     }
 
     .inbox-entry {
+      color: #003166;
       float: none;
       margin: 0;
       padding: 8px;
@@ -69,28 +70,28 @@
       background-color: #fafafa;
     }
 
+    @severity-low: #0085ff;
+    @severity-high: #ff9900;
+    @severity-critical: #ff3300;
+
     .inbox-entry.unknown {}
     .inbox-entry.success,
     .inbox-entry.recovered,
-    .inbox-entry.normal {
-      border-left: 4px solid green;
-    }
+    .inbox-entry.normal { border-left-color: green; }
+    .inbox-entry.severity-low { border-left-color: @severity-low; }
+    .inbox-entry.severity-high { border-left-color: @severity-high; }
+    .inbox-entry.severity-critical { border-left-color: @severity-critical; }
+    .inbox-entry.failure,
+    .inbox-entry.updates_stopped { border-left-color: red; }
 
     .inbox-entry.success [data-hook=icon],
     .inbox-entry.recovered [data-hook=icon],
-    .inbox-entry.normal [data-hook=icon] {
-      color: green;
-    }
-
-    .inbox-entry.failure,
-    .inbox-entry.updates_stopped {
-      border-left: 4px solid red;
-    }
-
+    .inbox-entry.normal [data-hook=icon] { color: green; }
+    .inbox-entry.severity-low [data-hook=icon] { color: @severity-low; }
+    .inbox-entry.severity-high [data-hook=icon] { color: @severity-high; }
+    .inbox-entry.severity-critical [data-hook=icon] { color: @severity-critical; }
     .inbox-entry.failure [data-hook=icon],
-    .inbox-entry.updates_stopped [data-hook=icon] {
-      color: red;
-    }
+    .inbox-entry.updates_stopped [data-hook=icon] { color: red; }
 
     .inbox-popup-body {
       padding: 0;
@@ -124,10 +125,6 @@
     .icon-warn { color: #ffff00; }
     .icon-fatal { color: #ff3300; }
     .icon-error { color: #ff3300; }
-
-    .severity-low { color: #00dcff; }
-    .severity-high { color: #ffff00; }
-    .severity-critical { color: #ff3300; }
 
     .settings-panel {
       font-size: 16px;
