@@ -20,6 +20,7 @@ module.exports = {
     task.save({},{
       success: () => {
         bootbox.alert('Task Updated')
+        App.state.events.fetch()
       },
       error: () => {
         bootbox.alert('Something goes wrong updating the Task')
@@ -34,6 +35,7 @@ module.exports = {
   createMany (hosts,data) {
     const done = after(hosts.length,() => {
       App.state.alerts.success('Success', 'Tasks created.')
+      App.state.events.fetch()
       if(App.state.onboarding.onboardingActive) {
         bootbox.alert('Congratulations!, Your first task has been created Successfully!')
         OnboardingActions.updateOnboarding(true)
@@ -50,6 +52,7 @@ module.exports = {
       success () {
         bootbox.alert('Task Deleted')
         App.state.tasks.remove( task )
+        App.state.events.fetch()
       }
     })
   },
