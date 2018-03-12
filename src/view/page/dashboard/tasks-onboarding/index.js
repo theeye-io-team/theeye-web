@@ -17,6 +17,7 @@ module.exports = View.extend({
     <section>
       <div style="text-align:center; font-size:16px;">
         <h2>You don't have any Task.</h2>
+        <h2 data-hook="no-agent">You have to install an agent before you create a task.</h2>
         <div id="create-task" data-hook="create-task" style="display:inline-block">
       </div>
     </section>
@@ -27,16 +28,28 @@ module.exports = View.extend({
       this.listenToAndRun(App.state.dashboard,'change:resourcesDataSynced',() => {
         if (App.state.dashboard.resourcesDataSynced===true) {
           this.stopListening(App.state.dashboard,'change:resourcesDataSynced')
-          if (App.state.resources.length !== 0) {
-            var createButton = new TutorialCreateButton({
-              className: 'btn btn-default'
-            })
-            this.renderSubview(createButton, this.queryByHook('create-task'))
-          } else {
-            this.queryByHook('create-task').innerHTML = "<h2>You have to install an agent before you create a task.</h2>"
-          }
+          var createButton = new TutorialCreateButton({
+            className: 'btn btn-default'
+          })
+          this.renderSubview(createButton, this.queryByHook('create-task'))
         }
       })
     }
+
+    this.listenToAndRun(App.state.dashboard.groupedResources,'add sync reset remove',() => {
+      var textElem = this.queryByHook('no-agent')
+      var btnElem = this.queryByHook('create-task')
+      if(App.state.dashboard.groupedResources.length>0) {
+        if (textElem)
+          textElem.style.visibility = 'hidden'
+        if (btnElem)
+          btnElem.style.visibility = ''
+      } else {
+        if (btnElem)
+          btnElem.style.visibility = 'hidden'
+        if (textElem)
+          textElem.style.visibility = ''
+      }
+    })
   }
 })

@@ -115,6 +115,7 @@ var showOnboarding = function(platform) {
     },
     onEnd: function() {
       disableScroll.off()
+      NavbarActions.hideSettingsMenu()
       return
     },
     onError: function() {

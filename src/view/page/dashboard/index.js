@@ -92,15 +92,7 @@ module.exports = View.extend({
 
     this.listenToAndRun(App.state.dashboard,'change:resourcesDataSynced',() => {
       if (App.state.dashboard.resourcesDataSynced===true) {
-        if (this.groupedResources.length>0) {
-          this.renderMonitorsPanel()
-        } else {
-          this.registerSubview(
-            new MonitoringOboardingPanel({
-              el: this.queryByHook('monitors-container')
-            }).render()
-          )
-        }
+        this.renderMonitorsPanel()
         this.stopListening(App.state.dashboard,'change:resourcesDataSynced')
       }
     })
@@ -108,16 +100,7 @@ module.exports = View.extend({
     if (this.renderTasks === true) {
       this.listenToAndRun(App.state.dashboard,'change:tasksDataSynced',() => {
         if (App.state.dashboard.tasksDataSynced===true) {
-          if (this.tasks.length>0) {
-            this.renderTasksPanel()
-          } else {
-            this.TasksOboardingPanel = new TasksOboardingPanel({
-              el: this.queryByHook('tasks-onboarding-container')
-            })
-            this.registerSubview(
-              this.TasksOboardingPanel.render()
-            )
-          }
+          this.renderTasksPanel()
           this.stopListening(App.state.dashboard,'change:tasksDataSynced')
         }
       })
@@ -125,17 +108,6 @@ module.exports = View.extend({
       // remove panel container
       this.queryByHook('tasks-panel').remove()
     }
-
-    this.listenToAndRun(App.state.tasks,'add',() => {
-      if(App.state.tasks.length>0) {
-        this.tasks = App.state.tasks
-        if(this.TasksOboardingPanel) {
-          this.TasksOboardingPanel.remove()
-          delete this['TasksOboardingPanel']
-          this.renderTasksPanel()
-        }
-      }
-    })
 
     if (this.renderStats === true) {
       this.renderSubview(
@@ -205,7 +177,10 @@ module.exports = View.extend({
     this.monitorRows = this.renderCollection(
       this.groupedResources,
       MonitorRowView,
-      this.queryByHook('monitors-container')
+      this.queryByHook('monitors-container'),
+      {
+        emptyView:MonitoringOboardingPanel
+      }
     )
 
     const rowtooltips = this.query('[data-hook=monitors-container] .tooltiped')
@@ -236,6 +211,37 @@ module.exports = View.extend({
       } else {
         this.monitorsFolding.fold()
         this.setUpAndRunningSign()
+      }
+    })
+
+    this.listenToAndRun(App.state.dashboard.groupedResources,'add sync reset remove',() => {
+      var monitorOptionsElem = this.queryByHook('monitor-options')
+      if (App.state.dashboard.groupedResources.length>0) {
+        if (monitorOptionsElem)
+          monitorOptionsElem.style.visibility = ''
+        if(this.monitorsFolding){
+          this.monitorsFolding.unfold()
+          this.monitorsFolding.showButton()
+        }
+        if(this.onBoarding)
+          this.onBoarding.onboardingStart()
+      } else {
+        if (monitorOptionsElem)
+          monitorOptionsElem.style.visibility = 'hidden'
+        if(this.monitorsFolding) {
+          this.monitorsFolding.hideButton()
+          this.hideUpAndRunning()
+        }
+      }
+    })
+
+    this.listenToAndRun(App.state.tasks,'add sync reset remove',() => {
+      if(this.tasksFolding) {
+        if (App.state.tasks.length>0) {
+          this.tasksFolding.showButton()
+        } else {
+          this.tasksFolding.hideButton()
+        }
       }
     })
 
@@ -316,7 +322,10 @@ module.exports = View.extend({
     const taskRows = this.renderCollection(
       this.tasks,
       TaskRowView,
-      this.queryByHook('tasks-container')
+      this.queryByHook('tasks-container'),
+      {
+        emptyView:TasksOboardingPanel
+      }
     )
 
     const runAllButton = new RunAllTasksButton({
@@ -335,7 +344,7 @@ module.exports = View.extend({
     const rowtooltips = this.query('[data-hook=tasks-container] .tooltiped')
     $(rowtooltips).tooltip()
 
-    const tasksFolding = this.renderSubview(
+    this.tasksFolding = this.renderSubview(
       new ItemsFolding({}),
       this.queryByHook('tasks-fold-container')
     )
@@ -343,7 +352,7 @@ module.exports = View.extend({
     taskRows.views.forEach(row => {
       let task = row.model
       if (!task.canExecute) {
-        tasksFolding.append(row.el)
+        this.tasksFolding.append(row.el)
       }
     })
 

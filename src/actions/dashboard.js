@@ -1,5 +1,6 @@
 import search from 'lib/query-params'
 import App from 'ampersand-app'
+import after from 'lodash/after'
 
 module.exports = {
   setMonitorsGroupByProperty (prop) {
@@ -11,7 +12,13 @@ module.exports = {
     App.Router.reload()
   },
   loadNewRegisteredHostAgent (host) {
-    App.state.navbar.settingsMenu.visible = false
-    App.Router.reload()
+    var done = after(2, function () {
+      App.state.dashboard.groupResources()
+    })
+    var step = function () {
+      done()
+    }
+    App.state.resources.fetch({ success: step, error: step })
+    App.state.hosts.fetch({ success: step, error: step })
   }
 }
