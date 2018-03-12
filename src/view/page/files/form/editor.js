@@ -27,7 +27,7 @@ const HintsWindow = View.extend({
       let modal = new Modalizer({
         buttons: false,
         title: 'Help',
-        bodyView: help 
+        bodyView: help
       })
       let el = modal.query('.modal-dialog')
       el.style.width = '50%'
@@ -111,7 +111,7 @@ export const EditorView = View.extend({
  * https://github.com/codemirror/CodeMirror/blob/master/addon/mode/loadmode.js
  *
  */
-const modeURL = 'https://codemirror.net/mode/%N/%N.js'
+const modeURL = '/js/codemirror/mode/%N/%N.js'
 var loading = {}
 
 const splitCallback = (cont, n) => {
