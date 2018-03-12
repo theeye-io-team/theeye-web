@@ -8,6 +8,7 @@ class TasksRoute extends Route {
     App.state.events.fetch()
     App.state.tags.fetch()
     App.state.tasks.fetch()
+    App.state.resources.fetch()
     App.state.hosts.fetch()
     App.state.files.fetch()
     //App.state.scripts.fetch()

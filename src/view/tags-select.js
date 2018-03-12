@@ -5,7 +5,7 @@ import SelectView from 'components/select2-view'
 
 module.exports = SelectView.extend({
   initialize () {
-    this.options = App.state.tags
+    this.options = App.state.extendedTags.tags
     this.multiple = true
     this.tags = true
     this.label = 'Tags'
