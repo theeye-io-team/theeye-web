@@ -76,7 +76,8 @@ module.exports = View.extend({
 
       let data = form.data
       SessionActions.updateCustomerIntegrations({
-        elasticsearch: {
+        integration: 'elasticsearch',
+        config: {
           enabled: data.elasticsearch_enabled,
           url: data.elasticsearch_url
         }
@@ -109,7 +110,8 @@ module.exports = View.extend({
       if (!form.valid) return
 
       SessionActions.updateCustomerIntegrations({
-        kibana: form.data.kibana
+        integration: 'kibana',
+        config: form.data.kibana
       })
       modal.hide()
     })

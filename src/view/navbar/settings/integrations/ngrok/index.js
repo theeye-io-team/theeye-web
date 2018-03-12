@@ -69,7 +69,8 @@ export default View.extend({
 
       let data = form.data
       SessionActions.updateCustomerIntegrations({
-        ngrok: {
+        integration: 'ngrok',
+        config: {
           enabled: data.enabled,
           address: data.address,
           authtoken: data.authtoken,

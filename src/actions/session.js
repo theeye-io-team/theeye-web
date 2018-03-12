@@ -80,7 +80,7 @@ module.exports = {
         logger.log('user profile data fetch success')
 
         logger.log('updating profile')
-        let customer = new Customer(user.current_customer,{ parse: true }) 
+        let customer = new Customer(user.current_customer,{ parse: true })
         sessionState.customer.set( customer.serialize() )
         sessionState.user.set(user)
         const customers = user.theeye.profile.customers
@@ -170,11 +170,9 @@ module.exports = {
       App.state.session.user.trigger('change:notifications')
     })
   },
-  updateCustomerIntegrations (settings) {
+  updateCustomerIntegrations (data) {
     var id = App.state.session.customer.id
-    var data = assign({}, App.state.session.customer.config, settings)
     App.state.loader.visible = true
-
     XHR.send({
       url: `${config.app_url}/customer/${id}/config`,
       method: 'put',
@@ -182,11 +180,11 @@ module.exports = {
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
-      done (config, xhr) {
+      done (response, xhr) {
         App.state.loader.visible = false
         if (xhr.status == 200) {
           bootbox.alert('Integrations updated.')
-          App.state.session.customer.config = config // || data.config
+          App.state.session.customer.config = response
         } else {
           bootbox.alert('Error updating integrations.')
         }
