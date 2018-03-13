@@ -17,9 +17,9 @@ export default State.extend({
 
     this.listenToAndRun(App.state.tasks,'add change sync reset',() => {
       var tagList = []
-      App.state.tags.forEach(tag => tagList.push(tag.name))
+      App.state.tags.forEach(tag => tagList.push(tag.name.toLowerCase()))
       App.state.tasks.forEach((task) => {
-        if(!tagList.includes(task.name)){
+        if(!tagList.includes(task.name.toLowerCase())){
           var tag = new Tag({
             id: task.name,
             name: task.name,
@@ -32,10 +32,9 @@ export default State.extend({
 
     this.listenToAndRun(App.state.resources,'add change sync reset',() => {
       var tagList = []
-      App.state.tags.forEach(tag => tagList.push(tag.name))
-      tagList = App.state.tags.map(tag => tag.name)
+      App.state.tags.forEach(tag => tagList.push(tag.name.toLowerCase()))
       App.state.resources.forEach((resource) => {
-        if(!tagList.includes(resource.name)){
+        if(!tagList.includes(resource.name.toLowerCase())){
           var tag = new Tag({
             id: resource.name,
             name: resource.name,
