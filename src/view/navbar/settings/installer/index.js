@@ -45,6 +45,11 @@ module.exports = View.extend({
       name: 'value',
       hook: 'windows-curl-agent'
     },
+    'dockerCurlAgent': {
+      type: 'attribute',
+      name: 'value',
+      hook: 'docker-curl-agent'
+    },
     'agentBinaryUrl': {
       type: 'attribute',
       name: 'href',
@@ -87,6 +92,14 @@ module.exports = View.extend({
         if(!this.agent)
           return
         return this.agent.windowsCurl
+      }
+    },
+    dockerCurlAgent: {
+      deps: ['agent'],
+      fn: function(){
+        if(!this.agent)
+          return
+        return this.agent.dockerCurl
       }
     },
     agentBinaryUrl : {
@@ -157,6 +170,7 @@ module.exports = View.extend({
     })
     new Clipboard( this.query('.clipboard-curl-agent-btn') )
     new Clipboard( this.query('.clipboard-windows-curl-agent-btn') )
+    new Clipboard( this.query('.clipboard-docker-curl-agent-btn') )
 
     this.renderSubview(
       new HelpIconView({

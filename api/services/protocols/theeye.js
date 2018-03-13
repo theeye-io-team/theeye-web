@@ -247,6 +247,15 @@ exports.getCustomerAgentCredentials = function (customer,supervisor,done) {
         user.customers[0].name // agents MUST have only one customer
       )
 
+      user.dockerCurl = format(
+        'docker run -e NODE_ENV="production" -e THEEYE_SUPERVISOR_CLIENT_ID="%s" -e THEEYE_SUPERVISOR_CLIENT_SECRET="%s"  -e THEEYE_SUPERVISOR_CLIENT_CUSTOMER="%s"  -e THEEYE_SUPERVISOR_API_URL="%s" -e THEEYE_CLIENT_HOSTNAME="%s" -d interactar/theeye-agent',
+        user.client_id,
+        user.client_secret,
+        user.customers[0].name, // agents MUST have only one customer
+        sails.config.supervisor.url,
+        user.username
+      )
+
       return done(null, user)
     },
     failure: err => done(err)
