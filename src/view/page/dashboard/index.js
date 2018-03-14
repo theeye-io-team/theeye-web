@@ -86,6 +86,7 @@ module.exports = View.extend({
   hideUpAndRunning () {
     this.$upandrunning.slideUp()
     this.$monitorsPanel.slideDown()
+    this.upandrunningSign = false
   },
   render () {
     this.renderWithTemplate()

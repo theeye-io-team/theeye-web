@@ -140,7 +140,7 @@ const MonitorView = View.extend({
 
     // capture and handle collapse event
     $( this.queryByHook('collapse-container') ).on('show.bs.collapse', () => {
-      MonitorActions.populate(this.model.monitor)
+      MonitorActions.populate(this.model)
     })
   },
   setMonitorIcon () {
@@ -177,7 +177,7 @@ const HostMonitorGroupView = MonitorView.extend({
 
     // capture and handle collapse event
     $( this.queryByHook('collapse-container') ).on('show.bs.collapse', () => {
-      MonitorActions.populate(this.model.monitor)
+      MonitorActions.populate(this.model)
     })
 
     var monitors = this.model.submonitors.models.reduce((acum, item) => {

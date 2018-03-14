@@ -341,7 +341,7 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
         Health monitor state: <i data-hook="dstat_state"></i>
       </h4>
 
-      <span>Host health thresholds</span>
+      <span>Host health values</span>
       <table class="table table-stripped">
         <thead>
           <tr data-hook="title-cols">
@@ -357,7 +357,7 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
             <td></td>
             <td><span data-hook="cpu"></span></td>
             <td><span data-hook="mem"></span></td>
-            <td><span data-hook="disk"></span></td>
+            <td><span data-hook="disk" style="white-space: pre-line"></span></td>
             <td><span data-hook="cache"></span></td>
           </tr>
         </tbody>
@@ -400,6 +400,7 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
 
     if (this.dstat && this.dstat.monitor) {
       this.listenToAndRun(this.dstat.monitor,'change:config',this.updateDstatState)
+      this.listenToAndRun(this.dstat,'change:last_event',this.updateDstatState)
     }
   },
   updateState () {
@@ -407,13 +408,19 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
   },
   updateDstatState () {
     const config = this.dstat.monitor.config
+    const lastEvent = this.dstat.last_event
+    if (!config || !config.limit || !lastEvent || !lastEvent.data) return
 
-    if (!config||!config.limit) return
+    var disksValue = ''
+    lastEvent.data.disk.forEach(function(disk) {
+      disksValue = disksValue + disk.name +': ' + String(Math.floor(disk.value))
+      + ' / ' + String(config.limit.disk) + "\n"
+    })
 
-    this.dstat_cache = String(config.limit.cache)
-    this.dstat_cpu = String(config.limit.cpu)
-    this.dstat_mem = String(config.limit.mem)
-    this.dstat_disk = String(config.limit.disk)
+    this.dstat_cache = String(Math.floor(lastEvent.data.cache)) + ' / ' + String(config.limit.cache)
+    this.dstat_cpu = String(Math.floor(lastEvent.data.cpu)) + ' / ' + String(config.limit.cpu)
+    this.dstat_mem = String(Math.floor(lastEvent.data.mem)) + ' / ' + String(config.limit.mem)
+    this.dstat_disk = disksValue
   }
 })
 
