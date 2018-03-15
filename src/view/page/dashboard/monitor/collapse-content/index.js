@@ -411,16 +411,39 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
     const lastEvent = this.dstat.last_event
     if (!config || !config.limit || !lastEvent || !lastEvent.data) return
 
-    var disksValue = ''
-    lastEvent.data.disk.forEach(function(disk) {
-      disksValue = disksValue + disk.name +': ' + String(Math.floor(disk.value))
-      + ' / ' + String(config.limit.disk) + "\n"
-    })
+    const data = lastEvent.data
+    if (data.error) {
+      console.warn('stats data error', data)
+      return
+    }
 
-    this.dstat_cache = String(Math.floor(lastEvent.data.cache)) + ' / ' + String(config.limit.cache)
-    this.dstat_cpu = String(Math.floor(lastEvent.data.cpu)) + ' / ' + String(config.limit.cpu)
-    this.dstat_mem = String(Math.floor(lastEvent.data.mem)) + ' / ' + String(config.limit.mem)
-    this.dstat_disk = disksValue
+    if (data.disk) {
+      var disksValue = ''
+      data.disk.forEach(function(disk){
+        disksValue = [
+          disksValue,
+          disk.name,
+          ': ',
+          String(Math.floor(disk.value)),
+          ' / ',
+          String(config.limit.disk),
+          "\n"
+        ].join('')
+      })
+      this.dstat_disk = disksValue
+    }
+
+    if (data.cache) {
+      this.dstat_cache = String(Math.floor(data.cache)) + ' / ' + String(config.limit.cache)
+    }
+
+    if (data.cpu) {
+      this.dstat_cpu = String(Math.floor(data.cpu)) + ' / ' + String(config.limit.cpu)
+    }
+
+    if (data.mem) {
+      this.dstat_mem = String(Math.floor(data.mem)) + ' / ' + String(config.limit.mem)
+    }
   }
 })
 
