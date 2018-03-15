@@ -29,6 +29,7 @@ class HostStats extends Route {
     App.state.hosts.fetch({
       success () {
         let host = App.state.hosts.get(options.id)
+        if (!host) return 
 
         fetchIntegrations(host.integrations)
 
@@ -65,6 +66,7 @@ class HostStats extends Route {
       })
       .then(res => res.json())
       .then(data => {
+        if (!data || (Array.isArray(data) && data.length===0)) return
         App.state.hoststatsPage.dstat = data.find(d => d.type === 'dstat')
         App.state.hoststatsPage.psaux = data.find(d => d.type === 'psaux')
       })
