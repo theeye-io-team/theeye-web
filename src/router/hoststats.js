@@ -67,8 +67,9 @@ class HostStats extends Route {
       .then(res => res.json())
       .then(data => {
         if (!data || (Array.isArray(data) && data.length===0)) return
-        App.state.hoststatsPage.dstat = data.find(d => d.type === 'dstat')
-        App.state.hoststatsPage.psaux = data.find(d => d.type === 'psaux')
+        if (data.error) return
+        App.state.hoststatsPage.dstat = data.find(d => d.type == 'dstat') || {}
+        App.state.hoststatsPage.psaux = data.find(d => d.type == 'psaux') || {}
       })
 
     this.page = new StatsView({ hostId: options.id })
