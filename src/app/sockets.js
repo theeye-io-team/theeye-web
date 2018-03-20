@@ -81,14 +81,16 @@ module.exports = () => {
       connect((err,socket) => {
         if (!App.sockets) { // create wrapper to subscribe and start listening to events
           App.sockets = createWrapper({ io })
-          App.listenTo(session.customer, 'change:id', updateSubscriptions)
-          App.sockets.subscribe({
-            query: {
-              customer: session.customer.name,
-              topics: defaultTopics
-            }
-          })
         }
+
+        App.sockets.subscribe({
+          query: {
+            customer: session.customer.name,
+            topics: defaultTopics
+          }
+        })
+
+        App.listenTo(session.customer, 'change:id', updateSubscriptions)
       }) // create socket and connect to server
     } else {
       disconnect()
