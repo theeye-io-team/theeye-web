@@ -23,10 +23,14 @@ module.exports = {
     if (!data) return res.send(400, 'Data is required.')
     if (!topic) return res.send(400, 'Topic is required.')
 
-    logger.debug('topic %s , model_type %s , model.name %s', topic, data.model_type, data.model.name || 'no name property')
+    logger.debug('topic %s model_type %s model.name %s',
+      topic,
+      data.model_type,
+      data.model.name || 'no name property'
+    )
 
     if (handledTopics.indexOf(event.topic) > -1) {
-      var acls = (data.model.task?data.model.task.acl:data.model.acl)||[]
+      var acls = ( data.model.task ? data.model.task.acl : data.model.acl ) || []
 
       getUsers(data.organization, acls, (error, users) => {
         if (error) return logger.error('%o',error)
@@ -94,15 +98,12 @@ const createNotifications = (event, users, customerName, callback) => {
   }
 
   // skip ScriptJobs 'assigned' lifecycle
-  if (
-    (
-      event.data.model_type === 'ScriptJob' ||
-      event.data.model_type === 'ScraperJob'
-    ) &&
-    event.data.model.lifecycle === LIFECYCLE.ASSIGNED
-  ) {
-    return callback(null, [])
-  }
+  //if (
+  //  /Job/.test(event.data.model_type) &&
+  //  event.data.model.lifecycle === LIFECYCLE.ASSIGNED
+  //) {
+  //  return callback(null, [])
+  //}
 
   // rulez for updates stopped/updates started.
   // only create notification for host
@@ -117,14 +118,15 @@ const createNotifications = (event, users, customerName, callback) => {
     return callback(null, [])
   }
 
-  const notifications = users.map(user => {
-    return {
+  const notifications = []
+  users.forEach(user => {
+    notifications.push({
       topic: event.topic,
       data: event.data,
       event_id: event.id,
       user_id: user.id,
       customer_name: customerName
-    }
+    })
   })
 
   sails.models.notification.create(notifications).exec(callback)
