@@ -25,6 +25,7 @@ const NotificationSettings = State.extend({
 const Model = AppModel.extend({
   props: {
     id: 'string',
+    name: 'string',
     username: 'string',
     credential: 'string',
     email: 'string',
@@ -43,9 +44,10 @@ const Model = AppModel.extend({
   },
   derived: {
     formatted_tags: {
-      deps: ['username','email','credential','enabled'],
+      deps: ['name','username','email','credential','enabled'],
       fn () {
         return [
+          'name=' + this.name,
           'username=' + this.username,
           'email=' + this.email,
           'credential=' + this.credential,

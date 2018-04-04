@@ -14,19 +14,19 @@ const EmptyView = View.extend({
 module.exports = View.extend({
   autoRender: true,
   props: {
-    title: ['string',false,'The Eye']
+    title: ['string',false,'TheEye']
   },
   template: `
   	<div class="main-container">
 			<nav></nav>
   	  <div data-hook="page-container"></div>
   	  <footer>
-  	    <a href="/">theeye.io</a> - Beta Release <br> Copyright © 2014-2017 Theeye Inc
+  	    <a href="/">theeye.io</a><br> Copyright © 2018 THEEYE INC
   	  </footer>
   	</div>
   `,
   initialize () {
-    this.title = 'The Eye'
+    this.title = 'TheEye'
     View.prototype.initialize.apply(this,arguments)
   },
   updateState (state) {
@@ -61,7 +61,7 @@ module.exports = View.extend({
     this.pageSwitcher = new ViewSwitcher({
       el: this.queryByHook('page-container'),
       show (view) {
-        document.title = view.pageTitle || 'Interactar'
+        document.title = view.pageTitle || 'TheEye'
         document.scrollTop = 0
       }
     })

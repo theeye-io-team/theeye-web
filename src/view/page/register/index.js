@@ -5,10 +5,33 @@ import InputView from 'ampersand-input-view'
 import AuthActions from 'actions/auth'
 import validator from 'validator'
 
+import logoCustomer1 from './customers-logo-comafi.png'
+import logoCustomer2 from './customers-logo-colppy.png'
+import logoCustomer3 from './customers-logo-ente.png'
+import logoCustomer4 from './customers-logo-ign.png'
+import logoCustomer5 from './customers-logo-invap.png'
+const template = require('./template.hbs')
+
 const registerForm = FormView.extend({
   autoRender: true,
   initialize() {
     this.fields = [
+      new InputView({
+        type:'name',
+        placeholder: 'Nombre',
+        name: 'name',
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        autofocus: true,
+        tests: [
+          function (value) {
+            if (validator.isEmpty(value)) {
+              return "Por favor, ingresa tu nombre.";
+            }
+          }
+        ] 
+      }),    
       new InputView({
         type:'email',
         placeholder: 'Email',
@@ -16,11 +39,11 @@ const registerForm = FormView.extend({
         required: true,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        autofocus: true,
+        autofocus: false,
         tests: [
           function (value) {
             if (!validator.isEmail(value)) {
-              return "Must be an email.";
+              return "El email ingresado es inv&aacute;lido";
             }
           }
         ]
@@ -38,6 +61,11 @@ module.exports = View.extend({
   },
   bindings: {
     formSwitch: [
+      {
+        type: 'toggle',
+        hook: 'register-content',
+        invert: true
+      },
       {
         type: 'toggle',
         hook: 'register-form-container',
@@ -62,7 +90,16 @@ module.exports = View.extend({
       this.message = App.state.register.message
     })
   },
-  template: require('./template.hbs'),
+  // template: require('./template.hbs'),
+  template: () => {
+    return template.call(this, { 
+      logoCustomer1: logoCustomer1, 
+      logoCustomer2: logoCustomer2, 
+      logoCustomer3: logoCustomer3,
+      logoCustomer4: logoCustomer4,
+      logoCustomer5: logoCustomer5
+    })
+  },  
   events: {
     'click button[data-hook=start-register]': function (event) {
       event.preventDefault()

@@ -225,6 +225,7 @@ var AuthController = {
   },
   registeruser: function(req, res) {
     var params = req.params.all();
+    if(!params.name) return res.send(400, 'You must provide a name');
     if(!params.username) return res.send(400, 'You must select a username');
     if(!params.email) return res.send(400, 'You must select an email');
     User.findOne({
@@ -244,7 +245,7 @@ var AuthController = {
             if(err) {
               logger.error(err);
               return res.send(400, 'Error re sending activation email.');
-            } else return res.json({message: 'The email is in use by an inactive account, a new account activation email has been sent.'});
+            } else return res.json({message: 'Te enviamos un email de confirmación. Activa tu cuenta y comienza a automatizar con TheEye.'});
           });
         }
       } else {
@@ -255,7 +256,8 @@ var AuthController = {
             if(err.code && err.code == 'CredentialsError')
               errMsg = 'Error sending registration email.'
             return res.send(400, errMsg);
-          } else return res.json({message: 'Account activation email sent. Follow the email instructions to complete the registration and start automating with TheEye.'});
+          // } else return res.json({message: 'Account activation email sent. Follow the email instructions to complete the registration and start automating with TheEye.'});
+          } else return res.json({message: 'Te enviamos un email de confirmacion. Activa tu cuenta y comienza a automatizar con TheEye.'});
         });
       }
     });

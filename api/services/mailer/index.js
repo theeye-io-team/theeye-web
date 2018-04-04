@@ -16,7 +16,7 @@ module.exports = {
 
       var options = {
         'to': input.invitee.email,
-        'subject': 'The Eye Invitation',
+        'subject': 'TheEye Invitation',
         'html': html
       };
 
@@ -38,7 +38,7 @@ module.exports = {
 
       var options = {
         'to': input.invitee.email,
-        'subject': 'The Eye Invitation',
+        'subject': 'TheEye Invitation',
         'html': html
       };
 
@@ -60,7 +60,8 @@ module.exports = {
 
       var options = {
         'to': input.invitee.email,
-        'subject': 'The Eye Registration confirmation',
+        // 'subject': 'TheEye Registration confirmation',
+        'subject': 'Confirma tu registro en TheEye',
         'html': html
       };
 
@@ -77,7 +78,7 @@ module.exports = {
     }, function(error, html) {
       var options = {
         to: data.user.email,
-        subject: 'The Eye Password Restore',
+        subject: 'TheEye Password Restore',
         html: html
       };
 
@@ -124,7 +125,7 @@ module.exports = {
     ejs.renderFile("views/email/customer-invitation.ejs", {locals: data}, function(error, html) {
       var options = {
         to: data.invitee.email,
-        subject:'The Eye Invitation',
+        subject:'TheEye Invitation',
         html:html
       };
       mailer.sendMail(options, error => next(error));
@@ -134,7 +135,7 @@ module.exports = {
     ejs.renderFile("views/email/customer-permissions.ejs", {locals: user}, function(error, html) {
       var options = {
         to: user.email,
-        subject:'The Eye Profile Alert',
+        subject:'TheEye Profile Alert',
         html:html
       };
       mailer.sendMail(options, error => next(error));

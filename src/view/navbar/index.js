@@ -273,6 +273,14 @@ const Menu = View.extend({
 
 module.exports = View.extend({
   autoRender: true,
+  events: {
+    'click a[data-hook=theeye-logo]': function (event) {
+      if(App.state.session.logged_in)
+        App.Router.navigate('dashboard')
+      else
+        window.location.href = 'https://theeye.io'
+    }
+  },  
   template: () => {
     return template.call(this, { logo: logo })
   },

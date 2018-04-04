@@ -97,6 +97,7 @@ module.exports = {
     var body = {}
     body.email = data.email
     body.username = data.email
+    body.name = data.name
 
     const req = xhr({
       url: `${config.app_url}/registeruser`,
@@ -159,7 +160,8 @@ module.exports = {
         App.state.loader.visible = false
         if (xhr.status == 200) {
           bootbox.alert({
-            message: 'Registration is completed',
+            // message: 'Registration is completed',
+            message: 'Proceso de registraci&oacute;n ha finalizado',
             callback: () => {
               App.state.session.access_token = response.access_token
             }

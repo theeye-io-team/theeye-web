@@ -6,6 +6,7 @@ var User = {
   attributes: {
     username: { type: 'string', unique: true, required: true, notNull:true, truthy: true },
     email: { type: 'email', unique: true, required: true, notNull:true, truthy: true },
+    name: { type: 'string', unique: false, required: true, notNull:true, truthy: true },
     current_customer: { type: 'string' },
     customers: { type: 'array', defaultsTo: [] },
     credential: { type: 'string', defaultsTo: 'admin' },
@@ -25,8 +26,8 @@ var User = {
     onboardingCompleted: { type: 'boolean', defaultsTo: false }
   },
   beforeCreate: function(values, next) {
-    var email = values.email;
-    var username = values.username;
+    var email = values.email
+    var username = values.username
 
     if(!email){
       var error = {

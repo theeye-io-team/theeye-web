@@ -333,10 +333,11 @@ passport.createUser = function(req, res, data, next) {
 
 passport.registerUser = function(req, res, next) {
   var supervisor = req.supervisor;
+  var name = req.param('name');
   var email = req.param('email');
   var username = req.param('username');
 
-  return createRegisterUser(email, username, function(err, invitee) {
+  return createRegisterUser(name, email, username, function(err, invitee) {
     if(err) return next(err);
     passport.sendUserActivationEmail( req.user, invitee, error => {
       next(error, invitee)
@@ -344,7 +345,7 @@ passport.registerUser = function(req, res, next) {
   });
 };
 
-function createRegisterUser (email, username, next) {
+function createRegisterUser (name, email, username, next) {
   var customers = [];
   var credential = 'owner';
 
@@ -352,6 +353,7 @@ function createRegisterUser (email, username, next) {
   User.create({
     enabled: false,
     invitation_token: token,
+    name: name,
     username: username,
     email: email,
     customers: customers,
@@ -364,6 +366,8 @@ function createRegisterUser (email, username, next) {
           return next(new Error('Invalid email.'));
         }else if (err.invalidAttributes.username) {
           return next(new Error('Invalid username.'));
+        }else if (err.invalidAttributes.name) {
+          return next(new Error('Invalid name.'));
         } else {
           return next(err);
         }
