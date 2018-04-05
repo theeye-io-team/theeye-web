@@ -76,7 +76,7 @@ const MonitorBaseModel = MonitorSchema.extend({
     last_update: 'date'
   },
   children: {
-    template: MonitorTemplate
+    template: MonitorTemplate.Model
   },
   serialize () {
     const serialize = MonitorSchema.prototype.serialize
@@ -230,7 +230,7 @@ function MonitorFactory (data) {
 
 function ResourceFactory (model, options={}) {
   let resource
-  let monitor = MonitorFactory(data)
+  let monitor = MonitorFactory(model)
 
   if (model.type == MonitorConstants.TYPE_NESTED) {
     resource = new NestedResource(model, options)
@@ -248,26 +248,6 @@ const Collection = AppCollection.extend({
     return model instanceof Resource || model instanceof NestedResource
   },
   url: urlRoot,
-  /**
-   * obtein a collection of every single tag.
-   * @return {Collection}
-   */
-  tagsUnique () {
-    var tags = this.reduce(function(tags,resource){
-      resource.get('formatted_tags').forEach(function(tag){
-        if (tags.indexOf(tag)==-1) {
-          tags.push(tag);
-        }
-      });
-      return tags;
-    },[]);
-
-    return new Collection(
-      tags.map(function(t){
-        return { name: t } ;
-      })
-    );
-  },
   // javascript array comparator
   comparator (m1,m2) {
     // sort by state order

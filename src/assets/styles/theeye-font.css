@@ -3,8 +3,7 @@
   src: url('../fonts/theeye.eot?qgy6n9'),
        url('../fonts/theeye.eot?qgy6n9#iefix') format('embedded-opentype'),
        url('../fonts/theeye.ttf?qgy6n9') format('truetype'),
-       url('../fonts/theeye.woff?qgy6n9') format('woff'),
-       url('../fonts/theeye.svg?qgy6n9#theeye') format('svg');
+       url('../fonts/theeye.woff?qgy6n9') format('woff');
   font-weight: normal;
   font-style: normal;
 }
