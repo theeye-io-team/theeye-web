@@ -2,14 +2,14 @@ import App from 'ampersand-app'
 import LifecycleConstants from 'constants/lifecycle'
 
 export default {
-  update (type, stats) {
+  receiveUpdate (type, stats) {
     if ( /hoststats/.test(window.location.pathname) ) { // currently navigating host stats
       if (App.state.hoststatsPage.host.id == stats.host_id) {
         App.state.hoststatsPage[type] = stats
       }
     }
   },
-  updateIntegrationsJobs (jobData) {
+  receiveIntegrationsJobsUpdates (jobData) {
     if (jobData._type == 'NgrokIntegrationJob') {
       if ( /hoststats/.test(window.location.pathname) ) { // currently navigating host stats
         let host = App.state.hoststatsPage.host

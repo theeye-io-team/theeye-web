@@ -1,6 +1,6 @@
 import AppCollection from 'lib/app-collection'
-import Schema from 'models/resource/schema'
-import { Model as MonitorTemplate } from 'models/monitor/template'
+import Schema from './resource-schema'
+import { Model as MonitorTemplate } from './monitor-template'
 //import { Model as HostGroup } from 'models/hostgroup'
 
 const config = require('config')

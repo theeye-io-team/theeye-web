@@ -5,9 +5,12 @@ import MonitorButtonsView from './buttons'
 import FilteredSubcollection from 'ampersand-filtered-subcollection'
 import MonitorActions from 'actions/monitor'
 const CollapseContentFactory = require('./collapse-content').Factory
+import MonitorConstants from 'constants/monitor'
 
-const genericTypes = ['scraper','script','host','process','file']
+//const genericTypes = ['scraper','script','host','process','file']
 const iconByType = {
+  //nested: 'fa-cubes',
+  nested: 'fa-bullseye',
   scraper: 'fa-cloud',
   script: 'fa-code',
   host: 'fa-server',
@@ -17,13 +20,14 @@ const iconByType = {
   psaux: 'fa-cogs'
 }
 
+const NO_TYPE_ICON_COLOR = '5bc4e8'
+
 /**
  * @summary turn string into hex color code
  *
  * https://stackoverflow.com/questions/3426404/create-a-hexadecimal-colour-based-on-a-string-with-javascript
  */
 const str2rgb = (str) => {
-
   function hashCode(str) { // java String#hashCode
     var hash = 0;
     for (var i = 0; i < str.length; i++) {
@@ -41,7 +45,6 @@ const str2rgb = (str) => {
   }
 
   return intToRGB(hashCode(str))
-
 }
 
 const getMonitorIconAttributesByType = (type) => {
@@ -61,7 +64,8 @@ const getMonitorIconAttributesByType = (type) => {
     const parts = type.split('-')
     if (parts[1]==='hostname') {
       iconClass += ` fa-server`
-      bgcolor = str2rgb(parts[2])
+      //bgcolor = str2rgb(parts[2])
+      bgcolor = NO_TYPE_ICON_COLOR
     }
     else if (parts[1]==='failure_severity') {
       iconClass += ` fa-fire severity-${parts[2].toLowerCase()}`
@@ -72,7 +76,8 @@ const getMonitorIconAttributesByType = (type) => {
     else { // use value first letter as icon
       let first = parts[2].replace(/[^A-Za-z0-9]/g, ' ').trim()[0].toLowerCase()
       iconClass += ` fa-letter fa-letter-${first}`
-      bgcolor = str2rgb(parts[2])
+      //bgcolor = str2rgb(parts[2])
+      bgcolor = NO_TYPE_ICON_COLOR
     }
   } else {
     iconClass += ` ${getIconByType(type)} ${type}-color`
@@ -139,9 +144,10 @@ const MonitorView = View.extend({
     )
 
     // capture and handle collapse event
-    $( this.queryByHook('collapse-container') ).on('show.bs.collapse', () => {
-      MonitorActions.populate(this.model)
-    })
+    $(this.queryByHook('collapse-container'))
+      .on('show.bs.collapse', () => {
+        MonitorActions.populate(this.model)
+      })
   },
   setMonitorIcon () {
     var type = this.model.type;
@@ -174,7 +180,6 @@ const HostMonitorGroupView = MonitorView.extend({
     this.setMonitorIcon()
   },
   renderCollapsedContent () {
-
     // capture and handle collapse event
     $( this.queryByHook('collapse-container') ).on('show.bs.collapse', () => {
       MonitorActions.populate(this.model)
@@ -197,13 +202,30 @@ const HostMonitorGroupView = MonitorView.extend({
   }
 })
 
+const NestedMonitorView = MonitorView.extend({
+  render () {
+    this.renderWithTemplate()
+    this.renderCollapsedContent()
+    this.renderButtons()
+    this.setMonitorIcon()
+  }
+})
+
 function MonitorViewFactory (options) {
   const model = options.model;
-  if (model.type === 'host') {
-    return new HostMonitorGroupView(options)
-  } else {
-    return new MonitorView(options)
+  let monitor
+  switch (model.type) {
+    case MonitorConstants.TYPE_HOST:
+      monitor = new HostMonitorGroupView(options)
+      break;
+    case MonitorConstants.TYPE_NESTED:
+      monitor = new NestedMonitorView(options)
+      break;
+    default:
+      monitor = new MonitorView(options)
+      break;
   }
+  return monitor
 }
 
 /**

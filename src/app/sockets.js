@@ -102,7 +102,7 @@ module.exports = () => {
 const createWrapper = ({ io }) => {
   return new SocketsWrapper({
     io,
-    events: {
+    events: { // topics
       // socket events handlers
       'notification-crud': event => {
         NotificationActions.add(event.model)
@@ -114,16 +114,16 @@ const createWrapper = ({ io }) => {
         DashboardActions.loadNewRegisteredHostAgent(event.model)
       },
       'host-stats': event => {
-        HostStatsActions.update('dstat', event.model)
+        HostStatsActions.receiveUpdate('dstat', event.model)
       },
       'host-processes': event => {
-        HostStatsActions.update('psaux', event.model)
+        HostStatsActions.receiveUpdate('psaux', event.model)
       },
       'monitor-state': (event) => {
-        ResourceActions.update(event.model)
+        ResourceActions.receiveUpdate(event.model.id, event.model)
       },
       'host-integrations-crud': (event) => {
-        HostActions.update(event.model.id, event.model)
+        HostActions.receiveUpdate(event.model.id, event.model)
       },
       'job-crud': (event) => {
         if (
@@ -131,8 +131,8 @@ const createWrapper = ({ io }) => {
           event.operation === OperationsConstants.CREATE ||
           event.operation === OperationsConstants.REPLACE
         ) {
-          JobActions.update(event.model)
-          HostStatsActions.updateIntegrationsJobs(event.model)
+          JobActions.receiveUpdate(event.model)
+          HostStatsActions.receiveIntegrationsJobsUpdates(event.model)
         }
       }
     }

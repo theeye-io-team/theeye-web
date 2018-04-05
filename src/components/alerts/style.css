@@ -2,9 +2,10 @@
 .alert-container {
   position: absolute;
   right: 10px;
-  top: 150px;
+  top: 85px;
   width: 300px;
 }
 
 .alert-container .alert {
+  opacity: 0.9;
 }

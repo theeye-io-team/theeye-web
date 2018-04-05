@@ -76,7 +76,8 @@ module.exports = View.extend({
     startingValue: 'any',
     options: 'any', // should be any object with array functions interface
     idAttribute: ['string',false,'id'],
-    textAttribute: ['string',false,'text'],
+    //textAttribute: ['string',false,'text'],
+    textAttribute: ['any',false,'text'],
     type: ['string', true, 'text'],
     unselectedText: ['string', true, ''],
     label: ['string', true, ''],
@@ -197,10 +198,17 @@ module.exports = View.extend({
       })()
     }
 
+    let getTextAttribute
+    if (typeof this.textAttribute == 'function') {
+      getTextAttribute = this.textAttribute
+    } else {
+      getTextAttribute = (attrs) => attrs[this.textAttribute]
+    }
+
     if (this.options) {
       select2setup.data = this.options.map(value => {
         return {
-          text: value[this.textAttribute],
+          text: getTextAttribute(value),
           id: value[this.idAttribute]
         }
       })
@@ -309,4 +317,24 @@ module.exports = View.extend({
     this.shouldValidate = true;
     this.runTests();
   },
+  selected () {
+    let value = this.value
+    let selected
+
+    if (this.multiple) {
+      selected = []
+      this.options.forEach(option => {
+        if (value.indexOf(option.id) !== -1) {
+          selected.push(option)
+        }
+      })
+    } else {
+      this.options.forEach(option => {
+        if (option.id == value) {
+          selected = option
+        }
+      })
+    }
+    return selected
+  }
 })

@@ -12,17 +12,14 @@ module.exports = {
     App.Router.reload()
   },
   loadNewRegisteredHostAgent (host) {
-    var resourcesWasEmpty
-    var done = after(2, function () {
-      if(resourcesWasEmpty) {
+    const resourcesWasEmpty = Boolean(App.state.resources.length === 0)
+    const step = after(2, function () {
+      if (resourcesWasEmpty) {
         App.state.onboarding.trigger('first-host-registered')
       }
-      App.state.dashboard.groupResources()
+      //App.state.dashboard.groupResources()
     })
-    var step = function () {
-      done()
-    }
-    resourcesWasEmpty = App.state.resources.length === 0
+
     App.state.resources.fetch({ success: step, error: step })
     App.state.hosts.fetch({ success: step, error: step })
   }

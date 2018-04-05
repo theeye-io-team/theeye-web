@@ -5,7 +5,7 @@ module.exports = {
     // window.location = '/hoststats/' + id
     App.navigate('/admin/hoststats/' + id)
   },
-  update (id, data) {
+  receiveUpdate (id, data) {
     let host = App.state.hosts.get(id)
 
     if (!host) {

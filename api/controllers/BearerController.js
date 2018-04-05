@@ -52,10 +52,19 @@ module.exports = {
 
       user.theeye = theeye
       const customers = theeye.profile.customers
+
+      if (
+        ! customers ||
+        ! Array.isArray(customers) ||
+        customers.length === 0
+      ) {
+        return res.send(500, 'error fetching profile. profile customers are empty.')
+      }
+
       const current_customer = customers.find(c => c.name==user.current_customer)
 
-      if(!current_customer) {
-        return res.send(500,'error fetching profile. Profile customer not found.')
+      if (!current_customer) {
+        return res.send(500,'error fetching profile. profile customer not found.')
       }
 
       req.supervisor.get({

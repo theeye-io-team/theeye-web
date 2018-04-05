@@ -19,11 +19,6 @@ const displayType = (emitter) => {
   if (type===MONITOR.TYPE_PSAUX) return 'processes'
 }
 
-//import { Script as ScriptTask } from 'models/task'
-//import { Scraper as ScraperTask } from 'models/task'
-//import { Model as Monitor } from 'models/monitor'
-//import { Model as Webhook } from 'models/webhook'
-
 class EmitterFactory {
   constructor (attrs, options) {
     var EmitterClass

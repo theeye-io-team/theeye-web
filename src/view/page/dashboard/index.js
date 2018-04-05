@@ -19,6 +19,7 @@ const searchRows = require('lib/filter-rows')
 import MonitorsOptions from './monitors-options'
 import MonitoringOboardingPanel from './monitoring-onboarding'
 import TasksOboardingPanel from './tasks-onboarding'
+import PlusMenuButton from './plus-menu-button'
 
 import onBoarding from './onboarding'
 
@@ -119,6 +120,7 @@ module.exports = View.extend({
     }
 
     this.onBoarding = new onBoarding()
+    this.renderPlusButton()
   },
   setUpAndRunningSign: function () {
     if (!this.upandrunningSign) {
@@ -237,7 +239,6 @@ module.exports = View.extend({
     })
 
     this.listenToOnce(App.state.onboarding,'first-host-registered',() => {
-      this.monitorsFolding.unfold()
       this.onBoarding.onboardingStart()
     })
 
@@ -269,6 +270,10 @@ module.exports = View.extend({
     })
 
     this.listenTo(this.monitors, 'sync change:state', this.setUpAndRunningSign)
+    this.listenTo(this.monitors, 'add', () => {
+      this.monitorsFolding.unfold()
+      App.state.dashboard.groupResources()
+    })
   },
   /**
    *
@@ -353,5 +358,9 @@ module.exports = View.extend({
     }
 
     this.listenToAndRun(App.state.searchbox,'change:search',search)
+  },
+  renderPlusButton () {
+    this.plusButton = new PlusMenuButton()
+    this.renderSubview(this.plusButton)
   }
 })

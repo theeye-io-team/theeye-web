@@ -7,22 +7,22 @@ module.exports = View.extend({
   props: {
     groupBy: 'object',
   },
-  derived: {
-    groupingMonitorsByProp: {
-      deps: ['groupBy'],
-      fn () {
-        return Boolean(this.groupBy.prop)
-      }
-    }
-  },
-  bindings: {
-    groupingMonitorsByProp: {
-      type: 'booleanClass',
-      hook: 'show-more-options',
-      yes: 'fa-toggle-on',
-      no: 'fa-toggle-off'
-    }
-  },
+  //derived: {
+  //  groupingMonitorsByProp: {
+  //    deps: ['groupBy'],
+  //    fn () {
+  //      return Boolean(this.groupBy.prop)
+  //    }
+  //  }
+  //},
+  //bindings: {
+  //  groupingMonitorsByProp: {
+  //    type: 'booleanClass',
+  //    hook: 'show-more-options',
+  //    yes: 'fa-toggle-on',
+  //    no: 'fa-toggle-off'
+  //  }
+  //},
   initialize () {
     View.prototype.initialize.apply(this,arguments)
 

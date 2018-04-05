@@ -26,7 +26,7 @@ module.exports = {
    * @param {Object} data job model properties
    *
    */
-  update (data) {
+  receiveUpdate (data) {
     logger.log('job updates received')
 
     const task_id = data.task_id

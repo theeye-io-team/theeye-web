@@ -38,6 +38,23 @@ const credentials = [
   { order: 5, id: 'owner', name: 'owner', description: 'Owner' }
 ]
 
+const looptimes = [
+  { id: 10000, text: '10 seconds' },
+  { id: 15000, text: '0.25' },
+  { id: 30000, text: '0.5' },
+  { id: 60000, text: '1' },
+  { id: 300000, text: '5' },
+  { id: 900000, text: '15' },
+  { id: 1800000, text: '30' },
+  { id: 3600000, text: '60' }
+]
+
+const severities = [
+  { id: 'LOW', text: 'LOW' },
+  { id: 'HIGH', text: 'HIGH' },
+  { id: 'CRITICAL', text: 'CRITICAL' }
+]
+
 const CredentialsCollection = Collection.extend({
   reset (models) {
     const reset = Collection.prototype.reset
@@ -86,6 +103,8 @@ const AppState = State.extend({
     this.session = new SessionState()
     this.navbar = new NavbarState()
     this.credentials = new CredentialsCollection()
+    this.looptimes = new Collection(looptimes)
+    this.severities = new Collection(severities)
 
     this.inbox = new InboxState({ appState: this })
   },

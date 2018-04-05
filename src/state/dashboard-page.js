@@ -3,65 +3,8 @@
 import App from 'ampersand-app'
 import uuidv4 from 'uuid/v4'
 
-import { Model as Resource } from 'models/resource'
-import { Collection as ResourceCollection } from 'models/resource'
+import { GroupedResourceCollection, GroupedResource } from 'models/resource'
 import AmpersandState from 'ampersand-state'
-import AmpersandCollection from 'ampersand-collection'
-
-/**
- * Resource but with a subresources/submonitors collection
- */
-const GroupedResource = Resource.extend({
-  hasError () {
-    if (!this.submonitors || this.submonitors.length===0) {
-      return false
-    }
-
-    return this.submonitors
-      .filter(m => m.hasError())
-      .length > 0
-  },
-  collections: {
-    submonitors: ResourceCollection
-  },
-  initialize () {
-    Resource.prototype.initialize.apply(this,arguments)
-
-    this.listenTo(this.submonitors,'change add reset',() => {
-      if (this.submonitors.length===0) return
-      const monitor = this.submonitors.higherSeverityMonitor()
-
-      this.state = monitor.state
-      this.failure_severity = monitor.failure_severity
-    })
-  }
-})
-
-const GroupedResourceCollection = ResourceCollection.extend({
-  // is not being used. this collection works like a subset of the resources collection
-  //model (attrs, options) {
-  //},
-  isModel (model) {
-    return model instanceof Resource || model instanceof GroupedResource
-  },
-  find (resource) {
-    const _find = ResourceCollection.prototype.find
-    // find the resource within a group or theresource alone
-    return _find.call(this, group => {
-      if (group.id === resource.id) return true
-      if (!group.submonitors||group.submonitors.length===0) return false
-
-      const item = group.submonitors.find(m => {
-        if (m.id === resource.id) return true
-        else if (m.type === 'host') {
-          if (!m.submonitors||m.submonitors.length===0) return false
-          return m.submonitors.get(resource.id)
-        }
-      })
-      return item !== undefined
-    })
-  }
-})
 
 module.exports = AmpersandState.extend({
   props: {

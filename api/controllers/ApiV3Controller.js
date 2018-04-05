@@ -95,23 +95,23 @@ module.exports = {
       success: (body, apires) => res.json(body)
     })
   },
-  ////**
-  /// * @method POST
-  /// * @route /api/:resource
-  /// *
-  /// * @param {String} resource
-  /// */
-  ///create (req, res, next){
-  ///  logger.debug('post api url ' + req.originalUrl);
-  ///  var route = req.originalUrl.replace(apibase,'')
-  ///  req.supervisor.create({
-  ///    route: route,
-  ///    body: req.body,
-  ///    query: req.query,
-  ///    failure: (error, apiRes) => res.send(error.statusCode, error),
-  ///    success: (body, apiRes) => res.json(body),
-  ///  });
-  ///},
+  /**
+   * @method POST
+   * @route /api/:resource
+   *
+   * @param {String} resource
+   */
+  create (req, res, next){
+    logger.debug('post api url ' + req.originalUrl);
+    var route = req.originalUrl.replace(apibase,'')
+    req.supervisor.create({
+      route: route,
+      body: req.body,
+      query: req.query,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
+    });
+  },
   ////**
   /// * @method PUT
   /// * @route /api/:resource/:id

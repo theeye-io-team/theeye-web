@@ -14,8 +14,8 @@ import EventsSelectView from 'view/events-select'
 import InputView from 'components/input-view'
 import TextareaView from 'components/input-view/textarea'
 import CheckboxView from 'components/checkbox-view'
-import Buttons from '../buttons'
-import AdvancedToggle from '../advanced-toggle'
+import FormButtons from 'view/buttons'
+import AdvancedToggle from 'view/advanced-toggle'
 import CopyTaskSelect from '../copy-task-select'
 
 import isURL from 'validator/lib/isURL'
@@ -287,7 +287,7 @@ module.exports = FormView.extend({
     this.addHelpIcon('triggers')
     this.addHelpIcon('gzip')
 
-    const buttons = new Buttons()
+    const buttons = new FormButtons()
     this.renderSubview(buttons)
     buttons.on('click:confirm', () => { this.submit() })
   },

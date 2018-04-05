@@ -1,7 +1,4 @@
-import State from 'ampersand-state'
 import AppModel from 'lib/app-model'
-//import { Model as Customer } from 'models/customer'
-
 module.exports = AppModel.extend({
   props: {
     id: 'string',
@@ -11,10 +8,7 @@ module.exports = AppModel.extend({
     name: 'string',
     type: 'string',
     _type: 'string',
-    config: 'object',
+    config: ['object',false, () => { return {} }],
     tags: 'array',
   }
-  //children: {
-  //  customer: Customer
-  //}
 })

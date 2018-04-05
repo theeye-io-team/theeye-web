@@ -2,7 +2,7 @@ import View from 'ampersand-view'
 import './buttons.less'
 module.exports = View.extend({
   template: `
-    <div class="task-form-buttons" data-hook="buttons-container">
+    <div class="form-buttons" data-hook="buttons-container">
       <div class="row">
         <div class="col-xs-12 col-md-6">
           <button type="button" class="btn btn-default" data-dismiss="modal"> Cancel </button>

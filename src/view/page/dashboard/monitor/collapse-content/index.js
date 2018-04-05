@@ -4,6 +4,9 @@ import lang2ext from 'lib/lang2ext'
 import FileActions from 'actions/file'
 import moment from 'moment'
 
+import State from 'ampersand-state'
+import Collection from 'ampersand-collection'
+
 const GenericCollapsedContent = View.extend({
   template: `<div>no definition</div>`,
   props: {
@@ -23,7 +26,7 @@ const GenericCollapsedContent = View.extend({
         const secs = dur.seconds()
         const mins = dur.minutes()
 
-        if (!mins&&!secs) return 'error'
+        if (!mins && !secs) return 'error'
 
         if (!mins) return `${secs} secs`
         if (!secs) return `${mins} mins`
@@ -35,8 +38,8 @@ const GenericCollapsedContent = View.extend({
       fn () {
         return this.monitor.description || 'no details'
       }
-    },
-  },
+    }
+  }
 })
 
 const bindings = GenericCollapsedContent.prototype.bindings
@@ -98,8 +101,8 @@ const ScraperCollapsedContent = GenericCollapsedContent.extend({
         const time = this.monitor.config.timeout
         return (time / 1000) + ' s'
       }
-    },
-  },
+    }
+  }
 })
 
 const ProcessCollapsedContent = GenericCollapsedContent.extend({
@@ -146,7 +149,7 @@ const ProcessCollapsedContent = GenericCollapsedContent.extend({
     if (!this.monitor.config || !this.monitor.config.ps) return
     this.is_regexp = this.monitor.config.ps.is_regexp
     this.pattern = this.monitor.config.ps.pattern
-  },
+  }
 })
 
 const ScriptCollapsedContent = GenericCollapsedContent.extend({
@@ -243,7 +246,7 @@ const ScriptCollapsedContent = GenericCollapsedContent.extend({
   }
 })
 
-const FileCollapsedContent =  GenericCollapsedContent.extend({
+const FileCollapsedContent = GenericCollapsedContent.extend({
   template: `
     <div class="task-container">
       <p>This monitor is executed on <i data-hook="hostname"></i> every <i data-hook="interval"></i></p>
@@ -326,7 +329,7 @@ const FileCollapsedContent =  GenericCollapsedContent.extend({
   }
 })
 
-const HostCollapsedContent =  GenericCollapsedContent.extend({
+const HostCollapsedContent = GenericCollapsedContent.extend({
   template: `
     <div>
       <p>This is <i data-hook="hostname"></i> keep alive.</p>
@@ -447,6 +450,41 @@ const HostCollapsedContent =  GenericCollapsedContent.extend({
   }
 })
 
+const NestedMonitorRowView = View.extend({
+  template: `
+    <tr>
+      <th></th>
+    </tr>
+  `
+})
+
+const NestedCollapsedContent = GenericCollapsedContent.extend({
+  template: `
+    <div>
+      <p>Nested Monitors</p>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody data-hook="nested-monitors-container">
+        </tbody>
+      </table>
+    </div>
+  `,
+  render () {
+    this.renderWithTemplate(this)
+
+    //let nestedMonitors = this.monitor.monitors
+    //this.renderCollection(
+    //  nestedMonitors,
+    //  NestedMonitorRowView,
+    //  this.queryByHook('nested-monitors-container')
+    //)
+  }
+})
+
 exports.Factory = (input) => {
   const type = input.model.type
 
@@ -461,6 +499,7 @@ exports.Factory = (input) => {
   if (type==='process') return new ProcessCollapsedContent(options)
   if (type==='file') return new FileCollapsedContent(options)
   if (type==='host') return new HostCollapsedContent(options)
+  if (type==='nested') return new NestedCollapsedContent(options)
   return new GenericCollapsedContent(options)
 }
 

@@ -105,28 +105,28 @@ const dispatch = (message,users) => {
         })
       }
 
-      if (process.env.NODE_ENV==='localdev') {
-        params.TargetArn = `arn:dummy:${user.username}`
-        dumpSNSMessage(dumpfile, params)
-      }
+      dumpSNSMessage(`arn:user:${user.username}`, dumpfile, params)
     })
   }
 }
 
-const dumpSNSMessage = (filename, payload) => {
-  if (!filename) {
-    return logger.error('no filename provided')
-  }
-
-  fs.appendFile(
-    filename,
-    JSON.stringify(payload) + "\n",
-    (err) => {
-      if (err) {
-        logger.error(err)
-      }
+const dumpSNSMessage = (dummyArn, filename, payload) => {
+  if (process.env.NODE_ENV==='localdev') {
+    if (!filename) {
+      return logger.error('no filename provided')
     }
-  )
+
+    let data = Object.assign({}, payload, { dummyArn })
+    fs.appendFile(
+      filename,
+      JSON.stringify(data)  + "\n",
+      (err) => {
+        if (err) {
+          logger.error(err)
+        }
+      }
+    )
+  }
 }
 
 const handleSNSError = (user, device) => {

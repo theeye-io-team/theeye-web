@@ -6,7 +6,7 @@ import AppCollection from 'lib/app-collection'
 const Customer = require('models/customer').Model
 const Hosts = require('models/host').Collection
 const TaskTemplates = require('models/task/template').Collection
-const ResourceTemplates = require('models/resource/template').Collection
+const ResourceTemplate = require('models/resource').Template
 const config = require('config')
 
 const urlRoot = `${config.api_url}/hostgroup`
@@ -40,7 +40,7 @@ const Model = AppModel.extend({
   collections: {
     hosts: Hosts, // has many host
     tasks: TaskTemplates, // has many task templates
-    resources: ResourceTemplates, // has many resource templates
+    resources: ResourceTemplate.Collection, // has many resource templates
     triggers: EventTemplates // has many event templates
   }
 })

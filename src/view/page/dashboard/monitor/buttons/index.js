@@ -4,7 +4,8 @@ import View from 'ampersand-view'
 import JobOutput from './job-output'
 import SearchActions from 'actions/searchbox'
 import ResourceActions from 'actions/resource'
-// import HostActions from 'actions/host'
+import MonitorConstants from 'constants/monitor'
+import MonitorEditView from 'view/page/monitor/edit'
 
 const Edit = View.extend({
   template: `
@@ -18,7 +19,11 @@ const Edit = View.extend({
   onClickEdit: function(event){
     event.stopPropagation();
     event.preventDefault();
-    ResourceActions.edit(this.model.id)
+    if (this.model.type===MonitorConstants.TYPE_NESTED) {
+      let view = new MonitorEditView(this.model)
+    } else {
+      ResourceActions.edit(this.model.id)
+    }
     return false;
   }
 })
@@ -114,11 +119,22 @@ module.exports = View.extend({
     const container = this.el
     let buttons
 
-    if (type == 'host') {
-      buttons = [ HostStats, Workflow, Search ]
-    }
-    else if (['script','scraper','process','file'].indexOf(type) !== -1) {
-      buttons = [ LastEvent, Workflow, Search ]
+    switch (type) {
+      case MonitorConstants.TYPE_HOST:
+        buttons = [ HostStats, Workflow, Search ]
+        break;
+      case MonitorConstants.TYPE_NESTED:
+        buttons = [ null, Workflow, Search ]
+        break;
+      case MonitorConstants.TYPE_SCRIPT:
+      case MonitorConstants.TYPE_SCRAPER:
+      case MonitorConstants.TYPE_PROCESS:
+      case MonitorConstants.TYPE_FILE:
+        buttons = [ LastEvent, Workflow, Search ]
+        break;
+      default:
+        buttons = []
+        break;
     }
 
     if (Array.isArray(buttons)) {
@@ -130,11 +146,12 @@ module.exports = View.extend({
     if (!buttons) return
 
     buttons.forEach(button => {
+      if (!button) return
       let view = new button({ model: this.model })
       view.render()
 
       let li = document.createElement('li')
-      li.appendChild( view.el )
+      li.appendChild(view.el)
       container.appendChild(li)
     })
   }
