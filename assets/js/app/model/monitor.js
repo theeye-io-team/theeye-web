@@ -73,7 +73,7 @@ window.App.Models.Monitor = BaseModel.extend({
       .fromNow();
 
     var tags = [
-      'monitor', 
+      'monitor',
       resource.name,
       resource.hostname,
       resource.type,
