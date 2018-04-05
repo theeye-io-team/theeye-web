@@ -19,7 +19,7 @@ const DeleteNotificationsView = View.extend({
           <small>
             Also delete unread notifications.
           </small>
-        </label> 
+        </label>
       </div>
     </div>
   `
@@ -138,8 +138,8 @@ const InboxPopupRow = View.extend({
 
     let eventIndex = custom_event || monitor_event
 
-    this.message = meaning[eventIndex] || `${monitor_event}:${state}`
-    this.icon = eventIcons[eventIndex]
+    this.message = meaning[eventIndex] || meaning[monitor_event]
+    this.icon = eventIcons[eventIndex] || eventIcons[monitor_event]
 
     // monitor execution always failure, unless used a recognized state
     if (state!=='normal') {
