@@ -24,6 +24,7 @@ const registerForm = FormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         autofocus: true,
+        requiredMessage: 'Por favor, ingresa tu nombre.',
         tests: [
           function (value) {
             if (validator.isEmpty(value)) {
@@ -40,10 +41,11 @@ const registerForm = FormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         autofocus: false,
+        requiredMessage: 'Por favor, ingresa tu correo electrónico.',
         tests: [
           function (value) {
             if (!validator.isEmail(value)) {
-              return "El email ingresado es inv&aacute;lido";
+              return "El email ingresado es inválido";
             }
           }
         ]
