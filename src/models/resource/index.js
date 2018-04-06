@@ -230,7 +230,7 @@ function MonitorFactory (data) {
 
 function ResourceFactory (model, options={}) {
   let resource
-  let monitor = MonitorFactory(model)
+  let monitor = MonitorFactory(model.monitor)
 
   if (model.type == MonitorConstants.TYPE_NESTED) {
     resource = new NestedResource(model, options)
