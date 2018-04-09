@@ -102,8 +102,8 @@ const groupByHost = (resources) => {
         groupedMonitors.push(grouped)
         // add to hostmonitors
         hostmonitors[hostname].host = grouped
-        resource.on('change',() => {
-          grouped.set( resource.changedAttributes() )
+        grouped.listenTo(resource, 'change', () => {
+          grouped.set(resource.changedAttributes())
         })
       }
 

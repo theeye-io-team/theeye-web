@@ -8,7 +8,7 @@ module.exports = AppModel.extend({
     name: 'string',
     type: 'string',
     _type: 'string',
-    config: ['object',false, () => { return {} }],
+    //config: ['object',false, () => { return {} }],
     tags: 'array',
   }
 })

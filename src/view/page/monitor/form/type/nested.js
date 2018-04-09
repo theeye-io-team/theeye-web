@@ -28,6 +28,17 @@ module.exports = FormView.extend({
       'acl','tags','description','failure_severity'
     ]
 
+    let nestedMonitors = []
+    if (this.model.monitor.config.monitors) {
+      this.model.monitor.config.monitors.forEach(mon => {
+        if (mon.id) {
+          nestedMonitors.push(mon.id)
+        } else {
+          console.warn('malkformed config.monitors data')
+        }
+      })
+    }
+
     this.fields = [
       new InputView({
         label: 'Name *',
@@ -45,9 +56,9 @@ module.exports = FormView.extend({
       new MonitorSelectView({
         invalidClass: 'text-danger',
         required: true,
-        value: this.model.monitor.config.monitors,
+        value: nestedMonitors,
         filter: (item) => {
-          return item.type !== 'nested' || item.id !== this.model.id
+          return item.id !== this.model.id
         }
       }),
       // advanced fields starts visible = false

@@ -458,9 +458,22 @@ const HostCollapsedContent = GenericCollapsedContent.extend({
 const NestedMonitorRowView = View.extend({
   template: `
     <tr>
-      <th></th>
+      <td>
+        <h4><i data-hook="name"></i></h4>
+      </td>
+      <td>
+        <h4><i data-hook="state-icon"></i></h4>
+      </td>
     </tr>
-  `
+  `,
+  bindings: {
+    'model.name': { hook:'name'},
+    'model.stateIcon': {
+      hook: 'state-icon',
+      type: 'attribute',
+      name: 'class'
+    },
+  }
 })
 
 const NestedCollapsedContent = GenericCollapsedContent.extend({
@@ -470,7 +483,8 @@ const NestedCollapsedContent = GenericCollapsedContent.extend({
       <table>
         <thead>
           <tr>
-            <th></th>
+            <th>Name</th>
+            <th>State</th>
           </tr>
         </thead>
         <tbody data-hook="nested-monitors-container">
@@ -481,12 +495,12 @@ const NestedCollapsedContent = GenericCollapsedContent.extend({
   render () {
     this.renderWithTemplate(this)
 
-    //let nestedMonitors = this.monitor.monitors
-    //this.renderCollection(
-    //  nestedMonitors,
-    //  NestedMonitorRowView,
-    //  this.queryByHook('nested-monitors-container')
-    //)
+    let nestedMonitors = this.monitor.config.monitors
+    this.renderCollection(
+      nestedMonitors,
+      NestedMonitorRowView,
+      this.queryByHook('nested-monitors-container')
+    )
   }
 })
 

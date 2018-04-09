@@ -100,7 +100,8 @@ module.exports = View.extend({
           text: params.term
         }
       }
-    }]
+    }],
+    removeEmptyValues: ['boolean', false, false]
   },
   derived: {
     value: {
@@ -235,16 +236,17 @@ module.exports = View.extend({
       } else if (Array.isArray(items)) {
         // items are treated as plain objects
         if (items.length>0) {
-          data = items.map(item => {
-            if (!item) return ''
+          data = []
+          items.forEach(item => {
+            if (!item) { return }
+
             if (typeof item == 'string') {
-              return item
+              data.push(item)
+            } else if (item.hasOwnProperty(this.idAttribute)) {
+              data.push(item[this.idAttribute])
+            } else {
+              console.warn(`${item} object properties invalid`)
             }
-            if (item.hasOwnProperty(this.idAttribute)) {
-              return item[this.idAttribute]
-            }
-            console.warn(`${item} object properties invalid`)
-            return ''
           })
         } else data = []
       } else {

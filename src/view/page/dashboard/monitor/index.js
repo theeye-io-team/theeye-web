@@ -116,6 +116,14 @@ const MonitorView = View.extend({
     },
   },
   bindings: {
+    'model.name': [
+      { hook: 'name' },
+      { 
+        type: 'attribute',
+        name: 'title',
+        hook: 'name'
+      }
+    ],
     'model.hostname': { hook: 'hostname' },
     'model.type': { hook: 'type' },
     'model.stateIcon': {

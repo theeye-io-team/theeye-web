@@ -1,3 +1,4 @@
+import State from 'ampersand-state'
 import AppCollection from 'lib/app-collection'
 import moment from 'moment'
 import assign from 'lodash/assign'
@@ -80,7 +81,10 @@ const MonitorBaseModel = MonitorSchema.extend({
   },
   serialize () {
     const serialize = MonitorSchema.prototype.serialize
-    return Object.assign({}, serialize.apply(this), this.config)
+    let data = Object.assign({}, serialize.apply(this), this.config)
+    delete data.config
+    delete data.monitor
+    return data
   }
 })
 
@@ -88,6 +92,7 @@ const Monitor = MonitorBaseModel.extend({
   props: {
     host_id: 'string',
     template_id: 'string',
+    config: ['object',false, () => { return {} }],
   },
   children: {
     host: Host
@@ -96,14 +101,23 @@ const Monitor = MonitorBaseModel.extend({
 
 const NestedMonitor = MonitorBaseModel.extend({
   props: {
-    looptime: ['number', false, 0] // is not required
+    looptime: ['number', false, 0], // is not required
+  },
+  children: {
+    config: State.extend({
+      collections: {
+        monitors: function () {
+          const Col = ResourceCollection
+          return new (Col.bind.apply(Col, arguments))([])
+        }
+      }
+    })
   },
   initialize () {
     MonitorBaseModel.prototype.initialize.apply(this, arguments)
     this.type = MonitorConstants.TYPE_NESTED
   }
 })
-
 
 const ResourceBaseModel = ResourceSchema.extend({
   urlRoot: urlRoot,
@@ -191,7 +205,6 @@ const ResourceBaseModel = ResourceSchema.extend({
   },
   serialize () {
     const serialize = ResourceSchema.prototype.serialize
-
     const monitor = this.monitor.serialize()
     return assign({}, serialize.apply(this), monitor)
   }
@@ -207,6 +220,10 @@ const Resource = ResourceBaseModel.extend({
     template: ResourceTemplate.Model, // belongs to
     host: Host, // belongs to
   },
+  initialize (options) {
+    //this.id = options._id || options.id
+    ResourceBaseModel.prototype.initialize.apply(this,arguments)
+  }
 })
 
 const NestedResource = ResourceBaseModel.extend({
@@ -228,25 +245,28 @@ function MonitorFactory (data) {
   }
 }
 
-function ResourceFactory (model, options={}) {
+function ResourceFactory (data, options={}) {
   let resource
-  let monitor = MonitorFactory(model.monitor)
+  let monitor = MonitorFactory(data.monitor || data)
 
-  if (model.type == MonitorConstants.TYPE_NESTED) {
-    resource = new NestedResource(model, options)
+  if (data.type == MonitorConstants.TYPE_NESTED) {
+    resource = new NestedResource(data, options)
   } else {
-    resource = new Resource(model, options)
+    resource = new Resource(data, options)
   }
   resource.monitor = monitor
+
   return resource
 }
 
-const Collection = AppCollection.extend({
-  //model: Resource,
+const _Collection = AppCollection.extend({
   model: ResourceFactory,
   isModel (model) {
     return model instanceof Resource || model instanceof NestedResource
-  },
+  }
+})
+
+const ResourceCollection = _Collection.extend({
   url: urlRoot,
   // javascript array comparator
   comparator (m1,m2) {
@@ -257,8 +277,8 @@ const Collection = AppCollection.extend({
       return 1
     } else {
       // if equal state order, sort by name
-      let name1 = m1.name.toLowerCase()
-      let name2 = m2.name.toLowerCase()
+      let name1 = m1.name ? m1.name.toLowerCase() : 0
+      let name2 = m2.name ? m2.name.toLowerCase() : 0
       if (name1<name2) return -1
       else if (name1>name2) return 1
       else return 0
@@ -290,7 +310,7 @@ const GroupedResource = Resource.extend({
       .length > 0
   },
   collections: {
-    submonitors: Collection
+    submonitors: ResourceCollection
   },
   initialize () {
     Resource.prototype.initialize.apply(this,arguments)
@@ -305,17 +325,17 @@ const GroupedResource = Resource.extend({
   }
 })
 
-const GroupedResourceCollection = Collection.extend({
+const GroupedResourceCollection = ResourceCollection.extend({
   // is not being used. this collection works like a subset of the resources collection
   //model (attrs, options) {
   //},
   isModel (model) {
-    const isModel = Collection.prototype.isModel
+    const isModel = ResourceCollection.prototype.isModel
 
     return isModel.call(this, model) || model instanceof GroupedResource
   },
   find (resource) {
-    const _find = Collection.prototype.find
+    const _find = ResourceCollection.prototype.find
     // find the resource within a group or theresource alone
     return _find.call(this, group => {
       if (group.id === resource.id) return true
@@ -333,12 +353,11 @@ const GroupedResourceCollection = Collection.extend({
   }
 })
 
-
 exports.Model = Resource
 exports.Nested = NestedResource
 exports.GroupedResource = GroupedResource
 exports.Factory = ResourceFactory
 
 exports.Template = ResourceTemplate
-exports.Collection = Collection
+exports.Collection = ResourceCollection
 exports.GroupedResourceCollection = GroupedResourceCollection

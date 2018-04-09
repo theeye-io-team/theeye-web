@@ -7,6 +7,7 @@ import ResourceModels from 'models/resource'
 //import XHR from 'lib/xhr'
 
 const create = (data, next = function(){}) => {
+  delete data.config
   let resource = ResourceModels.Factory(data)
 
   // only send form "data" to the api
@@ -31,8 +32,9 @@ module.exports = {
     // should be unified into a single model
     resource.set(data)
     resource.monitor.set(data)
-    resource.save(data,{
-      patch: true,
+    //resource.save(data,{
+    //  patch: true,
+    resource.save({},{
       success: () => {
         bootbox.alert('Monitor Updated')
       },

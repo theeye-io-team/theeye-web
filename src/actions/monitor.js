@@ -26,8 +26,18 @@ const populateHostMonitor = (model) => {
 }
 
 const populateNestedMonitor = (model) => {
-  //let monitors = model.monitor.config.monitors
-  //model.monitor.config.monitors = new ResourcesCollection(monitors)
+  let monitors = model.monitor.config.monitors // resource models in fact
+  monitors.forEach(mon => {
+    let monitor = App.state.resources.get( mon.id || mon._id )
+    if (!monitor) {
+      mon.fetch() // fetch from server
+    } else {
+      mon.set( monitor.serialize() )
+      mon.listenTo(monitor, 'change', () => {
+        mon.set(monitor.changedAttributes())
+      })
+    }
+  })
 }
 
 const populateMethods = {
