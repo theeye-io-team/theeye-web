@@ -28,14 +28,16 @@ const populateHostMonitor = (model) => {
 const populateNestedMonitor = (model) => {
   let monitors = model.monitor.config.monitors // resource models in fact
   monitors.forEach(mon => {
-    let monitor = App.state.resources.get( mon.id || mon._id )
-    if (!monitor) {
-      mon.fetch() // fetch from server
-    } else {
-      mon.set( monitor.serialize() )
-      mon.listenTo(monitor, 'change', () => {
-        mon.set(monitor.changedAttributes())
-      })
+    if (!mon.state || !mon.name) {
+      let monitor = App.state.resources.get( mon.id || mon._id )
+      if (!monitor) {
+        mon.fetch() // fetch from server
+      } else {
+        mon.set( monitor.serialize() )
+        mon.listenTo(monitor, 'change', () => {
+          mon.set(monitor.changedAttributes())
+        })
+      }
     }
   })
 }

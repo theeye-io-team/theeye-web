@@ -7,9 +7,7 @@ import ResourceModels from 'models/resource'
 //import XHR from 'lib/xhr'
 
 const create = (data, next = function(){}) => {
-  delete data.config
   let resource = ResourceModels.Factory(data)
-
   // only send form "data" to the api
   resource.save({}, {
     success: () => {
@@ -27,7 +25,6 @@ module.exports = {
   // remote server update
   update (id, data) {
     let resource = App.state.resources.get(id)
-
     // monitor and resource share almost the same properties.
     // should be unified into a single model
     resource.set(data)

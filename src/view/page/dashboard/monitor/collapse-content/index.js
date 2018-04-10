@@ -480,7 +480,7 @@ const NestedCollapsedContent = GenericCollapsedContent.extend({
   template: `
     <div>
       <p>Nested Monitors</p>
-      <table>
+      <table class="table">
         <thead>
           <tr>
             <th>Name</th>

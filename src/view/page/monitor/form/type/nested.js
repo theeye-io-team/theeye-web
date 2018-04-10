@@ -170,7 +170,8 @@ module.exports = FormView.extend({
   prepareData (data) {
     let f = assign({ config: {} }, data)
     f.type = MonitorConstants.TYPE_NESTED
-    f.config.monitors = data.monitors
+    f.config.monitors = data.monitors.map(m => { return { id: m } })
+    delete f.monitors
     return f
   },
   setWithMonitor (resource) {

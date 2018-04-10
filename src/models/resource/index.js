@@ -78,13 +78,6 @@ const MonitorBaseModel = MonitorSchema.extend({
   },
   children: {
     template: MonitorTemplate.Model
-  },
-  serialize () {
-    const serialize = MonitorSchema.prototype.serialize
-    let data = Object.assign({}, serialize.apply(this), this.config)
-    delete data.config
-    delete data.monitor
-    return data
   }
 })
 
@@ -99,23 +92,35 @@ const Monitor = MonitorBaseModel.extend({
   }
 })
 
+const NestedMonitorConfig = State.extend({
+  collections: {
+    monitors: function () {
+      const Col = ResourceCollection
+      return new (Col.bind.apply(Col, arguments))([])
+    }
+  },
+  serialize () {
+    return { monitors: this.monitors.map(m => m.id) }
+  }
+})
+
 const NestedMonitor = MonitorBaseModel.extend({
   props: {
     looptime: ['number', false, 0], // is not required
   },
   children: {
-    config: State.extend({
-      collections: {
-        monitors: function () {
-          const Col = ResourceCollection
-          return new (Col.bind.apply(Col, arguments))([])
-        }
-      }
-    })
+    config: NestedMonitorConfig
   },
   initialize () {
     MonitorBaseModel.prototype.initialize.apply(this, arguments)
     this.type = MonitorConstants.TYPE_NESTED
+  },
+  serialize () {
+    const serialize = MonitorSchema.prototype.serialize
+    let data = Object.assign({}, serialize.apply(this))
+    data.monitors = data.config.monitors
+    delete data.config
+    return data
   }
 })
 
@@ -206,7 +211,13 @@ const ResourceBaseModel = ResourceSchema.extend({
   serialize () {
     const serialize = ResourceSchema.prototype.serialize
     const monitor = this.monitor.serialize()
-    return assign({}, serialize.apply(this), monitor)
+    let data = assign({}, serialize.apply(this), monitor)
+
+    delete data.customer
+    delete data.monitor
+    delete data.user
+
+    return data
   }
 })
 
@@ -232,7 +243,7 @@ const NestedResource = ResourceBaseModel.extend({
     monitor: NestedMonitor, // has one
   },
   initialize () {
-    Resource.prototype.initialize.apply(this, arguments)
+    ResourceBaseModel.prototype.initialize.apply(this, arguments)
     this.type = MonitorConstants.TYPE_NESTED
   }
 })
