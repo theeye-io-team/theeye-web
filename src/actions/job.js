@@ -20,7 +20,7 @@ const updateJob = (job, data) => {
 }
 
 module.exports = {
-  /** 
+  /**
    *
    * @summary this is being updated via socket event
    * @param {Object} data job model properties
@@ -44,10 +44,29 @@ module.exports = {
   create (task, taskArgs) {
     logger.log('creating new job with task %o', task)
 
+    var data = []
+    taskArgs.forEach(function(arg){
+      switch (arg.type) {
+        case 'date':
+          if(Array.isArray(arg.value) && arg.value.length == 1) {
+            arg.value = arg.value[0]
+          }
+          break;
+        case 'file':
+          arg.value = arg.value.dataUrl
+          break;
+        default:
+          break;
+      }
+      delete arg.renderValue
+      delete arg.type
+      data.push(arg)
+    })
+
     XHR.send({
       method: 'post',
       url: `${config.api_url}/job`,
-      jsonData: { task: task.id, task_arguments: taskArgs },
+      jsonData: { task: task.id, task_arguments: data },
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },

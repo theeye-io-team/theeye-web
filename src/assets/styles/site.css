@@ -859,3 +859,16 @@ a.flowchart-icon {
 .example-btn {
   margin: 10px 0px;
 }
+
+.file-preview img {
+  max-height: 70px;
+}
+
+.form-group section.preview{
+  position: absolute;
+  z-index: 2000;
+  border: 1px solid #dcdcdc;
+  padding: 10px;
+  background: #fff;
+  right: 15px;
+}

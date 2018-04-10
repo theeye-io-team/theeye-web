@@ -5,7 +5,7 @@ import Flatpickr from 'flatpickr'
 import 'flatpickr/dist/flatpickr.css'
 
 const ClearIcon = View.extend({
-  template: `<i class="fa fa-remove" style="right:22px;top:24px;position:absolute;"></i>`,
+  template: `<i class="fa fa-remove" style="right:22px;top:10px;position:absolute;"></i>`,
   props: {
     visible: ['boolean', false, false]
   },
@@ -102,7 +102,7 @@ module.exports = InputView.extend({
   setValue (value, skipValidation) {
     this.inputValue = value
 
-    this.trigger('change:inputValue') // force change. value is always the same array 
+    this.trigger('change:inputValue') // force change. value is always the same array
 
     if (!skipValidation && !this.getErrorMessage()) {
       this.shouldValidate = true;

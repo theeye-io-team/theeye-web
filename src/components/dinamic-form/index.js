@@ -3,6 +3,12 @@ import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
+import Datepicker from 'components/input-view/datepicker'
+import OneLineMediaInputView from 'components/input-view/media/oneline'
+import { Model as MediaFileModel } from 'models/media-file'
+
+
+const moment = require('moment-timezone')
 
 module.exports = FormView.extend({
   props: {
@@ -56,6 +62,40 @@ module.exports = FormView.extend({
             validityClassSelector: '.control-label'
           })
         )
+      }  else if (spec.type === FIELD.TYPE_DATE) {
+        fields.push(
+          new Datepicker({
+            label: spec.label,
+            name: spec.label,
+            required: spec.required,
+            enableTime: true,
+            dateFormat: 'F J, Y at H:i',
+            value: spec.value,
+            invalidClass: 'text-danger',
+            validityClassSelector: '.control-label',
+            placeholder: `Select a date`,
+            mode: 'single',
+            tests: [
+              items => {
+                if (items.length === 0) {
+                  return 'Please provide a value.'
+                }
+                return
+              },
+            ]
+          })
+        )
+      }  else if (spec.type === FIELD.TYPE_FILE) {
+        fields.push(
+          new OneLineMediaInputView({
+            type: 'file',
+            label: spec.label,
+            name: spec.label,
+            value: new MediaFileModel(),
+            required: spec.required,
+            maxFileSize: 300
+          })
+        )
       }
     })
 
@@ -68,6 +108,11 @@ module.exports = FormView.extend({
 
     this.beforeSubmit()
     if (this.valid) {
+      for(var key in this.data) {
+        if (this.data[key] instanceof File) {
+          this.data[key].dataUrl = this._fieldViews[key]._values.file.dataUrl
+        }
+      }
       next(null, this.data)
     }
   },

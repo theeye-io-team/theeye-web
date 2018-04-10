@@ -8,7 +8,7 @@ module.exports = View.extend({
     <section>
       <h1>Select the argument type</h1>
       <div class="row task-button" style="text-align:center;">
-        <div class="col-xs-4">
+        <div class="col-xs-2 col-xs-offset-1">
           <button data-hook="fixed" class="btn btn-default">
             <i class="icons icons-script fa fa-chain"></i>
           </button>
@@ -16,7 +16,7 @@ module.exports = View.extend({
             <span data-hook="script-help"></span>
           </h2>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-2">
           <button data-hook="input" class="btn btn-default">
             <i class="icons icons-scraper fa fa-terminal"></i>
           </button>
@@ -24,11 +24,27 @@ module.exports = View.extend({
             <span data-hook="webhook-help"></span>
           </h2>
         </div>
-        <div class="col-xs-4">
+        <div class="col-xs-2">
           <button data-hook="select" class="btn btn-default">
             <i class="icons icons-scraper fa fa-list-ol"></i>
           </button>
           <h2>Options Selection
+            <span data-hook="webhook-help"></span>
+          </h2>
+        </div>
+        <div class="col-xs-2">
+          <button data-hook="date" class="btn btn-default">
+            <i class="icons icons-scraper fa fa-calendar"></i>
+          </button>
+          <h2>Date Input
+            <span data-hook="webhook-help"></span>
+          </h2>
+        </div>
+        <div class="col-xs-2">
+          <button data-hook="file" class="btn btn-default">
+            <i class="icons icons-scraper fa fa-file-o"></i>
+          </button>
+          <h2>File Input
             <span data-hook="webhook-help"></span>
           </h2>
         </div>
@@ -53,6 +69,8 @@ module.exports = View.extend({
     'click [data-hook=fixed]':'onClickFixed',
     'click [data-hook=input]':'onClickInput',
     'click [data-hook=select]':'onClickSelect',
+    'click [data-hook=date]':'onClickDate',
+    'click [data-hook=file]':'onClickFile',
     keydown: 'onKeyEvent',
     keypress: 'onKeyEvent'
   },
@@ -79,6 +97,16 @@ module.exports = View.extend({
     event.preventDefault()
     event.stopPropagation()
     this.renderArgumentForm(FIELD.TYPE_SELECT)
+  },
+  onClickDate (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.renderArgumentForm(FIELD.TYPE_DATE)
+  },
+  onClickFile (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.renderArgumentForm(FIELD.TYPE_FILE)
   },
   /**
    *

@@ -13,7 +13,7 @@ module.exports = InputView.extend({
   template: `
     <div>
       <label class="col-sm-3 control-label" data-hook="label"></label>
-      <div class="col-sm-9">
+      <div data-hook="input-container" class="col-sm-9">
         <input class="form-control form-input">
         <div data-hook="message-container" class="message message-below message-error">
           <p data-hook="message-text"></p>
