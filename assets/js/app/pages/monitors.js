@@ -623,7 +623,7 @@ var MonitorsPageInit = (function(){
      * DELETE HOST RESEOURCE FUNCTION
      */
     $(".deleteHostResource").on("click",function (event) {
-      bootbox.confirm('<h3>WARNING!</h3><p>The selected HOST and all the monitors attached to it will be removed. This is operation cannot be undo.</p><p>Are you sure you want to continue?</p>',
+      bootbox.confirm('<h3>WARNING!</h3><p>The selected HOST and all the monitors attached to it will be removed. This operation cannot be undone.</p><p>Are you sure you want to continue?</p>',
         function(confirmed){
           if(!confirmed) return;
           var $delTrigger = $(event.currentTarget);
