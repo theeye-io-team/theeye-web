@@ -29,6 +29,7 @@ const prepareMonitorStateChangeNotification = (monitor, monitor_event) => {
     case 'script':
     case 'process':
     case 'scraper':
+    case 'nested':
       msg = prepareDefaultNotification(monitor, monitor_event)
       break
     default:

@@ -1,9 +1,8 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
-//import ResourceActions from 'actions/resource'
-//import HelpTexts from 'language/help'
-//import HelpIconView from 'components/help-icon'
+import HelpTexts from 'language/help'
+import HelpIconView from 'components/help-icon'
 import MonitorFormView from '../form'
 
 import { Nested as NestedMonitors } from 'models/resource'
@@ -18,11 +17,15 @@ const ResourceCreationWizard = View.extend({
         <div class="row task-button" style="text-align:center;">
           <div class="col-xs-6">
             <button data-hook="nested" class="btn btn-default">
-              <i class="icons icons-script fa fa-code"></i>
+              <i class="icons icons-nested fa fa-bullseye"></i>
             </button>
-            <h2>Nested Monitors
-              <span data-hook="script-help"></span>
-            </h2>
+            <h2>Nested Monitors <span data-hook="nested-help"></span> </h2>
+          </div>
+          <div class="col-xs-6">
+            <a href="/admin/monitor" data-hook="others" class="btn btn-default">
+              <i class="icons icons-script fa fa-cogs"></i>
+            </a>
+            <h2>Other Monitors <span data-hook="others-help"></span> </h2>
           </div>
         </div>
       </section>
@@ -35,32 +38,31 @@ const ResourceCreationWizard = View.extend({
       event.stopPropagation()
       this.createForm( new NestedMonitors() )
     },
-    //'click button[data-hook=scraper]': function (event) {
+    //'click button[data-hook=others]': function (event) {
     //  event.preventDefault()
     //  event.stopPropagation()
-    //  this.createForm( new ScraperTask() )
     //}
   },
   render () {
     this.renderWithTemplate(this)
 
-    //this.renderSubview(
-    //  new HelpIconView({
-    //    color: [50,50,50],
-    //    category: 'task_help',
-    //    text: HelpTexts.task.creation.webhook
-    //  }),
-    //  this.queryByHook('webhook-help')
-    //)
+    this.renderSubview(
+      new HelpIconView({
+        color: [50,50,50],
+        category: 'monitor_wizard_help',
+        text: HelpTexts.monitor.wizard.nested
+      }),
+      this.queryByHook('nested-help')
+    )
 
-    //this.renderSubview(
-    //  new HelpIconView({
-    //    color: [50,50,50],
-    //    category: 'task_help',
-    //    text: HelpTexts.task.creation.script
-    //  }),
-    //  this.queryByHook('script-help')
-    //)
+    this.renderSubview(
+      new HelpIconView({
+        color: [50,50,50],
+        category: 'monitor_wizard_help',
+        text: HelpTexts.monitor.wizard.others
+      }),
+      this.queryByHook('others-help')
+    )
   },
   /**
    * @param {Resource} resource resource monitor instance

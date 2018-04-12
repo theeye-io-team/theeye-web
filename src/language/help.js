@@ -3,9 +3,11 @@
  * @module En/Help
  */
 
-const acl = 'Add permissions to specific users (or emails) that will be able to execute this task and receive notifications.'
+const acl = 'Give permissions to specific users (or user emails) that will be able to execute tasks, see monitors state and receive notifications.'
 const triggers = 'Select a task, monitor or webhook event that will trigger this task automagically.'
 const grace_time = 'If you select to Trigger with an event, you can choose a grace time to delay the execution of this action and have some time to cancel it via email if necessary.'
+const tags = 'Using Tags will help you to find your resources quickly'
+const description = 'A description'
 
 module.exports = {
   looptime: 'This is the check interval in minutes. The shorter the interval you choose, the more CPU and resource will consume.',
@@ -13,14 +15,23 @@ module.exports = {
   scripts: 'Select the script it has to execute.',
   script_arguments: 'Put here a comma separated list of arguments.',
   host: 'Where will the file be hosted?',
-  tags: 'To help you find your resources quickly.',
+  tags: tags,
   acls: acl,
   triggers: triggers,
   severity: 'You can set a severity to this monitor, which can be LOW, HIGH or CRITICAL.',
   monitor: {
+    monitors: 'Add or remove monitors',
     name: 'Give this monitor a name',
-    process: 'Which process it has to search for?',
-    copy: 'Select the monitor you want to copy from'
+    description: description,
+    acl: acl,
+    tags: tags,
+    process: 'The running system process to search for',
+    copy: 'Use another monitor setup to copy',
+    sfailure_everity: 'Set the severity to HIGH or CRITICAL to receive notifications',
+    wizard: {
+      nested: 'Create a monitor to notify when all the monitors inside it needs attention',
+      others: 'Go to Monitors page'
+    }
   },
   task: {
     creation: {

@@ -57,7 +57,7 @@ module.exports = FormView.extend({
         invalidClass: 'text-danger',
         required: true,
         value: nestedMonitors,
-        filter: (item) => {
+        optionsFilter: (item) => {
           return item.id !== this.model.id
         }
       }),
@@ -124,12 +124,14 @@ module.exports = FormView.extend({
     this.query('form').classList.add('form-horizontal')
 
     if (this.model.isNew()) {
-      this.addHelpIcon('copy_monitor')
+      this.addHelpIcon('copy')
     }
     this.addHelpIcon('name')
+    this.addHelpIcon('monitors')
     this.addHelpIcon('description')
     this.addHelpIcon('tags')
     this.addHelpIcon('acl')
+    this.addHelpIcon('failure_severity')
 
     const buttons = new FormButtons()
     this.renderSubview(buttons)
@@ -140,7 +142,7 @@ module.exports = FormView.extend({
     if (!view) return
     view.renderSubview(
       new HelpIcon({
-        text: HelpTexts.task.form[field]
+        text: HelpTexts.monitor[field]
       }),
       view.query('label')
     )
@@ -179,7 +181,9 @@ module.exports = FormView.extend({
       name: resource.name,
       description: resource.description,
       tags: resource.tags,
-      monitors: resource.monitor.config.monitors
+      monitors: resource.monitor.config.monitors,
+      acl: resource.acl,
+      failure_severity: resource.failure_severity
     })
   }
 })

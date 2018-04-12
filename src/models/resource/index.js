@@ -213,6 +213,8 @@ const ResourceBaseModel = ResourceSchema.extend({
     const monitor = this.monitor.serialize()
     let data = assign({}, serialize.apply(this), monitor)
 
+    data.id = this.id
+
     delete data.customer
     delete data.monitor
     delete data.user

@@ -10,7 +10,7 @@ module.exports = SelectView.extend({
   //  type: 'string'
   //},
   initialize (options) {
-    let filter = options.filter
+    let filter = options.optionsFilter
 
     if (filter) {
       this.options = new SubCollection(App.state.resources, { filter })
