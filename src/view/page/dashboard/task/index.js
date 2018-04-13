@@ -242,7 +242,7 @@ const ScriptCollapsedContent = View.extend({
   render () {
     this.renderWithTemplate(this)
     if (acls.hasAccessLevel('admin')) {
-      this.query('tbody tr').innerHTML += `<td><button data-hook="edit_script" class="fa fa-edit btn btn-sm btn-primary"></button></td>`
+      this.query('tbody tr').innerHTML += `<td><button data-hook="edit_script" title="Edit the script" class="fa fa-edit btn btn-sm btn-primary"></button></td>`
     }
   }
 })

@@ -245,7 +245,7 @@ const ScriptCollapsedContent = GenericCollapsedContent.extend({
   render () {
     this.renderWithTemplate(this)
     if (acls.hasAccessLevel('admin')) {
-      this.query('tbody tr').innerHTML += `<td><button title="edit the script" data-hook="edit_script" class="fa fa-edit btn btn-sm btn-primary"></button></td>`
+      this.query('tbody tr').innerHTML += `<td><button title="Edit the script" data-hook="edit_script" class="fa fa-edit btn btn-sm btn-primary"></button></td>`
     }
   }
 })
@@ -329,7 +329,7 @@ const FileCollapsedContent = GenericCollapsedContent.extend({
   render () {
     this.renderWithTemplate(this)
     if ( acls.hasAccessLevel('admin') ) {
-      this.query('tbody tr').innerHTML += `<td><button title="edit the script" data-hook="edit_file" class="fa fa-edit btn btn-sm btn-primary"></button></td>`
+      this.query('tbody tr').innerHTML += `<td><button title="Edit the script" data-hook="edit_file" class="fa fa-edit btn btn-sm btn-primary"></button></td>`
     }
   }
 })
