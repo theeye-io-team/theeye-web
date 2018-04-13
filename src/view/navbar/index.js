@@ -199,7 +199,7 @@ const Menu = View.extend({
         container.appendChild(html2dom(`<li><a href="/admin/task" class="eyemenu-icon eyemenu-tasks"> Tasks </a></li>`))
         container.appendChild(html2dom(`<li><a href="/admin/file" class="eyemenu-icon eyemenu-scripts"> Files & Scripts </a></li>`))
         container.appendChild(html2dom(`<li><a href="/admin/webhook" class="eyemenu-icon eyemenu-webhooks"> Webhooks </a></li>`))
-        container.appendChild(html2dom(`<li><a href="/admin/hostgroup" class="eyemenu-icon eyemenu-templates"> Provisioning </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/hostgroup" class="eyemenu-icon eyemenu-templates"> Templates </a></li>`))
       }
 
       if (Acls.hasAccessLevel('root')) {

@@ -16,7 +16,7 @@ module.exports = List.extend({
   autoRender: true,
   initialize (options) {
     options || (options = {})
-    this.title = 'Provisioning'
+    this.title = 'Templates'
   },
   render () {
     List.prototype.render.apply(this,arguments)
