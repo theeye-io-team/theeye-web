@@ -15,5 +15,5 @@ exports.COMPLETED = 'completed'
 
 exports.inProgress = (lifecycle) => {
   if (!lifecycle) return false
-  return (lifecycle === READY || lifecycle === ASSIGNED)
+  return (lifecycle === READY || lifecycle === ASSIGNED);
 }

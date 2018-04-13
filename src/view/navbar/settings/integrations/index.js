@@ -119,7 +119,7 @@ module.exports = View.extend({
   },
   render () {
     this.renderWithTemplate()
-    //this.renderIntegrations()
+    this.renderIntegrations()
   },
   renderIntegrations () {
     const ngrok = new Ngrok()

@@ -132,7 +132,7 @@ const createWrapper = ({ io }) => {
           event.operation === OperationsConstants.REPLACE
         ) {
           JobActions.receiveUpdate(event.model)
-          HostStatsActions.receiveIntegrationsJobsUpdates(event.model)
+          HostActions.receiveIntegrationJobUpdates(event.model)
         }
       }
     }

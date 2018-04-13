@@ -1,6 +1,6 @@
 import State from 'ampersand-state'
 import AppModel from 'lib/app-model'
-import LIFECYCLE from 'constants/lifecycle'
+import LifecycleConstants from 'constants/lifecycle'
 import { Model as User } from 'models/user'
 const config = require('config')
 
@@ -38,7 +38,7 @@ const BaseJob = AppModel.extend({
     inProgress: {
       deps: ['lifecycle'],
       fn () {
-        return LIFECYCLE.inProgress(this.lifecycle)
+        return LifecycleConstants.inProgress(this.lifecycle)
       }
     }
   }
@@ -98,16 +98,6 @@ const ScraperJobResult = State.extend({
   }
 })
 
-const NgrokIntegrationResult = State.extend({
-  props: {
-    url: 'string',
-    details: 'object',
-    status_code: 'number',
-    error_code: 'number',
-    message: 'string'
-  }
-})
-
 exports.ScriptJob = BaseJob.extend({
   children: {
     result: ScriptJobResult
@@ -117,6 +107,16 @@ exports.ScriptJob = BaseJob.extend({
 exports.ScraperJob = BaseJob.extend({
   children: {
     result: ScraperJobResult
+  }
+})
+
+const NgrokIntegrationResult = State.extend({
+  props: {
+    url:  ['string',false,''],
+    status_code: ['number', false, 0],
+    error_code: ['number', false, 0],
+    message: ['string', false, ''],
+    details: ['object',false, () => { return {} }]
   }
 })
 

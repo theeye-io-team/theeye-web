@@ -462,12 +462,16 @@ const NestedMonitorRowView = View.extend({
         <h4><i data-hook="name"></i></h4>
       </td>
       <td>
+        <h4><i data-hook="hostname"></i></h4>
+      </td>
+      <td>
         <h4><i data-hook="state-icon"></i></h4>
       </td>
     </tr>
   `,
   bindings: {
-    'model.name': { hook:'name'},
+    'model.name': { hook: 'name' },
+    'model.hostname': { hook: 'hostname' },
     'model.stateIcon': {
       hook: 'state-icon',
       type: 'attribute',
@@ -484,6 +488,7 @@ const NestedCollapsedContent = GenericCollapsedContent.extend({
         <thead>
           <tr>
             <th>Name</th>
+            <th>Hostname</th>
             <th>State</th>
           </tr>
         </thead>

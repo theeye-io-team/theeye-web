@@ -62,10 +62,14 @@ export default View.extend({
     psaux: ['object']
   },
   initialize (options) {
-    this.host = App.state.hoststatsPage.host
-    this.resource = App.state.hoststatsPage.resource
     this.listenToAndRun(App.state.hoststatsPage, 'change:dstat', this.updateDstat)
     this.listenToAndRun(App.state.hoststatsPage, 'change:psaux', this.updatePsaux)
+
+    this.on('change:host', () => {
+      console.log('host reference changed')
+      this.remove()
+      this.render()
+    })
   },
   updatePsaux: function () {
     this.psaux = App.state.hoststatsPage.psaux
@@ -592,7 +596,7 @@ const HostView = View.extend({
   },
   renderIntegrations () {
     let ngrok = App.state.session.customer.config.ngrok
-    if (ngrok&&ngrok.enabled===true) {
+    if (ngrok && ngrok.enabled === true) {
       let view = new NgrokIntegrationsView({
         model: this.host.integrations.ngrok,
         host: this.host
@@ -605,14 +609,15 @@ const HostView = View.extend({
 const NgrokIntegrationsView = View.extend({
   template: `
     <div class="ngrok">
-      <span style="cursor:pointer;">
-        <div>Ngrok tunnel</div>
+      <div class="loading-overlay" data-hook="loading-overlay"> </div>
+      <div class="ngrok-data">
+        <div>Ngrok tunnel <span data-hook="ngrok-state"></span></div>
         <div>
-          <i class="ngrok-switch fa" data-hook="start-ngrok"></i>
+          <i class="ngrok-switch fa" data-hook="ngrok-button"></i>
           <span data-hook="tunnel_url"></span>
           <span data-hook="ngrok_error"></span>
         </div>
-      </span>
+      </div>
     </div>
   `,
   props: {
@@ -631,47 +636,47 @@ const NgrokIntegrationsView = View.extend({
         return this.model.active ? 'Stop' : 'Start'
       }
     },
-    tunnel_url: {
-      deps: ['model.last_job.result.url'],
+    ngrok_state_html: {
+      deps: ['model.active', 'model.last_job.inProgress'],
       fn () {
-        return this.model.last_job.result.url
-      }
-    },
-    ngrok_error: {
-      deps: ['model.last_job.result.details','model.last_job.state'],
-      fn () {
-        if (this.model.last_job.state==='failure') {
-          return this.model.last_job.result.details.err
+        if (this.model.last_job.inProgress) {
+          return this.model.active ?
+            ' shutting down...wait <i class="fa fa-spin fa-cog"></i>' : 
+            ' establishing tunnel...wait <i class="fa fa-spin fa-cog"></i>'
         }
-        return ''
+        return this.model.active ? ' is established' : 'is down'
       }
     }
   },
   bindings: {
+    'model.last_job.inProgress': {
+      hook: 'loading-overlay',
+      type: 'toggle'
+    },
     ngrok_switch: [{
-      hook: 'start-ngrok',
+      hook: 'ngrok-button',
       type: 'booleanClass',
       yes: 'fa-stop',
       no: 'fa-play'
-    },{
-      hook: 'start-ngrok',
+    }, {
+      hook: 'ngrok-button',
       type: 'booleanClass',
       yes: 'red',
       no: 'green'
     }],
     ngrok_switch_html: {
-      hook: 'start-ngrok',
-      type: 'innerHTML',
+      hook: 'ngrok-button',
+      type: 'innerHTML'
     },
-    tunnel_url: {
-      hook: 'tunnel_url'
+    ngrok_state_html: {
+      hook: 'ngrok-state',
+      type: 'innerHTML'
     },
-    ngrok_error: {
-      hook: 'ngrok_error'
-    }
+    'model.tunnel_url': { hook: 'tunnel_url' },
+    'model.ngrok_error': { hook: 'ngrok_error' },
   },
   events: {
-    'click [data-hook=start-ngrok]':'onClickStartNgrokTunnel',
+    'click [data-hook=ngrok-button]': 'onClickNgrokButton',
     'click [data-hook=ngrok-settings]': function (event) {
       event.preventDefault()
       event.stopPropagation()
@@ -679,8 +684,8 @@ const NgrokIntegrationsView = View.extend({
       App.state.navbar.settingsMenu.current_tab = 'integrations'
     }
   },
-  onClickStartNgrokTunnel (event) {
-    if (this.model.active===true) {
+  onClickNgrokButton (event) {
+    if (this.model.active === true) {
       NgrokIntegrationActions.stopTunnel(this.host.id)
     } else {
       NgrokIntegrationActions.startTunnel(this.host.id)

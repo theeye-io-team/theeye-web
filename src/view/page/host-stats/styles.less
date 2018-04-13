@@ -70,6 +70,7 @@
 
   .integrations {
     .ngrok {
+      .ngrok-switch { cursor:pointer; }
       .ngrok-switch.green { color: rgb(0,255,0) }
       .ngrok-switch.red { color: rgb(255,0,0) }
     }
@@ -363,6 +364,26 @@
 @media all and (max-width: 991px) and (min-width: 768px) {
   .progress-vertical-item span.title {
     bottom: -90px
+  }
+}
+
+.stats-container {
+  section.integrations {
+    .ngrok {
+      position: relative;
+      width: 100%;
+      height: 100%;
+
+      .loading-overlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        background-color: rgba(0,0,0,0.1);
+      }
+    }
   }
 }
 
