@@ -216,7 +216,6 @@ const ResourceBaseModel = ResourceSchema.extend({
     data.id = this.id
 
     delete data.customer
-    delete data.monitor
     delete data.user
 
     return data
