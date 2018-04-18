@@ -91,7 +91,7 @@ const TaskButtonsView = View.extend({
   onClickWorkflow (event) {
     event.stopPropagation()
     event.preventDefault()
-    window.location = '/admin/workflow?node=' + this.model.id
+    window.location = '/admin/workflow/' + this.model.id
     return false
   },
   //onClickEdit (event) {

@@ -57,7 +57,7 @@ module.exports = {
     window.location = "/admin/monitor#search=" + id
   },
   workflow (id) {
-    window.location = '/admin/workflow?node=' + id
+    window.location = '/admin/workflow/' + id
   },
   createMany (hosts, data) {
     const done = after(hosts.length, () => {

@@ -543,6 +543,7 @@ input[type=checkbox].form-control {
 @media (max-width:767px) {
   .main-container { padding-top:55px; }
   .navbar-right li a {height:36px;padding:2px 5px;}
+  #workflow {top: 82px!important;}
 }
 
 #workflow {
@@ -551,7 +552,7 @@ input[type=checkbox].form-control {
   position: fixed;
   float: left;
   left: 0;
-  top: 0;
+  top: 103px;
   z-index: 999;
 }
 

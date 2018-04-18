@@ -10,6 +10,7 @@ const AuthRoute = require('./auth')
 const UserRoute = require('./user')
 const CustomerRoute = require('./customer')
 const WebhookRoute = require('./webhook')
+const WorkflowRoute = require('./workflow')
 import DashboardRoute from './dashboard'
 import ChartsRoute from './charts'
 import hopscotch from 'hopscotch'
@@ -125,6 +126,17 @@ module.exports = Router.extend({
           route.route('index', {id: id})
         })
     },
+    'admin/workflow/:id': (id) => {
+      const route = new WorkflowRoute()
+      route.route('index', {id: id})
+    },
+    // 'admin/workflow/:id': function (id) {
+    //   return import('./workflow')
+    //     .then(WorkflowRouter => {
+    //       const route = new WorkflowRouter()
+    //       route.route('index', {id: id})
+    //     })
+    // },
     '(*path)': function () {
       App.navigate('dashboard')
     }

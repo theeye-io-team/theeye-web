@@ -27,6 +27,8 @@ import HostStatsPageState from './hoststats-page'
 import InboxState from './inbox'
 import OnboardingState from './onboarding'
 import ExtendedTagsState from './extended-tags'
+import WorkflowPageState from './workflow-page'
+
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
@@ -89,7 +91,8 @@ const AppState = State.extend({
     editor: ['state',false,() => { return new EditorState() }],
     onboarding: ['state', false, () => new OnboardingState()],
     hoststatsPage: ['state', true, () => new HostStatsPageState()],
-    extendedTags: ['state', false, () => new ExtendedTagsState()]
+    extendedTags: ['state', false, () => new ExtendedTagsState()],
+    workflowPage: ['state', false, () => new WorkflowPageState()],
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)

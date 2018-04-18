@@ -34,7 +34,7 @@ const WebhookButtons = BaseView.extend({
   onClickWorkflow(event){
     event.preventDefault();
     event.stopPropagation();
-    window.open('/admin/workflow?node=' + this.model.id, '_blank');
+    window.open('/admin/workflow/' + this.model.id, '_blank');
     return false;
   },
   onClickEdit(event){
