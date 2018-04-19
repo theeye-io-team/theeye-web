@@ -9,6 +9,13 @@ module.exports = FormView.extend({
 
     this.fields = [
       new InputView({
+        name: 'name',
+        label: 'Name',
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
+      }),
+      new InputView({
         name: 'email',
         label: 'Email',
         tests: [

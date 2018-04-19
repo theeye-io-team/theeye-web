@@ -58,6 +58,7 @@ module.exports = {
     data.user = {}
     data.user.username = data.email
     data.user.email = data.email
+    data.user.name = data.name
     data.user.credential = data.credential
     delete data.email
 

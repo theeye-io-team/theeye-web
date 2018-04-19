@@ -10,6 +10,14 @@ module.exports = FormView.extend({
   initialize: function (options) {
     this.fields = [
       new InputView({
+        name: 'name',
+        label: 'Name',
+        value: this.model.name,
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
+      }),
+      new InputView({
         name: 'username',
         label: 'Username',
         value: this.model.username,

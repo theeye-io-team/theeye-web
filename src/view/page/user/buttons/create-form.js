@@ -10,6 +10,14 @@ module.exports = FormView.extend({
   initialize: function (options) {
     this.fields = [
       new InputView({
+        name: 'name',
+        label: 'Name',
+        value: this.model.name,
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
+      }),
+      new InputView({
         name: 'username',
         label: 'Username',
         value: this.model.username,
@@ -76,7 +84,7 @@ module.exports = FormView.extend({
     this.query('form').classList.add('form-horizontal')
   },
   focus () {
-    this.query('input[name=username]').focus()
+    this.query('input[name=name]').focus()
   },
   events: {
     'change input[name=enabled]': function (event) {

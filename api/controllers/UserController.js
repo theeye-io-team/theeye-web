@@ -67,11 +67,13 @@ var UserController = module.exports = {
     var params = req.params.all();
     if (!params.customers) return res.send(400, 'at least one customer is required')
     if (!params.username) return res.send(400, 'username is required')
+    if (!params.name) return res.send(400, 'name is required')
     if (!params.email) return res.send(400, 'email is required')
     if (!params.credential) return res.send(400, 'credential is required')
 
     var data = {
       username: params.username || params.email,
+      name: params.name,
       email: params.email,
       customers: params.customers,
       credential: params.credential,

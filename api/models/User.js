@@ -6,7 +6,7 @@ var User = {
   attributes: {
     username: { type: 'string', unique: true, required: true, notNull:true, truthy: true },
     email: { type: 'email', unique: true, required: true, notNull:true, truthy: true },
-    name: { type: 'string', unique: false, required: true, notNull:true, truthy: true },
+    name: { type: 'string' },
     current_customer: { type: 'string' },
     customers: { type: 'array', defaultsTo: [] },
     credential: { type: 'string', defaultsTo: 'admin' },

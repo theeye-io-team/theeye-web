@@ -12,6 +12,7 @@ module.exports = {
     body.sendInvitation = !data.enabled
     body.email = data.email
     body.username = data.username
+    body.name = data.name
     if (data.enabled) { // create enable, need password
       body.password = data.password
       body.confirmPassword = data.confirmPassword

@@ -70,7 +70,8 @@ module.exports = View.extend({
   template: require('./template.hbs'),
   props: {
     email: ['string', false, ''],
-    username: ['string', false, '']
+    username: ['string', false, ''],
+    name: ['string', false, '']
   },
   bindings: {
     'email': {
@@ -80,11 +81,16 @@ module.exports = View.extend({
     'username': {
       type: 'text',
       hook: 'account-username'
+    },
+    'name': {
+      type: 'text',
+      hook: 'account-name'
     }
   },
   initialize () {
     this.email = App.state.session.user.email
     this.username = App.state.session.user.username
+    this.name = App.state.session.user.name
   },
   events: {
     'click [data-hook=change-password]': 'changePassword'

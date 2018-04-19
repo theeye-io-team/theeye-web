@@ -142,6 +142,7 @@ var MemberController = module.exports = {
   },
   inviteMember: function(req, res) {
     var params = req.params.all();
+    if (!params.user.name) return res.send(400, 'name is required')
     if (!params.user.email) return res.send(400, 'email is required')
     if (!params.credential) return res.send(400, 'credential is required')
 
@@ -179,6 +180,7 @@ var MemberController = module.exports = {
         //if user doesnt exist, create one
         data = {
           username: params.user.email,
+          name: params.user.name,
           email: params.user.email,
           customers:[req.user.current_customer],
           credential: params.credential,
