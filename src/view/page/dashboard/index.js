@@ -29,7 +29,7 @@ const runAllTasks = (rows) => {
     const tasks = rows.map(row => row.model)
 
     const boxTitle = `With great power comes great responsibility`
-		const boxMessage = `You are going to run all the following tasks.<br> This operation cannot be canceled`
+    const boxMessage = `You are going to run various tasks.<br> This operation cannot be canceled`
 
 		bootbox.confirm({
 			title: boxTitle,

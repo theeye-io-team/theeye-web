@@ -115,13 +115,24 @@ module.exports = View.extend({
     this.askDinamicArguments(taskArgs => {
       let message
       if (taskArgs.length>0) {
-        taskArgs.map((arg) => {
-          if(arg.type == 'file')
-            arg.renderValue = arg.value.name
-          else
-            arg.renderValue = arg.value
-          return arg
+        taskArgs.forEach(function(arg) {
+          switch (arg.type) {
+            case 'date':
+              if(Array.isArray(arg.value) && arg.value.length == 1) {
+                arg.value = arg.value[0]
+                arg.renderValue = arg.value
+              }
+              break;
+            case 'file':
+              arg.value = arg.value.dataUrl
+              arg.renderValue = arg.value.name
+              break;
+            default:
+              arg.renderValue = arg.value
+              break;
+          }
         })
+
         message = runTaskWithArgsMessage({
           name: this.model.name,
           args: taskArgs

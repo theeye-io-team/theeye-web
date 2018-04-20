@@ -44,29 +44,10 @@ module.exports = {
   create (task, taskArgs) {
     logger.log('creating new job with task %o', task)
 
-    var data = []
-    taskArgs.forEach(function(arg){
-      switch (arg.type) {
-        case 'date':
-          if(Array.isArray(arg.value) && arg.value.length == 1) {
-            arg.value = arg.value[0]
-          }
-          break;
-        case 'file':
-          arg.value = arg.value.dataUrl
-          break;
-        default:
-          break;
-      }
-      delete arg.renderValue
-      delete arg.type
-      data.push(arg)
-    })
-
     XHR.send({
       method: 'post',
       url: `${config.api_url}/job`,
-      jsonData: { task: task.id, task_arguments: data },
+      jsonData: { task: task.id, task_arguments: taskArgs },
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
