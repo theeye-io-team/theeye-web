@@ -53,14 +53,14 @@ module.exports = View.extend({
          * @param {Object} args a {key0: value0, key1: value1, ...} object with each task argument
          */
         form.submit( (err,args) => {
-          const labels = Object.keys(args)
+          const orders = Object.keys(args)
           next(
-            labels.map( (label) => {
+            orders.map( (order) => {
               return {
-                order: this.model.taskArguments.get(label,'label').order,
-                label: label,
-                value: args[label],
-                type: this.model.taskArguments.get(label,'label').type
+                order: parseInt(order),
+                label: this.model.taskArguments.get(parseInt(order),'order').label,
+                value: args[order],
+                type: this.model.taskArguments.get(parseInt(order),'order').type
               }
             })
           )

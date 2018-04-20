@@ -36,7 +36,7 @@ module.exports = FormView.extend({
         fields.push(
           new InputView({
             label: spec.label,
-            name: spec.label,
+            name: spec.order.toString(),
             required: spec.required,
             invalidClass: 'text-danger',
             validityClassSelector: '.control-label',
@@ -47,7 +47,7 @@ module.exports = FormView.extend({
         fields.push(
           new SelectView({
             label: spec.label,
-            name: spec.label,
+            name: spec.order.toString(),
             multiple: false,
             tags: false,
             options: spec.options,
@@ -66,7 +66,7 @@ module.exports = FormView.extend({
         fields.push(
           new Datepicker({
             label: spec.label,
-            name: spec.label,
+            name: spec.order.toString(),
             required: spec.required,
             enableTime: true,
             dateFormat: 'F J, Y at H:i',
@@ -90,7 +90,7 @@ module.exports = FormView.extend({
           new OneLineMediaInputView({
             type: 'file',
             label: spec.label,
-            name: spec.label,
+            name: spec.order.toString(),
             value: new MediaFileModel(),
             required: spec.required,
             maxFileSize: 300
@@ -129,7 +129,7 @@ module.exports = FormView.extend({
   renderHelpIcons () {
     this.fieldsDefinitions.forEach(def => {
       if (def.help) {
-        const view = this._fieldViews[def.label]
+        const view = this._fieldViews[def.order.toString()]
         if (!view) return
         view.renderSubview(
           new HelpIcon({
