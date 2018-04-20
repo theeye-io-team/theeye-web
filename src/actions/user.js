@@ -55,6 +55,7 @@ module.exports = {
     var body = {}
     body.email = data.email
     body.username = data.username
+    body.name = data.name
     body.credential = data.credential
     body.customers = data.customers.map(id => {
       return App.state.customers.get(id).name
