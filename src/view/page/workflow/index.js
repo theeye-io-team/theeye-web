@@ -142,6 +142,13 @@ module.exports = View.extend({
       }]
     });
 
+    cy.nodes().forEach(function(node){
+      var type = node.data('value')._type
+      if(/event/i.test(type) && !node.outgoers().length) {
+        node.remove()
+      }
+    })
+
     cy.center();
 
     cy.on('tap','node',function(){
