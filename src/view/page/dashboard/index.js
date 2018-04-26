@@ -20,6 +20,7 @@ import MonitorsOptions from './monitors-options'
 import MonitoringOboardingPanel from './monitoring-onboarding'
 import TasksOboardingPanel from './tasks-onboarding'
 import PlusMenuButton from './plus-menu-button'
+import acls from 'lib/acls'
 
 import onBoarding from './onboarding'
 
@@ -120,7 +121,10 @@ module.exports = View.extend({
     }
 
     this.onBoarding = new onBoarding()
-    this.renderPlusButton()
+
+    if (acls.hasAccessLevel('admin')) {
+      this.renderPlusButton()
+    }
   },
   setUpAndRunningSign: function () {
     if (!this.upandrunningSign) {
