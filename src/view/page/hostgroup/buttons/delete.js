@@ -12,9 +12,23 @@ module.exports = PanelButton.extend({
     click: function (event) {
       event.stopPropagation()
       const msg = 'Continue removing the template? Template hosts will be unlinked and all the monitors and tasks will be removed as well'
-      bootbox.confirm(msg, (confirmed) => {
-        if (!confirmed) return
-        HostGroupActions.remove(this.model.id)
+      bootbox.confirm({
+        title: 'Warning! This action will have dangerous repercussions.',
+        message: msg,
+        buttons: {
+          confirm: {
+            label: 'Confirm',
+            className: 'btn-danger'
+          },
+          cancel: {
+            label: 'Cancel',
+            className: 'btn-default'
+          },
+        },
+        callback: confirm => {
+          if (!confirm) { return }
+          HostGroupActions.remove(this.model.id)
+        }
       })
     }
   }

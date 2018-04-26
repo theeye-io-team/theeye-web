@@ -96,7 +96,6 @@ module.exports.routes = {
    */
   // admin routes
   'get /':spaIndexRoute,
-  // 'get /admin/workflow':'WorkflowController.index',
   'get /admin/*':spaIndexRoute,
   'get /events':(req,res,next) => res.redirect('/dashboard'),
   'get /dashboard*':spaIndexRoute,
