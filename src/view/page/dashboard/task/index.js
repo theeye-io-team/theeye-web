@@ -8,6 +8,8 @@ import TaskActions from 'actions/task'
 import FileActions from 'actions/file'
 import LIFECYCLE from 'constants/lifecycle'
 import EditTaskButton from 'view/page/task/buttons/edit'
+import WorkflowActions from 'actions/workflow'
+
 
 import lang2ext from 'lib/lang2ext'
 
@@ -91,6 +93,7 @@ const TaskButtonsView = View.extend({
   onClickWorkflow (event) {
     event.stopPropagation()
     event.preventDefault()
+    
     App.navigate('/admin/workflow/' + this.model.id)
     return false
   },
