@@ -24,6 +24,10 @@ const addHostToGroup = (hostModel) => {
   currentGroup.hosts.add(hostModel)
 }
 
+const removeHostFromGroup = (hostModel) => {
+  currentGroup.hosts.remove(hostModel)
+}
+
 const RegexInputView = InputView.extend({
   template: `
     <div>
@@ -43,7 +47,7 @@ const RegexInputView = InputView.extend({
   `,
   derived: {
     searchable: {
-      deps: ['value','valid'],
+      deps: ['value', 'valid'],
       fn () {
         return this.value && this.valid && this.inputValue.length > 3
       }
@@ -83,10 +87,10 @@ const ItemView = View.extend({
     }
   },
   events: {
-    'click a':'onClickButton',
+    'click a': 'onClickButton'
   },
   onClickButton (event) {
-    //this.trigger('clicked',event)
+    // this.trigger('clicked',event)
     addHostToGroup(this.model)
   }
 })
@@ -94,7 +98,7 @@ const ItemView = View.extend({
 const HostsListView = View.extend({
   props: {
     hosts: 'collection',
-    massiveAddButton: ['boolean',false,false]
+    massiveAddButton: ['boolean', false, false]
   },
   template: `
     <div>
@@ -112,14 +116,14 @@ const HostsListView = View.extend({
     </div>
   `,
   initialize (options) {
-    View.prototype.initialize.apply(this,arguments)
+    View.prototype.initialize.apply(this, arguments)
 
-    this.listenTo(this.collection,'sync',function(){
-      this.massiveAddButton = ! Boolean(this.collection.length === 0)
+    this.listenTo(this.collection, 'sync', function () {
+      this.massiveAddButton = this.collection.length !== 0
     })
   },
   events: {
-    'click a[data-hook=massive-add]':'onClickMassiveAddButton',
+    'click a[data-hook=massive-add]': 'onClickMassiveAddButton'
   },
   onClickMassiveAddButton () {
     this.collection.forEach((model) => {
@@ -167,17 +171,11 @@ const HostsPreviewModal = Modalizer.extend({
     this.listenTo(this.list, 'click:add_all', () => {
       this.hide()
     })
-
-    //this.listenTo(this,'hidden',() => {
-    //  this.list.remove()
-    //  delete this.list
-    //})
   }
 })
 
 module.exports = FormView.extend({
   initialize (options) {
-
     currentGroup = this.model
 
     const regexInput = new RegexInputView({
@@ -196,7 +194,7 @@ module.exports = FormView.extend({
             return 'The regular expression is not valid'
           }
         }
-      ],
+      ]
     })
 
     const selectedHosts = new SelectView({
@@ -227,7 +225,7 @@ module.exports = FormView.extend({
         required: true,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        value: this.model.name,
+        value: this.model.name
       }),
       regexInput,
       selectedHosts,
@@ -237,8 +235,8 @@ module.exports = FormView.extend({
         required: false,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        value: this.model.description,
-      }),
+        value: this.model.description
+      })
     ]
 
     if (this.model.isNew()) {
@@ -250,7 +248,7 @@ module.exports = FormView.extend({
         options: App.state.hosts,
         styles: 'form-group',
         required: false,
-        //value: null,
+        // value: null,
         unselectedText: 'select a host',
         idAttribute: 'id',
         textAttribute: 'hostname',
@@ -271,6 +269,12 @@ module.exports = FormView.extend({
           }
         ]
       })
+
+      selectedHosts.listenTo(hostSelect, 'change:value', function () {
+        removeHostFromGroup(App.state.hosts.get(hostSelect.previousAttributes().value))
+        addHostToGroup(App.state.hosts.get(hostSelect.value))
+      })
+
       this.fields.unshift(hostSelect)
     } else {
       App.state.hostGroupPage.configResources = this.model.resources
