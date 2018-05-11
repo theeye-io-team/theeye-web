@@ -5,6 +5,7 @@ import XHR from 'lib/xhr'
 
 module.exports = {
   get: function(id) {
+    App.state.workflowPage.clear()
     XHR.send({
       url: `${config.api_url}/workflow?node=` + encodeURIComponent(id),
       // url: `${config.api_v3_url}/workflow/${options.id}/graph`,
@@ -12,7 +13,6 @@ module.exports = {
       timeout: 5000,
       done (workflow,xhr) {
         if(xhr.status == 200 && workflow.nodes)
-          App.state.workflowPage.clear()
           App.state.workflowPage.set('currentWorkflow', workflow)
       },
       fail (err,xhr) {
