@@ -101,7 +101,8 @@ module.exports = View.extend({
         }
       }
     }],
-    removeEmptyValues: ['boolean', false, false]
+    removeEmptyValues: ['boolean', false, false],
+    ajaxUrl: ['string', false, '']
   },
   derived: {
     value: {
@@ -178,6 +179,8 @@ module.exports = View.extend({
     this.renderSelect2Component(this.startingValue)
   },
   renderSelect2Component (value=null) {
+    var self = this
+
     this.$select
       .select2({})
       .select2('destroy')
@@ -208,6 +211,23 @@ module.exports = View.extend({
       })
     }
 
+    if (this.ajaxUrl !== '') {
+      select2setup.ajax = {
+        url: this.ajaxUrl,
+        dataType: 'json',
+        processResults: function (data) {
+          return {
+            results: data.map(value => {
+              return {
+                text: self.getTextAttribute(value),
+                id: value[self.idAttribute]
+              }
+            })
+          }
+        }
+      }
+    }
+
     // select2 instantiate
     this.$select.select2(select2setup)
 
@@ -217,7 +237,7 @@ module.exports = View.extend({
 
     // then set value
     this.setValue(value||this.value)
-    
+
     // the change:options will trigger only when the options object is completelly replaced
     this.listenTo(this, 'change:options', this.updateOptions)
   },
@@ -253,7 +273,7 @@ module.exports = View.extend({
     if (!items) {
       this.$select.val(null)
     } else {
-      var data 
+      var data
       if (items.isCollection) {
         // items are treated as models
         data = items.map(model => model.get(this.idAttribute))

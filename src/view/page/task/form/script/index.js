@@ -275,7 +275,10 @@ module.exports = FormView.extend({
     return this.data.taskArguments.find(arg => {
       return arg.type && (
         arg.type === FIELD.TYPE_INPUT ||
-        arg.type === FIELD.TYPE_SELECT
+        arg.type === FIELD.TYPE_SELECT ||
+        arg.type === FIELD.TYPE_DATE ||
+        arg.type === FIELD.TYPE_FILE ||
+        arg.type === FIELD.TYPE_REMOTE_OPTIONS
       )
     })
   },

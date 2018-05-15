@@ -6,6 +6,7 @@ import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import FIELD from 'constants/field'
 import { ValueOption as ArgumentValueOption } from 'models/task/dinamic-argument'
+import isURL from 'validator/lib/isURL'
 
 const SimpleInputView = InputView.extend({
   template: `
@@ -310,9 +311,48 @@ module.exports = FormView.extend({
         })
         this.fields.push(options)
       }
-      //if (this.model.type === FIELD.TYPE_INPUT) {
-      //  // nothing to do here
-      //}
+
+      if (this.model.type === FIELD.TYPE_REMOTE_OPTIONS) {
+        let endpointUrl = new InputView({
+          label: 'Endpoint URL *',
+          name: 'endpoint_url',
+          required: true,
+          invalidClass: 'text-danger',
+          validityClassSelector: '.control-label',
+          value: this.model.endpoint_url,
+          tests: [
+            function (value) {
+              if (!isURL(value, {
+                protocols: ['http', 'https'],
+                require_protocol: true
+              })) {
+                return 'Must be a valid URL (include protocol)'
+              }
+            }
+          ]
+        })
+        this.fields.push(endpointUrl)
+
+        let idAttribute = new InputView({
+          label: 'Value attribute *',
+          name: 'id_attribute',
+          required: true,
+          invalidClass: 'text-danger',
+          validityClassSelector: '.control-label',
+          value: this.model.id_attribute
+        })
+        this.fields.push(idAttribute)
+
+        let textAttribute = new InputView({
+          label: 'Text attribute *',
+          name: 'text_attribute',
+          required: true,
+          invalidClass: 'text-danger',
+          validityClassSelector: '.control-label',
+          value: this.model.text_attribute
+        })
+        this.fields.push(textAttribute)
+      }
     }
 
     const button = new ArgumentButton({

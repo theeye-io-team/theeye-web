@@ -2,7 +2,6 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
-//import config from 'config'
 import TaskModel from 'models/task'
 import assign from 'lodash/assign'
 import after from 'lodash/after'

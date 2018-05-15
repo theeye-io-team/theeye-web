@@ -93,7 +93,7 @@ const AppState = State.extend({
     onboarding: ['state', false, () => new OnboardingState()],
     hoststatsPage: ['state', true, () => new HostStatsPageState()],
     extendedTags: ['state', false, () => new ExtendedTagsState()],
-    workflowPage: ['state', false, () => new WorkflowPageState()],
+    workflowPage: ['state', false, () => new WorkflowPageState()]
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)

@@ -8,7 +8,7 @@ module.exports = View.extend({
     <section>
       <h1>Select the argument type</h1>
       <div class="row task-button" style="text-align:center;">
-        <div class="col-xs-2 col-xs-offset-1">
+        <div class="col-xs-2">
           <button data-hook="fixed" class="btn btn-default">
             <i class="icons icons-script fa fa-chain"></i>
           </button>
@@ -29,6 +29,14 @@ module.exports = View.extend({
             <i class="icons icons-scraper fa fa-list-ol"></i>
           </button>
           <h2>Options Selection
+            <span data-hook="webhook-help"></span>
+          </h2>
+        </div>
+        <div class="col-xs-2">
+          <button data-hook="remote-options" class="btn btn-default">
+            <i class="icons icons-scraper fa fa-list-ol"></i>
+          </button>
+          <h2>Remote Options
             <span data-hook="webhook-help"></span>
           </h2>
         </div>
@@ -71,6 +79,7 @@ module.exports = View.extend({
     'click [data-hook=select]':'onClickSelect',
     'click [data-hook=date]':'onClickDate',
     'click [data-hook=file]':'onClickFile',
+    'click [data-hook=remote-options]':'onClickRemoteOptions',
     keydown: 'onKeyEvent',
     keypress: 'onKeyEvent'
   },
@@ -97,6 +106,11 @@ module.exports = View.extend({
     event.preventDefault()
     event.stopPropagation()
     this.renderArgumentForm(FIELD.TYPE_SELECT)
+  },
+  onClickRemoteOptions (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.renderArgumentForm(FIELD.TYPE_REMOTE_OPTIONS)
   },
   onClickDate (event) {
     event.preventDefault()

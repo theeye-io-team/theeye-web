@@ -29,7 +29,10 @@ exports.DinamicArgument = Model.extend({
     help: ['string',true],
     readonly: ['boolean',false,false],
     //options: ['array',false,() => { return [] }],
-    required: ['boolean',false,true]
+    required: ['boolean',false,true],
+    endpoint_url: ['string',false],
+    id_attribute: ['string',false],
+    text_attribute: ['string',false]
   },
   collections: {
     options: OptionsCollection
