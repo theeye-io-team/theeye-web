@@ -2,6 +2,7 @@ import State from 'ampersand-state'
 import AppCollection from 'lib/app-collection'
 import isURL from 'validator/lib/isURL'
 import isMongoId from 'validator/lib/isMongoId'
+import TaskConstants from 'constants/task'
 
 //import { Model as Host } from 'models/host'
 
@@ -49,6 +50,12 @@ const Script = ScriptTemplate.extend({
       fn () {
         return Boolean(this.template_id) === true
       }
+    },
+    summary: {
+      deps: ['hostname','name'],
+      fn () {
+        return `[${this.hostname}] script task ${this.name}`
+      }
     }
   },
   children: {
@@ -93,6 +100,12 @@ const Scraper = ScraperTemplate.extend({
       fn () {
         return Boolean(this.template_id) === true
       }
+    },
+    summary: {
+      deps: ['hostname','name'],
+      fn () {
+        return `[${this.hostname}] web check task ${this.name}`
+      }
     }
   },
   children: {
@@ -109,16 +122,23 @@ const Scraper = ScraperTemplate.extend({
   }
 })
 
+const Factory = function (attrs, options={}) {
+  if (attrs.type == TaskConstants.TYPE_SCRIPT) {
+    return new Script(attrs, options)
+  }
+
+  if (attrs.type == TaskConstants.TYPE_SCRAPER) {
+    return new Scraper(attrs, options)
+  }
+
+  let err = new Error(`unrecognized type ${attrs.type}`)
+  throw err
+}
+
 const Collection = AppCollection.extend({
   comparator: 'name',
   url: urlRoot,
-  model (attrs, options) {
-    if ( /ScraperTask/.test(attrs._type) === true ) {
-      return new Scraper(attrs,options)
-    } else {
-      return new Script(attrs,options)
-    }
-  },
+  model: Factory,
   isModel (model) {
     return model instanceof Scraper || model instanceof Script
   }
@@ -127,13 +147,4 @@ const Collection = AppCollection.extend({
 exports.Scraper = Scraper
 exports.Script = Script
 exports.Collection = Collection
-
-exports.Factory = function (data) {
-  if (data.type == 'script') {
-    return new Script(data)
-  }
-  if (data.type == 'scraper') {
-    return new Scraper(data)
-  }
-  throw new Error(`unrecognized type ${data.type}`)
-}
+exports.Factory = Factory

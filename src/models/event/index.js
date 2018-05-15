@@ -3,6 +3,7 @@
 import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
+import Collection from 'ampersand-collection'
 const config = require('config')
 import EVENT from 'constants/event'
 import EMITTER from 'constants/emitter'
@@ -35,8 +36,9 @@ class EmitterFactory {
       case 'ScraperTask': // scraper task
         EmitterClass = App.Models.Task.Scraper
         break
-      case 'ResourceMonitor': // monitors with config subdocument
-        EmitterClass = App.Models.Monitor
+      //case 'ResourceMonitor': // monitors with config subdocument
+      case 'Resource': // monitors with config subdocument
+        EmitterClass = App.Models.Resource
         break
       case 'Webhook': // Incomming Webhook
         EmitterClass = App.Models.Webhook
@@ -170,11 +172,35 @@ const Model = AppModel.extend({
   //}
 })
 
-const Collection = AppCollection.extend({
-  url: urlRoot,
-  model: Model
+const EmitterCollection = Collection.extend({
+  model: EmitterFactory,
+  isModel: function (model) {
+    const isModel =
+      model instanceof App.Models.Task.Script ||
+      model instanceof App.Models.Task.Scraper ||
+      model instanceof App.Models.Resource ||
+      model instanceof App.Models.Webhook
+    return isModel
+  }
 })
 
-exports.Collection = Collection
+const EventsCollection = AppCollection.extend({
+  url: urlRoot,
+  model: Model,
+  filterEmitterEvents (emitter) {
+    let type = emitter._type
+    let events
+
+    if (type === 'Resource') {
+      events = this.filter((ev) => { return ev.emitter_id == emitter.monitor.id })
+    } else {
+      events = this.filter((ev) => { return ev.emitter_id == emitter.id })
+    }
+    return events
+  }
+})
+
+exports.EmitterCollection = EmitterCollection
+exports.Collection = EventsCollection
 exports.Model = Model
 exports.EmitterFactory = EmitterFactory

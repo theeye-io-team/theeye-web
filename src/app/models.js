@@ -19,6 +19,7 @@ module.exports = () => {
         Script: Task.Script,
         Scraper: Task.Scraper
       },
+      Monitor: Resource.Monitor,
       Resource: Resource.Model,
       Webhook: Webhook.Model
     }

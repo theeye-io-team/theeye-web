@@ -1,10 +1,11 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-import Workflow from './workflow'
+//import WorkflowView from 'view/workflow'
+import './style.less'
 
 module.exports = View.extend({
   template: `
-    <div class="admin-container">
+    <div class="workflow-page admin-container">
       <div class="admin-panel">
         <h3>Workflow</h3>
         <div data-hook="workflow-container"></div>
@@ -13,12 +14,27 @@ module.exports = View.extend({
   `,
   render() {
     this.renderWithTemplate(this)
+    this.renderWorkflowView()
+  },
+  renderWorkflowView () {
+    let currentWorkflow = App.state.workflowPage.currentWorkflow
 
-    this.workflow = new Workflow({currentWorkflow: {}})
-    this.renderSubview(this.workflow, this.queryByHook('workflow-container'))
+    import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
+      .then(WorkflowView => {
 
-    this.listenToAndRun(App.state.workflowPage, 'change:currentWorkflow', () => {
-      this.workflow.currentWorkflow = App.state.workflowPage.currentWorkflow
-    })
+        this.workflow = new WorkflowView({
+          graph: currentWorkflow
+        })
+
+        this.renderSubview(this.workflow, this.queryByHook('workflow-container'))
+
+        this.listenTo(
+          App.state.workflowPage,
+          'change:currentWorkflow',
+          () => {
+            this.workflow.graph = currentWorkflow
+          }
+        )
+      })
   }
 })

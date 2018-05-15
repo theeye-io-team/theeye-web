@@ -61,6 +61,38 @@ module.exports = {
       script.id = task.script_id
       script.fetch()
     }
+  },
+  massiveDelete (tasks) {
+    App.state.loader.visible = true
+
+    var errors = 0
+    const done = after(tasks.length,()=>{
+      if (errors > 0) {
+        const count = (errors===tasks.length) ? 'all' : 'some of'
+        bootbox.alert(
+          `Well, ${count} the delete request came back with error. Reloding now...`,() => {
+            //window.location.reload()
+            App.Router.reload()
+          }
+        )
+      } else {
+        App.state.loader.visible = false
+        bootbox.alert('That\'s it, they are gone. Congrats.',() => { })
+      }
+    })
+
+    tasks.forEach(function(task){
+      task.destroy({
+        success () {
+          App.state.tasks.remove(task)
+          done()
+        },
+        error () {
+          errors++
+          done()
+        }
+      })
+    })
   }
 }
 

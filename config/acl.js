@@ -29,7 +29,6 @@ var manager = assign({},user,{
 });
 
 var admin = assign({},user,{
-  'workflow' : ['index'],
   'webhook' : ['index'],
   'tasks' : ['*'],
   'script' : ['*'],

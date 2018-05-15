@@ -68,7 +68,7 @@ module.exports = {
         })
       } else {
         return function () {
-          console.log('uglify desactivated')
+          console.log('uglify deactivated')
         }
       }
     })()

@@ -9,13 +9,6 @@ import { DinamicArgument as ScriptArgument } from 'models/task/dinamic-argument'
 import FieldConstants from 'constants/field'
 import HelpIcon from 'components/help-icon'
 
-//const ArgumentsCollection = Collection.extend({
-//  //mainIndex: 'id',
-//  //indexes: ['order'],
-//  model: ScriptArgument,
-//  comparator: 'order'
-//})
-
 module.exports = View.extend({
   template: `
 	  <div class="form-group">

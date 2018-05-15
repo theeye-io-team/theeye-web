@@ -35,6 +35,12 @@ const Model = BaseModel.extend({
 
         return `${url}/${customer_name}/webhook/${id}/trigger/secret/${secret}`
       }
+    },
+    summary: {
+      deps: ['name'],
+      fn () {
+        return this.name
+      }
     }
   }
 })

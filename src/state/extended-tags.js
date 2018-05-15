@@ -1,7 +1,6 @@
 import App from 'ampersand-app'
-import State from  'ampersand-state'
-import { Model as Tag } from 'models/tag'
-import { Collection as Tags } from 'models/tag'
+import State from 'ampersand-state'
+import { Model as Tag, Collection as Tags } from 'models/tag'
 
 export default State.extend({
   collections: {
@@ -11,47 +10,31 @@ export default State.extend({
     State.prototype.initialize.apply(this, arguments)
     var tags = this.tags
 
-    this.listenToAndRun(App.state.tags,'add sync reset',() => {
-      tags.add(App.state.tags.models, {merge: true})
+    const addTag = (model) => {
+      if (!model.name) return
+
+      let lcname = model.name.toLowerCase()
+      let ctag = tags.get(lcname, 'name')
+      if (!ctag) {
+        let tag = new Tag({
+          id: lcname,
+          name: lcname,
+          customer_id: model.customer_id
+        })
+        tags.add(tag, {merge: true})
+      }
+    }
+
+    this.listenToAndRun(App.state.tags, 'add change sync reset', () => {
+      App.state.tags.forEach(addTag)
     })
 
-    this.listenToAndRun(App.state.tasks,'add change sync reset',() => {
-      var tagList = []
-      App.state.tags.forEach(tag => {
-        if (!tag.name) return
-        tagList.push(tag.name.toLowerCase())
-      })
-
-      App.state.tasks.forEach(task => {
-        if (!task.name) return
-        if (!tagList.includes(task.name.toLowerCase())) {
-          var tag = new Tag({
-            id: task.name,
-            name: task.name,
-            customer_id: task.customer_id
-          })
-          tags.add(tag, {merge: true})
-        }
-      })
+    this.listenToAndRun(App.state.tasks, 'add change sync reset', () => {
+      App.state.tasks.forEach(addTag)
     })
 
-    this.listenToAndRun(App.state.resources,'add change sync reset',() => {
-      var tagList = []
-      App.state.tags.forEach(tag => {
-        if (!tag.name) return
-        tagList.push(tag.name.toLowerCase())
-      })
-      App.state.resources.forEach(resource => {
-        if (!resource.name) return
-        if (!tagList.includes(resource.name.toLowerCase())) {
-          var tag = new Tag({
-            id: resource.name,
-            name: resource.name,
-            customer_id: resource.customer_id
-          })
-          tags.add(tag, {merge: true})
-        }
-      })
+    this.listenToAndRun(App.state.resources, 'add change sync reset', () => {
+      App.state.resources.forEach(addTag)
     })
   }
 })

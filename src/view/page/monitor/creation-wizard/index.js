@@ -9,6 +9,26 @@ import { Nested as NestedMonitors } from 'models/resource'
 
 import './styles.less'
 
+module.exports = function () {
+  const wizard = new ResourceCreationWizard()
+  wizard.render()
+  const modal = new Modalizer({
+    buttons: false,
+    title: 'Create Monitor',
+    bodyView: wizard
+  })
+
+  modal.on('hidden',() => {
+    wizard.remove()
+    modal.remove()
+  })
+
+  wizard.on('submitted',() => { modal.hide() })
+  modal.show()
+  modal.wizard = wizard
+  return modal
+}
+
 const ResourceCreationWizard = View.extend({
   template: `
     <div>
@@ -79,23 +99,3 @@ const ResourceCreationWizard = View.extend({
     View.prototype.remove.apply(this,arguments)
   }
 })
-
-module.exports = function () {
-  const wizard = new ResourceCreationWizard()
-  wizard.render()
-  const modal = new Modalizer({
-    buttons: false,
-    title: 'Create Monitor',
-    bodyView: wizard
-  })
-
-  modal.on('hidden',() => {
-    wizard.remove()
-    modal.remove()
-  })
-
-  wizard.on('submitted',() => { modal.hide() })
-  modal.show()
-  modal.wizard = wizard
-  return modal
-}

@@ -21,5 +21,13 @@ module.exports = AppModel.extend({
   children: {
     customer: Customer,
     user: User,
+  },
+  derived: {
+    summary: {
+      deps: ['hostname','name'],
+      fn () {
+        return `[${this.hostname}] ${this.type} monitor ${this.name}`
+      }
+    }
   }
 })

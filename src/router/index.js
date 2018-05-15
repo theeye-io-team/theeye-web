@@ -12,6 +12,7 @@ const CustomerRoute = require('./customer')
 const WebhookRoute = require('./webhook')
 import DashboardRoute from './dashboard'
 import ChartsRoute from './charts'
+import WorkflowRouter from './workflow'
 import hopscotch from 'hopscotch'
 
 module.exports = Router.extend({
@@ -126,11 +127,8 @@ module.exports = Router.extend({
         })
     },
     'admin/workflow/:id': (id) => {
-      return import(/* webpackChunkName: "router-workflow" */ './workflow')
-        .then(WorkflowRouter => {
-          const route = new WorkflowRouter()
-          route.route('index', {id: id})
-        })
+      const route = new WorkflowRouter()
+      route.route('index', {id: id})
     },
     '(*path)': function () {
       App.navigate('dashboard')

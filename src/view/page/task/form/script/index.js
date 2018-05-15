@@ -25,9 +25,6 @@ import TaskOnBoarding from '../../taskOnboarding'
 const HelpTexts = require('language/help')
 const TaskConstants = require('constants/task')
 
-const cannotBeTriggered = 'A Task with dynamic arguments cannot be automatically triggered by Workflow'
-const cannotBeScheduled = 'A Scheduled Task cannot have dynamic input/select arguments'
-
 module.exports = FormView.extend({
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew())
@@ -129,7 +126,7 @@ module.exports = FormView.extend({
           (values) => {
             if (values.length===0) return
             if (this.hasDynamicArguments()) {
-              return cannotBeTriggered
+              return HelpTexts.task.cannot_trigger
             }
           }
         ]
@@ -253,7 +250,7 @@ module.exports = FormView.extend({
       // this evaluation is copied from
       // model/task/template:hasDinamicArguments
       if (hasDynamicArguments) {
-        bootbox.alert(cannotBeScheduled)
+        bootbox.alert(HelpTexts.task.cannot_schedule)
         return next(null, false)
       }
     }

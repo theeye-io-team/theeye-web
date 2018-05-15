@@ -3,6 +3,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import TaskCreationWizard from '../../task/creation-wizard'
 import MonitorCreationWizard from '../../monitor/creation-wizard'
+import WorkflowCreationWizard from '../../workflow/creation-wizard'
 
 import './style.less'
 
@@ -48,6 +49,11 @@ module.exports = View.extend({
 
     this.renderSubview(
       new MonitorsOptionsView(),
+      menuOptionsContainer
+    )
+
+    this.renderSubview(
+      new WorkflowOptionsView(),
       menuOptionsContainer
     )
   }
@@ -112,5 +118,20 @@ let MonitorsOptionsView = OptionView.extend({
   startCreateWizard (event) {
     event.preventDefault()
     let wizard = new MonitorCreationWizard()
+  }
+})
+
+let WorkflowOptionsView = OptionView.extend({
+  initialize () {
+    OptionView.prototype.initialize.apply(this,arguments)
+    this.icon = ['fa','fa-sitemap']
+    this.tip = 'Create Workflow'
+  },
+  events: {
+    'click':'startCreateWizard'
+  },
+  startCreateWizard (event) {
+    event.preventDefault()
+    let wizard = new WorkflowCreationWizard()
   }
 })

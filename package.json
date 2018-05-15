@@ -5,6 +5,7 @@
   "description": "TheEye Web Interface",
   "keywords": [],
   "dependencies": {
+    "@dagrejs/graphlib": "2.1.4",
     "ampersand-app": "2.0.0",
     "ampersand-checkbox-view": "^6.0.0",
     "ampersand-collection": "^2.0.0",

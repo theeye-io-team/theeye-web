@@ -290,7 +290,7 @@ module.exports = View.extend({
       TaskRowView,
       this.queryByHook('tasks-container'),
       {
-        emptyView:TasksOboardingPanel
+        emptyView: TasksOboardingPanel
       }
     )
 
@@ -348,10 +348,13 @@ module.exports = View.extend({
             // verify if all the tasks are not being executed
             const jobsInProgress = rows
               .map(row => row.model)
-              .find(task => {
-                const lifecycle = task.lastjob.lifecycle
-                return LIFECYCLE.inProgress(lifecycle)
-              })
+							.find(task => {
+								if (/Task/.test(item._type)) {
+									const lifecycle = item.lastjob.lifecycle
+									return LIFECYCLE.inProgress(lifecycle)
+								}
+								return false // <<<< workflow
+							})
 
             runAllButton.disabled = (jobsInProgress !== undefined)
           }

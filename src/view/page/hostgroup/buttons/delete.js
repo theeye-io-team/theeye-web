@@ -11,8 +11,12 @@ module.exports = PanelButton.extend({
   events: {
     click: function (event) {
       event.stopPropagation()
+      const msg = [
+        'Hosts will be unlinked from the template and all the monitors and tasks will be removed as well.',
+        'Make sure you understand what you\'re doing before you accept this action.',
+        'Continue removing the template?'
+      ].join('')
 
-      const msg = 'Template hosts will be unlinked and all the monitors and tasks will be removed as well.<br><b>Make sure you understand what you\'re doing before you accept this action.</b><br>Continue removing the template?'
       bootbox.confirm({
         title: 'Warning! Please, read carefully before you continue.',
         message: msg,

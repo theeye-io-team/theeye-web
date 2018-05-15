@@ -26,7 +26,7 @@ const setStateFromQueryString = (query) => {
   }
 }
 
-const fetchData = (options) => {
+const prepareData = (options) => {
   const { fetchTasks } = options
 
   App.state.dashboard.resourcesDataSynced = false
@@ -42,14 +42,25 @@ const fetchData = (options) => {
   })
 
   var resourcesToFetch = 6
-  if (fetchTasks) resourcesToFetch += 1
-
-  var done = after(resourcesToFetch, function () {
+  if (fetchTasks) resourcesToFetch += 2
+  var done = after(resourcesToFetch, () => {
     App.state.loader.visible = false
   })
-  var step = function () {
+
+  const step = () => {
     App.state.loader.step()
     done()
+  }
+
+  if (fetchTasks) {
+    const nextStep = () => {
+      step()
+      App.state.tasks.fetch({ success: () => {
+        App.state.dashboard.groupTasks()
+        step()
+      }, error: step })
+    }
+    App.state.workflows.fetch({ success: nextStep, error: nextStep })
   }
 
   App.state.events.fetch({ success: step, error: step })
@@ -65,10 +76,6 @@ const fetchData = (options) => {
     },
     error: step
   })
-
-  if (fetchTasks) {
-    App.state.tasks.fetch({ success: step, error: step })
-  }
 }
 
 const index = (query) => {
@@ -76,7 +83,7 @@ const index = (query) => {
   const tasksEnabled = Boolean(query.tasks != 'hide')
   const statsEnabled = Boolean(query.stats == 'show')
 
-  fetchData({ fetchTasks: tasksEnabled })
+  prepareData({ fetchTasks: tasksEnabled })
 
   return renderPageView({
     renderTasks: tasksEnabled,
@@ -94,7 +101,7 @@ const renderPageView = (options) => {
   return new PageView({
     groupedResources: App.state.dashboard.groupedResources,
     monitors: App.state.resources,
-    tasks: App.state.tasks,
+    tasks: App.state.dashboard.groupedTasks,
     renderTasks: options.renderTasks,
     renderStats: options.renderStats
   })

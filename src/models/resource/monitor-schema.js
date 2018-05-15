@@ -10,5 +10,13 @@ module.exports = AppModel.extend({
     _type: 'string',
     //config: ['object',false, () => { return {} }],
     tags: 'array',
+  },
+  derived: {
+    summary: {
+      deps: ['name'],
+      fn () {
+        return `resource monitor ${this.name}`
+      }
+    }
   }
 })

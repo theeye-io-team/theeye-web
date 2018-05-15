@@ -3,25 +3,59 @@
 import App from 'ampersand-app'
 import uuidv4 from 'uuid/v4'
 
+import Collection from 'ampersand-collection'
 import { GroupedResourceCollection, GroupedResource } from 'models/resource'
+import { Collection as TasksCollection, Scraper, Script } from 'models/task'
+import { Workflow } from 'models/workflow'
 import AmpersandState from 'ampersand-state'
+import ModelConstants from 'constants/models'
+
+const GroupedTasksCollection = TasksCollection.extend({
+  model (attrs, options={}) {
+    const taskModel = TasksCollection.prototype.model
+    
+    if (attrs._type = ModelConstants.TYPE_WORKFLOW) {
+      return new Workflow(attrs, options)
+    } else {
+      return taskModel.apply(this, arguments)
+    }
+  },
+  isModel (model) {
+    const isTaskModel = TasksCollection.prototype.isModel
+    return model instanceof Workflow || isTaskModel.apply(this, arguments)
+  }
+})
 
 module.exports = AmpersandState.extend({
   props: {
     resourcesDataSynced: ['boolean',false,false],
     tasksDataSynced: ['boolean',false,false],
-    monitorsGroupBy: ['object',false, () => { return { prop: 'name' } }]
+    monitorsGroupBy: ['object',false, () => {
+      return { prop: 'name' }
+    }]
   },
   collections: {
     // representation of the current groups being display
-    groupedResources: GroupedResourceCollection
+    groupedResources: GroupedResourceCollection,
+    groupedTasks: GroupedTasksCollection
   },
   groupResources () {
     const resources = App.state.resources.models
     // now always group dstat and psaux into host
-    const groups = applyMonitorsGroupBy(groupByHost(resources), this.monitorsGroupBy)
-
+    const groups = groupMonitorsBy(
+      groupMonitorsByHost(resources),
+      this.monitorsGroupBy
+    )
     this.groupedResources.reset(groups)
+  },
+  groupTasks () {
+    const tasks = App.state.tasks
+    this.groupedTasks.add(tasks.models.filter(m => !m.workflow_id))
+
+    const workflows = App.state.workflows
+    this.groupedTasks.add(workflows.models)
+
+    //this.groupedTasks.sort()
   },
   setMonitorsGroupBy (groupBy) {
     this.monitorsGroupBy = parseMonitorsGroupBy(groupBy)
@@ -73,6 +107,22 @@ const parseMonitorsGroupBy = (groupby) => {
 
 /**
  *
+ * @param {Tasks} tasks collection
+ * @param {Workflows} workflows collection
+ * @return
+ *
+ */
+const groupTasksIntoWorkflows = (tasks, workflows) => {
+  const groups = []
+  workflows.forEach(workflow => {
+    let firstTaskId = workflow.first_task_id
+    let task = tasks.get(firstTaskId)
+  })
+  return tasks.models
+}
+
+/**
+ *
  * @summary given a set of resources attach them to the hosts and turn resources into grouped resource.
  * bind the grouped host resource to the original host model
  *
@@ -80,7 +130,7 @@ const parseMonitorsGroupBy = (groupby) => {
  * @return {GroupedResource[]}
  *
  */
-const groupByHost = (resources) => {
+const groupMonitorsByHost = (resources) => {
   const groupedMonitors = []
   const hostmonitors = {}
 
@@ -134,7 +184,7 @@ const groupByHost = (resources) => {
  *
  * @return {GroupedResource[]}
  */
-const applyMonitorsGroupBy = (resources, groupBy) => {
+const groupMonitorsBy = (resources, groupBy) => {
   const { tags, prop } = groupBy
 
   if (Object.keys(groupBy).length === 0) return null

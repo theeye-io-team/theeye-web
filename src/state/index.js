@@ -15,9 +15,10 @@ import { Collection as Tags } from 'models/tag'
 import { Collection as Scripts } from 'models/file/script'
 import { Collection as Files } from 'models/file'
 import { Collection as Events } from 'models/event'
+import { Workflows } from 'models/workflow'
+//import { EmitterCollection as Emitters } from 'models/event'
 import { Collection as Notifications } from 'models/notification'
 import Alerts from 'components/alerts'
-//import URI from 'urijs'
 
 import HostGroupPageState from './hostgroup-page'
 import DashboardPageState from './dashboard-page'
@@ -150,7 +151,7 @@ const AppState = State.extend({
     this.clear() // will reset all components state
 
     // call reset on every collections.
-    // do not REPLACE REFERENCES! this will only reset (empty) collections data
+    // do not REPLACE REFERENCES! this will only reset to empty collections data
     Object.keys(this).forEach(prop => {
       let val = this[prop]
       if (val && val.isCollection) val.reset()
@@ -239,6 +240,31 @@ const _initCollections = function () {
     webhooks: new Webhooks([]),
     members: new Members([]),
     events: new Events([]),
-    notifications: new Notifications([])
+    notifications: new Notifications([]),
+    //emitters: new Emitters([]),
+    workflows: new Workflows([])
   })
+
+  //_syncEmitters.apply(this)
 }
+
+///**
+// *
+// * @todo improve this.
+// *
+// */
+//const _syncEmitters = function () {
+//  //const onCollectionEvent = (event, model, that, options) => {
+//  const onCollectionEvent = () => {
+//    let models = [].concat(
+//      this.tasks.models,
+//      this.webhooks.models,
+//      this.resources.models
+//    )
+//    this.emitters.reset(models)
+//  }
+//
+//  this.listenTo(this.tasks, 'all', onCollectionEvent)
+//  this.listenTo(this.resources, 'all', onCollectionEvent)
+//  this.listenTo(this.webhooks, 'all', onCollectionEvent)
+//}
