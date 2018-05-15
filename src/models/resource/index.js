@@ -291,8 +291,8 @@ const ResourceCollection = _Collection.extend({
       // if equal state order, sort by name
       let name1 = m1.name ? m1.name.toLowerCase() : 0
       let name2 = m2.name ? m2.name.toLowerCase() : 0
-      if (name1<name2) return -1
-      else if (name1>name2) return 1
+      if (name1>name2) return -1
+      else if (name1<name2) return 1
       else return 0
     }
   },
