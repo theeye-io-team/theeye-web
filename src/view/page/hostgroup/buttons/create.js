@@ -3,6 +3,7 @@ import Modalizer from 'components/modalizer'
 import FormView from '../form'
 import { Model as HostGroup } from 'models/hostgroup'
 import HostGroupActions from 'actions/hostgroup'
+import bootbox from 'bootbox'
 
 module.exports = CommonButton.extend({
   initialize (options) {
@@ -38,8 +39,33 @@ module.exports = CommonButton.extend({
       this.listenTo(modal,'confirm',function(){
         form.beforeSubmit()
         if (form.valid === true) {
-          HostGroupActions.create(form.data)
-          modal.hide()
+          const msg = [
+            'This template will be applied to the source host.',
+            'This means that any tasks or monitors deleted from the config will be deleted as well from the source host.'
+          ].join('<br>')
+
+          bootbox.confirm({
+            title: 'Warning! Please, read carefully before you continue.',
+            message: msg,
+            buttons: {
+              confirm: {
+                label: 'Confirm',
+                className: 'btn-danger'
+              },
+              cancel: {
+                label: 'Cancel',
+                className: 'btn-default'
+              },
+            },
+            callback: confirm => {
+              if (!confirm) {
+                modal.hide()
+                return
+              }
+              HostGroupActions.create(form.data)
+              modal.hide()
+            }
+          })
         }
       })
 

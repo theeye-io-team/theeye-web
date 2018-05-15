@@ -15,7 +15,7 @@ module.exports = PanelButton.extend({
         'Hosts will be unlinked from the template and all the monitors and tasks will be removed as well.',
         'Make sure you understand what you\'re doing before you accept this action.',
         'Continue removing the template?'
-      ].join('')
+      ].join('<br>')
 
       bootbox.confirm({
         title: 'Warning! Please, read carefully before you continue.',
