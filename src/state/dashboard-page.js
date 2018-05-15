@@ -55,6 +55,10 @@ module.exports = AmpersandState.extend({
     const workflows = App.state.workflows
     this.groupedTasks.add(workflows.models)
 
+    this.listenTo(App.state.tasks, 'add', (model) => {
+      this.groupedTasks.add(model)
+    })
+
     //this.groupedTasks.sort()
   },
   setMonitorsGroupBy (groupBy) {
