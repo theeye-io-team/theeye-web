@@ -1,16 +1,85 @@
 import App from 'ampersand-app'
 import acls from 'lib/acls'
 import View from 'ampersand-view'
-import JobResult from '../job-result'
-import ExecButton from './exec-button'
 import SearchActions from 'actions/searchbox'
 import TaskActions from 'actions/task'
 import FileActions from 'actions/file'
 import LIFECYCLE from 'constants/lifecycle'
 import EditTaskButton from 'view/page/task/buttons/edit'
-import CollapsibleRow from './collapsible-row'
+import JobResult from '../../job-result'
+import ExecTaskButton from './exec-button'
+import CollapsibleRow from '../collapsible-row'
 
 import lang2ext from 'lib/lang2ext'
+
+module.exports = CollapsibleRow.extend({
+  derived: {
+    hostname: {
+      deps: ['model.hostname'],
+      fn () {
+        return `(${this.model.hostname})` || '(Hostname not assigned)'
+      }
+    },
+    type: {
+      cache: true,
+      deps: ['model.type'],
+      fn () {
+        const type = this.model.type
+        if (type === 'scraper') return 'web request'
+        if (type === 'script') return 'script'
+      }
+    },
+    type_icon: {
+      cache: true,
+      deps: ['model.type'],
+      fn () {
+        const type = this.model.type
+        if (type === 'scraper') return 'fa fa-cloud'
+        if (type === 'script') return 'fa fa-code'
+      }
+    },
+    header_type_icon: {
+      cache: true,
+      deps: ['model.type'],
+      fn () {
+        const type = this.model.type
+        if (type === 'scraper') return 'circle fa fa-cloud scraper-color'
+        if (type === 'script') return 'circle fa fa-code script-color'
+      }
+    }
+  },
+  onClickToggleCollapse (event) {
+    TaskActions.populate(this.model)
+    return
+  },
+  renderButtons () {
+    this.renderSubview(
+      new TaskButtonsView({ model: this.model }),
+      this.query('div[data-hook=buttons-container]')
+    )
+    this.renderSubview(
+      new TaskButtonsView({ model: this.model }),
+      this.query('ul.dropdown-menu[data-hook=buttons-container]')
+    )
+
+    if (acls.hasAccessLevel('user')) {
+      const button = this.renderSubview(
+        new ExecTaskButton({ model: this.model }),
+        this.queryByHook('execute-button-container')
+      )
+    }
+  },
+  renderCollapsedContent () {
+    let content
+    if (this.model.type === 'script') {
+      content = new ScriptCollapsedContent({ model: this.model })
+    } else {
+      content = new ScraperCollapsedContent({ model: this.model })
+    }
+
+    this.renderSubview(content, this.queryByHook('collapse-container-body'))
+  }
+})
 
 const TaskButtonsView = View.extend({
   template: `
@@ -257,74 +326,5 @@ const ScriptCollapsedContent = View.extend({
     if (acls.hasAccessLevel('admin')) {
       this.query('tbody tr').innerHTML += `<td><button data-hook="edit_script" title="Edit the script" class="fa fa-edit btn btn-sm btn-primary"></button></td>`
     }
-  }
-})
-
-module.exports = CollapsibleRow.extend({
-  derived: {
-    hostname: {
-      deps: ['model.hostname'],
-      fn () {
-        return this.model.hostname || 'Hostname not assigned'
-      }
-    },
-    type: {
-      cache: true,
-      deps: ['model.type'],
-      fn () {
-        const type = this.model.type
-        if (type === 'scraper') return 'web request'
-        if (type === 'script') return 'script'
-      }
-    },
-    type_icon: {
-      cache: true,
-      deps: ['model.type'],
-      fn () {
-        const type = this.model.type
-        if (type === 'scraper') return 'fa fa-cloud'
-        if (type === 'script') return 'fa fa-code'
-      }
-    },
-    header_type_icon: {
-      cache: true,
-      deps: ['model.type'],
-      fn () {
-        const type = this.model.type
-        if (type === 'scraper') return 'circle fa fa-cloud scraper-color'
-        if (type === 'script') return 'circle fa fa-code script-color'
-      }
-    }
-  },
-  onClickToggleCollapse (event) {
-    TaskActions.populate(this.model)
-    return
-  },
-  renderButtons () {
-    this.renderSubview(
-      new TaskButtonsView({ model: this.model }),
-      this.query('div[data-hook=buttons-container]')
-    )
-    this.renderSubview(
-      new TaskButtonsView({ model: this.model }),
-      this.query('ul.dropdown-menu[data-hook=buttons-container]')
-    )
-
-    if (acls.hasAccessLevel('user')) {
-      const button = this.renderSubview(
-        new ExecButton({ model: this.model }),
-        this.queryByHook('execute-button-container')
-      )
-    }
-  },
-  renderCollapsedContent () {
-    let content
-    if (this.model.type === 'script') {
-      content = new ScriptCollapsedContent({ model: this.model })
-    } else {
-      content = new ScraperCollapsedContent({ model: this.model })
-    }
-
-    this.renderSubview(content, this.queryByHook('collapse-container-body'))
   }
 })

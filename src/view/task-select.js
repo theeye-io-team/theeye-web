@@ -2,11 +2,23 @@
 
 import App from 'ampersand-app'
 import SelectView from 'components/select2-view'
+import FilteredCollection from 'ampersand-filtered-subcollection'
 
 module.exports = SelectView.extend({
   initialize (specs) {
+
+    var filters = [ item => true ]
+
+    if (
+      Array.isArray(specs.filterOptions) &&
+      specs.filterOptions.length
+    ) {
+      filters = filters.concat(specs.filterOptions)
+    }
+
+    var options = new FilteredCollection(App.state.tasks, { filters })
     Object.assign(this, {
-      options: App.state.tasks,
+      options: options,
       multiple: false,
       tags: false,
       label: 'Task',

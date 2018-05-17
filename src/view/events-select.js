@@ -8,9 +8,7 @@ import FilteredCollection from 'ampersand-filtered-subcollection'
 module.exports = SelectView.extend({
   initialize (options) {
     var filters = [
-      item => {
-        return item.displayable == true
-      }
+      item => item.displayable == true
     ]
 
     if (Array.isArray(options.filterOptions) && options.filterOptions.length) {

@@ -16,10 +16,10 @@ module.exports = View.extend({
   props: {
     name: ['string',false,'workflow'],
     // the first selected task. this is the first task executed.
-    firstTask: 'state',
+    startTask: 'state',
     // the last selected task. can be empty.
     // will be used as emitter on next selection step
-    lastTask: 'state',
+    endTask: 'state',
     graph: ['object', false]
   },
   derived: {
@@ -92,7 +92,7 @@ module.exports = View.extend({
     const builder = new WorkflowBuilderView({
       label: 'Event',
       name: 'event',
-      emitter: this.lastTask
+      emitter: this.endTask
     })
 
     const modal = new Modalizer({
@@ -124,10 +124,10 @@ module.exports = View.extend({
     w.setEdge(data.emitter.id, data.emitter_state.id)
     w.setEdge(data.emitter_state.id, data.task.id)
 
-    if (!this.lastTask) {
-      this.firstTask = data.emitter
+    if (!this.endTask) {
+      this.startTask = data.emitter
     }
-    this.lastTask = data.task
+    this.endTask = data.task
     // force change trigger
     this.trigger('change:graph', this.graph)
   },
@@ -162,7 +162,10 @@ const WorkflowBuilderView = FormView.extend({
     } else {
       emitterSelection = new TaskSelectView({
         label: 'Task A',
-        name: 'emitter'
+        name: 'emitter',
+        filterOptions: [
+          item => !item.workflow_id
+        ]
       })
       emitterSelection.on('change:value', () => {
         let emitter = emitterSelection.selected()
@@ -191,7 +194,12 @@ const WorkflowBuilderView = FormView.extend({
       stateEventSelection.options = events.filterEmitterEvents(options.emitter)
     }
 
-    taskSelection = new TaskSelectView({ label: 'Task B' })
+    taskSelection = new TaskSelectView({
+      label: 'Task B',
+      filterOptions: [
+        item => !item.workflow_id
+      ]
+    })
 
     this.fields = [
       emitterSelection,

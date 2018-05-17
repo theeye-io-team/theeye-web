@@ -11,38 +11,6 @@ const View = require('ampersand-view')
 // http://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal
 $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 
-const ButtonsView = View.extend({
-  template: `
-    <div>
-      <div class="col-xs-12 col-md-6">
-        <button type="button"
-          class="btn btn-default"
-          data-dismiss="modal">
-          Cancel
-        </button>
-      </div>
-      <div class="col-xs-12 col-md-6">
-        <button type="button"
-          class="btn btn-primary"
-          data-hook="confirm">
-        </button>
-      </div>
-    </div>
-  `,
-  props: {
-    confirmButton: {
-      type: 'string',
-      default: 'CONFIRM'
-    }
-  },
-  bindings: {
-    confirmButton: {
-      hook: 'confirm',
-      type: 'text'
-    }
-  }
-})
-
 module.exports = View.extend({
   template: `
     <div class="modalizer">
@@ -160,6 +128,10 @@ module.exports = View.extend({
       }
       modalBody.appendChild(this.bodyView.el)
     }
+
+    this.listenTo(this.bodyView, 'remove', () => {
+      this.hide()
+    })
   },
   show () {
     this.renderBody()
@@ -197,5 +169,37 @@ module.exports = View.extend({
     this.hide()
     this.bodyView.remove()
     View.prototype.remove.apply(this, arguments)
+  }
+})
+
+const ButtonsView = View.extend({
+  template: `
+    <div>
+      <div class="col-xs-12 col-md-6">
+        <button type="button"
+          class="btn btn-default"
+          data-dismiss="modal">
+          Cancel
+        </button>
+      </div>
+      <div class="col-xs-12 col-md-6">
+        <button type="button"
+          class="btn btn-primary"
+          data-hook="confirm">
+        </button>
+      </div>
+    </div>
+  `,
+  props: {
+    confirmButton: {
+      type: 'string',
+      default: 'CONFIRM'
+    }
+  },
+  bindings: {
+    confirmButton: {
+      hook: 'confirm',
+      type: 'text'
+    }
   }
 })

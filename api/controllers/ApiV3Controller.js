@@ -79,19 +79,21 @@ module.exports = {
       success: (body, apiRes) => res.json(body),
     });
   },
-  // GET
-  getFileLinkedModels (req, res) {
-    const supervisor = req.supervisor
-    const file_id = req.param('id')
-    if (!file_id) return res.send(400, 'File id required.')
-
+  /**
+   * @method DELETE
+   * @route /apiv3/:route
+   *
+   * @param {String} resource
+   * @param {String} id
+   */
+  remove (req, res, next){
+    logger.debug('remove api url ' + req.originalUrl)
     var route = req.originalUrl.replace(apibase,'')
-
-    supervisor.fetch({
-      route: `/file/${file_id}/linkedmodels`,
-      method: 'GET',
-      failure: (error, apires) => res.send(error.statusCode, error) ,
-      success: (body, apires) => res.json(body)
+    req.supervisor.remove({
+      route: route,
+      query: req.query,
+      failure: (error, apiRes) => res.send(error.statusCode, error),
+      success: (body, apiRes) => res.json(body),
     })
   },
   /**
@@ -110,5 +112,20 @@ module.exports = {
       failure: (error, apiRes) => res.send(error.statusCode, error),
       success: (body, apiRes) => res.json(body),
     });
+  },
+  // GET
+  getFileLinkedModels (req, res) {
+    const supervisor = req.supervisor
+    const file_id = req.param('id')
+    if (!file_id) return res.send(400, 'File id required.')
+
+    var route = req.originalUrl.replace(apibase,'')
+
+    supervisor.fetch({
+      route: `/file/${file_id}/linkedmodels`,
+      method: 'GET',
+      failure: (error, apires) => res.send(error.statusCode, error) ,
+      success: (body, apires) => res.json(body)
+    })
   },
 }

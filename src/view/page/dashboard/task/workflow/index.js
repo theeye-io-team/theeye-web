@@ -1,19 +1,19 @@
 import App from 'ampersand-app'
+import ladda from 'ladda'
 import Acls from 'lib/acls'
 import View from 'ampersand-view'
-import CollapsibleRow from './collapsible-row'
-import ExecButton from './exec-button'
 import EditWorkflowButton from 'view/page/workflow/edit-button'
 import WorkflowActions from 'actions/workflow'
-import TaskRowView from './task'
+import CollapsibleRow from '../collapsible-row'
+import ExecButton from '../exec-button'
+import TaskRowView from '../task'
 
 module.exports = CollapsibleRow.extend({
-  template: require('./row.hbs'),
   derived: {
     hostname: {
       deps: ['model.hostname'],
       fn () {
-        return this.model.hostname || 'Hostname not assigned'
+        return ''
       }
     },
     type: {
@@ -56,12 +56,28 @@ module.exports = CollapsibleRow.extend({
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
     )
 
-    //if (Acls.hasAccessLevel('user')) {
-    //  const button = this.renderSubview(
-    //    new ExecButton({ model: this.model }),
-    //    this.queryByHook('execute-button-container')
-    //  )
-    //}
+    if (Acls.hasAccessLevel('user')) {
+      const button = this.renderSubview(
+        new ExecWorkflowButton({ workflow: this.model }),
+        this.queryByHook('execute-button-container')
+      )
+    }
+  }
+})
+
+const ExecWorkflowButton = ExecButton.extend({
+  props: {
+    workflow: 'state'
+  },
+  render () {
+    ExecButton.prototype.render.apply(this, arguments)
+    this.listenToAndRun(this.workflow,'change:lifecycle',() => { })
+  },
+  onClickExecute (event) {
+    event.stopPropagation()
+    event.preventDefault()
+
+    WorkflowActions.triggerExecution(this.workflow)
   }
 })
 

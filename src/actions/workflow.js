@@ -31,6 +31,7 @@ module.exports = {
     workflow.save({},{
       success: () => {
         App.state.workflows.add(workflow)
+        this.populate(workflow)
       },
       error: (err) => {
         logger.error(err)
@@ -38,25 +39,46 @@ module.exports = {
       }
     })
   },
+  remove (id) {
+    const workflow = App.state.workflows.get(id)
+    workflow.destroy({
+      success () {
+        bootbox.alert('Workflow deleted')
+        App.state.workflows.remove(workflow)
+        unlinkTasks(workflow)
+      }
+    })
+  },
   populate (workflow) {
+    if (workflow.populated) return
     if (workflow.tasks.models.length!==0) return
     var nodes = workflow.graph.nodes()
-    var first = workflow.first_task_id
+    var first = workflow.start_task_id
     walkGraph([], workflow.graph, null, first, (tasks) => {
       workflow.tasks.add(tasks)
+      tasks.forEach(task => {
+        if (!task.workflow_id) {
+          task.workflow_id = workflow.id
+        }
+      })
     })
+    workflow.populated = true
+  },
+  triggerExecution (workflow) {
+    this.populate(workflow)
+    workflow.start_task.trigger('execution')
   }
 }
 
 const walkGraph = (acum, graph, previous, current, end) => {
   if (!current) {
-    logger.log('no more to walk')
+    logger.log('workflow walk completed. no more to walk.')
     return end(acum)
   }
   var data = graph.node(current)
   var successors = graph.successors(current)
 
-  if (data._type == 'Task') {
+  if (!/Event/.test(data._type)) {
     var task = App.state.tasks.get(data.id)
     if (task) {
       acum.push(task)
@@ -64,4 +86,17 @@ const walkGraph = (acum, graph, previous, current, end) => {
   }
 
   walkGraph(acum, graph, current, successors[0], end)
+}
+
+const unlinkTasks = (workflow) => {
+  let graph = workflow.graph
+  graph.nodes().forEach(node => {
+    var data = graph.node(node)
+    if (!/Event/.test(data._type)) {
+      var task = App.state.tasks.get(data.id)
+      if (!task) return
+      task.workflow_id = null
+      task.workflow = null
+    }
+  })
 }

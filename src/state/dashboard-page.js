@@ -11,6 +11,23 @@ import AmpersandState from 'ampersand-state'
 import ModelConstants from 'constants/models'
 
 const GroupedTasksCollection = TasksCollection.extend({
+	//comparator (m1, m2) {
+	//  if (m1._type === m2._type) {
+	//    // sort same types by name
+	//    if (m1.name<m2.name) { return -1 }
+	//    if (m1.name>m2.name) { return  1 }
+	//    return 0
+	//  } else {
+	//    // first comes workflow
+	//    if (m1._type==='Workflow') return -1
+	//    if (m2._type==='Workflow') return  1
+	//  }
+	//},
+	comparator (m1, m2) {
+		if (m1.name.toLowerCase()<m2.name.toLowerCase()) { return -1 }
+		if (m1.name.toLowerCase()>m2.name.toLowerCase()) { return  1 }
+		return 0 
+	},
   model (attrs, options={}) {
     const taskModel = TasksCollection.prototype.model
     
@@ -51,11 +68,21 @@ module.exports = AmpersandState.extend({
   groupTasks () {
     const tasks = App.state.tasks
     this.groupedTasks.add(tasks.models.filter(m => !m.workflow_id))
+    this.listenTo(App.state.tasks, 'add', (model) => {
+      this.groupedTasks.add(model)
+    })
+    this.listenTo(App.state.tasks, 'change:workflow_id', (task) => {
+      // if task has no workflow assigned then put it into the grouped tasks collection
+      if (!task.workflow_id) {
+        this.groupedTasks.add(task)
+      } else {
+        this.groupedTasks.remove(task)
+      }
+    })
 
     const workflows = App.state.workflows
     this.groupedTasks.add(workflows.models)
-
-    this.listenTo(App.state.tasks, 'add', (model) => {
+    this.listenTo(App.state.workflows, 'add', (model) => {
       this.groupedTasks.add(model)
     })
 
@@ -107,22 +134,6 @@ const parseMonitorsGroupBy = (groupby) => {
   }
 
   return groupby
-}
-
-/**
- *
- * @param {Tasks} tasks collection
- * @param {Workflows} workflows collection
- * @return
- *
- */
-const groupTasksIntoWorkflows = (tasks, workflows) => {
-  const groups = []
-  workflows.forEach(workflow => {
-    let firstTaskId = workflow.first_task_id
-    let task = tasks.get(firstTaskId)
-  })
-  return tasks.models
 }
 
 /**

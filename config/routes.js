@@ -145,6 +145,7 @@ module.exports.routes = {
   'get /apiv3/file/:id/linkedmodels':'ApiV3Controller.getFileLinkedModels',
   'patch /apiv3/:route*':'ApiV3Controller.patch',
   'post /apiv3/:route*':'ApiV3Controller.create',
+  'delete /apiv3/:route*':'ApiV3Controller.remove',
   'put /apiv3/:route*':'ApiV3Controller.update',
   'get /apiv3/:route*':'ApiV3Controller.get',
   'get /apiv3/:route*':'ApiV3Controller.fetch',

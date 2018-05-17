@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import AdvancedToggle from 'view/advanced-toggle'
+import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import FormButtons from 'view/buttons'
 import SelectView from 'components/select2-view'
@@ -13,6 +14,7 @@ import WorkflowActions from 'actions/workflow'
 import WorkflowBuilder from './workflow-builder'
 import assign from 'lodash/assign'
 import EventsSelectView from 'view/events-select'
+import bootbox from 'bootbox'
 
 export default FormView.extend({
   initialize (options) {
@@ -21,7 +23,8 @@ export default FormView.extend({
     this.advancedFields = [
       'acl',
       'tags',
-      'description'
+      'description',
+      'remove-workflow-button'
     ]
 
     this.fields = [
@@ -74,6 +77,36 @@ export default FormView.extend({
         value: this.model.acl
       })
     ]
+
+    if (!isNew) {
+      let removeButton = new RemoveWorkflowButton({
+        visible: false,
+        onClick: (event) => {
+          bootbox.confirm({
+            title: 'Confirm Workflow removal',
+            message: 'Remove the workflow and release tasks from it?',
+            backdrop: true,
+            buttons: {
+              confirm: {
+                label: 'Yes, please',
+                className: 'btn-danger'
+              },
+              cancel: {
+                label: 'I\m not sure',
+                className: 'btn-default'
+              }
+            },
+            callback: (confirmed) => {
+              if (confirmed===true) {
+                WorkflowActions.remove(this.model.id)
+                this.remove()
+              }
+            }
+          })
+        }
+      })
+      this.fields.push(removeButton)
+    }
 
     FormView.prototype.initialize.apply(this, arguments)
   },
@@ -130,9 +163,43 @@ export default FormView.extend({
   },
   prepareData (data) {
     let f = assign({}, data)
-    f.first_task_id = this._fieldViews.graph.firstTask.id
-    f.last_task_id = this._fieldViews.graph.lastTask.id
+    f.start_task_id = this._fieldViews.graph.startTask.id
+    f.end_task_id = this._fieldViews.graph.endTask.id
     delete f['advanced-toggler']
+    delete f['remove-workflow-button']
     return f
+  }
+})
+
+const RemoveWorkflowButton = View.extend({
+  template: `
+    <div class="form-group">
+      <label class="col-sm-3 control-label" data-hook="label">Remove Workflow</label>
+      <div class="col-sm-9">
+        <div style="padding-bottom: 15px;">
+          <button data-hook="build" title="remove the workflow" class="btn btn-danger">
+            <i class="fa fa-trash"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  `,
+  props: {
+    onClick: ['any',true],
+    name: ['string',false,'remove-workflow-button'],
+    visible: ['boolean',false,true]
+  },
+  bindings: {
+    visible: {
+      type: 'toggle'
+    }
+  },
+  session: {
+    valid: ['boolean',false,true]
+  },
+  events: {
+    'click button': function (event) {
+      if (this.onClick) this.onClick(event)
+    }
   }
 })
