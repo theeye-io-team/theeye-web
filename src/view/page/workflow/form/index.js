@@ -44,7 +44,9 @@ export default FormView.extend({
       }),
       new WorkflowBuilder({
         name: 'graph',
-        value: this.model.graph
+        value: this.model.graph,
+        startTask: this.model.start_task,
+        endTask: this.model.end_task
       }),
       // advanced fields starts visible = false
       new AdvancedToggle({

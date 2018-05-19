@@ -26,6 +26,20 @@ module.exports = {
       }
     })
   },
+  update (id, data) {
+    let tmp = new Workflow(data)
+    tmp.id = id
+    tmp.save({},{
+      success: () => {
+        const workflow = App.state.workflows.get(id)
+        workflow.set(workflow.parse(tmp.serialize()))
+      },
+      error: (err) => {
+        logger.error(err)
+        bootbox.alert('Something went wrong. Please refresh')
+      }
+    })
+  },
   create (data) {
     let workflow = new Workflow(data)
     workflow.save({},{

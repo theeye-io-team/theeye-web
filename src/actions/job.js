@@ -26,9 +26,7 @@ module.exports = {
    * @param {Object} data job model properties
    *
    */
-  receiveUpdate (data) {
-    logger.log('job updates received')
-
+  applyStateUpdate (data) {
     const task_id = data.task_id
     const task = App.state.tasks.get(task_id)
 
@@ -38,7 +36,6 @@ module.exports = {
       return
     }
 
-    logger.log('updating task job')
     updateJob(task.lastjob, data)
   },
   create (task, taskArgs) {

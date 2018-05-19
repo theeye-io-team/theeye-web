@@ -114,16 +114,16 @@ const createWrapper = ({ io }) => {
         DashboardActions.loadNewRegisteredHostAgent(event.model)
       },
       'host-stats': event => {
-        HostStatsActions.receiveUpdate('dstat', event.model)
+        HostStatsActions.applyStateUpdate('dstat', event.model)
       },
       'host-processes': event => {
-        HostStatsActions.receiveUpdate('psaux', event.model)
+        HostStatsActions.applyStateUpdate('psaux', event.model)
       },
       'monitor-state': (event) => {
-        ResourceActions.receiveUpdate(event.model.id, event.model)
+        ResourceActions.applyStateUpdate(event.model.id, event.model)
       },
       'host-integrations-crud': (event) => {
-        HostActions.receiveUpdate(event.model.id, event.model)
+        HostActions.applyStateUpdate(event.model.id, event.model)
       },
       'job-crud': (event) => {
         if (
@@ -131,9 +131,12 @@ const createWrapper = ({ io }) => {
           event.operation === OperationsConstants.CREATE ||
           event.operation === OperationsConstants.REPLACE
         ) {
-          JobActions.receiveUpdate(event.model)
-          HostActions.receiveIntegrationJobUpdates(event.model)
+          JobActions.applyStateUpdate(event.model)
+          HostActions.applyIntegrationJobStateUpdates(event.model)
         }
+      },
+      'task-crud': (event) => {
+        TaskActions.applyStateUpdate(event.model)
       }
     }
   })

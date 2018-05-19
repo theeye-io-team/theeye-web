@@ -41,7 +41,7 @@ module.exports = {
     })
   },
   // apply incomming changes (socket/pull) to local cache
-  receiveUpdate (id, data) {
+  applyStateUpdate (id, data) {
     var model = App.state.resources.get(data.id)
     if (!model) {
       logger.error('resource not found')

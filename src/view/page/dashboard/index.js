@@ -349,8 +349,8 @@ module.exports = View.extend({
             const jobsInProgress = rows
               .map(row => row.model)
 							.find(task => {
-								if (/Task/.test(item._type)) {
-									const lifecycle = item.lastjob.lifecycle
+								if (/Task/.test(task._type)) {
+									const lifecycle = task.lastjob.lifecycle
 									return LIFECYCLE.inProgress(lifecycle)
 								}
 								return false // <<<< workflow

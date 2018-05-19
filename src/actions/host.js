@@ -6,7 +6,7 @@ module.exports = {
     // window.location = '/hoststats/' + id
     App.navigate('/admin/hoststats/' + id)
   },
-  receiveUpdate (id, data) {
+  applyStateUpdate (id, data) {
     let host = App.state.hosts.get(id)
 
     if (!host) {
@@ -35,7 +35,7 @@ module.exports = {
       })
     }
   },
-  receiveIntegrationJobUpdates (jobData) {
+  applyIntegrationJobStateUpdates (jobData) {
     if (jobData._type == 'NgrokIntegrationJob') {
       if (/hoststats/.test(window.location.pathname)) { // currently navigating host stats
         if (jobData.host_id == App.state.hoststatsPage.host.id) {
