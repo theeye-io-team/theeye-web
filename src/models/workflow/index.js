@@ -2,7 +2,6 @@ import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import graphlib from 'graphlib'
-import { Factory as TaskFactory } from 'models/task'
 
 import config from 'config'
 const urlRoot = `${config.api_v3_url}/workflow`
@@ -66,11 +65,6 @@ export const Workflow = AppModel.extend({
       }
     }
   },
-  //children: {
-  //  start_task: TaskFactory,
-  //  end_task: TaskFactory,
-  //  current_task: TaskFactory
-  //},
   serialize () {
     let attrs = AppModel.prototype.serialize.apply(this,arguments)
     let graph = graphlib.json.write(this.graph)

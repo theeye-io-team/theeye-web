@@ -7,9 +7,10 @@ import './style.less'
 module.exports = View.extend({
   template: `
     <div class="workflow-component">
-      <button data-hook="fit">Fit</button>
-      <button data-hook="center">Center</button>
-      <button data-hook="redraw">Re-draw</button>
+      <button class="btn btn-default" data-hook="fit">Fit</button>
+      <button class="btn btn-default" data-hook="center">Center</button>
+      <button class="btn btn-default" data-hook="redraw">Re-draw</button>
+      <button class="btn btn-danger" data-hook="reset">Reset!</button>
       <div class="workflow-graph-container" data-hook="graph-container"> </div>
     </div>
   `,
@@ -21,6 +22,7 @@ module.exports = View.extend({
     'click button[data-hook=fit]':'onClickFit',
     'click button[data-hook=center]':'onClickCenter',
     'click button[data-hook=redraw]':'onClickRedraw',
+    'click button[data-hook=reset]':'onClickReset',
   },
   onClickFit (event) {
     event.preventDefault()
@@ -43,6 +45,14 @@ module.exports = View.extend({
     event.stopPropagation()
 
     this.updateCytoscape()
+
+    return false
+  },
+  onClickReset (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    this.trigger('reset')
 
     return false
   },
@@ -126,6 +136,11 @@ module.exports = View.extend({
     })
 
     this.cy = cy
+
+    cy.on('tap', 'node', (event) => {
+      var node = event.cyTarget.data()
+      this.trigger('tap:node', event)
+    })
   }
 })
 

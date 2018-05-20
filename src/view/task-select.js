@@ -16,9 +16,13 @@ module.exports = SelectView.extend({
       filters = filters.concat(specs.filterOptions)
     }
 
-    var options = new FilteredCollection(App.state.tasks, { filters })
+    var options = new FilteredCollection(
+      specs.options || App.state.tasks,
+      { filters }
+    )
+
     Object.assign(this, {
-      options: options,
+      options,
       multiple: false,
       tags: false,
       label: 'Task',

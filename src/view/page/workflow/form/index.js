@@ -9,7 +9,7 @@ import TextareaView from 'components/input-view/textarea'
 import TagsSelectView from 'view/tags-select'
 import MembersSelectView from 'view/members-select'
 import HelpIcon from 'components/help-icon'
-const HelpTexts = require('language/help')
+import HelpTexts from 'language/help'
 import WorkflowActions from 'actions/workflow'
 import WorkflowBuilder from './workflow-builder'
 import assign from 'lodash/assign'
@@ -43,6 +43,7 @@ export default FormView.extend({
         value: this.model.triggers
       }),
       new WorkflowBuilder({
+        workflow_id: this.model.id,
         name: 'graph',
         value: this.model.graph,
         startTask: this.model.start_task,

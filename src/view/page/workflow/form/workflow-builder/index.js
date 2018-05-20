@@ -8,13 +8,14 @@ import SelectView from 'components/select2-view'
 import TaskSelectView from 'view/task-select'
 import FormButtons from 'view/buttons'
 import DisabledInputView from 'components/input-view/disabled'
-//import WorkflowView from 'view/workflow'
+import bootbox from 'bootbox'
 
 const graphlib = require('graphlib')
 
 module.exports = View.extend({
   props: {
-    name: ['string',false,'workflow'],
+    workflow_id: 'string',
+    name: ['string', false, 'workflow'],
     // the first selected task. this is the first task executed.
     startTask: 'state',
     // the last selected task. can be empty.
@@ -39,6 +40,23 @@ module.exports = View.extend({
         let edges = this.graph.edges()
         return nodes.length > 0 && edges.length > 0
       }
+    },
+    workflowTasksCollection: {
+      //cache: false,
+      deps: ['graph'],
+      fn () {
+        let nodes = this.graph.nodes()
+        var tasks = []
+        nodes.forEach(id => {
+          var node = this.graph.node(id)
+          if (node && !/Event/.test(node._type)) {
+            let task = App.state.tasks.get(id)
+            if (!task) return
+            tasks.push(task)
+          }
+        })
+        return new Collection(tasks)
+      }
     }
   },
   template: `
@@ -55,11 +73,16 @@ module.exports = View.extend({
     </div>
   `,
   initialize (options) {
-    this.graph = options.value || new graphlib.Graph({
-      directed: true,
-      multigraph: false,
-      compound: false
-    })
+    if (options.value) {
+      //clone to new graph
+      this.graph = graphlib.json.read(graphlib.json.write(options.value))
+    } else {
+      this.graph = new graphlib.Graph({
+        directed: true,
+        multigraph: false,
+        compound: false
+      })
+    }
 
     View.prototype.initialize.apply(this,arguments)
     this.on('change:valid change:value', this.reportToParent, this)
@@ -69,27 +92,104 @@ module.exports = View.extend({
   },
   render () {
     this.renderWithTemplate(this)
-    this.renderWorkflowPreview()
+    this.renderWorkflowGraph()
   },
-  renderWorkflowPreview () {
+  renderWorkflowGraph () {
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
       .then(WorkflowView => {
-        const workflowPreview = new WorkflowView({
-          graph: this.graph
-        })
-
-        this.workflowPreview = workflowPreview
-
-        this.renderSubview(workflowPreview, this.queryByHook('graph-preview'))
-
-        this.on('change:graph', workflowPreview.updateCytoscape, workflowPreview)
+        const workflowGraph = new WorkflowView({ graph: this.graph })
+        this.workflowGraph = workflowGraph
+        this.renderSubview(workflowGraph, this.queryByHook('graph-preview'))
+        this.on('change:graph', workflowGraph.updateCytoscape, workflowGraph)
+        this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
+        this.listenTo(workflowGraph, 'reset', this.onResetButton)
       })
+  },
+  onResetButton () {
+		bootbox.confirm({
+			title: 'Workflow action',
+			message: 'Remove all nodes?',
+			buttons: {
+				confirm: {
+					label: 'Yes, please',
+					className: 'btn-danger'
+				},
+				cancel: {
+					label: 'Cancel',
+					className: 'btn-default'
+				},
+			},
+			callback: confirm => {
+				if (!confirm) { return }
+        this.reset()
+			}
+		})
+  },
+  reset () {
+    var graph = this.graph
+    this.startTask = null
+    this.endTask = null
+    graph.nodes().forEach(node => graph.removeNode(node))
+    this.trigger('change:graph', graph)
+  },
+  onTapNode (event) {
+    var node = event.cyTarget.data()
+
+		bootbox.confirm({
+			title: 'Node action',
+			message: 'Delete the node? its successors will be deleted too.',
+			buttons: {
+				confirm: {
+					label: 'Yes, please',
+					className: 'btn-danger'
+				},
+				cancel: {
+					label: 'Better keep it',
+					className: 'btn-default'
+				},
+			},
+			callback: confirm => {
+				if (!confirm) { return }
+        this.removeNode(node.id)
+			}
+		})
+  },
+  removeNode (node) {
+    const graph = this.graph
+    var node = graph.node(node)
+    var nodes = []
+    collectSuccessorsInPath(nodes, node.id, graph)
+
+    // we should replace the end task
+    if (!/Event/.test(node._type)) { // also remove the predecessor event node of the task
+      var evNodes = graph.predecessors(node.id)
+      if (evNodes.length>0) {
+        nodes.push(evNodes[0])
+        let endTask = graph.predecessors(evNodes[0])[0]
+        this.set('endTask', App.state.tasks.get(endTask))
+      } else {
+        // start task removed
+        this.unset('startTask')
+        this.unset('endTask')
+      }
+    } else { // event removed, predecessor is the last task
+      let endTask = graph.predecessors(node.id)[0]
+      this.set('endTask', App.state.tasks.get(endTask))
+    }
+
+    for (var i=0; i<nodes.length; i++) {
+      graph.removeNode(nodes[i])
+    }
+
+    this.trigger('change:graph', this.graph)
   },
   onClickAddEvent (event) {
     event.preventDefault()
     event.stopPropagation()
 
     const builder = new WorkflowBuilderView({
+      workflow_tasks: this.workflowTasksCollection,
+      workflow_id: this.workflow_id,
       label: 'Event',
       name: 'event',
       emitter: this.endTask
@@ -146,6 +246,11 @@ const CustomDisabledInputView = DisabledInputView.extend({
 })
 
 const WorkflowBuilderView = FormView.extend({
+  props: {
+    workflow_tasks: 'collection',
+    workflow_id: 'string',
+    nodes: ['array', false, () => { return [] }]
+  },
   initialize (options) {
     let emitterSelection
     let stateEventSelection
@@ -153,18 +258,20 @@ const WorkflowBuilderView = FormView.extend({
 
     let emitter_id = options.emitter && options.emitter.id
     if (emitter_id) {
-      emitterSelection = new CustomDisabledInputView({
+      emitterSelection = new TaskSelectView({
+        label: 'Task A',
         name: 'emitter',
-        value: options.emitter.summary,
-        label: 'Event emitter',
-        selectedValue: options.emitter
+        options: this.workflow_tasks
       })
     } else {
       emitterSelection = new TaskSelectView({
         label: 'Task A',
         name: 'emitter',
         filterOptions: [
-          item => !item.workflow_id
+          item => {
+            let filter = !item.workflow_id || (item.workflow_id === this.workflow_id)
+            return filter
+          }
         ]
       })
       emitterSelection.on('change:value', () => {
@@ -197,7 +304,10 @@ const WorkflowBuilderView = FormView.extend({
     taskSelection = new TaskSelectView({
       label: 'Task B',
       filterOptions: [
-        item => !item.workflow_id
+        item => {
+          let filter = !item.workflow_id || (item.workflow_id === this.workflow_id)
+          return filter
+        }
       ]
     })
 
@@ -227,3 +337,12 @@ const WorkflowBuilderView = FormView.extend({
     }
   }
 })
+
+const collectSuccessorsInPath = (successors, node, graph) => {
+  successors.push(node)
+  var nodes = graph.successors(node)
+  if (nodes.length===0) return
+  for (var i=0; i<nodes.length; i++) {
+    collectSuccessorsInPath(successors, nodes[i], graph)
+  }
+}

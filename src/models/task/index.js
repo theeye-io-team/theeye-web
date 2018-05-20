@@ -123,6 +123,8 @@ const Scraper = ScraperTemplate.extend({
 })
 
 const Factory = function (attrs, options={}) {
+  if (attrs.isCollection) return
+
   if (attrs.type == TaskConstants.TYPE_SCRIPT) {
     return new Script(attrs, options)
   }
