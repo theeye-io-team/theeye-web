@@ -33,6 +33,7 @@ module.exports = {
       success: () => {
         const workflow = App.state.workflows.get(id)
         workflow.set(workflow.parse(tmp.serialize()))
+        this.populate(workflow)
       },
       error: (err) => {
         logger.error(err)
