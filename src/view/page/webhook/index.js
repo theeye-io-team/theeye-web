@@ -55,7 +55,7 @@ const CreateButton = CommonButton.extend({
 const MassDelete = MassiveDeleteButton.extend({
   initialize () {
     MassiveDeleteButton.prototype.initialize.apply(this,arguments)
-    this.name = 'webhook'
+    this.name = 'webhooks'
     this.displayProperty = 'name'
   },
   deleteItems (webhooks) {
@@ -82,7 +82,7 @@ module.exports = List.extend({
       new HelpIconView({
         color: [255,255,255],
         category: 'title_help',
-        text: HelpTexts.titles.webhook_page 
+        text: HelpTexts.titles.webhook_page
       }),
       this.queryByHook('title-help')
     )

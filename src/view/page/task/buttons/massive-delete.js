@@ -4,11 +4,10 @@ import TaskActions from 'actions/task'
 module.exports = MassiveDeleteButton.extend({
   initialize () {
     MassiveDeleteButton.prototype.initialize.apply(this,arguments)
-    this.name = 'name'
+    this.name = 'tasks'
     this.displayProperty = 'name'
   },
   deleteItems (tasks) {
     TaskActions.massiveDelete(tasks)
   }
 })
-

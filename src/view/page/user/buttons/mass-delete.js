@@ -6,7 +6,7 @@ import App from 'ampersand-app'
 module.exports = MassiveDeleteButton.extend({
 	initialize () {
 		MassiveDeleteButton.prototype.initialize.apply(this,arguments)
-		this.name = 'user'
+		this.name = 'users'
 		this.displayProperty = 'username'
 	},
 	deleteItems (users) {
