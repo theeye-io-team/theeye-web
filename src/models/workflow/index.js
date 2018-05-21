@@ -7,12 +7,45 @@ import config from 'config'
 const urlRoot = `${config.api_v3_url}/workflow`
 
 export const Workflow = AppModel.extend({
+  dataTypes: {
+    'graphlib.Graph': {
+      set (graph) {
+        if (graph instanceof graphlib.Graph) {
+          return {
+            val: graph,
+            type: 'graphlib.Graph'
+          }
+        }
+        try {
+          // try to parse it from passed in value:
+          var newGraph = graphlib.json.read(graph)
+
+          return {
+            val: newGraph,
+            type: 'graphlib.Graph'
+          }
+        } catch (parseError) {
+          // return the value with what we think its type is
+          return {
+            val: graph,
+            type: typeof graph
+          }
+        }
+      },
+      compare (currentVal, newVal, attributeName) {
+        return false
+      },
+      default () {
+        return new graphlib.Graph()
+      }
+    }
+  },
   urlRoot: urlRoot,
   props: {
     _type: 'string',
     id: 'string',
     name: 'string',
-		user_id: 'string', // owner/creator
+    user_id: 'string', // owner/creator
     customer_id: 'string',
     description: 'string',
     tags: 'array',
@@ -23,9 +56,7 @@ export const Workflow = AppModel.extend({
     start_task_id: ['string',true],
     end_task_id: ['string',true],
     current_task_id: 'string',
-    graph: ['object', false, () => {
-      return new graphlib.Graph()
-    }]
+    graph: ['graphlib.Graph', true]
   },
   collections: {
     tasks: function (attrs, options) {
@@ -83,10 +114,10 @@ export const Workflow = AppModel.extend({
     attrs.graph = graph
     return attrs
   },
-  parse (attrs) {
-    attrs.graph = graphlib.json.read(attrs.graph)
-    return attrs
-  }
+  //parse (attrs) {
+  //  attrs.graph = graphlib.json.read(attrs.graph)
+  //  return attrs
+  //}
 })
 
 export const Workflows = AppCollection.extend({

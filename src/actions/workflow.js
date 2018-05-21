@@ -32,7 +32,8 @@ module.exports = {
     tmp.save({},{
       success: () => {
         const workflow = App.state.workflows.get(id)
-        workflow.set(workflow.parse(tmp.serialize()))
+        workflow.set(tmp.serialize())
+        workflow.populated = false // reset to repopulate
         this.populate(workflow)
       },
       error: (err) => {
