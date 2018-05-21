@@ -70,13 +70,12 @@ module.exports = {
     if (workflow.tasks.models.length!==0) return
     var nodes = workflow.graph.nodes()
     var first = workflow.start_task_id
-    walkGraph([], workflow.graph, null, first, (tasks) => {
-      workflow.tasks.add(tasks)
-      tasks.forEach(task => {
-        if (!task.workflow_id) {
-          task.workflow_id = workflow.id
-        }
-      })
+    var tasks = walkGraph([], workflow.graph, null, first)
+    workflow.tasks.add(tasks)
+    tasks.forEach(task => {
+      if (!task.workflow_id) {
+        task.workflow_id = workflow.id
+      }
     })
     workflow.populated = true
   },
@@ -86,13 +85,12 @@ module.exports = {
   }
 }
 
-const walkGraph = (acum, graph, previous, current, end) => {
+const walkGraph = (acum, graph, previous, current) => {
   if (!current) {
     logger.log('workflow walk completed. no more to walk.')
-    return end(acum)
+    return
   }
   var data = graph.node(current)
-  var successors = graph.successors(current)
 
   if (!/Event/.test(data._type)) {
     var task = App.state.tasks.get(data.id)
@@ -101,7 +99,11 @@ const walkGraph = (acum, graph, previous, current, end) => {
     }
   }
 
-  walkGraph(acum, graph, current, successors[0], end)
+  var successors = graph.successors(current)
+  successors.forEach(succ => {
+    walkGraph(acum, graph, current, succ)
+  })
+  return acum
 }
 
 const unlinkTasks = (workflow) => {
