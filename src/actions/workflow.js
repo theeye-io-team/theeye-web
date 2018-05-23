@@ -9,13 +9,13 @@ const logger = require('lib/logger')('actions:workflow')
 module.exports = {
   get (id) {
     XHR.send({
-      url: `${config.api_v3_url}/workflow/id/graph`,
+      url: `${config.api_v3_url}/workflow/triggers?node=${id}`,
       method: 'get',
       timeout: 5000,
-      done (workflow, xhr) {
+      done (graphData, xhr) {
         if (xhr.status === 200) {
           App.state.workflowPage.clear()
-          let graph = graphlib.json.read(workflow)
+          let graph = graphlib.json.read(graphData)
           App.state.workflowPage.set('currentWorkflow', graph)
         } else {
           // ???

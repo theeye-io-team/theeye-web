@@ -57,6 +57,21 @@ module.exports = View.extend({
         })
         return new Collection(tasks)
       }
+    },
+    workflowEventsCollection: {
+      //cache: false,
+      deps: ['graph'],
+      fn () {
+        let nodes = this.graph.nodes()
+        var events = []
+        nodes.forEach(id => {
+          var node = this.graph.node(id)
+          if (/Event/.test(node._type)) {
+            events.push({ id })
+          }
+        })
+        return new Collection(events)
+      }
     }
   },
   template: `
@@ -69,7 +84,7 @@ module.exports = View.extend({
           </button>
         </div>
       </div>
-      <div class="workflow-preview col-sm-12" data-hook="graph-preview" style="height: 200px;"></div>
+      <div class="workflow-preview col-sm-12" data-hook="graph-preview" style="height: 300px;"></div>
     </div>
   `,
   initialize (options) {
@@ -97,7 +112,10 @@ module.exports = View.extend({
   renderWorkflowGraph () {
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
       .then(WorkflowView => {
-        const workflowGraph = new WorkflowView({ graph: this.graph })
+        const workflowGraph = new WorkflowView({
+          graph: this.graph,
+          mode: 'edit'
+        })
         this.workflowGraph = workflowGraph
         this.renderSubview(workflowGraph, this.queryByHook('graph-preview'))
         this.on('change:graph', workflowGraph.updateCytoscape, workflowGraph)
@@ -189,6 +207,7 @@ module.exports = View.extend({
 
     const builder = new WorkflowBuilderView({
       workflow_tasks: this.workflowTasksCollection,
+      workflow_events: this.workflowEventsCollection,
       workflow_id: this.workflow_id,
       label: 'Event',
       name: 'event',
@@ -248,6 +267,7 @@ const CustomDisabledInputView = DisabledInputView.extend({
 const WorkflowBuilderView = FormView.extend({
   props: {
     workflow_tasks: 'collection',
+    workflow_events: 'collection',
     workflow_id: 'string',
     nodes: ['array', false, () => { return [] }]
   },
@@ -259,12 +279,14 @@ const WorkflowBuilderView = FormView.extend({
     let emitter_id = options.emitter && options.emitter.id
     if (emitter_id) {
       emitterSelection = new TaskSelectView({
+        required: true,
         label: 'Task A',
         name: 'emitter',
         options: this.workflow_tasks
       })
     } else {
       emitterSelection = new TaskSelectView({
+        required: true,
         label: 'Task A',
         name: 'emitter',
         filterOptions: [
@@ -274,18 +296,23 @@ const WorkflowBuilderView = FormView.extend({
           }
         ]
       })
-      emitterSelection.on('change:value', () => {
-        let emitter = emitterSelection.selected()
-        if (!emitter) return
-        let options = App.state.events.filterEmitterEvents(emitter)
-        stateEventSelection.options = options
-        if (options.length>0) {
-          stateEventSelection.setValue(options[0])
-        }
-      })
     }
 
+    emitterSelection.on('change:value', () => {
+      let emitter = emitterSelection.selected()
+      if (!emitter) return
+      let options = App.state.events.filterEmitterEvents(
+        emitter,
+        this.workflow_events
+      )
+      stateEventSelection.options = options
+      if (options.length>0) {
+        stateEventSelection.setValue(options[0])
+      }
+    })
+
     stateEventSelection = new SelectView({
+      required: true,
       label: 'State',
       name: 'emitter_state',
       options: new Collection([]),
@@ -298,10 +325,14 @@ const WorkflowBuilderView = FormView.extend({
 
     if (emitter_id) {
       let events = App.state.events
-      stateEventSelection.options = events.filterEmitterEvents(options.emitter)
+      stateEventSelection.options = events.filterEmitterEvents(
+        options.emitter,
+        this.workflow_events
+      )
     }
 
     taskSelection = new TaskSelectView({
+      required: true,
       label: 'Task B',
       filterOptions: [
         item => {
@@ -325,9 +356,16 @@ const WorkflowBuilderView = FormView.extend({
 
     const buttons = new FormButtons({ confirmText: 'Add' })
     this.renderSubview(buttons)
-    buttons.on('click:confirm', () => {
-      this.trigger('event-added', this.prepareData())
-    })
+    buttons.on('click:confirm', this.submit, this)
+  },
+  submit () {
+    this.beforeSubmit()
+    if (!this.valid) {
+      // cancel submit
+      return
+    }
+    let data = this.prepareData(this.data)
+    this.trigger('event-added', data)
   },
   prepareData () {
     return {

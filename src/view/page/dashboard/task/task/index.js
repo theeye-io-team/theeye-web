@@ -90,6 +90,11 @@ const TaskButtonsView = View.extend({
           <i data-hook="last_job_lifecycle" style="top:-6px;position:relative;right:4px;font-size:12px"></i> </li>
         </button>
       </li>
+  <li>
+    <button class="btn btn-primary tooltiped" title="Workflow" data-hook="workflow">
+      <i class="fa fa-sitemap" aria-hidden="true"></i>
+    </button>
+  </li>
       <span data-hook="edit-button"> </span>
       <li>
         <button data-hook="search" class="btn btn-primary tooltiped" title="Search related elements">
@@ -158,6 +163,13 @@ const TaskButtonsView = View.extend({
     //'click button[data-hook=edit]':'onClickEdit',
     'click button[data-hook=search]':'onClickSearch',
     'click button[data-hook=last_exec]':'onClickLastExecution',
+    'click button[data-hook=workflow]':'onClickWorkflow',
+  },
+  onClickWorkflow (event) {
+    event.stopPropagation();
+    event.preventDefault();
+    TaskActions.nodeWorkflow(this.model.id)
+    return false;
   },
   onClickSearch (event) {
     event.preventDefault()

@@ -187,14 +187,30 @@ const EmitterCollection = Collection.extend({
 const EventsCollection = AppCollection.extend({
   url: urlRoot,
   model: Model,
-  filterEmitterEvents (emitter) {
+  /**
+   * @param {Emitter} emitter
+   * @param {AmpersandCollection} excludes
+   */
+  filterEmitterEvents (emitter, excludes) {
     let type = emitter._type
     let events
 
     if (type === 'Resource') {
-      events = this.filter((ev) => { return ev.emitter_id == emitter.monitor.id })
+      events = this.filter((ev) => {
+        var keep = (
+          ev.emitter_id == emitter.monitor.id &&
+          excludes.get(ev.id) === undefined
+        )
+        return keep
+      })
     } else {
-      events = this.filter((ev) => { return ev.emitter_id == emitter.id })
+      events = this.filter((ev) => {
+        var keep = (
+          ev.emitter_id == emitter.id &&
+          excludes.get(ev.id) === undefined
+        )
+        return keep
+      })
     }
     return events
   }

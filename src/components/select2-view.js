@@ -323,7 +323,7 @@ module.exports = View.extend({
   getErrorMessage: function () {
     var message = ''
     if (this.required) {
-      if (!this.value) {
+      if (!this.value||Number(this.value)===0) {
         return this.requiredMessage
       }
       if (Array.isArray(this.value) && this.value.length === 0) {

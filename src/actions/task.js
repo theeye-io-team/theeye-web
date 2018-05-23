@@ -10,6 +10,9 @@ import OnboardingActions from 'actions/onboarding'
 const logger = require('lib/logger')('actions:tasks')
 
 module.exports = {
+  nodeWorkflow (node) {
+    App.navigate('/admin/workflow/' + node)
+  },
   update (id, data) {
     let task = App.state.tasks.get(id)
     task.taskArguments.reset([])

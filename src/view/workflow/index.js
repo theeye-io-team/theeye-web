@@ -15,8 +15,15 @@ module.exports = View.extend({
     </div>
   `,
   props: {
+    mode: ['string',false],
     //graph: 'graphlib'
     graph: 'object' // Graph (graphlib) instance
+  },
+  bindings: {
+    mode: {
+      type: 'toggle',
+      hook: 'reset'
+    }
   },
   events: {
     'click button[data-hook=fit]':'onClickFit',
@@ -83,10 +90,13 @@ module.exports = View.extend({
     return elems
   },
   updateCytoscape () {
-    this.cy.destroy()
+    if (this.cy) {
+      this.cy.destroy()
+    }
     this.renderCytoscape()
   },
   renderCytoscape () {
+    if (!this.graph) return
     const elems = this.getCytoscapeElements()
     cydagre(cytoscape)
 
