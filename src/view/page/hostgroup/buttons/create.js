@@ -40,8 +40,9 @@ module.exports = CommonButton.extend({
         form.beforeSubmit()
         if (form.valid === true) {
           const msg = [
-            'This template will be applied to the source host.',
-            'This means that any tasks or monitors deleted from the config will be deleted as well from the source host.'
+            'Do you want to apply this configuration to the source host you used to create this template?',
+            'YES: Apply template configuration to the source host. <br> This means that any tasks or monitors deleted from the config will be deleted as well from the source host.',
+            'NO: Do not apply template configuration to the source host.'
           ].join('<br>')
 
           bootbox.confirm({
@@ -49,20 +50,16 @@ module.exports = CommonButton.extend({
             message: msg,
             buttons: {
               confirm: {
-                label: 'Confirm',
+                label: 'YES',
                 className: 'btn-danger'
               },
               cancel: {
-                label: 'Cancel',
+                label: 'NO',
                 className: 'btn-default'
               },
             },
             callback: confirm => {
-              if (!confirm) {
-                modal.hide()
-                return
-              }
-              HostGroupActions.create(form.data)
+              HostGroupActions.create(form.data, confirm)
               modal.hide()
             }
           })

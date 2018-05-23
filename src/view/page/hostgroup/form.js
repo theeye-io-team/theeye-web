@@ -270,11 +270,6 @@ module.exports = FormView.extend({
         ]
       })
 
-      selectedHosts.listenTo(hostSelect, 'change:value', function () {
-        removeHostFromGroup(App.state.hosts.get(hostSelect.previousAttributes().value))
-        addHostToGroup(App.state.hosts.get(hostSelect.value))
-      })
-
       this.fields.unshift(hostSelect)
     } else {
       App.state.hostGroupPage.configResources = this.model.resources

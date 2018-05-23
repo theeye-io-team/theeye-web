@@ -9,7 +9,7 @@ import { Collection as Hosts } from 'models/host'
 import { Model as HostGroup } from 'models/hostgroup'
 
 const Actions = {
-  create (data) {
+  create (data, applyToSourceHost) {
     const state = App.state.hostGroupPage
     const resources = state.configResources.serialize()
     const tasks = state.configTasks.serialize()
@@ -18,7 +18,8 @@ const Actions = {
     const body = Object.assign({}, data, {
       resources: resources,
       tasks: tasks,
-      triggers: triggers
+      triggers: triggers,
+      applyToSourceHost: applyToSourceHost
     })
 
     XHR.send({
