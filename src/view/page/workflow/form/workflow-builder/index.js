@@ -16,11 +16,6 @@ module.exports = View.extend({
   props: {
     workflow_id: 'string',
     name: ['string', false, 'workflow'],
-    // the first selected task. this is the first task executed.
-    startTask: 'state',
-    // the last selected task. can be empty.
-    // will be used as emitter on next selection step
-    endTask: 'state',
     graph: ['object', false]
   },
   derived: {
@@ -120,13 +115,13 @@ module.exports = View.extend({
         this.renderSubview(workflowGraph, this.queryByHook('graph-preview'))
         this.on('change:graph', workflowGraph.updateCytoscape, workflowGraph)
         this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
-        this.listenTo(workflowGraph, 'reset', this.onResetButton)
+        this.listenTo(workflowGraph, 'clear', this.onClearButton)
       })
   },
-  onResetButton () {
+  onClearButton () {
 		bootbox.confirm({
 			title: 'Workflow action',
-			message: 'Remove all nodes?',
+			message: 'Remove everything?',
 			buttons: {
 				confirm: {
 					label: 'Yes, please',
@@ -139,14 +134,12 @@ module.exports = View.extend({
 			},
 			callback: confirm => {
 				if (!confirm) { return }
-        this.reset()
+        this.clear()
 			}
 		})
   },
-  reset () {
+  clear () {
     var graph = this.graph
-    this.startTask = null
-    this.endTask = null
     graph.nodes().forEach(node => graph.removeNode(node))
     this.trigger('change:graph', graph)
   },
@@ -172,27 +165,15 @@ module.exports = View.extend({
 			}
 		})
   },
-  removeNode (node) {
+  removeNode (id) {
     const graph = this.graph
-    var node = graph.node(node)
-    var nodes = []
-    collectSuccessorsInPath(nodes, node.id, graph)
+    var nodes = [id]
+    var node = graph.node(id)
 
-    // we should replace the end task
-    if (!/Event/.test(node._type)) { // also remove the predecessor event node of the task
-      var evNodes = graph.predecessors(node.id)
-      if (evNodes.length>0) {
-        nodes.push(evNodes[0])
-        let endTask = graph.predecessors(evNodes[0])[0]
-        this.set('endTask', App.state.tasks.get(endTask))
-      } else {
-        // start task removed
-        this.unset('startTask')
-        this.unset('endTask')
-      }
-    } else { // event removed, predecessor is the last task
-      let endTask = graph.predecessors(node.id)[0]
-      this.set('endTask', App.state.tasks.get(endTask))
+    // also remove the predecessor and successors event nodes of the task
+    if (!/Event/.test(node._type)) {
+      graph.predecessors(id).forEach(n => nodes.push(n))
+      graph.successors(id).forEach(n => nodes.push(n))
     }
 
     for (var i=0; i<nodes.length; i++) {
@@ -210,8 +191,7 @@ module.exports = View.extend({
       workflow_events: this.workflowEventsCollection,
       workflow_id: this.workflow_id,
       label: 'Event',
-      name: 'event',
-      emitter: this.endTask
+      name: 'event'
     })
 
     const modal = new Modalizer({
@@ -243,10 +223,6 @@ module.exports = View.extend({
     w.setEdge(data.emitter.id, data.emitter_state.id)
     w.setEdge(data.emitter_state.id, data.task.id)
 
-    if (!this.endTask) {
-      this.startTask = data.emitter
-    }
-    this.endTask = data.task
     // force change trigger
     this.trigger('change:graph', this.graph)
   },
@@ -276,8 +252,7 @@ const WorkflowBuilderView = FormView.extend({
     let stateEventSelection
     let taskSelection
 
-    let emitter_id = options.emitter && options.emitter.id
-    if (emitter_id) {
+    if (this.workflow_tasks.length>0) {
       emitterSelection = new TaskSelectView({
         required: true,
         label: 'Task A',
@@ -323,14 +298,6 @@ const WorkflowBuilderView = FormView.extend({
       unselectedText: 'select the emitter state'
     })
 
-    if (emitter_id) {
-      let events = App.state.events
-      stateEventSelection.options = events.filterEmitterEvents(
-        options.emitter,
-        this.workflow_events
-      )
-    }
-
     taskSelection = new TaskSelectView({
       required: true,
       label: 'Task B',
@@ -375,12 +342,3 @@ const WorkflowBuilderView = FormView.extend({
     }
   }
 })
-
-const collectSuccessorsInPath = (successors, node, graph) => {
-  successors.push(node)
-  var nodes = graph.successors(node)
-  if (nodes.length===0) return
-  for (var i=0; i<nodes.length; i++) {
-    collectSuccessorsInPath(successors, nodes[i], graph)
-  }
-}

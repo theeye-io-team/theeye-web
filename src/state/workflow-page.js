@@ -3,6 +3,6 @@ import State from  'ampersand-state'
 
 module.exports = State.extend({
   props: {
-    currentWorkflow: ['object',false],
+    currentWorkflow: 'object'
   }
 })

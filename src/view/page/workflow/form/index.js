@@ -8,6 +8,7 @@ import InputView from 'components/input-view'
 import TextareaView from 'components/input-view/textarea'
 import TagsSelectView from 'view/tags-select'
 import MembersSelectView from 'view/members-select'
+import TaskSelectView from 'view/task-select'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
 import WorkflowActions from 'actions/workflow'
@@ -27,6 +28,8 @@ export default FormView.extend({
       'remove-workflow-button'
     ]
 
+    WorkflowActions.populate(this.model)
+
     this.fields = [
       new InputView({
         label: 'Name *',
@@ -42,18 +45,25 @@ export default FormView.extend({
         visible: true,
         value: this.model.triggers
       }),
+      new TaskSelectView({
+        required: true,
+        label: 'Starting Task',
+        name: 'start_task_id',
+        value: this.model.start_task_id,
+        options: this.model.tasks
+      }),
       new WorkflowBuilder({
         workflow_id: this.model.id,
         name: 'graph',
-        value: this.model.graph,
-        startTask: this.model.start_task,
-        endTask: this.model.end_task
+        value: this.model.graph
       }),
       // advanced fields starts visible = false
       new AdvancedToggle({
         onclick: (event) => {
           this.advancedFields.forEach(name => {
-            this._fieldViews[name].toggle('visible')
+            var field = this._fieldViews[name]
+            if (!field) return
+            field.toggle('visible')
           })
         }
       }),
@@ -166,8 +176,6 @@ export default FormView.extend({
   },
   prepareData (data) {
     let f = assign({}, data)
-    f.start_task_id = this._fieldViews.graph.startTask.id
-    f.end_task_id = this._fieldViews.graph.endTask.id
     delete f['advanced-toggler']
     delete f['remove-workflow-button']
     return f

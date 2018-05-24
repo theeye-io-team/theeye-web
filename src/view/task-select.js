@@ -21,18 +21,16 @@ module.exports = SelectView.extend({
       { filters }
     )
 
-    Object.assign(this, {
-      options,
-      multiple: false,
-      tags: false,
-      label: 'Task',
-      name: 'task',
-      styles: 'form-group',
-      unselectedText: 'select a task',
-      idAttribute: 'id',
-      textAttribute: 'summary',
-      allowCreateTags: false
-    }, specs)
+    this.options = options
+    this.multiple = false
+    this.tags = false
+    this.label = specs.label || 'Task'
+    this.name = specs.name || 'task'
+    this.styles = 'form-group'
+    this.unselectedText = 'select a task'
+    this.idAttribute = 'id'
+    this.textAttribute = 'summary'
+    this.allowCreateTags = false
 
     SelectView.prototype.initialize.apply(this,arguments)
   }

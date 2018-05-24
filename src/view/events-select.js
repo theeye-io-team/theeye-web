@@ -16,7 +16,6 @@ module.exports = SelectView.extend({
     }
 
     this.options = new FilteredCollection(App.state.events, { filters })
-
     this.multiple = true
     this.tags = true
     this.label = options.label || 'Events'

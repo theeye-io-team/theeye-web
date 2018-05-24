@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import View from 'ampersand-view'
 import cytoscape from 'cytoscape'
 import cydagre from 'cytoscape-dagre'
@@ -10,7 +11,7 @@ module.exports = View.extend({
       <button class="btn btn-default" data-hook="fit">Fit</button>
       <button class="btn btn-default" data-hook="center">Center</button>
       <button class="btn btn-default" data-hook="redraw">Re-draw</button>
-      <button class="btn btn-danger" data-hook="reset">Reset!</button>
+      <button class="btn btn-danger" data-hook="clear">Clear!</button>
       <div class="workflow-graph-container" data-hook="graph-container"> </div>
     </div>
   `,
@@ -19,17 +20,26 @@ module.exports = View.extend({
     //graph: 'graphlib'
     graph: 'object' // Graph (graphlib) instance
   },
+  initialize () {
+    View.prototype.initialize.apply(this,arguments)
+
+    const updateState = () => {
+      App.state.workflowVisualizer.graph = this.graph
+    }
+
+    this.listenToAndRun(this, 'change:graph', updateState)
+  },
   bindings: {
     mode: {
       type: 'toggle',
-      hook: 'reset'
+      hook: 'clear'
     }
   },
   events: {
     'click button[data-hook=fit]':'onClickFit',
     'click button[data-hook=center]':'onClickCenter',
     'click button[data-hook=redraw]':'onClickRedraw',
-    'click button[data-hook=reset]':'onClickReset',
+    'click button[data-hook=clear]':'onClickClear',
   },
   onClickFit (event) {
     event.preventDefault()
@@ -55,11 +65,11 @@ module.exports = View.extend({
 
     return false
   },
-  onClickReset (event) {
+  onClickClear (event) {
     event.preventDefault()
     event.stopPropagation()
 
-    this.trigger('reset')
+    this.trigger('clear')
 
     return false
   },

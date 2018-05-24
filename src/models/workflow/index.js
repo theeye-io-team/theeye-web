@@ -79,7 +79,7 @@ export const Workflow = AppModel.extend({
     state: 'string',
     triggers: ['array', false, () => { return [] }],
     start_task_id: ['string',true],
-    end_task_id: ['string',true],
+    end_task_id: ['string'],
     current_task_id: 'string',
     graph: ['graphlib.Graph', true]
   },
@@ -103,6 +103,7 @@ export const Workflow = AppModel.extend({
       cache: false,
       deps: ['start_task_id'],
       fn () {
+        if (!this.start_task_id) return
         return App.state.tasks.get(this.start_task_id)
       }
     },
@@ -110,6 +111,7 @@ export const Workflow = AppModel.extend({
       cache: false,
       deps: ['end_task_id'],
       fn () {
+        if (!this.end_task_id) return
         return App.state.tasks.get(this.end_task_id)
       }
     },
@@ -139,7 +141,7 @@ export const Workflow = AppModel.extend({
 
     attrs.graph = graph
     return attrs
-  },
+  }
   //parse (attrs) {
   //  attrs.graph = graphlib.json.read(attrs.graph)
   //  return attrs
