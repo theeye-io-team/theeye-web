@@ -6,6 +6,31 @@ import graphlib from 'graphlib'
 import config from 'config'
 const urlRoot = `${config.api_v3_url}/workflow`
 
+const formattedTags = () => {
+  return {
+    deps: ['name','hostname','description','tags','graph'],
+    fn () {
+      let graph = this.graph
+      let tasksNames = []
+      if (graph) {
+        graph.nodes().forEach(node => {
+          var data = graph.node(node)
+          if (!/Event/.test(data._type)) {
+            var task = App.state.tasks.get(data.id)
+            if (!task) return
+            tasksNames.push(task._values.name)
+          }
+        })
+      }
+      return [
+        'name=' + this.name,
+        'hostname=' + this.hostname,
+        'description=' + this.description
+      ].concat(this.tags).concat(tasksNames)
+    }
+  }
+}
+
 export const Workflow = AppModel.extend({
   dataTypes: {
     'graphlib.Graph': {
@@ -67,6 +92,7 @@ export const Workflow = AppModel.extend({
     populated: 'boolean'
   },
   derived: {
+    formatted_tags: formattedTags(),
     canExecute: {
       deps: [],
       fn () {
@@ -102,7 +128,7 @@ export const Workflow = AppModel.extend({
     graph.nodes = graph.nodes.map(node => {
       return {
         v: node.v,
-        value: { 
+        value: {
           name: node.value.name,
           id: node.value.id,
           _type: node.value._type,

@@ -9,6 +9,7 @@ import TaskRowView from './task'
 import MonitorRowView from './monitor'
 import RunAllTasksButton from './task/run-all-button'
 import JobActions from 'actions/job'
+import WorkflowActions from 'actions/workflow'
 import bootbox from 'bootbox'
 import LIFECYCLE from 'constants/lifecycle'
 
@@ -48,7 +49,13 @@ const runAllTasks = (rows) => {
 			},
 			callback (confirmed) {
 				if (confirmed===true) {
-          tasks.forEach(task => JobActions.create(task))
+          tasks.forEach(task => {
+            if (/Workflow/.test(task._type)) {
+              WorkflowActions.run(task)
+            } else {
+              JobActions.create(task.start_task)
+            }
+          })
 				}
 			}
 		})

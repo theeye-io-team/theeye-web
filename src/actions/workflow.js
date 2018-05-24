@@ -4,6 +4,7 @@ import config from 'config'
 import XHR from 'lib/xhr'
 import graphlib from 'graphlib'
 import { Workflow } from 'models/workflow'
+import JobActions from 'actions/job'
 const logger = require('lib/logger')('actions:workflow')
 
 module.exports = {
@@ -82,6 +83,9 @@ module.exports = {
   triggerExecution (workflow) {
     this.populate(workflow)
     workflow.start_task.trigger('execution')
+  },
+  run (workflow) {
+    JobActions.create(workflow.start_task)
   }
 }
 
