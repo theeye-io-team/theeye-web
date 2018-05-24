@@ -4,6 +4,7 @@ import PanelButton from 'components/list/item/panel-button'
 import HostGroupActions from 'actions/hostgroup'
 import Modalizer from 'components/modalizer'
 import FormView from '../form'
+import bootbox from 'bootbox'
 
 module.exports = PanelButton.extend({
   initialize (options) {
@@ -14,7 +15,6 @@ module.exports = PanelButton.extend({
   events: {
     click (event) {
       event.stopPropagation()
-
       const form = new FormView({ model: this.model })
       const modal = new Modalizer({
         confirmButton: 'Save',
@@ -31,13 +31,52 @@ module.exports = PanelButton.extend({
       })
 
       this.listenTo(modal,'confirm',() => {
+        var self = this
         form.beforeSubmit()
         if (!form.valid) return
-        HostGroupActions.update(this.model.id, form.data)
+
+        if(self.hostsDeleted(form.data)) {
+          const msg = [
+            'Do you want to also remove the template monitors and tasks from the removed hosts?',
+            '<b>NO:</b> Only remove the hosts form the template.',
+            '<b>YES:</b> Remove the hosts form the template and also delete the template monitors and tasks from the removed hosts.'
+          ].join('<br>')
+
+          bootbox.dialog({
+            title: 'Warning! Please, read carefully before you continue.',
+            message: msg,
+            buttons: {
+              no: {
+                label: 'NO',
+                className: 'btn-default',
+                callback: function() {
+                  HostGroupActions.update(self.model.id, form.data, false)
+                }
+              },
+              yes: {
+                label: 'YES',
+                className: 'btn-danger',
+                callback: function() {
+                  HostGroupActions.update(self.model.id, form.data, true)
+                }
+              }
+            }
+          })
+        } else {
+          HostGroupActions.update(self.model.id, form.data, false)
+        }
         modal.hide()
       })
 
       modal.show()
     }
+  },
+  hostsDeleted (data) {
+    var deleted = false
+    var prevHosts = this.model.hosts.models.map(i => i.id)
+    prevHosts.forEach( function(id) {
+      deleted = !data.hosts.includes(id)
+    })
+    return deleted
   }
 })

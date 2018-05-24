@@ -38,8 +38,10 @@ const Actions = {
       }
     })
   },
-  update (id, data) {
-    const body = Object.assign({},data)
+  update (id, data, deleteInstances) {
+    const body = Object.assign({},data,{
+      deleteInstances: deleteInstances
+    })
 
     XHR.send({
       url: `${config.api_url}/hostgroup/${id}`,
@@ -58,9 +60,9 @@ const Actions = {
       }
     })
   },
-  remove (id) {
+  remove (id, deleteInstances) {
     XHR.send({
-      url: `${config.api_url}/hostgroup/${id}`,
+      url: `${config.api_url}/hostgroup/${id}?deleteInstances=${deleteInstances}`,
       method: 'DELETE',
       headers: { Accept:'application/json;charset=UTF-8' },
       done (data,xhr) {

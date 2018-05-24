@@ -41,8 +41,8 @@ module.exports = CommonButton.extend({
         if (form.valid === true) {
           const msg = [
             'Do you want to apply this configuration to the source host you used to create this template?',
-            'YES: Apply template configuration to the source host. <br> This means that any tasks or monitors deleted from the config will be deleted as well from the source host.',
-            'NO: Do not apply template configuration to the source host.'
+            '<b>YES:</b> Apply template configuration to the source host. <br> This means that any tasks or monitors deleted from the config will be deleted as well from the source host.',
+            '<b>NO:</b> Do not apply template configuration to the source host.'
           ].join('<br>')
 
           bootbox.confirm({
