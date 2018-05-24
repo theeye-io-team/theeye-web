@@ -30,6 +30,20 @@ export default FormView.extend({
 
     WorkflowActions.populate(this.model)
 
+    const workflowBuilder = new WorkflowBuilder({
+      workflow_id: this.model.id,
+      name: 'graph',
+      value: this.model.graph
+    })
+
+    const taskSelect = new TaskSelectView({
+      required: true,
+      label: 'Starting Task',
+      name: 'start_task_id',
+      value: this.model.start_task_id,
+      options: this.model.tasks
+    })
+
     this.fields = [
       new InputView({
         label: 'Name *',
@@ -45,18 +59,8 @@ export default FormView.extend({
         visible: true,
         value: this.model.triggers
       }),
-      new TaskSelectView({
-        required: true,
-        label: 'Starting Task',
-        name: 'start_task_id',
-        value: this.model.start_task_id,
-        options: this.model.tasks
-      }),
-      new WorkflowBuilder({
-        workflow_id: this.model.id,
-        name: 'graph',
-        value: this.model.graph
-      }),
+      taskSelect,
+      workflowBuilder,
       // advanced fields starts visible = false
       new AdvancedToggle({
         onclick: (event) => {
@@ -120,6 +124,10 @@ export default FormView.extend({
       })
       this.fields.push(removeButton)
     }
+
+    this.listenTo(workflowBuilder, 'change:workflowTasksCollection', () => {
+      taskSelect.options = workflowBuilder.workflowTasksCollection
+    })
 
     FormView.prototype.initialize.apply(this, arguments)
   },

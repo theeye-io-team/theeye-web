@@ -197,7 +197,7 @@ module.exports = View.extend({
     const modal = new Modalizer({
       buttons: false,
       title: 'Workflow',
-      bodyView: builder 
+      bodyView: builder
     })
 
     this.listenTo(modal,'hidden',() => {
