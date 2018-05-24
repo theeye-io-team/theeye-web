@@ -274,7 +274,6 @@ const ScheduleForm = FormView.extend({
     } finally {
       if (isNaN(nextRunAt)) {
         nextRunAt = undefined
-        console.log('failed to calculate nextRunAt due to invalid repeat interval')
       }
     }
     return nextRunAt

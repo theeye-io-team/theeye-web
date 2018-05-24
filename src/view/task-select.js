@@ -7,7 +7,15 @@ import FilteredCollection from 'ampersand-filtered-subcollection'
 module.exports = SelectView.extend({
   initialize (specs) {
 
-    var filters = [ item => true ]
+    var filters = [
+      item => true,
+      item => item.host_id,
+      item => {
+        if (item.taskArguments.length===0) return true
+        var noFixed = item.taskArguments.models.find(arg => arg.type !== 'fixed')
+        return (noFixed === undefined)
+      }
+    ]
 
     if (
       Array.isArray(specs.filterOptions) &&
