@@ -53,7 +53,7 @@ const runAllTasks = (rows) => {
             if (/Workflow/.test(task._type)) {
               WorkflowActions.run(task)
             } else {
-              JobActions.create(task.start_task)
+              JobActions.create(task)
             }
           })
 				}
@@ -348,22 +348,22 @@ module.exports = View.extend({
 
         if (App.state.searchbox.search.length > 3) {
           const rows = taskRows.views.filter(row => row.show === true)
-          if (!rows || rows.length===0) {
+          if (!rows || rows.length === 0) {
             // no rows to show
             runAllButton.disabled = true
           } else {
             // verify if all the tasks are not being executed
-            const jobsInProgress = rows
+            const nonExecutableTasks = rows
               .map(row => row.model)
-							.find(task => {
-								if (/Task/.test(task._type)) {
-									const lifecycle = task.lastjob.lifecycle
-									return LIFECYCLE.inProgress(lifecycle)
-								}
-								return false // <<<< workflow
-							})
+              .find(task => {
+                if (/Task/.test(task._type)) {
+                  const lifecycle = task.lastjob.lifecycle
+                  return (LIFECYCLE.inProgress(lifecycle) || task.hasDinamicArguments)
+                }
+                return false // <<<< workflow
+              })
 
-            runAllButton.disabled = (jobsInProgress !== undefined)
+            runAllButton.disabled = (nonExecutableTasks !== undefined)
           }
         } else {
           runAllButton.disabled = true
@@ -371,7 +371,7 @@ module.exports = View.extend({
       }
     }
 
-    this.listenToAndRun(App.state.searchbox,'change:search',search)
+    this.listenToAndRun(App.state.searchbox, 'change:search', search)
   },
   renderPlusButton () {
     this.plusButton = new PlusMenuButton()
