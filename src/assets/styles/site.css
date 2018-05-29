@@ -173,8 +173,8 @@ hr {border:none;border-bottom:1px dotted #fff}
 .loginBox .result-container h1 {    font-size: 27px; color: #d78d47;}
 .loginBox .result-container h2 {    font-size: 22px; color: #fff;}
 
-.registerBox, .formContainer { width:80%; margin:110px auto 4%; text-align:center; color:#fff }
-.registerBox, .registerBoxTitle { width:100%; margin:90px auto 4%; text-align:left; color:#fff; padding-left: 10px; padding-right: 10px}
+.registerBox, .formContainer { width:80%; margin:50px auto 4%; text-align:center; color:#fff }
+.registerBox, .registerBoxTitle { width:90%; margin:60px auto 4%; text-align:left; color:#fff; padding-left: 10px; padding-right: 10px}
 
 .registerBox ul {
   vertical-align: middle;
@@ -186,23 +186,24 @@ hr {border:none;border-bottom:1px dotted #fff}
 }
 
 .registerBox h1 {
-  font-size: 35px;
-  color: #d78d47;
-  letter-spacing: 2px;
-  margin: 0 0 40px;
-  line-height: 50px
+  text-align: center;
+  font-size: 28px;
+  color: #fff;
+  /* letter-spacing: 2px; */
+  /* margin: 0 0 40px; */
+  line-height: 1.4
 }
 .registerBox h2 {
   font-size: 25px;
   color: #d78d47;
   letter-spacing: 2px;
-  margin: 0 0 40px;
+  /* margin: 0 0 40px; */
   line-height: 25px
 }
 
 .registerBox, .registerBoxAdditionalInformation { width:100%; margin:90px auto 4%; text-align:left; color:#fff; padding-left: 10px; padding-right: 10px;}
 
-.registerBox, .registerBoxCustomers { width:100%; margin:90px auto 4%; text-align:center; color:#fff; padding-left: 10px; padding-right: 10px}
+.registerBox, .registerBoxCustomers { width:100%; margin:60px auto 4%; text-align:center; color:#fff; padding-left: 10px; padding-right: 10px}
 .registerBox h1 {margin-bottom:24px}
 .registerBox .or {border-top:1px dashed #fff;position:relative;margin:40px 0}
 .registerBox input, .registerBox button {width:100%;border:none;border-radius:4px;padding:10px;margin-bottom:10px;text-align:center;font-size:24px}
