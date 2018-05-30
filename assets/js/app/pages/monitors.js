@@ -547,6 +547,15 @@ var MonitorsPageInit = (function(){
       }
     }
 
+    function handleNestedEdit (event) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      bootbox.alert({
+        message: '<div> <p>Please modify this monitor from the Dashboard.</p> </div>'
+      })
+    }
+
     function handleResourceAction(event){
       event.preventDefault();
       event.stopPropagation();
@@ -585,6 +594,7 @@ var MonitorsPageInit = (function(){
     $('[data-hook=edit-script-monitor]').on('click', handleResourceAction);
     $('[data-hook=edit-dstat-monitor]').on('click', handleResourceAction);
     $('[data-hook=create-monitor').on('click', handleResourceAction);
+    $('[data-hook=edit-nested-monitor]').on('click', handleNestedEdit);
 
     // hook to scripts.js event script_uploaded
     window.scriptState.on('script_uploaded', function(evt,script){
