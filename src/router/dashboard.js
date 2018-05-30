@@ -5,6 +5,7 @@ import App from 'ampersand-app'
 import search from 'lib/query-params'
 import Route from 'lib/router-route'
 import after from 'lodash/after'
+import WorkflowActions from 'actions/workflow'
 
 const logger = require('lib/logger')('router:dashboard')
 
@@ -57,6 +58,9 @@ const prepareData = (options) => {
       step()
       App.state.tasks.fetch({ success: () => {
         App.state.dashboard.groupTasks()
+        App.state.workflows.forEach(workflow => {
+          WorkflowActions.populate(workflow)
+        })
         step()
       }, error: step })
     }

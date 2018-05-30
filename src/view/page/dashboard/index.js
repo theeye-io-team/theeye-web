@@ -11,7 +11,6 @@ import RunAllTasksButton from './task/run-all-button'
 import JobActions from 'actions/job'
 import WorkflowActions from 'actions/workflow'
 import bootbox from 'bootbox'
-import LIFECYCLE from 'constants/lifecycle'
 
 const logger = require('lib/logger')('view:page:dashboard')
 const ItemsFolding = require('./panel-items-fold')
@@ -337,6 +336,8 @@ module.exports = View.extend({
           onrow: (row, isHit) => {
             if (row.model.canExecute) {
               row.show = isHit
+            } else {
+              row.show = false
             }
           },
           onsearchend: () => {
@@ -357,10 +358,17 @@ module.exports = View.extend({
               .map(row => row.model)
               .find(task => {
                 if (/Task/.test(task._type)) {
-                  const lifecycle = task.lastjob.lifecycle
-                  return (LIFECYCLE.inProgress(lifecycle) || task.hasDinamicArguments)
+                  return !task.canBatchExecute
                 }
-                return false // <<<< workflow
+                if (/Workflow/.test(task._type)) {
+                  var WFNotExecutable = false
+                  task.tasks.models.forEach(function (wfTask) {
+                    if (!wfTask.canBatchExecute) {
+                      WFNotExecutable = true
+                    }
+                  })
+                  return WFNotExecutable
+                }
               })
 
             runAllButton.disabled = (nonExecutableTasks !== undefined)

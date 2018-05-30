@@ -3,6 +3,7 @@ import AppCollection from 'lib/app-collection'
 import isURL from 'validator/lib/isURL'
 import isMongoId from 'validator/lib/isMongoId'
 import TaskConstants from 'constants/task'
+import LIFECYCLE from 'constants/lifecycle'
 
 //import { Model as Host } from 'models/host'
 
@@ -43,6 +44,12 @@ const Script = ScriptTemplate.extend({
       deps: ['script_id','host_id'],
       fn () {
         return isMongoId(this.script_id || '') && isMongoId(this.host_id || '')
+      }
+    },
+    canBatchExecute: {
+      deps: ['lastjob', 'hasDinamicArguments'],
+      fn () {
+        return !(LIFECYCLE.inProgress(this.lastjob.lifecycle) || this.hasDinamicArguments)
       }
     },
     hasTemplate: {
