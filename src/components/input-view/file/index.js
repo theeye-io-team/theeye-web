@@ -4,6 +4,22 @@ import './style.css'
 // //////////////////////////////////////////////////////////////////////////////
 
 var FileReaderInputView = InputView.extend({
+  template: `
+    <div>
+      <label class="col-sm-3 control-label" data-hook="label"></label>
+      <div class="col-sm-9">
+        <div class="upload-btn-wrapper">
+          <button for="file-upload" data-hook="button-label" class="btn btn-primary">
+            <i class="fa fa-folder-open"></i> Open File
+          </button>
+          <input id="file-upload" class="" type="file">
+        </div>
+        <div data-hook="message-container" class="message message-below message-error">
+          <p data-hook="message-text"></p>
+        </div>
+      </div>
+    </div>
+  `,
   props: {
     label: [ 'string', true, 'File' ],
     name: [ 'string', true, 'file' ],
@@ -14,31 +30,11 @@ var FileReaderInputView = InputView.extend({
     validityClassSelector: ['string', true, '.control-label'],
     tests: [ 'array', true, () => [] ],
     message: [ 'string', false, '' ],
-    template: [ 'any', false, '' ],
     unselectedText: 'any', // these are any so a function returning a string can be passed
     value: 'any'  //
   },
   initialize: function (opts) {
     this.callback = opts.callback || function () {}
-
-    if (typeof opts.template === 'undefined') {
-      this.template = `
-        <div>
-          <label class="col-sm-3 control-label" data-hook="label"></label>
-          <div class="col-sm-9">
-            <div class="upload-btn-wrapper">
-              <button for="file-upload" data-hook="button-label" class="btn btn-primary">
-                <i class="fa fa-folder-open"></i> Open File
-              </button>
-              <input id="file-upload" class="" type="file">
-            </div>
-            <div data-hook="message-container" class="message message-below message-error">
-              <p data-hook="message-text"></p>
-            </div>
-          </div>
-        </div>
-      `
-    }
 
     //
     // this.requiredMet = this.fieldsValid = true;

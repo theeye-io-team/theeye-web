@@ -4,6 +4,8 @@ import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 import config from 'config'
+import FileSaver from 'file-saver'
+import URI from 'urijs'
 
 import { Collection as Hosts } from 'models/host'
 import { Model as HostGroup } from 'models/hostgroup'
@@ -87,27 +89,6 @@ const Actions = {
       }
     })
   },
-  importTemplateConfigFromRecipe (recipeId) {
-    this.fetchRecipe(recipeId, (err,recipe) => {
-      if (!err) {
-        this.createTemplateFromRecipe(recipe)
-      }
-    })
-  },
-  fetchRecipe (id, next) {
-    XHR.send({
-      method: 'GET',
-      url: `${config.api_v3_url}/recipe/${id}`,
-      done: (data,xhr) => {
-        next(null, data.instructions)
-      },
-      fail (err,xhr) {
-        let msg = 'Sorry, we fail to fetch the recipe'
-        bootbox.alert(msg)
-        return next(new Error(msg))
-      }
-    })
-  },
   readRecipeConfig (recipe) {
     App.state.hostGroupPage.setConfigs(recipe)
   },
@@ -130,6 +111,37 @@ const Actions = {
       },
       //success: () => {
       //}
+    })
+  },
+  exportToJSON (id) {
+    this.fetchRecipe({hostgroup_id: id}, function (err, instructions) {
+      var jsonContent = JSON.stringify(instructions)
+      if (!err) {
+        var blob = new Blob([jsonContent], {type: 'application/json'})
+        FileSaver.saveAs(blob, 'template-recipe.json')
+      }
+    })
+  },
+  fetchRecipe (query, next) {
+    query = URI.buildQuery(query)
+
+    XHR.send({
+      method: 'GET',
+      url: `${config.api_v3_url}/recipe?${query}`,
+      done: (data, xhr) => {
+        if (data.length) {
+          next(null, data[0].instructions)
+        } else {
+          let msg = 'Sorry, template recipe not found. Please create this template again to be able to export it.'
+          bootbox.alert(msg)
+          return next(new Error(msg))
+        }
+      },
+      fail (err, xhr) {
+        let msg = 'Error retrieving template recipe.'
+        bootbox.alert(msg)
+        return next(new Error(msg))
+      }
     })
   }
 }

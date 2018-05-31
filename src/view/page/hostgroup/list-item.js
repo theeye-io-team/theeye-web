@@ -2,6 +2,7 @@ import ListItem from 'components/list/item'
 import View from 'ampersand-view'
 import EditButton from './buttons/edit'
 import DeleteButton from './buttons/delete'
+import ExportButton from './buttons/export'
 
 module.exports = ListItem.extend({
   derived: {
@@ -22,8 +23,9 @@ module.exports = ListItem.extend({
     ListItem.prototype.render.apply(this,arguments)
 
     this.addButtons([
+      { view: ExportButton, params: { model: this.model } },
       { view: EditButton, params: { model: this.model } },
-      { view: DeleteButton, params: { model: this.model } },
+      { view: DeleteButton, params: { model: this.model } }
     ])
 
     this.renderSubview(

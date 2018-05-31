@@ -133,7 +133,7 @@ module.exports = View.extend({
   `,
   props: {
     valid: ['boolean',false,true],
-    show_config: ['boolean',false,false],
+    show_config: ['boolean',false,true],
     name: ['string',false,'configs'],
     required: ['boolean',false,true],
     edit_mode: ['boolean',false,false],
