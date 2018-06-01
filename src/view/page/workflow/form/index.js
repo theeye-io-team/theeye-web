@@ -25,7 +25,8 @@ export default FormView.extend({
       'acl',
       'tags',
       'description',
-      'remove-workflow-button'
+      'remove-workflow-button',
+      'start_task_id'
     ]
 
     WorkflowActions.populate(this.model)
@@ -40,6 +41,7 @@ export default FormView.extend({
       required: true,
       label: 'Starting Task',
       name: 'start_task_id',
+      visible: false,
       value: this.model.start_task_id,
       options: this.model.tasks
     })
@@ -59,7 +61,6 @@ export default FormView.extend({
         visible: true,
         value: this.model.triggers
       }),
-      taskSelect,
       workflowBuilder,
       // advanced fields starts visible = false
       new AdvancedToggle({
@@ -71,6 +72,7 @@ export default FormView.extend({
           })
         }
       }),
+      taskSelect,
       new TextareaView({
         visible: false,
         label: 'More Info',
