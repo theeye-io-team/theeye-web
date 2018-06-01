@@ -170,6 +170,9 @@ const Menu = View.extend({
     this.listenToAndRun(App.state.session.user, 'change:credential', () => {
       this.renderMenuLinks()
     })
+    this.listenToAndRun(App.state.session.customer, 'change:config', () => {
+      this.setChartsLink()
+    })
     this.renderBackdrop()
     this.renderSettingsMenu()
   },
@@ -185,8 +188,24 @@ const Menu = View.extend({
       backdrop.visible = this.menu_switch
     })
   },
+  setChartsLink () {
+    if (!Acls.hasAccessLevel('user')) {
+      return
+    } else {
+      var container = this.query('[data-hook=links-container] span.charts-link')
+      if (App.state.session.customer.config.kibana) {
+        if (!container.firstChild) {
+          container.appendChild(html2dom(`<li><a href="/admin/charts" class="eyemenu-ico eyemenu-charts"> Dashboard </a></li>`))
+        }
+      } else {
+        while (container.firstChild) {
+          container.removeChild(container.firstChild)
+        }
+      }
+    }
+  },
   renderMenuLinks () {
-    const container = this.query('[data-hook=links-container] span')
+    const container = this.query('[data-hook=links-container] span.default-links')
 
     // empty container
     while (container.hasChildNodes()) {
@@ -280,7 +299,7 @@ module.exports = View.extend({
       else
         window.location.href = 'https://theeye.io'
     }
-  },  
+  },
   template: () => {
     return template.call(this, { logo: logo })
   },
