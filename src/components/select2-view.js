@@ -1,15 +1,15 @@
 import View from 'ampersand-view'
-import matchesSelector from 'matches-selector'
 import dom from 'ampersand-dom'
 import 'select2'
 import $ from 'jquery'
+//import matchesSelector from 'matches-selector'
 
-function getMatches (el, selector) {
-  if (selector === '') return [el]
-  var matches = []
-  if (matchesSelector(el, selector)) matches.push(el)
-  return matches.concat(Array.prototype.slice.call(el.querySelectorAll(selector)))
-}
+//function getMatches (el, selector) {
+//  if (selector === '') return [el]
+//  var matches = []
+//  if (matchesSelector(el, selector)) matches.push(el)
+//  return matches.concat(Array.prototype.slice.call(el.querySelectorAll(selector)))
+//}
 
 module.exports = View.extend({
   template: `
@@ -88,7 +88,7 @@ module.exports = View.extend({
     requiredMessage: ['string', true, 'This field is required.'],
     validClass: ['string', true, 'input-valid'],
     invalidClass: ['string', true, 'input-invalid'],
-    validityClassSelector: ['string', true, 'select'],
+    //validityClassSelector: ['string', true, 'label, select'],
     tabindex: ['number', true, 0],
     allowCreateTags: ['boolean',false,false],
     allowClear: ['boolean',false,false],
@@ -310,9 +310,16 @@ module.exports = View.extend({
   },
   validityClassChanged: function (view, newClass) {
     var oldClass = view.previousAttributes().validityClass
-    getMatches(this.el, this.validityClassSelector).forEach(function (match) {
-      dom.switchClass(match, oldClass, newClass)
-    })
+
+    let msg = this.queryByHook('message-text')
+    dom.switchClass(msg, oldClass, newClass)
+
+    let label = this.queryByHook('label')
+    dom.switchClass(label, oldClass, newClass)
+
+    //getMatches(this.el, this.validityClassSelector).forEach(function (match) {
+    //  dom.switchClass(match, oldClass, newClass)
+    //})
   },
   reportToParent: function () {
     if (this.parent) this.parent.update(this)

@@ -140,8 +140,7 @@ const Factory = function (attrs, options={}) {
     return new Scraper(attrs, options)
   }
 
-  let err = new Error(`unrecognized type ${attrs.type}`)
-  throw err
+  console.error( new Error(`unrecognized type ${attrs.type}`) )
 }
 
 const Collection = AppCollection.extend({

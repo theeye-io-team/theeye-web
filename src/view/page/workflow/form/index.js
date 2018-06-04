@@ -17,6 +17,25 @@ import assign from 'lodash/assign'
 import EventsSelectView from 'view/events-select'
 import bootbox from 'bootbox'
 
+const StartingTaskSelectionView = TaskSelectView.extend({
+  initialize (specs) {
+    TaskSelectView.prototype.initialize.apply(this,arguments)
+
+    this.required = true
+    this.label = 'Starting Task'
+    this.name = 'start_task_id'
+    this.invalidClass = 'text-danger'
+
+    const emptyFn = function(){}
+    this.onOpenning = specs.onOpenning || emptyFn
+  },
+  render () {
+    TaskSelectView.prototype.render.apply(this, arguments)
+
+    this.$select.on('select2:opening', this.onOpenning)
+  }
+})
+
 export default FormView.extend({
   initialize (options) {
     const isNew = Boolean(this.model.isNew())
@@ -26,7 +45,7 @@ export default FormView.extend({
       'tags',
       'description',
       'remove-workflow-button',
-      'start_task_id'
+      'triggers'
     ]
 
     WorkflowActions.populate(this.model)
@@ -37,13 +56,17 @@ export default FormView.extend({
       value: this.model.graph
     })
 
-    const taskSelect = new TaskSelectView({
-      required: true,
-      label: 'Starting Task',
-      name: 'start_task_id',
-      visible: false,
+    const startingTaskSelect = new StartingTaskSelectionView({
       value: this.model.start_task_id,
-      options: this.model.tasks
+      options: this.model.tasks,
+      onOpenning: (event) => {
+        if (workflowBuilder.graph.nodes().length===0) {
+          event.preventDefault()
+          event.stopPropagation()
+          bootbox.alert('To select the Starting Task, you have to add Workflow Events first')
+          return false
+        }
+      }
     })
 
     this.fields = [
@@ -55,13 +78,8 @@ export default FormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.name,
       }),
-      new EventsSelectView({
-        label: 'Triggered by',
-        name: 'triggers',
-        visible: true,
-        value: this.model.triggers
-      }),
       workflowBuilder,
+      startingTaskSelect,
       // advanced fields starts visible = false
       new AdvancedToggle({
         onclick: (event) => {
@@ -72,7 +90,6 @@ export default FormView.extend({
           })
         }
       }),
-      taskSelect,
       new TextareaView({
         visible: false,
         label: 'More Info',
@@ -81,6 +98,12 @@ export default FormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         value: this.model.description,
+      }),
+      new EventsSelectView({
+        label: 'Triggered by',
+        visible: false,
+        name: 'triggers',
+        value: this.model.triggers
       }),
       new TagsSelectView({
         required: false,
@@ -128,7 +151,7 @@ export default FormView.extend({
     }
 
     this.listenTo(workflowBuilder, 'change:workflowTasksCollection', () => {
-      taskSelect.options = workflowBuilder.workflowTasksCollection
+      startingTaskSelect.options = workflowBuilder.workflowTasksCollection
     })
 
     FormView.prototype.initialize.apply(this, arguments)
