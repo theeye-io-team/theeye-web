@@ -7,7 +7,7 @@ export default View.extend({
   template: `
     <div class="row border">
       <div class="col-xs-6">
-        <span>ngrok</span>
+        <span>Ngrok</span>
       </div>
       <div class="col-xs-4">
         <span data-hook="enabled"></span>
