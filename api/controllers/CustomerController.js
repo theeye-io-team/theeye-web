@@ -27,7 +27,7 @@ var CustomerController = module.exports = {
     req.supervisor.get({
       route:'/customer',
       id:req.params.id,
-      success: customer => res.send(200, {customer: customer}),
+      success: customer => res.send(200, customer),
       failure: err => res.send(err.statusCode, err)
     });
   },

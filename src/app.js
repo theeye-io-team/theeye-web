@@ -92,6 +92,7 @@ App.extend({
   customerChange (customer) {
     this.state.session.customer.clear()
     this.state.session.customer.set( customer.serialize() )
+    this.state.session.customer.fetch()
     this.state.reset()
     this.Router.reload()
   }
