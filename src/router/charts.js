@@ -5,10 +5,21 @@ import App from 'ampersand-app'
 import Route from 'lib/router-route'
 
 class Charts extends Route {
-  indexRoute () {
-    const customer = App.state.session.customer
+  indexRoute (options) {
+    const { integration = '' } = options
+    const config = App.state.session.customer.config[integration]
+    let url = ''
+
+    if (!config) {
+      url = ''
+    } else if (integration.toLowerCase() === 'kibana') {
+      url = config
+    } else {
+      // generic integrations here
+      url = config.url
+    }
     return new PageView({
-      url: customer.config.kibana
+      url: url || 'https://app.theeye.io/404'
     })
   }
 }

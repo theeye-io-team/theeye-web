@@ -88,9 +88,9 @@ module.exports = Router.extend({
         route.route('index')
       })
     },
-    'admin/charts': () => {
+    'admin/charts/:integration': (integration) => {
       const route = new ChartsRoute()
-      route.route('index')
+      route.route('index', {integration})
     },
     'login': () => {
       const route = new AuthRoute()

@@ -193,14 +193,17 @@ const Menu = View.extend({
       return
     } else {
       var container = this.query('[data-hook=links-container] span.charts-link')
+
+      const netbrainsConfig = App.state.session.customer.config.netbrains
+      while (container.firstChild) {
+        container.removeChild(container.firstChild)
+      }
+
       if (App.state.session.customer.config.kibana) {
-        if (!container.firstChild) {
-          container.appendChild(html2dom(`<li><a href="/admin/charts" class="eyemenu-ico eyemenu-charts"> Dashboard </a></li>`))
-        }
-      } else {
-        while (container.firstChild) {
-          container.removeChild(container.firstChild)
-        }
+        container.appendChild(html2dom(`<li><a href="/admin/charts/kibana" class="eyemenu-ico eyemenu-charts"> Dashboard </a></li>`))
+      }
+      if (netbrainsConfig && netbrainsConfig.enabled) {
+        container.appendChild(html2dom(`<li><a href="/admin/charts/netbrains" class="eyemenu-ico eyemenu-charts"> Netbrains </a></li>`))
       }
     }
   },
