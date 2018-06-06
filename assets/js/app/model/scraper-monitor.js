@@ -20,6 +20,7 @@ window.App.Models.ScraperMonitor = BaseModel.extend({
       // monitor
       acl: resource.acl,
 			name: monitor.name,
+      description: resource.description,
 			hosts: [ monitor.host_id ],
 			looptime: monitor.looptime,
 			type: monitor.type,

@@ -223,6 +223,7 @@ var MonitorsPageInit = (function(){
       $form.find('[data-hook=resource_id]').val(resource.id);
       $form.find('[data-hook=monitor_type]').val(type);
       $form.find('[data-hook=name]').val(resource.name);
+      $form.find('[data-hook=description]').val(resource.description);
       $form.find('[data-hook=hosts]').val(resource.host_id);
       $form.find('[data-hook=disabled]').prop('checked', !monitor.enable);
       var acls = $form.find('select[data-hook=acl]');

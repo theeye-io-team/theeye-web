@@ -6,6 +6,7 @@ module.exports = AppModel.extend({
     customer_name: 'string',
     looptime: 'number',
     name: 'string',
+    description: 'string',
     type: 'string',
     _type: 'string',
     //config: ['object',false, () => { return {} }],

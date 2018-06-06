@@ -4,7 +4,7 @@ window.App.Models.Task = BaseModel.extend({
   urlRoot:'/api/task',
   parse:function(task){
     var tags = [
-      'task', 
+      'task',
       task.name,
       task.hostname,
       task.type
