@@ -13,25 +13,18 @@ class Dashboard extends Route {
   indexRoute () {
     App.state.loader.visible = true
     const query = search.get()
-    setStateFromQueryString(query)
+    App.state.dashboard.setMonitorsGroupBy(query.monitorsgroupby)
     return index(query)
   }
 }
 
 module.exports = Dashboard
 
-const setStateFromQueryString = (query) => {
-  let groupBy = query.monitorsgroupby
-  if (groupBy) {
-    App.state.dashboard.setMonitorsGroupBy(groupBy)
-  }
-}
-
 const prepareData = (options) => {
   const { fetchTasks } = options
 
   App.state.dashboard.resourcesDataSynced = false
-  App.state.dashboard.groupedResources.once('reset',() => {
+  App.state.dashboard.groupedResources.once('reset', () => {
     logger.log('resources synced and grouped resources prepared')
     App.state.dashboard.resourcesDataSynced = true
   })

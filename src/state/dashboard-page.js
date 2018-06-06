@@ -89,7 +89,10 @@ module.exports = AmpersandState.extend({
     //this.groupedTasks.sort()
   },
   setMonitorsGroupBy (groupBy) {
-    this.monitorsGroupBy = parseMonitorsGroupBy(groupBy)
+    if (groupBy) {
+      App.state.localSettings.monitorsGroupBy = groupBy
+    }
+    this.monitorsGroupBy = parseMonitorsGroupBy(App.state.localSettings.monitorsGroupBy)
   }
 })
 

@@ -30,7 +30,7 @@ import OnboardingState from './onboarding'
 import ExtendedTagsState from './extended-tags'
 import WorkflowPageState from './workflow-page'
 import WorkflowVisualizerState from './workflow-visualizer'
-
+import LocalSettings from './local-settings'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
@@ -107,6 +107,7 @@ const AppState = State.extend({
     this.loader = App.loader
 
     this.session = new SessionState()
+    this.localSettings = new LocalSettings()
     this.navbar = new NavbarState()
     this.credentials = new CredentialsCollection()
     this.looptimes = new Collection(looptimes)
@@ -115,7 +116,8 @@ const AppState = State.extend({
     this.inbox = new InboxState({ appState: this })
   },
   appInit () {
-    this.session.appInit()
+    this.localSettings.appInit()
+      .then(ls => this.session.appInit())
 
     const resetCredentialsCollection = () => {
       if (this.session.logged_in===undefined) {
