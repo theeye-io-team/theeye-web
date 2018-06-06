@@ -1,13 +1,9 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import NotificationActions from 'actions/notifications'
-import moment from 'moment'
 import Modalizer from 'components/modalizer'
-import FormView from 'ampersand-form-view'
 import SettingsView from './settings-pane'
-import StateConstants from 'constants/states'
-import LifecycleConstants from 'constants/lifecycle'
-//import bootbox from 'bootbox'
+import InboxRowFactory from './item/factory'
 
 const DeleteNotificationsView = View.extend({
   template: `
@@ -27,170 +23,9 @@ const DeleteNotificationsView = View.extend({
 
 import './style.less'
 
-const resourceType = {
-  Resource: 'Resource',
-  ScriptJob: 'Task'
-}
-
-const meaning = {
-  'lifecycle:ready': 'Queued',
-  'lifecycle:assigned': 'Task is being executed',
-  'lifecycle:finished': 'Finished running',
-  'lifecycle:canceled': 'Has been canceled',
-  'lifecycle:terminated': 'Terminated abnormally',
-  'lifecycle:completed': 'Completed',
-  updates_stopped: 'Has gone silent',
-  updates_started: 'Came back to life',
-  failure: 'Requires your attention',
-  recovered: 'Came back to normal',
-  'file:restored': 'File restored',
-  'host:stats:normal': 'Host stats back to normal',
-  'host:stats:cpu:high': 'Host CPU high',
-  'host:stats:mem:high': 'Host memory high',
-  'host:stats:disk:high': 'Host disk high',
-  'host:stats:cache:high': 'Host cache high'
-}
-
-const eventIcons = {
-  'lifecycle:ready': 'fa fa-clock-o',
-  'lifecycle:assigned': 'fa fa-clock-o',
-  'lifecycle:finished': 'fa fa-check-circle',
-  'lifecycle:canceled': 'fa fa-minus-circle',
-  'lifecycle:terminated': 'fa fa-question-circle',
-  'lifecycle:completed': 'fa fa-check-circle',
-  success: 'fa fa-check-circle',
-  normal: 'fa fa-check-circle',
-  failure: 'fa fa-exclamation-circle',
-  recovered: 'fa fa-check-circle',
-  updates_started: 'fa fa-check-circle',
-  updates_stopped: 'fa fa-times-circle',
-  'file:restored': 'fa fa-refresh',
-  'host:stats:normal': 'fa fa-check-circle',
-  'host:stats:cpu:high': 'fa fa-bar-chart',
-  'host:stats:mem:high': 'fa fa-bar-chart',
-  'host:stats:disk:high': 'fa fa-bar-chart',
-  'host:stats:cache:high': 'fa fa-bar-chart'
-}
-
 const EmptyView = View.extend({
   template: `<div class="no-notifications" data-hook="no-notifications">No notifications</div>`
 })
-
-const InboxPopupRow = View.extend({
-  props: {
-    colorClass: 'string',
-    modelType: 'string',
-    modelName: 'string',
-    message: 'string',
-    time: 'string',
-    icon: 'string',
-    text: 'string'
-  },
-  template: `
-    <div class="inbox-entry">
-      <span data-hook="icon"></span>
-      <span data-hook="time"></span>
-      <span data-hook="modelType"></span>
-      <span data-hook="modelName" class="label label-primary"></span>
-      <span data-hook="message"></span>
-    </div>
-  `,
-  bindings: {
-    message: { hook: 'message' },
-    time: { hook: 'time' },
-    modelName: { hook: 'modelName' },
-    modelType: { hook: 'modelType' },
-    colorClass: { type: 'class' },
-    icon: {
-      type: 'attribute',
-      name: 'class',
-      hook: 'icon'
-    }
-  },
-  initialize () {
-    this.inboxify()
-  },
-  inboxify () {
-    let format = 'L [at] LT'
-    if (new Date().toDateString() === new Date(this.model.createdAt).toDateString()) {
-      format = '[Today at] LT'
-    }
-
-    const type = this.model.data.model._type
-
-    this.time = moment(this.model.createdAt).format(format)
-    this.modelName = this.model.data.model.name
-    this.modelType = resourceType[this.model.data.model_type]
-    this.icon = ''
-
-    if (type === 'Resource') {
-      this.resourceInboxItem()
-    } else if (/Job/.test(type)===true) {
-      this.jobInboxItem()
-    } else {
-      this.defaultInboxItem()
-    }
-  },
-  resourceInboxItem () {
-    let state = sanitizeState(this.model.data.model.state)
-    let monitor_event = this.model.data.monitor_event
-    let custom_event = this.model.data.custom_event
-
-    let eventIndex = custom_event || monitor_event
-
-    this.message = meaning[eventIndex] || meaning[monitor_event]
-    this.icon = eventIcons[eventIndex] || eventIcons[monitor_event]
-
-    // monitor execution always failure, unless used a recognized state
-    if (state!=='normal') {
-      this.colorClass = severityToColorClass(this.model.data.model.failure_severity)
-      if (!this.colorClass) {
-        this.colorClass = StateConstants.FAILURE
-      }
-    } else {
-      this.colorClass = StateConstants.SUCCESS
-    }
-  },
-  jobInboxItem () {
-    // it is a task execution
-    let state = sanitizeState(this.model.data.model.state)
-    let lifecycle = this.model.data.model.lifecycle
-    this.message = meaning['lifecycle:' + lifecycle] || `${lifecycle}:${state}`
-
-    if (this.modelName === 'agent:config:update') {
-      let hostname = this.model.data.model.host.hostname
-      this.modelName = `${hostname} configuration update`
-    }
-
-    if (lifecycle === LifecycleConstants.FINISHED) {
-      if (state === StateConstants.FAILURE) {
-        this.icon = eventIcons[state]
-      } else {
-        this.icon = eventIcons[StateConstants.SUCCESS]
-      }
-    } else {
-      this.icon = eventIcons['lifecycle:' + lifecycle]
-    }
-
-    // task execution always success, unless declared a failure
-    this.colorClass = stateToColorClass(state)
-    if (!this.colorClass) {
-      this.colorClass = StateConstants.SUCCESS
-    }
-  },
-  defaultInboxItem () {
-    let state = sanitizeState(this.model.data.model.state)
-    //console.warning(this.model)
-    this.icon = eventIcons[state]
-    this.message = `${state}`
-  }
-})
-
-const sanitizeState = (state) => state.toLowerCase().replace(/ /g,"_")
-
-const stateToColorClass = (state) => (StateConstants.STATES.indexOf(state)!==-1) ? state : null
-
-const severityToColorClass = sev => `severity-${sev.toLowerCase()}`
 
 const isDescendant = (parent, child) => {
   let node = child.parentNode
@@ -368,7 +203,7 @@ module.exports = View.extend({
 
     this.list = this.renderCollection(
       this.collection,
-      InboxPopupRow,
+      InboxRowFactory,
       this.queryByHook('inbox-popup-container'),
       {
         emptyView: EmptyView

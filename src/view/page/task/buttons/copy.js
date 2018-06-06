@@ -47,7 +47,7 @@ const CopyForm = FormView.extend({
     const data = this.prepareData(
       assign({},this.model.serialize(),{
         name: this.data.name,
-        taskArguments: this.model.taskArguments.serialize()
+        task_arguments: this.model.task_arguments.serialize()
       })
     )
     TaskActions.createMany(this.data.hosts, data)

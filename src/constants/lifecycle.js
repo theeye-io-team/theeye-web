@@ -7,6 +7,7 @@
  **/
 const READY = exports.READY = 'ready'
 const ASSIGNED = exports.ASSIGNED = 'assigned'
+const ONHOLD = exports.ONHOLD = 'onhold'
 exports.FINISHED = 'finished'
 exports.TERMINATED = 'terminated'
 exports.CANCELED = 'canceled'
@@ -15,5 +16,9 @@ exports.COMPLETED = 'completed'
 
 exports.inProgress = (lifecycle) => {
   if (!lifecycle) return false
-  return (lifecycle === READY || lifecycle === ASSIGNED);
+  return (
+    lifecycle === READY ||
+    lifecycle === ASSIGNED ||
+    lifecycle === ONHOLD
+  )
 }

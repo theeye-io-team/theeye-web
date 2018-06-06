@@ -3,9 +3,11 @@ import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 import TaskModel from 'models/task'
+import TaskConstants from 'constants/task'
 import assign from 'lodash/assign'
 import after from 'lodash/after'
 import OnboardingActions from 'actions/onboarding'
+const emptyCallback = () => {}
 
 const logger = require('lib/logger')('actions:tasks')
 
@@ -15,9 +17,9 @@ module.exports = {
   },
   update (id, data) {
     let task = App.state.tasks.get(id)
-    task.taskArguments.reset([])
+    task.task_arguments.reset([])
     task.set(data)
-    //task.taskArguments.reset(data.taskArguments)
+    //task.task_arguments.reset(data.task_arguments)
     task.save({},{
       success: () => {
         bootbox.alert('Task Updated')
@@ -49,7 +51,31 @@ module.exports = {
     })
     hosts.forEach(host => {
       let taskData = assign({},data,{ host_id: host })
-      create(taskData,done)
+      this.create(taskData,done)
+    })
+  },
+  /**
+   * @param {Object} data
+   * @param {Function} next
+   */
+  create (data, next) {
+    next || (next = emptyCallback)
+    const task = TaskModel.Factory(data)
+    XHR.send({
+      url: task.urlRoot,
+      method: 'POST',
+      jsonData: task.serialize(),
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (response,xhr) {
+        task.set(response)
+        App.state.tasks.add(task,{ merge: true })
+        next(null,task)
+      },
+      error (response,xhr) {
+        next(new Error())
+      },
     })
   },
   remove (id) {
@@ -63,10 +89,12 @@ module.exports = {
     })
   },
   populate (task) {
-    const script = task.script
-    if (script !== undefined && !script.id) {
-      script.id = task.script_id
-      script.fetch()
+    if (task.type === TaskConstants.TYPE_SCRIPT) {
+      const script = task.script
+      if (script !== undefined && !script.id) {
+        script.id = task.script_id
+        script.fetch()
+      }
     }
   },
   massiveDelete (tasks) {
@@ -103,26 +131,3 @@ module.exports = {
   }
 }
 
-/**
- * @param {Object} data
- * @param {Function} next
- */
-const create = (data,next) => {
-  const task = TaskModel.Factory(data)
-  XHR.send({
-    url: task.urlRoot,
-    method: 'POST',
-    jsonData: task.serialize(),
-    headers: {
-      Accept: 'application/json;charset=UTF-8'
-    },
-    done (response,xhr) {
-      task.set(response)
-      App.state.tasks.add(task,{ merge: true })
-      next(null,task)
-    },
-    error (response,xhr) {
-      next(new Error())
-    },
-  })
-}

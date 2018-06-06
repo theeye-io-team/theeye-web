@@ -47,8 +47,7 @@ module.exports = BaseView.extend({
       throw new Error('at least give me one button')
     }
 
-    const mobileContainer = this.query('.panel-item-mobile ul.dropdown-menu[data-hook=action-buttons]')
-    const desktopContainer = this.query('div.panel-item.icons.panel-item-desktop[data-hook=action-buttons]')
+    const buttonsContainer = this.query('.panel-item ul.dropdown-menu[data-hook=action-buttons]')
 
     buttons.forEach(button => {
       let btn
@@ -59,8 +58,7 @@ module.exports = BaseView.extend({
       if (!btn) return
 
       // render one for each container view
-      this.renderSubview(new button.view(button.params), mobileContainer)
-      this.renderSubview(new button.view(button.params), desktopContainer)
+      this.renderSubview(new button.view(button.params), buttonsContainer)
     })
   },
   // most of these bindings should be removed over time

@@ -6,6 +6,8 @@ import Route from 'lib/router-route'
 
 class HostGroup extends Route {
   indexRoute () {
+    App.state.hostGroupPage.resetCollection()
+
     // webhooks collection
     App.state.hostGroups.fetch()
     App.state.hosts.fetch()

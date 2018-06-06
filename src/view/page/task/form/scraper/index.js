@@ -16,13 +16,13 @@ import TextareaView from 'components/input-view/textarea'
 import CheckboxView from 'components/checkbox-view'
 import FormButtons from 'view/buttons'
 import AdvancedToggle from 'view/advanced-toggle'
-import CopyTaskSelect from '../copy-task-select'
-
 import isURL from 'validator/lib/isURL'
+import WebhooksConstants from 'constants/webhooks'
+import TASK from 'constants/task'
+import HelpTexts from 'language/help'
 
-const WebhooksConstants = require('constants/webhooks')
-const TASK = require('constants/task')
-const HelpTexts = require('language/help')
+import CopyTaskSelect from '../copy-task-select'
+import RemoveButton from '../remove-button'
 
 module.exports = FormView.extend({
   initialize (options) {
@@ -89,7 +89,8 @@ module.exports = FormView.extend({
       'triggers',
       'grace_time',
       'status_code',
-      'pattern'
+      'pattern',
+      'remove-button'
     ]
 
     this.fields = [
@@ -121,7 +122,9 @@ module.exports = FormView.extend({
       new AdvancedToggle({
         onclick: (event) => {
           this.advancedFields.forEach(name => {
-            this._fieldViews[name].toggle('visible')
+            var field = this._fieldViews[name]
+            if (!field) return
+            field.toggle('visible')
           })
         }
       }),
@@ -255,6 +258,9 @@ module.exports = FormView.extend({
           this.setWithTask(task)
         }
       })
+    } else {
+      let removeButton = new RemoveButton({ form: this })
+      this.fields.push(removeButton)
     }
 
     FormView.prototype.initialize.apply(this, arguments)

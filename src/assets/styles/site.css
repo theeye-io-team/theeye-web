@@ -364,6 +364,18 @@ h3.light { color: #EEE}
 .admin-container .panel-heading .panel-item.icons,
 .admin-container .panel-heading .panel-item.icons .resource-search,
 .admin-container .panel-heading .panel-item.icons .state-resource-container { float:right; /*margin-left:10px;*/ }
+.admin-container .panel-heading .panel-item.icons ul.dropdown-menu {
+  left:inherit;
+  right:0;
+  width:40px;
+  min-width:inherit;
+  background:none;
+  margin:0;
+  padding:0;
+  background-color:#304269;
+  text-align:center; 
+}
+.admin-container .panel-heading .panel-item.icons button.dropdown-toggle { margin-left:5px; }
 .admin-container .panel-heading .panel-item .visible-badge {padding-right:5px;}
 .admin-container .panel-default.selectedItem>.panel-heading{ color: #F39B0F; }
 /*.admin-container .panel-heading .panel-item.icons .trigger-task {top:-5px;}*/
@@ -447,7 +459,6 @@ ol.list-group.tasks { color:#34495E }
 .create-monitor:focus,.create-monitor:hover{color:#262626;text-decoration:none;background-color:#f5f5f5}
 
 .remark-alert { color: #ee4c5a; }
-.remark-warning { color: #ee4c5a; }
 .remark-success { color: #70ff00; }
 .remark-warning { color: #ffff00; }
 .remark-default { color: #ffffff; }
@@ -786,6 +797,8 @@ a.flowchart-icon {
 .admin-container.dashboard i.circle { border-radius: 50%; }
 .admin-container.dashboard i.host-color { background-color: #00b4bc }
 .admin-container.dashboard i.script-color { background-color: #c6639b }
+.admin-container.dashboard i.approval-color { background-color: #aaa }
+.admin-container.dashboard i.workflow-color { background-color: #aaa }
 .admin-container.dashboard i.nested-color { background-color: #06b777 }
 .admin-container.dashboard i.process-color { background-color: #1c73b9 }
 .admin-container.dashboard i.scraper-color { background-color: #158df9 }
@@ -799,7 +812,7 @@ a.flowchart-icon {
 .admin-container .table-header.admin div.panel-item.icons.dropdown ul.dropdown-menu {left:inherit;right:0;width:40px;min-width:inherit;background:none;margin:0;padding:0;}
 .admin-container.dashboard .panel-heading .panel-item.name {padding-right:5px;}
 .admin-container.dashboard .panel-item.icons li {display:block;}
-.admin-container.dashboard .panel-item.icons li .btn {padding:5px 10px; width:36px;}
+.admin-container.dashboard .panel-item.icons li .btn {padding:5px 10px; width:36px; height: 34px;}
 .admin-container.dashboard .panel-item.state-icon { text-align:right; width:30px; float:right; padding:5px; font-size:20px; }
 .admin-container.dashboard .panel-item.icons .dropdown-menu>li>a {color:inherit;background-color:inherit;}
 .admin-container.dashboard .panel-item.icons .dropdown-menu>li>a:hover {background-image: none;background-color: #286090;}
@@ -811,25 +824,12 @@ a.flowchart-icon {
 @media (max-width: 767px) {
   .admin-container .panel-heading .panel-item.name { width:72%;padding-right:20px; }
   .admin-container .panel-heading .panel-title-content { position:relative; }
-  .admin-container .panel-heading .panel-item.icons.panel-item-mobile {}
-  .admin-container .panel-heading .panel-item.icons.panel-item-mobile ul.dropdown-menu { left:inherit;right:0;width:40px;min-width:inherit;background:none;margin:0;padding:0;background-color:#304269; }
-  .admin-container .panel-heading .panel-item.icons.panel-item-mobile ul.dropdown-menu { text-align:center; }
-  .admin-container .panel-heading .panel-item.icons.panel-item-mobile button.dropdown-toggle { margin-left:5px; }
   button.rowSelector, button.rowSelector-not {}
-  .admin-container .panel-heading .panel-item.icons .host-menu.dropdown.button-desktop { display:none; }
-  .admin-container .panel-heading .panel-item.icons.panel-item-desktop { display:none; }
-  .admin-container .table-header.admin div.icons.panel-item-mobile { display:block; }
-  .admin-container .table-header.admin div.icons.panel-item-desktop { display:none; }
 }
 
 @media (min-width: 768px) {
   .admin-container .panel-heading .panel-item.name { width:70%;padding-right:5px; }
-  .admin-container .panel-heading .panel-item.icons.panel-item-desktop li { float:left; list-style:none; margin-left: 5px; }
   .admin-container.dashboard .panel-heading .panel-item.name { width:50%; }
-  .admin-container .panel-heading .panel-item.icons.panel-item-desktop { display:block; }
-  .admin-container .panel-heading .panel-item.icons.panel-item-mobile { display:none; }
-  .admin-container .table-header.admin div.icons.panel-item-mobile { display:none; }
-  .admin-container .table-header.admin div.icons.panel-item-desktop { display:block; }
 }
 
 @media (max-width: 640px) {

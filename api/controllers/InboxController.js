@@ -54,9 +54,13 @@ module.exports = {
       query.read = true
     }
 
-    Notification.destroy(query).exec(err => {
+    Notification.native(function (err, notifications) {
       if (err) return res.send(500, err)
-      res.send(200, null)
+
+      notifications.remove(query, function (err, result) {
+        if (err) return res.send(500, err)
+        res.send(200, null)
+      })
     })
   },
   markAllRead (req, res) {

@@ -10,14 +10,18 @@ import ScheduleButton from './buttons/schedule'
 import './style.css'
 import bootbox from 'bootbox'
 import { getSchedules, cancelSchedule } from 'actions/schedule'
+import TaskConstants from 'constants/task'
 
 function Factory (options) {
   const model = options.model
-  if (model.type==='script') { // script task
+  if (model.type===TaskConstants.TYPE_SCRIPT) {
     return new ScriptItem(options)
   }
-  if (model.type==='scraper') {
+  if (model.type===TaskConstants.TYPE_SCRAPER) {
     return new ScraperItem(options)
+  }
+  if (model.type===TaskConstants.TYPE_APPROVAL) {
+    return new ApprovalItem(options)
   }
   throw new Error(`unrecognized type ${model.type}`)
   //return new Item(options)
@@ -125,6 +129,17 @@ const ScraperItem = Item.extend({
       }
     }
   },
+})
+
+const ApprovalItem = Item.extend({
+  derived: {
+    item_description: {
+      deps: ['model.name'],
+      fn () {
+        return this.model.name 
+      }
+    }
+  }
 })
 
 const Collapsed = View.extend({

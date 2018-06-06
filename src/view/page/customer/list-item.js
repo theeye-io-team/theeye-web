@@ -105,12 +105,7 @@ module.exports = ListItem.extend({
 
     this.renderSubview(
       new CustomerButtons({ model: this.model }),
-      this.query('div.panel-item.icons.panel-item-desktop[data-hook=action-buttons]')
-    )
-
-    this.renderSubview(
-      new CustomerButtons({ model: this.model }),
-      this.query('.panel-item-mobile ul.dropdown-menu[data-hook=action-buttons]')
+      this.query('div.panel-item.icons ul.dropdown-menu[data-hook=action-buttons]')
     )
 
     this.renderSubview(

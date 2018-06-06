@@ -1,13 +1,15 @@
 'use strict'
 
 import View from 'ampersand-view'
-import ArgumentsCreator from './creator'
 import Modalizer from 'components/modalizer'
-import ArgumentView from './argument'
 import Collection from 'ampersand-collection'
 import { DinamicArgument as ScriptArgument } from 'models/task/dinamic-argument'
 import FieldConstants from 'constants/field'
 import HelpIcon from 'components/help-icon'
+
+// component dependencies
+import ArgumentsCreator from './creator'
+import ArgumentView from './argument'
 
 module.exports = View.extend({
   template: `

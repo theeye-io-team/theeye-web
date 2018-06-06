@@ -1,6 +1,7 @@
 
 exports.TYPE_SCRAPER = 'scraper'
 exports.TYPE_SCRIPT = 'script'
+exports.TYPE_APPROVAL = 'approval'
 
 exports.GRACE_TIME = Object.freeze([
   {

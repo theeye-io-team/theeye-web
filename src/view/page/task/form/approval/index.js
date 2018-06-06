@@ -1,59 +1,29 @@
 import App from 'ampersand-app'
-import bootbox from 'bootbox'
-import View from 'ampersand-view'
-import TaskActions from 'actions/task'
-import InputView from 'components/input-view'
-import TextareaView from 'components/input-view/textarea'
-import SelectView from 'components/select2-view'
-import Buttons from 'view/buttons'
-import TagsSelectView from 'view/tags-select'
-import ScriptSelectView from 'view/script-select'
-import MembersSelectView from 'view/members-select'
-import EventsSelectView from 'view/events-select'
-import AdvancedToggle from 'view/advanced-toggle'
 import assign from 'lodash/assign'
 import HelpTexts from 'language/help'
+import InputView from 'components/input-view'
+import MembersSelectView from 'view/members-select'
+import AdvancedToggle from 'view/advanced-toggle'
+import TextareaView from 'components/input-view/textarea'
+import TagsSelectView from 'view/tags-select'
+import EventsSelectView from 'view/events-select'
 import TaskConstants from 'constants/task'
-
-import RemoveButton from '../remove-button'
+import Buttons from 'view/buttons'
+import TaskActions from 'actions/task'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 import CopyTaskSelect from '../copy-task-select'
-import TaskOnBoarding from '../../taskOnboarding'
+import RemoveButton from '../remove-button'
 
 module.exports = TaskFormView.extend({
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew())
 
-    // multiple only if new, allows to create multiple tasks at once
-    let hostsSelection = new SelectView({
-      label: 'Host',
-      name: (isNewTask?'hosts':'host_id'),
-      multiple: isNewTask,
-      tags: isNewTask,
-      options: App.state.hosts,
-      value: this.model.host_id,
-      required: true,
-      unselectedText: 'select a host',
-      idAttribute: 'id',
-      textAttribute: 'hostname',
-      requiredMessage: 'Selection required',
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label'
-    })
-
-    let scriptSelection = new ScriptSelectView({
-      value: this.model.script_id,
-      required: true
-    })
-
     this.advancedFields = [
-      'script_runas',
       'description',
       'tags',
       'acl',
       'triggers',
-      'grace_time',
       'task_arguments',
       'remove-button'
     ]
@@ -67,8 +37,16 @@ module.exports = TaskFormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.name,
       }),
-      hostsSelection ,
-      scriptSelection ,
+      new MembersSelectView({
+        multiple: false,
+        required: true,
+        visible: true,
+        name: 'approver_id',
+        label: 'Approver *',
+        idAttribute: 'id',
+        textAttribute: 'label',
+        value: this.model.approver_id
+      }),
       // advanced fields starts visible = false
       new AdvancedToggle({
         onclick: (event) => {
@@ -78,16 +56,6 @@ module.exports = TaskFormView.extend({
             field.toggle('visible')
           })
         }
-      }),
-      new InputView({
-        visible: false,
-        label: 'Run As',
-        name: 'script_runas',
-        placeholder: 'sudo -u the_user %script%',
-        required: false,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        value: this.model.script_runas,
       }),
       new TextareaView({
         visible: false,
@@ -130,24 +98,6 @@ module.exports = TaskFormView.extend({
           }
         ]
       }),
-      new SelectView({
-        visible: false,
-        label: 'Trigger on-hold time',
-        name: 'grace_time',
-        multiple: false,
-        tags: false,
-        options: TaskConstants.GRACE_TIME.map(gt => {
-          return {
-            id: gt.secs,
-            text: gt.text
-          }
-        }),
-        value: this.model.grace_time,
-        required: false,
-        unselectedText: 'Select the Trigger on-hold time',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
-      }),
       new ArgumentsView({
         visible: false,
         name: 'task_arguments',
@@ -156,7 +106,9 @@ module.exports = TaskFormView.extend({
     ]
 
     if (this.model.isNew()) {
-      const copySelect = new CopyTaskSelect({ type: TaskConstants.TYPE_SCRIPT })
+      const copySelect = new CopyTaskSelect({
+        type: TaskConstants.TYPE_APPROVAL
+      })
       this.fields.unshift(copySelect)
       this.listenTo(copySelect,'change',() => {
         if (copySelect.value) {
@@ -177,63 +129,29 @@ module.exports = TaskFormView.extend({
     this.query('form').classList.add('form-horizontal')
 
     if (this.model.isNew()) {
-      this.addHelpIcon('hosts')
       this.addHelpIcon('copy_task')
-    } else {
-      this.addHelpIcon('host_id')
     }
     this.addHelpIcon('name')
     this.addHelpIcon('description')
     this.addHelpIcon('tags')
-    this.addHelpIcon('script_runas')
-    this.addHelpIcon('script_id')
     this.addHelpIcon('acl')
     this.addHelpIcon('triggers')
-    this.addHelpIcon('grace_time')
-    this.addHelpIcon('task_arguments')
 
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)
     buttons.on('click:confirm', () => { this.submit() })
-
-    if (this.model.isNew()) {
-      if(App.state.onboarding.onboardingActive) {
-        var taskOnBoarding = new TaskOnBoarding({parent: this})
-        taskOnBoarding.step2()
-
-        this.listenTo(App.state.onboarding,'change:showTaskLastStep',() => {
-          if (App.state.onboarding.showTaskLastStep) {
-            taskOnBoarding.step4()
-            App.state.onboarding.showTaskLastStep = false
-          }
-        })
-      }
-    }
   },
   submit (next) {
     next||(next=()=>{})
 
     this.beforeSubmit()
-    if (!this.valid) return next(null, false)
-
-    const hasDynamicArguments = this.hasDynamicArguments()
-
-    // TODO: temporary NON-dynamic arguments validation
-    // for scheduled tasks
-    if (this.model.hasSchedules) {
-      // this evaluation is copied from
-      // model/task/template:hasDinamicArguments
-      if (hasDynamicArguments) {
-        bootbox.alert(HelpTexts.task.cannot_schedule)
-        return next(null, false)
-      }
-    }
+    if (!this.valid) { return next(null, false) }
 
     let data = this.prepareData(this.data)
     if (!this.model.isNew()) {
       TaskActions.update(this.model.id, data)
     } else {
-      TaskActions.createMany(data.hosts, data)
+      TaskActions.create(data)
     }
 
     next(null,true)
@@ -241,19 +159,15 @@ module.exports = TaskFormView.extend({
   },
   prepareData (data) {
     let f = assign({}, data)
-    f.type = TaskConstants.TYPE_SCRIPT
-    f.grace_time = Number(data.grace_time)
+    f.type = TaskConstants.TYPE_APPROVAL
     return f
   },
   setWithTask (task) {
     this.setValues({
-      script_id: task.script_id,
+      approver_id: task.approver_id,
       name: task.name,
-      script_runas: task.script_runas,
       description: task.description,
       tags: task.tags,
-      grace_time: task.grace_time,
-      task_arguments: task.task_arguments
     })
   }
 })

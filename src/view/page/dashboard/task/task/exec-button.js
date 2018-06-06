@@ -4,16 +4,24 @@ import App from 'ampersand-app'
 import bootbox from 'bootbox'
 import JobActions from 'actions/job'
 const logger = require('lib/logger')('page:dashboard:task:exec-button')
-import LIFECYCLE from 'constants/lifecycle'
+import LifecycleConstants from 'constants/lifecycle'
 
 import DinamicForm from 'components/dinamic-form'
 import Modalizer from 'components/modalizer'
 
-export default ExecButton.extend({
-  askDinamicArguments (next) {
+export default function (options) {
+  if (options.model.type === 'approval') {
+    return new ExecApprovalTaskButton(options)
+  } else {
+    return new ExecTaskButton(options)
+  }
+}
+
+const ExecTaskButton = ExecButton.extend({
+  getDinamicArguments (next) {
     if (this.model.hasDinamicArguments) {
       const form = new DinamicForm ({
-        fieldsDefinitions: this.model.taskArguments.models
+        fieldsDefinitions: this.model.task_arguments.models
       })
 
       const modal = new Modalizer({
@@ -40,9 +48,9 @@ export default ExecButton.extend({
             orders.map( (order) => {
               return {
                 order: parseInt(order),
-                label: this.model.taskArguments.get(parseInt(order),'order').label,
+                label: this.model.task_arguments.get(parseInt(order),'order').label,
                 value: args[order],
-                type: this.model.taskArguments.get(parseInt(order),'order').type
+                type: this.model.task_arguments.get(parseInt(order),'order').type
               }
             })
           )
@@ -64,7 +72,7 @@ export default ExecButton.extend({
         backdrop: true,
         callback: (confirmed) => {
           if (confirmed) {
-            JobActions.cancel(this.model)
+            JobActions.cancel(this.model.lastjob)
           }
         }
       })
@@ -94,7 +102,7 @@ export default ExecButton.extend({
     return false
   },
   _confirmExecution () {
-    this.askDinamicArguments(taskArgs => {
+    this.getDinamicArguments(taskArgs => {
       let message
       if (taskArgs.length>0) {
         taskArgs.forEach(function(arg) {
@@ -131,7 +139,7 @@ export default ExecButton.extend({
         backdrop: true,
         callback: (confirmed) => {
           if (confirmed) {
-            JobActions.create(this.model, taskArgs)
+            JobActions.createFromTask(this.model, taskArgs)
           }
         }
       })
@@ -139,32 +147,65 @@ export default ExecButton.extend({
   },
   render () {
     ExecButton.prototype.render.apply(this, arguments)
-    this.listenToAndRun(this.model.lastjob,'change:lifecycle',() => {
-      this.checkJobLifecycle()
-    })
-
     this.listenTo(this.model, 'execution', () => {
       this.execute()
     })
-  },
-  checkJobLifecycle () {
-    const lifecycle = this.model.lastjob.lifecycle
-    switch (lifecycle) {
-      case LIFECYCLE.FINISHED:
-      case LIFECYCLE.TERMINATED:
-      case LIFECYCLE.COMPLETED:
-      case LIFECYCLE.EXPIRED:
-      case LIFECYCLE.CANCELED:
-        this.lbutton.stop()
-        break;
-      case LIFECYCLE.READY:
-      case LIFECYCLE.ASSIGNED:
-        this.lbutton.start()
-        this.queryByHook('execute').removeAttribute('disabled')
-        break;
-      default:
-        logger.error('no lifecycle')
-        break;
+  }
+})
+
+const ExecApprovalTaskButton = ExecTaskButton.extend({
+  execute () {
+    if (this.model.lastjob.inProgress) {
+      if (this.model.approver_id === App.state.session.user.id) {
+        this.getDinamicArguments(taskArgs => {
+          const message = `Approve/Reject?`
+          bootbox.dialog({
+          message: message,
+          backdrop: true,
+          buttons: {
+            reject: {
+              label: 'Reject',
+              className: 'btn btn-danger',
+              callback: () => {
+                JobActions.reject(this.model.lastjob, taskArgs)
+              }
+            },
+            approve: {
+              label: 'Approve',
+              className: 'btn btn-primary',
+              callback: () => {
+                JobActions.approve(this.model.lastjob, taskArgs)
+              }
+            }
+          }
+          })
+        })
+      } else {
+        const message = `The Approval request is pending. What do you want to do?`
+
+        bootbox.dialog({
+          message: message,
+          backdrop: true,
+          buttons: {
+            cancel: {
+              label: 'Cancel request',
+              className: 'btn btn-danger',
+              callback: () => {
+                JobActions.cancel(this.model.lastjob)
+              }
+            },
+            resend: {
+              label: 'Resend request',
+              className: 'btn btn-primary',
+              callback: () => {
+                JobActions.createFromTask(this.model, [])
+              }
+            }
+          }
+        })
+      }
+    } else {
+      JobActions.createFromTask(this.model, [])
     }
   }
 })

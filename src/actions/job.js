@@ -38,13 +38,13 @@ module.exports = {
 
     updateJob(task.lastjob, data)
   },
-  create (task, taskArgs) {
+  createFromTask (task, args) {
     logger.log('creating new job with task %o', task)
 
     XHR.send({
       method: 'post',
       url: `${config.api_url}/job`,
-      jsonData: { task: task.id, task_arguments: taskArgs },
+      jsonData: { task: task.id, task_arguments: args },
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -58,8 +58,7 @@ module.exports = {
       }
     })
   },
-  cancel (task) {
-    const job = task.lastjob
+  cancel (job) {
     XHR.send({
       method: 'put',
       url: `${config.api_url}/job/${job.id}/cancel`,
@@ -68,9 +67,59 @@ module.exports = {
       },
       done (data,xhr) {
         logger.debug('job canceled')
-        task.lastjob.clear()
-        task.lastjob.result.clear()
-        task.lastjob.set('lifecycle',LIFECYCLE.CANCELED)
+        job.clear()
+        job.result.clear()
+        job.set('lifecycle',LIFECYCLE.CANCELED)
+      },
+      fail (err,xhr) {
+        bootbox.alert('something goes wrong')
+        console.log(arguments)
+      }
+    })
+  },
+  approve (job, args) {
+    XHR.send({
+      method: 'put',
+      url: `${config.api_v3_url}/job/${job.id}/approve`,
+      jsonData: {
+        result: {
+          state: 'success',
+          data: args || []
+        }
+      },
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (data,xhr) {
+        logger.debug('job approved')
+        //job.clear()
+        //job.result.clear()
+        //job.set('lifecycle', LIFECYCLE.CANCELED)
+      },
+      fail (err,xhr) {
+        bootbox.alert('something goes wrong')
+        console.log(arguments)
+      }
+    })
+  },
+  reject (job, args) {
+    XHR.send({
+      method: 'put',
+      url: `${config.api_v3_url}/job/${job.id}/reject`,
+      jsonData: {
+        result: {
+          state: 'failure',
+          data: args || []
+        }
+      },
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (data,xhr) {
+        logger.debug('job rejected')
+        //job.clear()
+        //job.result.clear()
+        //job.set('lifecycle',LIFECYCLE.CANCELED)
       },
       fail (err,xhr) {
         bootbox.alert('something goes wrong')

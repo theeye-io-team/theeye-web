@@ -4,59 +4,33 @@ import View from 'ampersand-view'
 import SearchActions from 'actions/searchbox'
 import TaskActions from 'actions/task'
 import FileActions from 'actions/file'
-import LIFECYCLE from 'constants/lifecycle'
+import TaskConstants from 'constants/task'
 import EditTaskButton from 'view/page/task/buttons/edit'
 import JobResult from '../../job-result'
 import ExecTaskButton from './exec-button'
 import CollapsibleRow from '../collapsible-row'
-
 import lang2ext from 'lib/lang2ext'
 
-module.exports = CollapsibleRow.extend({
-  derived: {
-    hostname: {
-      deps: ['model.hostname'],
-      fn () {
-        return `(${this.model.hostname})` || '(Hostname not assigned)'
-      }
-    },
-    type: {
-      cache: true,
-      deps: ['model.type'],
-      fn () {
-        const type = this.model.type
-        if (type === 'scraper') return 'web request'
-        if (type === 'script') return 'script'
-      }
-    },
-    type_icon: {
-      cache: true,
-      deps: ['model.type'],
-      fn () {
-        const type = this.model.type
-        if (type === 'scraper') return 'fa fa-cloud'
-        if (type === 'script') return 'fa fa-code'
-      }
-    },
-    header_type_icon: {
-      cache: true,
-      deps: ['model.type'],
-      fn () {
-        const type = this.model.type
-        if (type === 'scraper') return 'circle fa fa-cloud scraper-color'
-        if (type === 'script') return 'circle fa fa-code script-color'
-      }
-    }
-  },
+module.exports = function (options) {
+  switch (options.model.type) {
+    case TaskConstants.TYPE_SCRIPT:
+      return new ScriptCollapsibleRow(options)
+      break;
+    case TaskConstants.TYPE_SCRAPER:
+      return new ScraperCollapsibleRow(options)
+      break;
+    case TaskConstants.TYPE_APPROVAL:
+      return new ApprovalCollapsibleRow(options)
+      break;
+  }
+}
+
+const TaskCollapsibleRow = CollapsibleRow.extend({
   onClickToggleCollapse (event) {
     TaskActions.populate(this.model)
     return
   },
   renderButtons () {
-    this.renderSubview(
-      new TaskButtonsView({ model: this.model }),
-      this.query('div[data-hook=buttons-container]')
-    )
     this.renderSubview(
       new TaskButtonsView({ model: this.model }),
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
@@ -68,15 +42,71 @@ module.exports = CollapsibleRow.extend({
         this.queryByHook('execute-button-container')
       )
     }
+  }
+})
+
+const ScriptCollapsibleRow = TaskCollapsibleRow.extend({
+  derived: {
+    hostname: {
+      deps: ['model.hostname'],
+      fn () {
+        return `(${this.model.hostname})` || '(Hostname not assigned)'
+      }
+    },
+    type: {
+      fn: () => TaskConstants.TYPE_SCRIPT
+    },
+    type_icon: {
+      fn: () => 'fa fa-code'
+    },
+    header_type_icon: {
+      fn: () => 'circle fa fa-code script-color'
+    }
   },
   renderCollapsedContent () {
-    let content
-    if (this.model.type === 'script') {
-      content = new ScriptCollapsedContent({ model: this.model })
-    } else {
-      content = new ScraperCollapsedContent({ model: this.model })
-    }
+    var content = new ScriptCollapsedContent({ model: this.model })
+    this.renderSubview(content, this.queryByHook('collapse-container-body'))
+  }
+})
 
+const ScraperCollapsibleRow = TaskCollapsibleRow.extend({
+  derived: {
+    hostname: {
+      deps: ['model.hostname'],
+      fn () {
+        return `(${this.model.hostname})` || '(Hostname not assigned)'
+      }
+    },
+    type: {
+      fn: () => TaskConstants.TYPE_SCRAPER
+    },
+    type_icon: {
+      fn: () => 'fa fa-code'
+    },
+    header_type_icon: {
+      fn: () => 'circle fa fa-cloud scraper-color'
+    }
+  },
+  renderCollapsedContent () {
+    var content = new ScraperCollapsedContent({ model: this.model })
+    this.renderSubview(content, this.queryByHook('collapse-container-body'))
+  }
+})
+
+const ApprovalCollapsibleRow = TaskCollapsibleRow.extend({
+  derived: {
+    type: {
+      fn: () => TaskConstants.TYPE_APPROVAL
+    },
+    type_icon: {
+      fn: () => 'fa fa-thumbs-o-up'
+    },
+    header_type_icon: {
+      fn: () => 'circle fa fa-thumbs-o-up approval-color'
+    }
+  },
+  renderCollapsedContent () {
+    var content = new ApprovalCollapsedContent({ model: this.model })
     this.renderSubview(content, this.queryByHook('collapse-container-body'))
   }
 })
@@ -87,14 +117,13 @@ const TaskButtonsView = View.extend({
       <li>
         <button data-hook="last_exec" class="btn btn-primary" title="Execution output">
           <i class="fa fa-file-text-o" aria-hidden="true"></i>
-          <i data-hook="last_job_lifecycle" style="top:-6px;position:relative;right:4px;font-size:12px"></i> </li>
         </button>
       </li>
-  <li>
+    <li>
     <button class="btn btn-primary tooltiped" title="Workflow" data-hook="workflow">
       <i class="fa fa-sitemap" aria-hidden="true"></i>
     </button>
-  </li>
+    </li>
       <span data-hook="edit-button"> </span>
       <li>
         <button data-hook="search" class="btn btn-primary tooltiped" title="Search related elements">
@@ -112,52 +141,6 @@ const TaskButtonsView = View.extend({
         return Boolean(lastjob.result)
       }
     },
-    execution_lifecycle: {
-      deps: ['model.lastjob.lifecycle'],
-      fn () {
-        const job = this.model.lastjob
-        if (!job) return
-
-        const lifecycle = job.lifecycle
-        const state = job.state
-
-        const isCompleted = (lifecycle) => {
-          return [
-            LIFECYCLE.COMPLETED,
-            LIFECYCLE.TERMINATED,
-            LIFECYCLE.FINISHED,
-          ].indexOf(lifecycle) !== -1
-        }
-
-        if (!lifecycle) return ''
-        if (lifecycle === LIFECYCLE.READY) return 'fa fa-spin fa-refresh'
-        if (lifecycle === LIFECYCLE.ASSIGNED) return 'fa fa-spin fa-refresh remark-success'
-        if (isCompleted(lifecycle)) {
-          if (state === 'failure') return 'fa fa-exclamation remark-alert'
-          return 'fa fa-check remark-success'
-        }
-        if (lifecycle === LIFECYCLE.CANCELED) {
-          return 'fa fa-ban remark-alert'
-        }
-        if (lifecycle === LIFECYCLE.ASSIGNED) {
-          return 'fa fa-ban remark-alert'
-        }
-        return 'fa fa-question remark-alert'
-      }
-    }
-  },
-  bindings: {
-    execution_lifecycle: {
-      hook: 'last_job_lifecycle',
-      type: 'attribute',
-      name: 'class'
-    },
-    //execResult: {
-    //  type: 'booleanAttribute',
-    //  name: 'disabled',
-    //  hook: 'last_exec',
-    //  invert: true
-    //}
   },
   events: {
     //'click button[data-hook=edit]':'onClickEdit',
@@ -201,6 +184,17 @@ const TaskButtonsView = View.extend({
       var button = new EditTaskButton({ model: this.model })
       this.renderSubview(button, this.queryByHook('edit-button'))
     }
+  }
+})
+
+const ApprovalCollapsedContent = View.extend({
+  template: `
+    <div class="task-container">
+      <h4><i data-hook="name"></i></h4>
+    </div>
+  `,
+  bindings: {
+    'model.name': { hook: 'name' }
   }
 })
 

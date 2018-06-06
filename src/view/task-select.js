@@ -9,10 +9,10 @@ module.exports = SelectView.extend({
 
     var filters = [
       item => true,
-      item => item.host_id
+      item => item.type === 'approval' || item.host_id
       //item => {
-      //  if (item.taskArguments.length===0) return true
-      //  var noFixed = item.taskArguments.models.find(arg => arg.type !== 'fixed')
+      //  if (item.task_arguments.length===0) return true
+      //  var noFixed = item.task_arguments.models.find(arg => arg.type !== 'fixed')
       //  return (noFixed === undefined)
       //}
     ]

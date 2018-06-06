@@ -28,5 +28,10 @@ export default AmpersandState.extend({
     this.configTasks.reset(config.tasks,{ parse: true })
     this.configResources.reset(config.resources,{ parse: true })
     this.configTriggers.reset(config.triggers,{ parse: true })
+  },
+  resetCollection () {
+    this.configTasks.reset([])
+    this.configResources.reset([])
+    this.configTriggers.reset([])
   }
 })

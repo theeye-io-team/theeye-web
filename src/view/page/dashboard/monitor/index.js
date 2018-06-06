@@ -171,10 +171,6 @@ const MonitorView = View.extend({
   renderButtons () {
     this.renderSubview(
       new MonitorButtonsView({ model: this.model }),
-      this.query('div[data-hook=buttons-container]')
-    )
-    this.renderSubview(
-      new MonitorButtonsView({ model: this.model }),
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
     )
   },

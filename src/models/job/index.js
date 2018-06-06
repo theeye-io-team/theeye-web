@@ -98,6 +98,18 @@ const ScraperJobResult = State.extend({
   }
 })
 
+const ApprovalJobResult = State.extend({ })
+
+const NgrokIntegrationResult = State.extend({
+  props: {
+    url:  ['string',false,''],
+    status_code: ['number', false, 0],
+    error_code: ['number', false, 0],
+    message: ['string', false, ''],
+    details: ['object',false, () => { return {} }]
+  }
+})
+
 exports.ScriptJob = BaseJob.extend({
   children: {
     result: ScriptJobResult
@@ -110,13 +122,9 @@ exports.ScraperJob = BaseJob.extend({
   }
 })
 
-const NgrokIntegrationResult = State.extend({
-  props: {
-    url:  ['string',false,''],
-    status_code: ['number', false, 0],
-    error_code: ['number', false, 0],
-    message: ['string', false, ''],
-    details: ['object',false, () => { return {} }]
+exports.ApprovalJob = BaseJob.extend({
+  children: {
+    result: ApprovalJobResult
   }
 })
 

@@ -9,6 +9,7 @@ import TaskOnBoarding from '../taskOnboarding'
 
 import { Script as ScriptTask } from 'models/task'
 import { Scraper as ScraperTask } from 'models/task'
+import { Approval as ApprovalTask } from 'models/task'
 
 import './styles.less'
 
@@ -18,21 +19,25 @@ const TaskCreationWizard = View.extend({
     <section data-hook="type-selection-container" class="task-type-selection">
       <h1>Please, select the task type to continue</h1>
       <div class="row task-button" style="text-align:center;">
-        <div class="col-xs-6">
+        <div class="col-xs-4">
           <button data-hook="script" class="btn btn-default">
             <i class="icons icons-script fa fa-code"></i>
           </button>
-          <h2>Script
-            <span data-hook="script-help"></span>
-          </h2>
+          <h2>Script<span data-hook="script-help"></span></h2>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-4">
           <button data-hook="scraper" class="btn btn-default">
             <i class="icons icons-scraper fa fa-cloud"></i>
           </button>
           <h2>Outgoing Webhook/<br>HTTP Request
             <span data-hook="webhook-help"></span>
           </h2>
+        </div>
+        <div class="col-xs-4">
+          <button data-hook="approval" class="btn btn-default">
+            <i class="icons icons-approval fa fa-thumbs-o-up"></i>
+          </button>
+          <h2>Approval<span data-hook="approval-help"></span></h2>
         </div>
       </div>
     </section>
@@ -49,6 +54,11 @@ const TaskCreationWizard = View.extend({
       event.preventDefault()
       event.stopPropagation()
       this.createFormTask( new ScraperTask() )
+    },
+    'click button[data-hook=approval]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      this.createFormTask( new ApprovalTask() )
     }
   },
   render () {
@@ -83,9 +93,7 @@ const TaskCreationWizard = View.extend({
    */
   createFormTask (task) {
     this.queryByHook('type-selection-container').remove()
-    const form = new TaskFormView({
-      model: task,
-    })
+    const form = new TaskFormView({ model: task })
     //form.render()
     this.renderSubview(form,this.queryByHook('form-container'))
     this.form = form

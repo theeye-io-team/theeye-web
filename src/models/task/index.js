@@ -7,9 +7,8 @@ import LIFECYCLE from 'constants/lifecycle'
 
 //import { Model as Host } from 'models/host'
 
-const JobModel = require('models/job')
-const ScriptTemplate = require('./template').Script
-const ScraperTemplate = require('./template').Scraper
+const Job = require('models/job')
+const Template = require('./template')
 const config = require('config')
 
 const urlRoot = `${config.api_url}/task`
@@ -30,7 +29,7 @@ const formattedTags = () => {
 }
 
 // add host and template to both script and scraper tasks
-const Script = ScriptTemplate.extend({
+const Script = Template.Script.extend({
   urlRoot: urlRoot,
   props: {
     hostname: 'string',
@@ -66,12 +65,11 @@ const Script = ScriptTemplate.extend({
     }
   },
   children: {
-    //host: Host,
-    lastjob: JobModel.ScriptJob,
-    template: ScriptTemplate,
+    lastjob: Job.ScriptJob,
+    template: Template.Script,
   },
   serialize () {
-    var serial = ScriptTemplate.prototype.serialize.apply(this,arguments)
+    var serial = Template.Script.prototype.serialize.apply(this,arguments)
     serial.template = this.template ? this.template.id : null
     serial.host = this.host_id
     serial.script = this.script_id
@@ -80,7 +78,7 @@ const Script = ScriptTemplate.extend({
   }
 })
 
-const Scraper = ScraperTemplate.extend({
+const Scraper = Template.Scraper.extend({
   urlRoot: urlRoot,
   props: {
     hostname: 'string',
@@ -116,14 +114,64 @@ const Scraper = ScraperTemplate.extend({
     }
   },
   children: {
-    //host: Host,
-    lastjob: JobModel.ScraperJob,
-    template: ScraperTemplate,
+    lastjob: Job.ScraperJob,
+    template: Template.Scraper,
   },
   serialize () {
-    var serial = ScraperTemplate.prototype.serialize.apply(this,arguments)
+    var serial = Template.Scraper.prototype.serialize.apply(this,arguments)
     serial.template = this.template ? this.template.id : null
     serial.host = this.host_id
+    delete serial.lastjob
+    return serial
+  }
+})
+
+const Approval = Template.Approval.extend({
+  urlRoot,
+  props: {
+    template_id: 'string',
+    lastjob_id: 'string'
+  },
+  derived: {
+    formatted_tags: () => {
+      return {
+        deps: ['name','type','description','acl','tags'],
+        fn () {
+          return [
+            'name=' + this.name,
+            'type=' + this.type,
+            'description=' + this.description,
+            'acl=' + this.acl,
+          ].concat(this.tags)
+        }
+      }
+    },
+    canExecute: {
+      deps: [],
+      fn () {
+        return true
+      }
+    },
+    hasTemplate: {
+      deps: ['template_id'],
+      fn () {
+        return Boolean(this.template_id) === true
+      }
+    },
+    summary: {
+      deps: ['name'],
+      fn () {
+        return `approval task ${this.name}`
+      }
+    }
+  },
+  children: {
+    lastjob: Job.ApprovalJob,
+    template: Template.Approval,
+  },
+  serialize () {
+    var serial = Template.Approval.prototype.serialize.apply(this,arguments)
+    serial.template = this.template ? this.template.id : null
     delete serial.lastjob
     return serial
   }
@@ -140,7 +188,12 @@ const Factory = function (attrs, options={}) {
     return new Scraper(attrs, options)
   }
 
-  console.error( new Error(`unrecognized type ${attrs.type}`) )
+  if (attrs.type == TaskConstants.TYPE_APPROVAL) {
+    return new Approval(attrs, options)
+  }
+
+  let err = new Error(`unrecognized type ${attrs.type}`)
+  throw err
 }
 
 const Collection = AppCollection.extend({
@@ -148,11 +201,17 @@ const Collection = AppCollection.extend({
   url: urlRoot,
   model: Factory,
   isModel (model) {
-    return model instanceof Scraper || model instanceof Script
+    let isModel = (
+      model instanceof Scraper ||
+      model instanceof Script ||
+      model instanceof Approval
+    )
+    return isModel
   }
 })
 
 exports.Scraper = Scraper
 exports.Script = Script
+exports.Approval = Approval
 exports.Collection = Collection
 exports.Factory = Factory

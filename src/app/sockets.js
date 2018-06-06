@@ -9,6 +9,7 @@ import JobActions from 'actions/job'
 import NotificationActions from 'actions/notifications'
 import DashboardActions from 'actions/dashboard'
 import HostActions from 'actions/host'
+import TaskActions from 'actions/task'
 import SessionActions from 'actions/session'
 import config from 'config'
 const logger = require('lib/logger')('app:sockets')
@@ -40,6 +41,8 @@ const defaultTopics = [
   //'host-processes',
   'monitor-state',
   'job-crud',
+  //'task-crud',
+  //'task-interrupted',
   'host-integrations-crud', // host integrations changes
   'host-registered'
 ]
@@ -104,26 +107,23 @@ const createWrapper = ({ io }) => {
     io,
     events: { // topics
       // socket events handlers
-      'notification-crud': event => {
+      'notification-crud': event => { // always subscribed
         NotificationActions.add(event.model)
       },
       'session-customer-changed': event => { // temporal fix
         SessionActions.verifyCustomerChange(event.organization)
       },
-      'host-registered': event => {
-        DashboardActions.loadNewRegisteredHostAgent(event.model)
-      },
+      // subscribed on demand
       'host-stats': event => {
         HostStatsActions.applyStateUpdate('dstat', event.model)
       },
+      // subscribed on demand
       'host-processes': event => {
         HostStatsActions.applyStateUpdate('psaux', event.model)
       },
+      // subscribed by default. see defaultTopics definition
       'monitor-state': (event) => {
         ResourceActions.applyStateUpdate(event.model.id, event.model)
-      },
-      'host-integrations-crud': (event) => {
-        HostActions.applyStateUpdate(event.model.id, event.model)
       },
       'job-crud': (event) => {
         if (
@@ -134,6 +134,12 @@ const createWrapper = ({ io }) => {
           JobActions.applyStateUpdate(event.model)
           HostActions.applyIntegrationJobStateUpdates(event.model)
         }
+      },
+      'host-integrations-crud': (event) => {
+        HostActions.applyStateUpdate(event.model.id, event.model)
+      },
+      'host-registered': event => {
+        DashboardActions.loadNewRegisteredHostAgent(event.model)
       },
       'task-crud': (event) => {
         TaskActions.applyStateUpdate(event.model)
