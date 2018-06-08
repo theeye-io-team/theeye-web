@@ -31,7 +31,9 @@ module.exports = {
     wizard: {
       nested: 'Create a monitor to notify when all the monitors inside it needs attention',
       others: 'Go to Monitors page'
-    }
+    },
+    unmute_button: 'Click to start receiving monitor notifications',
+    mute_button: 'Click to stop receiving monitor notifications'
   },
   task: {
     creation: {

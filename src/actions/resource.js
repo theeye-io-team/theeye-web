@@ -4,7 +4,8 @@ import after from 'lodash/after'
 import bootbox from 'bootbox'
 import assign from 'lodash/assign'
 import ResourceModels from 'models/resource'
-//import XHR from 'lib/xhr'
+import XHR from 'lib/xhr'
+const config = require('config')
 
 const create = (data, next = function(){}) => {
   let resource = ResourceModels.Factory(data)
@@ -22,6 +23,7 @@ const create = (data, next = function(){}) => {
 }
 
 module.exports = {
+  create: create,
   // remote server update
   update (id, data) {
     let resource = App.state.resources.get(id)
@@ -69,5 +71,45 @@ module.exports = {
       create(monitorData, done)
     })
   },
-  create: create
+  mute (id) {
+    changeAlerts (id, false, function(err){
+      if (!err) {
+        App.state.alerts.success('Alerts are disabled.')
+      } else { 
+        App.state.alerts.danger('An error has ocurr updating the monitor')
+      }
+    })
+  },
+  unmute (id) {
+    changeAlerts (id, true, function(err){
+      if (!err) {
+        App.state.alerts.success('Alerts are enabled again.')
+      } else {
+        App.state.alerts.danger('An error has ocurr updating the monitor')
+      }
+    })
+  }
+
+}
+
+const changeAlerts = (id, value, next) => {
+  const resource = App.state.resources.get(id)
+  const url = `${config.api_url}/resource/${id}/alerts`
+  next || (next = function(){})
+
+  if (typeof value === 'boolean') {
+    XHR.send({
+      url: url,
+      method: 'PATCH',
+      jsonData: { alerts: value },
+      headers: { Accept: 'application/json;charset=UTF-8' },
+      done (response, xhr) {
+        resource.set('alerts', value)
+        next()
+      },
+      error (response, xhr) {
+        next( new Error() )
+      },
+    })
+  }
 }

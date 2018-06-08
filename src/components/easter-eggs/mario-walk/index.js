@@ -7,7 +7,7 @@
 var jquery = require('jquery');
 
 
-const MarioWalk = function (options) {
+function MarioWalk (options) {
 
   options||(options={});
 

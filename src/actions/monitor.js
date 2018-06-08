@@ -4,6 +4,25 @@ import { Collection as ResourcesCollection } from 'models/resource'
 
 const Script = require('models/file/script').Model
 
+module.exports = {
+  populate (model) {
+    // nested monitor doesn't has host
+    if (model.type !== MonitorConstants.TYPE_NESTED) {
+      if (!model.monitor.host.id) {
+        let host = App.state.hosts.get(model.monitor.host_id)
+        if (!host) {
+          model.monitor.host.id = model.monitor.host_id
+          model.monitor.host.fetch()
+        } else {
+          model.monitor.host.set( host.serialize() )
+        }
+      }
+    }
+
+    callPopulateByType(model)
+  }
+}
+
 const populateScriptMonitor = (model) => {
   if (!model.monitor.config.script) {
     const script = new Script()
@@ -55,23 +74,4 @@ const callPopulateByType = (model) => {
   const method = populateMethods[model.monitor.type]
   if (!method) return
   method.call(this,model)
-}
-
-module.exports = {
-  populate (model) {
-    // nested monitor doesn't has host
-    if (model.type !== MonitorConstants.TYPE_NESTED) {
-      if (!model.monitor.host.id) {
-        let host = App.state.hosts.get(model.monitor.host_id)
-        if (!host) {
-          model.monitor.host.id = model.monitor.host_id
-          model.monitor.host.fetch()
-        } else {
-          model.monitor.host.set( host.serialize() )
-        }
-      }
-    }
-
-    callPopulateByType(model)
-  }
 }

@@ -6,6 +6,65 @@ import SearchActions from 'actions/searchbox'
 import ResourceActions from 'actions/resource'
 import MonitorConstants from 'constants/monitor'
 import MonitorEditView from 'view/page/monitor/edit'
+import HelpMessages from 'language/help'
+
+const Mute = View.extend({
+  template: `
+    <button class="btn btn-primary tooltiped" data-hook="mute-toggler">
+      <i class="fa" aria-hidden="true"></i>
+    </button>
+  `,
+  derived: {
+    is_muted: {
+      deps: ['model.alerts'],
+      fn () {
+        return this.model.alerts === false
+      }
+    },
+    title_text: {
+      deps: ['is_muted'],
+      fn () {
+        if (this.is_muted) {
+          return HelpMessages.monitor.unmute_button
+        } else {
+          return HelpMessages.monitor.mute_button
+        }
+      }
+    }
+  },
+  bindings: {
+    is_muted: [{
+      selector: 'button i',
+      type: 'booleanClass',
+      no: 'fa-volume-up',
+      yes: 'fa-volume-off',
+    },{
+      selector: 'button i',
+      type: 'booleanClass',
+      yes: 'remark-alert'
+    }],
+    title_text: {
+      type: 'attribute',
+      name: 'title',
+      hook: 'mute-toggler'
+    }
+  },
+  events: {
+    'click button[data-hook=mute-toggler]':'onClickButton'
+  },
+  onClickButton: function(event){
+    event.stopPropagation();
+    event.preventDefault();
+
+    if (this.is_muted) {
+      ResourceActions.unmute(this.model.id)
+    } else {
+      ResourceActions.mute(this.model.id)
+    }
+
+    return false;
+  }
+})
 
 const Edit = View.extend({
   template: `
@@ -121,16 +180,16 @@ module.exports = View.extend({
 
     switch (type) {
       case MonitorConstants.TYPE_HOST:
-        buttons = [ HostStats, Workflow, Search ]
+        buttons = [ HostStats, Workflow, Search, Mute ]
         break;
       case MonitorConstants.TYPE_NESTED:
-        buttons = [ null, Workflow, Search ]
+        buttons = [ null, Workflow, Search, Mute ]
         break;
       case MonitorConstants.TYPE_SCRIPT:
       case MonitorConstants.TYPE_SCRAPER:
       case MonitorConstants.TYPE_PROCESS:
       case MonitorConstants.TYPE_FILE:
-        buttons = [ LastEvent, Workflow, Search ]
+        buttons = [ LastEvent, Workflow, Search, Mute ]
         break;
       default:
         buttons = []
