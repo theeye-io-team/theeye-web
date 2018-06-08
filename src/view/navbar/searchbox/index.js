@@ -6,42 +6,50 @@ module.exports = View.extend({
   autoRender: true,
   template: require('./template.hbs'),
   props: {
-    inputValue: ['string',false,''],
-    searchActivated: ['boolean',false,false]
+    inputValue: ['string', false, ''],
+    showMobileInput: ['boolean', false, false],
+    showDeleteButton: ['boolean', false, false]
   },
   bindings: {
-    searchActivated: {
+    showMobileInput: {
       type: 'toggle',
       hook: 'search-mobile-container'
+    },
+    showDeleteButton: {
+      type: 'toggle',
+      hook: 'endsearch-icon'
     },
     inputValue: [{
       type: 'value',
       hook: 'xs-input'
-    },{
+    }, {
       type: 'value',
       hook: 'sm-input'
     }]
   },
   initialize () {
-    View.prototype.initialize.apply(this,arguments)
+    View.prototype.initialize.apply(this, arguments)
 
-    this.listenToAndRun(App.state.searchbox,'change:search',() => {
+    this.listenToAndRun(App.state.searchbox, 'change:search', () => {
       this.updateState()
     })
   },
   events: {
     'input input': 'oninput',
     'click [data-hook=search-button-mobile]': 'onClickSearchMobile',
-    'click [data-hook=endsearch-button-mobile]': 'onClickEndSearchMobile'
+    'click [data-hook=endsearch-button-mobile]': 'onClickEndSearchMobile',
+    'click [data-hook=endsearch-icon]': 'onClickEndSearchMobile'
   },
   oninput (event) {
+    this.showDeleteButton = event.target.value.length > 0
     SearchActions.search(event.target.value)
   },
   onClickSearchMobile (event) {
-    this.searchActivated = true
+    this.showMobileInput = true
   },
   onClickEndSearchMobile (event) {
-    this.searchActivated = false
+    this.showMobileInput = false
+    this.showDeleteButton = false
     this.endsearch()
   },
   render () {
@@ -54,18 +62,19 @@ module.exports = View.extend({
         document.activeElement === inputs[0] ||
         document.activeElement === inputs[1]
       ) {
-        if (event.keyCode == 27) {
+        if (event.keyCode === 27) {
           self.endsearch()
         }
       }
     }, false)
   },
   endsearch () {
-    this.queryAll('input').forEach(input => input.value = '')
+    this.queryAll('input').forEach(input => (input.value = ''))
     SearchActions.clear()
   },
   // listen to app state changes and update inputValue
   updateState () {
     this.inputValue = App.state.searchbox.search
+    this.showDeleteButton = this.inputValue.length > 0
   }
 })

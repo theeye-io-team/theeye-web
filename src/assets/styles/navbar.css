@@ -86,7 +86,26 @@
 .navbar-eyemenu input:-ms-input-placeholder {color: #005580}
 .navbar-eyemenu input:-moz-placeholder {color: #005580}
 .navbar-eyemenu .eyemenu-search-panel-desktop input {padding:6px 48px;color:#005580;border:none;font-size:21px;width:85%;outline:none!important;margin-top:14px;background:#f8f8f8}
-.navbar-eyemenu .eyemenu-search-panel-desktop .fa-search {position:absolute;left:10px;top:10px;font-size:24px;color:#ccc;padding:11px 15px 11px 0;color:#005580}
+.navbar-eyemenu .eyemenu-search-panel-desktop .fa-search {
+  position: absolute;
+  left: 10px;
+  top: 10px;
+  font-size: 24px;
+  padding: 11px 15px 11px 0;
+  color: #005580;
+}
+.navbar-eyemenu .eyemenu-search-panel-desktop .fa-times-circle {
+  position: absolute;
+  right: 14%;
+  top: 12px;
+  font-size: 24px;
+  padding: 11px 15px 11px 0;
+  color: #00558080;
+  cursor: pointer;
+}
+.navbar-eyemenu .eyemenu-search-panel-desktop .fa-times-circle:hover {
+  color: #005580;
+}
 .navbar-eyemenu .navbar-right {margin:0;position:relative}
 .navbar-eyemenu .eyemenu-search-panel-clear {position:absolute;right:0;top:0;font-size:24px;color:#ccc;padding:11px 15px;cursor:pointer;color:#005580;display:none}
 
@@ -95,6 +114,18 @@
 	.navbar-eyemenu .eyemenu-search-panel-mobile {position:fixed;top:0;left:0;right:0;background:#fff;height:50px;}
 	.navbar-eyemenu .eyemenu-search-panel-mobile input {padding:12px;color:#005580;border:none;font-size:18px;outline:none!important;margin-left:36px;width:90%}
 	.navbar-eyemenu .eyemenu-search-panel-mobile .fa-arrow-left {position:absolute;left:0;top:0;color:#ccc;padding:17px;cursor:pointer;color:#005580}
+  .navbar-eyemenu .eyemenu-search-panel-mobile .fa-times-circle {
+    position: absolute;
+    right: 1%;
+    top: 3px;
+    font-size: 24px;
+    padding: 11px 15px 11px 0;
+    color: #00558080;
+    cursor: pointer;
+  }
+  .navbar-eyemenu .eyemenu-search-panel-mobile .fa-times-circle:hover {
+    color: #005580;
+  }
 	.navbar-eyemenu .eyemenu-search-icon.hidden-sm {padding:10px 15px 10px 15px;font-size:21px;float:right;top:0;right:0;color:#ccc;cursor:pointer;color:#005982}
 	.navbar-eyemenu .eyemenu-panel-launcher {padding:10px 15px 10px 15px;font-size:21px;}
 	.navbar-eyemenu .eyemenu-panel-launcher.eyemenu-panel-innerlauncher {margin:0;}
