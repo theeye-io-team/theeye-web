@@ -14,6 +14,7 @@ import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 import CopyTaskSelect from '../copy-task-select'
 import RemoveButton from '../remove-button'
+import bootbox from 'bootbox'
 
 module.exports = TaskFormView.extend({
   initialize (options) {
@@ -88,15 +89,7 @@ module.exports = TaskFormView.extend({
           }
         ],
         visible: false,
-        value: this.model.triggers,
-        tests: [
-          (values) => {
-            if (values.length===0) return
-            if (this.hasDynamicArguments()) {
-              return HelpTexts.task.cannot_trigger
-            }
-          }
-        ]
+        value: this.model.triggers
       }),
       new ArgumentsView({
         visible: false,
@@ -140,6 +133,19 @@ module.exports = TaskFormView.extend({
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)
     buttons.on('click:confirm', () => { this.submit() })
+
+    let acl = this._fieldViews.acl
+    let approver = this._fieldViews.approver_id
+    acl.listenToAndRun(approver, 'change:value', () => {
+      let selected = approver.selected()
+      if (!selected) return
+      if (selected.credential==='user') {
+        if (this.model.workflow_id) {
+          bootbox.alert('Make sure the approver has the required ACL to the Workflow')
+        }
+        acl.setValue( acl.value.concat(selected.email) )
+      }
+    })
   },
   submit (next) {
     next||(next=()=>{})
@@ -168,6 +174,7 @@ module.exports = TaskFormView.extend({
       name: task.name,
       description: task.description,
       tags: task.tags,
+      triggers: task.trigger || []
     })
   }
 })

@@ -21,7 +21,8 @@ module.exports = View.extend({
           <p data-hook="message-text"></p>
         </div>
       </div>
-    </div>`,
+    </div>
+  `,
   bindings: {
     visible: {
       type: 'toggle'
@@ -270,36 +271,39 @@ module.exports = View.extend({
     //this.$select.trigger('change')
   },
   setValue (items) {
-    if (!items) {
-      this.$select.val(null)
-    } else {
-      var data
-      if (items.isCollection) {
+    var data = []
+    if (items.isCollection) {
+      if (items.length>0) {
         // items are treated as models
-        data = items.map(model => model.get(this.idAttribute))
-      } else if (Array.isArray(items)) {
-        // items are treated as plain objects
-        if (items.length>0) {
-          data = []
-          items.forEach(item => {
-            if (!item) { return }
-
-            if (typeof item == 'string') {
-              data.push(item)
-            } else if (item.hasOwnProperty(this.idAttribute)) {
-              data.push(item[this.idAttribute])
-            } else {
-              console.warn(`${item} object properties invalid`)
-            }
-          })
-        } else data = []
-      } else {
-        // items is a single item
-        data = items
+        items.forEach(model => {
+          let val = model.get(this.idAttribute)
+          if (!val) {
+            return console.warn(`${model} properties are invalid`)
+          }
+          data.push(val)
+        })
       }
+    } else if (Array.isArray(items)) {
+      // items are treated as plain objects
+      if (items.length>0) {
+        items.forEach(item => {
+          if (!item) { return }
 
-      this.$select.val(data)
+          if (typeof item == 'string') {
+            data.push(item)
+          } else if (item.hasOwnProperty(this.idAttribute)) {
+            data.push(item[this.idAttribute])
+          } else {
+            console.warn(`${item} object properties are invalid`)
+          }
+        })
+      }
+    } else {
+      // set single item
+      data = items
     }
+
+    this.$select.val(data)
     this.$select.trigger('change')
     return
   },
