@@ -46,7 +46,12 @@ module.exports = TaskFormView.extend({
         label: 'Approver *',
         idAttribute: 'id',
         textAttribute: 'label',
-        value: this.model.approver_id
+        value: this.model.approver_id,
+        filterOptions: [
+          item => {
+            return item.credential !== 'viewer'
+          }
+        ],
       }),
       // advanced fields starts visible = false
       new AdvancedToggle({

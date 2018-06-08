@@ -7,7 +7,22 @@ import FilteredCollection from 'ampersand-filtered-subcollection'
 
 module.exports = SelectView.extend({
   initialize (specs) {
-    this.options = specs.options || App.state.members
+
+    var filters = [ item => true ]
+
+    if (
+      Array.isArray(specs.filterOptions) &&
+      specs.filterOptions.length
+    ) {
+      filters = filters.concat(specs.filterOptions)
+    }
+
+    var options = new FilteredCollection(
+      specs.options || App.state.members,
+      { filters }
+    )
+
+    this.options = options
     this.multiple = (typeof specs.multiple === 'boolean') ? specs.multiple : true
     this.tags = specs.tags || true
     this.label = specs.label || 'Members'
@@ -15,12 +30,6 @@ module.exports = SelectView.extend({
     this.styles = specs.styles || 'form-group'
     this.idAttribute = specs.idAttribute || 'email'
     this.textAttribute = specs.textAttribute || 'label'
-    //this.allowCreateTags = true
-    //const basicCreateTags = this.createTags
-    //this.createTags = function (value) {
-    //  //test value before create tag
-    //  if (isEmail(value)) basicCreateTags(value)
-    //}
     
     SelectView.prototype.initialize.apply(this,arguments)
   }
