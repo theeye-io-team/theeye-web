@@ -272,35 +272,37 @@ module.exports = View.extend({
   },
   setValue (items) {
     var data = []
-    if (items.isCollection) {
-      if (items.length>0) {
-        // items are treated as models
-        items.forEach(model => {
-          let val = model.get(this.idAttribute)
-          if (!val) {
-            return console.warn(`${model} properties are invalid`)
-          }
-          data.push(val)
-        })
-      }
-    } else if (Array.isArray(items)) {
-      // items are treated as plain objects
-      if (items.length>0) {
-        items.forEach(item => {
-          if (!item) { return }
+    if (items) {
+      if (items.isCollection) {
+        if (items.length>0) {
+          // items are treated as models
+          items.forEach(model => {
+            let val = model.get(this.idAttribute)
+            if (!val) {
+              return console.warn(`${model} properties are invalid`)
+            }
+            data.push(val)
+          })
+        }
+      } else if (Array.isArray(items)) {
+        // items are treated as plain objects
+        if (items.length>0) {
+          items.forEach(item => {
+            if (!item) { return }
 
-          if (typeof item == 'string') {
-            data.push(item)
-          } else if (item.hasOwnProperty(this.idAttribute)) {
-            data.push(item[this.idAttribute])
-          } else {
-            console.warn(`${item} object properties are invalid`)
-          }
-        })
+            if (typeof item == 'string') {
+              data.push(item)
+            } else if (item.hasOwnProperty(this.idAttribute)) {
+              data.push(item[this.idAttribute])
+            } else {
+              console.warn(`${item} object properties are invalid`)
+            }
+          })
+        }
+      } else {
+        // set single item
+        data = items
       }
-    } else {
-      // set single item
-      data = items
     }
 
     this.$select.val(data)
