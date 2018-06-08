@@ -95,7 +95,7 @@ module.exports = {
     workflow.start_task.trigger('execution')
   },
   run (workflow) {
-    JobActions.create(workflow.start_task)
+    JobActions.createFromTask(workflow.start_task)
   }
 }
 

@@ -52,7 +52,7 @@ const runAllTasks = (rows) => {
             if (/Workflow/.test(task._type)) {
               WorkflowActions.run(task)
             } else {
-              JobActions.create(task)
+              JobActions.createFromTask(task)
             }
           })
 				}
