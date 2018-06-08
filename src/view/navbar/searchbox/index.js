@@ -7,11 +7,11 @@ module.exports = View.extend({
   template: require('./template.hbs'),
   props: {
     inputValue: ['string', false, ''],
-    showMobileInpu: ['boolean', false, false],
+    showMobileInput: ['boolean', false, false],
     showDeleteButton: ['boolean', false, false]
   },
   bindings: {
-    showMobileInpu: {
+    showMobileInput: {
       type: 'toggle',
       hook: 'search-mobile-container'
     },
@@ -45,10 +45,10 @@ module.exports = View.extend({
     SearchActions.search(event.target.value)
   },
   onClickSearchMobile (event) {
-    this.showMobileInpu = true
+    this.showMobileInput = true
   },
   onClickEndSearchMobile (event) {
-    this.showMobileInpu = false
+    this.showMobileInput = false
     this.showDeleteButton = false
     this.endsearch()
   },
