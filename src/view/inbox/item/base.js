@@ -46,8 +46,6 @@ export default View.extend({
       format = '[Today at] LT'
     }
 
-    const type = this.model.data.model._type
-
     this.time = moment(this.model.createdAt).format(format)
     this.modelName = this.model.data.model.name
     this.modelType = resourceType[this.model.data.model_type]
@@ -56,6 +54,6 @@ export default View.extend({
     this.customizeItem()
   },
   sanitizeState (state) {
-    state.toLowerCase().replace(/ /g,"_")
+    return state.toLowerCase().replace(/ /g, '_')
   }
 })

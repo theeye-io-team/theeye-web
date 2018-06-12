@@ -12,7 +12,7 @@ export default View.extend({
     this.renderSwitch('push', notify.push)
     //this.renderSwitch('mute', notify.mute)
     //this.renderSwitch('email', notify.email)
-    //this.renderSwitch('desktop', notify.desktop)
+    this.renderSwitch('desktop', notify.desktop)
   },
   renderSwitch (name, value) {
     const btn = new SimpleSwitch({ value: value || false })
