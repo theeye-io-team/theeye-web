@@ -32,7 +32,7 @@ module.exports = {
     if (handledTopics.indexOf(event.topic) > -1) {
       var acls = ( data.model.task ? data.model.task.acl : data.model.acl ) || []
 
-      getUsers(data.organization, acls, (error, users) => {
+      getUsers(event, data.organization, acls, (error, users) => {
         if (error) return logger.error('%o',error)
 
         // create a notification for each user
@@ -69,20 +69,28 @@ module.exports = {
 }
 
 // Returns a user collection for a given customer
-const getUsers = (customerName, acls, callback) => {
+const getUsers = (event, customerName, acls, callback) => {
   if (!customerName) {
     const err = new Error('I need a customer to find the users')
     return callback(err)
   }
 
-  User.find({
+  var query = {
     username: { $ne: null },
     customers: customerName,
     $or: [
-      { credential: { $in: ['admin','owner','root'] } },
+      { credential: { $in: ['admin', 'owner', 'root'] } },
       { email: { $in: acls } }
     ]
-  }, function(error, users) {
+  }
+
+  if (event.topic === 'job-crud' && event.data.model_type === 'ApprovalJob' && event.data.model.lifecycle === 'onhold') {
+    query = {
+      id: event.data.approver_id
+    }
+  }
+
+  User.find(query, function (error, users) {
     if (!users || !Array.isArray(users) || !users.length) {
       return callback(null, [])
     }

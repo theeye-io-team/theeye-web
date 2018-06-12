@@ -7,74 +7,106 @@ const dumpfile = '/tmp/theeye-push-dump.log'
 
 module.exports = {
   send (event, users) {
-    if (event.topic === 'monitor-state') {
-      const model = event.data.model
-      let monitor_event = event.data.monitor_event
-      let severity = model.failure_severity
+    const model = event.data.model
+    switch (event.topic) {
+      case 'monitor-state':
+        let monitor_event = event.data.monitor_event
+        let severity = model.failure_severity
 
-      if (severity == 'HIGH' || severity == 'CRITICAL') {
-        let msg = prepareMonitorStateChangeNotification(model, monitor_event)
-        if (msg) dispatch(msg, users)
-      }
+        if (severity === 'HIGH' || severity === 'CRITICAL') {
+          let data = prepareMonitorStateChangeNotification(model, monitor_event)
+          if (data.msg) dispatch(data, users)
+        }
+        break
+      case 'job-crud':
+        let data = prepareJobNotification(model)
+        if (data.msg) dispatch(data, users)
+        break
     }
   }
 }
 
+const prepareJobNotification = (job) => {
+  let data = {}
+  switch (job._type) {
+    case 'ApprovalJob':
+      data = prepareApprovalJobNotification(job)
+      break
+    default:
+      logger.error('job type %s not handled', job._type)
+      break
+  }
+  return data
+}
+
+const prepareApprovalJobNotification = (job) => {
+  let data = {}
+
+  switch (job.lifecycle) {
+    case 'onhold':
+      data.msg = `Task ${job.task.name} needs approval.`
+      data.action = 'approvalTasks'
+      break
+  }
+  return data
+}
+
 const prepareMonitorStateChangeNotification = (monitor, monitor_event) => {
-  let msg
+  let data = {}
   switch (monitor.type) {
     case 'host':
-      msg = prepareHostNotification(monitor, monitor_event)
+      data = prepareHostNotification(monitor, monitor_event)
       break
     case 'script':
     case 'process':
     case 'scraper':
     case 'nested':
-      msg = prepareDefaultNotification(monitor, monitor_event)
+      data = prepareDefaultNotification(monitor, monitor_event)
       break
     default:
       logger.error('monitor type %s not handled', monitor.type)
       break
   }
-  return msg
+  return data
 }
 
 const prepareHostNotification = (monitor, monitor_event) => {
-  var msg = ''
+  let data = {}
   switch (monitor_event) {
     case 'updates_started':
-      msg = `${monitor.name} started reporting again.`
+      data.msg = `${monitor.name} started reporting again.`
       break
     case 'updates_stopped':
-      msg = `${monitor.name} stopped reporting updates.`
+      data.msg = `${monitor.name} stopped reporting updates.`
       break
   }
-  return msg
+  return data
 }
 
 const prepareDefaultNotification = (monitor, monitor_event) => {
-  var msg = ''
+  let data = {}
   switch (monitor_event) {
     case 'recovered':
-      msg = `${monitor.name} recovered.`
+      data.msg = `${monitor.name} recovered.`
       break
     case 'failure':
-      msg = `${monitor.name} checks failed.`
+      data.msg = `${monitor.name} checks failed.`
       break
   }
-  return msg
+  return data
 }
 
-const dispatch = (message,users) => {
-  if (!message) {
+const dispatch = (data, users) => {
+  if (!data.msg) {
     return logger.error('Error. invalid message, undefined condition')
   }
-  message = message.replace(/['"]+/g, '')
+  var message = data.msg.replace(/['"]+/g, '')
+  var action = data.action || 'showNotificationsTab'
 
   var params = {
     MessageStructure: 'json',
     Message: JSON.stringify({
-      "GCM": "{ \"data\": { \"message\": \"" + message + "\", \"style\": \"inbox\", \"summaryText\": \"%n% New notifications\"} }",
+      "GCM": "{ \"data\": { \"message\": \"" + message + "\",  \"action\": \"" + action + "\", \"style\": \"inbox\", \"summaryText\": \"%n% New notifications\"} }",
       "APNS_SANDBOX": "{ \"aps\": { \"alert\": \"" + message + "\" } }",
       "APNS": "{ \"aps\": { \"alert\": \"" + message + "\" } }"
     })
