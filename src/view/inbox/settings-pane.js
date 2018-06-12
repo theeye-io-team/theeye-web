@@ -85,7 +85,7 @@ export default View.extend({
 
     this.renderSubview(
       new FilterSwitch({
-        label: 'Task started notifications?',
+        label: 'Notify me of launched tasks',
         filter: JOB_START_NOTIFICATION
       }),
       this.queryByHook('switchs-container')

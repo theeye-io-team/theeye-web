@@ -13,7 +13,8 @@ class Charts extends Route {
     if (!config) {
       url = ''
     } else if (integration.toLowerCase() === 'kibana') {
-      url = config
+      // accept old configs for kibana
+      url = config.url || config
     } else {
       // generic integrations here
       url = config.url

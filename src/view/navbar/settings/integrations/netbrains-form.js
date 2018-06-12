@@ -1,5 +1,5 @@
 import FormView from 'ampersand-form-view'
-import InputView from 'components/input-view'
+import IframeParserInputView from './IframeParserInputView'
 import CheckboxView from 'components/checkbox-view'
 import isURL from 'validator/lib/isURL'
 
@@ -12,7 +12,7 @@ module.exports = FormView.extend({
         label: 'Netbrains enabled',
         value: Boolean(netbrainsConfig.enabled)
       }),
-      new InputView({
+      new IframeParserInputView({
         name: 'netbrains_url',
         label: 'Netbrains url',
         placeholder: 'Netbrains url',

@@ -21,14 +21,14 @@ module.exports = View.extend({
     },
     elasticsearchEnabled: {
       deps: ['model.config'],
-      fn: function(){
+      fn: function () {
         return this.model.config.elasticsearch && this.model.config.elasticsearch.enabled
       }
     },
     kibanaEnabled: {
       deps: ['model.config'],
-      fn: function(){
-        return Boolean(this.model.config.kibana)
+      fn: function () {
+        return this.model.config.kibana && this.model.config.kibana.enabled
       }
     }
   },
@@ -47,7 +47,7 @@ module.exports = View.extend({
       {
         type: 'toggle',
         hook: 'elasticsearch-enabled'
-      },{
+      }, {
         type: 'toggle',
         hook: 'elasticsearch-disabled',
         invert: true
@@ -57,7 +57,7 @@ module.exports = View.extend({
       {
         type: 'toggle',
         hook: 'kibana-enabled'
-      },{
+      }, {
         type: 'toggle',
         hook: 'kibana-disabled',
         invert: true
@@ -118,12 +118,12 @@ module.exports = View.extend({
       bodyView: form
     })
 
-    this.listenTo(modal,'shown',function(){ form.focus() })
-    this.listenTo(modal,'hidden',function(){
+    this.listenTo(modal, 'shown', function () { form.focus() })
+    this.listenTo(modal, 'hidden', function () {
       form.remove()
       modal.remove()
     })
-    this.listenTo(modal,'confirm',function(){
+    this.listenTo(modal, 'confirm', function () {
       form.beforeSubmit()
       if (!form.valid) return
 
@@ -153,18 +153,21 @@ module.exports = View.extend({
       bodyView: form
     })
 
-    this.listenTo(modal,'shown',function(){ form.focus() })
-    this.listenTo(modal,'hidden',function(){
+    this.listenTo(modal, 'shown', function () { form.focus() })
+    this.listenTo(modal, 'hidden', function () {
       form.remove()
       modal.remove()
     })
-    this.listenTo(modal,'confirm',function(){
+    this.listenTo(modal, 'confirm', function () {
       form.beforeSubmit()
       if (!form.valid) return
 
       SessionActions.updateCustomerIntegrations({
         integration: 'kibana',
-        config: form.data.kibana
+        config: {
+          enabled: form.data.kibana_enabled,
+          url: form.data.kibana_url
+        }
       })
       modal.hide()
     })

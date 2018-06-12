@@ -66,21 +66,28 @@ module.exports = {
       }
     }
 
-    data.config.kibana = data.kibana
+    if (data.kibana_enabled && !data.kibana_url) {
+      bootbox.alert('Please provide a kibana url')
+      return
+    }
+    data.config.kibana = {
+      enabled: data.kibana_enabled,
+      url: data.kibana_url
+    }
 
     delete data.elasticsearch_enabled
     delete data.elasticsearch_url
     delete data.kibana
 
     customer.set(data)
-    customer.save({},{
+    customer.save({}, {
       collection: App.state.customers,
-      success: function(){
-        bootbox.alert('Customer Updated',function(){ });
+      success: function () {
+        bootbox.alert('Customer Updated')
         App.state.customers.add(customer, {merge: true})
       },
-      error: function(err) {
-        bootbox.alert('Error updating customer',function(){ });
+      error: function (err) {
+        bootbox.alert('Error updating customer')
       }
     })
     modal.hide()
@@ -90,7 +97,7 @@ module.exports = {
 
     data.config = {}
     if (data.elasticsearch_enabled) {
-      if(!data.elasticsearch_url) {
+      if (!data.elasticsearch_url) {
         bootbox.alert('Please provide an elasticsearch url',function(){})
         return
       }
@@ -105,22 +112,29 @@ module.exports = {
       }
     }
 
-    data.config.kibana = data.kibana
+    if (data.kibana_enabled && !data.kibana_url) {
+      bootbox.alert('Please provide a kibana url')
+      return
+    }
+    data.config.kibana = {
+      enabled: data.kibana_enabled,
+      url: data.kibana_url
+    }
 
     delete data.elasticsearch_enabled
     delete data.elasticsearch_url
     delete data.kibana
 
     customer.set(data)
-    customer.save({},{
-      success: function() {
-        bootbox.alert('Customer Created',function(){ });
+    customer.save({}, {
+      success: function () {
+        bootbox.alert('Customer Created')
         App.state.customers.add(customer)
       },
-      error: function(err) {
-        bootbox.alert('Error creating customer',function(){ });
+      error: function (err) {
+        bootbox.alert('Error creating customer')
       }
-    });
+    })
     modal.hide()
   },
   getAgentCredentials () {

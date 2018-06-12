@@ -7,7 +7,10 @@ import merge from 'lodash/merge'
 const urlRoot = `${config.app_url}/customer`
 
 const defaultConfig = {
-  kibana: null,
+  kibana: {
+    enabled: false,
+    url: ''
+  },
   elasticsearch: {
     enabled: false,
     url: ''
@@ -26,15 +29,15 @@ const Model = AppModel.extend({
     id: 'string',
     name: 'string',
     description: 'string',
-    config: ['object', false, () => {
+    config: ['object', true, () => {
       return Object.assign({}, defaultConfig)
     }],
     creation_date: 'date',
-		last_update: 'date'
+    last_update: 'date'
   },
   derived: {
     formatted_tags: {
-      deps: ['name','description'],
+      deps: ['name', 'description'],
       fn () {
         return [
           'name=' + this.name,
@@ -43,7 +46,19 @@ const Model = AppModel.extend({
       }
     }
   },
-  parse(attrs) {
+  parse (attrs) {
+    // MUTATE kibana config schema
+    // special `if`: when Factory parses the value, config is empty
+    if (attrs.config) {
+      attrs.config.kibana = attrs.config.kibana || defaultConfig.kibana
+      if (typeof (attrs.config.kibana) === 'string') {
+        attrs.config.kibana = {
+          enabled: true,
+          url: attrs.config.kibana || ''
+        }
+      }
+    }
+
     attrs.config = merge({}, defaultConfig, attrs.config)
     return attrs
   }

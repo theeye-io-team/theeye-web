@@ -199,9 +199,12 @@ const Menu = View.extend({
         container.removeChild(container.firstChild)
       }
 
-      if (App.state.session.customer.config.kibana) {
+      // handle kibana config schema change
+      const { kibana } = App.state.session.customer.config
+      if (kibana && kibana.enabled && kibana.url) {
         container.appendChild(html2dom(`<li><a href="/admin/charts/kibana" class="eyemenu-ico eyemenu-charts"> Dashboard </a></li>`))
       }
+
       if (netbrainsConfig && netbrainsConfig.enabled) {
         container.appendChild(html2dom(`<li><a href="/admin/charts/netbrains" class="eyemenu-ico eyemenu-charts"> Netbrains </a></li>`))
       }

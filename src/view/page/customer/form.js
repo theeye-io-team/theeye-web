@@ -7,8 +7,14 @@ import isURL from 'validator/lib/isURL'
 import App from 'ampersand-app'
 
 module.exports = FormView.extend({
+  props: {
+    showKibana: ['boolean', false, false],
+    kibanaUrlInput: 'object'
+  },
   initialize: function (options) {
     var isNew = this.model.isNew()
+
+    this.showKibana = (!isNew ? this.model.config.kibana.enabled : false)
     this.fields = [
       new InputView({
         name: 'name',
@@ -26,16 +32,22 @@ module.exports = FormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         required: false,
-        autofocus:true
+        autofocus: true
       }),
-      new InputView({
-        name: 'kibana',
+      new CheckboxView({
+        name: 'kibana_enabled',
+        label: 'Kibana enabled',
+        value: (!isNew ? this.model.config.kibana.enabled : false)
+      }),
+      this.kibanaUrlInput = new InputView({
+        name: 'kibana_url',
         label: 'Kibana iframe',
         placeholder: 'Kibana iframe',
-        value: this.model.config.kibana,
+        visible: this.showKibana,
+        value: (!isNew ? this.model.config.kibana.url : ''),
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        required: false
+        required: this.showKibana
       }),
       new CheckboxView({
         name: 'elasticsearch_enabled',
@@ -77,6 +89,10 @@ module.exports = FormView.extend({
   events: {
     'change input[name=elasticsearch_enabled]': function (event) {
       this.togglePasswordFields(event.target.checked)
+    },
+    'change input[name=kibana_enabled]': function (event) {
+      this.showKibana = event.target.checked
+      this.kibanaUrlInput.set({visible: this.showKibana, required: this.showKibana})
     }
   },
   togglePasswordFields: function (on) {

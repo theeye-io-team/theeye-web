@@ -1,42 +1,16 @@
 import FormView from 'ampersand-form-view'
-import InputView from 'components/input-view'
+import IframeParserInputView from './IframeParserInputView'
+import CheckboxView from 'components/checkbox-view'
+
 import isURL from 'validator/lib/isURL'
-
-const IframeParserInputView = InputView.extend({
-  clean (value) {
-    let originalValue = InputView.prototype.clean.apply(this, arguments)
-    return this.parseIframe(originalValue)
-  },
-  parseIframe (value) {
-    if (!value) return value
-    if (!value.match) return value
-    if (!value.match('iframe')) return value
-
-    let parsed = null
-    try {
-      let div = document.createElement('div')
-      div.innerHTML = value.trim()
-      parsed = div.firstChild
-
-      if (parsed.tagName === 'IFRAME') {
-        this.setValue(parsed.src, true)
-        return parsed.src
-      } else {
-        return value
-      }
-    } catch (err) {
-      return value
-    }
-  }
-})
 
 module.exports = FormView.extend({
   initialize: function (options) {
     this.urlInput = new IframeParserInputView({
-      name: 'kibana',
+      name: 'kibana_url',
       label: 'Kibana URL',
       placeholder: 'Kibana URL',
-      value: this.model.config.kibana,
+      value: this.model.config.kibana.url,
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label',
       required: false,
@@ -54,7 +28,14 @@ module.exports = FormView.extend({
       ]
     })
 
-    this.fields = [ this.urlInput ]
+    this.fields = [
+      new CheckboxView({
+        name: 'kibana_enabled',
+        label: 'Kibana enabled',
+        value: Boolean(this.model.config.kibana.enabled)
+      }),
+      this.urlInput
+    ]
     FormView.prototype.initialize.apply(this, arguments)
   },
   render () {
@@ -62,6 +43,6 @@ module.exports = FormView.extend({
     this.query('form').classList.add('form-horizontal')
   },
   focus () {
-    this.query('input[name=kibana]').focus()
+    this.query('input[name=kibana_url]').focus()
   }
 })
