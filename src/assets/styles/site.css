@@ -373,7 +373,7 @@ h3.light { color: #EEE}
   margin:0;
   padding:0;
   background-color:#304269;
-  text-align:center; 
+  text-align:center;
 }
 .admin-container .panel-heading .panel-item.icons button.dropdown-toggle { margin-left:5px; }
 .admin-container .panel-heading .panel-item .visible-badge {padding-right:5px;}
@@ -828,8 +828,8 @@ a.flowchart-icon {
 }
 
 @media (min-width: 768px) {
-  .admin-container .panel-heading .panel-item.name { width:70%;padding-right:5px; }
-  .admin-container.dashboard .panel-heading .panel-item.name { width:50%; }
+  .admin-container .panel-heading .panel-item.name { width:75%;padding-right:5px; }
+  /* .admin-container.dashboard .panel-heading .panel-item.name { width:50%; } */
 }
 
 @media (max-width: 640px) {

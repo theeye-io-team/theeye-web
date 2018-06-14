@@ -30,21 +30,23 @@ export default State.extend({
       this.updateFilters
     )
 
-    this.listenTo(this.filteredNotifications, 'add', this.desktopNotification)
+    this.listenTo(this.filteredNotifications, 'add', this.prepareDesktopNotification)
   },
-  desktopNotification (notificationModel, collection) {
+  prepareDesktopNotification (notificationModel, collection) {
     if (!this.appState.session.user.notifications.desktop) return
     // no desktop for read notifications
     if (notificationModel.read) return
     // no support? no action
     if (!('Notification' in window)) return
-
     // if user has denied access, don't bother anymore
     if (window.Notification.permission === 'denied') return
+    // if notification is older than 5', discard
+    if (((new Date() - notificationModel.createdAt) / 1000 / 60) > 3) return
 
     const notifOptions = {
       icon: notificationBadge,
-      badge: notificationBadge,
+      badge: notificationBadge, // not happening
+      tag: 'TheEyeNotification',
       body: this.messageFactory(notificationModel.data)
     }
     const title = this.titleFactory(notificationModel.data)
@@ -52,11 +54,20 @@ export default State.extend({
     if (window.Notification.permission !== 'granted') {
       window.Notification.requestPermission(permission => {
         if (permission === 'granted') {
-          new window.Notification(title, notifOptions)
+          this.createDesktopNotification(title, notifOptions)
         }
       })
     } else {
-      new window.Notification(title, notifOptions)
+      this.createDesktopNotification(title, notifOptions)
+    }
+  },
+  createDesktopNotification (title, options) {
+    const notification = new window.Notification(title, options)
+    notification.onclick = function () {
+      // eslint-disable-next-line
+      parent.focus()
+      window.focus() // just in case, older browsers
+      this.close()
     }
   },
   /**
