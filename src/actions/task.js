@@ -4,9 +4,12 @@ import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 import TaskModel from 'models/task'
 import TaskConstants from 'constants/task'
+import LifecycleConstants from 'constants/lifecycle'
 import assign from 'lodash/assign'
 import after from 'lodash/after'
 import OnboardingActions from 'actions/onboarding'
+import {eachSeries} from 'async'
+import {ExecApprovalTask} from 'view/page/dashboard/task/task/exec-task.js'
 const emptyCallback = () => {}
 
 const logger = require('lib/logger')('actions:tasks')
@@ -128,6 +131,22 @@ module.exports = {
         }
       })
     })
+  },
+  checkPedingApprovals () {
+    const pendingApprovalTasks = App.state.tasks.models.filter((task) => {
+      var isPending = (
+        task.type === TaskConstants.TYPE_APPROVAL &&
+        task.approver_id === App.state.session.user.id &&
+        task.lastjob &&
+        task.lastjob.lifecycle === LifecycleConstants.ONHOLD
+      )
+
+      return isPending
+    })
+
+    eachSeries(pendingApprovalTasks, function (task, done) {
+      var execApprovalTask = new ExecApprovalTask({model: task})
+      execApprovalTask.execute(true, done)
+    })
   }
 }
-
