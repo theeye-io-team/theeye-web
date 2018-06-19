@@ -15,6 +15,7 @@ const sockets = require('app/sockets')
 const session = require('app/session')
 const models = require('app/models')
 const experimentalFeatures = require('app/experimental')
+const checkLicense = require('app/license')
 
 import 'assets/styles'
 
@@ -33,6 +34,7 @@ App.extend({
       sockets()
       models()
       experimentalFeatures()
+      checkLicense()
     })
   },
   initState (next) {
@@ -95,6 +97,7 @@ App.extend({
     this.state.session.customer.fetch()
     this.state.reset()
     this.Router.reload()
+    checkLicense()
   }
 })
 

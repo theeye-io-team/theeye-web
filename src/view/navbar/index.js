@@ -298,6 +298,22 @@ const Menu = View.extend({
 
 module.exports = View.extend({
   autoRender: true,
+  props: {
+    licenseExpired: ['boolean', true, false]
+  },
+  bindings: {
+    licenseExpired: [
+      {
+        type: 'toggle',
+        invert: true,
+        selector: '.header-tools'
+      },
+      {
+        type: 'toggle',
+        selector: '.license-header'
+      }
+    ]
+  },
   events: {
     'click a[data-hook=theeye-logo]': function (event) {
       if(App.state.session.logged_in)
@@ -315,6 +331,23 @@ module.exports = View.extend({
     this.listenToAndRun(App.state.session, 'change:logged_in', () => {
       this.updateState(App.state.session)
     })
+    this.listenToAndRun(App.state.session, 'change:licenseExpired', () => {
+      this.updateLicenseStatus(App.state.session)
+    })
+  },
+  updateLicenseStatus (state) {
+    const {logged_in: loggedIn, licenseExpired} = state
+
+    this.licenseExpired = (licenseExpired === true && loggedIn === true)
+    // this makes the UI unusable once the user selected
+    // an 'expired license customer'
+    // if (this.licenseExpired) {
+    //   this.destroyLoggedInComponents()
+    // }
+    // this hack (to prevent the stated above) breaks
+    //  else {
+    //   this.renderLoggedInComponents()
+    // }
   },
   updateState (state) {
     const logged_in = state.logged_in

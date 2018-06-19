@@ -25,7 +25,8 @@ module.exports = AmpersandState.extend({
     logged_in: 'boolean',
     authorization: 'string',
     restored: 'boolean',
-    relogin_message: ['boolean',false,false]
+    relogin_message: ['boolean',false,false],
+    licenseExpired: ['boolean', true, false]
   },
   appInit () {
     this.storage = localforage.createInstance({
