@@ -2,6 +2,7 @@ import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import config from 'config'
 import { Model as Notification } from 'models/notification'
+import DesktopNotification from 'lib/desktop-notification'
 
 const logger = require('lib/logger')('actions:tasks')
 
@@ -43,13 +44,21 @@ module.exports = {
       }
     })
   },
-  add (model) {
-    let notify = new Notification(model)
+  /**
+   *
+   * this method is called on socket event
+   * only will arrive unread notifications
+   *
+   */
+  handleNotification (data) {
+    let notification = new Notification(data)
     if (App.state.inbox.isOpen) {
-      notify.read = true
-      notify.save()
+      notification.read = true
+      notification.save()
     }
-    App.state.notifications.add(notify)
+    App.state.notifications.add(notification)
+
+    DesktopNotification.create(notification)
   },
   toggleInboxOpen () {
     App.state.inbox.toggle('isOpen')

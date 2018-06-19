@@ -12,11 +12,6 @@ module.exports = View.extend({
     value: ['boolean', true, false]
   },
   bindings: {
-    //value: {
-    //  type: 'booleanAttribute',
-    //  selector: 'input',
-    //  name: 'checked'
-    //},
     cid: [
       {
         type: 'attribute',
