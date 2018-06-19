@@ -42,7 +42,6 @@
     <label for="looptime" class="col-sm-3 control-label"> Check Interval (mins) * </label>
     <div class="col-sm-9">
       <select data-hook="looptime" name="looptime" class="form-control">
-        <option value="0" disabled selected><strong>select check interval</strong></option>
         <% looptimes.forEach(function(t) { %>
         <option value="<%= t.id %>"><strong><%= t.value %></strong></option>
         <% }); %>

@@ -53,9 +53,9 @@
         <select data-hook="looptime" name="looptime" class="form-control">
           <% looptimes.forEach(function(t) {
             var extraAttributes = '';
-            if( t.id==30000 ) { extraAttributes += ' selected'; } %>
-          <option value="<%= t.id %>" <%= extraAttributes %>><strong><%= t.value %></strong></option>
-        <% }); %>
+            if( t.id==90000 ) { extraAttributes += ' selected'; } %>
+            <option value="<%= t.id %>" <%= extraAttributes %>><strong><%= t.value %></strong></option>
+          <% }); %>
       </select>
     </div>
   </div>

@@ -47,6 +47,7 @@ const looptimes = [
   { id: 15000, text: '0.25' },
   { id: 30000, text: '0.5' },
   { id: 60000, text: '1' },
+  { id: 90000, text: '1.5' },
   { id: 300000, text: '5' },
   { id: 900000, text: '15' },
   { id: 1800000, text: '30' },

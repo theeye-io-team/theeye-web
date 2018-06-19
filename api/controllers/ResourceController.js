@@ -45,6 +45,7 @@ module.exports = {
         {'id':minutesToMillisecondsString(0.25),'value':'0.25'},
         {'id':minutesToMillisecondsString(0.5),'value':'0.5'},
         {'id':minutesToMillisecondsString(1),'value':'1'},
+        {'id':minutesToMillisecondsString(1.5),'value':'1.5'},
         {'id':minutesToMillisecondsString(5),'value':'5'},
         {'id':minutesToMillisecondsString(15),'value':'15'},
         {'id':minutesToMillisecondsString(30),'value':'30'},

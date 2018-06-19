@@ -439,7 +439,7 @@ var MonitorsPageInit = (function(){
         });
         if (host) $select.val(host).trigger('change');
 
-        $form.find('select[data-hook=looptime]').val(60000);
+        $form.find('select[data-hook=looptime]').val(90000);
         $form.find('select#script_id')
           .select2({
             tabindex: 0,

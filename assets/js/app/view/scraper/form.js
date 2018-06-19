@@ -174,6 +174,7 @@ var Scraper = (function Scraper(){
       this.queryByHook('looptimes').select2({
         tabindex: 0,
         placeholder: 'Monitor Looptime', data: Select2Data.PrepareIdValueData( this.looptimes ) });
+      this.queryByHook('looptimes').val('90000').trigger('change');
       this.queryByHook('timeouts').select2({
         tabindex: 0,
         placeholder: 'Request Timeout', data: Select2Data.PrepareIdValueData( this.timeouts ) });

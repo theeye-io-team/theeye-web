@@ -252,7 +252,7 @@ var PermanentFile = new (function(){
         placeholder: 'Monitor Looptime',
         data: Select2Data.PrepareIdValueData(this.looptimes)
       });
-      this.queryByHook('looptimes').val('30000').trigger('change');
+      this.queryByHook('looptimes').val('90000').trigger('change');
 
       this.monitorSelect = new MonitorSelect({
         label:'Copy From',
