@@ -1,41 +1,81 @@
 /* global async, Passport, sails, User */
 var passport = require('../services/passport')
 var mailer = require('../services/mailer')
-var difference = require('lodash/difference')
 
+const difference = require('lodash/difference')
 const logger = require('../libs/logger')('controllers:member')
+
+const PROTOCOL_THEEYE = 'theeye'
 
 var MemberController = module.exports = {
   //GET  /member
 
-  fetch: function(req, res) {
-    var supervisor = req.supervisor;
-    var customerName = req.user.current_customer;
-    if(!customerName)
-      return res.send(400, 'Customer name required.');
+  fetch (req, res) {
+    var supervisor = req.supervisor
+    var customerName = req.user.current_customer
 
-    User.find({
-      username : { $ne: null }
-    }, function(error, users) {
-      if(error) return res.send(500, error);
-      users = users.filter(user  => user.customers.includes(customerName));
+    if (!customerName) {
+      return res.send(400, 'Customer name required.')
+    }
 
-      var members = users.map((user, index) => {
-        return {
-          id: user.id,
-          user_id: user.id,
-          credential: user.credential,
-          user: {
-            id: user.id,
-            username: user.username,
-            credential: user.credential,
-            email: user.email,
-            enabled: user.enabled
+    User.native(function (err, users) {
+      let usersCursor = users.aggregate(
+        [
+          {
+            $match: {
+              username: { $ne: null },
+              customers: customerName
+            }
+          },
+          {
+            $lookup: {
+              from: 'web_passport',
+              localField: '_id',
+              foreignField: 'user',
+              as: 'passports'
+            }
           }
-        }
-      });
-      return res.json(members);
-    });
+        ],
+        //{ explain: true }
+        { cursor: {} }
+      )
+
+      var members = []
+      const collectMembers = (cursor, next) => {
+        cursor.next((err, user) => {
+          if (user === null) {
+            return cursor.close(next)
+          }
+
+          const passport = user.passports.find(p => {
+            return p.protocol === PROTOCOL_THEEYE
+          })
+
+          members.push({
+            id: user._id,
+            user_id: user._id,
+            credential: user.credential,
+            customer_name: customerName,
+            user: {
+              id: user._id,
+              username: user.username,
+              credential: user.credential,
+              email: user.email,
+              enabled: user.enabled
+            },
+            theeye: { 
+              user_id: passport?passport.api_user:null
+            }
+          })
+
+          collectMembers(cursor, next)
+        })
+      }
+
+      collectMembers(usersCursor, () => {
+        return res.json(members)
+      })
+    })
   },
   /**
    *

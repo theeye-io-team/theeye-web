@@ -20,6 +20,9 @@ module.exports = {
   get (req, res, next) {
     logger.debug('getting api url ' + req.originalUrl)
     var route = req.originalUrl.replace(apibase,'')
+
+    req.query.web_user_id = req.user.id
+
     req.supervisor.get({
       route: route,
       query: req.query,
@@ -36,6 +39,9 @@ module.exports = {
   fetch (req, res, next) {
     logger.debug('fetching api url ' + req.originalUrl)
     var route = req.originalUrl.replace(apibase,'')
+
+    req.query.web_user_id = req.user.id
+
     req.supervisor.fetch({
       route: route,
       query: req.query,
@@ -53,6 +59,9 @@ module.exports = {
   patch (req, res, next) {
     logger.debug('patching api url ' + req.originalUrl);
     var route = req.originalUrl.replace(apibase,'')
+
+    req.body.web_user_id = req.user.id
+
     req.supervisor.patch({
       route: route,
       query: req.query,
@@ -71,13 +80,16 @@ module.exports = {
   update (req, res, next) {
     logger.debug('putting api url ' + req.originalUrl);
     var route = req.originalUrl.replace(apibase,'')
+
+    req.body.web_user_id = req.user.id
+
     req.supervisor.update({
       route: route,
       query: req.query,
       body: req.body,
       failure: (error, apiRes) => res.send(error.statusCode, error),
-      success: (body, apiRes) => res.json(body),
-    });
+      success: (body, apiRes) => res.json(body)
+    })
   },
   /**
    * @method DELETE
@@ -88,12 +100,15 @@ module.exports = {
    */
   remove (req, res, next){
     logger.debug('remove api url ' + req.originalUrl)
-    var route = req.originalUrl.replace(apibase,'')
+    var route = req.originalUrl.replace(apibase, '')
+
+    req.query.web_user_id = req.user.id
+
     req.supervisor.remove({
       route: route,
       query: req.query,
       failure: (error, apiRes) => res.send(error.statusCode, error),
-      success: (body, apiRes) => res.json(body),
+      success: (body, apiRes) => res.json(body)
     })
   },
   /**
@@ -103,15 +118,18 @@ module.exports = {
    * @param {String} resource
    */
   create (req, res, next){
-    logger.debug('post api url ' + req.originalUrl);
-    var route = req.originalUrl.replace(apibase,'')
+    logger.debug('post api url ' + req.originalUrl)
+    var route = req.originalUrl.replace(apibase, '')
+
+    req.body.web_user_id = req.user.id
+
     req.supervisor.create({
       route: route,
       body: req.body,
       query: req.query,
       failure: (error, apiRes) => res.send(error.statusCode, error),
-      success: (body, apiRes) => res.json(body),
-    });
+      success: (body, apiRes) => res.json(body)
+    })
   },
   // GET
   getFileLinkedModels (req, res) {
