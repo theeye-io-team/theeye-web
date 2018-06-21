@@ -1,5 +1,3 @@
-
-/* global sails, User */
 const LIFECYCLE = require('../../src/constants/lifecycle')
 const logger = require('../libs/logger')('controllers:notification')
 const Notifications = require('../libs/notifications')
@@ -105,14 +103,6 @@ const createNotifications = (event, users, customerName, callback) => {
     return callback(null, [])
   }
 
-  // skip ScriptJobs 'assigned' lifecycle
-  //if (
-  //  /Job/.test(event.data.model_type) &&
-  //  event.data.model.lifecycle === LIFECYCLE.ASSIGNED
-  //) {
-  //  return callback(null, [])
-  //}
-
   // rulez for updates stopped/updates started.
   // only create notification for host
   if (
@@ -128,14 +118,62 @@ const createNotifications = (event, users, customerName, callback) => {
 
   const notifications = []
   users.forEach(user => {
-    notifications.push({
-      topic: event.topic,
-      data: event.data,
-      event_id: event.id,
-      user_id: user.id,
-      customer_name: customerName
-    })
+    let excludes = user.notifications.desktopExcludes
+    let isExcluded = false
+
+    if (excludes && Array.isArray(excludes) && excludes.length>0) {
+      isExcluded = excludes.find(exc => {
+        return matchExclusionFilter(exc, event)
+      })
+    }
+
+    if (!isExcluded) {
+      notifications.push({
+        topic: event.topic,
+        data: event.data,
+        event_id: event.id,
+        user_id: user.id,
+        customer_name: customerName
+      })
+    }
   })
 
   sails.models.notification.create(notifications).exec(callback)
+}
+
+/**
+ *
+ * @prop {Object} excFilter an object with exclusion filter data
+ * @prop {Object} notifEvent the notification event information (with data and topic)
+ * @return true if any filter match
+ *
+ */
+const matchExclusionFilter = (excFilter, notifEvent) => {
+	// every string prop value has to match
+	let hasMatch = false
+	for (let prop in excFilter) {
+    if (canCompare(excFilter[prop]) && canCompare(notifEvent[prop])) {
+      hasMatch = (excFilter[prop] === notifEvent[prop])
+    }
+	}
+
+	// also we care about data properties
+	let hasMatchingData = false
+	if (excFilter.data) {
+		for (let dataProp in excFilter.data) {
+      if (canCompare(excFilter.data[dataProp]) && canCompare(notifEvent.data[dataProp])) {
+        hasMatchingData = (notifEvent.data[dataProp] === excFilter.data[dataProp])
+      }
+		}
+	}
+
+	// filters are exclusions, if matches, reject returning false
+	return hasMatch || hasMatchingData
+}
+
+// we can compare types and null
+const canCompare = (value) => {
+  let types = ["number", "string", "boolean", "undefined"]
+  let type = typeof value
+  return types.indexOf(type) !== -1 || value === null
 }

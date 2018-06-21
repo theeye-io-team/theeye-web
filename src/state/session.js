@@ -24,6 +24,7 @@ module.exports = AmpersandState.extend({
     authorization: 'string',
     restored: 'boolean',
     relogin_message: ['boolean',false,false],
+ // why this prop name is camelcase when all other properties are underscore separated? why !!
     licenseExpired: ['boolean', true, false]
   },
   appInit () {
