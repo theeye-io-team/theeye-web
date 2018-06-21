@@ -120,7 +120,6 @@ module.exports.routes = {
   'get  /session/profile': 'BearerController.sessionProfile',
   'put  /session/profile/settings': 'BearerController.updateSettings',
   'put  /session/profile/onboarding': 'BearerController.updateOnboarding',
-  'get  /session/license': 'BearerController.licenseCheck',
   // FILES & SCRIPTS
   'post /apiv2/file':'ApiV2Controller.filePut',
   'put /apiv2/file/:id':'ApiV2Controller.filePut',

@@ -1,35 +1,37 @@
 import App from 'ampersand-app'
 import fetch from 'isomorphic-fetch'
+import config from 'config'
 
+const swallow = () => {
+  App.state.session.licenseExpired = false
+}
 module.exports = () => {
   const customerName = App.state.session.customer.name
-  const accessToken = App.state.session.access_token
-  if (!customerName || !accessToken) return
+  const loggedIn = App.state.session.logged_in
+
+  // when no session, no customer. Cancel check.
+  if (!loggedIn || !customerName) return
+
+  const licenseServiceUri = config.lc_url
+  const url = `${licenseServiceUri}?client=${customerName}`
 
   const fetchOptions = {
     headers: new window.Headers({
       Accept: 'application/json',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`
-    })
+      'Content-Type': 'application/json'
+    }),
+    mode: 'cors'
   }
-  fetch('/session/license', fetchOptions)
-    .catch(err => {
-      console.warn(err) // network error
-    })
-    .then(res => {
-      if (res.ok) {
-        return res.json()
-      } else {
-        return res.text()
-      }
-    })
+  return fetch(url, fetchOptions)
+    .catch(err => swallow(err))
+    .then(res => res.json())
     .then(json => {
-      // errors come in text
-      if (typeof (json) === 'string') {
-        // console.warn(json)
+      if (json && json.endLicense) {
+        const expired = new Date() > new Date(json.endLicense)
+        App.state.session.licenseExpired = expired
       } else {
-        App.state.session.licenseExpired = json.expired
+        App.state.session.licenseExpired = false
       }
     })
+    .catch(err => swallow(err))
 }

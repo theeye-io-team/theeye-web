@@ -110,26 +110,5 @@ module.exports = {
 
       res.send(200, { onboardingCompleted: user.onboardingCompleted })
     })
-  },
-  licenseCheck (req, res) {
-    const { client_customer } = req.supervisor
-    const licenseServiceUri = 'https://65oomigadl.execute-api.us-east-1.amazonaws.com/dev-license'
-    const url = `${licenseServiceUri}?client=${client_customer}`
-
-    const fetchOptions = {
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      }
-    }
-    fetch(url, fetchOptions)
-      .then(response => response.json())
-      .then(json => {
-        const expired = (json && json.endLicense)
-          ? new Date() > new Date(json.endLicense)
-          : false
-        return res.send(200, { expired })
-      })
-      .catch(err => res.send(500, err))
   }
 }

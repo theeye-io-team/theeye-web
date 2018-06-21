@@ -331,23 +331,14 @@ module.exports = View.extend({
     this.listenToAndRun(App.state.session, 'change:logged_in', () => {
       this.updateState(App.state.session)
     })
-    this.listenToAndRun(App.state.session, 'change:licenseExpired', () => {
+    this.listenToAndRun(App.state.session, 'change:logged_in change:licenseExpired', () => {
       this.updateLicenseStatus(App.state.session)
     })
   },
   updateLicenseStatus (state) {
     const {logged_in: loggedIn, licenseExpired} = state
 
-    this.licenseExpired = (licenseExpired === true && loggedIn === true)
-    // this makes the UI unusable once the user selected
-    // an 'expired license customer'
-    // if (this.licenseExpired) {
-    //   this.destroyLoggedInComponents()
-    // }
-    // this hack (to prevent the stated above) breaks
-    //  else {
-    //   this.renderLoggedInComponents()
-    // }
+    this.licenseExpired = (licenseExpired === true && Boolean(loggedIn))
   },
   updateState (state) {
     const logged_in = state.logged_in

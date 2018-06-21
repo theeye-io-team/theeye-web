@@ -2,16 +2,14 @@
 
 import AmpersandState from 'ampersand-state'
 import XHR from 'lib/xhr'
-import after from 'lodash/after'
+
 import localforage from 'localforage'
 import SessionActions from 'actions/session'
 
 import { Model as User } from 'models/user'
 import { Model as Customer } from 'models/customer'
 
-import config from 'config'
-
-//const publicpaths = ['/login','/activate','/register']
+import checkLicense from 'app/license'
 
 module.exports = AmpersandState.extend({
   props: {
@@ -34,10 +32,14 @@ module.exports = AmpersandState.extend({
       storeName: 'session'
     })
 
-    this.restoreFromStorage( () => {
+    this.customer.on('change:name', checkLicense)
+    this.on('change:logged_in', checkLicense)
+
+    this.restoreFromStorage(() => {
       // once session determines if the current access token is valid or not
       // trigger restored event to continue app initialization
-      this.on('change:access_token',(event) => { this.validateAccessToken() })
+      this.on('change:access_token', (event) => { this.validateAccessToken() })
+
       this.trigger('restored')
     })
   },

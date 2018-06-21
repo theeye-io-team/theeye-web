@@ -1,4 +1,3 @@
-//import 'jquery' // imported by webpack. not required
 import 'bootstrap'
 import config from 'config'
 
@@ -7,15 +6,12 @@ import AppState from 'state'
 import Router from 'router'
 import ChatBox from 'components/chat'
 import RootContainer from 'view/root-container'
-import query from 'lib/query-params'
-const logger = require('lib/logger')('app')
 
 require('app/events')
 const sockets = require('app/sockets')
 const session = require('app/session')
 const models = require('app/models')
 const experimentalFeatures = require('app/experimental')
-const checkLicense = require('app/license')
 
 import 'assets/styles'
 
@@ -27,14 +23,13 @@ App.extend({
   state: new AppState(),
   init () {
     this.bindDocumentEvents()
-    this.initState( () => {
+    this.initState(() => {
       App.state.loader.visible = false // app finish loading.
       this.registerComponents()
       session()
       sockets()
       models()
       experimentalFeatures()
-      checkLicense()
     })
   },
   initState (next) {
@@ -93,11 +88,10 @@ App.extend({
    */
   customerChange (customer) {
     this.state.session.customer.clear()
-    this.state.session.customer.set( customer.serialize() )
+    this.state.session.customer.set(customer.serialize())
     this.state.session.customer.fetch()
     this.state.reset()
     this.Router.reload()
-    checkLicense()
   }
 })
 
