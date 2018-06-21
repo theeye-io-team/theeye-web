@@ -5,6 +5,7 @@ module.exports = {
   'lifecycle:canceled': 'Has been canceled',
   'lifecycle:terminated': 'Terminated abnormally',
   'lifecycle:completed': 'Completed',
+  'lifecycle:onhold': 'On hold',
   updates_stopped: 'Has gone silent',
   updates_started: 'Came back to life',
   failure: 'Requires your attention',
