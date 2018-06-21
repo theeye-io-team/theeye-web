@@ -41,7 +41,12 @@ module.exports = PanelButton.extend({
         if(this.model.hasTemplate) {
           bootbox.alert({
             title:'Warning',
-            message: require('./template-warning.hbs')
+            message: `
+            <div>
+              <p>Warning!</p>
+              <p>You are customizing a task that belongs to a template, changes will be only applied to this task.</p>
+              <p>Please update your template to make changes available for all.</p>
+            </div>`
           })
         }
       })

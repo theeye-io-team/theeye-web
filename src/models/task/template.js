@@ -38,6 +38,14 @@ const Schema = AppModel.extend({
     _type: 'string', // discriminator
     hasSchedules: ['boolean', true, false]
   },
+  derived: {
+    hasWorkflow: {
+      deps: ['workflow_id'],
+      fn () {
+        return Boolean(this.workflow_id) === true
+      }
+    }
+  },
   session: {
     hasDinamicArguments: 'boolean'
   },
