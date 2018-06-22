@@ -109,6 +109,17 @@
 .navbar-eyemenu .navbar-right {margin:0;position:relative}
 .navbar-eyemenu .eyemenu-search-panel-clear {position:absolute;right:0;top:0;font-size:24px;color:#ccc;padding:11px 15px;cursor:pointer;color:#005580;display:none}
 
+.license-header {
+  position: absolute;
+  right: 0px;
+  padding: 0px;
+}
+
+.license-header p{
+  max-width: unset;
+  margin-bottom: 0px;
+}
+
 /* responsiveness */
 @media (max-width: 767px) {
 	.navbar-eyemenu .eyemenu-search-panel-mobile {position:fixed;top:0;left:0;right:0;background:#fff;height:50px;}
