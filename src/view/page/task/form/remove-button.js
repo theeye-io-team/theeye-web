@@ -1,7 +1,8 @@
 import View from 'ampersand-view'
 import bootbox from 'bootbox'
 import TaskActions from 'actions/task'
-module.exports = View.extend({
+import DeleteButton from '../buttons/delete'
+module.exports = DeleteButton.extend({
   template: `
     <div class="form-group">
       <label class="col-sm-3 control-label" data-hook="label">Remove Task</label>
@@ -30,28 +31,10 @@ module.exports = View.extend({
   },
   events: {
     'click button': function (event) {
-      bootbox.confirm({
-        title: 'Confirm Task removal',
-        message: 'Remove the Task?',
-        backdrop: true,
-        buttons: {
-          confirm: {
-            label: 'Yes, please',
-            className: 'btn-danger'
-          },
-          cancel: {
-            label: 'I\m not sure',
-            className: 'btn-default'
-          }
-        },
-        callback: (confirmed) => {
-          if (confirmed===true) {
-            TaskActions.remove(this.form.model.id)
-            this.form.remove()
-          }
-        }
+      var self = this
+      this.deleteTask(this.form.model, function () {
+        self.form.remove()
       })
     }
   }
 })
-
