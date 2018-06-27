@@ -8,18 +8,23 @@ const dumpfile = '/tmp/theeye-push-dump.log'
 module.exports = {
   send (event, users) {
     const model = event.data.model
+    let data
     switch (event.topic) {
       case 'monitor-state':
         let monitor_event = event.data.monitor_event
         let severity = model.failure_severity
 
         if (severity === 'HIGH' || severity === 'CRITICAL') {
-          let data = prepareMonitorStateChangeNotification(model, monitor_event)
+          data = prepareMonitorStateChangeNotification(model, monitor_event)
           if (data.msg) dispatch(data, users)
         }
         break
       case 'job-crud':
-        let data = prepareJobNotification(model)
+        data = prepareJobNotification(model)
+        if (data.msg) dispatch(data, users)
+        break
+      case 'webhook-triggered':
+        data = prepareWebhookNotification(model)
         if (data.msg) dispatch(data, users)
         break
     }
@@ -93,6 +98,12 @@ const prepareDefaultNotification = (monitor, monitor_event) => {
       data.msg = `${monitor.name} checks failed.`
       break
   }
+  return data
+}
+
+const prepareWebhookNotification = (webhook) => {
+  let data = {}
+  data.msg = `Webhook ${webhook.name} triggered.`
   return data
 }
 

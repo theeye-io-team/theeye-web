@@ -3,7 +3,8 @@ import moment from 'moment'
 
 const resourceType = {
   Resource: 'Resource',
-  ScriptJob: 'Task'
+  ScriptJob: 'Task',
+  Webhook: 'Webhook'
 }
 
 export default View.extend({

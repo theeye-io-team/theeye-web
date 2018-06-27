@@ -22,7 +22,6 @@ export default {
     const notifOptions = {
       icon: notificationBadge,
       badge: notificationBadge, // not happening
-      tag: 'TheEyeNotification',
       body: messageFactory(notification.data)
     }
 
@@ -60,6 +59,8 @@ const titleFactory = (data) => {
     return 'Resource ' + data.model.name
   } else if (/Job/.test(type) === true) {
     return 'Task ' + data.model.name
+  } else if (type === 'Webhook') {
+    return 'Webhook ' + data.model.name
   } else {
     return ''
   }
@@ -74,6 +75,8 @@ const messageFactory = (data) => {
     let state = data.model.state.toLowerCase().replace(/ /g, '_')
     let lifecycle = data.model.lifecycle
     return meaning['lifecycle:' + lifecycle] || `${lifecycle}:${state}`
+  } else if (type === 'Webhook') {
+    return meaning['webhook']
   } else {
     return data.model.state.toLowerCase().replace(/ /g, '_')
   }

@@ -4,7 +4,8 @@ const Notifications = require('../libs/notifications')
 
 const handledTopics = [
   'monitor-state',
-  'job-crud'
+  'job-crud',
+  'webhook-triggered'
 ]
 
 module.exports = {
