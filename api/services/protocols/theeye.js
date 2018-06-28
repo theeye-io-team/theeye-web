@@ -253,7 +253,7 @@ exports.getCustomerAgentCredentials = function (customer,supervisor,done) {
         user.client_secret,
         user.customers[0].name, // agents MUST have only one customer
         sails.config.supervisor.url,
-        user.username
+        user.customers[0].name
       )
 
       return done(null, user)
