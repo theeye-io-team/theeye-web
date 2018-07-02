@@ -20,7 +20,7 @@ module.exports = ExecButton.extend({
   },
   execute () {
     var execTask
-    if (App.state.session.licenseExpired) {
+    if (!App.state.session.licenseExpired) {
       if (this.model.type === TaskConstants.TYPE_APPROVAL) {
         execTask = new ExecApprovalTask({model: this.model})
       } else {
