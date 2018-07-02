@@ -3,9 +3,13 @@
  * Notification Structs core information
  *
  */
-export const JOB_START_NOTIFICATION = {
+exports.JOB_START_NOTIFICATION = {
   topic: 'job-crud',
   data: {
     operation: 'create'
   }
+}
+
+exports.JOB_NOTIFICATION = {
+  topic: 'job-crud'
 }

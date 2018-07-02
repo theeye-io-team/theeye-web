@@ -1,4 +1,3 @@
-const LIFECYCLE = require('../../src/constants/lifecycle')
 const logger = require('../libs/logger')('controllers:notification')
 const Notifications = require('../libs/notifications')
 
@@ -29,15 +28,15 @@ module.exports = {
     )
 
     if (handledTopics.indexOf(event.topic) > -1) {
-      var acls = ( data.model.task ? data.model.task.acl : data.model.acl ) || []
+      var acls = (data.model.task ? data.model.task.acl : data.model.acl) || []
 
       getUsers(event, data.organization, acls, (error, users) => {
-        if (error) return logger.error('%o',error)
+        if (error) return logger.error('%o', error)
 
         // create a notification for each user
         createNotifications(event, users, data.organization, (err, notifications) => {
-          if (err) return logger.error('%o',err)
-          if (notifications.length===0) return
+          if (err) return logger.error('%o', err)
+          if (notifications.length === 0) return
 
           // send extra notification event via sns topic
           Notifications.sockets.send({
@@ -54,7 +53,7 @@ module.exports = {
         // push and mail here !important
         Notifications.push.send(event, users)
 
-        //Notifications.email.send('TO-DO', users)
+        // Notifications.email.send('TO-DO', users)
       })
     }
 
@@ -83,7 +82,7 @@ const getUsers = (event, customerName, acls, callback) => {
     ]
   }
 
-  if (event.topic === 'job-crud' && event.data.model_type === 'ApprovalJob' && event.data.model.lifecycle === 'onhold') {
+  if (isApprovalOnHoldEvent(event)) {
     query = {
       id: event.data.approver_id
     }
@@ -122,10 +121,12 @@ const createNotifications = (event, users, customerName, callback) => {
     let excludes = (user.notifications && user.notifications.desktopExcludes) || []
     let isExcluded = false
 
-    if (excludes && Array.isArray(excludes) && excludes.length>0) {
-      isExcluded = excludes.find(exc => {
-        return matchExclusionFilter(exc, event)
-      })
+    if (!isApprovalOnHoldEvent(event)) {
+      if (excludes && Array.isArray(excludes) && excludes.length > 0) {
+        isExcluded = excludes.find(exc => {
+          return matchExclusionFilter(exc, event)
+        })
+      }
     }
 
     if (!isExcluded) {
@@ -151,30 +152,52 @@ const createNotifications = (event, users, customerName, callback) => {
  */
 const matchExclusionFilter = (excFilter, notifEvent) => {
 	// every string prop value has to match
-	let hasMatch = false
-	for (let prop in excFilter) {
+  let hasMatch = false
+  for (let prop in excFilter) {
     if (canCompare(excFilter[prop]) && canCompare(notifEvent[prop])) {
       hasMatch = (excFilter[prop] === notifEvent[prop])
     }
-	}
+  }
 
 	// also we care about data properties
-	let hasMatchingData = false
-	if (excFilter.data) {
-		for (let dataProp in excFilter.data) {
+  let hasMatchingData = false
+  if (excFilter.data) {
+    for (let dataProp in excFilter.data) {
       if (canCompare(excFilter.data[dataProp]) && canCompare(notifEvent.data[dataProp])) {
         hasMatchingData = (notifEvent.data[dataProp] === excFilter.data[dataProp])
       }
-		}
-	}
+    }
+  } else {
+    hasMatchingData = true
+  }
 
 	// filters are exclusions, if matches, reject returning false
-	return hasMatch || hasMatchingData
+  return hasMatch && hasMatchingData
 }
 
-// we can compare types and null
+/**
+ * @summary ...
+ * @param {*} value
+ * @return {Boolean}
+ */
 const canCompare = (value) => {
-  let types = ["number", "string", "boolean", "undefined"]
+  // we can compare types and null
+  let types = ['number', 'string', 'boolean', 'undefined']
   let type = typeof value
   return types.indexOf(type) !== -1 || value === null
+}
+
+/**
+ * @summary ...
+ * @param {Object} event
+ * @return {Boolean}
+ */
+const isApprovalOnHoldEvent = (event) => {
+  let isEvent = (
+    event.topic === 'job-crud' &&
+    event.data.model_type === 'ApprovalJob' &&
+    event.data.model.lifecycle === 'onhold'
+  )
+
+  return isEvent
 }

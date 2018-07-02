@@ -4,7 +4,7 @@ import NavbarActions from 'actions/navbar'
 import SessionActions from 'actions/session'
 import SimpleSwitch from 'components/simple-switch'
 
-import { JOB_START_NOTIFICATION } from 'constants/notifications'
+import { JOB_NOTIFICATION } from 'constants/notifications'
 
 const FilterSwitch = View.extend({
   props: {
@@ -42,7 +42,6 @@ const FilterSwitch = View.extend({
     // determine if exclusion filter exists in user options
     const filter = this.filter
     const filtered = App.state.session.user.notifications.getExclusionFilter(filter)
-
     // if it DOES EXIST (the user has previously de-activated it)
     // create the switch as with OFF/false value
     const filterSwitch = new SimpleSwitch({ value: !filtered })
@@ -85,8 +84,8 @@ export default View.extend({
 
     this.renderSubview(
       new FilterSwitch({
-        label: 'Notify me of launched tasks',
-        filter: JOB_START_NOTIFICATION
+        label: 'Notify me about tasks',
+        filter: JOB_NOTIFICATION
       }),
       this.queryByHook('switchs-container')
     )
