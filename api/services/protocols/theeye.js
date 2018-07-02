@@ -225,12 +225,13 @@ exports.getCustomerAgentCredentials = function (customer, supervisor, done) {
         return done(null, [])
       }
 
+      var user = users[0]
+
       // agents MUST have only one customer
       if (!user.customers || user.customers.length === 0) {
         return done(null, [])
       }
 
-      var user = users[0]
       var customer = user.customers[0]
 
       user.curl = format(
