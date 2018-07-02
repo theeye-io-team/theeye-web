@@ -1,6 +1,8 @@
+import App from 'ampersand-app'
 import ExecButton from '../exec-button'
 import {ExecTask, ExecApprovalTask} from './exec-task.js'
 import TaskConstants from 'constants/task'
+import bootbox from 'bootbox'
 
 module.exports = ExecButton.extend({
   onClickExecute (event) {
@@ -18,11 +20,15 @@ module.exports = ExecButton.extend({
   },
   execute () {
     var execTask
-    if (this.model.type === TaskConstants.TYPE_APPROVAL) {
-      execTask = new ExecApprovalTask({model: this.model})
+    if (App.state.session.licenseExpired) {
+      if (this.model.type === TaskConstants.TYPE_APPROVAL) {
+        execTask = new ExecApprovalTask({model: this.model})
+      } else {
+        execTask = new ExecTask({model: this.model})
+      }
+      execTask.execute()
     } else {
-      execTask = new ExecTask({model: this.model})
+      bootbox.alert('Your license has expired! </br> Please contact your service provider to activate the product again.')
     }
-    execTask.execute()
   }
 })
