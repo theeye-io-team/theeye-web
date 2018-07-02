@@ -3,8 +3,8 @@
  * TheEye Authentication Protocol
  *
  */
-var format = require('util').format;
-var logger = require('../../libs/logger')('service:protocols:theeye');
+var format = require('util').format
+var logger = require('../../libs/logger')('service:protocols:theeye')
 
 /**
  * @author Facundo
@@ -13,16 +13,16 @@ var logger = require('../../libs/logger')('service:protocols:theeye');
  * @param {Function} next callback
  */
 exports.createUser = function (localUser, params, supervisor, next) {
-  params.enabled = true;
+  params.enabled = true
   supervisor.create({
-    route:'/user',
-    body:params,
-    success:(body) => {
+    route: '/user',
+    body: params,
+    success: (body) => {
       if (!body) {
-        return next(null);
+        return next(null)
       }
 
-      var profile = body.user;
+      var profile = body.user
 
       var customers = profile.customers.map(
         customer => {
@@ -31,26 +31,26 @@ exports.createUser = function (localUser, params, supervisor, next) {
             name: customer.name
           }
         }
-      );
+      )
 
       Passport.create({
         protocol: 'theeye',
         provider: 'theeye',
-        user: localUser.id ,
+        user: localUser.id,
         token: profile.token,
         api_user: profile.id,
         profile: profile
       }, function (err, passport) {
         if (err) {
-          logger.error('%o',err);
-          return next(err);
+          logger.error('%o', err)
+          return next(err)
         }
-        return next(null, profile);
-      });
+        return next(null, profile)
+      })
     },
-    failure:(err) => {
-      logger.error('%o',err);
-      return next(err);
+    failure: (err) => {
+      logger.error('%o', err)
+      return next(err)
     }
   })
 }
@@ -61,8 +61,7 @@ exports.createUser = function (localUser, params, supervisor, next) {
  * @param {Object} supervisor , autenticated supervisor client
  * @param {Function} doneFn
  */
-exports.refreshToken = function(user, supervisor, doneFn)
-{
+exports.refreshToken = function (user, supervisor, doneFn) {
 }
 
 /**
@@ -76,15 +75,14 @@ exports.updateUser = function (userId, updates, supervisor, doneFn) {
   Passport.findOne({
     user: userId,
     protocol: 'theeye'
-  }, function(error, passport) {
-
+  }, function (error, passport) {
     if (error) {
-      logger.error('%o',error);
-      return doneFn(error);
+      logger.error('%o', error)
+      return doneFn(error)
     }
 
     if (!passport) {
-      logger.error('passport not found. ' + passport);
+      logger.error('passport not found. ' + passport)
       return doneFn()
     }
     supervisor.patch({
@@ -92,15 +90,13 @@ exports.updateUser = function (userId, updates, supervisor, doneFn) {
       id: passport.profile.id,
       body: updates,
       success: (res) => {
-        passport.profile = res.user;
-        passport.save( (err) => doneFn(err) );
+        passport.profile = res.user
+        passport.save((err) => doneFn(err))
       },
       failure: (err) => doneFn(err)
-    });
-
-  });
+    })
+  })
 }
-
 
 /**
  * @author Tomas
@@ -114,15 +110,14 @@ exports.updateMemberCredential = function (userId, updates, supervisor, route, d
   Passport.findOne({
     user: userId,
     protocol: 'theeye'
-  }, function(error, passport) {
-
+  }, function (error, passport) {
     if (error) {
-      logger.error('%o',error);
-      return doneFn(error);
+      logger.error('%o', error)
+      return doneFn(error)
     }
 
     if (!passport) {
-      logger.error('passport not found. ' + passport);
+      logger.error('passport not found. ' + passport)
       return doneFn()
     }
 
@@ -130,15 +125,13 @@ exports.updateMemberCredential = function (userId, updates, supervisor, route, d
       route: route += passport.profile.id + '/credential',
       body: updates,
       success: (res) => {
-        passport.profile = res;
-        passport.save( (err) => doneFn(err) );
+        passport.profile = res
+        passport.save((err) => doneFn(err))
       },
       failure: (err) => doneFn(err)
-    });
-
-  });
+    })
+  })
 }
-
 
 /**
  * @author Tomas
@@ -152,15 +145,14 @@ exports.removeMemberFromCustomer = function (userId, updates, supervisor, route,
   Passport.findOne({
     user: userId,
     protocol: 'theeye'
-  }, function(error, passport) {
-
+  }, function (error, passport) {
     if (error) {
-      logger.error('%o',error);
-      return doneFn(error);
+      logger.error('%o', error)
+      return doneFn(error)
     }
 
     if (!passport) {
-      logger.error('passport not found. ' + passport);
+      logger.error('passport not found. ' + passport)
       return doneFn()
     }
 
@@ -169,13 +161,12 @@ exports.removeMemberFromCustomer = function (userId, updates, supervisor, route,
       id: passport.profile.id,
       body: updates,
       success: (res) => {
-        passport.profile = res;
-        passport.save( (err) => doneFn(err) );
+        passport.profile = res
+        passport.save((err) => doneFn(err))
       },
       failure: (err) => doneFn(err)
-    });
-
-  });
+    })
+  })
 }
 
 /**
@@ -190,15 +181,14 @@ exports.addMemberToCustomer = function (userId, updates, supervisor, route, done
   Passport.findOne({
     user: userId,
     protocol: 'theeye'
-  }, function(error, passport) {
-
+  }, function (error, passport) {
     if (error) {
-      logger.error('%o',error);
-      return doneFn(error);
+      logger.error('%o', error)
+      return doneFn(error)
     }
 
     if (!passport) {
-      logger.error('passport not found. ' + passport);
+      logger.error('passport not found. ' + passport)
       return doneFn()
     }
 
@@ -206,37 +196,49 @@ exports.addMemberToCustomer = function (userId, updates, supervisor, route, done
       route: route += passport.profile.id + '/customers',
       body: updates,
       success: (res) => {
-        passport.profile = res;
-        passport.save( (err) => doneFn(err) );
+        passport.profile = res
+        passport.save((err) => doneFn(err))
       },
       failure: (err) => doneFn(err)
-    });
-
-  });
+    })
+  })
 }
 
-exports.getCustomerAgentCredentials = function (customer,supervisor,done) {
+/**
+ * @author Tomas
+ * @param {Object} customer
+ * @param {Object} supervisor , autenticated supervisor client
+ * @param {Function} done
+ */
+exports.getCustomerAgentCredentials = function (customer, supervisor, done) {
   supervisor.fetch({
-    route:'/:customer/user',
+    route: '/:customer/user',
     query: {
       where: {
-        credential:'agent',
-        'customers.name':customer
+        credential: 'agent',
+        'customers.name': customer
       },
-      limit:1
+      limit: 1
     },
     success: users => {
-      if (!users||users.length===0) {
-        return done(null,[])
+      if (!users || users.length === 0) {
+        return done(null, [])
       }
+
+      // agents MUST have only one customer
+      if (!user.customers || user.customers.length === 0) {
+        return done(null, [])
+      }
+
       var user = users[0]
+      var customer = user.customers[0]
 
       user.curl = format(
         'curl -s "%s" | bash -s "%s" "%s" "%s" ',
         sails.config.application.agentInstallerUrl.linux,
         user.client_id,
         user.client_secret,
-        user.customers[0].name // agents MUST have only one customer
+        customer.name
       )
 
       user.windowsCurl = format(
@@ -244,16 +246,16 @@ exports.getCustomerAgentCredentials = function (customer,supervisor,done) {
         sails.config.application.agentInstallerUrl.windows,
         user.client_id,
         user.client_secret,
-        user.customers[0].name // agents MUST have only one customer
+        customer.name
       )
 
       user.dockerCurl = format(
         'docker run -e NODE_ENV="production" -e THEEYE_SUPERVISOR_CLIENT_ID="%s" -e THEEYE_SUPERVISOR_CLIENT_SECRET="%s"  -e THEEYE_SUPERVISOR_CLIENT_CUSTOMER="%s"  -e THEEYE_SUPERVISOR_API_URL="%s" -e THEEYE_CLIENT_HOSTNAME="%s" -d interactar/theeye-agent',
         user.client_id,
         user.client_secret,
-        user.customers[0].name, // agents MUST have only one customer
+        customer.name,
         sails.config.supervisor.url,
-        user.customers[0].name
+        customer.name
       )
 
       return done(null, user)
