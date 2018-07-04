@@ -20,7 +20,7 @@ module.exports = PanelButton.extend({
         buttons: {
           confirm: {
             label: 'Confirm',
-            className: 'btn-danger'
+            className: 'btn-primary'
           },
           cancel: {
             label: 'Cancel',

@@ -5,7 +5,7 @@ import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 import config from 'config'
 import FileSaver from 'file-saver'
-import URI from 'urijs'
+import qs from 'qs'
 
 import { Collection as Hosts } from 'models/host'
 import { Model as HostGroup } from 'models/hostgroup'
@@ -122,8 +122,8 @@ const Actions = {
       }
     })
   },
-  fetchRecipe (query, next) {
-    query = URI.buildQuery(query)
+  fetchRecipe (where, next) {
+    let query = qs.stringify({ where })
 
     XHR.send({
       method: 'GET',

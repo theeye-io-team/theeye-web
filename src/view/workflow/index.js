@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import cytoscape from 'cytoscape'
 import cydagre from 'cytoscape-dagre'
-import URI from 'urijs'
+import qs from 'qs'
 import './style.less'
 
 module.exports = View.extend({
@@ -200,9 +200,12 @@ function Node (value) {
     if (!type) return undefined
 
     var search = { id: value.id }
-    var uri = URI('/admin/' + type + '#search=' + value.name)
-    uri.addSearch(search)
-    return uri.toString()
+
+    search = qs.stringify(search, { addQueryPrefix: true })
+
+    var uri = '/admin/' + type + search + '#search=' + value.name
+
+    return uri
   }
 
   Object.defineProperty(this, 'data', {
