@@ -4,10 +4,9 @@
  * how to use
  *
  *  // connect sockets and start listening to events
- *  SocketsWrapper({
- *    io: window.io,
+ *  new SocketsWrapper({
  *    query: {
- *      param: 'a custom param', 
+ *      param: 'a custom param',
  *    },
  *    onSubscribed:function(data,jwres){
  *      logger.debug('subscribed to event updates');
@@ -22,28 +21,30 @@
  *
  */
 
+import App from 'ampersand-app'
 import Events from 'ampersand-events'
 import assign from 'lodash/assign'
+import sailsSockets from 'lib/sails.io.js'
 const logger = require('lib/logger')('eye::sockets')
 
 function SocketsWrapper (options) {
-
   // only instances can extended its own prototype
   if ( ! (this instanceof SocketsWrapper) ) {
     return new SocketsWrapper(options)
   }
 
-  const self = this
+  this.events = options.events
 
   assign(this, Events)
+  return this
+}
 
-  this.subscriptions = []
-  this.io = options.io
-  const socket = this.socket = io.socket
+module.exports = SocketsWrapper
 
-  for (let event in options.events) {
+const bindEvents = (socket, emitter, events) => {
+  for (let event in events) {
     socket.on(event, function (message) {
-      options.events[event](message)
+      events[event](message)
     })
   }
 
@@ -58,52 +59,93 @@ function SocketsWrapper (options) {
   socket.$emit = function () {
     logger.debug('socket event %s, %o', arguments[0], arguments)
     $emit.apply(socket, arguments)
-    self.trigger(arguments[0], arguments[1])
+    emitter.trigger(arguments[0], arguments[1])
   }
 
   socket.on('connect', function () {
     logger.debug('socket connected')
-    self.trigger('connected')
+    emitter.trigger('connected')
   })
 
   socket.on('disconnect', function () {
     logger.debug('socket disconnected')
-    self.trigger('disconnected')
+    emitter.trigger('disconnected')
   })
 
-  return this
+  return
+}
+
+SocketsWrapper.prototype.connect = function (done) {
+  const sailsIO = sailsSockets(io) // setup sails sockets connection using global socket.io object
+  let socket = this.socket
+  if (!socket) {
+    logger.log('connecting sails socket')
+    sailsIO.connect({ url: App.config.socket_url }, (err, socket) => {
+      this.socket = socket
+      bindEvents(socket, this, this.events)
+      done(null, socket)
+    })
+  } else {
+    if (!socket.socket.connected) {
+      var host = new RegExp(socket.socket.options.host)
+      if (host.test(App.config.socket_url)) {
+        // If host url matches, reconnect socket.
+        logger.log('reconnecting socket')
+        socket.socket.connect()
+        done(null, socket)
+      } else {
+        // If host url doesn't match, connect new socket.
+        sailsIO.connect({ url: App.config.socket_url }, (err, socket) => {
+          this.socket = socket
+          bindEvents(socket, this, this.events)
+          done(null, socket)
+        })
+      }
+    }
+  }
+}
+
+SocketsWrapper.prototype.disconnect = function (done) {
+  let socket = this.socket
+  if (!socket) return
+  if (socket.socket.connected) {
+    this.unsubscribe({ // unsubscribe all
+      onUnsubscribed: () => {
+        socket.disconnect()
+      }
+    })
+  }
+}
+
+SocketsWrapper.prototype.destroy = function (done) {
 }
 
 SocketsWrapper.prototype.connected = function () {
   let socket = this.socket
-  return socket.socket && socket.socket.connected
+  return socket && socket.socket && socket.socket.connected
 }
 
 SocketsWrapper.prototype.subscribe = function ({ query, onSubscribed }) {
-  let subscriptions = this.subscriptions
+  let socket = this.socket
 
   const subscribe = () => {
     logger.debug('subscribing...')
-    this.socket.post('/sockets/subscribe', query, function (data, jwt) {
-      Array.prototype.push.apply(subscriptions, query.topics)
+    socket.post('/sockets/subscribe', query, function (data, jwt) {
       onSubscribed && onSubscribed(data, jwt)
     })
   }
 
-  if (this.connected()) subscribe() 
+  if (this.connected()) subscribe()
   else this.listenToOnce(this, 'connected', subscribe)
 }
 
 SocketsWrapper.prototype.unsubscribe = function (options={}) {
-
   let { query, onUnsubscribed } = options
-
-  let subscriptions = this.subscriptions
+  let socket = this.socket
 
   if (this.connected()) {
     logger.debug('unsubscribing...')
-    this.socket.post('/sockets/unsubscribe', query||{}, function (data, jwt) {
-      subscriptions = []
+    socket.post('/sockets/unsubscribe', query||{}, function (data, jwt) {
       onUnsubscribed && onUnsubscribed(data, jwt)
     })
   } else {
@@ -112,14 +154,13 @@ SocketsWrapper.prototype.unsubscribe = function (options={}) {
 }
 
 SocketsWrapper.prototype.serverSubscriptions = function () {
+  let socket = this.socket
   if (this.connected()) {
     logger.debug('querying subscriptions')
-    this.socket.get('/sockets/subscriptions', function (data, jwt) {
+    socket.get('/sockets/subscriptions', function (data, jwt) {
       logger.debug('%o', data)
     })
   } else {
     logger.debug('socket is not connected. cannot unsubscribe')
   }
 }
-
-module.exports = SocketsWrapper
