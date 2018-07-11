@@ -19,10 +19,16 @@ export default {
     // this is another improbable case, only should arrive unreaded notifications via socket
     if (notification.read) return
 
+    const type = notification.data.model._type
+
     const notifOptions = {
       icon: notificationBadge,
       badge: notificationBadge, // not happening
       body: messageFactory(notification.data)
+    }
+
+    if (navigator.platform.toLowerCase().indexOf('mac') === -1) {
+      notifOptions.tag = 'TheEyeNotification'
     }
 
     const title = titleFactory(notification.data)
