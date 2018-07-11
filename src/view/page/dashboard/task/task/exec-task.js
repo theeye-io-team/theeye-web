@@ -2,7 +2,6 @@ import App from 'ampersand-app'
 import State from 'ampersand-state'
 const runTaskWithArgsMessage = require('./run-task-message.hbs')
 import bootbox from 'bootbox'
-import JobActions from 'actions/job'
 
 import DinamicForm from 'components/dinamic-form'
 import Modalizer from 'components/modalizer'
@@ -87,7 +86,7 @@ const ExecTask = State.extend({
         backdrop: true,
         callback: (confirmed) => {
           if (confirmed) {
-            JobActions.cancel(this.model.lastjob)
+            App.actions.job.cancel(this.model.lastjob)
           }
         }
       })
@@ -132,7 +131,7 @@ const ExecTask = State.extend({
         backdrop: true,
         callback: (confirmed) => {
           if (confirmed) {
-            JobActions.createFromTask(this.model, taskArgs)
+            App.actions.job.createFromTask(this.model, taskArgs)
           }
         }
       })
@@ -149,7 +148,7 @@ const ExecApprovalTask = ExecTask.extend({
         this.updateApprovalRequest(done)
       }
     } else {
-      JobActions.createFromTask(this.model, [])
+      App.actions.job.createFromTask(this.model, [])
       if (done) done()
     }
   },
@@ -162,7 +161,7 @@ const ExecApprovalTask = ExecTask.extend({
         callback: () => {
           this.getDinamicArguments(taskArgs => {
             taskArgs = parseTaskArgs(taskArgs)
-            JobActions.reject(this.model.lastjob, taskArgs)
+            App.actions.job.reject(this.model.lastjob, taskArgs)
             if (done) done()
           })
         }
@@ -173,7 +172,7 @@ const ExecApprovalTask = ExecTask.extend({
         callback: () => {
           this.getDinamicArguments(taskArgs => {
             taskArgs = parseTaskArgs(taskArgs)
-            JobActions.approve(this.model.lastjob, taskArgs)
+            App.actions.job.approve(this.model.lastjob, taskArgs)
             if (done) done()
           })
         }
@@ -208,7 +207,7 @@ const ExecApprovalTask = ExecTask.extend({
           label: 'Cancel request',
           className: 'btn btn-danger',
           callback: () => {
-            JobActions.cancel(this.model.lastjob)
+            App.actions.job.cancel(this.model.lastjob)
             if (done) done()
           }
         },
@@ -216,7 +215,7 @@ const ExecApprovalTask = ExecTask.extend({
           label: 'Resend request',
           className: 'btn btn-primary',
           callback: () => {
-            JobActions.createFromTask(this.model, [])
+            App.actions.job.createFromTask(this.model, [])
             if (done) done()
           }
         }

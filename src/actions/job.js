@@ -5,7 +5,9 @@ import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 const logger = require('lib/logger')('actions:jobs')
 const config = require('config')
-import LIFECYCLE from 'constants/lifecycle'
+import TaskConstants from 'constants/task'
+import LifecycleConstants from 'constants/lifecycle'
+import {ExecApprovalTask} from 'view/page/dashboard/task/task/exec-task.js'
 
 const updateJob = (job, data) => {
   // reset
@@ -36,7 +38,9 @@ module.exports = {
       return
     }
 
+
     updateJob(task.lastjob, data)
+    this.handleApprovalTask(task)
   },
   createFromTask (task, args) {
     logger.log('creating new job with task %o', task)
@@ -69,7 +73,7 @@ module.exports = {
         logger.debug('job canceled')
         job.clear()
         job.result.clear()
-        job.set('lifecycle',LIFECYCLE.CANCELED)
+        job.set('lifecycle',LifecycleConstants.CANCELED)
       },
       fail (err,xhr) {
         bootbox.alert('something goes wrong')
@@ -94,7 +98,7 @@ module.exports = {
         logger.debug('job approved')
         //job.clear()
         //job.result.clear()
-        //job.set('lifecycle', LIFECYCLE.CANCELED)
+        //job.set('lifecycle', LifecycleConstants.CANCELED)
       },
       fail (err,xhr) {
         bootbox.alert('something goes wrong')
@@ -119,12 +123,31 @@ module.exports = {
         logger.debug('job rejected')
         //job.clear()
         //job.result.clear()
-        //job.set('lifecycle',LIFECYCLE.CANCELED)
+        //job.set('lifecycle',LifecycleConstants.CANCELED)
       },
       fail (err,xhr) {
         bootbox.alert('something goes wrong')
         console.log(arguments)
       }
     })
+  },
+  /**
+   *
+   * @summary check if should show approval modal
+   * @param {Object} data job model properties
+   *
+   */
+  handleApprovalTask (task) {
+    var requestApproval = (
+      task.type === TaskConstants.TYPE_APPROVAL &&
+      task.approver_id === App.state.session.user.id &&
+      task.lastjob &&
+      task.lastjob.lifecycle === LifecycleConstants.ONHOLD
+    )
+
+    if (requestApproval) {
+      var execApprovalTask = new ExecApprovalTask({model: task})
+      execApprovalTask.execute(true)
+    }
   }
 }

@@ -11,6 +11,7 @@ require('app/events')
 const sockets = require('app/sockets')
 const session = require('app/session')
 const models = require('app/models')
+const actions = require('app/actions')
 const experimentalFeatures = require('app/experimental')
 
 import 'assets/styles'
@@ -29,6 +30,7 @@ App.extend({
       session()
       sockets()
       models()
+      actions()
       experimentalFeatures()
     })
   },
