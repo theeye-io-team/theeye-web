@@ -5,7 +5,7 @@ import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
 import Datepicker from 'components/input-view/datepicker'
 import OneLineMediaInputView from 'components/input-view/media/oneline'
-import { Model as MediaFileModel } from 'models/media-file'
+import MediaFileModel from './media-file'
 import isURL from 'validator/lib/isURL'
 
 module.exports = FormView.extend({

@@ -16,12 +16,14 @@ const Actions = {
     const resources = state.configResources.serialize()
     const tasks = state.configTasks.serialize()
     const triggers = state.configTriggers.serialize()
+    const files = state.configFiles.serialize()
 
     const body = Object.assign({}, data, {
-      resources: resources,
-      tasks: tasks,
-      triggers: triggers,
-      applyToSourceHost: applyToSourceHost
+      resources,
+      tasks,
+      files,
+      triggers,
+      applyToSourceHost
     })
 
     XHR.send({
@@ -76,11 +78,15 @@ const Actions = {
       },
     })
   },
+  resetTemplatesConfig () {
+    App.state.hostGroupPage.resetCollection()
+  },
   fetchHostConfig (id,next) {
     XHR.send({
       method: 'GET',
       url: `${config.api_url}/host/${id}/config`,
-      done (data,xhr) {
+      done: (data,xhr) => {
+        this.resetTemplatesConfig()
         App.state.hostGroupPage.setConfigs(data)
         //next(null,data)
       },
@@ -90,6 +96,7 @@ const Actions = {
     })
   },
   readRecipeConfig (recipe) {
+    this.resetTemplatesConfig()
     App.state.hostGroupPage.setConfigs(recipe)
   },
   //

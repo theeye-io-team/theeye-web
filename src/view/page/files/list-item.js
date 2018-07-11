@@ -18,35 +18,35 @@ module.exports = ListItem.extend({
         return this.model.description
       }
     },
-    //badge: {
-    //  deps: ['model.hasTemplate'],
-    //  fn () {
-    //    if (this.model.hasTemplate) {
-    //      return 'fa fa-clone remark-success visible-badge'
-    //    }
-    //  }
-    //},
-    //badge_tip: {
-    //  deps: ['model.hasTemplate'],
-    //  fn () {
-    //    if (this.model.hasTemplate) {
-    //      return 'This task is linked to a Template'
-    //    }
-    //  }
-    //}
+    badge: {
+      deps: ['model.hasTemplate'],
+      fn () {
+        if (this.model.hasTemplate) {
+          return 'fa fa-clone remark-success visible-badge'
+        }
+      }
+    },
+    badge_tip: {
+      deps: ['model.hasTemplate'],
+      fn () {
+        if (this.model.hasTemplate) {
+          return 'This task is linked to a Template'
+        }
+      }
+    }
   },
-  //bindings: assign({},ListItem.prototype.bindings,{
-  //  badge: {
-  //    hook: 'item_badge',
-  //    type: 'attribute',
-  //    name: 'class'
-  //  },
-  //  badge_tip: {
-  //    hook: 'item_badge',
-  //    type: 'attribute',
-  //    name: 'title'
-  //  },
-  //}),
+  bindings: assign({},ListItem.prototype.bindings,{
+    badge: {
+      hook: 'item_badge',
+      type: 'attribute',
+      name: 'class'
+    },
+    badge_tip: {
+      hook: 'item_badge',
+      type: 'attribute',
+      name: 'title'
+    },
+  }),
   render () {
     ListItem.prototype.render.apply(this,arguments)
 

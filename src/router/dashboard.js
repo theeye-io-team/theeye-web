@@ -49,13 +49,17 @@ const prepareData = (options) => {
   if (fetchTasks) {
     const nextStep = () => {
       step()
-      App.state.tasks.fetch({ success: () => {
-        App.state.dashboard.groupTasks()
-        App.state.workflows.forEach(workflow => {
-          WorkflowActions.populate(workflow)
-        })
-        step()
-      }, error: step })
+      App.state.tasks.fetch({
+        success: () => {
+          App.state.dashboard.groupTasks()
+          App.state.workflows.forEach(workflow => {
+            WorkflowActions.populate(workflow)
+          })
+          step()
+        },
+        error: step,
+        reset: true
+      })
     }
     App.state.workflows.fetch({ success: nextStep, error: nextStep })
   }
@@ -71,7 +75,8 @@ const prepareData = (options) => {
       App.state.dashboard.groupResources()
       step()
     },
-    error: step
+    error: step,
+    reset: true
   })
 }
 

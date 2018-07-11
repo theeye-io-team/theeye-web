@@ -11,27 +11,15 @@ import AmpersandState from 'ampersand-state'
 import ModelConstants from 'constants/models'
 
 const GroupedTasksCollection = TasksCollection.extend({
-	//comparator (m1, m2) {
-	//  if (m1._type === m2._type) {
-	//    // sort same types by name
-	//    if (m1.name<m2.name) { return -1 }
-	//    if (m1.name>m2.name) { return  1 }
-	//    return 0
-	//  } else {
-	//    // first comes workflow
-	//    if (m1._type==='Workflow') return -1
-	//    if (m2._type==='Workflow') return  1
-	//  }
-	//},
-	comparator (m1, m2) {
-		if (m1.name.toLowerCase()<m2.name.toLowerCase()) { return -1 }
-		if (m1.name.toLowerCase()>m2.name.toLowerCase()) { return  1 }
-		return 0 
-	},
+  comparator (m1, m2) {
+    if (m1.name.toLowerCase()<m2.name.toLowerCase()) { return -1 }
+    if (m1.name.toLowerCase()>m2.name.toLowerCase()) { return  1 }
+    return 0 
+  },
   model (attrs, options={}) {
     const taskModel = TasksCollection.prototype.model
     
-    if (attrs._type = ModelConstants.TYPE_WORKFLOW) {
+    if (attrs._type == ModelConstants.TYPE_WORKFLOW) {
       return new Workflow(attrs, options)
     } else {
       return taskModel.apply(this, arguments)
@@ -68,10 +56,20 @@ module.exports = AmpersandState.extend({
   groupTasks () {
     const tasks = App.state.tasks
     this.groupedTasks.add(tasks.models.filter(m => !m.workflow_id))
-    this.listenTo(App.state.tasks, 'add', (model) => {
+
+    this.listenTo(tasks, 'add', (model) => {
       this.groupedTasks.add(model)
     })
-    this.listenTo(App.state.tasks, 'change:workflow_id', (task) => {
+
+    this.listenTo(tasks, 'remove', (model) => {
+      this.groupedTasks.remove(model)
+    })
+
+    this.listenTo(tasks, 'reset', () => {
+      this.groupedTasks.reset(tasks.models)
+    })
+
+    this.listenTo(tasks, 'change:workflow_id', (task) => {
       // if task has no workflow assigned then put it into the grouped tasks collection
       if (!task.workflow_id) {
         this.groupedTasks.add(task)

@@ -15,6 +15,150 @@ const HelpTexts = require('language/help')
 
 var currentGroup
 
+module.exports = FormView.extend({
+  initialize (options) {
+    currentGroup = this.model
+
+    const regexInput = new RegexInputView({
+      label: 'Auto provision hostnames matching this pattern',
+      name: 'hostname_regex',
+      required: false,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      value: this.model.hostname_regex,
+      placeholder: '^hostname$',
+      tests: [
+        (value) => {
+          try {
+            new RegExp(value)
+          } catch (regexError) {
+            return 'The regular expression is not valid'
+          }
+        }
+      ]
+    })
+
+    const selectedHosts = new SelectView({
+      label: 'Destination Hosts',
+      name: 'hosts',
+      multiple: true,
+      tags: true,
+      options: App.state.hosts,
+      value: this.model.hosts,
+      styles: 'form-group',
+      required: false,
+      unselectedText: 'select a host',
+      idAttribute: 'id',
+      textAttribute: 'hostname',
+      requiredMessage: 'Selection required',
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label'
+    })
+
+    selectedHosts.listenTo(this.model.hosts, 'add', () => {
+      selectedHosts.setValue(this.model.hosts)
+    })
+
+    this.fields = [
+      new InputView({
+        label: 'Template Name *',
+        name: 'name',
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.name
+      }),
+      regexInput,
+      selectedHosts,
+      new InputView({
+        label: 'Description',
+        name: 'description',
+        required: false,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.description
+      })
+    ]
+
+    if (this.model.isNew()) {
+      const configSelection = new HostConfigSelect({
+        label: 'Source Host (role model) *',
+        name: 'copy_host',
+        multiple: false,
+        tags: false,
+        options: App.state.hosts,
+        styles: 'form-group',
+        required: false,
+        // value: null,
+        unselectedText: 'select a host',
+        idAttribute: 'id',
+        textAttribute: 'hostname',
+        requiredMessage: 'Selection required',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        tests: [
+          () => {
+            const noConfig = (
+              App.state.hostGroupPage.configResources.length === 0 &&
+              App.state.hostGroupPage.configTasks.length === 0 &&
+              App.state.hostGroupPage.configTriggers.length === 0 &&
+              App.state.hostGroupPage.configFiles.length === 0
+            )
+
+            if (noConfig) {
+              return 'Configuration is required. We need something to create a template'
+            }
+          }
+        ]
+      })
+
+      this.fields.unshift(configSelection)
+    } else {
+      App.state.hostGroupPage.configResources = this.model.resources
+      App.state.hostGroupPage.configTasks = this.model.tasks
+      App.state.hostGroupPage.configTriggers = this.model.triggers
+      App.state.hostGroupPage.configFiles = this.model.files
+
+      const configs = new ConfigsView()
+      configs.render()
+      this.fields.unshift(configs)
+    }
+
+    FormView.prototype.initialize.apply(this, arguments)
+  },
+  focus () {
+    this.query('input[name=name]').focus()
+  },
+  render () {
+    FormView.prototype.render.apply(this, arguments)
+    this.query('form').classList.add('form-horizontal')
+
+    this.previewModal = new HostsPreviewModal({
+      model: this.model // contains the collection of hosts
+    })
+
+    this.addHelpIcon('name')
+    this.addHelpIcon('description')
+    this.addHelpIcon('hostname_regex')
+    this.addHelpIcon('hosts')
+    this.addHelpIcon('copy_host')
+  },
+  addHelpIcon (field) {
+    const view = this._fieldViews[field]
+    if (!view) return
+    view.renderSubview(
+      new HelpIcon({
+        text: HelpTexts.hostgroup.form[field]
+      }),
+      view.query('label')
+    )
+  },
+  remove () {
+    FormView.prototype.remove.apply(this)
+    this.previewModal.remove()
+  }
+})
+
 /**
  *
  * @param {Host} hostModel
@@ -171,147 +315,5 @@ const HostsPreviewModal = Modalizer.extend({
     this.listenTo(this.list, 'click:add_all', () => {
       this.hide()
     })
-  }
-})
-
-module.exports = FormView.extend({
-  initialize (options) {
-    currentGroup = this.model
-
-    const regexInput = new RegexInputView({
-      label: 'Auto provision hostnames matching this pattern',
-      name: 'hostname_regex',
-      required: false,
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label',
-      value: this.model.hostname_regex,
-      placeholder: '^hostname$',
-      tests: [
-        (value) => {
-          try {
-            new RegExp(value)
-          } catch (regexError) {
-            return 'The regular expression is not valid'
-          }
-        }
-      ]
-    })
-
-    const selectedHosts = new SelectView({
-      label: 'Destination Hosts',
-      name: 'hosts',
-      multiple: true,
-      tags: true,
-      options: App.state.hosts,
-      value: this.model.hosts,
-      styles: 'form-group',
-      required: false,
-      unselectedText: 'select a host',
-      idAttribute: 'id',
-      textAttribute: 'hostname',
-      requiredMessage: 'Selection required',
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label'
-    })
-
-    selectedHosts.listenTo(this.model.hosts, 'add', () => {
-      selectedHosts.setValue(this.model.hosts)
-    })
-
-    this.fields = [
-      new InputView({
-        label: 'Template Name *',
-        name: 'name',
-        required: true,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        value: this.model.name
-      }),
-      regexInput,
-      selectedHosts,
-      new InputView({
-        label: 'Description',
-        name: 'description',
-        required: false,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        value: this.model.description
-      })
-    ]
-
-    if (this.model.isNew()) {
-      const hostSelect = new HostConfigSelect({
-        label: 'Source Host (role model) *',
-        name: 'copy_host',
-        multiple: false,
-        tags: false,
-        options: App.state.hosts,
-        styles: 'form-group',
-        required: false,
-        // value: null,
-        unselectedText: 'select a host',
-        idAttribute: 'id',
-        textAttribute: 'hostname',
-        requiredMessage: 'Selection required',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        tests: [
-          () => {
-            const noConfig = (
-              App.state.hostGroupPage.configResources.length === 0 &&
-              App.state.hostGroupPage.configTasks.length === 0 &&
-              App.state.hostGroupPage.configTriggers.length === 0
-            )
-
-            if (noConfig) {
-              return 'Configuration is required. We need something to create a template'
-            }
-          }
-        ]
-      })
-
-      this.fields.unshift(hostSelect)
-    } else {
-      App.state.hostGroupPage.configResources = this.model.resources
-      App.state.hostGroupPage.configTasks = this.model.tasks
-      App.state.hostGroupPage.configTriggers = this.model.triggers
-
-      const configs = new ConfigsView()
-      configs.render()
-      this.fields.unshift(configs)
-    }
-
-    FormView.prototype.initialize.apply(this, arguments)
-  },
-  focus () {
-    this.query('input[name=name]').focus()
-  },
-  render () {
-    FormView.prototype.render.apply(this, arguments)
-    this.query('form').classList.add('form-horizontal')
-
-    this.previewModal = new HostsPreviewModal({
-      model: this.model // contains the collection of hosts
-    })
-
-    this.addHelpIcon('name')
-    this.addHelpIcon('description')
-    this.addHelpIcon('hostname_regex')
-    this.addHelpIcon('hosts')
-    this.addHelpIcon('copy_host')
-  },
-  addHelpIcon (field) {
-    const view = this._fieldViews[field]
-    if (!view) return
-    view.renderSubview(
-      new HelpIcon({
-        text: HelpTexts.hostgroup.form[field]
-      }),
-      view.query('label')
-    )
-  },
-  remove () {
-    FormView.prototype.remove.apply(this)
-    this.previewModal.remove()
   }
 })

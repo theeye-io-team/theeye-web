@@ -5,21 +5,6 @@ import ConfigsView from '../../configs'
 import FileInputView from 'components/input-view/file'
 import bootbox from 'bootbox'
 
-const ImportFileInputView = FileInputView.extend({
-  template: `
-    <div>
-      <div class="col-sm-12">
-        <div class="upload-btn-wrapper" style="display:block">
-          <button for="file-upload" data-hook="button-label" class="btn btn-primary" style="width:100%">
-            <i class="fa fa-upload"></i> Import
-          </button>
-          <input id="file-upload" class="" type="file">
-        </div>
-      </div>
-    </div>
-  `
-})
-
 module.exports = SelectView.extend({
   template: `
     <div class="form-group form-horizontal hostconfig-select">
@@ -90,4 +75,19 @@ module.exports = SelectView.extend({
   update () {
     this.clear()
   }
+})
+
+const ImportFileInputView = FileInputView.extend({
+  template: `
+    <div>
+      <div class="col-sm-12">
+        <div class="upload-btn-wrapper" style="display:block">
+          <button for="file-upload" data-hook="button-label" class="btn btn-primary" style="width:100%">
+            <i class="fa fa-upload"></i> Import
+          </button>
+          <input id="file-upload" class="" type="file">
+        </div>
+      </div>
+    </div>
+  `
 })

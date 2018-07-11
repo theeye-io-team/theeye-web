@@ -6,6 +6,149 @@ import HostGroupActions from 'actions/hostgroup'
 
 import './styles.css'
 
+module.exports = View.extend({
+  template: `
+    <div class="template-configs" style="padding:10px;">
+      <div class="toggle" data-hook="configs-toggler">
+        Display host config <i class="fa fa-chevron-down"></i>
+      </div>
+      <div class="configs" data-hook="configs">
+        <ul class="list-group" data-hook="resources">
+          <h3><span>No</span> Monitors</h3>
+        </ul>
+        <ul class="list-group" data-hook="tasks">
+          <h3><span>No</span> Tasks</h3>
+        </ul>
+        <ul class="list-group" data-hook="files">
+          <h3><span>No</span> Files</h3>
+        </ul>
+        <ul class="list-group" data-hook="triggers">
+          <h3><span>No</span> Triggers</h3>
+        </ul>
+      </div>
+    </div>
+  `,
+  props: {
+    valid: ['boolean',false,true],
+    show_config: ['boolean',false,true],
+    name: ['string',false,'configs'],
+    required: ['boolean',false,true],
+    edit_mode: ['boolean',false,false],
+    no_resources: ['boolean',false,false],
+    no_tasks: ['boolean',false,false],
+    no_files: ['boolean',false,false],
+    no_triggers: ['boolean',false,false],
+  },
+  bindings: {
+    show_config: {
+      type: 'toggle',
+      hook: 'configs'
+    },
+    no_resources: [
+      {
+        type: 'booleanClass',
+        name: 'empty',
+        hook: 'resources'
+      },{
+        type: 'toggle',
+        selector: '.configs [data-hook=resources]>h3>span'
+      }
+    ],
+    no_tasks: [
+      {
+        type: 'booleanClass',
+        name: 'empty',
+        hook: 'tasks'
+      },{
+        type: 'toggle',
+        selector: '.configs [data-hook=tasks]>h3>span'
+      }
+    ],
+    no_files: [
+      {
+        type: 'booleanClass',
+        name: 'empty',
+        hook: 'files'
+      },{
+        type: 'toggle',
+        selector: '.configs [data-hook=files]>h3>span'
+      }
+    ],
+    no_triggers: [
+      {
+        type: 'booleanClass',
+        name: 'empty',
+        hook: 'triggers'
+      },{
+        type: 'toggle',
+        selector: '.configs [data-hook=triggers]>h3>span'
+      }
+    ],
+  },
+  events: {
+    'click [data-hook=configs-toggler]': function () {
+      this.toggle('show_config')
+    }
+  },
+  render () {
+    this.renderWithTemplate(this)
+
+    this.renderCollection(
+      App.state.hostGroupPage.configResources,
+      (options) => {
+        options.readonly = ! this.edit_mode
+        return new ItemView(options)
+      },
+      this.queryByHook('resources')
+    )
+
+    this.renderCollection(
+      App.state.hostGroupPage.configTasks,
+      (options) => {
+        options.readonly = ! this.edit_mode
+        return new ItemView(options)
+      },
+      this.queryByHook('tasks')
+    )
+
+    this.renderCollection(
+      App.state.hostGroupPage.configFiles,
+      (options) => {
+        options.readonly = ! this.edit_mode
+        return new FileItemView(options)
+      },
+      this.queryByHook('files')
+    )
+
+    this.renderCollection(
+      App.state.hostGroupPage.configTriggers,
+      (options) => {
+        // edit only when create
+        options.readonly = ! this.edit_mode
+        if (options.readonly===true) {
+          return new ShowTriggerItemView(options)
+        } else {
+          return new CreateTriggerItemView(options)
+        }
+      },
+      this.queryByHook('triggers')
+    )
+
+    this.listenTo(App.state.hostGroupPage.configResources,'reset add remove',() => {
+      this.no_resources = (App.state.hostGroupPage.configResources.length === 0)
+    })
+    this.listenTo(App.state.hostGroupPage.configTasks,'reset add remove',() => {
+      this.no_tasks = (App.state.hostGroupPage.configTasks.length === 0)
+    })
+    this.listenTo(App.state.hostGroupPage.configFiles,'reset add remove',() => {
+      this.no_files = (App.state.hostGroupPage.configFiles.length === 0)
+    })
+    this.listenTo(App.state.hostGroupPage.configTriggers,'reset add remove',() => {
+      this.no_triggers = (App.state.hostGroupPage.configTriggers.length === 0)
+    })
+  }
+})
+
 const InfoView = View.extend({
   template: `<div></div>`,
   bindings: {
@@ -14,13 +157,21 @@ const InfoView = View.extend({
 })
 
 const ItemView = View.extend({
+  //template: `
+  //  <li>
+  //    <span data-hook="name"></span>
+  //    (<span data-hook="type"></span>)
+  //    <i class="fa fa-remove" title="Do not add this to the Template" data-hook="remove-button"></i>
+  //    <i class="fa fa-eye" title="More" data-hook="show" style="display:none"></i>
+  //  </li>
+  //`,
   template: `
-  <li>
-    <span data-hook="name"></span>
-    (<span data-hook="type"></span>)
-    <i class="fa fa-remove" title="Do not add this to the Template" data-hook="remove-button"></i>
-    <i class="fa fa-eye" title="More" data-hook="show" style="display:none"></i>
-  </li>`,
+    <li>
+      <span data-hook="name"></span>
+      (<span data-hook="type"></span>)
+      <i class="fa fa-eye" title="More" data-hook="show" style="display:none"></i>
+    </li>
+  `,
   props: {
     styles: ['string',false,'list-group-item'],
     readonly: ['boolean',false,false]
@@ -62,15 +213,35 @@ const ItemView = View.extend({
   }
 })
 
+const getFileAttachedTo = () => {
+  // nop...
+}
+
+const FileItemView = ItemView.extend({
+  template: `
+    <li>
+      <span data-hook="filename"></span>
+    </li>
+  `,
+  derived: {
+    attached_to: {
+      deps: ['model'],
+      fn () {
+        //let fid = this.model.id
+      }
+    }
+  },
+  bindings: merge({}, ItemView.prototype.bindings, {
+    'model.filename': { hook: 'filename' },
+  })
+})
+
 /**
  *
  * the model data structure changes before creation
  *
  */
 const ShowTriggerItemView = ItemView.extend({
-  initialize () {
-    ItemView.prototype.initialize.apply(this,arguments)
-  },
   template: `
     <li>
       <b><span data-hook="task-name"></span></b>
@@ -91,12 +262,13 @@ const ShowTriggerItemView = ItemView.extend({
  */
 const CreateTriggerItemView = ItemView.extend({
   template: `
-  <li>
-    <span data-hook="name"></span>
-    <span data-hook="count-visibility">(<span data-hook="count"></span> events attached)</span>
-    <i class="fa fa-remove" title="Do not add this to the Template" data-hook="remove-button"></i>
-    <i class="fa fa-eye" title="More" data-hook="show" style="display:none"></i>
-  </li>`,
+    <li>
+      <span data-hook="name"></span>
+      <span data-hook="count-visibility">(<span data-hook="count"></span> events attached)</span>
+      <i class="fa fa-remove" title="Do not add this to the Template" data-hook="remove-button"></i>
+      <i class="fa fa-eye" title="More" data-hook="show" style="display:none"></i>
+    </li>
+  `,
   bindings: merge({}, ItemView.prototype.bindings, {
     'model.task.name': {
       type: 'text',
@@ -110,121 +282,4 @@ const CreateTriggerItemView = ItemView.extend({
     //  hook: 'count-visibility'
     }]
   })
-})
-
-module.exports = View.extend({
-  template: `
-    <div class="template-configs" style="padding:10px;">
-      <div class="toggle" data-hook="configs-toggler">
-        Display host config <i class="fa fa-chevron-down"></i>
-      </div>
-      <div class="configs" data-hook="configs">
-        <ul class="list-group" data-hook="resources">
-          <h3><span>No</span> Monitors</h3>
-        </ul>
-        <ul class="list-group" data-hook="tasks">
-          <h3><span>No</span> Tasks</h3>
-        </ul>
-        <ul class="list-group" data-hook="triggers">
-          <h3><span>No</span> Triggers</h3>
-        </ul>
-      </div>
-    </div>
-  `,
-  props: {
-    valid: ['boolean',false,true],
-    show_config: ['boolean',false,true],
-    name: ['string',false,'configs'],
-    required: ['boolean',false,true],
-    edit_mode: ['boolean',false,false],
-    no_resources: ['boolean',false,false],
-    no_tasks: ['boolean',false,false],
-    no_triggers: ['boolean',false,false],
-  },
-  bindings: {
-    show_config: {
-      type: 'toggle',
-      hook: 'configs'
-    },
-    no_resources: [
-      {
-        type: 'booleanClass',
-        name: 'empty',
-        hook: 'resources'
-      },{
-        type: 'toggle',
-        selector: '.configs [data-hook=resources]>h3>span'
-      }
-    ],
-    no_tasks: [
-      {
-        type: 'booleanClass',
-        name: 'empty',
-        hook: 'tasks'
-      },{
-        type: 'toggle',
-        selector: '.configs [data-hook=tasks]>h3>span'
-      }
-    ],
-    no_triggers: [
-      {
-        type: 'booleanClass',
-        name: 'empty',
-        hook: 'triggers'
-      },{
-        type: 'toggle',
-        selector: '.configs [data-hook=triggers]>h3>span'
-      }
-    ],
-  },
-  events: {
-    'click [data-hook=configs-toggler]': function () {
-      this.toggle('show_config')
-    }
-  },
-  render () {
-    this.renderWithTemplate(this)
-
-    this.renderCollection(
-      App.state.hostGroupPage.configResources,
-      (options) => {
-        options.readonly = ! this.edit_mode
-        return new ItemView(options)
-      },
-      this.queryByHook('resources')
-    )
-
-    this.renderCollection(
-      App.state.hostGroupPage.configTasks,
-      (options) => {
-        options.readonly = ! this.edit_mode
-        return new ItemView(options)
-      },
-      this.queryByHook('tasks')
-    )
-
-    this.renderCollection(
-      App.state.hostGroupPage.configTriggers,
-      (options) => {
-        // edit only when create
-        options.readonly = ! this.edit_mode
-        if (options.readonly===true) {
-          return new ShowTriggerItemView(options)
-        } else {
-          return new CreateTriggerItemView(options)
-        }
-      },
-      this.queryByHook('triggers')
-    )
-
-    this.listenTo(App.state.hostGroupPage.configResources,'reset add remove',() => {
-      this.no_resources = (App.state.hostGroupPage.configResources.length === 0)
-    })
-    this.listenTo(App.state.hostGroupPage.configTasks,'reset add remove',() => {
-      this.no_tasks = (App.state.hostGroupPage.configTasks.length === 0)
-    })
-    this.listenTo(App.state.hostGroupPage.configTriggers,'reset add remove',() => {
-      this.no_triggers = (App.state.hostGroupPage.configTriggers.length === 0)
-    })
-  }
 })

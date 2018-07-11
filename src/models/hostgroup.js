@@ -7,6 +7,7 @@ const Customer = require('models/customer').Model
 const Hosts = require('models/host').Collection
 const TaskTemplates = require('models/task/template').Collection
 const ResourceTemplate = require('models/resource').Template
+const Files = require('models/file').Collection
 const config = require('config')
 
 const urlRoot = `${config.api_url}/hostgroup`
@@ -41,7 +42,8 @@ const Model = AppModel.extend({
     hosts: Hosts, // has many host
     tasks: TaskTemplates, // has many task templates
     resources: ResourceTemplate.Collection, // has many resource templates
-    triggers: EventTemplates // has many event templates
+    triggers: EventTemplates, // has many event templates
+    files: Files // has many file templates
   }
 })
 
