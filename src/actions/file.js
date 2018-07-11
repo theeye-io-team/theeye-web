@@ -26,31 +26,36 @@ export default {
     return file
   },
   remove (id) {
-    const file = App.state.files.get(id)
     //check if file has vinculations
+    this.syncLinkedModels(id, (err, file) => {
+      if (err) {
+        bootbox.alert('Error deleting file. %s', err)
+        return
+      }
+
+      if (file.linked_models.length > 0) {
+        bootbox.alert("The file is being used by a Monitor or Task and can't be deleted.")
+      } else {
+        file.destroy()
+      }
+    })
+  },
+  syncLinkedModels (id, next) {
+    const file = App.state.files.get(id)
     XHR.send({
       url: `${config.app_url}/apiv3/file/${id}/linkedmodels`,
       method: 'get',
-      headers: {
-        Accept: 'application/json;charset=UTF-8'
-      },
-      done: (models,xhr) => {
-        if (xhr.status == 200) {
-          if (Array.isArray(models)) {
-            if (models.length > 0) {
-              bootbox.alert("The file is being used by a Monitor or Task and can't be deleted.")
-            } else {
-              file.destroy()
-            }
-          } else {
-            bootbox.alert('Error deleting file.')
-          }
+      headers: { Accept: 'application/json;charset=UTF-8' },
+      done: (models, xhr) => {
+        if (xhr.status === 200 && Array.isArray(models)) {
+          file.linked_models = models
+          next(null, file)
         } else {
-          bootbox.alert('Error deleting file.')
+          next( new Error('invalid server response') )
         }
       },
-      fail: (err,xhr) => {
-        bootbox.alert('Error deleting file.')
+      fail: (err, xhr) => {
+        next( new Error('invalid server response') )
       }
     })
   },

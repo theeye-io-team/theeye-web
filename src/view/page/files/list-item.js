@@ -13,9 +13,13 @@ module.exports = ListItem.extend({
       }
     },
     item_description: {
-      deps: ['model.description'],
+      deps: ['model.description', 'model.linked_models'],
       fn () {
-        return this.model.description
+        let desc = this.model.description
+        if (this.model.linked_models.length>0) {
+          desc += ' (linked to models)'
+        }
+        return desc
       }
     },
     badge: {

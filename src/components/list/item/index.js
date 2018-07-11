@@ -104,8 +104,8 @@ module.exports = BaseView.extend({
     }, {
       hook: 'selectable',
       type: 'booleanClass',
-      yes: 'glyphicon-check',
-      no: 'glyphicon-unchecked'
+      yes: 'fa-check-square-o',
+      no: 'fa-square-o'
     }],
     show: {
       type: 'toggle'

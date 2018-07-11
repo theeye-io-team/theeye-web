@@ -12,8 +12,7 @@ const MassSelectorButton = CommonButton.extend({
   },
   initialize () {
     CommonButton.prototype.initialize.apply(this,arguments)
-    //this.iconClass = 'fa'
-    this.iconClass = 'glyphicon'
+    this.iconClass = 'fa'
   },
   onclick (event) {
     event.stopPropagation()
@@ -23,8 +22,8 @@ const MassSelectorButton = CommonButton.extend({
     checked: {
       type: 'booleanClass',
       selector: 'span',
-      yes: 'glyphicon-check',
-      no: 'glyphicon-unchecked'
+      yes: 'fa-check-square-o',
+      no: 'fa-square-o'
       //yes: 'fa-check-square-o',
       //no: 'fa-square-o'
     }
@@ -51,7 +50,7 @@ module.exports = BaseView.extend({
     var massSelector = new MassSelectorButton({
       tip: 'Select all',
       className: 'btn btn-primary rowSelector',
-      iconClass: 'glyphicon glyphicon-unchecked'
+      iconClass: 'fa fa-square-o'
     })
 
     this.listenTo(massSelector,'change:checked',() => {

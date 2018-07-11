@@ -16,12 +16,13 @@ module.exports = AppModel.extend({
     public: { type: 'boolean', default: false },
     tags: { type: 'array', default: () => { return [] } },
     input_mode: { type: 'string', default: 'editor' },
-    template_id: 'string',
     _type: { type: 'string', default: 'File' },
+    template_id: 'string',
     data: { type: 'string' }
 	},
   session: {
     is_script: { type: 'boolean', default: false },
+    linked_models: { type: 'array', default: () => { return [] } }
   },
   parse (args) {
     if (args.data) args.data = this.decodeData(args.data)
