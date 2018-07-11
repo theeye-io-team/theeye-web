@@ -33,7 +33,7 @@ export default {
             msg = `[HIGH] ${notification.hostname}. ${notification.name} stopped reporting updates.`
             break
           case 'agent_stopped':
-            msg = `[HIGH] ${notification.hostname} host agent stopped reporting updates.`
+            msg = `[HIGH] ${notification.hostname} bot stopped reporting updates.`
             break
           case 'agent:worker:error':
           case 'failure':

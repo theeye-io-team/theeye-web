@@ -35,8 +35,8 @@ module.exports = State.extend({
         },
         {
           target: "show-installer",
-          title: "Agent installation",
-          content: "First thing you need is to install an agent, let's check the agent installation tutorial.",
+          title: "Bot installation",
+          content: "First thing you need is to install a bot, let's check the bot installation tutorial.",
           placement: "right",
           yOffset: -20,
           zindex: 998,
@@ -119,9 +119,9 @@ module.exports = State.extend({
       this.active = true
       var message = ''
       if(App.state.resources.length == 0) {
-        message = "You don't have any monitors, do you wan't to see the agent installation tutorial?"
+        message = "You don't have any monitors, do you wan't to see the bot installation tutorial?"
       } else {
-        message = "Your agent is up and running!, would you like to see the task creation tutorial next?"
+        message = "Your Bot is up and running!, would you like to see the task creation tutorial next?"
       }
 
       bootbox.confirm({

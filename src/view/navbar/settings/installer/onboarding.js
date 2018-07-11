@@ -14,7 +14,7 @@ var showOnboarding = function(platform) {
     steps = [
       {
         target: document.querySelectorAll('[data-tutorial=linux-onboarding]')[0],
-        title: "Linux Agent installation",
+        title: "Linux Bot installation",
         content: "First of all, open a Terminal.",
         placement: "left",
         yOffset: -20,
@@ -22,7 +22,7 @@ var showOnboarding = function(platform) {
       },
       {
         target: document.querySelectorAll('[data-tutorial=linux-onboarding]')[1],
-        title: "Linux Agent installation",
+        title: "Linux Bot installation",
         content: "Make sure you have got administrator privileges in order to run the installation.",
         placement: "left",
         yOffset: -20,
@@ -30,7 +30,7 @@ var showOnboarding = function(platform) {
       },
       {
         target: document.querySelectorAll('[data-tutorial=linux-onboarding]')[2],
-        title: "Linux Agent installation",
+        title: "Linux Bot installation",
         content: "Copy/paste and run the installation script.",
         placement: "left",
         yOffset: -20,
@@ -38,7 +38,7 @@ var showOnboarding = function(platform) {
       },
       {
         target: document.querySelectorAll('[data-tutorial=linux-onboarding]')[3],
-        title: "Linux Agent installation",
+        title: "Linux Bot installation",
         content: "Wait until the installation is completed.",
         placement: "left",
         yOffset: -20,
@@ -46,7 +46,7 @@ var showOnboarding = function(platform) {
       },
       {
         target: document.querySelectorAll('[data-tutorial=linux-onboarding]')[4],
-        title: "Linux Agent installation",
+        title: "Linux Bot installation",
         content: "Once installation is completed, you'll see it appears in your dashboard.",
         placement: "left",
         yOffset: -20,
@@ -61,7 +61,7 @@ var showOnboarding = function(platform) {
     steps = [
       {
         target: document.querySelectorAll('[data-tutorial=windows-onboarding]')[0],
-        title: "Windows Agent installation",
+        title: "Windows Bot installation",
         content: "First of all, open a CMD console.",
         placement: "left",
         yOffset: -20,
@@ -69,7 +69,7 @@ var showOnboarding = function(platform) {
       },
       {
         target: document.querySelectorAll('[data-tutorial=windows-onboarding]')[1],
-        title: "Windows Agent installation",
+        title: "Windows Bot installation",
         content: "Make sure you have got administrator privileges in order to run the installation.",
         placement: "left",
         yOffset: -20,
@@ -77,7 +77,7 @@ var showOnboarding = function(platform) {
       },
       {
         target: document.querySelectorAll('[data-tutorial=windows-onboarding]')[2],
-        title: "Windows Agent installation",
+        title: "Windows Bot installation",
         content: "Copy and paste and run the installation script.",
         placement: "left",
         yOffset: -20,
@@ -85,7 +85,7 @@ var showOnboarding = function(platform) {
       },
       {
         target: document.querySelectorAll('[data-tutorial=windows-onboarding]')[3],
-        title: "Windows Agent installation",
+        title: "Windows Bot installation",
         content: "Wait until the installation is completed.",
         placement: "left",
         yOffset: -20,
@@ -93,7 +93,7 @@ var showOnboarding = function(platform) {
       },
       {
         target: document.querySelectorAll('[data-tutorial=windows-onboarding]')[4],
-        title: "Windows Agent installation",
+        title: "Windows Bot installation",
         content: "Once installation is completed, you'll see it appears in your dashboard.",
         placement: "left",
         yOffset: -20,
@@ -108,7 +108,7 @@ var showOnboarding = function(platform) {
     steps = [
       {
         target: document.querySelectorAll('[data-tutorial=docker-onboarding]')[0],
-        title: "Docker Agent installation",
+        title: "Docker Bot installation",
         content: "First of all, open a CMD console.",
         placement: "left",
         yOffset: -20,
@@ -116,7 +116,7 @@ var showOnboarding = function(platform) {
       },
       {
         target: document.querySelectorAll('[data-tutorial=docker-onboarding]')[1],
-        title: "Docker Agent installation",
+        title: "Docker Bot installation",
         content: "Make sure you have got administrator privileges in order to run the installation.",
         placement: "left",
         yOffset: -20,
@@ -124,7 +124,7 @@ var showOnboarding = function(platform) {
       },
       {
         target: document.querySelectorAll('[data-tutorial=docker-onboarding]')[2],
-        title: "Docker Agent installation",
+        title: "Docker Bot installation",
         content: "Copy and paste and run the installation script.",
         placement: "left",
         yOffset: -20,
@@ -132,7 +132,7 @@ var showOnboarding = function(platform) {
       },
       {
         target: document.querySelectorAll('[data-tutorial=docker-onboarding]')[3],
-        title: "Docker Agent installation",
+        title: "Docker Bot installation",
         content: "Wait until the installation is completed.",
         placement: "left",
         yOffset: -20,
@@ -140,7 +140,7 @@ var showOnboarding = function(platform) {
       },
       {
         target: document.querySelectorAll('[data-tutorial=docker-onboarding]')[4],
-        title: "Docker Agent installation",
+        title: "Docker Bot installation",
         content: "Once installation is completed, you'll see it appears in your dashboard.",
         placement: "left",
         yOffset: -20,

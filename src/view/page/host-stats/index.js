@@ -477,10 +477,10 @@ const HostView = View.extend({
       <section data-hook="server">
         <span class="fa fa-server"></span> <i data-hook="name"></i>
         <br>
-        Agent Version <small data-hook="agent_version"></small>
+        Bot Version <small data-hook="agent_version"></small>
         <p>
           | <span data-hook="os_name"></span>
-          | Agent
+          | Bot
           <span>
             <b><i data-hook="state_message"></i></b>
           </span>
@@ -641,7 +641,7 @@ const NgrokIntegrationsView = View.extend({
       fn () {
         if (this.model.last_job.inProgress) {
           return this.model.active ?
-            ' shutting down...wait <i class="fa fa-spin fa-cog"></i>' : 
+            ' shutting down...wait <i class="fa fa-spin fa-cog"></i>' :
             ' establishing tunnel...wait <i class="fa fa-spin fa-cog"></i>'
         }
         return this.model.active ? ' is established' : 'is down'

@@ -145,7 +145,7 @@ module.exports = {
         if (xhr.status !== 200) {
           bootbox.alert({
             title: 'Error',
-            message: 'Error fetching agent credentials, please try again later.'
+            message: 'Error fetching bot credentials, please try again later.'
           })
         } else {
           App.state.navbar.settingsMenu.agent = response.user
@@ -154,7 +154,7 @@ module.exports = {
       fail: (err,xhr) => {
         bootbox.alert({
           title: 'Error',
-          message: 'Error fetching agent credentials, please try again later.'
+          message: 'Error fetching bot credentials, please try again later.'
         })
       }
     })
