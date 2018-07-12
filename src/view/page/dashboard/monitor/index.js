@@ -13,7 +13,7 @@ const iconByType = {
   nested: 'fa-bullseye',
   scraper: 'fa-cloud',
   script: 'fa-code',
-  host: 'fa-server',
+  host: 'theeye-robot-solid',
   process: 'fa-cog',
   file: 'fa-file-o',
   dstat: 'fa-bar-chart',
@@ -118,7 +118,7 @@ const MonitorView = View.extend({
   bindings: {
     'model.name': [
       { hook: 'name' },
-      { 
+      {
         type: 'attribute',
         name: 'title',
         hook: 'name'

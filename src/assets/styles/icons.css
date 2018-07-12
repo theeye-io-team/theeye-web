@@ -1,0 +1,30 @@
+@font-face {
+  font-family: 'icons';
+  src:  url('../icons/icons.eot?d043jl');
+  src:  url('../icons/icons.eot?d043jl#iefix') format('embedded-opentype'),
+    url('../icons/icons.ttf?d043jl') format('truetype'),
+    url('../icons/icons.woff?d043jl') format('woff'),
+    url('../icons/icons.svg?d043jl#icons') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+[class^="theeye-"], [class*=" theeye-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icons' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.theeye-robot-solid:before {
+  content: "\e901";
+}

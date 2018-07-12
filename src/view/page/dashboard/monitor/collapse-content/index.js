@@ -339,7 +339,7 @@ const HostCollapsedContent = GenericCollapsedContent.extend({
     <div>
       <p>This is <i data-hook="hostname"></i> keep alive.</p>
 
-      <h4><i class="fa fa-server"></i>
+      <h4><i class="fa theeye-robot-solid"></i>
         Host monitor state: <i data-hook="host_state"></i>
       </h4>
       <h4><i class="fa fa-cogs"></i>
