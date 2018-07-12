@@ -27,10 +27,10 @@ export default AmpersandState.extend({
     configTriggers: TaskEvents
   },
   setConfigs (config) {
-    this.configFiles.reset(config.files || [],{ parse: true })
-    this.configTasks.reset(config.tasks || [],{ parse: true })
-    this.configResources.reset(config.resources || [],{ parse: true })
-    this.configTriggers.reset(config.triggers || [],{ parse: true })
+    this.configFiles.reset(config.files || [], { parse: true })
+    this.configTasks.reset(config.tasks || [], { parse: true })
+    this.configResources.reset(config.resources || [], { parse: true })
+    this.configTriggers.reset(config.triggers || [], { parse: true })
   },
   resetCollection () {
     this.configFiles.reset([])

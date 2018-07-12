@@ -18,6 +18,7 @@ module.exports = AppModel.extend({
     input_mode: { type: 'string', default: 'editor' },
     _type: { type: 'string', default: 'File' },
     template_id: 'string',
+    source_model_id: 'string', // temporal , is used to create templates
     data: { type: 'string' }
 	},
   session: {

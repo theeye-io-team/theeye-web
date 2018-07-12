@@ -218,6 +218,7 @@ const ResourceBaseModel = ResourceSchema.extend({
 
     delete data.customer
     delete data.user
+    delete data.host
 
     return data
   }

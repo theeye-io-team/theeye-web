@@ -10,13 +10,10 @@ const urlRoot = `${config.api_url}/monitor-template`
 export const Model = Schema.extend({
   urlRoot: urlRoot,
   props: {
+    source_model_id: 'string',
     template_resource_id: 'string', // belongs to
     hostgroup_id: 'string'
-  },
-  //children: {
-  //  hostgroup: HostGroup, // belongs to
-  //  template_resource: ResourceTemplate // has one
-  //}
+  }
 })
 
 export const Collection = AppCollection.extend({

@@ -11,6 +11,7 @@ module.exports = AppModel.extend({
     _type: 'string',
     //config: ['object',false, () => { return {} }],
     tags: 'array',
+    source_model_id: 'string', // temporal , is used to create templates
   },
   derived: {
     summary: {

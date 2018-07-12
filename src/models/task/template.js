@@ -31,6 +31,7 @@ const Schema = AppModel.extend({
     secret: 'string',
     grace_time: 'number',
     type: 'string',
+    source_model_id: 'string',
     // empty tags and triggers
     tags: ['array',false, () => { return [] }],
     triggers: ['array',false, () => { return [] }],

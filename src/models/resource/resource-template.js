@@ -8,6 +8,7 @@ const urlRoot = `${config.api_url}/resource-template`
 
 const Model = Schema.extend({
 	props: {
+    //source_model_id: 'string',
     hostgroup_id: 'string' // belongs to
 	},
   children: {
