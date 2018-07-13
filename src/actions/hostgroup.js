@@ -8,7 +8,7 @@ import FileSaver from 'file-saver'
 import qs from 'qs'
 
 import { Collection as Hosts } from 'models/host'
-import { Model as HostGroup } from 'models/hostgroup'
+//import { Model as HostGroup } from 'models/hostgroup'
 
 const Actions = {
   create (data, applyToSourceHost) {

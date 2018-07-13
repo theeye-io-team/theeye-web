@@ -36,30 +36,35 @@ module.exports = CommonButton.extend({
     this.listenTo(modal,'confirm',function(){
       form.beforeSubmit()
       if (form.valid === true) {
-        const msg = [
-          'Do you want to apply this configuration to the source host you used to create this template?',
-          '<b>NO:</b> Do not apply template configuration to the source host.',
-          '<b>YES:</b> Apply template configuration to the source host. <br> This means that any tasks or monitors deleted from the config will be deleted as well from the source host.'
-        ].join('<br>')
+        if (form.data.copy_host) {
+          const msg = [
+            'Do you want to apply this configuration to the source host you used to create this template?',
+            '<b>NO:</b> Do not apply template configuration to the source host.',
+            '<b>YES:</b> Apply template configuration to the source host. <br> This means that any tasks or monitors deleted from the config will be deleted as well from the source host.'
+          ].join('<br>')
 
-        bootbox.confirm({
-          title: 'Warning! Please, read carefully before you continue.',
-          message: msg,
-          buttons: {
-            confirm: {
-              label: 'YES',
-              className: 'btn-danger'
+          bootbox.confirm({
+            title: 'Warning! Please, read carefully before you continue.',
+            message: msg,
+            buttons: {
+              confirm: {
+                label: 'YES',
+                className: 'btn-danger'
+              },
+              cancel: {
+                label: 'NO',
+                className: 'btn-default'
+              },
             },
-            cancel: {
-              label: 'NO',
-              className: 'btn-default'
-            },
-          },
-          callback: confirm => {
-            HostGroupActions.create(form.data, confirm)
-            modal.hide()
-          }
-        })
+            callback: confirm => {
+              HostGroupActions.create(form.data, confirm)
+              modal.hide()
+            }
+          })
+        } else {
+          HostGroupActions.create(form.data, false)
+          modal.hide()
+        }
       }
     })
 

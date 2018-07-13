@@ -18,6 +18,7 @@ module.exports = AppModel.extend({
 		alerts: 'boolean',
     tags: 'array',
     source_model_id: 'string', // temporal , is used to create templates
+    hostgroup_id: ['string', false, null] // only if belongs to
 	},
   children: {
     customer: Customer,

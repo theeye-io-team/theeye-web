@@ -6,8 +6,8 @@ import MonitorConstants from 'constants/monitor'
 
 const MonitorSchema = require('./monitor-schema')
 const ResourceSchema = require('./resource-schema')
-const MonitorTemplate = require('./monitor-template')
-const ResourceTemplate = require('./resource-template')
+//const MonitorTemplate = require('./monitor-template')
+//const ResourceTemplate = require('./resource-template')
 const Host = require('models/host/index').Model
 
 const config = require('config')
@@ -77,7 +77,7 @@ const MonitorBaseModel = MonitorSchema.extend({
     last_update: 'date'
   },
   children: {
-    template: MonitorTemplate.Model
+    template: MonitorSchema
   }
 })
 
@@ -90,6 +90,43 @@ const Monitor = MonitorBaseModel.extend({
   children: {
     host: Host
   },
+})
+
+const _Collection = AppCollection.extend({
+  model: ResourceFactory,
+  isModel (model) {
+    return model instanceof Resource || model instanceof NestedResource
+  }
+})
+
+const ResourceCollection = _Collection.extend({
+  url: urlRoot,
+  // javascript array comparator
+  comparator (m1,m2) {
+    // sort by state order
+    if (m1.stateOrder>m2.stateOrder) {
+      return -1
+    } else if (m1.stateOrder<m2.stateOrder) {
+      return 1
+    } else {
+      // if equal state order, sort by name
+      let name1 = m1.name ? m1.name.toLowerCase() : 0
+      let name2 = m2.name ? m2.name.toLowerCase() : 0
+      if (name1>name2) return -1
+      else if (name1<name2) return 1
+      else return 0
+    }
+  },
+  higherSeverityMonitor () {
+    const submonitors = this.models
+    if (!submonitors||submonitors.length===0) return null
+    return submonitors.reduce( (worstMonitor,monitor) => {
+      if (!worstMonitor) return monitor;
+      var m1 = monitor.stateOrder
+      var m2 = worstMonitor.stateOrder
+      return (m1>m2) ? monitor : worstMonitor;
+    }, null )
+  }
 })
 
 const NestedMonitorConfig = State.extend({
@@ -200,8 +237,8 @@ const ResourceBaseModel = ResourceSchema.extend({
     return this.state === 'failure' || this.state === 'updates_stopped'
   },
   parse (attrs) {
-    const monitor = attrs.monitor
-    if (!monitor) return attrs
+    const monitor = (attrs.monitor || attrs.template_monitor)
+    if (!monitor) { return attrs }
 
     return assign({}, attrs, {
       // monitor
@@ -231,7 +268,7 @@ const Resource = ResourceBaseModel.extend({
   },
   children: {
     monitor: Monitor, // has one
-    template: ResourceTemplate.Model, // belongs to
+    template: ResourceSchema, // belongs to
     host: Host, // belongs to
   },
   initialize (options) {
@@ -272,43 +309,6 @@ function ResourceFactory (data, options={}) {
 
   return resource
 }
-
-const _Collection = AppCollection.extend({
-  model: ResourceFactory,
-  isModel (model) {
-    return model instanceof Resource || model instanceof NestedResource
-  }
-})
-
-const ResourceCollection = _Collection.extend({
-  url: urlRoot,
-  // javascript array comparator
-  comparator (m1,m2) {
-    // sort by state order
-    if (m1.stateOrder>m2.stateOrder) {
-      return -1
-    } else if (m1.stateOrder<m2.stateOrder) {
-      return 1
-    } else {
-      // if equal state order, sort by name
-      let name1 = m1.name ? m1.name.toLowerCase() : 0
-      let name2 = m2.name ? m2.name.toLowerCase() : 0
-      if (name1>name2) return -1
-      else if (name1<name2) return 1
-      else return 0
-    }
-  },
-  higherSeverityMonitor () {
-    const submonitors = this.models
-    if (!submonitors||submonitors.length===0) return null
-    return submonitors.reduce( (worstMonitor,monitor) => {
-      if (!worstMonitor) return monitor;
-      var m1 = monitor.stateOrder
-      var m2 = worstMonitor.stateOrder
-      return (m1>m2) ? monitor : worstMonitor;
-    }, null )
-  }
-})
 
 /**
  * Resource but with a subresources/submonitors collection
@@ -373,6 +373,6 @@ exports.Nested = NestedResource
 exports.GroupedResource = GroupedResource
 exports.Factory = ResourceFactory
 
-exports.Template = ResourceTemplate
+//exports.Template = ResourceTemplate
 exports.Collection = ResourceCollection
 exports.GroupedResourceCollection = GroupedResourceCollection
