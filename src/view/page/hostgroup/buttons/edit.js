@@ -8,7 +8,7 @@ import bootbox from 'bootbox'
 
 module.exports = PanelButton.extend({
   initialize (options) {
-    this.title = 'Edit Host Template'
+    this.title = 'Edit Bot Template'
     this.iconClass = 'fa fa-edit'
     this.className = 'btn btn-primary'
   },
@@ -37,9 +37,9 @@ module.exports = PanelButton.extend({
 
         if(self.hostsDeleted(form.data)) {
           const msg = [
-            'Do you want to also remove the template monitors and tasks from the removed hosts?',
-            '<b>NO:</b> Only remove the hosts form the template.',
-            '<b>YES:</b> Remove the hosts form the template and also delete the template monitors and tasks from the removed hosts.'
+            'Do you want to also remove the template monitors and tasks from the removed Bots?',
+            '<b>NO:</b> Only remove the Bots form the template.',
+            '<b>YES:</b> Remove the Bots form the template and also delete the template monitors and tasks from the removed Bots.'
           ].join('<br>')
 
           bootbox.dialog({

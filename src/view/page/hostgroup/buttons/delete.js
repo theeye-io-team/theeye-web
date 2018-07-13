@@ -6,7 +6,7 @@ const unlinkDestinationHostsTemplate = require('./unlink-destination-hosts.hbs')
 
 module.exports = PanelButton.extend({
   initialize: function (options) {
-    this.title = 'Delete Host Template'
+    this.title = 'Delete Bot Template'
     this.iconClass = 'fa fa-trash'
     this.className = 'btn btn-primary'
   },
@@ -27,7 +27,7 @@ module.exports = PanelButton.extend({
       })
 
       bootbox.dialog({
-        title: 'Warning! This template has destination hosts.',
+        title: 'Warning! This template has destination Bots.',
         message: msg,
         buttons: {
           no: {

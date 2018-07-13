@@ -94,13 +94,15 @@ var FileReaderInputView = InputView.extend({
 
     InputView.prototype.render.call(this)
 
-    this.query('input').addEventListener('change', function (changeEvent) {
+    var input = this.query('input')
+    input.addEventListener('change', function (changeEvent) {
       var reader = new window.FileReader()
       var file = changeEvent.target.files[0] // file input in single mode, read only 1st item in files array
 
       reader.onloadend = event => {
         file.contents = event.target.result
         self.callback(file)
+        input.value = '' // reset will allow to re import the same file again
       }
       reader.readAsText(file)
     })

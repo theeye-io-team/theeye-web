@@ -10,7 +10,7 @@ module.exports = View.extend({
   template: `
     <div class="template-configs" style="padding:10px;">
       <div class="toggle" data-hook="configs-toggler">
-        Display host config <i class="fa fa-chevron-down"></i>
+        Display selected Bot config <i class="fa fa-chevron-down"></i>
       </div>
       <div class="configs" data-hook="configs">
         <ul class="list-group" data-hook="resources">

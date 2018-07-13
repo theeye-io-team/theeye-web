@@ -20,7 +20,7 @@ module.exports = FormView.extend({
     currentGroup = this.model
 
     const regexInput = new RegexInputView({
-      label: 'Auto provision hostnames matching this pattern',
+      label: 'Auto provision Bot names matching this pattern',
       name: 'hostname_regex',
       required: false,
       invalidClass: 'text-danger',
@@ -39,7 +39,7 @@ module.exports = FormView.extend({
     })
 
     const selectedHosts = new SelectView({
-      label: 'Destination Hosts',
+      label: 'Destination Bots',
       name: 'hosts',
       multiple: true,
       tags: true,
@@ -47,7 +47,7 @@ module.exports = FormView.extend({
       value: this.model.hosts,
       styles: 'form-group',
       required: false,
-      unselectedText: 'select a host',
+      unselectedText: 'select a Bot',
       idAttribute: 'id',
       textAttribute: 'hostname',
       requiredMessage: 'Selection required',
@@ -82,7 +82,7 @@ module.exports = FormView.extend({
 
     if (this.model.isNew()) {
       const configSelection = new HostConfigSelect({
-        label: 'Source Host (role model) *',
+        label: 'Source Bot (role model) *',
         name: 'copy_host',
         multiple: false,
         tags: false,
@@ -90,7 +90,7 @@ module.exports = FormView.extend({
         styles: 'form-group',
         required: false,
         // value: null,
-        unselectedText: 'select a host',
+        unselectedText: 'select a Bot',
         idAttribute: 'id',
         textAttribute: 'hostname',
         requiredMessage: 'Selection required',
@@ -298,7 +298,7 @@ const HostsPreviewModal = Modalizer.extend({
 
     this.fade = options.fade || true
     this.visible = options.visible || false // like auto open
-    this.title = options.title || 'Hosts matching the Regular Expression'
+    this.title = options.title || 'Bots matching the Regular Expression'
     this.class = 'hosts-list-modal'
 
     this.list = new HostsListView({

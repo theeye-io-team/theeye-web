@@ -30,14 +30,14 @@ module.exports = FormView.extend({
 
     // multiple only if new, allows to create multiple tasks at once
     let hostsSelection = new SelectView({
-      label: 'Host *',
+      label: 'Bots *',
       name: (isNewTask?'hosts':'host_id'),
       multiple: isNewTask,
       tags: isNewTask,
       options: App.state.hosts,
       value: this.model.host_id,
       required: true,
-      unselectedText: 'select a host',
+      unselectedText: 'select a Bot',
       idAttribute: 'id',
       textAttribute: 'hostname',
       requiredMessage: 'Selection required',

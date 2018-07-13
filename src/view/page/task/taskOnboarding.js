@@ -68,7 +68,7 @@ class TaskOnBoarding {
         {
           target: self.parent._fieldViews.hosts.query('div.col-sm-9'),
           title: "Task Tutorial",
-          content: "The host where the task runs must be selected.",
+          content: "The task must have a Bot to run.",
           placement: "top",
           yOffset: -5,
           xOffset: 15,

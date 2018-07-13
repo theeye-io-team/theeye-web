@@ -63,7 +63,7 @@ const getMonitorIconAttributesByType = (type) => {
   if (/^groupby-/.test(type) === true) {
     const parts = type.split('-')
     if (parts[1]==='hostname') {
-      iconClass += ` fa-server`
+      iconClass += ` theeye-robot-solid`
       //bgcolor = str2rgb(parts[2])
       bgcolor = NO_TYPE_ICON_COLOR
     }

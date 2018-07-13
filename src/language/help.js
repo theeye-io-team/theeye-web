@@ -43,8 +43,8 @@ module.exports = {
     form: {
       name: 'Give this task a name',
       description: 'A description',
-      host_id: 'A registered host',
-      hosts: 'One or more hosts can be selected',
+      host_id: 'A registered Bot',
+      hosts: 'One or more Bots can be selected',
       script_id: 'Scripts are sets of instructions writen in a programming language to achive something automatically',
       tags: 'Adding Tags will help to search and group',
       timeout: 'How much time to wait the server\'s response before giving up. Default is 5 seconds.',
@@ -83,17 +83,17 @@ module.exports = {
     task_page: 'Tasks allow\'s you to run Web/APi requests and custom scripts. You can then schedule the tasks.',
     monitor_page: 'Monitors watches your Web/API endpoints, files, processes, hosts health and scripts changes and send alerts to You.',
     webhook_page: 'Webhooks allows you to Trigger tasks automagically, through requests from outside applications.',
-    hostgroup_page: 'Templates allows you to group hosts, and give them the same monitors and tasks. Also use Templates for Auto-Provisioning of new hosts.',
+    hostgroup_page: 'Templates allows you to group Bots, and give them the same monitors and tasks. Also use Templates for Auto-Provisioning of new Bots.',
   },
   hostgroup: {
     form: {
       name: 'Give this template a name',
       description: 'Use a description to improve teamwork an usability',
       hostname_regex: 'Use a Regular Expression if you want the auto provisioning features. You can test the Regular Expression by using the "Search..." button',
-      hosts: 'Select the Hosts you want to include in this Template. [Warning] Existent hosts won\'t be included in the Template unless you choose them. [Tip] You can use the "Search..." button',
-      copy_host: 'Select a properly configured host to create the Template.',
+      hosts: 'Select the Bots you want to include in this Template. [Warning] Existent Bots won\'t be included in the Template unless you choose them. [Tip] You can use the "Search..." button',
+      copy_host: 'Select a properly configured Bot to create the Template.',
     },
-    regexp_search: 'All this hosts match the regular expression. If you don\'t add them to the template they will be ignored. To include all this hosts into the Template click on <b style="color:#337ab7">Add All</b>'
+    regexp_search: 'All this Bots match the regular expression. If you don\'t add them to the template they will be ignored. To include all this Bots into the Template click on <b style="color:#337ab7">Add All</b>'
   },
   scheduler: {
     taskform: {

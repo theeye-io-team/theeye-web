@@ -7,7 +7,7 @@ import bootbox from 'bootbox'
 
 module.exports = CommonButton.extend({
   initialize (options) {
-    this.title = 'New Host Group'
+    this.title = 'New Bot template'
     this.className = 'btn btn-primary tooltiped'
     this.iconClass = 'fa fa-plus'
   },
@@ -20,7 +20,7 @@ module.exports = CommonButton.extend({
     const modal = new Modalizer({
       confirmButton: 'Create',
       buttons: true,
-      title: 'Create Host Template',
+      title: 'Create Bot Template',
       bodyView: form
     })
 
@@ -38,9 +38,9 @@ module.exports = CommonButton.extend({
       if (form.valid === true) {
         if (form.data.copy_host) {
           const msg = [
-            'Do you want to apply this configuration to the source host you used to create this template?',
-            '<b>NO:</b> Do not apply template configuration to the source host.',
-            '<b>YES:</b> Apply template configuration to the source host. <br> This means that any tasks or monitors deleted from the config will be deleted as well from the source host.'
+            'Do you want to apply this configuration to the source Bot you used to create this template?',
+            '<b>NO:</b> Do not apply template configuration to the source Bot.',
+            '<b>YES:</b> Apply template configuration to the source Bot, too.'
           ].join('<br>')
 
           bootbox.confirm({

@@ -13,7 +13,7 @@ const CopyForm = FormView.extend({
   initialize () {
     this.fields = [
       new SelectView({
-        label: 'Target Hosts *',
+        label: 'Target Bots *',
         name: 'hosts',
         multiple: true,
         tags: true,
@@ -21,7 +21,7 @@ const CopyForm = FormView.extend({
         //value: null,
         styles: 'form-group',
         required: false,
-        unselectedText: 'select source hosts',
+        unselectedText: 'select source Bot',
         idAttribute: 'id',
         textAttribute: 'hostname',
         requiredMessage: 'Selection required',
