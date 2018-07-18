@@ -2,14 +2,17 @@ import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import InputView from 'ampersand-input-view'
 import AuthActions from 'actions/auth'
+import NavbarActions from 'actions/navbar'
 import App from 'ampersand-app'
+import validator from 'validator'
+import activationLang from 'language/activation'
 
 const ActivateForm = FormView.extend({
   autoRender: true,
   initialize () {
     const passwordInput = new InputView({
       type: 'password',
-      placeholder: 'Password',
+      placeholder: activationLang.getText('password'),
       name: 'password',
       required: true,
       invalidClass: 'text-danger',
@@ -17,19 +20,27 @@ const ActivateForm = FormView.extend({
       tests: [
         function (value) {
           if (value.length < 8) {
-            return "Must have at least 8 characters";
+            return activationLang.getText('passwordLengthError')
           }
         }
       ]
     })
 
     const usernameInput = new InputView({
-      placeholder: 'Username',
+      placeholder: activationLang.getText('username'),
       name: 'username',
       required: true,
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label',
-      autofocus: true
+      autofocus: true,
+      requiredMessage: activationLang.getText('usernameMissing'),
+      tests: [
+        function (value) {
+          if (validator.isEmpty(value)) {
+            return activationLang.getText('usernameMissing')
+          }
+        }
+      ]
     })
 
     this.fields = [
@@ -37,7 +48,7 @@ const ActivateForm = FormView.extend({
       passwordInput,
       new InputView({
         type: 'password',
-        placeholder: 'Confirm password',
+        placeholder: activationLang.getText('confirmPassword'),
         name: 'confirmPassword',
         required: true,
         invalidClass: 'text-danger',
@@ -45,12 +56,12 @@ const ActivateForm = FormView.extend({
         tests: [
           function (value) {
             if (value !== passwordInput.value) {
-              return "Password does not match.";
+              return activationLang.getText('passwordMatchError')
             }
           },
           function (value) {
             if (value.length < 8) {
-              return "Must have at least 8 characters";
+              return activationLang.getText('passwordLengthError')
             }
           }
         ]
@@ -65,9 +76,44 @@ module.exports = View.extend({
   initialize () {
     View.prototype.initialize.apply(this,arguments)
     this.username = App.state.activate.username
+    this.template = `
+      <div class="activate-container">
+        <div class="activate-header">
+          <div class="container">
+            <div class="row">
+              <div class="col-xs-12">
+                <img class="logo" src="/images/logo.png" alt="TheEye">
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xs-12">
+                <h1>${activationLang.getText('headerTitle')}</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="container">
+          <div class="activate-main">
+            <div class="row">
+              <div class="col-xs-12">
+                <h1>${activationLang.getText('title')}</h1>
+              </div>
+            </div>
+            <div class="row"  data-hook="activate-form-container">
+              <div class="col-xs-12">
+                <h2>${activationLang.getText('subtitle')}</h2>
+                <div class="form-wrapper">
+                  <div data-hook="activate-form" class="form-container"></div>
+                  <button data-hook="start-activate">${activationLang.getText('btnFinish')}</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    `
   },
   autoRender: true,
-  template: require('./template.hbs'),
   props: {
     token: ['string',false,''],
     username: ['string',false,'']
@@ -88,5 +134,7 @@ module.exports = View.extend({
     this.renderWithTemplate(this)
     this.activateForm = new ActivateForm()
     this.renderSubview(this.activateForm, this.queryByHook('activate-form'))
+
+    NavbarActions.setVisibility(false)
   }
 })

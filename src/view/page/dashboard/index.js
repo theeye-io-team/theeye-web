@@ -132,6 +132,8 @@ module.exports = View.extend({
     if (acls.hasAccessLevel('admin')) {
       this.renderPlusButton()
     }
+
+    document.getElementsByClassName('navbar')[0].style.display = 'block'
   },
   setUpAndRunningSign: function () {
     if (!this.upandrunningSign) {

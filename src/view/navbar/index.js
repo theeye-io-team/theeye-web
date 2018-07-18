@@ -299,7 +299,8 @@ const Menu = View.extend({
 module.exports = View.extend({
   autoRender: true,
   props: {
-    licenseExpired: ['boolean', true, false]
+    licenseExpired: ['boolean', true, false],
+    visible: ['boolean', true, true]
   },
   bindings: {
     licenseExpired: [
@@ -312,7 +313,8 @@ module.exports = View.extend({
         type: 'toggle',
         selector: '.license-header'
       }
-    ]
+    ],
+    visible: { type: 'toggle' }
   },
   events: {
     'click a[data-hook=theeye-logo]': function (event) {
@@ -334,11 +336,17 @@ module.exports = View.extend({
     this.listenToAndRun(App.state.session, 'change:logged_in change:licenseExpired', () => {
       this.updateLicenseStatus(App.state.session)
     })
+    this.listenToAndRun(App.state.navbar, 'change:visible', () => {
+      this.updateNavbarVisibility(App.state.navbar)
+    })
   },
   updateLicenseStatus (state) {
     const {logged_in: loggedIn, licenseExpired} = state
 
     this.licenseExpired = (licenseExpired === true && Boolean(loggedIn))
+  },
+  updateNavbarVisibility (state) {
+    this.visible = state.visible
   },
   updateState (state) {
     const logged_in = state.logged_in

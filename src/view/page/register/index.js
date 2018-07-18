@@ -3,49 +3,44 @@ import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import InputView from 'ampersand-input-view'
 import AuthActions from 'actions/auth'
+import NavbarActions from 'actions/navbar'
 import validator from 'validator'
+import registerLang from 'language/register'
 
-import logoCustomer1 from './customers-logo-comafi.png'
-import logoCustomer2 from './customers-logo-colppy.png'
-import logoCustomer3 from './customers-logo-ente.png'
-import logoCustomer4 from './customers-logo-ign.png'
-import logoCustomer5 from './customers-logo-invap.png'
-const template = require('./template.hbs')
-
-const registerForm = FormView.extend({
+const RegisterForm = FormView.extend({
   autoRender: true,
-  initialize() {
+  initialize () {
     this.fields = [
       new InputView({
-        type:'name',
-        placeholder: 'Nombre',
+        type: 'name',
+        placeholder: registerLang.getText('name'),
         name: 'name',
         required: true,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         autofocus: true,
-        requiredMessage: 'Por favor, ingresa tu nombre.',
+        requiredMessage: registerLang.getText('nameMissing'),
         tests: [
           function (value) {
             if (validator.isEmpty(value)) {
-              return "Por favor, ingresa tu nombre.";
+              return registerLang.getText('nameMissing')
             }
           }
-        ] 
-      }),    
+        ]
+      }),
       new InputView({
-        type:'email',
-        placeholder: 'Email',
+        type: 'email',
+        placeholder: registerLang.getText('email'),
         name: 'email',
         required: true,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         autofocus: false,
-        requiredMessage: 'Por favor, ingresa tu correo electrónico.',
+        requiredMessage: registerLang.getText('emailMissing'),
         tests: [
           function (value) {
             if (!validator.isEmail(value)) {
-              return "El email ingresado es inválido";
+              return registerLang.getText('emailInvalid')
             }
           }
         ]
@@ -58,8 +53,7 @@ const registerForm = FormView.extend({
 module.exports = View.extend({
   autoRender: true,
   props: {
-    formSwitch: ['boolean',false,false],
-    message: ['string',false,'']
+    formSwitch: ['boolean', false, false]
   },
   bindings: {
     formSwitch: [
@@ -70,38 +64,101 @@ module.exports = View.extend({
       },
       {
         type: 'toggle',
-        hook: 'register-form-container',
-        invert: true
-      },
-      {
-        type: 'toggle',
-        hook: 'result-container',
+        hook: 'result-container'
       }
-    ],
-    'message': {
-      type: 'text',
-      hook: 'result-message'
-    }
+    ]
   },
   initialize () {
+    this.template = `
+    <div class="register-container container">
+      <div class="register-header">
+        <div class="row">
+          <div class="col-xs-12">
+            <img class="logo" src="/images/logo.png" alt="TheEye">
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <h1>${registerLang.getText('title')}</h1>
+          </div>
+        </div>
+      </div>
+      <div class="register-main" data-hook="register-content">
+        <div class="row">
+          <div class="col-xs-12">
+            <h1>${registerLang.getText('subtitle1')}</br>${registerLang.getText('subtitle2')}</h1>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 col-md-7 list-col">
+            <h2>${registerLang.getText('listTitle')}</h2>
+            <p>${registerLang.getText('listItem1')}</p>
+            <p>${registerLang.getText('listItem2')}</p>
+            <p>${registerLang.getText('listItem3')}</p>
+            <p>${registerLang.getText('listItem4')}</p>
+          </div>
+          <div class="col-xs-12 col-md-5 form-col">
+            <h2>${registerLang.getText('formTitle')}</h2>
+            <div class="form-container">
+              <div class="row">
+                <div class="col-xs-12">
+                  <div data-hook="register-form"></div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <button data-hook="start-register">${registerLang.getText('registerButton')}</button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12 form-below">
+                  <span>${registerLang.getText('goToLogin')}</span> <a href='/login'>${registerLang.getText('goToLoginLink1')}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 clients-title">
+            <h2>${registerLang.getText('clientsTitle1')}</br>${registerLang.getText('clientsTitle2')}</h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 clients">
+            <img src="/images/register/logo_banco-comafi.png" alt="">
+            <img src="/images/register/logo_colppy.png" alt="">
+            <img src="/images/register/logo_ente.png" alt="">
+            <img src="/images/register/logo_ign.png" alt="">
+            <img src="/images/register/logo_invap.png" alt="">
+            <img src="/images/register/logo_Rappi.png" alt="">
+            <img src="/images/register/logo_frontec.png" alt="">
+          </div>
+        </div>
+      </div>
+      <div class="register-main" data-hook="result-container">
+        <div class="result-container">
+          <div class="row">
+            <div class="col-xs-12">
+              <h1>${registerLang.getText('thanks')}</h1>
+              <h2>${registerLang.getText('success1')}</h2>
+              <h2>${registerLang.getText('success2')}</br>${registerLang.getText('success3')}</h2>
+            </div>
+          </div>
+          <div class="row btn-container">
+            <div class="col-xs-12">
+              <a href="/login">${registerLang.getText('goToLoginLink2')}</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    `
     this.formSwitch = App.state.register.result
     this.listenTo(App.state.register, 'change:result', () => {
       this.formSwitch = App.state.register.result
     })
-    this.listenTo(App.state.register, 'change:message', () => {
-      this.message = App.state.register.message
-    })
   },
-  // template: require('./template.hbs'),
-  template: () => {
-    return template.call(this, { 
-      logoCustomer1: logoCustomer1, 
-      logoCustomer2: logoCustomer2, 
-      logoCustomer3: logoCustomer3,
-      logoCustomer4: logoCustomer4,
-      logoCustomer5: logoCustomer5
-    })
-  },  
   events: {
     'click button[data-hook=start-register]': function (event) {
       event.preventDefault()
@@ -113,9 +170,12 @@ module.exports = View.extend({
       }
     }
   },
-  render() {
+  render () {
     this.renderWithTemplate(this)
-    this.registerForm = new registerForm({})
+    this.registerForm = new RegisterForm({})
     this.renderSubview(this.registerForm, this.queryByHook('register-form'))
+
+    document.getElementsByTagName('body')[0].style.backgroundColor = '#fafafa'
+    NavbarActions.setVisibility(false)
   }
 })

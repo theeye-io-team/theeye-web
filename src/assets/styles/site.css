@@ -166,64 +166,293 @@ hr {border:none;border-bottom:1px dotted #fff}
 .loginBox .activate-form form label { width: 100%; }
 .loginBox .customer-form form label { width: 100%; }
 .loginBox .password-form form label { width: 100%; }
-.loginBox .register-link { margin-top: 10px; }
-.loginBox .register-link a { color:#fff; }
+.loginBox .register-link { margin-top: 10px; cursor: pointer; }
+.loginBox .register-link a { color:#fff; cursor: pointer; }
 .loginBox .login-toggle { cursor:pointer; }
 .loginBox .login-back { cursor:pointer; color: #fff; font-size: 14px; font-weight: 400;}
 .loginBox .result-container h1 {    font-size: 27px; color: #d78d47;}
 .loginBox .result-container h2 {    font-size: 22px; color: #fff;}
 
-.registerBox, .formContainer { width:80%; margin:50px auto 4%; text-align:center; color:#fff }
-.registerBox, .registerBoxTitle { width:90%; margin:60px auto 4%; text-align:left; color:#fff; padding-left: 10px; padding-right: 10px}
-
-.registerBox ul {
-  vertical-align: middle;
-  padding-left: 30px;
-  font-family:'Rubik', 'Montserrat', sans-serif;
-  font-weight: 100;
-  font-size: 20px;
-   color: #fff;
+.register-container {
+  padding-bottom: 30px;
+  width:100%;
+  position: absolute;
+  background-color: #FAFAFA;
+  top: 0px;
 }
 
-.registerBox h1 {
+.register-container .register-header {
   text-align: center;
-  font-size: 28px;
+  padding: 15px 0px 20px 0px;
+  margin: 0px 25px;
+  border-bottom: 1px solid #c6c8c8;
+}
+
+.register-container .register-header .logo{
+  width: 160px;
+}
+
+.register-container h1 {
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: 23px;
+  font-weight: normal;
+  color: #130e40;
+}
+
+.register-container .register-header h1 {
+  margin: 0px;
+  margin-top: 5px;
+}
+
+.register-container .register-main h1 {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 25px;
+}
+
+.register-container .list-col {
+  font-family:'Montserrat', sans-serif;
+  color: #EC8E49;
+  padding-left: 150px;
+}
+
+.register-container .list-col h2 {
+  font-size: 23px;
+  font-weight: 400;
+  margin-bottom: 30px;
+}
+
+.register-container .list-col p {
+  padding-left: 50px;
+  font-size: 20px;
+  font-weight: 200;
+  margin-bottom: 18px;
+}
+
+.register-container .form-col {
+  padding-right: 150px;
+}
+
+.register-container .form-col h2 {
+  font-family:'Montserrat', sans-serif;
+  color: #555;
+  font-size: 20px;
+  font-weight: 200;
+  line-height: 21px;
+  margin-bottom: 25px;
+}
+
+.register-container .form-col .form-container label {
+  width: 100%;
+}
+
+.register-container .form-col .form-container input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  border-bottom: 1px solid #c6c8c8;
+  font-family:'Rubik', sans-serif;
+  font-weight: 100;
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 35px;
+  padding-bottom: 8px;
+}
+
+.register-container .form-col .form-container ::placeholder {
+  color: #555;
+}
+
+.register-container .form-col .form-container .message p {
+  color: #EC8E49;
+  margin-top: -20px;
+  margin-bottom: 0px;
+  font-weight: 400;
+}
+
+.register-container .form-col .form-container button {
+  font-family: 'Trebuchet MS', sans-serif;
+  width: 100%;
+  text-transform: uppercase;
+  padding: 12px 0px;
+  background: #130e40;
   color: #fff;
-  /* letter-spacing: 2px; */
-  /* margin: 0 0 40px; */
-  line-height: 1.4
-}
-.registerBox h2 {
-  font-size: 25px;
-  color: #d78d47;
-  letter-spacing: 2px;
-  /* margin: 0 0 40px; */
-  line-height: 25px
+  font-size: 22px;
+  border-radius: 36px;
+  letter-spacing: 0.8px;
 }
 
-.registerBox, .registerBoxAdditionalInformation { width:100%; margin:90px auto 4%; text-align:left; color:#fff; padding-left: 10px; padding-right: 10px;}
+.register-container .form-col .form-container .form-below {
+  text-align: center;
+  color: #555;
+  margin-top: 10px;
+  font-weight: 100;
+  font-size: 15px;
+}
 
-.registerBox, .registerBoxCustomers { width:100%; margin:60px auto 4%; text-align:center; color:#fff; padding-left: 10px; padding-right: 10px}
-.registerBox h1 {margin-bottom:24px}
-.registerBox .or {border-top:1px dashed #fff;position:relative;margin:40px 0}
-.registerBox input, .registerBox button {width:100%;border:none;border-radius:4px;padding:10px;margin-bottom:10px;text-align:center;font-size:24px}
-.registerBox input {color:#304269;height:50px; }
-.registerBox button {color:#fff;background: #d78d47;background: -moz-linear-gradient(top,  #d78d47 0%, #af733a 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d78d47), color-stop(100%,#af733a));background: -webkit-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: -o-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: -ms-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: linear-gradient(to bottom,  #d78d47 0%,#af733a 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d78d47', endColorstr='#af733a',GradientType=0 )}
-.registerBox .or span {background:#415c76;padding:10px;position:absolute;top:-22px;left:48%}
-.registerBox section.license a:hover { color:#ee8e40; }
-.registerBox .login-form form label { width: 100%; }
-.registerBox .forgot-form form label { width: 100%; }
-.registerBox .register-form form label { width: 100%; }
-.registerBox .activate-form form label { width: 100%; }
-.registerBox .customer-form form label { width: 100%; }
-.registerBox .password-form form label { width: 100%; }
-.registerBox .register-link { margin-top: 10px; }
-.registerBox .register-link a { color:#fff; }
-.registerBox .login-toggle { cursor:pointer; }
-.registerBox .login-back { cursor:pointer; color: #fff; font-size: 14px; font-weight: 400;}
-.registerBox .result-container h1 { font-size: 27px; color: #d78d47;}
-.registerBox .result-container h2 { font-size: 22px; color: #fff;}
-.registerBox .result-container a  { font-size: 22px; color: #ffffff; line-height: 2; border-radius: 18px; display: inline-block; cursor: pointer; font-weight: bold; text-decoration: none; background: #d78d47; margin: 0; padding: 0; border-color: #d78d47; border-style: solid; border-width: 10px 20px;}
+.register-container .form-col .form-container .form-below a {
+  color:  #130e40;
+  cursor: pointer;
+  text-decoration:underline;
+}
+
+
+.register-container .clients-title h2 {
+  font-family: 'Trebuchet MS', sans-serif;
+  font-size: 21px;
+  font-weight: normal;
+  color: #130e40;
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 0px;
+}
+
+.register-container .clients {
+  text-align: center;
+}
+
+.register-container .clients img {
+  width: 150px;
+}
+
+.register-container .result-container {
+  text-align: center;
+}
+
+.register-container .result-container h1 {
+  margin-top: 90px;
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 45px;
+}
+
+.register-container .result-container h2 {
+  font-family:'Montserrat', sans-serif;
+  color: #EC8E49;
+  font-size: 22px;
+  line-height: 40px;
+  margin: 0px;
+}
+
+.register-container .result-container .btn-container {
+  margin-top: 45px;
+}
+
+.register-container .result-container .btn-container a {
+  font-family: 'Trebuchet MS', sans-serif;
+  width: 100%;
+  text-transform: uppercase;
+  padding: 12px 0px;
+  background: #130e40;
+  color: #fff;
+  font-size: 22px;
+  border-radius: 36px;
+  letter-spacing: 0.8px;
+  display: block;
+  max-width: 380px;
+  margin: auto;
+}
+
+.activate-container {
+  padding-bottom: 50px;
+  width:100%;
+  position: absolute;
+  background-color: #314367;
+  top: 0px;
+}
+
+.activate-container .activate-header {
+  text-align: center;
+  padding: 15px 0px 20px 0px;
+  background-color: #FAFAFA;
+}
+
+.activate-container .activate-header .logo{
+  width: 160px;
+}
+
+.activate-container h1 {
+  font-family: 'Trebuchet MS', sans-serif;
+  font-weight: normal;
+}
+
+.activate-container .activate-header h1 {
+  margin: 0px;
+  margin-top: 5px;
+  color: #130e40;
+  font-size: 23px;
+}
+
+.activate-container .activate-main {
+  text-align: center;
+}
+
+.activate-container .activate-main h1 {
+  margin-top: 40px;
+  margin-bottom: 30px;
+  font-size: 27px;
+  color: #FFF;
+}
+
+.activate-container .activate-main h2 {
+  font-family:'Montserrat', sans-serif;
+  color: #FFF;
+  font-size: 20px;
+  font-weight: 200;
+  margin-bottom: 50px;
+}
+
+.activate-container .form-container {
+  width: 100%;
+  max-width: 450px;
+  margin: 0px auto;
+}
+
+.activate-container .form-container label {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.activate-container .form-container input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  border-bottom: 1px solid #CCC;
+  font-family:'Rubik', sans-serif;
+  font-weight: 100;
+  font-size: 17px;
+  color: #FFF;
+  margin-bottom: 25px;
+  padding-bottom: 8px;
+}
+
+.activate-container .form-container ::placeholder {
+  color: #CCC;
+}
+
+.activate-container .form-container .message p {
+  color: #EC8E49;
+  margin-top: -20px;
+  margin-bottom: 0px;
+  font-weight: 400;
+}
+
+.activate-container button {
+  font-family: 'Trebuchet MS', sans-serif;
+  width: 100%;
+  max-width: 450px;
+  margin: 20px auto;
+  text-transform: uppercase;
+  padding: 12px 0px;
+  background: #EC8E49;
+  color: #FFF;
+  font-size: 22px;
+  border-radius: 36px;
+  letter-spacing: 0.8px;
+  border: none;
+}
 
 .sign {padding:14px 0;color:#fff;border:1px solid #fff;border-radius:4px;width:100%;display:inline-block;font-size:18px;margin-bottom:6px}
 .sign i {font-size:24px;margin-right:6px}
@@ -430,14 +659,6 @@ ol.list-group.tasks { color:#34495E }
 
   @media (min-width: 1200px) {
   .loginBox {width:35%}
-}
-
-@media (min-width: 1024px) {
-  .registerBox {width:40%}
-}
-
-@media (min-width: 1200px) {
-  .registerBox {width:35%}
 }
 
 ::-webkit-scrollbar{width:8px;height:8px;}
@@ -828,6 +1049,7 @@ a.flowchart-icon {
   .admin-container .panel-heading .panel-item.name { width:72%;padding-right:20px; }
   .admin-container .panel-heading .panel-title-content { position:relative; }
   button.rowSelector, button.rowSelector-not {}
+  .activate-container .form-wrapper { padding: 0px 30px; }
 }
 
 @media (min-width: 768px) {
@@ -846,6 +1068,17 @@ a.flowchart-icon {
     padding-right: 0px;
   }
 }
+
+@media (max-width: 991px) {
+  .register-container .list-col { padding: 0px 40px; }
+  .register-container .list-col p { padding: 0px 20px; }
+  .register-container .form-col { padding: 0px 40px; }
+  .register-container .form-col h2 { text-align: center; margin: 40px 0px; }
+  .register-container .form-col .form-container button { margin-top: 20px; }
+  .register-container .clients-title h2 { margin-top: 50px; margin-bottom: 10px; }
+  .register-container .clients img { width: 200px; margin: 0px 30px; }
+}
+
 /**
  *
  * } SETTINGS FOR NEW ADMIN PAGES MOBILE BUTTON

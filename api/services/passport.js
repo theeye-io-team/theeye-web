@@ -512,7 +512,7 @@ function verifyUsername(user, next) {
       if(prevUser.invitation_token == user.invitation_token)
         return next(null);
     }
-    return next({statusCode: 400, body: {error: 'Username already in use.'}});
+    return next({statusCode: 400, body: {error: 'Username already in use.', errorCode: 'usernameTaken'}});
   });
 }
 

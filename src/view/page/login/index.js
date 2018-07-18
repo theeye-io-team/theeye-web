@@ -2,6 +2,7 @@ import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import InputView from 'ampersand-input-view'
 import AuthActions from 'actions/auth'
+import NavbarActions from 'actions/navbar'
 import App from 'ampersand-app'
 
 const LoginForm = FormView.extend({
@@ -124,5 +125,8 @@ module.exports = View.extend({
     this.renderSubview(this.loginForm, this.queryByHook('login-form'))
     this.renderSubview(this.forgotForm, this.queryByHook('forgot-form'))
     App.state.loader.visible = false
+
+    document.getElementsByTagName('body')[0].style.backgroundColor = '#304269'
+    NavbarActions.setVisibility(true)
   }
 })

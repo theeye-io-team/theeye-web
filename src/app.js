@@ -16,8 +16,15 @@ const experimentalFeatures = require('app/experimental')
 
 import 'assets/styles'
 
+function getUserLanguage () {
+  const suportedLanguages = ['en', 'es']
+  const lang = navigator.language.substring(0, 2)
+  return (suportedLanguages.indexOf(lang) > -1) ? lang : 'en'
+}
+
 // Extends our main app singleton
 App.extend({
+  language: getUserLanguage(),
   config: config,
   EasterEggs: require('components/easter-eggs'),
   Router: new Router(),

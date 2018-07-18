@@ -5,6 +5,8 @@ import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 import assign from 'lodash/assign'
 import config from 'config'
+import registerLang from 'language/register'
+import activationLang from 'language/activation'
 
 const xhr = $.ajax
 
@@ -107,16 +109,15 @@ module.exports = {
       contentType: 'application/json; charset=utf-8',
     })
 
-    req.done(function(response){
+    req.done(function (response) {
       App.state.loader.visible = false
       App.state.register.result = true
-      if(response.message) App.state.register.message = response.message
     })
-    req.fail(function(jqXHR, textStatus, errorThrown){
+    req.fail(function (jqXHR, textStatus, errorThrown) {
       App.state.loader.visible = false
-      var msg = jqXHR.responseText || 'An error has ocurred, please try again later.'
+      var msg = registerLang.getText(jqXHR.responseText) || registerLang.getText('defaultError')
       bootbox.alert({
-        title: 'Registration error',
+        title: registerLang.getText('errorTitle'),
         message: msg
       })
     })
@@ -127,7 +128,7 @@ module.exports = {
       method: 'get',
       done: (response,xhr) => {
         if (xhr.status !== 201) {
-          bootbox.alert('Account activation error, please try again later.')
+          bootbox.alert(activationLang.getText('defaultError'))
           App.state.activate.finalStep = false
         } else {
           App.state.activate.username = username
@@ -136,10 +137,10 @@ module.exports = {
       },
       fail: (err,xhr) => {
         if (xhr.status == 400) {
-          bootbox.alert('Username already in use.')
+          bootbox.alert(activationLang.getText('usernameTaken'))
           App.state.activate.finalStep = false
         } else if (xhr.status !== 201) {
-          bootbox.alert('Account activation error, please try again later.')
+          bootbox.alert(activationLang.getText('defaultError'))
           App.state.activate.finalStep = false
         }
       }
@@ -161,14 +162,14 @@ module.exports = {
         if (xhr.status == 200) {
           bootbox.alert({
             // message: 'Registration is completed',
-            message: 'Proceso de registraci&oacute;n ha finalizado',
+            message: activationLang.getText('success'),
             callback: () => {
               App.state.session.access_token = response.access_token
             }
           })
         } else {
           bootbox.alert({
-            message: 'Error, please try again',
+            message: activationLang.getText('defaultError'),
             callback: () => {
             }
           })
@@ -178,13 +179,15 @@ module.exports = {
         App.state.loader.visible = false
         if (xhr.status == 400) {
           bootbox.alert({
-            message: xhr.response.body.error || 'Error, please try again',
+            message: activationLang.getText(xhr.response.body.errorCode) ||
+            xhr.response.body.error ||
+            activationLang.getText('defaultError'),
             callback: () => {
             }
           })
         } else {
           bootbox.alert({
-            message: 'Error, please try again',
+            message: activationLang.getText('defaultError'),
             callback: () => {
             }
           })

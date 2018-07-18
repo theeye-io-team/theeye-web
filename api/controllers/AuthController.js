@@ -237,27 +237,26 @@ var AuthController = {
       if (user) {
         if(user.enabled) {
           if(user.username == params.username)
-          return res.send(400, 'The username is taken. Please use another one.');
+          return res.send(400, 'usernameTaken');
           if(user.email == params.email)
-          return res.send(400, 'The email is taken. Please use another one.');
+          return res.send(400, 'emailTaken');
         } else {
           passport.sendUserActivationEmail( req.user, user, err => {
             if(err) {
               logger.error(err);
-              return res.send(400, 'Error re sending activation email.');
-            } else return res.json({message: 'Te enviamos un email de confirmación. Activa tu cuenta y comienza a automatizar con TheEye.'});
+              return res.send(400, 'sendActivationEmailError');
+            } else return res.json({message: 'success'});
           });
         }
       } else {
         passport.registerUser(req, res, function(err, user) {
           if(err) {
             logger.error(err);
-            var errMsg = 'Error registering user.'
+            var errMsg = 'registerError'
             if(err.code && err.code == 'CredentialsError')
-              errMsg = 'Error sending registration email.'
+              errMsg = 'sendUserRegistrationEmailError'
             return res.send(400, errMsg);
-          // } else return res.json({message: 'Account activation email sent. Follow the email instructions to complete the registration and start automating with TheEye.'});
-          } else return res.json({message: 'Te enviamos un email de confirmacion. Activa tu cuenta y comienza a automatizar con TheEye.'});
+          } else return res.json({message: 'success'});
         });
       }
     });

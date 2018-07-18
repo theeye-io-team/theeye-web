@@ -37,7 +37,8 @@ const SettingsMenuState = State.extend({
 
 module.exports = State.extend({
   props: {
-    menuSwitch: ['boolean',false,false]
+    menuSwitch: ['boolean',false,false],
+    visible: ['boolean',false,true]
   },
   children: {
     settingsMenu: SettingsMenuState
