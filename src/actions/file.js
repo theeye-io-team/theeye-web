@@ -40,6 +40,38 @@ export default {
       }
     })
   },
+  massiveDelete (models) {
+    App.state.loader.visible = true
+
+    var errors = 0
+    const done = after(models.length, () => {
+      if (errors > 0) {
+        const count = (errors === models.length) ? 'all' : 'some of'
+        bootbox.alert(
+          `Well, ${count} the delete request came back with error. Reloding now...`,() => {
+            //window.location.reload()
+            App.Router.reload()
+          }
+        )
+      } else {
+        App.state.loader.visible = false
+        bootbox.alert('That\'s it, they are gone. Congrats.',() => { })
+      }
+    })
+
+    models.forEach(model => {
+      model.destroy({
+        success () {
+          App.state.files.remove(model)
+          done()
+        },
+        error () {
+          errors++
+          done()
+        }
+      })
+    })
+  },
   syncLinkedModels (id, next) {
     const file = App.state.files.get(id)
     XHR.send({

@@ -133,18 +133,20 @@ module.exports = {
       if (err) {
         return res.send(500, err)
       }
-      // https://github.com/request/request/issues/1761
-      // formData bug? if true/false value is passed into
-      // formData object, request throws:
-      // TypeError: first argument must be a string or Buffer
-      params.public = 0 // fuck this shit!!!!!!!!!!!!!!!!!!!!
-      var readstream = fs.createReadStream(fname)
+
+      params.public = 0
       params.file = {
-        value: readstream,
+        value: fs.createReadStream(fname),
         options: {
           filename: params.filename
         }
       }
+
+      for (let idx in Object.assign({}, params)) {
+        let param = params[idx]
+        if (!param) { delete params[idx] }
+      }
+
       req.supervisor.performRequest({
         method: req.method, // POST or PUT
         url: url,
