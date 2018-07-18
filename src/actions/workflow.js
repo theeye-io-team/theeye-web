@@ -5,6 +5,8 @@ import XHR from 'lib/xhr'
 import graphlib from 'graphlib'
 import { Workflow } from 'models/workflow'
 import JobActions from 'actions/job'
+import union from 'lodash/union'
+import difference from 'lodash/difference'
 const logger = require('lib/logger')('actions:workflow')
 
 module.exports = {
@@ -36,6 +38,7 @@ module.exports = {
         workflow.set(tmp.serialize())
         workflow.populated = false // reset to repopulate
         this.populate(workflow)
+        this.updateAcl(id)
       },
       error: (err) => {
         logger.error(err)
@@ -49,6 +52,7 @@ module.exports = {
       success: () => {
         App.state.workflows.add(workflow)
         this.populate(workflow)
+        this.updateAcl(workflow.id)
       },
       error: (err) => {
         logger.error(err)
@@ -96,6 +100,24 @@ module.exports = {
   },
   run (workflow) {
     JobActions.createFromTask(workflow.start_task)
+  },
+  updateAcl (id) {
+    let workflow = App.state.workflows.get(id)
+    let acl = []
+
+    workflow.tasks.forEach(task => {
+      acl = union(acl, task.acl)
+    })
+
+    workflow.acl = acl
+    workflow.save({}, {
+      success: () => {
+      },
+      error: (err) => {
+        logger.error(err)
+        bootbox.alert('Something went wrong. Please refresh')
+      }
+    })
   }
 }
 

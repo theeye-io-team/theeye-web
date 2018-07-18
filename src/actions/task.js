@@ -8,6 +8,7 @@ import LifecycleConstants from 'constants/lifecycle'
 import assign from 'lodash/assign'
 import after from 'lodash/after'
 import OnboardingActions from 'actions/onboarding'
+import WorkflowActions from 'actions/workflow'
 import {eachSeries} from 'async'
 import {ExecApprovalTask} from 'view/page/dashboard/task/task/exec-task.js'
 const emptyCallback = () => {}
@@ -25,6 +26,9 @@ module.exports = {
     //task.task_arguments.reset(data.task_arguments)
     task.save({},{
       success: () => {
+        if (task.workflow_id) {
+          WorkflowActions.updateAcl(task.workflow_id)
+        }
         bootbox.alert('Task Updated')
         App.state.events.fetch()
       },

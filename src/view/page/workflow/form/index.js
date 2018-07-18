@@ -195,7 +195,6 @@ export default FormView.extend({
     }
 
     // id property is the required value, with "numeric" data type
-
     let data = this.prepareData(this.data)
     //data.looptime = this._fieldViews.looptime.selected().id
     if (!this.model.isNew()) {
