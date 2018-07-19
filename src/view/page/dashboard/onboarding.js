@@ -124,31 +124,41 @@ module.exports = State.extend({
         message = "Your Bot is up and running!, would you like to see the task creation tutorial next?"
       }
 
-      bootbox.confirm({
+      bootbox.dialog({
         title: 'Tutorial',
         message: message,
         closeButton: false,
         buttons: {
           confirm: {
             label: 'Start tutorial',
-            className: 'btn-primary'
+            className: 'btn-primary',
+            callback () {
+              if (App.state.resources.length === 0) {
+                self.showMonitorOnboarding()
+              } else {
+                self.showTaskOnboarding()
+              }
+              OnboardingActions.updateOnboarding(false)
+              OnboardingActions.showOnboarding()
+            }
           },
           cancel: {
             label: 'No, thanks',
-            className: 'btn-danger'
-          }
-        },
-        callback (confirm) {
-          if(confirm){
-            if(App.state.resources.length == 0) {
-              self.showMonitorOnboarding()
-            } else {
-              self.showTaskOnboarding()
+            className: 'btn-danger',
+            callback () {
+              this.active = false
+              OnboardingActions.updateOnboarding(true)
+              OnboardingActions.hideOnboarding()
             }
-          } else {
-            this.active = false
+          },
+          later: {
+            label: 'Remind me later',
+            className: 'btn-default',
+            callback () {
+              this.active = false
+              OnboardingActions.hideOnboarding()
+            }
           }
-          OnboardingActions.updateOnboarding(!confirm)
         }
       })
     }

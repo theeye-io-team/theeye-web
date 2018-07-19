@@ -22,10 +22,12 @@ module.exports = {
         user.set(settings)
       }
     })
-    App.state.onboarding.onboardingActive = value
   },
   showOnboarding () {
     App.state.onboarding.onboardingActive = true
+  },
+  hideOnboarding () {
+    App.state.onboarding.onboardingActive = false
   },
   showTaskLastStep () {
     App.state.onboarding.showTaskLastStep = true

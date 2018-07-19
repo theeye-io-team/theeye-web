@@ -54,6 +54,7 @@ module.exports = {
       if(App.state.onboarding.onboardingActive) {
         bootbox.alert('Congratulations!, Your first task has been created Successfully!')
         OnboardingActions.updateOnboarding(true)
+        OnboardingActions.hideOnboarding()
       }
     })
     hosts.forEach(host => {
