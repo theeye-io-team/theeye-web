@@ -14,11 +14,11 @@ const GroupedTasksCollection = TasksCollection.extend({
   comparator (m1, m2) {
     if (m1.name.toLowerCase()<m2.name.toLowerCase()) { return -1 }
     if (m1.name.toLowerCase()>m2.name.toLowerCase()) { return  1 }
-    return 0 
+    return 0
   },
   model (attrs, options={}) {
     const taskModel = TasksCollection.prototype.model
-    
+
     if (attrs._type == ModelConstants.TYPE_WORKFLOW) {
       return new Workflow(attrs, options)
     } else {
@@ -104,9 +104,9 @@ const monitorPropertyValueDescriptionMap = (value) => {
     'script': 'Scripts',
     'file': 'Files',
     'process': 'Processes',
-    'host': 'Hosts',
-    'dstat': 'Hosts Stats',
-    'psaux': 'Hosts Processes',
+    'host': 'Bots',
+    'dstat': 'Bots Stats',
+    'psaux': 'Bots Processes',
   }
 
   return ( descriptions[value] || ucfirst(value) )
