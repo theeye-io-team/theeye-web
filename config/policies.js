@@ -53,7 +53,8 @@ module.exports.policies = {
       'sessionCustomer',
       'supervisorInitializer'
     ],
-    'create': ['noSession']
+    'create': ['hasSecret'],
+    'maintenance': ['hasSecret']
   },
   InboxController: {
     '*': [

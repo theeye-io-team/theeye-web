@@ -109,7 +109,7 @@ const Scraper = Template.Scraper.extend({
     summary: {
       deps: ['hostname','name'],
       fn () {
-        return `[${this.hostname}] web check task ${this.name}`
+        return `[${this.hostname}] web request task ${this.name}`
       }
     }
   },

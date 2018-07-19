@@ -81,7 +81,9 @@ module.exports = {
     port: 60080,
     palancas: {
       resource: 'job'
-    }
+    },
+    // supervisor incoming requests secret passphrase
+    incoming_secret: '77E0EAF3B83DD7A7A4004602626446EADED31BF794956FC9BBAD051FA5A25038'
   },
 	aws: {
 		username: '',

@@ -124,7 +124,7 @@ const ScraperItem = Item.extend({
         if (this.model.hostname) {
           description += `${this.model.hostname} `
         }
-        description += 'Web Check'
+        description += 'Web Request'
         return description
       }
     }

@@ -69,7 +69,9 @@ module.exports.routes = {
   // ContactController routes
   'post   /contact' : 'ContactController.contact',
 
-  'post   /notification' : 'NotificationController.create',
+  // SYSTEM NOTIFICATIONS API
+  'post /notification' : 'NotificationController.create',
+  'delete /notification' : 'NotificationController.maintenance',
 
   // INBOX
   'get /inbox': 'InboxController.index',

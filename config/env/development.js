@@ -126,6 +126,8 @@ module.exports = {
     port: 60080,
     palancas: {
       resource : 'job'
-    }
+    },
+    // supervisor incoming requests secret passphrase
+    incoming_secret: 'secret_passphrase'
   }
 }

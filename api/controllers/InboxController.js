@@ -58,8 +58,8 @@ module.exports = {
       if (err) return res.send(500, err)
 
       notifications.remove(query, function (err, result) {
-        if (err) return res.send(500, err)
-        res.send(200, null)
+        if (err) { return res.send(500, err) }
+        res.send(200, { count: result })
       })
     })
   },
@@ -69,7 +69,7 @@ module.exports = {
     let ids = notif.map(n => new ObjectID(n.id)) // native mongodb query uses ObjectID
 
     Notification.native(function (err, notifications) {
-      if (err) return res.send(500, err)
+      if (err) { return res.send(500, err) }
 
       notifications.update(
         {

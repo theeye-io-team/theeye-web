@@ -100,7 +100,7 @@ const ucfirst = (string) => {
 
 const monitorPropertyValueDescriptionMap = (value) => {
   const descriptions = {
-    'scraper': 'Web Checks',
+    'scraper': 'Web Request',
     'script': 'Scripts',
     'file': 'Files',
     'process': 'Processes',

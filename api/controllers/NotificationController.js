@@ -1,5 +1,6 @@
 const logger = require('../libs/logger')('controllers:notification')
 const Notifications = require('../libs/notifications')
+const moment = require('moment')
 
 const handledTopics = [
   'monitor-state',
@@ -63,6 +64,30 @@ module.exports = {
     Notifications.sockets.send(event)
 
     return res.send(200)
+  },
+  /**
+   *
+   * remove notifications to free database space
+   *
+   */
+  maintenance (req, res) {
+    Notification.native(function (err, notifications) {
+      if (err) { return res.send(500, err) }
+
+      let date = moment()
+        .subtract(3, 'days')
+        .startOf('day')
+        .toDate()
+
+      notifications.remove({
+        createdAt: {
+          $lte: date
+        }
+      }, function (err, result) {
+        if (err) { return res.send(500, err) }
+        res.send(200, { count: result })
+      })
+    })
   }
 }
 
