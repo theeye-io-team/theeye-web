@@ -23,7 +23,7 @@ var CustomerController = module.exports = {
    * GET  /customer/:id
    *
    */
-  get (req, res) {
+  getcustomer (req, res) {
     req.supervisor.get({
       route:'/customer',
       id:req.params.id,

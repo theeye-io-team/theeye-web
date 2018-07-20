@@ -1,8 +1,8 @@
 'use strict';
 
-const assign = require('lodash/assign')
+const assign = Object.assign
 
-var viewer = {
+const viewer = {
   'sockets': ['*'],
   'fileapi':['*'],
   'api':['*'],
@@ -15,43 +15,46 @@ var viewer = {
   'member' : ['fetch'],
   'auth': ['login','activate','google','connect','unlink','logout'],
   'user': ['myprofile','setcustomer','ampersand','getuserpassport','registerdevicetoken'],
-  'inbox': ['*']
+  'inbox': ['*'],
+  'customer': ['getcustomer']
 }
 
-var user = assign({},viewer,{
+const user = assign({}, viewer, {
   'events': ['*'],
   'hoststats': ['*'],
   'palanca': ['*']
-});
+})
 
-var manager = assign({},user,{
-  'member' : ['*']
-});
+const manager = assign({}, user, {
+  'member': ['*']
+})
 
-var admin = assign({},user,{
-  'webhook' : ['index'],
-  'tasks' : ['*'],
-  'script' : ['*'],
-  'resource' : ['*'],
-  'hostgroup' : ['*'],
-  'scheduler' : ['*'],
-  'customer' : ['getuseragent', 'editconfig']
-});
+const admin = assign({},user,{
+  'webhook': ['index'],
+  'tasks': ['*'],
+  'script': ['*'],
+  'resource': ['*'],
+  'hostgroup': ['*'],
+  'scheduler': ['*'],
+  'customer': ['getcustomer', 'getuseragent', 'editconfig']
+})
 
-var owner = assign({},admin,manager,{
-  'auth' : ['*']
-});
+const owner = assign({},admin,manager,{
+  'auth': ['*']
+})
 
-var root = assign({},owner,{
-  'user'     : ['*'],
-  'customer' : ['*']
-});
+const root = assign({},owner,{
+  'user': ['*'],
+  'customer': ['*']
+})
 
-module.exports.acl = {
-  root: root,
-  owner: owner,
-  admin: admin,
-  user: user,
-  viewer: viewer,
-  manager: manager
-};
+module.exports = {
+  acl: {
+    root,
+    owner,
+    admin,
+    user,
+    viewer,
+    manager
+  }
+}
