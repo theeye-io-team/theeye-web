@@ -39,8 +39,9 @@ const admin = assign({},user,{
   'customer': ['getcustomer', 'getuseragent', 'editconfig']
 })
 
-const owner = assign({}, manager, admin, {
-  'auth': ['*']
+const owner = assign({}, admin, {
+  'auth': ['*'],
+  'member': ['*']
 })
 
 const root = assign({},owner,{
