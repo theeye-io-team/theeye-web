@@ -90,7 +90,8 @@ module.exports = FormView.extend({
       'grace_time',
       'status_code',
       'pattern',
-      'remove-button'
+      'remove-button',
+      'copy_task'
     ]
 
     this.fields = [
@@ -250,8 +251,8 @@ module.exports = FormView.extend({
     ]
 
     if (this.model.isNew()) {
-      const copySelect = new CopyTaskSelect({ type: TASK.TYPE_SCRAPER })
-      this.fields.unshift(copySelect)
+      const copySelect = new CopyTaskSelect({ type: TASK.TYPE_SCRAPER, visible: false })
+      this.fields.splice(4, 0, copySelect)
       this.listenTo(copySelect,'change',() => {
         if (copySelect.value) {
           let task = App.state.tasks.get(copySelect.value)

@@ -55,7 +55,8 @@ module.exports = TaskFormView.extend({
       'triggers',
       'grace_time',
       'task_arguments',
-      'remove-button'
+      'remove-button',
+      'copy_task'
     ]
 
     this.fields = [
@@ -156,8 +157,8 @@ module.exports = TaskFormView.extend({
     ]
 
     if (this.model.isNew()) {
-      const copySelect = new CopyTaskSelect({ type: TaskConstants.TYPE_SCRIPT })
-      this.fields.unshift(copySelect)
+      const copySelect = new CopyTaskSelect({ type: TaskConstants.TYPE_SCRIPT, visible: false })
+      this.fields.splice(4, 0, copySelect)
       this.listenTo(copySelect,'change',() => {
         if (copySelect.value) {
           let task = App.state.tasks.get(copySelect.value)

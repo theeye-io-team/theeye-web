@@ -26,7 +26,8 @@ module.exports = TaskFormView.extend({
       'acl',
       'triggers',
       'task_arguments',
-      'remove-button'
+      'remove-button',
+      'copy_task'
     ]
 
     this.fields = [
@@ -105,9 +106,10 @@ module.exports = TaskFormView.extend({
 
     if (this.model.isNew()) {
       const copySelect = new CopyTaskSelect({
-        type: TaskConstants.TYPE_APPROVAL
+        type: TaskConstants.TYPE_APPROVAL,
+        visible: false
       })
-      this.fields.unshift(copySelect)
+      this.fields.splice(3, 0, copySelect)
       this.listenTo(copySelect,'change',() => {
         if (copySelect.value) {
           let task = App.state.tasks.get(copySelect.value)
@@ -179,7 +181,8 @@ module.exports = TaskFormView.extend({
       name: task.name,
       description: task.description,
       tags: task.tags,
-      triggers: task.trigger || []
+      triggers: task.trigger || [],
+      task_arguments: task.task_arguments || []
     })
   }
 })
