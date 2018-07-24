@@ -6,6 +6,7 @@ import TaskActions from 'actions/task'
 import FileActions from 'actions/file'
 import TaskConstants from 'constants/task'
 import EditTaskButton from 'view/page/task/buttons/edit'
+import CopyTaskButton from 'view/page/task/buttons/copy'
 import JobResult from '../../job-result'
 import ExecTaskButton from './exec-button'
 import CollapsibleRow from '../collapsible-row'
@@ -125,6 +126,7 @@ const TaskButtonsView = View.extend({
     </button>
     </li>
       <span data-hook="edit-button"> </span>
+      <span data-hook="copy-button"> </span>
       <li>
         <button data-hook="search" class="btn btn-primary tooltiped" title="Search related elements">
           <i class="fa fa-search" aria-hidden="true"></i>
@@ -181,8 +183,11 @@ const TaskButtonsView = View.extend({
     this.renderWithTemplate(this)
 
     if (acls.hasAccessLevel('admin')) {
-      var button = new EditTaskButton({ model: this.model })
-      this.renderSubview(button, this.queryByHook('edit-button'))
+      var editButton = new EditTaskButton({ model: this.model })
+      this.renderSubview(editButton, this.queryByHook('edit-button'))
+
+      var copyButton = new CopyTaskButton({ model: this.model })
+      this.renderSubview(copyButton, this.queryByHook('copy-button'))
     }
   }
 })
