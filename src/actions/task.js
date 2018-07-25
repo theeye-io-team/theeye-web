@@ -11,6 +11,8 @@ import OnboardingActions from 'actions/onboarding'
 import WorkflowActions from 'actions/workflow'
 import {eachSeries} from 'async'
 import {ExecApprovalTask} from 'view/page/dashboard/task/task/exec-task.js'
+import config from 'config'
+import FileSaver from 'file-saver'
 const emptyCallback = () => {}
 
 const logger = require('lib/logger')('actions:tasks')
@@ -152,6 +154,36 @@ module.exports = {
     eachSeries(pendingApprovalTasks, function (task, done) {
       var execApprovalTask = new ExecApprovalTask({model: task})
       execApprovalTask.execute(true, done)
+    })
+  },
+  /**
+   *
+   * @summary export task recipe
+   * @param {String} id task id
+   *
+   */
+  exportRecipe (id) {
+    let task = App.state.tasks.get(id)
+    this.fetchRecipe(id, (err, recipe) => {
+      if (!err) {
+        var jsonContent = JSON.stringify(recipe)
+        var blob = new Blob([jsonContent], { type: 'application/json' })
+        let fname = task.name.replace(/ /g,'_')
+        FileSaver.saveAs(blob, `${fname}.json`)
+      }
+    })
+  },
+  fetchRecipe (id, next) {
+    next || (next = emptyCallback)
+    XHR.send({
+      method: 'GET',
+      url: `${config.api_v3_url}/task/${id}/recipe`,
+      done: recipe => next(null, recipe),
+      fail (err, xhr) {
+        let msg = 'Error retrieving task recipe.'
+        bootbox.alert(msg)
+        return next(new Error(msg))
+      }
     })
   }
 }

@@ -122,8 +122,8 @@ const Actions = {
   },
   exportToJSON (id) {
     this.fetchRecipe({hostgroup_id: id}, function (err, instructions) {
-      var jsonContent = JSON.stringify(instructions)
       if (!err) {
+        var jsonContent = JSON.stringify(instructions)
         var blob = new Blob([jsonContent], {type: 'application/json'})
         FileSaver.saveAs(blob, 'template-recipe.json')
       }
@@ -131,6 +131,7 @@ const Actions = {
   },
   fetchRecipe (where, next) {
     let query = qs.stringify({ where })
+    next || (next = () => {})
 
     XHR.send({
       method: 'GET',

@@ -120,13 +120,18 @@ const TaskButtonsView = View.extend({
           <i class="fa fa-file-text-o" aria-hidden="true"></i>
         </button>
       </li>
-    <li>
-    <button class="btn btn-primary tooltiped" title="Workflow" data-hook="workflow">
-      <i class="fa fa-sitemap" aria-hidden="true"></i>
-    </button>
-    </li>
+      <li>
+        <button class="btn btn-primary tooltiped" title="Workflow" data-hook="workflow">
+          <i class="fa fa-sitemap" aria-hidden="true"></i>
+        </button>
+      </li>
       <span data-hook="edit-button"> </span>
       <span data-hook="copy-button"> </span>
+      <li>
+        <button data-hook="recipe" class="btn btn-primary tooltiped" title="Export this task recipe">
+          <i class="fa fa-file-code-o" aria-hidden="true"></i>
+        </button>
+      </li>
       <li>
         <button data-hook="search" class="btn btn-primary tooltiped" title="Search related elements">
           <i class="fa fa-search" aria-hidden="true"></i>
@@ -149,6 +154,13 @@ const TaskButtonsView = View.extend({
     'click button[data-hook=search]':'onClickSearch',
     'click button[data-hook=last_exec]':'onClickLastExecution',
     'click button[data-hook=workflow]':'onClickWorkflow',
+    'click button[data-hook=recipe]':'onClickRecipe',
+  },
+  onClickRecipe (event) {
+    event.stopPropagation()
+    event.preventDefault()
+    TaskActions.exportRecipe(this.model.id)
+    return false
   },
   onClickWorkflow (event) {
     event.stopPropagation();
@@ -189,6 +201,8 @@ const TaskButtonsView = View.extend({
       var copyButton = new CopyTaskButton({ model: this.model })
       this.renderSubview(copyButton, this.queryByHook('copy-button'))
     }
+
+    $( this.query('.tooltiped') ).tooltip()
   }
 })
 
