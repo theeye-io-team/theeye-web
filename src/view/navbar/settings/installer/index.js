@@ -1,16 +1,18 @@
 import View from 'ampersand-view'
 import App from 'ampersand-app'
 import Clipboard from 'clipboard'
-import NavbarActions from 'actions/navbar'
 import onboarding from './onboarding'
 import hopscotch from 'hopscotch'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
+import NavbarActions from 'actions/navbar'
+import acls from 'lib/acls'
+
+import { startBot } from 'actions/integrations'
 
 const config = require('config')
 
 import '../settings.css'
-
 
 module.exports = View.extend({
   template: require('./template.hbs'),
@@ -129,12 +131,17 @@ module.exports = View.extend({
   },
   events: {
     'click [data-hook=go-to-dashboard]':'onClickGoToDashboard',
-    'click [data-hook=start-onboarding]':'onClickStartOnboarding'
+    'click [data-hook=start-onboarding]':'onClickStartOnboarding',
+    'click [data-hook=start-bot]': 'onClickStartBot'
+  },
+  onClickStartBot (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    if (acls.hasAccessLevel('admin')) { startBot() }
   },
   onClickGoToDashboard (event) {
     event.preventDefault()
     event.stopPropagation()
-
     NavbarActions.hideSettingsMenu()
   },
   onClickStartOnboarding() {
@@ -178,6 +185,14 @@ module.exports = View.extend({
         text: HelpTexts.onboarding.installer
       }),
       this.queryByHook('start-onboarding')
+    )
+
+    this.renderSubview(
+      new HelpIconView({
+        color: [0,77,121],
+        text: HelpTexts.settings.installer.autobot
+      }),
+      this.queryByHook('start-bot-help')
     )
   }
 })

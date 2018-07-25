@@ -105,5 +105,10 @@ module.exports = {
     installer: 'Show installer tutorial.',
     task: 'Show task tutorial.',
     script: 'Show script tutorial'
+  },
+  settings: {
+    installer: {
+      autobot: 'We can start a Bot for you'
+    }
   }
 }

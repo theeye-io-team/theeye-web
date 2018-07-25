@@ -46,6 +46,7 @@ module.exports.routes = {
   'get    /verifypasswordresettoken'  : 'PasswordController.verifyPasswordResetToken',
   // most of hereunder routes, probably will be removed after migrating to API calls
   // CustomerController routes
+  'get    /customer/autobot' : 'CustomerController.autobot',
   'get    /customer/agent' : 'CustomerController.getuseragent',
   'get    /customer/:id' : 'CustomerController.getcustomer',
   'get    /customer' : 'CustomerController.fetch',

@@ -6,6 +6,7 @@ import FileRouter from 'router/files'
 import bootbox from 'bootbox'
 const config = require('config')
 import XHR from 'lib/xhr'
+import after from 'lodash/after'
 
 export default {
   get (id) {

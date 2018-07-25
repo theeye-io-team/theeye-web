@@ -36,7 +36,7 @@ const admin = assign({},user,{
   'resource': ['*'],
   'hostgroup': ['*'],
   'scheduler': ['*'],
-  'customer': ['getcustomer', 'getuseragent', 'editconfig']
+  'customer': ['getcustomer', 'getuseragent', 'editconfig', 'autobot']
 })
 
 const owner = assign({}, admin, {

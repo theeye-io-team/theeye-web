@@ -160,7 +160,18 @@ const ScraperJobResult = View.extend({
   bindings: {
     'result.status_code': { hook: 'status_code' },
     'result.message': { hook: 'message' },
-    'result.body': { hook: 'body' },
+    body: { hook: 'body' },
+  },
+  derived: {
+    body: {
+      deps: ['result.body'],
+      fn () {
+        let body = this.result.body
+        if (body === undefined) { return 'response body not available' }
+
+        return JSON.stringify(body)
+      }
+    }
   },
   initialize () {
     View.prototype.initialize.apply(this,arguments)

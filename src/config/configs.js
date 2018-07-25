@@ -1,12 +1,16 @@
 'use strict'
 
+let defSuperv = 'http://127.0.0.1:60080'
+let prodSuperv = 'https://supervisor.theeye.io'
+let devSuperv = 'https://supervisor.development.theeye.io'
+
 const defaultConfigs = {
   env: 'default',
   app_url: 'http://localhost:6080',
   socket_url: 'http://localhost:6080',
   api_url: 'http://localhost:6080/apiv2',
   api_v3_url: 'http://localhost:6080/apiv3',
-  supervisor_api_url: 'http://localhost:60080',
+  supervisor_api_url: defSuperv,
   session: {
     refresh_interval: 1000 * 60 * 30
   },
@@ -17,7 +21,7 @@ const defaultConfigs = {
     url: 'https://s3.amazonaws.com/theeye.agent/TheEyeWinServiceInstaller.zip',
     name: 'TheEyeWinServiceInstaller.zip'
   },
-  lc_url: 'https://assets.theeye.io/production/bugtracking'
+  lc_url: 'https://assets.theeye.io/production/bugtracking',
 }
 
 const configs = {
@@ -37,7 +41,7 @@ const configs = {
     socket_url: 'https://development.theeye.io',
     api_url: 'https://development.theeye.io/apiv2',
     api_v3_url: 'https://development.theeye.io/apiv3',
-    supervisor_api_url: 'https://supervisor.development.theeye.io',
+    supervisor_api_url: devSuperv,
   }),
 
   // cloud staging enviroment
@@ -57,7 +61,7 @@ const configs = {
     socket_url: 'https://app.theeye.io',
     api_url: 'https://app.theeye.io/apiv2',
     api_v3_url: 'https://app.theeye.io/apiv3',
-    supervisor_api_url: 'https://supervisor.theeye.io',
+    supervisor_api_url: prodSuperv
   })
 }
 

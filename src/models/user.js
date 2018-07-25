@@ -62,7 +62,7 @@ const Model = AppModel.extend({
   },
   collections: {
     customers: Customers
-  },
+  }
 })
 
 const Collection = AppCollection.extend({

@@ -176,11 +176,11 @@ var showOnboarding = function(platform) {
 }
 
 module.exports = {
-  start() {
+  start () {
     bootbox.dialog({
       title: 'Tutorial',
-      message: "Which platform installer tutorial do you want to check?",
-      closeButton: false,
+      message: "Which installation tutorial do you want to Start?",
+      closeButton: true,
       buttons: {
         linux: {
           label: 'Linux',

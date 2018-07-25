@@ -83,7 +83,14 @@ module.exports = {
       resource: 'job'
     },
     // supervisor incoming requests secret passphrase
-    incoming_secret: '77E0EAF3B83DD7A7A4004602626446EADED31BF794956FC9BBAD051FA5A25038'
+    incoming_secret: '77E0EAF3B83DD7A7A4004602626446EADED31BF794956FC9BBAD051FA5A25038',
+    integrations: {
+      autobot: {
+        task_id: '5b57a27be79f800c3ff8b52d',
+        task_customer: 'demo',
+        task_exec_path: '/job/secret/06eb33aaff7a7c3d897311e7e30e0cb0d685a6574b86307032d9cd611ba1fdef?customer=demo'
+      }
+    }
   },
 	aws: {
 		username: '',

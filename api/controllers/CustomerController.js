@@ -135,6 +135,56 @@ var CustomerController = module.exports = {
         if(!user) return res.send(404);
         return res.send(200, { user: user });
       }
-    );
+    )
+  },
+  autobot (req, res, next) {
+    const supervisor = req.supervisor
+    // current customer
+    const customer_name = req.user.current_customer
+    const theeye = passport.protocols.theeye
+
+    theeye.getCustomerAgentCredentials(
+      customer_name,
+      supervisor,
+      (err, agent) => {
+        if (err) { return res.send(500) }
+        if (!agent) { return res.send(404) }
+
+        let autobot = sails.config.supervisor.integrations.autobot
+
+        /**
+         *
+         * Order is important
+         *
+         * @summary create a bot via task
+         *
+         * client_id argument 0
+         * client_secret argument 1
+         * client_customer argument 2
+         * supervisor_api_url argument 3
+         * botname argument 4
+         *
+         */
+        let payload = {
+          task: autobot.task_id,
+          task_arguments: [
+            { order: 0, value: agent.client_id },
+            { order: 1, value: agent.client_secret },
+            { order: 2, value: customer_name },
+            { order: 3, value: sails.config.supervisor.url },
+            { order: 4, value: customer_name }
+          ]
+        }
+
+        // execute integration task
+        supervisor.client_customer = autobot.task_customer
+        supervisor.create({
+          route: autobot.task_exec_path,
+          body: payload,
+          success: job => res.send(200, job),
+          failure: err => res.send(err.statusCode, err)
+        })
+      }
+    )
   }
-};
+}
