@@ -1,6 +1,7 @@
 import search from 'lib/query-params'
 import App from 'ampersand-app'
 import after from 'lodash/after'
+import NavbarActions from 'actions/navbar'
 
 module.exports = {
   setMonitorsGroupByProperty (prop) {
@@ -12,6 +13,8 @@ module.exports = {
     App.Router.reload()
   },
   loadNewRegisteredHostAgent (host) {
+    App.state.loader.visible = false
+    NavbarActions.hideSettingsMenu()
     const resourcesWasEmpty = Boolean(App.state.resources.length === 0)
     const step = after(2, function () {
       if (resourcesWasEmpty) {

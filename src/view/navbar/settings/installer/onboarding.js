@@ -1,5 +1,4 @@
 import bootbox from 'bootbox'
-import NavbarActions from 'actions/navbar'
 import OnboardingActions from 'actions/onboarding'
 import hopscotch from 'hopscotch'
 import 'hopscotch/dist/css/hopscotch.min.css'
@@ -147,6 +146,17 @@ var showOnboarding = function(platform) {
         xOffset: -20
       },
     ]
+  } else if (platform === 'self-provided') {
+    steps = [
+      {
+        target: document.querySelectorAll('[data-tutorial=self-provided-onboarding]')[0],
+        title: "Self-Provided Bot installation",
+        content: "Click here to start a Self-Provided Bot.",
+        placement: "left",
+        yOffset: -20,
+        xOffset: -20
+      },
+    ]
   }
 
   var installerTour = {
@@ -162,7 +172,6 @@ var showOnboarding = function(platform) {
     },
     onEnd: function() {
       disableScroll.off()
-      NavbarActions.hideSettingsMenu()
       return
     },
     onError: function() {
@@ -182,6 +191,13 @@ module.exports = {
       message: "Which installation tutorial do you want to Start?",
       closeButton: true,
       buttons: {
+        self_provided: {
+          label: 'Self-Provided',
+          className: 'btn-primary',
+          callback () {
+            showOnboarding('self-provided')
+          }
+        },
         linux: {
           label: 'Linux',
           className: 'btn-primary',

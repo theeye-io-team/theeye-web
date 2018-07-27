@@ -14,10 +14,9 @@ module.exports = View.extend({
         <div data-hook="howto-container">
           <div>
             <h2></h2>
-            We can start a Bot for you, just click <a style="cursor:pointer;color:#64b1f3" href="#" data-hook="start-bot">here</a><br>
-            Or you can also install your own Bots following
-            <a href="#" style="cursor:pointer;color:#64b1f3" 
-            id="show-installer" 
+            Please follow the instructions provided in
+            <a href="#" style="cursor:pointer;color:#64b1f3"
+            id="show-installer"
             data-hook="show-installer">
             this Tutorial
             </a> </h2>
@@ -28,12 +27,6 @@ module.exports = View.extend({
   `,
   events: {
     'click [data-hook=show-installer]': 'showInstaller',
-    'click [data-hook=start-bot]': 'startBot'
-  },
-  startBot (event) {
-    event.preventDefault()
-    event.stopPropagation()
-    if (acls.hasAccessLevel('admin')) { startBot() }
   },
   showInstaller (event) {
     event.preventDefault()
