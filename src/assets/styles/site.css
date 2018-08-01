@@ -1041,6 +1041,7 @@ a.flowchart-icon {
 .admin-container.dashboard i.host-color { background-color: #00b4bc }
 .admin-container.dashboard i.script-color { background-color: #c6639b }
 .admin-container.dashboard i.approval-color { background-color: #9fbc75 }
+.admin-container.dashboard i.dummy-color { background-color: #fb8484 }
 .admin-container.dashboard i.workflow-color { background-color: #bc9ad6 }
 .admin-container.dashboard i.webhook-color { background-color: #158df9 }
 .admin-container.dashboard i.notification-color { background-color: #f9cb5a }

@@ -177,6 +177,58 @@ const Approval = Template.Approval.extend({
   }
 })
 
+const Dummy = Template.Dummy.extend({
+  urlRoot,
+  props: {
+    template_id: 'string',
+    lastjob_id: 'string'
+  },
+  derived: {
+    formatted_tags: () => {
+      return {
+        deps: ['name','type','description','acl','tags'],
+        fn () {
+          return [
+            'name=' + this.name,
+            'type=' + this.type,
+            'description=' + this.description,
+            'acl=' + this.acl,
+          ].concat(this.tags)
+        }
+      }
+    },
+    canExecute: {
+      deps: [],
+      fn () {
+        return true
+      }
+    },
+    hasTemplate: {
+      deps: ['template_id'],
+      fn () {
+        return Boolean(this.template_id) === true
+      }
+    },
+    summary: {
+      deps: ['name'],
+      fn () {
+        return `dummy task ${this.name}`
+      }
+    }
+  },
+  children: {
+    lastjob: Job.DummyJob,
+    template: Template.Dummy,
+  },
+  serialize () {
+    var serial = Template.Dummy.prototype.serialize.apply(this,arguments)
+    serial.template = this.template ? this.template.id : null
+    delete serial.lastjob
+    return serial
+  }
+})
+
+
 const Factory = function (attrs, options={}) {
   if (attrs.isCollection) return
 
@@ -192,6 +244,10 @@ const Factory = function (attrs, options={}) {
     return new Approval(attrs, options)
   }
 
+  if (attrs.type == TaskConstants.TYPE_DUMMY) {
+    return new Dummy(attrs, options)
+  }
+
   let err = new Error(`unrecognized type ${attrs.type}`)
   throw err
 }
@@ -204,7 +260,8 @@ const Collection = AppCollection.extend({
     let isModel = (
       model instanceof Scraper ||
       model instanceof Script ||
-      model instanceof Approval
+      model instanceof Approval ||
+      model instanceof Dummy
     )
     return isModel
   }
@@ -213,5 +270,6 @@ const Collection = AppCollection.extend({
 exports.Scraper = Scraper
 exports.Script = Script
 exports.Approval = Approval
+exports.Dummy = Dummy
 exports.Collection = Collection
 exports.Factory = Factory

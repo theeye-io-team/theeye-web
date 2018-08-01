@@ -228,6 +228,24 @@ const ApprovalTask = Schema.extend({
   }
 })
 
+const DummyTask = Schema.extend({
+  initialize () {
+    Schema.prototype.initialize.apply(this,arguments)
+    this.type = 'dummy'
+  },
+  parse () {
+    var attrs = Schema.prototype.parse.apply(this,arguments)
+    attrs.remote_url = attrs.url
+    delete attrs.url
+    return attrs
+  },
+  serialize () {
+    let data = Schema.prototype.serialize.apply(this,arguments)
+    data.url = data.remote_url
+    return data
+  }
+})
+
 const Collection = AppCollection.extend({
   model: function (attrs, options) {
     if ( /ScraperTaskTemplate/.test(attrs._type) === true ) {
@@ -243,4 +261,5 @@ exports.Collection = Collection
 exports.Scraper = ScraperTask
 exports.Script = ScriptTask
 exports.Approval = ApprovalTask
+exports.Dummy = DummyTask
 //exports.Notification = NotificationTask

@@ -39,12 +39,14 @@ module.exports = View.extend({
   bindings: {
     visible: {
       type: 'toggle'
-    }
+    },
+    label: { hook: 'label' }
   },
   props: {
     visible: ['boolean',false,true],
     scriptArguments: 'collection',
-    name: ['string',false,'scriptArguments']
+    name: ['string',false,'scriptArguments'],
+    label: ['string',false,'Script Arguments']
   },
   initialize (options) {
     // copy collection

@@ -23,6 +23,9 @@ function Factory (options) {
   if (model.type===TaskConstants.TYPE_APPROVAL) {
     return new ApprovalItem(options)
   }
+  if (model.type===TaskConstants.TYPE_DUMMY) {
+    return new DummyItem(options)
+  }
   throw new Error(`unrecognized type ${model.type}`)
   //return new Item(options)
 }
@@ -136,7 +139,18 @@ const ApprovalItem = Item.extend({
     item_description: {
       deps: ['model.name'],
       fn () {
-        return this.model.name 
+        return this.model.name
+      }
+    }
+  }
+})
+
+const DummyItem = Item.extend({
+  derived: {
+    item_description: {
+      deps: ['model.name'],
+      fn () {
+        return this.model.name
       }
     }
   }

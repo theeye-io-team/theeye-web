@@ -23,6 +23,9 @@ module.exports = function (options) {
     case TaskConstants.TYPE_APPROVAL:
       return new ApprovalCollapsibleRow(options)
       break;
+    case TaskConstants.TYPE_DUMMY:
+      return new DummyCollapsibleRow(options)
+      break;
   }
 }
 
@@ -108,6 +111,24 @@ const ApprovalCollapsibleRow = TaskCollapsibleRow.extend({
   },
   renderCollapsedContent () {
     var content = new ApprovalCollapsedContent({ model: this.model })
+    this.renderSubview(content, this.queryByHook('collapse-container-body'))
+  }
+})
+
+const DummyCollapsibleRow = TaskCollapsibleRow.extend({
+  derived: {
+    type: {
+      fn: () => TaskConstants.TYPE_DUMMY
+    },
+    type_icon: {
+      fn: () => 'fa fa-terminal'
+    },
+    header_type_icon: {
+      fn: () => 'circle fa fa-terminal dummy-color'
+    }
+  },
+  renderCollapsedContent () {
+    var content = new DummyCollapsedContent({ model: this.model })
     this.renderSubview(content, this.queryByHook('collapse-container-body'))
   }
 })
@@ -207,6 +228,17 @@ const TaskButtonsView = View.extend({
 })
 
 const ApprovalCollapsedContent = View.extend({
+  template: `
+    <div class="task-container">
+      <h4><i data-hook="name"></i></h4>
+    </div>
+  `,
+  bindings: {
+    'model.name': { hook: 'name' }
+  }
+})
+
+const DummyCollapsedContent = View.extend({
   template: `
     <div class="task-container">
       <h4><i data-hook="name"></i></h4>

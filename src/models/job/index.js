@@ -100,6 +100,9 @@ const ScraperJobResult = State.extend({
 
 const ApprovalJobResult = State.extend({ })
 
+const DummyJobResult = State.extend({ })
+
+
 const NgrokIntegrationResult = State.extend({
   props: {
     url:  ['string',false,''],
@@ -125,6 +128,12 @@ exports.ScraperJob = BaseJob.extend({
 exports.ApprovalJob = BaseJob.extend({
   children: {
     result: ApprovalJobResult
+  }
+})
+
+exports.DummyJob = BaseJob.extend({
+  children: {
+    result: DummyJobResult
   }
 })
 

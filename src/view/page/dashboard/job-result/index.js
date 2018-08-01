@@ -45,6 +45,13 @@ const ApprovalJobResult = View.extend({
   template: `<div class="result approval-result"></div>`
 })
 
+const DummyJobResult = View.extend({
+  props: {
+    result: 'state'
+  },
+  template: `<div class="result approval-result"></div>`
+})
+
 const ScriptJobResult = View.extend({
   props: {
     result: 'state'
@@ -236,6 +243,8 @@ const JobView = View.extend({
       this.result = new ScraperJobResult(opts)
     } else if (type === 'ApprovalJob') {
       this.result = new ApprovalJobResult(opts)
+    } else if (type === 'DummyJob') {
+      this.result = new DummyJobResult(opts)
     } else {
       if (!type) {
         console.error('unrecognised job type %s', type)
