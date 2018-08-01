@@ -42,7 +42,7 @@ module.exports = TaskFormView.extend({
       validityClassSelector: '.control-label'
     })
 
-    let scriptSelection = new ScriptSelectView({
+    this.scriptSelection = new ScriptSelectView({
       value: this.model.script_id,
       required: true
     })
@@ -69,7 +69,7 @@ module.exports = TaskFormView.extend({
         value: this.model.name,
       }),
       hostsSelection ,
-      scriptSelection ,
+      this.scriptSelection ,
       // advanced fields starts visible = false
       new AdvancedToggle({
         onclick: (event) => {

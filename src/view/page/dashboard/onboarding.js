@@ -6,6 +6,7 @@ import NavbarActions from 'actions/navbar'
 import hopscotch from 'hopscotch'
 import 'hopscotch/dist/css/hopscotch.min.css'
 import acls from 'lib/acls'
+import TaskCreationWizard from 'view/page/task/creation-wizard'
 
 module.exports = State.extend({
   props: {
@@ -81,7 +82,14 @@ module.exports = State.extend({
           placement: "left",
           yOffset: -20,
           delay: 500,
-          zindex: 998
+          zindex: 998,
+          showNextButton: false,
+          showCTAButton: true,
+          ctaLabel: 'Next',
+          onCTA: function () {
+            hopscotch.endTour(true)
+            let wizard = new TaskCreationWizard()
+          }
         }
       ],
       showCloseButton: true,

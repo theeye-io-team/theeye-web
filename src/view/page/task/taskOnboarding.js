@@ -29,7 +29,14 @@ class TaskOnBoarding {
           title: "Task Tutorial",
           content: "Click the script task icon.",
           placement: "right",
-          delay: 500
+          delay: 500,
+          showNextButton: false,
+          showCTAButton: true,
+          ctaLabel: 'Next',
+          onCTA: function () {
+            hopscotch.endTour(true)
+            self.parent.launchScriptTaskForm()
+          }
         }
       ],
       showCloseButton: true,
@@ -79,8 +86,15 @@ class TaskOnBoarding {
         {
           target: self.parent.queryByHook('mode-button'),
           title: "Task Tutorial",
-          content: 'Click on "Create Script" to go on with the tutorial.',
-          placement: "top"
+          content: 'Click on "Create Script" to add a script to this task.',
+          placement: "top",
+          showNextButton: false,
+          showCTAButton: true,
+          ctaLabel: 'Next',
+          onCTA: function () {
+            hopscotch.endTour(true)
+            self.parent.scriptSelection.onClickModeButton()
+          }
         }
       ],
       showCloseButton: true,
@@ -110,7 +124,14 @@ class TaskOnBoarding {
           target: self.parent.queryByHook('confirm'),
           title: "Task Tutorial",
           content: "Click here to finish your task creation.",
-          placement: "top"
+          placement: "top",
+          showNextButton: false,
+          showCTAButton: true,
+          ctaLabel: 'Done',
+          onCTA: function () {
+            hopscotch.endTour(true)
+            self.parent.submit()
+          }
         }
       ],
       showCloseButton: true,

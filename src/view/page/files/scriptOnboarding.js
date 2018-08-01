@@ -60,7 +60,14 @@ class ScriptOnBoarding {
           target: self.parent.queryByHook('confirm'),
           title: "Script Tutorial",
           content: "Click here to create your new script.",
-          placement: "top"
+          placement: "top",
+          showNextButton: false,
+          showCTAButton: true,
+          ctaLabel: 'Next',
+          onCTA: function () {
+            hopscotch.endTour(true)
+            self.parent.submitForm()
+          }
         },
       ],
       showCloseButton: true,

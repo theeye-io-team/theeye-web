@@ -132,6 +132,7 @@ module.exports = View.extend({
             <img src="/images/register/logo_invap.png" alt="">
             <img src="/images/register/logo_Rappi.png" alt="">
             <img src="/images/register/logo_frontec.png" alt="">
+            <img src="/images/register/logo_bgh.png" alt="">
           </div>
         </div>
       </div>

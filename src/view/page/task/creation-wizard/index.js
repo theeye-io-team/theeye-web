@@ -52,11 +52,7 @@ const TaskCreationWizard = View.extend({
   </div>
   `,
   events: {
-    'click button[data-hook=script]': function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-      this.createFormTask( new ScriptTask() )
-    },
+    'click button[data-hook=script]': 'launchScriptTaskForm',
     'click button[data-hook=scraper]': function (event) {
       event.preventDefault()
       event.stopPropagation()
@@ -72,6 +68,13 @@ const TaskCreationWizard = View.extend({
       event.stopPropagation()
       this.createFormTask( new DummyTask() )
     }
+  },
+  launchScriptTaskForm: function (event) {
+    if (event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    this.createFormTask(new ScriptTask())
   },
   render () {
     this.renderWithTemplate(this)

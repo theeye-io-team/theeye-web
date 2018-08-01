@@ -56,8 +56,10 @@ module.exports = SelectView.extend({
     'click button[data-hook=mode-button]':'onClickModeButton'
   },
   onClickModeButton (event) {
-    event.preventDefault()
-    event.stopPropagation()
+    if (event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
 
     let file
     if (!this.value) {
