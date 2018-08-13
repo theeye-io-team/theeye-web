@@ -121,10 +121,10 @@ const DummyCollapsibleRow = TaskCollapsibleRow.extend({
       fn: () => TaskConstants.TYPE_DUMMY
     },
     type_icon: {
-      fn: () => 'fa fa-terminal'
+      fn: () => 'fa fa-list-ul'
     },
     header_type_icon: {
-      fn: () => 'circle fa fa-terminal dummy-color'
+      fn: () => 'circle fa fa-list-ul dummy-color'
     }
   },
   renderCollapsedContent () {

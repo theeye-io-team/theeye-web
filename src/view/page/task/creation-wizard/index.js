@@ -42,7 +42,7 @@ const TaskCreationWizard = View.extend({
         </div>
         <div class="col-xs-3">
           <button data-hook="dummy" class="btn btn-default">
-            <i class="icons icons-dummy fa fa-terminal"></i>
+            <i class="icons icons-dummy fa fa-list-ul"></i>
           </button>
           <h2>Input<span data-hook="dummy-help"></span></h2>
         </div>

@@ -18,7 +18,7 @@ module.exports = View.extend({
         </div>
         <div class="col-xs-2">
           <button data-hook="input" class="btn btn-default">
-            <i class="icons icons-scraper fa fa-terminal"></i>
+            <i class="icons icons-scraper fa fa-list"></i>
           </button>
           <h2>Text Input
             <span data-hook="webhook-help"></span>

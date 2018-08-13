@@ -17,6 +17,31 @@ const emptyCallback = () => {}
 
 const logger = require('lib/logger')('actions:tasks')
 
+/**
+ * @param {Object} data
+ * @param {Function} next
+ */
+const create = function (data, next) {
+  next || (next = emptyCallback)
+  const task = TaskModel.Factory(data)
+  XHR.send({
+    url: task.urlRoot,
+    method: 'POST',
+    jsonData: task.serialize(),
+    headers: {
+      Accept: 'application/json;charset=UTF-8'
+    },
+    done (response, xhr) {
+      task.set(response)
+      App.state.tasks.add(task, { merge: true })
+      next(null, task)
+    },
+    error (response, xhr) {
+      next(new Error())
+    }
+  })
+}
+
 module.exports = {
   nodeWorkflow (node) {
     App.navigate('/admin/workflow/' + node)
@@ -61,31 +86,12 @@ module.exports = {
     })
     hosts.forEach(host => {
       let taskData = assign({},data,{ host_id: host })
-      this.create(taskData,done)
+      create(taskData,done)
     })
   },
-  /**
-   * @param {Object} data
-   * @param {Function} next
-   */
-  create (data, next) {
-    next || (next = emptyCallback)
-    const task = TaskModel.Factory(data)
-    XHR.send({
-      url: task.urlRoot,
-      method: 'POST',
-      jsonData: task.serialize(),
-      headers: {
-        Accept: 'application/json;charset=UTF-8'
-      },
-      done (response,xhr) {
-        task.set(response)
-        App.state.tasks.add(task,{ merge: true })
-        next(null,task)
-      },
-      error (response,xhr) {
-        next(new Error())
-      },
+  create (data) {
+    create(data, function () {
+      App.state.events.fetch()
     })
   },
   remove (id) {
