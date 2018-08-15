@@ -1,7 +1,6 @@
 import App from 'ampersand-app'
 import bootbox from 'bootbox'
 import View from 'ampersand-view'
-import TaskActions from 'actions/task'
 import InputView from 'components/input-view'
 import TextareaView from 'components/input-view/textarea'
 import SelectView from 'components/select2-view'
@@ -122,14 +121,14 @@ module.exports = TaskFormView.extend({
         ],
         visible: false,
         value: this.model.triggers,
-        tests: [
-          (values) => {
-            if (values.length===0) return
-            if (this.hasDynamicArguments()) {
-              return HelpTexts.task.cannot_trigger
-            }
-          }
-        ]
+        //tests: [
+        //  (values) => {
+        //    if (values.length===0) return
+        //    if (this.hasDynamicArguments()) {
+        //      return HelpTexts.task.cannot_trigger
+        //    }
+        //  }
+        //]
       }),
       new SelectView({
         visible: false,
@@ -232,9 +231,9 @@ module.exports = TaskFormView.extend({
 
     let data = this.prepareData(this.data)
     if (!this.model.isNew()) {
-      TaskActions.update(this.model.id, data)
+      App.actions.task.update(this.model.id, data)
     } else {
-      TaskActions.createMany(data.hosts, data)
+      App.actions.task.createMany(data.hosts, data)
     }
 
     next(null,true)

@@ -66,7 +66,7 @@ module.exports = AmpersandState.extend({
     })
 
     this.listenTo(tasks, 'reset', () => {
-      this.groupedTasks.reset(tasks.models)
+      this.groupedTasks.reset(tasks.models.filter(m => !m.workflow_id))
     })
 
     this.listenTo(tasks, 'change:workflow_id', (task) => {

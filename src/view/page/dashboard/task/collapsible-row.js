@@ -4,21 +4,84 @@ import View from 'ampersand-view'
  * tasks rows
  */
 module.exports = View.extend({
-  template: require('./row.hbs'),
+  template: `
+    <div class="taskRow">
+      <div class="tasks-container panel panel-default">
+        <div class="panel-heading"
+          role="tab"
+          data-hook="panel-heading"> <!-- Collapse Heading Container { -->
+          <h4 class="panel-title-icon"><i data-hook="header-icon"></i></h4>
+          <h4 class="panel-title">
+            <span class="collapsed"
+              data-hook="collapse-toggle"
+              data-toggle="collapse"
+              data-parent="#task-accordion"
+              href="#unbinded"
+              aria-expanded="false"
+              aria-controls="unbinded">
+              <div class="panel-title-content">
+    
+                <span class="panel-item name">
+                  <span data-hook="name" title=""></span>
+                  <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
+                </span>
+    
+                <div class="panel-item icons dropdown">
+                  <button class="btn dropdown-toggle btn-primary"
+                    type="button"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="true">
+                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                  </button>
+                  <ul data-hook="buttons-container" class="dropdown-menu"></ul>
+                </div>
+    
+                <!-- RUN TASK BUTTON -->
+                <div data-hook="execute-button-container" class="panel-item icons run-task-icon">
+                </div>
+              </div>
+            </span>
+          </h4>
+        </div> <!-- } END Collapse Heading Container -->
+        <!-- Collapsed Container { -->
+        <div data-hook="collapse-container"
+          id="unbinded"
+          class="panel-collapse collapse"
+          aria-labelledby="unbinded"
+          role="tabpanel">
+          <div class="panel-body" data-hook="collapse-container-body"> </div>
+        </div>
+        <!-- } END Collapsed Container -->
+      </div>
+    </div>
+  `,
   props: {
-    show: ['boolean',false,true]
+    show: ['boolean', false, true]
   },
   derived: {
-    collapsedHeaderId: {
-      deps: ['model.id'],
+    row_text: {
+      deps: ['model.name'],
       fn () {
-        return `collapse_heading_${this.model.id}`
+        return this.model.name
       }
     },
-    collapseContainerId: {
+    collapse_header_id: {
+      deps: ['model.id'],
+      fn () {
+        return `collapse_header_${this.model.id}`
+      }
+    },
+    collapse_container_id: {
       deps: ['model.id'],
       fn () {
         return `collapse_container_${this.model.id}`
+      }
+    },
+    collapse_toggle_href: {
+      deps: ['collapse_container_id'],
+      fn () {
+        return `#${this.collapse_container_id}`
       }
     },
     description: {
@@ -47,7 +110,36 @@ module.exports = View.extend({
     }
   },
   bindings: {
-    'model.name': { hook: 'name' },
+    collapse_toggle_href: {
+      hook: 'collapse-toggle',
+      type: 'attribute',
+      name: 'href'
+    },
+    collapse_header_id: [{
+      hook: 'panel-heading',
+      type: 'attribute',
+      name: 'id'
+    },{
+      hook: 'collapse-container',
+      type: 'attribute',
+      name: 'aria-labelledby'
+    }],
+    collapse_container_id: [{
+      hook: 'collapse-toggle',
+      type: 'attribute',
+      name: 'aria-controls'
+    },{
+      hook: 'collapse-container',
+      type: 'attribute',
+      name: 'id'
+    }],
+    row_text: [{
+      hook: 'name'
+    },{
+      hook: 'name',
+      type: 'attribute',
+      name: 'title'
+    }],
     type_icon: {
       type: 'attribute',
       name: 'class',

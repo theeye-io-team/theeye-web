@@ -3,7 +3,7 @@
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import Collection from 'ampersand-collection'
-import { DinamicArgument as ScriptArgument } from 'models/task/dinamic-argument'
+import { DinamicArgument as TaskArgument } from 'models/task/dinamic-argument'
 import FieldConstants from 'constants/field'
 import HelpIcon from 'components/help-icon'
 
@@ -14,10 +14,10 @@ import ArgumentView from './argument'
 module.exports = View.extend({
   template: `
 	  <div class="form-group">
-      <label class="col-sm-3 control-label" data-hook="label">Script Arguments</label>
+      <label class="col-sm-3 control-label" data-hook="label">Input Arguments</label>
       <div class="col-sm-9">
         <div style="padding-bottom: 15px;">
-          <button data-hook="add-script-argument"
+          <button data-hook="add-argument"
             title="add new argument"
             class="btn btn-default"> Add arguments <i class="fa fa-plus"></i>
           </button>
@@ -44,21 +44,21 @@ module.exports = View.extend({
   },
   props: {
     visible: ['boolean',false,true],
-    scriptArguments: 'collection',
-    name: ['string',false,'scriptArguments'],
-    label: ['string',false,'Script Arguments']
+    taskArguments: 'collection',
+    name: ['string',false,'taskArguments'],
+    label: ['string',false,'Task Arguments']
   },
   initialize (options) {
     // copy collection
-    this.scriptArguments = new Collection(options.value.serialize(), {
+    this.taskArguments = new Collection(options.value.serialize(), {
       parent: this,
-      model: ScriptArgument,
+      model: TaskArgument,
       comparator: 'order'
     })
     View.prototype.initialize.apply(this,arguments)
   },
   events: {
-    'click [data-hook=add-script-argument]':'onClickAddScriptArgument',
+    'click [data-hook=add-argument]':'onClickAddScriptArgument',
   },
   onClickAddScriptArgument (event) {
     event.preventDefault()
@@ -87,13 +87,13 @@ module.exports = View.extend({
     this.renderWithTemplate(this)
 
     this.renderCollection(
-      this.scriptArguments,
+      this.taskArguments,
       ArgumentView,
       this.query('ul')
     )
 
     // when model removed change all arguments order to its new index
-    this.listenTo(this.scriptArguments,'remove',this.onArgumentRemoved)
+    this.listenTo(this.taskArguments,'remove',this.onArgumentRemoved)
 
     this.renderSubview(
       new HelpIcon({
@@ -103,38 +103,38 @@ module.exports = View.extend({
     )
   },
   onArgumentRemoved (argument) {
-    this.scriptArguments.models.forEach((arg,index) => {
+    this.taskArguments.models.forEach((arg,index) => {
       arg.order = index
     })
   },
   onArgumentAdded (argument) {
     // get the last id + 1
-    if (this.scriptArguments.length===0) {
+    if (this.taskArguments.length===0) {
       argument.id = 1
     } else {
-      // scriptArguments is not sorted by id
-      argument.id = this.scriptArguments.reduce((max,arg) => {
+      // taskArguments is not sorted by id
+      argument.id = this.taskArguments.reduce((max,arg) => {
         return (arg.id>=max) ? arg.id : max
       },1) + 1 // starting from id 1 , get the last + 1
     }
 
-    argument.order = this.scriptArguments.length
+    argument.order = this.taskArguments.length
 
     // fixed arguments does not has a label
     if (argument.type===FieldConstants.TYPE_FIXED) {
-      argument.label = `FixedArg${this.scriptArguments.length}`
+      argument.label = `FixedArg${this.taskArguments.length}`
       argument.readonly = true
     }
 
-    this.scriptArguments.add( new ScriptArgument(argument) )
-    this.trigger('change:scriptArguments')
+    this.taskArguments.add( new TaskArgument(argument) )
+    this.trigger('change:taskArguments')
   },
   /**
    * @param {Mixed} value array of objects/models or a collection
    */
   setValue (value) {
     if (value.isCollection) value = value.serialize()
-    this.scriptArguments.reset(value)
+    this.taskArguments.reset(value)
   },
   derived: {
     valid: {
@@ -144,9 +144,9 @@ module.exports = View.extend({
     },
     value: {
       cache: false,
-      deps: ['scriptArguments'],
+      deps: ['taskArguments'],
       fn () {
-        return this.scriptArguments.map(arg => arg.serialize())
+        return this.taskArguments.map(arg => arg.serialize())
       }
     }
   }

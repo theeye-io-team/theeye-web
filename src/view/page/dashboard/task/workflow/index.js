@@ -5,7 +5,8 @@ import EditWorkflowButton from 'view/page/workflow/edit-button'
 import WorkflowActions from 'actions/workflow'
 import CollapsibleRow from '../collapsible-row'
 import ExecButton from '../exec-button'
-import TaskRowView from '../task'
+import TaskJobRow from '../task/collapse/job'
+import moment from 'moment'
 
 module.exports = CollapsibleRow.extend({
   derived: {
@@ -24,12 +25,11 @@ module.exports = CollapsibleRow.extend({
   },
   onClickToggleCollapse (event) {
     WorkflowActions.populate(this.model)
-    return
   },
   renderCollapsedContent () {
     this.renderCollection(
-      this.model.tasks,
-      TaskRowView,
+      this.model.jobs,
+      WorkflowJobRowView,
       this.queryByHook('collapse-container-body')
     )
   },
@@ -48,21 +48,71 @@ module.exports = CollapsibleRow.extend({
   }
 })
 
-const ExecWorkflowButton = ExecButton.extend({
-  render () {
-    ExecButton.prototype.render.apply(this, arguments)
-    this.listenToAndRun(this.model,'change:lifecycle',() => { })
+const WorkflowJobRowView = CollapsibleRow.extend({
+  derived: {
+    row_text: {
+      deps: ['model.creation_date'],
+      fn () {
+        if (!this.model.user) { return '' }
+
+        let mdate = moment(this.model.creation_date)
+        let uname = this.model.user.username
+
+        let text = [
+          uname,
+          ' executed on ',
+          mdate.format('MMMM Do YYYY, HH:mm:ss Z'),
+        ].join('')
+        return text
+      }
+    },
+    hostname: {
+      fn: () => ''
+    },
+    type: {
+      fn: () => 'workflow'
+    },
+    type_icon: {
+      fn: () => 'fa fa-sitemap'
+    },
+    header_type_icon: {
+      fn: () => 'circle fa fa-sitemap workflow-color'
+    }
   },
-  onClickExecute (event) {
+  renderCollapsedContent () {
+    const jobRows = this.renderCollection(
+      this.model.jobs,
+      TaskJobDescriptiveRow,
+      this.queryByHook('collapse-container-body'),
+      {
+        reverse: true
+      }
+    )
+  }
+})
+
+const TaskJobDescriptiveRow = TaskJobRow.extend({
+  derived: {
+    row_title: {
+      deps: ['model.name'],
+      fn () {
+        return this.model.name
+      }
+    }
+  }
+})
+
+const ExecWorkflowButton = ExecButton.extend({
+  onClick (event) {
     event.stopPropagation()
     event.preventDefault()
-
     WorkflowActions.triggerExecution(this.model)
+    return false
   }
 })
 
 const WorkflowButtonsView = View.extend({
-  template: ` <div> <span data-hook="edit-button"> </span> </div> `,
+  template: `<div><span data-hook="edit-button"></span></div>`,
   render () {
     this.renderWithTemplate(this)
 

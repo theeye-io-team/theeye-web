@@ -4,10 +4,10 @@ import isURL from 'validator/lib/isURL'
 import isMongoId from 'validator/lib/isMongoId'
 import TaskConstants from 'constants/task'
 import LIFECYCLE from 'constants/lifecycle'
+import Schema from './schema'
 
 //import { Model as Host } from 'models/host'
 
-const Job = require('models/job')
 const Template = require('./template')
 const config = require('config')
 
@@ -34,8 +34,7 @@ const Script = Template.Script.extend({
   props: {
     hostname: 'string',
     host_id: 'string',
-    template_id: 'string',
-    lastjob_id: 'string'
+    template_id: 'string'
   },
   derived: {
     formatted_tags: formattedTags(),
@@ -46,9 +45,9 @@ const Script = Template.Script.extend({
       }
     },
     canBatchExecute: {
-      deps: ['lastjob', 'hasDinamicArguments'],
+      deps: ['hasDinamicArguments'],
       fn () {
-        return !(LIFECYCLE.inProgress(this.lastjob.lifecycle) || this.hasDinamicArguments)
+        return !this.hasDinamicArguments
       }
     },
     hasTemplate: {
@@ -65,17 +64,15 @@ const Script = Template.Script.extend({
     }
   },
   children: {
-    lastjob: Job.ScriptJob,
-    template: Template.Script,
+    template: Template.Script
   },
   serialize () {
     var serial = Template.Script.prototype.serialize.apply(this,arguments)
     serial.template = this.template ? this.template.id : null
     serial.host = this.host_id
     serial.script = this.script_id
-    delete serial.lastjob
     return serial
-  }
+  },
 })
 
 const Scraper = Template.Scraper.extend({
@@ -83,8 +80,7 @@ const Scraper = Template.Scraper.extend({
   props: {
     hostname: 'string',
     host_id: 'string',
-    template_id: 'string',
-    lastjob_id: 'string'
+    template_id: 'string'
   },
   derived: {
     formatted_tags: formattedTags(),
@@ -114,23 +110,20 @@ const Scraper = Template.Scraper.extend({
     }
   },
   children: {
-    lastjob: Job.ScraperJob,
     template: Template.Scraper,
   },
   serialize () {
     var serial = Template.Scraper.prototype.serialize.apply(this,arguments)
     serial.template = this.template ? this.template.id : null
     serial.host = this.host_id
-    delete serial.lastjob
     return serial
-  }
+  },
 })
 
 const Approval = Template.Approval.extend({
   urlRoot,
   props: {
-    template_id: 'string',
-    lastjob_id: 'string'
+    template_id: 'string'
   },
   derived: {
     formatted_tags: () => {
@@ -166,22 +159,19 @@ const Approval = Template.Approval.extend({
     }
   },
   children: {
-    lastjob: Job.ApprovalJob,
     template: Template.Approval,
   },
   serialize () {
     var serial = Template.Approval.prototype.serialize.apply(this,arguments)
     serial.template = this.template ? this.template.id : null
-    delete serial.lastjob
     return serial
-  }
+  },
 })
 
 const Dummy = Template.Dummy.extend({
   urlRoot,
   props: {
-    template_id: 'string',
-    lastjob_id: 'string'
+    template_id: 'string'
   },
   derived: {
     formatted_tags: () => {
@@ -217,13 +207,11 @@ const Dummy = Template.Dummy.extend({
     }
   },
   children: {
-    lastjob: Job.DummyJob,
     template: Template.Dummy,
   },
   serialize () {
     var serial = Template.Dummy.prototype.serialize.apply(this,arguments)
     serial.template = this.template ? this.template.id : null
-    delete serial.lastjob
     return serial
   }
 })
@@ -267,6 +255,19 @@ const Collection = AppCollection.extend({
   }
 })
 
+exports.Task = Schema.extend({
+  session: {
+    _all: 'object' // keep properties returned by the server as is
+  },
+  urlRoot,
+  mutate () {
+    return new Factory(this._all)
+  },
+  parse (attrs) {
+    this._all = attrs
+    return attrs
+  }
+})
 exports.Scraper = Scraper
 exports.Script = Script
 exports.Approval = Approval

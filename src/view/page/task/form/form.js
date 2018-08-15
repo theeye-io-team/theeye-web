@@ -5,7 +5,10 @@ import FieldConstants from 'constants/field'
 
 export default FormView.extend({
   focus () {
-    this.query('input[name=name]').focus()
+    const eles = this.queryAll('.form-control')
+    if (eles.length==0) { return }
+    eles[0].autofocus = true
+    eles[0].focus()
   },
   addHelpIcon (field) {
     const view = this._fieldViews[field]

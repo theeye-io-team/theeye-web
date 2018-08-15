@@ -38,10 +38,10 @@ class EmitterFactory {
         break
       //case 'ResourceMonitor': // monitors with config subdocument
       case 'Resource': // monitors with config subdocument
-        EmitterClass = App.Models.Resource
+        EmitterClass = App.Models.Resource.Model
         break
       case 'Webhook': // Incomming Webhook
-        EmitterClass = App.Models.Webhook
+        EmitterClass = App.Models.Webhook.Model
         break
     }
 
@@ -191,8 +191,8 @@ const EmitterCollection = Collection.extend({
     const isModel =
       model instanceof App.Models.Task.Script ||
       model instanceof App.Models.Task.Scraper ||
-      model instanceof App.Models.Resource ||
-      model instanceof App.Models.Webhook
+      model instanceof App.Models.Resource.Model ||
+      model instanceof App.Models.Webhook.Model
     return isModel
   }
 })

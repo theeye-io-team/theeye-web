@@ -384,7 +384,7 @@ module.exports = View.extend({
 
     this.listenToAndRun(App.state.searchbox, 'change:search', search)
 
-    TaskActions.checkPedingApprovals()
+    JobActions.checkPedingApprovals()
   },
   renderPlusButton () {
     this.plusButton = new PlusMenuButton()

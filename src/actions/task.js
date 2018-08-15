@@ -4,43 +4,17 @@ import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 import TaskModel from 'models/task'
 import TaskConstants from 'constants/task'
-import LifecycleConstants from 'constants/lifecycle'
+import TaskRouter from 'router/task'
 import assign from 'lodash/assign'
 import after from 'lodash/after'
 import OnboardingActions from 'actions/onboarding'
 import WorkflowActions from 'actions/workflow'
-import {eachSeries} from 'async'
-import {ExecApprovalTask} from 'view/page/dashboard/task/task/exec-task.js'
 import config from 'config'
 import FileSaver from 'file-saver'
 const emptyCallback = () => {}
+import { ExecTask, ExecApprovalTask } from 'view/page/dashboard/task/task/exec-task.js'
 
 const logger = require('lib/logger')('actions:tasks')
-
-/**
- * @param {Object} data
- * @param {Function} next
- */
-const create = function (data, next) {
-  next || (next = emptyCallback)
-  const task = TaskModel.Factory(data)
-  XHR.send({
-    url: task.urlRoot,
-    method: 'POST',
-    jsonData: task.serialize(),
-    headers: {
-      Accept: 'application/json;charset=UTF-8'
-    },
-    done (response, xhr) {
-      task.set(response)
-      App.state.tasks.add(task, { merge: true })
-      next(null, task)
-    },
-    error (response, xhr) {
-      next(new Error())
-    }
-  })
-}
 
 module.exports = {
   nodeWorkflow (node) {
@@ -56,7 +30,7 @@ module.exports = {
         if (task.workflow_id) {
           WorkflowActions.updateAcl(task.workflow_id)
         }
-        bootbox.alert('Task Updated')
+        App.state.alerts.success('Success', 'Tasks Updated')
         App.state.events.fetch()
       },
       error: () => {
@@ -98,7 +72,7 @@ module.exports = {
     const task = App.state.tasks.get(id)
     task.destroy({
       success () {
-        bootbox.alert('Task Deleted')
+        App.state.alerts.success('Success', 'Tasks Removed.')
         App.state.tasks.remove( task )
         App.state.events.fetch()
       }
@@ -112,6 +86,8 @@ module.exports = {
         script.fetch()
       }
     }
+
+    task.fetchJobs(function () { return })
   },
   massiveDelete (tasks) {
     App.state.loader.visible = true
@@ -145,23 +121,6 @@ module.exports = {
       })
     })
   },
-  checkPedingApprovals () {
-    const pendingApprovalTasks = App.state.tasks.models.filter((task) => {
-      var isPending = (
-        task.type === TaskConstants.TYPE_APPROVAL &&
-        task.approver_id === App.state.session.user.id &&
-        task.lastjob &&
-        task.lastjob.lifecycle === LifecycleConstants.ONHOLD
-      )
-
-      return isPending
-    })
-
-    eachSeries(pendingApprovalTasks, function (task, done) {
-      var execApprovalTask = new ExecApprovalTask({model: task})
-      execApprovalTask.execute(true, done)
-    })
-  },
   /**
    *
    * @summary export task recipe
@@ -191,5 +150,48 @@ module.exports = {
         return next(new Error(msg))
       }
     })
+  },
+  execute (task) {
+    var execTask
+    if (!App.state.session.licenseExpired) {
+      if (task.type === TaskConstants.TYPE_APPROVAL) {
+        execTask = new ExecApprovalTask({ model: task })
+      } else {
+        execTask = new ExecTask({ model: task })
+      }
+      execTask.execute()
+    } else {
+      bootbox.alert('Your license has expired! </br> Please contact your service provider to activate the product again.')
+    }
+  },
+  edit (id) {
+    // route edit file action
+    let router = new TaskRouter()
+    router.route('edit', { id })
   }
+}
+
+/**
+ * @param {Object} data
+ * @param {Function} next
+ */
+const create = function (data, next) {
+  next || (next = emptyCallback)
+  const task = TaskModel.Factory(data)
+  XHR.send({
+    url: task.urlRoot,
+    method: 'POST',
+    jsonData: task.serialize(),
+    headers: {
+      Accept: 'application/json;charset=UTF-8'
+    },
+    done (response, xhr) {
+      task.set(response)
+      App.state.tasks.add(task, { merge: true })
+      next(null, task)
+    },
+    error (response, xhr) {
+      next(new Error())
+    }
+  })
 }

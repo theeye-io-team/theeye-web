@@ -70,7 +70,7 @@ module.exports = View.extend({
     }
   },
   template: `
-	  <div class="workflow-builder-component form-group">
+    <div class="workflow-builder-component form-group">
       <label class="col-sm-3 control-label" data-hook="label"> Workflow Events </label>
       <div class="col-sm-9">
         <div style="padding-bottom: 15px;">
@@ -119,24 +119,24 @@ module.exports = View.extend({
       })
   },
   onClearButton () {
-		bootbox.confirm({
-			title: 'Workflow action',
-			message: 'Remove everything?',
-			buttons: {
-				confirm: {
-					label: 'Yes, please',
-					className: 'btn-danger'
-				},
-				cancel: {
-					label: 'Cancel',
-					className: 'btn-default'
-				},
-			},
-			callback: confirm => {
-				if (!confirm) { return }
+    bootbox.confirm({
+      title: 'Workflow action',
+      message: 'Remove everything?',
+      buttons: {
+        confirm: {
+          label: 'Yes, please',
+          className: 'btn-danger'
+        },
+        cancel: {
+          label: 'Cancel',
+          className: 'btn-default'
+        },
+      },
+      callback: confirm => {
+        if (!confirm) { return }
         this.clear()
-			}
-		})
+      }
+    })
   },
   clear () {
     var graph = this.graph
@@ -146,24 +146,53 @@ module.exports = View.extend({
   onTapNode (event) {
     var node = event.cyTarget.data()
 
-		bootbox.confirm({
-			title: 'Node action',
-			message: 'Delete the node? its successors will be deleted too.',
-			buttons: {
-				confirm: {
-					label: 'Yes, please',
-					className: 'btn-danger'
-				},
-				cancel: {
-					label: 'Better keep it',
-					className: 'btn-default'
-				},
-			},
-			callback: confirm => {
-				if (!confirm) { return }
+    if (this.contextMenu) {
+      this.contextMenu.remove()
+    }
+
+    if (/Task$/.test(node.value._type) === true) {
+      var menu = new Menu({})
+      menu.render()
+      menu.el.style.position = 'absolute'
+      menu.el.style.top = (event.cyRenderedPosition.y + 120) + 'px'
+      menu.el.style.left = event.cyRenderedPosition.x + 'px'
+
+      this.el.appendChild(menu.el)
+      this.registerSubview(menu)
+      this.contextMenu = menu
+
+      // this is a task node
+      menu.on('click:edit', () => {
+        menu.remove()
+        App.actions.task.edit(node.id)
+      })
+      menu.on('click:remove', () => {
+        menu.remove()
+        this.removeNodeDialog(node)
+      })
+    } else {
+      this.removeNodeDialog(node)
+    }
+  },
+  removeNodeDialog (node) {
+    bootbox.confirm({
+      title: 'Node action',
+      message: 'Delete the node? its successors will be deleted too.',
+      buttons: {
+        confirm: {
+          label: 'Yes, please',
+          className: 'btn-danger'
+        },
+        cancel: {
+          label: 'Better keep it',
+          className: 'btn-default'
+        },
+      },
+      callback: confirm => {
+        if (!confirm) { return }
         this.removeNode(node.id)
-			}
-		})
+      }
+    })
   },
   removeNode (id) {
     const graph = this.graph
@@ -342,3 +371,36 @@ const WorkflowBuilderView = FormView.extend({
     }
   }
 })
+
+const Menu = View.extend({
+  template: `
+    <div class="dropdown">
+      <ul class="dropdown-menu" style="display: block;">
+        <li><a data-hook="edit" href="#">Edit</a></li>
+        <li><a data-hook="remove" href="#">Remove</a></li>
+      </ul>
+    </div>
+  `,
+  events: {
+    'click [data-hook=edit]': 'onClickEdit',
+    'click [data-hook=remove]': 'onClickRemove'
+  },
+  onClickEdit (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    this.trigger('click:edit')
+  },
+  onClickRemove (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    this.trigger('click:remove')
+  }
+})
+
+const pointerPosition = (e) => {
+  var posx = e.clientX
+  var posy = e.clientY
+  return { x: posx, y: posy }
+}

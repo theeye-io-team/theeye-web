@@ -2,35 +2,82 @@ import App from 'ampersand-app'
 import State from 'ampersand-state'
 const runTaskWithArgsMessage = require('./run-task-message.hbs')
 import bootbox from 'bootbox'
+import TaskConstants from 'constants/task'
 
 import DinamicForm from 'components/dinamic-form'
 import Modalizer from 'components/modalizer'
 
-const parseTaskArgs = (taskArgs) => {
-  taskArgs.forEach(function (arg) {
-    switch (arg.type) {
-      case 'date':
-        if (Array.isArray(arg.value) && arg.value.length === 1) {
-          arg.value = arg.value[0]
-          arg.renderValue = arg.value
-        }
-        break
-      case 'file':
-        arg.value = arg.value.dataUrl
-        arg.renderValue = arg.value.name
-        break
-      default:
-        arg.renderValue = arg.value
-        break
-    }
-  })
-
-  return taskArgs
-}
-
-const ExecTask = State.extend({
+const BaseExec = State.extend({
   props: {
     model: 'state'
+  },
+  parseArgs (args) {
+    args.forEach(function (arg) {
+      switch (arg.type) {
+        case 'date':
+          if (Array.isArray(arg.value) && arg.value.length === 1) {
+            arg.value = arg.value[0]
+            arg.renderValue = arg.value
+          }
+          break
+        case 'file':
+          arg.value = arg.value.dataUrl
+          arg.renderValue = arg.value.name
+          break
+        default:
+          arg.renderValue = arg.value
+          break
+      }
+    })
+
+    return args
+  }
+})
+
+const ExecTask = BaseExec.extend({
+  getDinamicOutputs (next) {
+    if (this.model.hasDinamicOutputs) {
+      const form = new DinamicForm({
+        fieldsDefinitions: this.model.output_parameters.models
+      })
+
+      const modal = new Modalizer({
+        buttons: true,
+        confirmButton: 'Run',
+        title: `Run ${this.model.name} with dynamic arguments`,
+        bodyView: form
+      })
+
+      this.listenTo(modal, 'shown', () => { form.focus() })
+
+      this.listenTo(modal, 'hidden', () => {
+        form.remove()
+        modal.remove()
+      })
+
+      this.listenTo(modal, 'confirm', () => {
+        /**
+         * @param {Object} args a {key0: value0, key1: value1, ...} object with each task argument
+         */
+        form.submit((err, args) => {
+          const orders = Object.keys(args)
+          next(
+            orders.map((order) => {
+              return {
+                order: parseInt(order),
+                label: this.model.output_parameters.get(parseInt(order), 'order').label,
+                value: args[order],
+                type: this.model.output_parameters.get(parseInt(order), 'order').type
+              }
+            })
+          )
+          modal.hide()
+        })
+      })
+      modal.show()
+    } else {
+      next([])
+    }
   },
   getDinamicArguments (next) {
     if (this.model.hasDinamicArguments) {
@@ -76,44 +123,48 @@ const ExecTask = State.extend({
       next([])
     }
   },
-  execute () {
-    if (this.model.lastjob.inProgress) {
-      const message = `Cancel <b>${this.model.name}</b> the execution of this task?
-        <a target="_blank" href="https://github.com/theeye-io/theeye-docs/blob/master/tasks/cancellation">Why this happens?</a>`
+  checkInProgress () {
+    let inProgress = this.model.jobs.models.some(job => {
+      return job.inProgress
+    })
 
+    if (inProgress) {
       bootbox.confirm({
-        message: message,
+        message: 'This task is currently under execution, do you wish to execute it again?',
         backdrop: true,
         callback: (confirmed) => {
           if (confirmed) {
-            App.actions.job.cancel(this.model.lastjob)
+            this._confirmExecution()
           }
         }
       })
     } else {
-      if (!this.model.canExecute) return
-
-      let reporting = this.model.hostIsReporting()
-      if (reporting === null) return  // cannot find the resource for this task
-      if (reporting === false) {
-        bootbox.confirm({
-          message: `
-          <h2>At this moment the host that runs this task is not reporting.</h2>
-          <h2>Would you like to queue this task for running when the host is restored?</h2>
-          `,
-          backdrop: true,
-          callback: (confirmed) => {
-            if (confirmed) this._confirmExecution()
-          }
-        })
-      } else this._confirmExecution()
+      this._confirmExecution()
     }
   },
+  execute () {
+    if (!this.model.canExecute) return
+
+    let reporting = this.model.hostIsReporting()
+    if (reporting === null) return  // cannot find the resource for this task
+    if (reporting === false) {
+      bootbox.confirm({
+        message: `
+        <h2>At this moment the host that runs this task is not reporting.</h2>
+        <h2>Would you like to queue this task for running when the host is restored?</h2>
+        `,
+        backdrop: true,
+        callback: (confirmed) => {
+          if (confirmed) this.checkInProgress()
+        }
+      })
+    } else this.checkInProgress()
+  },
   _confirmExecution () {
-    this.getDinamicArguments(taskArgs => {
+    let callback = taskArgs => {
       let message
       if (taskArgs.length > 0) {
-        taskArgs = parseTaskArgs(taskArgs)
+        taskArgs = this.parseArgs(taskArgs)
 
         message = runTaskWithArgsMessage({
           name: this.model.name,
@@ -135,94 +186,41 @@ const ExecTask = State.extend({
           }
         }
       })
-    })
+    }
+
+    if (this.model.type === TaskConstants.TYPE_DUMMY) {
+      this.getDinamicOutputs(callback)
+    } else {
+      this.getDinamicArguments(callback)
+    }
   }
 })
 
-const ExecApprovalTask = ExecTask.extend({
-  execute (showSkip, done) {
-    if (this.model.lastjob.inProgress) {
-      if (this.model.approver_id === App.state.session.user.id) {
-        this.requestApproval(showSkip, done)
-      } else {
-        this.updateApprovalRequest(done)
-      }
+const ExecApprovalTask = BaseExec.extend({
+  checkInProgress () {
+    let inProgress = this.model.jobs.models.some(job => {
+      return job.inProgress
+    })
+
+    if (inProgress) {
+      bootbox.confirm({
+        message: 'This task is currently under execution, do you wish to execute it again?',
+        backdrop: true,
+        callback: (confirmed) => {
+          if (confirmed) {
+            App.actions.job.createFromTask(this.model, [])
+          }
+        }
+      })
     } else {
       App.actions.job.createFromTask(this.model, [])
-      if (done) done()
     }
   },
-  requestApproval (showSkip, done) {
-    var message = `Approve/Reject?`
-    var buttons = {
-      reject: {
-        label: 'Reject',
-        className: 'btn btn-danger',
-        callback: () => {
-          this.getDinamicArguments(taskArgs => {
-            taskArgs = parseTaskArgs(taskArgs)
-            App.actions.job.reject(this.model.lastjob, taskArgs)
-            if (done) done()
-          })
-        }
-      },
-      approve: {
-        label: 'Approve',
-        className: 'btn btn-primary',
-        callback: () => {
-          this.getDinamicArguments(taskArgs => {
-            taskArgs = parseTaskArgs(taskArgs)
-            App.actions.job.approve(this.model.lastjob, taskArgs)
-            if (done) done()
-          })
-        }
-      }
-    }
-
-    if (showSkip) {
-      message = `<p>Task <b>${this.model.name}</b> needs your approval to continue.</p>`
-      buttons.skip = {
-        label: 'Skip',
-        className: 'btn btn-default',
-        callback: () => {
-          if (done) done()
-        }
-      }
-    }
-
-    bootbox.dialog({
-      message: message,
-      backdrop: true,
-      buttons: buttons
-    })
-  },
-  updateApprovalRequest (done) {
-    const message = `The Approval request is pending. What do you want to do?`
-
-    bootbox.dialog({
-      message: message,
-      backdrop: true,
-      buttons: {
-        cancel: {
-          label: 'Cancel request',
-          className: 'btn btn-danger',
-          callback: () => {
-            App.actions.job.cancel(this.model.lastjob)
-            if (done) done()
-          }
-        },
-        resend: {
-          label: 'Resend request',
-          className: 'btn btn-primary',
-          callback: () => {
-            App.actions.job.createFromTask(this.model, [])
-            if (done) done()
-          }
-        }
-      }
-    })
+  execute () {
+    this.checkInProgress()
   }
 })
 
+exports.BaseExec = BaseExec
 exports.ExecTask = ExecTask
 exports.ExecApprovalTask = ExecApprovalTask

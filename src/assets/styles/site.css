@@ -588,6 +588,7 @@ h3.light { color: #EEE}
 .admin-container .panel-heading .name,
 .admin-container .panel-heading .hostname {white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
 .admin-container .panel-heading .panel-item.name {float:left; padding:0px 10px 0px 10px; line-height: 28px;}
+.admin-container .panel-heading .panel-item.name .job-title {font-size: 14px;}
 .admin-container .panel-heading .panel-item.icons {float:right; text-align:right; padding:0;}
 .admin-container .panel-heading .panel-item.icons .host-menu.dropdown { display: inline-block; width: 38px; height: 32px; }
 .admin-container .panel-heading .panel-item.icons,
@@ -898,6 +899,11 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
   background-size: 36px;
   background-position: 7px 7px;
 }
+
+.dashboard .events-panel .job-container h4.panel-title {
+  padding-left: 0px;
+}
+
 .dashboard .events-panel .panel-default .panel-title-content { padding-left:0; }
 .dashboard .events-panel h3 { height: 40px; line-height: 28px;/* h3 inherits a top/bottom padding of 6 */ }
 .dashboard .events-panel .panel-item.icons .btn-icon-image {
@@ -1066,6 +1072,12 @@ a.flowchart-icon {
 .admin-container.dashboard .instructions-list-container { color:#555;padding:20px;  }
 .admin-container.dashboard .instructions-list-container .instructions-list { padding:20px; background-color:#fff; text-align:left; }
 .admin-container.dashboard .instructions-list-container .instructions-list li { padding:10px; }
+
+.admin-container.dashboard .task-exec-button .badge {
+  top: -14px;
+  right: 7px;
+  background-color: #d88e47;
+}
 
 @media (max-width: 767px) {
   .admin-container .panel-heading .panel-item.name { width:72%;padding-right:20px; }

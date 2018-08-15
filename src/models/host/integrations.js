@@ -9,7 +9,7 @@ const Ngrok = State.extend({
     last_job_id: 'string'
   },
   children: {
-    last_job: JobModels.NgrokIntegrationJob
+    last_job: JobModels.NgrokIntegration
   },
   derived: {
 		tunnel_url: {

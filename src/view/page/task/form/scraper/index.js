@@ -4,7 +4,6 @@ import App from 'ampersand-app'
 import assign from 'lodash/assign'
 import FormView from 'ampersand-form-view'
 import View from 'ampersand-view'
-import TaskActions from 'actions/task'
 import PatternInputView from './pattern-input'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
@@ -18,7 +17,7 @@ import FormButtons from 'view/buttons'
 import AdvancedToggle from 'view/advanced-toggle'
 import isURL from 'validator/lib/isURL'
 import WebhooksConstants from 'constants/webhooks'
-import TASK from 'constants/task'
+import TaskConstants from 'constants/task'
 import HelpTexts from 'language/help'
 
 import CopyTaskSelect from '../copy-task-select'
@@ -168,7 +167,7 @@ module.exports = FormView.extend({
         name: 'grace_time',
         multiple: false,
         tags: false,
-        options: TASK.GRACE_TIME.map(gt => {
+        options: TaskConstants.GRACE_TIME.map(gt => {
           return {
             id: gt.secs,
             text: gt.text
@@ -251,7 +250,10 @@ module.exports = FormView.extend({
     ]
 
     if (this.model.isNew()) {
-      const copySelect = new CopyTaskSelect({ type: TASK.TYPE_SCRAPER, visible: false })
+      const copySelect = new CopyTaskSelect({
+        type: TaskConstants.TYPE_SCRAPER,
+        visible: false
+      })
       this.fields.splice(4, 0, copySelect)
       this.listenTo(copySelect,'change',() => {
         if (copySelect.value) {
@@ -319,16 +321,16 @@ module.exports = FormView.extend({
 
     let data = this.prepareData(this.data)
     if (!this.model.isNew()) {
-      TaskActions.update(this.model.id, data)
+      App.actions.task.update(this.model.id, data)
     } else {
-      TaskActions.createMany(data.hosts, data)
+      App.actions.task.createMany(data.hosts, data)
     }
     this.trigger('submitted')
     next(null,true)
   },
   prepareData (data) {
     let f = assign({}, data)
-    f.type = TASK.TYPE_SCRAPER
+    f.type = TaskConstants.TYPE_SCRAPER
     f.timeout = Number(data.timeout)
     f.grace_time = Number(data.grace_time)
     f.status_code = Number(data.status_code)

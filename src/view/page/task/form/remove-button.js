@@ -1,6 +1,5 @@
 import View from 'ampersand-view'
 import bootbox from 'bootbox'
-import TaskActions from 'actions/task'
 import DeleteButton from '../buttons/delete'
 module.exports = DeleteButton.extend({
   template: `

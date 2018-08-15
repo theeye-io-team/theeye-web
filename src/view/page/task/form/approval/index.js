@@ -9,12 +9,12 @@ import TagsSelectView from 'view/tags-select'
 import EventsSelectView from 'view/events-select'
 import TaskConstants from 'constants/task'
 import Buttons from 'view/buttons'
-import TaskActions from 'actions/task'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 import CopyTaskSelect from '../copy-task-select'
 import RemoveButton from '../remove-button'
 import bootbox from 'bootbox'
+import HelpIcon from 'components/help-icon'
 
 module.exports = TaskFormView.extend({
   initialize (options) {
@@ -26,6 +26,7 @@ module.exports = TaskFormView.extend({
       'acl',
       'triggers',
       'task_arguments',
+      'output_parameters',
       'remove-button',
       'copy_task'
     ]
@@ -100,7 +101,14 @@ module.exports = TaskFormView.extend({
       new ArgumentsView({
         visible: false,
         name: 'task_arguments',
+        label: 'Expected input',
         value: this.model.task_arguments
+      }),
+      new ArgumentsView({
+        visible: false,
+        name: 'output_parameters',
+        label: 'Output values',
+        value: this.model.output_parameters
       })
     ]
 
@@ -137,6 +145,22 @@ module.exports = TaskFormView.extend({
     this.addHelpIcon('acl')
     this.addHelpIcon('triggers')
 
+    const taskArgumentsView = this._fieldViews['task_arguments']
+    taskArgumentsView.renderSubview(
+      new HelpIcon({
+        text: HelpTexts.task.form['approval_task_arguments']
+      }),
+      taskArgumentsView.query('label')
+    )
+
+    const outputParametersView = this._fieldViews['output_parameters']
+    outputParametersView.renderSubview(
+      new HelpIcon({
+        text: HelpTexts.task.form['approval_output_parameters']
+      }),
+      outputParametersView.query('label')
+    )
+
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)
     buttons.on('click:confirm', () => { this.submit() })
@@ -162,9 +186,9 @@ module.exports = TaskFormView.extend({
 
     let data = this.prepareData(this.data)
     if (!this.model.isNew()) {
-      TaskActions.update(this.model.id, data)
+      App.actions.task.update(this.model.id, data)
     } else {
-      TaskActions.create(data)
+      App.actions.task.create(data)
     }
 
     next(null,true)
@@ -182,7 +206,8 @@ module.exports = TaskFormView.extend({
       description: task.description,
       tags: task.tags,
       triggers: task.trigger || [],
-      task_arguments: task.task_arguments || []
+      task_arguments: task.task_arguments || [],
+      output_parameters: task.output_parameters || []
     })
   }
 })

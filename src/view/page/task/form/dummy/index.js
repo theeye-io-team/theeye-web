@@ -9,7 +9,6 @@ import TagsSelectView from 'view/tags-select'
 import EventsSelectView from 'view/events-select'
 import TaskConstants from 'constants/task'
 import Buttons from 'view/buttons'
-import TaskActions from 'actions/task'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 import CopyTaskSelect from '../copy-task-select'
@@ -39,9 +38,9 @@ module.exports = TaskFormView.extend({
         value: this.model.name,
       }),
       new ArgumentsView({
-        name: 'task_arguments',
-        label: 'Task Arguments',
-        value: this.model.task_arguments
+        name: 'output_parameters',
+        label: 'Output parameters',
+        value: this.model.output_parameters
       }),
       // advanced fields starts visible = false
       new AdvancedToggle({
@@ -130,17 +129,16 @@ module.exports = TaskFormView.extend({
 
     this.beforeSubmit()
     if (!this.valid) { return next(null, false) }
-
-    if (!this.data.task_arguments.length) {
+    if (!this.data.output_parameters.length) {
       bootbox.alert('Please add at least one argument.')
       return next(null, false)
     }
 
     let data = this.prepareData(this.data)
     if (!this.model.isNew()) {
-      TaskActions.update(this.model.id, data)
+      App.actions.task.update(this.model.id, data)
     } else {
-      TaskActions.create(data)
+      App.actions.task.createMany(data.hosts, data)
     }
 
     next(null,true)
@@ -157,7 +155,7 @@ module.exports = TaskFormView.extend({
       description: task.description,
       tags: task.tags,
       triggers: task.trigger || [],
-      task_arguments: task.task_arguments || []
+      output_parameters: task.output_parameters || []
     })
   }
 })

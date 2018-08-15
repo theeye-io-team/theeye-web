@@ -33,11 +33,11 @@ App.extend({
     this.bindDocumentEvents()
     this.initState(() => {
       App.state.loader.visible = false // app finish loading.
+      models()
+      actions()
       this.registerComponents()
       session()
       sockets()
-      models()
-      actions()
       experimentalFeatures()
     })
   },
