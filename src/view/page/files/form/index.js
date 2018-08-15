@@ -2,7 +2,6 @@ import App from 'ampersand-app'
 import assign from 'lodash/assign'
 import FormView from 'ampersand-form-view'
 import View from 'ampersand-view'
-import FileActions from 'actions/file'
 import ScriptActions from 'actions/script'
 import InputView from 'components/input-view'
 import TextareaView from 'components/input-view/textarea'
@@ -13,57 +12,6 @@ import CommonButton from 'components/common-button'
 import { EditorView } from './editor'
 import ScriptOnBoarding from '../scriptOnboarding'
 import OnboardingActions from 'actions/onboarding'
-
-const FilenameInputView = InputView.extend({
-  props: {
-    extension: ['string',false,undefined]
-  },
-  initialize () {
-    this.label = 'Filename *'
-    this.name = 'filename'
-    this.required = true
-    this.invalidClass = 'text-danger'
-    this.validityClassSelector = '.control-label'
-    this.tests = [
-      value => {
-        if (value && !this.extension) {
-          return 'Filename needs an extension'
-        }
-      }
-    ]
-    InputView.prototype.initialize.apply(this,arguments)
-
-    this.listenToAndRun(this,'change:value',() => {
-      this.onFilenameChange()
-    })
-  },
-  onFilenameChange () {
-    let fname = this.value
-
-    function extension (fname) {
-      return fname.slice((fname.lastIndexOf(".") - 1 >>> 0) + 2)
-    }
-
-    this.extension = extension(fname) || null
-  }
-})
-
-const IntroView = View.extend({
-  template: `<p class="bg-info" style="padding: 8px;">
-    <span class="label label-success">New</span>&nbsp;
-    Use the editor to type/paste your script, or just drag n'drop a file
-    <strong>into</strong> the editor. Code highlighting
-    is set when you name your script with extension.
-  </p>`
-})
-
-const ExampleBtn = CommonButton.extend({
-  initialize (options) {
-    this.title = 'Load Example'
-    this.className = 'btn btn-primary example-btn'
-    this.onClickButton = options.onClickButton
-  }
-})
 
 module.exports = FormView.extend({
   initialize (options) {
@@ -184,9 +132,9 @@ module.exports = FormView.extend({
     let file
     let data = this.prepareData(obj)
     if (!this.model.isNew()) {
-      file = FileActions.update(this.model.id, data)
+      file = App.actions.file.update(this.model.id, data)
     } else {
-      file = FileActions.create(data)
+      file = App.actions.file.create(data)
     }
 
     this.trigger('submitted', file)
@@ -209,5 +157,56 @@ module.exports = FormView.extend({
     this.setValues({
       /** select which data we need to set **/
     })
+  }
+})
+
+const FilenameInputView = InputView.extend({
+  props: {
+    extension: ['string',false,undefined]
+  },
+  initialize () {
+    this.label = 'Filename *'
+    this.name = 'filename'
+    this.required = true
+    this.invalidClass = 'text-danger'
+    this.validityClassSelector = '.control-label'
+    this.tests = [
+      value => {
+        if (value && !this.extension) {
+          return 'Filename needs an extension'
+        }
+      }
+    ]
+    InputView.prototype.initialize.apply(this,arguments)
+
+    this.listenToAndRun(this,'change:value',() => {
+      this.onFilenameChange()
+    })
+  },
+  onFilenameChange () {
+    let fname = this.value
+
+    function extension (fname) {
+      return fname.slice((fname.lastIndexOf(".") - 1 >>> 0) + 2)
+    }
+
+    this.extension = extension(fname) || null
+  }
+})
+
+const IntroView = View.extend({
+  template: `<p class="bg-info" style="padding: 8px;">
+    <span class="label label-success">New</span>&nbsp;
+    Use the editor to type/paste your script, or just drag n'drop a file
+    <strong>into</strong> the editor. Code highlighting
+    is set when you name your script with extension.
+  </p>`
+})
+
+const ExampleBtn = CommonButton.extend({
+  initialize (options) {
+    this.title = 'Load Example'
+    this.className = 'btn btn-primary example-btn'
+    this.onClickButton = options.onClickButton
   }
 })

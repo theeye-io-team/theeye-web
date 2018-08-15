@@ -1,7 +1,7 @@
+import App from 'ampersand-app'
 import View from 'ampersand-view'
 import acls from 'lib/acls'
 import lang2ext from 'lib/lang2ext'
-import FileActions from 'actions/file'
 import moment from 'moment'
 
 import State from 'ampersand-state'
@@ -192,7 +192,7 @@ const ScriptCollapsedContent = GenericCollapsedContent.extend({
 
     if (!this.script_id) return
 
-    FileActions.edit(this.script_id)
+    App.actions.file.edit(this.script_id)
 
     return false
   },
@@ -322,7 +322,7 @@ const FileCollapsedContent = GenericCollapsedContent.extend({
 
     if (!this.file_id) return
 
-    FileActions.edit(this.file_id)
+    App.actions.file.edit(this.file_id)
 
     return false
   },

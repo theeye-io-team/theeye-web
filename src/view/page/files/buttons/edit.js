@@ -1,5 +1,5 @@
+import App from 'ampersand-app'
 import PanelButton from 'components/list/item/panel-button'
-import FileActions from 'actions/file'
 
 module.exports = PanelButton.extend({
   initialize (options) {
@@ -13,7 +13,7 @@ module.exports = PanelButton.extend({
       event.preventDefault()
       event.stopPropagation()
 
-      FileActions.edit(this.model.id)
+      App.actions.file.edit(this.model.id)
     }
   }
 })

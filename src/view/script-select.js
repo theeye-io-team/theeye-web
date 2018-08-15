@@ -5,7 +5,6 @@ import SelectView from 'components/select2-view'
 import FileForm from 'view/page/files/form'
 import Modalizer from 'components/modalizer'
 import { Model as FileModel } from 'models/file'
-import FileActions from 'actions/file'
 import OnboardingActions from 'actions/onboarding'
 import SubCollection from 'ampersand-filtered-subcollection'
 
@@ -66,7 +65,7 @@ module.exports = SelectView.extend({
       file = new FileModel({ _type: 'Script' })
     } else {
       file = App.state.files.get(this.value)
-      FileActions.get(this.value)
+      App.actions.file.get(this.value)
     }
 
     const form = new FileForm({ model: file })

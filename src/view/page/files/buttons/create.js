@@ -1,7 +1,6 @@
 import View from 'ampersand-view'
 import CommonButton from 'components/common-button'
 import Modalizer from 'components/modalizer'
-import FileActions from 'actions/file'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
 import { Model as FileModel } from 'models/file'
