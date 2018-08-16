@@ -130,7 +130,7 @@ const ExecTask = BaseExec.extend({
 
     if (inProgress) {
       bootbox.confirm({
-        message: 'This task is currently under execution, do you wish to execute it again?',
+        message: `Task <b>${this.model.name}</b> is currently under execution, do you wish to execute it again?`,
         backdrop: true,
         callback: (confirmed) => {
           if (confirmed) {
@@ -204,7 +204,7 @@ const ExecApprovalTask = BaseExec.extend({
 
     if (inProgress) {
       bootbox.confirm({
-        message: 'This task is currently under execution, do you wish to execute it again?',
+        message: `Task <b>${this.model.name}</b> is currently under execution, do you wish to execute it again?`,
         backdrop: true,
         callback: (confirmed) => {
           if (confirmed) {

@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 import App from 'ampersand-app'
 import config from 'config'
@@ -27,38 +27,39 @@ import onBoarding from './onboarding'
 
 const runAllTasks = (rows) => {
   // doble check here
-  if (rows.length>0) {
+  if (rows.length > 0) {
     const tasks = rows.map(row => row.model)
 
     const boxTitle = `With great power comes great responsibility`
     const boxMessage = `You are going to run various tasks.<br> This operation cannot be canceled`
 
-		bootbox.confirm({
-			title: boxTitle,
-			message: boxMessage,
+    bootbox.confirm({
+      title: boxTitle,
+      message: boxMessage,
       backdrop: true,
-			buttons: {
-				confirm: {
-					label: 'Run All',
-					className: 'btn-danger'
-				},
-				cancel: {
-					label: 'Maybe another time...',
-					className: 'btn-default'
-				}
-			},
-			callback (confirmed) {
-				if (confirmed===true) {
+      buttons: {
+        confirm: {
+          label: 'Run All',
+          className: 'btn-danger'
+        },
+        cancel: {
+          label: 'Maybe another time...',
+          className: 'btn-default'
+        }
+      },
+      callback (confirmed) {
+        if (confirmed === true) {
+
           tasks.forEach(task => {
             if (/Workflow/.test(task._type)) {
-              WorkflowActions.run(task)
+              WorkflowActions.triggerExecution(task)
             } else {
-              JobActions.createFromTask(task)
+              TaskActions.execute(task)
             }
           })
-				}
-			}
-		})
+        }
+      }
+    })
   }
 }
 
@@ -78,19 +79,19 @@ module.exports = View.extend({
     groupedResources: 'collection',
     monitors: 'collection',
     tasks: 'collection',
-    renderStats: ['boolean',false,false],
-    renderTasks: ['boolean',false,true],
-    waitTimeout: ['number',false,null],
-    upandrunningSign: ['boolean',false,() => {
+    renderStats: ['boolean', false, false],
+    renderTasks: ['boolean', false, true],
+    waitTimeout: ['number', false, null],
+    upandrunningSign: ['boolean', false, () => {
       let enabled = config.dashboard.upandrunningSign
       return typeof enabled === 'boolean' ? enabled : true
     }]
   },
   events: {
-    'click [data-hook=up-and-running] i':'hideUpAndRunning',
+    'click [data-hook=up-and-running] i': 'hideUpAndRunning'
   },
   initialize () {
-    View.prototype.initialize.apply(this,arguments)
+    View.prototype.initialize.apply(this, arguments)
   },
   hideUpAndRunning () {
     this.$upandrunning.slideUp()
@@ -101,18 +102,18 @@ module.exports = View.extend({
   render () {
     this.renderWithTemplate()
 
-    this.listenToAndRun(App.state.dashboard,'change:resourcesDataSynced',() => {
-      if (App.state.dashboard.resourcesDataSynced===true) {
+    this.listenToAndRun(App.state.dashboard, 'change:resourcesDataSynced', () => {
+      if (App.state.dashboard.resourcesDataSynced === true) {
         this.renderMonitorsPanel()
-        this.stopListening(App.state.dashboard,'change:resourcesDataSynced')
+        this.stopListening(App.state.dashboard, 'change:resourcesDataSynced')
       }
     })
 
     if (this.renderTasks === true) {
-      this.listenToAndRun(App.state.dashboard,'change:tasksDataSynced',() => {
-        if (App.state.dashboard.tasksDataSynced===true) {
+      this.listenToAndRun(App.state.dashboard, 'change:tasksDataSynced', () => {
+        if (App.state.dashboard.tasksDataSynced === true) {
           this.renderTasksPanel()
-          this.stopListening(App.state.dashboard,'change:tasksDataSynced')
+          this.stopListening(App.state.dashboard, 'change:tasksDataSynced')
         }
       })
     } else {
@@ -158,7 +159,7 @@ module.exports = View.extend({
       this.$monitorsPanel.slideUp()
     }
   },
-  sortGroupedResouces: function() {
+  sortGroupedResouces: function () {
     if (!(this.groupedResources.length > 0)) return
 
     const failing = this.getFailingMonitors()
@@ -190,7 +191,7 @@ module.exports = View.extend({
       this.monitorsFolding.hideButton()
     }
   },
-  getFailingMonitors() {
+  getFailingMonitors () {
     return this.monitors.filter(monitor => {
       let group = this.groupedResources.find(monitor)
       if (!group) return false
@@ -203,8 +204,8 @@ module.exports = View.extend({
    *
    */
   renderMonitorsPanel () {
-    this.$upandrunning = $( this.queryByHook('up-and-running') )
-    this.$monitorsPanel = $( this.queryByHook('monitors-container') )
+    this.$upandrunning = $(this.queryByHook('up-and-running'))
+    this.$monitorsPanel = $(this.queryByHook('monitors-container'))
 
     this.renderSubview(
       new MonitorsOptions(),
@@ -216,7 +217,7 @@ module.exports = View.extend({
       MonitorRowView,
       this.queryByHook('monitors-container'),
       {
-        emptyView:MonitoringOboardingPanel
+        emptyView: MonitoringOboardingPanel
       }
     )
 
@@ -251,30 +252,33 @@ module.exports = View.extend({
       }
     })
 
-    this.listenToOnce(App.state.onboarding,'first-host-registered',() => {
+    this.listenToOnce(App.state.onboarding, 'first-host-registered', () => {
       this.onBoarding.onboardingStart()
     })
 
-    this.listenToAndRun(App.state.dashboard.groupedResources,'add change sync reset',() => {
+    this.listenToAndRun(App.state.dashboard.groupedResources, 'add change sync reset', () => {
       var monitorOptionsElem = this.queryByHook('monitor-options')
       if (App.state.dashboard.groupedResources.length > 0) {
-        if (monitorOptionsElem)
+        if (monitorOptionsElem) {
           monitorOptionsElem.style.visibility = ''
-        if(this.monitorsFolding) {
+        }
+        if (this.monitorsFolding) {
           this.monitorsFolding.showButton()
         }
       } else {
-        if (monitorOptionsElem)
+        if (monitorOptionsElem) {
           monitorOptionsElem.style.visibility = 'hidden'
-        if(this.monitorsFolding)
+        }
+        if (this.monitorsFolding) {
           this.monitorsFolding.hideButton()
+        }
       }
       this.sortGroupedResouces()
     })
 
-    this.listenToAndRun(App.state.tasks,'add sync reset',() => {
-      if(this.tasksFolding) {
-        if (App.state.tasks.length>0) {
+    this.listenToAndRun(App.state.tasks, 'add sync reset', () => {
+      if (this.tasksFolding) {
+        if (App.state.tasks.length > 0) {
           this.tasksFolding.showButton()
         } else {
           this.tasksFolding.hideButton()
@@ -309,7 +313,7 @@ module.exports = View.extend({
     runAllButton.render()
     this.registerSubview(runAllButton)
 
-    this.listenTo(runAllButton,'runall',() => {
+    this.listenTo(runAllButton, 'runall', () => {
       const rows = taskRows.views.filter(row => {
         return row.model.canExecute && row.show === true
       })
