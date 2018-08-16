@@ -53,8 +53,6 @@ module.exports = {
       },
       done (data,xhr) {
         logger.debug('job canceled')
-        job.clear()
-        job.result.clear()
         job.set('lifecycle', LifecycleConstants.CANCELED)
       },
       fail (err,xhr) {

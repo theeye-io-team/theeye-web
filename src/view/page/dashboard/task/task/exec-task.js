@@ -31,53 +31,6 @@ const BaseExec = State.extend({
     })
 
     return args
-  }
-})
-
-const ExecTask = BaseExec.extend({
-  getDinamicOutputs (next) {
-    if (this.model.hasDinamicOutputs) {
-      const form = new DinamicForm({
-        fieldsDefinitions: this.model.output_parameters.models
-      })
-
-      const modal = new Modalizer({
-        buttons: true,
-        confirmButton: 'Run',
-        title: `Run ${this.model.name} with dynamic arguments`,
-        bodyView: form
-      })
-
-      this.listenTo(modal, 'shown', () => { form.focus() })
-
-      this.listenTo(modal, 'hidden', () => {
-        form.remove()
-        modal.remove()
-      })
-
-      this.listenTo(modal, 'confirm', () => {
-        /**
-         * @param {Object} args a {key0: value0, key1: value1, ...} object with each task argument
-         */
-        form.submit((err, args) => {
-          const orders = Object.keys(args)
-          next(
-            orders.map((order) => {
-              return {
-                order: parseInt(order),
-                label: this.model.output_parameters.get(parseInt(order), 'order').label,
-                value: args[order],
-                type: this.model.output_parameters.get(parseInt(order), 'order').type
-              }
-            })
-          )
-          modal.hide()
-        })
-      })
-      modal.show()
-    } else {
-      next([])
-    }
   },
   getDinamicArguments (next) {
     if (this.model.hasDinamicArguments) {
@@ -142,24 +95,6 @@ const ExecTask = BaseExec.extend({
       this._confirmExecution()
     }
   },
-  execute () {
-    if (!this.model.canExecute) return
-
-    let reporting = this.model.hostIsReporting()
-    if (reporting === null) return  // cannot find the resource for this task
-    if (reporting === false) {
-      bootbox.confirm({
-        message: `
-        <h2>At this moment the host that runs this task is not reporting.</h2>
-        <h2>Would you like to queue this task for running when the host is restored?</h2>
-        `,
-        backdrop: true,
-        callback: (confirmed) => {
-          if (confirmed) this.checkInProgress()
-        }
-      })
-    } else this.checkInProgress()
-  },
   _confirmExecution () {
     let callback = taskArgs => {
       let message
@@ -196,26 +131,72 @@ const ExecTask = BaseExec.extend({
   }
 })
 
-const ExecApprovalTask = BaseExec.extend({
-  checkInProgress () {
-    let inProgress = this.model.jobs.models.some(job => {
-      return job.inProgress
-    })
-
-    if (inProgress) {
-      bootbox.confirm({
-        message: `Task <b>${this.model.name}</b> is currently under execution, do you wish to execute it again?`,
-        backdrop: true,
-        callback: (confirmed) => {
-          if (confirmed) {
-            App.actions.job.createFromTask(this.model, [])
-          }
-        }
+const ExecTask = BaseExec.extend({
+  getDinamicOutputs (next) {
+    if (this.model.hasDinamicOutputs) {
+      const form = new DinamicForm({
+        fieldsDefinitions: this.model.output_parameters.models
       })
+
+      const modal = new Modalizer({
+        buttons: true,
+        confirmButton: 'Run',
+        title: `Run ${this.model.name} with dynamic arguments`,
+        bodyView: form
+      })
+
+      this.listenTo(modal, 'shown', () => { form.focus() })
+
+      this.listenTo(modal, 'hidden', () => {
+        form.remove()
+        modal.remove()
+      })
+
+      this.listenTo(modal, 'confirm', () => {
+        /**
+         * @param {Object} args a {key0: value0, key1: value1, ...} object with each task argument
+         */
+        form.submit((err, args) => {
+          const orders = Object.keys(args)
+          next(
+            orders.map((order) => {
+              return {
+                order: parseInt(order),
+                label: this.model.output_parameters.get(parseInt(order), 'order').label,
+                value: args[order],
+                type: this.model.output_parameters.get(parseInt(order), 'order').type
+              }
+            })
+          )
+          modal.hide()
+        })
+      })
+      modal.show()
     } else {
-      App.actions.job.createFromTask(this.model, [])
+      next([])
     }
   },
+  execute () {
+    if (!this.model.canExecute) return
+
+    let reporting = this.model.hostIsReporting()
+    if (reporting === null) return  // cannot find the resource for this task
+    if (reporting === false) {
+      bootbox.confirm({
+        message: `
+        <h2>At this moment the host that runs this task is not reporting.</h2>
+        <h2>Would you like to queue this task for running when the host is restored?</h2>
+        `,
+        backdrop: true,
+        callback: (confirmed) => {
+          if (confirmed) this.checkInProgress()
+        }
+      })
+    } else this.checkInProgress()
+  }
+})
+
+const ExecApprovalTask = BaseExec.extend({
   execute () {
     this.checkInProgress()
   }

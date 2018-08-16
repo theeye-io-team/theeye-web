@@ -160,7 +160,7 @@ const ExecApprovalJob = BaseExec.extend({
     })
   },
   updateApprovalRequest (done) {
-    const message = `The Approval request is pending. What do you want to do?`
+    const message = `The Approval request is pending. Cancel approval request?`
 
     bootbox.dialog({
       message: message,
@@ -171,14 +171,6 @@ const ExecApprovalJob = BaseExec.extend({
           className: 'btn btn-danger',
           callback: () => {
             App.actions.job.cancel(this.model)
-            if (done) done()
-          }
-        },
-        resend: {
-          label: 'Resend request',
-          className: 'btn btn-primary',
-          callback: () => {
-            App.actions.job.resendApproval(this.model, [])
             if (done) done()
           }
         }
