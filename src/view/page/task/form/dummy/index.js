@@ -138,7 +138,7 @@ module.exports = TaskFormView.extend({
     if (!this.model.isNew()) {
       App.actions.task.update(this.model.id, data)
     } else {
-      App.actions.task.createMany(data.hosts, data)
+      App.actions.task.create(data)
     }
 
     next(null,true)
