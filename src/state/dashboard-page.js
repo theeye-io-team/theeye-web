@@ -60,11 +60,9 @@ module.exports = AmpersandState.extend({
     this.listenTo(tasks, 'add', (model) => {
       this.groupedTasks.add(model)
     })
-
     this.listenTo(tasks, 'remove', (model) => {
       this.groupedTasks.remove(model)
     })
-
     this.listenTo(tasks, 'reset', () => {
       this.groupedTasks.reset(tasks.models.filter(m => !m.workflow_id))
     })

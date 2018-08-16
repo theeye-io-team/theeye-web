@@ -92,7 +92,7 @@ export const Workflow = AppModel.extend({
     }
   },
   session: {
-    populated: 'boolean'
+    alreadyPopulated: ['boolean', false, false]
   },
   derived: {
     formatted_tags: formattedTags(),
@@ -160,39 +160,7 @@ export const Workflow = AppModel.extend({
         }
       },
       success: (collection, jobs, options) => {
-        if (jobs.length>0) {
-          let tJobs = []
-          let wJobs = []
-
-          // order resulting jobs into task and workflow jobs
-          jobs.forEach(job => {
-            if (job._type === 'WorkflowJob') {
-              wJobs.push(job)
-            } else {
-              tJobs.push(job)
-            }
-          })
-
-          if (wJobs.length > 0) {
-            // assign each task job to its own workflow job instance
-            if (tJobs.length > 0) {
-              tJobs.forEach(tJob => {
-                // seach the matching workflow job
-                let wJob = wJobs.find(wJob => {
-                  return wJob.id === tJob.workflow_job_id
-                })
-
-                if (wJob) {
-                  if (!wJob.jobs) { wJob.jobs = [] }
-                  wJob.jobs.push(tJob)
-                }
-              })
-            }
-          }
-
-          this.jobs.reset(wJobs)
-        }
-
+        this.jobs.reset(groupJobs(jobs))
         //this.reset(models, options)
         //this.trigger('sync', this, models, options)
         // group jobs by workflow_job
@@ -208,6 +176,40 @@ export const Workflow = AppModel.extend({
   //  return attrs
   //}
 })
+
+const groupJobs = (jobs) => {
+  let wJobs = []
+  if (jobs.length>0) {
+    let tJobs = []
+
+    // order resulting jobs into task and workflow jobs
+    jobs.forEach(job => {
+      if (job._type === 'WorkflowJob') {
+        wJobs.push(job)
+      } else {
+        tJobs.push(job)
+      }
+    })
+
+    if (wJobs.length > 0) {
+      // assign each task job to its own workflow job instance
+      if (tJobs.length > 0) {
+        tJobs.forEach(tJob => {
+          // seach the matching workflow job
+          let wJob = wJobs.find(wJob => {
+            return wJob.id === tJob.workflow_job_id
+          })
+
+          if (wJob) {
+            if (!wJob.jobs) { wJob.jobs = [] }
+            wJob.jobs.push(tJob)
+          }
+        })
+      }
+    }
+  }
+  return wJobs
+}
 
 export const Workflows = AppCollection.extend({
   indexes: ['name'],

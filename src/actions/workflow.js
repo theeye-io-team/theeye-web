@@ -37,7 +37,7 @@ module.exports = {
       success: () => {
         const workflow = App.state.workflows.get(id)
         workflow.set(tmp.serialize())
-        workflow.populated = false // reset to repopulate
+        workflow.alreadyPopulated = false // reset to repopulate
         this.populate(workflow)
         this.updateAcl(id)
       },
@@ -72,7 +72,7 @@ module.exports = {
     })
   },
   populate (workflow) {
-    if (workflow.populated) { return }
+    if (workflow.alreadyPopulated) { return }
     if (workflow.tasks.models.length!==0) { return }
 
     let nodes = workflow.graph.nodes()
@@ -93,7 +93,7 @@ module.exports = {
       }
     })
 
-    workflow.populated = true
+    workflow.alreadyPopulated = true
     workflow.fetchJobs()
   },
   triggerExecution (workflow) {

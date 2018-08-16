@@ -96,7 +96,7 @@ module.exports = AmpersandState.extend({
 
     this.storage
       .setItem('session', this.toJSON())
-      .catch(err => debug('ERROR %j', err))
+      .catch(err => console.error('ERROR %j', err))
   },
   //destroy (done) {
   //  done || (done = ()=>{})

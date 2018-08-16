@@ -53,7 +53,7 @@ const BaseJob = AppModel.extend({
     taskModel: {
       deps: ['task'],
       fn () {
-        if (!this.task) return {}
+        if (!this.task) { return {} }
         return new App.Models.Task.Factory(this.task, {})
       }
     },
@@ -182,37 +182,65 @@ const NgrokIntegrationJob = BaseJob.extend({
   }
 })
 
-const Factory = function (attrs, options={}) {
+const JobFactory = function (attrs, options={}) {
   if (attrs.isCollection) { return }
+  if (attrs.isState) { return attrs } // already constructed
 
-  if (attrs._type == JobConstants.SCRIPT_TYPE) {
-    return new ScriptJob(attrs, options)
+  let model
+
+  if (attrs.id) {
+    model = App.state.jobs.get(attrs.id)
+    if (model) {
+      // reset
+      model.clear()
+      model.result.clear()
+
+      // and update
+      model.set(attrs)
+      model.result.set(attrs.result)
+      if (attrs.user) {
+        model.user.set(attrs.user)
+      }
+      return model
+    }
   }
 
-  if (attrs._type == JobConstants.SCRAPER_TYPE) {
-    return new ScraperJob(attrs, options)
+  const createModel = () => {
+    let type = attrs._type
+    let model
+    switch (type) {
+      case JobConstants.SCRIPT_TYPE:
+        model = new ScriptJob(attrs, options)
+        break;
+      case JobConstants.SCRAPER_TYPE:
+        model = new ScraperJob(attrs, options)
+        break;
+      case JobConstants.APPROVAL_TYPE:
+        model = new ApprovalJob(attrs, options)
+        break;
+      case JobConstants.DUMMY_TYPE:
+        model = new DummyJob(attrs, options)
+        break;
+      case JobConstants.WORKFLOW_TYPE:
+        model = new WorkflowJob(attrs, options)
+        break;
+      default:
+        let err = new Error(`unrecognized type ${type}`)
+        throw err
+        break;
+    }
+    return model
   }
 
-  if (attrs._type == JobConstants.APPROVAL_TYPE) {
-    return new ApprovalJob(attrs, options)
-  }
-
-  if (attrs._type == JobConstants.DUMMY_TYPE) {
-    return new DummyJob(attrs, options)
-  }
-
-  if (attrs._type == JobConstants.WORKFLOW_TYPE) {
-    return new WorkflowJob(attrs, options)
-  }
-
-  let err = new Error(`unrecognized type ${attrs._type}`)
-  throw err
+  model = createModel()
+  App.state.jobs.add(model, {merge:true})
+  return model
 }
 
 const Collection = AppCollection.extend({
   comparator: 'creation_date',
   url: urlRoot,
-  model: Factory,
+  model: JobFactory,
   isModel (model) {
     let isModel = (
       model instanceof ScraperJob ||
@@ -237,5 +265,5 @@ exports.Dummy = DummyJob
 exports.Workflow = WorkflowJob
 exports.NgrokIntegration = NgrokIntegrationJob
 
-exports.Factory = Factory
+exports.Factory = JobFactory
 exports.Collection = Collection

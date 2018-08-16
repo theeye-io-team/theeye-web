@@ -4,7 +4,7 @@ module.exports = {
     var search
     var params
 
-    if (document.origin==="null" || options.pushStateSupport===false) {
+    if (window.origin==="null" || options.pushStateSupport===false) {
       var parts = window.location.hash.split('?')
       if (parts.length<2) {
         return {}

@@ -15,10 +15,10 @@ module.exports = AmpersandModel.extend({
       }
     }
   },
-  ajaxConfig: function () {
-    if (!App.state) return {}
-    if (!App.state.session) return {}
-    if (!App.state.session.authorization) return {}
+  ajaxConfig () {
+    if (!App.state) { return {} }
+    if (!App.state.session) { return {} }
+    if (!App.state.session.authorization) { return {} }
 
     var authorization = App.state.session.authorization
     return {

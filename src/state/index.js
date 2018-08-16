@@ -11,6 +11,7 @@ import { Collection as Hosts } from 'models/host'
 import { Collection as Schedules } from 'models/schedule'
 import { Collection as Resources } from 'models/resource'
 import { Collection as Tasks } from 'models/task'
+import { Collection as Jobs } from 'models/job'
 import { Collection as Tags } from 'models/tag'
 import { Collection as Scripts } from 'models/file/script'
 import { Collection as Files } from 'models/file'
@@ -238,6 +239,7 @@ const _initCollections = function () {
     resources: new Resources([]),
     schedules: new Schedules(),
     tasks: new Tasks([]),
+    jobs: new Jobs([]),
     tags: new Tags([]),
     scripts: new Scripts([]),
     files: new Files([]),

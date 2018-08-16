@@ -1,2 +1,4 @@
 
-export const TYPE_WORKFLOW = 'Workflow'
+const TYPE_WORKFLOW = 'Workflow'
+
+exports.TYPE_WORKFLOW = TYPE_WORKFLOW

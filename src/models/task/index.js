@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import State from 'ampersand-state'
 import AppCollection from 'lib/app-collection'
 import isURL from 'validator/lib/isURL'
@@ -217,33 +218,49 @@ const Dummy = Template.Dummy.extend({
 })
 
 
-const Factory = function (attrs, options={}) {
+const TaskFactory = function (attrs, options={}) {
   if (attrs.isCollection) return
+  if (attrs.isState) { return attrs } // already constructed
 
-  if (attrs.type == TaskConstants.TYPE_SCRIPT) {
-    return new Script(attrs, options)
+  let model
+
+  if (attrs.id) {
+    model = App.state.tasks.get(attrs.id)
+    if (model) { return model }
   }
 
-  if (attrs.type == TaskConstants.TYPE_SCRAPER) {
-    return new Scraper(attrs, options)
+  const createModel = () => {
+    let type = attrs.type
+    let model
+    switch (type) {
+      case TaskConstants.TYPE_SCRIPT:
+        model = new Script(attrs, options)
+        break;
+      case TaskConstants.TYPE_SCRAPER:
+        model = new Scraper(attrs, options)
+        break;
+      case TaskConstants.TYPE_APPROVAL:
+        model = new Approval(attrs, options)
+        break;
+      case TaskConstants.TYPE_DUMMY:
+        model = new Dummy(attrs, options)
+        break;
+      default:
+        let err = new Error(`unrecognized type ${type}`)
+        throw err
+        break;
+    }
+    return model
   }
 
-  if (attrs.type == TaskConstants.TYPE_APPROVAL) {
-    return new Approval(attrs, options)
-  }
-
-  if (attrs.type == TaskConstants.TYPE_DUMMY) {
-    return new Dummy(attrs, options)
-  }
-
-  let err = new Error(`unrecognized type ${attrs.type}`)
-  throw err
+  model = createModel()
+  return model
 }
 
 const Collection = AppCollection.extend({
   comparator: 'name',
   url: urlRoot,
-  model: Factory,
+  model: TaskFactory,
   isModel (model) {
     let isModel = (
       model instanceof Scraper ||
@@ -261,7 +278,7 @@ exports.Task = Schema.extend({
   },
   urlRoot,
   mutate () {
-    return new Factory(this._all)
+    return new TaskFactory(this._all)
   },
   parse (attrs) {
     this._all = attrs
@@ -273,4 +290,4 @@ exports.Script = Script
 exports.Approval = Approval
 exports.Dummy = Dummy
 exports.Collection = Collection
-exports.Factory = Factory
+exports.Factory = TaskFactory

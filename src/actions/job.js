@@ -20,7 +20,6 @@ module.exports = {
    *
    */
   applyStateUpdate (data) {
-    let self = this
     const task = App.state.tasks.get(data.task_id)
 
     if (!task) {
@@ -29,10 +28,21 @@ module.exports = {
       return
     }
 
-    task.fetchJobs({}, function () {
-      updateModel(task, data)
-      self.handleApprovalTask(task, data)
-    })
+    const tjob = new JobFactory(data, {})
+
+    if (task.workflow_id) {
+      // get the workflow
+      const workflow = App.state.workflows.get(task.workflow_id)
+      if (!workflow) { } // error
+
+      // get the job
+      let wjob = workflow.jobs.get(tjob.workflow_job_id)
+      if (!wjob) { } // async error?
+      wjob.jobs.add(tjob)
+    } else {
+      task.jobs.add(tjob)
+    }
+    this.handleApprovalTask(tjob, task)
   },
   createFromTask (task, args) {
     logger.log('creating new job with task %o', task)
@@ -117,9 +127,7 @@ module.exports = {
    * @param {Object} data job model properties
    *
    */
-  handleApprovalTask (task, data) {
-    var job = task.jobs.get(data.id)
-
+  handleApprovalTask (job, task) {
     var requestApproval = (
       job._type === JobConstants.APPROVAL_TYPE &&
       task.approver_id === App.state.session.user.id &&
@@ -159,25 +167,6 @@ module.exports = {
         execApprovalJob.execute(true, done)
       })
     })
-  }
-}
-
-const updateModel = (task, data) => {
-  let job = task.jobs.get(data.id)
-
-  // create
-  if (!job) {
-    job = new JobFactory(data, {})
-    task.jobs.add(job)
-  } else {
-    // reset
-    job.clear()
-    job.result.clear()
-
-    // and update
-    job.set(data)
-    job.result.set(data.result)
-    if (data.user) { job.user.set(data.user) }
   }
 }
 

@@ -21,7 +21,9 @@ module.exports = () => {
     if (logged_in === undefined) return // wait until it is set
 
     if (!App.Router.history.started()) {
-      App.Router.history.start({ pushState: (document.origin!=='null') })
+      App.Router.history.start({
+        pushState: (window.origin!=='null')
+      })
     }
 
     let publicRoute = isPublicRoute(window.location.pathname)
@@ -29,7 +31,7 @@ module.exports = () => {
       if (!logged_in) {
         App.Router.redirectTo('login',{replace: true})
       } else {
-        if (document.origin=='null') {
+        if (window.origin=='null') {
           // redirect to dashboard only if pushState is not supported
           App.Router.redirectTo('dashboard',{replace: true})
         }

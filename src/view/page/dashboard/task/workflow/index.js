@@ -49,6 +49,42 @@ module.exports = CollapsibleRow.extend({
 })
 
 const WorkflowJobRowView = CollapsibleRow.extend({
+  template: `
+    <div class="taskRow">
+      <div class="tasks-container panel panel-default">
+        <div class="panel-heading"
+          role="tab"
+          data-hook="panel-heading"> <!-- Collapse Heading Container { -->
+          <h4 class="panel-title-icon"><i data-hook="header-icon"></i></h4>
+          <h4 class="panel-title">
+            <span class="collapsed"
+              data-hook="collapse-toggle"
+              data-toggle="collapse"
+              data-parent="#task-accordion"
+              href="#unbinded"
+              aria-expanded="false"
+              aria-controls="unbinded">
+              <div class="panel-title-content">
+                <span class="panel-item name">
+                  <span data-hook="name" title=""></span>
+                  <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
+                </span>
+              </div>
+            </span>
+          </h4>
+        </div> <!-- } END Collapse Heading Container -->
+        <!-- Collapsed Container { -->
+        <div data-hook="collapse-container"
+          id="unbinded"
+          class="panel-collapse collapse"
+          aria-labelledby="unbinded"
+          role="tabpanel">
+          <div class="panel-body" data-hook="collapse-container-body"> </div>
+        </div>
+        <!-- } END Collapsed Container -->
+      </div>
+    </div>
+  `,
   derived: {
     row_text: {
       deps: ['model.creation_date'],
