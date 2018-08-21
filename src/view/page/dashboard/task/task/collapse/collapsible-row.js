@@ -69,9 +69,7 @@ const TaskButtonsView = View.extend({
   onClickSearch (event) {
     event.preventDefault()
     event.stopPropagation()
-
     SearchActions.search(this.model.name)
-
     return false
   },
   render () {

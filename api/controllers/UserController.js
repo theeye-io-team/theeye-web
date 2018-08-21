@@ -158,7 +158,7 @@ var UserController = module.exports = {
           error => {
             if (error) {
               logger.error(error);
-              res.json(500,'the user was updated but with errors. ' + error.message);
+              res.json(500, 'user updae was not completed. ' + error.message);
             } else {
               res.json(user);
             }

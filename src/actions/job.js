@@ -20,30 +20,47 @@ module.exports = {
    *
    */
   applyStateUpdate (data) {
-    const task = App.state.tasks.get(data.task_id)
+    if (data._type==='WorkflowJob') {
+      const workflow = App.state.workflows.get(data.workflow_id)
 
-    if (!task) {
-      logger.error('task not found')
-      logger.error(task)
-      return
-    }
-
-    const tjob = new JobFactory(data, {})
-
-    if (task.workflow_id) {
-      // get the workflow
-      const workflow = App.state.workflows.get(task.workflow_id)
-      if (!workflow) { } // error
-
-      // get the job
-      let wjob = workflow.jobs.get(tjob.workflow_job_id)
-      if (!wjob) { } // async error?
-      wjob.jobs.add(tjob)
+      if (!workflow) {
+        logger.error('workflow not found in state')
+        logger.error('%o', data)
+        return
+      }
+      // workflow job created
+      workflow.jobs.add(data, { merge: true })
     } else {
-      task.jobs.add(tjob)
+      const task = App.state.tasks.get(data.task_id)
+
+      if (!task) {
+        logger.error('task not found in state')
+        logger.error('%o', data)
+        return
+      }
+
+      const tjob = new JobFactory(data, {})
+
+      if (task.workflow_id) {
+        // get the workflow
+        const workflow = App.state.workflows.get(task.workflow_id)
+        if (!workflow) { } // error
+
+        // get the job
+        let wjob = workflow.jobs.get(tjob.workflow_job_id)
+        if (!wjob) { } // async error?
+        wjob.jobs.add(tjob)
+      } else {
+        task.jobs.add(tjob)
+      }
+      this.handleApprovalTask(tjob, task)
     }
-    this.handleApprovalTask(tjob, task)
   },
+  /**
+   *
+   *
+   *
+   */
   createFromTask (task, args) {
     logger.log('creating new job with task %o', task)
 
@@ -72,13 +89,17 @@ module.exports = {
     })
   },
   approve (job, args) {
+    args = args || []
     XHR.send({
       method: 'put',
       url: `${config.api_v3_url}/job/${job.id}/approve`,
       jsonData: {
         result: {
           state: 'success',
-          data: args || []
+          data: {
+            args,
+            output: args.map(arg => arg.value)
+          }
         }
       },
       headers: {
@@ -97,13 +118,17 @@ module.exports = {
     })
   },
   reject (job, args) {
+    args = args || []
     XHR.send({
       method: 'put',
       url: `${config.api_v3_url}/job/${job.id}/reject`,
       jsonData: {
         result: {
           state: 'failure',
-          data: args || []
+          data: {
+            args,
+            output: args.map(arg => arg.value)
+          }
         }
       },
       headers: {
@@ -187,7 +212,8 @@ const createWorkflowJob = (workflow, args) => {
     },
     done (job, xhr) {
       logger.debug('job created. updating workflow')
-      workflow.jobs.add(job, { merge: true })
+      //wait for socket update arrive and create there
+      //workflow.jobs.add(job, { merge: true })
     },
     fail (err,xhr) {
       bootbox.alert('Job creation failed')

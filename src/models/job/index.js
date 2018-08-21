@@ -192,12 +192,14 @@ const JobFactory = function (attrs, options={}) {
     model = App.state.jobs.get(attrs.id)
     if (model) {
       // reset
-      model.clear()
-      model.result.clear()
+      //model.clear()
+      //model.result.clear()
 
       // and update
       model.set(attrs)
-      model.result.set(attrs.result)
+      if (model.result) {
+        model.result.set(attrs.result)
+      }
       if (attrs.user) {
         model.user.set(attrs.user)
       }
