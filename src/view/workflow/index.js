@@ -208,12 +208,24 @@ function Node (value) {
     return uri
   }
 
+  this.getResourceLabel = function () {
+    var type = this.getModelType()
+    if (!type) return
+
+    if (type === 'task') {
+      var task = App.state.tasks.get(value.id)
+      if (!task) return
+      return task.name
+    }
+  }
+
   Object.defineProperty(this, 'data', {
     get: function () {
       var url = this.getResourceUrl()
+      var label = this.getResourceLabel() || value.name
       return {
         id: value.id,
-        label: value.name,
+        label: label,
         value: value,
         href: url
       }

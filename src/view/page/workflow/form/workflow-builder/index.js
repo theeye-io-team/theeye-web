@@ -144,6 +144,7 @@ module.exports = View.extend({
     this.trigger('change:graph', graph)
   },
   onTapNode (event) {
+    var self = this
     var node = event.cyTarget.data()
 
     if (this.contextMenu) {
@@ -164,7 +165,13 @@ module.exports = View.extend({
       // this is a task node
       menu.on('click:edit', () => {
         menu.remove()
-        App.actions.task.edit(node.id)
+        var task = App.state.tasks.get(node.id)
+        if(!task) return
+        self.stopListening(task, 'change:name')
+        self.listenTo(task, 'change:name', function() {
+          self.trigger('change:graph', self.graph)
+        })
+        App.actions.task.edit(task.id)
       })
       menu.on('click:remove', () => {
         menu.remove()
