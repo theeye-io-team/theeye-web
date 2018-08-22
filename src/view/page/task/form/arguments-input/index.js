@@ -77,7 +77,11 @@ module.exports = View.extend({
       modal.remove()
     })
 
-    this.listenTo(creator,'added',this.onArgumentAdded)
+    this.listenTo(creator,'added', arg => {
+      creator.remove()
+      modal.remove()
+      this.onArgumentAdded(arg)
+    })
 
     modal.show()
 
