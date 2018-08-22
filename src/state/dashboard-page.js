@@ -10,11 +10,22 @@ import { Workflow } from 'models/workflow'
 import AmpersandState from 'ampersand-state'
 import ModelConstants from 'constants/models'
 
+const isWorkflow = (model) => {
+  return /Workflow/.test(model._type)
+}
+
 const GroupedTasksCollection = TasksCollection.extend({
   comparator (m1, m2) {
-    if (m1.name.toLowerCase()<m2.name.toLowerCase()) { return -1 }
-    if (m1.name.toLowerCase()>m2.name.toLowerCase()) { return  1 }
-    return 0
+    let m1IsWf = isWorkflow(m1)
+    let m2IsWf = isWorkflow(m2)
+
+    if ( (m1IsWf && m2IsWf) || (!m1IsWf && !m2IsWf) ) {
+      if (m1.name.toLowerCase()<m2.name.toLowerCase()) { return -1 }
+      if (m1.name.toLowerCase()>m2.name.toLowerCase()) { return  1 }
+      return 0
+    }
+    else if (m1IsWf) { return -1 }
+    else if (m2IsWf) { return 1 }
   },
   model (attrs, options={}) {
     const taskModel = TasksCollection.prototype.model

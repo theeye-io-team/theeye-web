@@ -95,6 +95,9 @@ export const Workflow = AppModel.extend({
     alreadyPopulated: ['boolean', false, false]
   },
   derived: {
+    type: {
+      fn: () => 'workflow'
+    },
     formatted_tags: formattedTags(),
     canExecute: {
       deps: [],
