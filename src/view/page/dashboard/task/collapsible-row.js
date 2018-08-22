@@ -57,7 +57,7 @@ module.exports = View.extend({
     </div>
   `,
   props: {
-    show: ['boolean', false, true]
+    collapsed: ['boolean', false, true]
   },
   derived: {
     row_text: {
@@ -152,13 +152,12 @@ module.exports = View.extend({
     },
     type: { hook: 'type' },
     description: { hook: 'description' },
-    hostname: { hook: 'hostname' },
-    show: { type: 'toggle' }
+    hostname: { hook: 'hostname' }
   },
   events: {
     'click .collapsed[data-hook=collapse-toggle]': 'onClickToggleCollapse'
   },
-  // capture and handle collapse event
+  // capture and handle open/un-collapse event
   onClickToggleCollapse (event) {
     return
   },
@@ -166,7 +165,14 @@ module.exports = View.extend({
     this.renderWithTemplate()
     this.renderButtons()
     this.renderCollapsedContent()
+
+    let $el = $(this.query('.panel-collapse.collapse'))
+    $el.on('show.bs.collapse', () => { this.collapsed = false })
+    $el.on('hide.bs.collapse', () => { this.collapsed = true  })
   },
+  //remove () {
+  //  View.prototype.remove.apply(this, arguments)
+  //},
   renderButtons () {
     return
   },
@@ -174,4 +180,3 @@ module.exports = View.extend({
     return
   }
 })
-

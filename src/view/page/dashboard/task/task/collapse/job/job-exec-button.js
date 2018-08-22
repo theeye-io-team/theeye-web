@@ -1,6 +1,7 @@
 import View from 'ampersand-view'
 import LifecycleConstants from 'constants/lifecycle'
 import JobConstants from 'constants/job'
+import StateConstants from 'constants/states'
 import { ExecJob, ExecApprovalJob } from './exec-job.js'
 import JobResult from 'view/page/dashboard/job-result'
 
@@ -53,10 +54,19 @@ module.exports = View.extend({
         }
 
         if (!lifecycle) return ''
-        if (lifecycle === LifecycleConstants.READY) return 'fa fa-spin fa-refresh'
-        if (lifecycle === LifecycleConstants.ASSIGNED) return 'fa fa-spin fa-refresh remark-success'
+        if (lifecycle === LifecycleConstants.READY) {
+          return 'fa fa-spin fa-refresh'
+        }
+        if (lifecycle === LifecycleConstants.ASSIGNED) {
+          return 'fa fa-spin fa-refresh remark-success'
+        }
         if (isCompleted(lifecycle)) {
-          if (state === 'failure') return 'fa fa-exclamation remark-alert'
+          if (state === StateConstants.FAILURE) {
+            return 'fa fa-exclamation remark-alert'
+          }
+          if (state === StateConstants.ERROR) {
+            return 'fa fa-question remark-warning'
+          }
           return 'fa fa-check remark-success'
         }
         if (lifecycle === LifecycleConstants.CANCELED) {

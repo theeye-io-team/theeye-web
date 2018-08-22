@@ -11,6 +11,7 @@ const CANCELED = 'canceled'
 const INTEGRATION_STARTED = 'started'
 const INTEGRATION_STOPPED = 'stopped'
 const UNKNOWN = 'unknown'
+const IN_PROGRESS = 'in_progress'
 
 exports.INTEGRATION_STARTED = INTEGRATION_STARTED
 exports.INTEGRATION_STOPPED = INTEGRATION_STOPPED
@@ -25,6 +26,7 @@ exports.STARTED = MONITOR_STARTED
 exports.CHANGED = CHANGED
 exports.ERROR = ERROR
 exports.UNKNOWN = UNKNOWN
+exports.IN_PROGRESS = IN_PROGRESS
 
 exports.STATES = [
   INTEGRATION_STARTED,
@@ -38,5 +40,6 @@ exports.STATES = [
   MONITOR_STARTED,
   CHANGED,
   ERROR,
-  UNKNOWN
+  UNKNOWN,
+  IN_PROGRESS
 ]

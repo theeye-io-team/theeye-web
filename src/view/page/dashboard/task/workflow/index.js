@@ -8,6 +8,8 @@ import ExecButton from '../exec-button'
 import TaskJobRow from '../task/collapse/job'
 import moment from 'moment'
 
+import './styles.less'
+
 module.exports = CollapsibleRow.extend({
   derived: {
     hostname: {
@@ -30,7 +32,10 @@ module.exports = CollapsibleRow.extend({
     this.renderCollection(
       this.model.jobs,
       WorkflowJobRowView,
-      this.queryByHook('collapse-container-body')
+      this.queryByHook('collapse-container-body'),
+      {
+        reverse: true
+      }
     )
   },
   renderButtons () {
@@ -50,8 +55,8 @@ module.exports = CollapsibleRow.extend({
 
 const WorkflowJobRowView = CollapsibleRow.extend({
   template: `
-    <div class="taskRow">
-      <div class="tasks-container panel panel-default">
+    <div class="workflow-job-row">
+      <div class="panel panel-default">
         <div class="panel-heading"
           role="tab"
           data-hook="panel-heading"> <!-- Collapse Heading Container { -->
@@ -108,21 +113,27 @@ const WorkflowJobRowView = CollapsibleRow.extend({
     type: {
       fn: () => 'workflow'
     },
-    type_icon: {
-      fn: () => 'fa fa-sitemap'
-    },
+    //type_icon: {
+    //},
     header_type_icon: {
-      fn: () => 'circle fa fa-sitemap workflow-color'
+      deps: ['collapsed'],
+      fn () {
+        let icon = 'fa fa-chevron-right rotate'
+        if (!this.collapsed) {
+          icon += ' rotate-down'
+        }
+        return icon
+      }
     }
   },
   renderCollapsedContent () {
     const jobRows = this.renderCollection(
       this.model.jobs,
       TaskJobDescriptiveRow,
-      this.queryByHook('collapse-container-body'),
-      {
-        reverse: true
-      }
+      this.queryByHook('collapse-container-body')
+      //{
+      //  reverse: true
+      //}
     )
   }
 })

@@ -20,8 +20,9 @@ module.exports = {
    *
    */
   applyStateUpdate (data) {
+    let workflow
     if (data._type==='WorkflowJob') {
-      const workflow = App.state.workflows.get(data.workflow_id)
+      workflow = App.state.workflows.get(data.workflow_id)
 
       if (!workflow) {
         logger.error('workflow not found in state')
@@ -43,8 +44,12 @@ module.exports = {
 
       if (task.workflow_id) {
         // get the workflow
-        const workflow = App.state.workflows.get(task.workflow_id)
-        if (!workflow) { } // error
+        workflow = App.state.workflows.get(task.workflow_id)
+        if (!workflow) { // error
+          logger.error('workflow not found in state')
+          logger.error('%o', data)
+          return
+        }
 
         // get the job
         let wjob = workflow.jobs.get(tjob.workflow_job_id)

@@ -55,6 +55,7 @@ export default View.extend({
     this.customizeItem()
   },
   sanitizeState (state) {
+    if (!state) { return '' }
     return state.toLowerCase().replace(/ /g, '_')
   }
 })
