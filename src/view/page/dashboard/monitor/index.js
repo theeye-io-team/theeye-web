@@ -258,7 +258,7 @@ const MonitorView = View.extend({
       new MonitorButtonsView({ model: this.model }),
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
     )
-  },
+  }
 })
 
 const HostMonitorGroupView = MonitorView.extend({

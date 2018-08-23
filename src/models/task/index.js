@@ -20,7 +20,7 @@ const formattedTags = () => {
     fn () {
       return [
         'name=' + this.name,
-        'hostname=' + this.hostname,
+        'hostname=' + this.hostname || 'no-host',
         'type=' + this.type,
         'description=' + this.description,
         'acl=' + this.acl,
@@ -127,19 +127,7 @@ const Approval = Template.Approval.extend({
     template_id: 'string'
   },
   derived: {
-    formatted_tags: () => {
-      return {
-        deps: ['name','type','description','acl','tags'],
-        fn () {
-          return [
-            'name=' + this.name,
-            'type=' + this.type,
-            'description=' + this.description,
-            'acl=' + this.acl,
-          ].concat(this.tags)
-        }
-      }
-    },
+    formatted_tags: formattedTags(),
     canExecute: {
       deps: [],
       fn () {
@@ -175,19 +163,7 @@ const Dummy = Template.Dummy.extend({
     template_id: 'string'
   },
   derived: {
-    formatted_tags: () => {
-      return {
-        deps: ['name','type','description','acl','tags'],
-        fn () {
-          return [
-            'name=' + this.name,
-            'type=' + this.type,
-            'description=' + this.description,
-            'acl=' + this.acl,
-          ].concat(this.tags)
-        }
-      }
-    },
+    formatted_tags: formattedTags(),
     canExecute: {
       deps: [],
       fn () {

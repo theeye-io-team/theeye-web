@@ -18,26 +18,12 @@ class EmitterFactory {
       throw new Error(`Cannot build an Emitter without a type`)
     }
 
-    switch (type) {
-      case EmitterConstants.TASK_SCRIPT:
-        EmitterClass = App.Models.Task.Script
-        break
-      case EmitterConstants.TASK_SCRAPER:
-        EmitterClass = App.Models.Task.Scraper
-        break
-      case EmitterConstants.TASK_APPROVAL:
-        EmitterClass = App.Models.Task.Approval
-        break
-      case EmitterConstants.TASK_DUMMY:
-        EmitterClass = App.Models.Task.Dummy
-        break
-      //case 'ResourceMonitor': // monitors with config subdocument
-      case EmitterConstants.RESOURCE:
-        EmitterClass = App.Models.Resource.Model
-        break
-      case EmitterConstants.WEBHOOK:
-        EmitterClass = App.Models.Webhook.Model
-        break
+    if (/Task/.test(type) === true) {
+      EmitterClass = App.Models.Task.Factory
+    } else if (EmitterConstants.RESOURCE === type) {
+      EmitterClass = App.Models.Resource.Model
+    } else if (EmitterConstants.WEBHOOK === type) {
+      EmitterClass = App.Models.Webhook.Model
     }
 
     if (!EmitterClass) {
@@ -78,48 +64,14 @@ const Model = AppModel.extend({
 
         let eventName = this.name
         let emitterType = emitter._type
-        let summary
-        let hostname
+        let summary = 'summary unset'
 
-        if (emitter.host) {
-          hostname = emitter.host.hostname.toLowerCase()
-        }
-
-        switch (emitterType) {
-          case EmitterConstants.WEBHOOK:
-            summary = `Incomming Webhook ${emitter.name} trigger`
-            break;
-          case EmitterConstants.MONITOR:
-            summary = monitorEventSummary(emitter, eventName)
-            break;
-          case EmitterConstants.TASK_SCRIPT:
-            if (eventName === EventConstants.SUCCESS) {
-              summary = `Task Script, ${emitter.name}, ${hostname} success`
-            } else if (eventName === EventConstants.FAILURE) {
-              summary = `Task Script, ${emitter.name}, ${hostname} failure`
-            }
-            break
-          case EmitterConstants.TASK_SCRAPER:
-            if (eventName === EventConstants.SUCCESS) {
-              summary = `Task Webcheck, ${emitter.name}, ${hostname} success`
-            } else if (eventName === EventConstants.FAILURE) {
-              summary = `Task Webcheck, ${emitter.name}, ${hostname} failure`
-            }
-            break;
-          case EmitterConstants.TASK_APPROVAL:
-            if (eventName === EventConstants.SUCCESS) {
-              summary = `Task Approval, ${emitter.name} approved`
-            } else if (eventName === EventConstants.FAILURE) {
-              summary = `Task Approval, ${emitter.name} rejected`
-            }
-            break;
-          case EmitterConstants.TASK_DUMMY:
-            if (eventName === EventConstants.SUCCESS) {
-              summary = `Task Inputs, ${emitter.name} success`
-            } else if (eventName === EventConstants.FAILURE) {
-              summary = `Task Inputs, ${emitter.name} failure`
-            }
-            break;
+        if (EmitterConstants.WEBHOOK === emitterType) {
+          summary = `Incomming Webhook ${emitter.name} trigger`
+        } else if (EmitterConstants.MONITOR === emitterType) {
+          summary = monitorEventSummary(emitter, eventName)
+        } else if (/Task/.test(emitterType) === true) {
+          summary = taskEventSummary(emitter, eventName)
         }
 
         return summary
@@ -156,6 +108,49 @@ const Model = AppModel.extend({
     }
   }
 })
+
+const taskEventSummary = (emitter, eventName) => {
+  let hostname, summary
+
+  if (emitter.host) {
+    hostname = emitter.host.hostname.toLowerCase()
+  }
+
+  switch (emitter._type) {
+    case EmitterConstants.TASK_SCRIPT:
+      if (eventName === EventConstants.SUCCESS) {
+        summary = `Task Script, ${emitter.name}, ${hostname} success`
+      } else if (eventName === EventConstants.FAILURE) {
+        summary = `Task Script, ${emitter.name}, ${hostname} failure`
+      }
+      break
+    case EmitterConstants.TASK_SCRAPER:
+      if (eventName === EventConstants.SUCCESS) {
+        summary = `Task Webcheck, ${emitter.name}, ${hostname} success`
+      } else if (eventName === EventConstants.FAILURE) {
+        summary = `Task Webcheck, ${emitter.name}, ${hostname} failure`
+      }
+      break;
+    case EmitterConstants.TASK_APPROVAL:
+      if (eventName === EventConstants.SUCCESS) {
+        summary = `Task Approval, ${emitter.name} approved`
+      } else if (eventName === EventConstants.FAILURE) {
+        summary = `Task Approval, ${emitter.name} rejected`
+      }
+      break;
+    case EmitterConstants.TASK_DUMMY:
+      if (eventName === EventConstants.SUCCESS) {
+        summary = `Task Inputs, ${emitter.name} success`
+      } else if (eventName === EventConstants.FAILURE) {
+        summary = `Task Inputs, ${emitter.name} failure`
+      }
+      break;
+  }
+
+  if (emitter.workflow_id) { summary += ' (task belongs to workflow)' }
+
+  return summary
+}
 
 const monitorEventSummary = (emitter, eventName) => {
   let summary, hostname

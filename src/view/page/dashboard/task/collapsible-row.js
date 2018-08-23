@@ -57,7 +57,8 @@ module.exports = View.extend({
     </div>
   `,
   props: {
-    collapsed: ['boolean', false, true]
+    collapsed: ['boolean', false, true],
+    show: ['boolean',false,true]
   },
   derived: {
     row_text: {
@@ -110,6 +111,9 @@ module.exports = View.extend({
     }
   },
   bindings: {
+    show: {
+      type: 'toggle'
+    },
     collapse_toggle_href: {
       hook: 'collapse-toggle',
       type: 'attribute',
