@@ -76,18 +76,20 @@ const titleFactory = (data) => {
 
 const messageFactory = (data) => {
   const type = data.model._type
+  let state = data.model.state
+  state = state ? state.toLowerCase().replace(/ /g, '_') : 'unknown'
+
   if (type === 'Resource') {
     let eventIndex = data.custom_event || data.monitor_event
     return meaning[eventIndex] || meaning[data.monitor_event]
   } else if (/WorkflowJob/.test(type) === true) {
     return meaning['job:' + data.operation] || ''
   } else if (/Job/.test(type) === true) {
-    let state = data.model.state.toLowerCase().replace(/ /g, '_')
     let lifecycle = data.model.lifecycle
     return meaning['lifecycle:' + lifecycle] || `${lifecycle}:${state}`
   } else if (type === 'Webhook') {
     return meaning['webhook']
   } else {
-    return data.model.state.toLowerCase().replace(/ /g, '_')
+    return state
   }
 }
