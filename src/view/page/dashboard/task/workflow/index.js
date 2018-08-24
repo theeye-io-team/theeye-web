@@ -72,7 +72,6 @@ const WorkflowJobRowView = CollapsibleRow.extend({
               <div class="panel-title-content">
                 <span class="panel-item name">
                   <span data-hook="name" title=""></span>
-                  <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
                 </span>
               </div>
             </span>
@@ -101,17 +100,11 @@ const WorkflowJobRowView = CollapsibleRow.extend({
 
         let text = [
           uname,
-          ' executed on ',
-          mdate.format('MMMM Do YYYY, HH:mm:ss Z'),
+          ' ran on ',
+          mdate.format('D-MMM-YY, HH:mm:ss'),
         ].join('')
         return text
       }
-    },
-    hostname: {
-      fn: () => ''
-    },
-    type: {
-      fn: () => 'workflow'
     },
     //type_icon: {
     //},

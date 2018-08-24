@@ -23,7 +23,7 @@ const buildMessage = function (model) {
         line += values[index]
         break
       case FIELD.TYPE_DATE:
-        line += moment(values[index]).format('MMMM Do YYYY, HH:mm:ss Z')
+        line += moment(values[index]).format('D-MMM-YY, HH:mm:ss')
         break
       case FIELD.TYPE_FILE:
         line += `<a href='${values[index]}' download='file${index + 1}'>Download</a>`

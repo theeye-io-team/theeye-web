@@ -27,12 +27,12 @@ module.exports = View.extend({
       deps: ['model.user', 'model.creation_date'],
       fn () {
         let title = ''
-        let date = moment(this.model.creation_date).format('MMMM Do YYYY, HH:mm:ss Z')
+        let date = moment(this.model.creation_date).format('D-MMM-YY, HH:mm:ss')
         if (this.model.user.username) {
           title += this.model.user.username
         }
-        
-        return title + ` executed on ${date}`
+
+        return title + ` ran on ${date}`
       }
     }
   },
