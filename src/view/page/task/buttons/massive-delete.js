@@ -1,5 +1,5 @@
+import App from 'ampersand-app'
 import MassiveDeleteButton from 'components/list/header/buttons/massive-delete'
-import TaskActions from 'actions/task'
 
 module.exports = MassiveDeleteButton.extend({
   initialize () {
@@ -8,6 +8,6 @@ module.exports = MassiveDeleteButton.extend({
     this.displayProperty = 'name'
   },
   deleteItems (tasks) {
-    TaskActions.massiveDelete(tasks)
+    App.actions.task.massiveDelete(tasks)
   }
 })
