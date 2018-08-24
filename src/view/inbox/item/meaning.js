@@ -16,5 +16,6 @@ module.exports = {
   'host:stats:mem:high': 'Host memory high',
   'host:stats:disk:high': 'Host disk high',
   'host:stats:cache:high': 'Host cache high',
-  'webhook': 'Triggered'
+  'webhook': 'Triggered',
+  'job:create': 'Started'
 }

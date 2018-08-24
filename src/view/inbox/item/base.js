@@ -4,7 +4,8 @@ import moment from 'moment'
 const resourceType = {
   Resource: 'Resource',
   ScriptJob: 'Task',
-  Webhook: 'Webhook'
+  Webhook: 'Webhook',
+  WorkflowJob: 'Workflow'
 }
 
 export default View.extend({

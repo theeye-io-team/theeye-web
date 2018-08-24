@@ -63,6 +63,8 @@ const titleFactory = (data) => {
   const type = data.model._type
   if (type === 'Resource') {
     return 'Resource ' + data.model.name
+  } else if (/WorkflowJob/.test(type) === true) {
+    return 'Workflow ' + data.model.name
   } else if (/Job/.test(type) === true) {
     return 'Task ' + data.model.name
   } else if (type === 'Webhook') {
@@ -77,6 +79,8 @@ const messageFactory = (data) => {
   if (type === 'Resource') {
     let eventIndex = data.custom_event || data.monitor_event
     return meaning[eventIndex] || meaning[data.monitor_event]
+  } else if (/WorkflowJob/.test(type) === true) {
+    return meaning['job:' + data.operation] || ''
   } else if (/Job/.test(type) === true) {
     let state = data.model.state.toLowerCase().replace(/ /g, '_')
     let lifecycle = data.model.lifecycle

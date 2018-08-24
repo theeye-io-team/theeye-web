@@ -16,5 +16,6 @@ module.exports = {
   'host:stats:cpu:high': 'fa fa-bar-chart',
   'host:stats:mem:high': 'fa fa-bar-chart',
   'host:stats:disk:high': 'fa fa-bar-chart',
-  'host:stats:cache:high': 'fa fa-bar-chart'
+  'host:stats:cache:high': 'fa fa-bar-chart',
+  'job:create': 'fa fa-check-circle'
 }
