@@ -67,12 +67,12 @@ module.exports = {
    *
    */
   createFromTask (task, args) {
-    logger.log('creating new job with task %o', task)
-
     if (!task.workflow_id) {
+      logger.log('creating new job with task %o', task)
       createSingleTaskJob(task, args)
     } else {
       let workflow = App.state.workflows.get(task.workflow_id)
+      logger.log('creating new job with workflow %o', workflow)
       createWorkflowJob(workflow, args)
     }
   },
@@ -201,8 +201,6 @@ module.exports = {
 }
 
 const createWorkflowJob = (workflow, args) => {
-  logger.log('creating new job with workflow %o', workflow)
-
   let body = {
     task: workflow.start_task_id,
     task_arguments: args
