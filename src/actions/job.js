@@ -160,7 +160,7 @@ module.exports = {
   handleApprovalTask (job, task) {
     var requestApproval = (
       job._type === JobConstants.APPROVAL_TYPE &&
-      task.approver_id === App.state.session.user.id &&
+      task.isApprover(App.state.session.user.id) &&
       job.lifecycle === LifecycleConstants.ONHOLD
     )
 
@@ -170,21 +170,23 @@ module.exports = {
     }
   },
   checkPedingApprovals () {
-    const userApprovalTasks = App.state.tasks.models.filter((task) => {
+    const userTasksToApprove = App.state.tasks.models.filter((task) => {
       let check = (
         task.type === TaskConstants.TYPE_APPROVAL &&
-        task.approver_id === App.state.session.user.id
+        task.isApprover(App.state.session.user.id)
       )
       return check
     })
 
-    each(userApprovalTasks, function (task, done) {
+    if (userTasksToApprove.length===0) { return }
+
+    each(userTasksToApprove, function (task, done) {
       task.fetchJobs({}, done)
     }, function (err) {
       if (err) { return }
 
       let pendingApprovalJobs = []
-      userApprovalTasks.forEach(function (task) {
+      userTasksToApprove.forEach(function (task) {
         task.jobs.models.forEach(function (job) {
           if (job.lifecycle === LifecycleConstants.ONHOLD) {
             pendingApprovalJobs.push(job)

@@ -108,7 +108,7 @@ const ApprovalTask = Schema.extend({
     this.type = 'approval'
   },
   props: {
-    approver_id: 'string'
+    approvers: 'array'
   },
   parse () {
     var attrs = Schema.prototype.parse.apply(this,arguments)
@@ -120,6 +120,9 @@ const ApprovalTask = Schema.extend({
     let data = Schema.prototype.serialize.apply(this,arguments)
     data.url = data.remote_url
     return data
+  },
+  isApprover (userid) {
+    return this.approvers.indexOf(userid) !== -1
   }
 })
 

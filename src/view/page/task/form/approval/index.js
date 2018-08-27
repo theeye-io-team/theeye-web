@@ -41,14 +41,14 @@ module.exports = TaskFormView.extend({
         value: this.model.name,
       }),
       new MembersSelectView({
-        multiple: false,
+        multiple: true,
         required: true,
         visible: true,
-        name: 'approver_id',
+        name: 'approvers',
         label: 'Approver *',
         idAttribute: 'id',
         textAttribute: 'label',
-        value: this.model.approver_id,
+        value: this.model.approvers,
         filterOptions: [
           item => {
             return item.credential !== 'viewer'
@@ -166,13 +166,13 @@ module.exports = TaskFormView.extend({
     buttons.on('click:confirm', () => { this.submit() })
 
     let acl = this._fieldViews.acl
-    let approver = this._fieldViews.approver_id
-    acl.listenToAndRun(approver, 'change:value', () => {
-      let selected = approver.selected()
-      if (!selected) return
+    let approvers = this._fieldViews.approvers
+    acl.listenToAndRun(approvers, 'change:value', () => {
+      let selected = approvers.selected()
+      if (!selected) { return }
       if (selected.credential==='user') {
         if (this.model.workflow_id) {
-          bootbox.alert('Make sure the approver has the required ACL to the Workflow')
+          bootbox.alert('Make sure the approvers has the required ACL to the Workflow')
         }
         acl.setValue( acl.value.concat(selected.email) )
       }
@@ -201,7 +201,7 @@ module.exports = TaskFormView.extend({
   },
   setWithTask (task) {
     this.setValues({
-      approver_id: task.approver_id,
+      approvers: task.approvers,
       name: task.name,
       description: task.description,
       tags: task.tags,
