@@ -108,7 +108,7 @@ const ApprovalTask = Schema.extend({
     this.type = 'approval'
   },
   props: {
-    approvers: 'array'
+    approvers: ['array', false, () => { return [] }]
   },
   parse () {
     var attrs = Schema.prototype.parse.apply(this,arguments)
@@ -122,6 +122,7 @@ const ApprovalTask = Schema.extend({
     return data
   },
   isApprover (userid) {
+    if (!this.approvers) { return false }
     return this.approvers.indexOf(userid) !== -1
   }
 })
