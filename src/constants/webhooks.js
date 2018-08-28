@@ -18,5 +18,15 @@ exports.TIMEOUTS = Object.freeze([
     secs: 15,
     text: '15 seconds'
   },
+  {
+    ms: 30000,
+    secs: 30,
+    text: '30 seconds'
+  },
+  {
+    ms: 60000,
+    secs: 60,
+    text: '60 seconds'
+  }
 ])
 
