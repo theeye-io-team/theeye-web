@@ -106,16 +106,18 @@ const ExecApprovalJob = BaseExec.extend({
       next([])
     }
   },
-  execute (showSkip, done) {
+  execute (isPendingCheck, done) {
     if (this.model.inProgress) {
-      if (this.model.task.approver_id === App.state.session.user.id) {
-        this.requestApproval(showSkip, done)
+      if (this.model.isApprover(App.state.session.user.id)) {
+        this.requestApproval(isPendingCheck, done)
       } else {
-        this.updateApprovalRequest(done)
+        if (!isPendingCheck) {
+          this.updateApprovalRequest(done)
+        }
       }
     }
   },
-  requestApproval (showSkip, done) {
+  requestApproval (isPendingCheck, done) {
     let message = buildMessage(this.model)
 
     var buttons = {
@@ -143,7 +145,7 @@ const ExecApprovalJob = BaseExec.extend({
       }
     }
 
-    if (showSkip) {
+    if (isPendingCheck) {
       buttons.skip = {
         label: 'Skip',
         className: 'btn btn-default',

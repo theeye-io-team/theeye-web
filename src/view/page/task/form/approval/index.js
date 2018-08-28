@@ -168,13 +168,17 @@ module.exports = TaskFormView.extend({
     let acl = this._fieldViews.acl
     let approvers = this._fieldViews.approvers
     acl.listenToAndRun(approvers, 'change:value', () => {
+      let userSelected = false
       let selected = approvers.selected()
       if (!selected) { return }
-      if (selected.credential==='user') {
-        if (this.model.workflow_id) {
-          bootbox.alert('Make sure the approvers has the required ACL to the Workflow')
+      selected.forEach(function (approver) {
+        if (approver.credential === 'user') {
+          userSelected = true
+          acl.setValue(acl.value.concat(approver.email))
         }
-        acl.setValue( acl.value.concat(selected.email) )
+      })
+      if (userSelected && this.model.workflow_id) {
+        bootbox.alert('Make sure the approvers have the required ACL to the Workflow')
       }
     })
   },

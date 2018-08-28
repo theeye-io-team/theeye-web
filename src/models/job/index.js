@@ -161,6 +161,10 @@ const ScraperJob = BaseJob.extend({
 const ApprovalJob = BaseJob.extend({
   children: {
     result: ApprovalJobResult
+  },
+  isApprover (userid) {
+    if (!this.task.approvers) { return false }
+    return this.task.approvers.indexOf(userid) !== -1
   }
 })
 
