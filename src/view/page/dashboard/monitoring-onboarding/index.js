@@ -9,14 +9,14 @@ module.exports = View.extend({
   template: `
     <section>
       <div style="text-align:center; font-size:16px;">
-        <h2 style="display:inline-block;">You don't have any Monitor yet</h2><br/>
+        <h2 data-tutorial="monitor-onboarding" style="display:inline-block;">You don't have any Monitor yet</h2><br/>
         <h2 style="display:inline-block;">A Bot must be running to add monitors</h2>
         <div data-hook="howto-container">
           <div>
             <h2></h2>
             Please follow the instructions provided in
             <a href="#" style="cursor:pointer;color:#64b1f3"
-            id="show-installer"
+            data-tutorial="monitor-onboarding"
             data-hook="show-installer">
             this Tutorial
             </a> </h2>

@@ -28,14 +28,15 @@ module.exports = State.extend({
       id: "monitorTour",
       steps: [
         {
-          target: "monitor-accordion",
+          target: document.querySelectorAll('[data-tutorial=monitor-onboarding]')[0],
           title: "Hello!",
           content: "You don't have any monitor yet.",
           placement: "right",
+          yOffset: -20,
           zindex: 998,
         },
         {
-          target: "show-installer",
+          target: document.querySelectorAll('[data-tutorial=monitor-onboarding]')[1],
           title: "Bot installation",
           content: "First thing you need is to install a bot, let's check the bot installation tutorial.",
           placement: "right",
@@ -76,7 +77,7 @@ module.exports = State.extend({
       id: "taskTour",
       steps: [
         {
-          target: "create-task",
+          target: document.querySelectorAll('[data-tutorial=task-onboarding]')[0],
           title: "Hello again!",
           content: "You don't have any task yet. Let's create a simple 'Hello World' task. Click here to start the task tutorial!",
           placement: "left",
