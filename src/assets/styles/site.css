@@ -61,7 +61,7 @@ h1 {font-weight:700}
 button {outline:none}
 .fleft {float:left}
 .fright {float:right}
-.big-icon{ font-size: 5em }
+.big-icon{ font-size: 45px }
 /* header */
 .navbar {margin-bottom:0px;}
 .navbar-header {width:100%;}
@@ -707,9 +707,9 @@ ol.list-group.tasks { color:#34495E }
 .remark-warning { color: #ffff00; }
 .remark-default { color: #ffffff; }
 
-.main-status { width: 100%; text-align: center; padding: 10px; cursor:pointer; }
-.main-status h4 { margin:0; display: inline-block; padding-left: 5px;}
-.main-status i {display: inline-block; vertical-align: middle;}
+.main-status { width: 100%; padding: 10px; cursor:pointer; }
+.main-status h4 { display: block; margin: 0px; padding-left: 50px; font-size: 16px; line-height: 45px; }
+.main-status i { display: block; float: left; }
 form.admin-form .form-group div.buttons { padding-bottom: 5px; }
 
 /**
@@ -890,7 +890,7 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 
 .dashboard { padding-left: 6%; padding-right: 6%; padding-top: 30px; }
 .dashboard .panel-group .monitorRow {background-color: #304269;}
-.dashboard .events-panel { padding-left: 10; padding-right: 10; padding-bottom: 10px; }
+.dashboard .events-panel { padding-left: 10; padding-right: 10; }
 /*.dashboard .events-panel.resources-panel { border-right:2px solid #23324C; }*/
 /*.dashboard .events-panel.tasks-panel { border-left:2px solid #23324C; }*/
 /*.dashboard .events-panel.tasks-panel { float: right; }*/

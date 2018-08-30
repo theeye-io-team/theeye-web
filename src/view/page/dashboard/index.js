@@ -88,7 +88,7 @@ module.exports = View.extend({
     }]
   },
   events: {
-    'click [data-hook=up-and-running] i': 'hideUpAndRunning'
+    'click [data-hook=up-and-running]': 'hideUpAndRunning'
   },
   initialize () {
     View.prototype.initialize.apply(this, arguments)
