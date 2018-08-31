@@ -116,7 +116,7 @@ const WorkflowJobRowView = CollapsibleRow.extend({
       fn () {
         let icon = 'fa fa-chevron-right rotate'
         if (!this.collapsed) {
-          icon += ' rotate-down'
+          icon += ' rotate-90'
         }
         return icon
       }

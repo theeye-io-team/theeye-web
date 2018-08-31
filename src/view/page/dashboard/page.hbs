@@ -2,7 +2,9 @@
   <!-- MONITORS -->
   <div data-hook="monitors-panel" class="monitors admin-panel">
     <section class="col-md-12 resources-panel events-panel">
-      <h3 data-hook="monitors-panel-header">Monitors</h3>
+      <h3 data-hook="monitors-panel-header">
+        Monitors <a data-hook="toggle-up-and-running" href="#" class="fa fa-chevron-up rotate" style="color: white;"></a>
+      </h3>
 
       <!-- HIDDEN CONTAINER WITH EXTRA OPTIONS -->
       <div data-hook="more-options" class="group hidden-container">
@@ -10,7 +12,7 @@
       </div>
 
       <!-- ALL UP AND RUNNING -->
-      <div data-hook="up-and-running" class="main-status hidden-container">
+      <div data-hook="hide-up-and-running" class="main-status hidden-container">
         <i class="fa fa-check-circle big-icon"></i>
         <h4>Relax, Nothing to worry about</h4>
       </div>

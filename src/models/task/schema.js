@@ -124,6 +124,8 @@ const Schema = AppModel.extend({
         })
     }
 
+    delete serial.jobs
+
     return serial
   },
   hostResource () {

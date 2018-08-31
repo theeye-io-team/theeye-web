@@ -21,3 +21,21 @@
        -o-animation: fadeout 1s; /* Opera < 12.1 */
           animation: fadeout 1s;
 }
+
+.rotate {
+  -moz-transition: all 0.1s linear;
+  -webkit-transition: all 0.1s linear;
+  transition: all 0.1s linear;
+}
+
+.rotate.rotate-90 {
+  -moz-transform:rotate(90deg);
+  -webkit-transform:rotate(90deg);
+  transform:rotate(90deg);
+}
+
+.rotate.rotate-180 {
+  -moz-transform:rotate(180deg);
+  -webkit-transform:rotate(180deg);
+  transform:rotate(180deg);
+}

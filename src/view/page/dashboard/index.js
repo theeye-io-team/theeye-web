@@ -25,44 +25,6 @@ import acls from 'lib/acls'
 
 import onBoarding from './onboarding'
 
-const runAllTasks = (rows) => {
-  // doble check here
-  if (rows.length > 0) {
-    const tasks = rows.map(row => row.model)
-
-    const boxTitle = `With great power comes great responsibility`
-    const boxMessage = `You are going to run various tasks.<br> This operation cannot be canceled`
-
-    bootbox.confirm({
-      title: boxTitle,
-      message: boxMessage,
-      backdrop: true,
-      buttons: {
-        confirm: {
-          label: 'Run All',
-          className: 'btn-danger'
-        },
-        cancel: {
-          label: 'Maybe another time...',
-          className: 'btn-default'
-        }
-      },
-      callback (confirmed) {
-        if (confirmed === true) {
-
-          tasks.forEach(task => {
-            if (/Workflow/.test(task._type)) {
-              WorkflowActions.triggerExecution(task)
-            } else {
-              TaskActions.execute(task)
-            }
-          })
-        }
-      }
-    })
-  }
-}
-
 /**
  *
  * @author Facugon
@@ -81,23 +43,78 @@ module.exports = View.extend({
     tasks: 'collection',
     renderStats: ['boolean', false, false],
     renderTasks: ['boolean', false, true],
-    waitTimeout: ['number', false, null],
-    upandrunningSign: ['boolean', false, () => {
+    upAndRunningSignEnabled: ['boolean', false, () => {
       let enabled = config.dashboard.upandrunningSign
       return typeof enabled === 'boolean' ? enabled : true
-    }]
+    }],
+    upAndRunningSignVisible: 'boolean',
+    failingMonitors: ['array', false, () => { return [] }]
+  },
+  derived: {
+    failingMonitorsCount: {
+      deps: ['failingMonitors'],
+      fn () {
+        return this.failingMonitors.length > 0
+      }
+    }
+  },
+  bindings: {
+    failingMonitorsCount: {
+      type: 'toggle',
+      hook: 'toggle-up-and-running',
+      invert: true
+    },
+    upAndRunningSignVisible: {
+      type: 'booleanClass',
+      hook: 'toggle-up-and-running',
+      name: 'rotate-180'
+    }
   },
   events: {
-    'click [data-hook=up-and-running]': 'hideUpAndRunning'
+    'click [data-hook=hide-up-and-running]': 'clickHideUpAndRunningSign',
+    'click [data-hook=toggle-up-and-running]': 'clickUpAndRunningSignToggle',
+  },
+  clickHideUpAndRunningSign (event) {
+    this.upAndRunningSignEnabled = false
+    this.hideUpAndRunningSign()
+    this.stopListening(
+      this,
+      'change:failingMonitors',
+      this.toggleUpAndRunningSign
+    )
+  },
+  clickUpAndRunningSignToggle (event) {
+    if (this.upAndRunningSignEnabled === true) {
+      this.clickHideUpAndRunningSign(event)
+    } else {
+      this.upAndRunningSignEnabled = true
+      this.listenToAndRun(
+        this,
+        'change:failingMonitors',
+        this.toggleUpAndRunningSign
+      )
+    }
   },
   initialize () {
     View.prototype.initialize.apply(this, arguments)
+
+    this.listenTo(this.monitors, 'sync change:state', () => {
+      this.failingMonitors = this.monitors.filter(monitor => {
+        let group = this.groupedResources.find(monitor)
+        if (!group) { return false }
+        return monitor.hasError()
+      })
+    })
   },
-  hideUpAndRunning () {
-    this.$upandrunning.slideUp()
+  hideUpAndRunningSign () {
+    this.upAndRunningSignVisible = false
+    this.$upAndRunningSignEl.slideUp()
     this.$monitorsPanel.slideDown()
-    this.upandrunningSign = false
-    this.stopListening(this.monitors, 'sync change:state', this.setUpAndRunningSign)
+  },
+  showUpAndRunningSign () {
+    this.upAndRunningSignVisible = true
+    this.$upAndRunningSignEl.slideDown()
+    this.$monitorsPanel.slideUp()
   },
   render () {
     this.renderWithTemplate()
@@ -136,33 +153,21 @@ module.exports = View.extend({
 
     document.getElementsByClassName('navbar')[0].style.display = 'block'
   },
-  setUpAndRunningSign: function () {
-    if (!this.upandrunningSign) {
-      // upandrunning is disabled
-      return
-    }
-    if (this.waitTimeout) {
-      // the user is interacting
-      return
-    }
-    if (!(this.monitors.length > 0)) {
-      return
-    }
-
-    const failing = this.getFailingMonitors()
-
+  toggleUpAndRunningSign () {
+    // upandrunning is disabled
+    if (this.upAndRunningSignEnabled === false) { return }
+    if (this.monitors.length === 0) { return }
+    const failing = this.failingMonitors
     if (failing.length > 0) {
-      this.$upandrunning.slideUp()
-      this.$monitorsPanel.slideDown()
+      this.hideUpAndRunningSign()
     } else {
-      this.$upandrunning.slideDown()
-      this.$monitorsPanel.slideUp()
+      this.showUpAndRunningSign()
     }
   },
-  sortGroupedResouces: function () {
+  sortGroupedResouces () {
     if (!(this.groupedResources.length > 0)) return
 
-    const failing = this.getFailingMonitors()
+    const failing = this.failingMonitors
 
     /** move ok monitors to fold container **/
     const foldMonitors = () => {
@@ -191,20 +196,13 @@ module.exports = View.extend({
       this.monitorsFolding.hideButton()
     }
   },
-  getFailingMonitors () {
-    return this.monitors.filter(monitor => {
-      let group = this.groupedResources.find(monitor)
-      if (!group) return false
-      return monitor.hasError()
-    })
-  },
   /**
    *
    * should be converted into a Monitors Panel View
    *
    */
   renderMonitorsPanel () {
-    this.$upandrunning = $(this.queryByHook('up-and-running'))
+    this.$upAndRunningSignEl = $(this.queryByHook('hide-up-and-running'))
     this.$monitorsPanel = $(this.queryByHook('monitors-container'))
 
     this.renderSubview(
@@ -244,11 +242,11 @@ module.exports = View.extend({
         })
       }
       if (App.state.searchbox.search) {
-        this.hideUpAndRunning()
+        this.hideUpAndRunningSign()
         this.monitorsFolding.unfold()
       } else {
         this.monitorsFolding.fold()
-        // this.setUpAndRunningSign()
+        this.toggleUpAndRunningSign()
       }
     })
 
@@ -286,7 +284,12 @@ module.exports = View.extend({
       }
     })
 
-    this.listenTo(this.monitors, 'sync change:state', this.setUpAndRunningSign)
+    this.listenTo(
+      this,
+      'change:failingMonitors',
+      this.toggleUpAndRunningSign
+    )
+
     this.listenTo(this.monitors, 'add', () => {
       this.monitorsFolding.unfold()
       App.state.dashboard.groupResources()
@@ -395,3 +398,41 @@ module.exports = View.extend({
     this.renderSubview(this.plusButton)
   }
 })
+
+const runAllTasks = (rows) => {
+  // doble check here
+  if (rows.length > 0) {
+    const tasks = rows.map(row => row.model)
+
+    const boxTitle = `With great power comes great responsibility`
+    const boxMessage = `You are going to run various tasks.<br> This operation cannot be canceled`
+
+    bootbox.confirm({
+      title: boxTitle,
+      message: boxMessage,
+      backdrop: true,
+      buttons: {
+        confirm: {
+          label: 'Run All',
+          className: 'btn-danger'
+        },
+        cancel: {
+          label: 'Maybe another time...',
+          className: 'btn-default'
+        }
+      },
+      callback (confirmed) {
+        if (confirmed === true) {
+
+          tasks.forEach(task => {
+            if (/Workflow/.test(task._type)) {
+              WorkflowActions.triggerExecution(task)
+            } else {
+              TaskActions.execute(task)
+            }
+          })
+        }
+      }
+    })
+  }
+}
