@@ -1043,6 +1043,10 @@ a.flowchart-icon {
   min-height: 38px; width: 38px; padding-top: 5px; line-height: 28px; text-align: center; font-size: 18px;
 }
 
+.admin-container.dashboard .tasks-container .workflow-job-row .panel-heading h4.panel-title-icon i {
+  font-size: 16px;
+}
+
 .admin-container.dashboard .panel-item.icons { }
 .admin-container.dashboard i.circle { border-radius: 50%; }
 .admin-container.dashboard i.host-color { background-color: #00b4bc }
@@ -1078,6 +1082,17 @@ a.flowchart-icon {
   top: -14px;
   right: 7px;
   background-color: #d88e47;
+}
+
+.admin-container.dashboard .job-status-icon {
+  width: 30px;
+  padding-right: 10px;
+  text-align: center;
+}
+
+.admin-container.dashboard .job-status-icon i{
+  font-size: 16px;
+  line-height: 28px;
 }
 
 @media (max-width: 767px) {

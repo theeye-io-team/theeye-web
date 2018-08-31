@@ -3,18 +3,9 @@ import View from 'ampersand-view'
 module.exports = View.extend({
   initialize () {
     View.prototype.initialize.apply(this, arguments)
-
-    this.listenToAndRun(
-      this.model.jobs,
-      'add change sync reset remove',
-      this.udpateInProgressJobs
-    )
-  },
-  props: {
-    in_progress_jobs: ['number', true, 0]
   },
   bindings: {
-    in_progress_jobs: [
+    'model.inProgressJobs': [
       {
         type: 'text',
         hook: 'badge'
@@ -24,10 +15,6 @@ module.exports = View.extend({
         hook: 'badge'
       }
     ]
-  },
-  udpateInProgressJobs () {
-    let inProgressJobs = this.model.jobs.filter(job => job.inProgress)
-    this.in_progress_jobs = inProgressJobs.length
   },
   template: `
     <li class="task-exec-button">

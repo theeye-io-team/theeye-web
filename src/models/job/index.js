@@ -261,6 +261,24 @@ const Collection = AppCollection.extend({
 const WorkflowJob = BaseJob.extend({
   collections: {
     jobs: Collection
+  },
+  session: {
+    lifecycle: 'string'
+  },
+  initialize () {
+    BaseJob.prototype.initialize.apply(this, arguments)
+
+    this.listenToAndRun(
+      this.jobs,
+      'add change sync reset remove',
+      function () {
+        if (this.jobs.length) {
+          this.lifecycle = this.jobs.at(this.jobs.length - 1).lifecycle
+        } else {
+          this.lifecycle = undefined
+        }
+      }
+    )
   }
 })
 

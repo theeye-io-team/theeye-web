@@ -16,16 +16,20 @@ const isWorkflow = (model) => {
 
 const GroupedTasksCollection = TasksCollection.extend({
   comparator (m1, m2) {
-    let m1IsWf = isWorkflow(m1)
-    let m2IsWf = isWorkflow(m2)
+    if (m1.inProgressJobs > m2.inProgressJobs) { return -1 }
+    else if (m1.inProgressJobs < m2.inProgressJobs) { return 1 }
+    else {
+      let m1IsWf = isWorkflow(m1)
+      let m2IsWf = isWorkflow(m2)
 
-    if ( (m1IsWf && m2IsWf) || (!m1IsWf && !m2IsWf) ) {
-      if (m1.name.toLowerCase()<m2.name.toLowerCase()) { return -1 }
-      if (m1.name.toLowerCase()>m2.name.toLowerCase()) { return  1 }
-      return 0
+      if ( (m1IsWf && m2IsWf) || (!m1IsWf && !m2IsWf) ) {
+        if (m1.name.toLowerCase()<m2.name.toLowerCase()) { return -1 }
+        if (m1.name.toLowerCase()>m2.name.toLowerCase()) { return  1 }
+        return 0
+      }
+      else if (m1IsWf) { return -1 }
+      else if (m2IsWf) { return 1 }
     }
-    else if (m1IsWf) { return -1 }
-    else if (m2IsWf) { return 1 }
   },
   model (attrs, options={}) {
     const taskModel = TasksCollection.prototype.model
@@ -100,6 +104,13 @@ module.exports = AmpersandState.extend({
       App.state.localSettings.monitorsGroupBy = groupBy
     }
     this.monitorsGroupBy = parseMonitorsGroupBy(App.state.localSettings.monitorsGroupBy)
+  },
+  initialize () {
+    AmpersandState.prototype.initialize.apply(this, arguments)
+
+    this.listenToAndRun(this.groupedTasks, 'change:inProgressJobs', () => {
+      this.groupedTasks.sort()
+    })
   }
 })
 
