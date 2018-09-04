@@ -49,14 +49,7 @@ XHR.send = (options, callback) => {
     if (xhr.status >= 400) { // 400 && 500 error
       options.fail && options.fail(data, xhr)
 
-      const args = { xhr: xhr, options: options }
-      if (xhr.status === 401) {
-        XHR.trigger('unauthorized', args)
-      } else if (xhr.status === 403) {
-        XHR.trigger('forbidden', args)
-      } else if (xhr.status >= 500) {
-        XHR.trigger('server_error', args)
-      }
+      XHR.handleError(xhr, options)
     }
 
     if (xhr.status >= 200 && xhr.status <= 299) { // status 200
@@ -128,4 +121,15 @@ XHR.authorization = null
 XHR.defaults = {
   timeout: 0,
   withCredentials: true
+}
+
+XHR.handleError = (xhr, options) => {
+  const args = { xhr, options }
+  if (xhr.status === 401) {
+    XHR.trigger('unauthorized', args)
+  } else if (xhr.status === 403) {
+    XHR.trigger('forbidden', args)
+  } else if (xhr.status >= 500) {
+    XHR.trigger('server_error', args)
+  }
 }

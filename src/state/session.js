@@ -43,33 +43,33 @@ module.exports = AmpersandState.extend({
         this.on('change:access_token', (event) => {
           this.verifyAccessToken()
         })
-
         this.trigger('restored')
       })
     })
   },
   verifyAccessToken (next) {
     const token = this.access_token
-    const isValidFormat = Boolean(token)
 
     const done = () => {
       this.persist()
       if (next) { next() }
     }
 
-    if (!isValidFormat) { // empty or not set
-      XHR.authorization = this.authorization = ''
-      this.logged_in = false
-      done()
-    } else {
-      XHR.authorization = this.authorization = `Bearer ${token}`
-      if (!this.logged_in) { // valid access token
-        // try to login by fetching the profile with the access_token
-        SessionActions.fetchProfile(done)
-      } else {
+    SessionActions.verifyAccessToken(token, (err) => {
+      if (err) {
+        XHR.authorization = this.authorization = ''
+        this.logged_in = false
         done()
+      } else {
+        XHR.authorization = this.authorization = `Bearer ${token}`
+        if (!this.logged_in) { // valid access token
+          // try to login by fetching the profile with the access_token
+          SessionActions.fetchProfile(done)
+        } else {
+          done()
+        }
       }
-    }
+    })
   },
   restoreFromStorage (next) {
     this.storage

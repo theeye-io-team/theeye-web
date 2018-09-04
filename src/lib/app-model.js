@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import AmpersandModel from 'ampersand-model'
+import XHR from 'lib/xhr'
 
 module.exports = AmpersandModel.extend({
   dataTypes: {
@@ -30,5 +31,19 @@ module.exports = AmpersandModel.extend({
         withCredentials: true
       }
     }
+  },
+  sync (method, model, options) {
+    let errorFn = options ? options.error : (()=>{})
+
+    options = Object.assign({}, (options||{}), {
+      error: function (respObj, errStr, errMsg) {
+        if (respObj.statusCode >= 400) {
+          XHR.handleError(respObj.rawRequest, options)
+        }
+        if (errorFn) { errorFn.call(this, arguments) }
+      }
+    })
+
+    return AmpersandModel.prototype.sync.call(this, method, model, options)
   }
 })

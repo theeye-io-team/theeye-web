@@ -6,6 +6,8 @@ import bootbox from 'bootbox'
 import assign from 'lodash/assign'
 import reject from 'lodash/reject'
 
+import jwtDecode from 'jwt-decode'
+
 import { Model as Customer } from 'models/customer'
 
 module.exports = {
@@ -51,6 +53,21 @@ module.exports = {
       })
     }
   },
+  verifyAccessToken (token, done) {
+    const isValidFormat = Boolean(token)
+    if (!isValidFormat) { // empty or not set
+      return done( new Error('invalid token format') )
+    }
+
+    let decoded = jwtDecode(token)
+    let date = new Date()
+
+    if ((decoded.exp * 1000) <= date.getTime()) {
+      return done( new Error('session expired') )
+    }
+
+    return done()
+  },
   refreshAccessToken () {
     logger.debug('obtaining new acccess token..')
 
@@ -60,13 +77,8 @@ module.exports = {
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
-      done: (data,xhr) => {
+      done: (data, xhr) => {
         App.state.session.access_token = data.access_token
-        //App.state.session.set({
-        //  access_token: data.access_token
-        //},{ silent: true })
-      },
-      fail: (err,xhr) => {
       }
     })
   },
