@@ -37,31 +37,37 @@ module.exports = AmpersandState.extend({
     this.on('change:logged_in', checkLicense)
 
     this.restoreFromStorage(() => {
-      // once session determines if the current access token is valid or not
-      // trigger restored event to continue app initialization
-      this.on('change:access_token', (event) => { this.validateAccessToken() })
+      this.verifyAccessToken(() => {
+        // once session determines if the current access token is valid or not
+        // trigger restored event to continue app initialization
+        this.on('change:access_token', (event) => {
+          this.verifyAccessToken()
+        })
 
-      this.trigger('restored')
+        this.trigger('restored')
+      })
     })
   },
-  validateAccessToken (next) {
+  verifyAccessToken (next) {
     const token = this.access_token
     const isValidFormat = Boolean(token)
-    this.authorization = isValidFormat ? `Bearer ${token}` : ''
-    XHR.authorization = this.authorization
 
     const done = () => {
       this.persist()
-      if (next) next()
+      if (next) { next() }
     }
 
     if (!isValidFormat) { // empty or not set
+      XHR.authorization = this.authorization = ''
       this.logged_in = false
       done()
     } else {
+      XHR.authorization = this.authorization = `Bearer ${token}`
       if (!this.logged_in) { // valid access token
         // try to login by fetching the profile with the access_token
         SessionActions.fetchProfile(done)
+      } else {
+        done()
       }
     }
   },
@@ -70,13 +76,9 @@ module.exports = AmpersandState.extend({
       .getItem('session')
       .then(data => {
         data || (data={})
-
-        if (!data.access_token) {
-          data.access_token = null
-        }
-
-        this.set(data,{ silent: true })
-        this.validateAccessToken(next)
+        if (!data.access_token) { data.access_token = null }
+        this.set(data, { silent: true })
+        next()
       })
   },
   clear () {

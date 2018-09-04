@@ -247,11 +247,10 @@ module.exports = function (io) {
      * 'connect' event is triggered when the socket establishes a connection
      *  successfully.
      */
-    socket.on('connect', function socketConnected() {
+    socket.on('connect', function socketConnected () {
 
       if (!socket.$events.disconnect) {
-        socket.on('disconnect', function() {
-        });
+        socket.on('disconnect', function() { })
       }
 
       if (!socket.$events.reconnect) {
@@ -260,7 +259,7 @@ module.exports = function (io) {
           consolog(
             'socket reconnected successfully after being offline ' +
             'for ' + numSecsOffline + ' seconds.');
-        });
+        })
       }
 
       if (!socket.$events.reconnecting) {
@@ -268,26 +267,27 @@ module.exports = function (io) {
           socket.msSinceConnectionLost = msSinceConnectionLost;
           consolog(
             'socket is trying to reconnect...' +
-            '(attempt #' + numAttempts + ')');
-        });
+            'attempt #' + numAttempts
+          )
+        })
       }
 
 
       // 'error' event is triggered if connection can not be established.
-      // (usually because of a failed authorization, which is in turn
-      // usually due to a missing or invalid cookie)
+      // usually because of a failed authorization, which is in turn
+      // usually due to a missing or invalid cookie
       if (!socket.$events.error) {
         socket.on('error', function failedToConnect(err) {
 
           consolog(
-            'Failed to connect socket (probably due to failed authorization on server)',
+            'Failed to connect socket. probably due to failed authorization on server',
             'Error:', err
           );
         });
       }
-    });
+    })
 
-    if (next) next(null,socket) // use callback to ensure socket is defined
+    if (next) { next(null, socket) } // use callback to ensure socket is defined
   }
 
   return {

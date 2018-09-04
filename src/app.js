@@ -43,7 +43,7 @@ App.extend({
   },
   initState (next) {
     // listen session restored
-    this.listenToOnce(this.state.session,'restored',next)
+    this.listenToOnce(this.state.session, 'restored', next)
     this.state.appInit()
   },
   navigate (page) {

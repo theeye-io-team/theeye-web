@@ -20,7 +20,6 @@
  *  });
  *
  */
-
 import App from 'ampersand-app'
 import Events from 'ampersand-events'
 import assign from 'lodash/assign'
@@ -40,6 +39,99 @@ function SocketsWrapper (options) {
 }
 
 module.exports = SocketsWrapper
+
+SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
+
+  connect (done) {
+    const sailsIO = sailsSockets(io) // setup sails sockets connection using global socket.io object
+    let socket = this.socket
+    if (!socket) {
+      logger.log('connecting sails socket')
+      sailsIO.connect({ url: App.config.socket_url }, (err, socket) => {
+        this.socket = socket
+        bindEvents(socket, this, this.events)
+        done(null, socket)
+      })
+    } else {
+      if (!socket.socket.connected) {
+        var host = new RegExp(socket.socket.options.host)
+        if (host.test(App.config.socket_url)) {
+          // If host url matches, reconnect socket.
+          logger.log('reconnecting socket')
+          socket.socket.connect()
+          done(null, socket)
+        } else {
+          // If host url doesn't match, connect new socket.
+          sailsIO.connect({ url: App.config.socket_url }, (err, socket) => {
+            this.socket = socket
+            bindEvents(socket, this, this.events)
+            done(null, socket)
+          })
+        }
+      }
+    }
+  },
+
+  disconnect (done) {
+    let socket = this.socket
+    if (!socket) return
+    if (socket.socket.connected) {
+      this.unsubscribe({ // unsubscribe all
+        onUnsubscribed: () => {
+          socket.disconnect()
+        }
+      })
+    }
+  },
+
+  destroy (done) {
+  },
+
+  connected () {
+    let socket = this.socket
+    return socket && socket.socket && socket.socket.connected
+  },
+
+  subscribe ({ query, onSubscribed }) {
+    let socket = this.socket
+
+    const subscribe = () => {
+      logger.debug('subscribing...')
+      socket.post('/sockets/subscribe', query, function (data, jwt) {
+        onSubscribed && onSubscribed(data, jwt)
+      })
+    }
+
+    if (this.connected()) { subscribe() }
+    else this.listenToOnce(this, 'connected', subscribe)
+  },
+
+  unsubscribe (options={}) {
+    let { query, onUnsubscribed } = options
+    let socket = this.socket
+
+    if (this.connected()) {
+      logger.debug('unsubscribing...')
+      socket.post('/sockets/unsubscribe', query||{}, function (data, jwt) {
+        onUnsubscribed && onUnsubscribed(data, jwt)
+      })
+    } else {
+      logger.debug('socket is not connected. cannot unsubscribe')
+    }
+  },
+
+  serverSubscriptions () {
+    let socket = this.socket
+    if (this.connected()) {
+      logger.debug('querying subscriptions')
+      socket.get('/sockets/subscriptions', function (data, jwt) {
+        logger.debug('%o', data)
+      })
+    } else {
+      logger.debug('socket is not connected. cannot unsubscribe')
+    }
+  }
+})
 
 const bindEvents = (socket, emitter, events) => {
   for (let event in events) {
@@ -63,104 +155,12 @@ const bindEvents = (socket, emitter, events) => {
   }
 
   socket.on('connect', function () {
-    logger.debug('socket connected')
     emitter.trigger('connected')
   })
 
   socket.on('disconnect', function () {
-    logger.debug('socket disconnected')
     emitter.trigger('disconnected')
   })
 
   return
-}
-
-SocketsWrapper.prototype.connect = function (done) {
-  const sailsIO = sailsSockets(io) // setup sails sockets connection using global socket.io object
-  let socket = this.socket
-  if (!socket) {
-    logger.log('connecting sails socket')
-    sailsIO.connect({ url: App.config.socket_url }, (err, socket) => {
-      this.socket = socket
-      bindEvents(socket, this, this.events)
-      done(null, socket)
-    })
-  } else {
-    if (!socket.socket.connected) {
-      var host = new RegExp(socket.socket.options.host)
-      if (host.test(App.config.socket_url)) {
-        // If host url matches, reconnect socket.
-        logger.log('reconnecting socket')
-        socket.socket.connect()
-        done(null, socket)
-      } else {
-        // If host url doesn't match, connect new socket.
-        sailsIO.connect({ url: App.config.socket_url }, (err, socket) => {
-          this.socket = socket
-          bindEvents(socket, this, this.events)
-          done(null, socket)
-        })
-      }
-    }
-  }
-}
-
-SocketsWrapper.prototype.disconnect = function (done) {
-  let socket = this.socket
-  if (!socket) return
-  if (socket.socket.connected) {
-    this.unsubscribe({ // unsubscribe all
-      onUnsubscribed: () => {
-        socket.disconnect()
-      }
-    })
-  }
-}
-
-SocketsWrapper.prototype.destroy = function (done) {
-}
-
-SocketsWrapper.prototype.connected = function () {
-  let socket = this.socket
-  return socket && socket.socket && socket.socket.connected
-}
-
-SocketsWrapper.prototype.subscribe = function ({ query, onSubscribed }) {
-  let socket = this.socket
-
-  const subscribe = () => {
-    logger.debug('subscribing...')
-    socket.post('/sockets/subscribe', query, function (data, jwt) {
-      onSubscribed && onSubscribed(data, jwt)
-    })
-  }
-
-  if (this.connected()) subscribe()
-  else this.listenToOnce(this, 'connected', subscribe)
-}
-
-SocketsWrapper.prototype.unsubscribe = function (options={}) {
-  let { query, onUnsubscribed } = options
-  let socket = this.socket
-
-  if (this.connected()) {
-    logger.debug('unsubscribing...')
-    socket.post('/sockets/unsubscribe', query||{}, function (data, jwt) {
-      onUnsubscribed && onUnsubscribed(data, jwt)
-    })
-  } else {
-    logger.debug('socket is not connected. cannot unsubscribe')
-  }
-}
-
-SocketsWrapper.prototype.serverSubscriptions = function () {
-  let socket = this.socket
-  if (this.connected()) {
-    logger.debug('querying subscriptions')
-    socket.get('/sockets/subscriptions', function (data, jwt) {
-      logger.debug('%o', data)
-    })
-  } else {
-    logger.debug('socket is not connected. cannot unsubscribe')
-  }
 }

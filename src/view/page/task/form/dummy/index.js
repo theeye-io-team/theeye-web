@@ -39,7 +39,7 @@ module.exports = TaskFormView.extend({
       }),
       new ArgumentsView({
         name: 'output_parameters',
-        label: 'Output parameters',
+        label: 'Output values',
         value: this.model.output_parameters
       }),
       // advanced fields starts visible = false

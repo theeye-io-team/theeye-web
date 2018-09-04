@@ -29,6 +29,15 @@ module.exports = () => {
   // initialize sails sockets
   let session = App.state.session
 
+  const subscribe = () => {
+    App.sockets.subscribe({
+      query: {
+        customer: session.customer.name,
+        topics: defaultTopics
+      }
+    })
+  }
+
   const updateSubscriptions = () => {
     if (!session.customer.id) return
 
@@ -37,12 +46,7 @@ module.exports = () => {
       onUnsubscribed: () => {
 
         // ... then subscribe again to new customer notifications
-        App.sockets.subscribe({
-          query: {
-            customer: session.customer.name,
-            topics: defaultTopics
-          }
-        })
+        subscribe()
       }
     })
   }
@@ -51,17 +55,15 @@ module.exports = () => {
 
   App.listenToAndRun(session, 'change:logged_in', () => {
     const logged_in = session.logged_in
-    if (logged_in===undefined) return
+    if (logged_in===undefined) { return }
     if (logged_in===true) {
-      App.sockets.connect(err => {
-        App.sockets.subscribe({
-          query: {
-            customer: session.customer.name,
-            topics: defaultTopics
-          }
-        })
+      // get a socket and wait connected event
+      App.sockets.on('connected', () => {
+        logger.debug('socket connected')
+        subscribe() // events subscription
         App.listenTo(session.customer, 'change:id', updateSubscriptions)
       })
+      App.sockets.connect(err => { })
     } else {
       App.sockets.disconnect()
       App.stopListening(session.customer, 'change:id', updateSubscriptions)
