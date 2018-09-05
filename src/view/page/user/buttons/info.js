@@ -9,8 +9,8 @@ import config from 'config'
 
 module.exports = CommonButton.extend({
   initialize (options) {
-    this.tip = 'Waiting activation'
-    this.className = 'btn btn-primary'
+    this.title = 'Waiting activation'
+    this.className = 'btn btn-primary dropdown-icon'
     this.iconClass = 'glyphicon glyphicon-info-sign'
     this.show = Boolean(!this.model.enabled && this.model.invitation_token)
   },

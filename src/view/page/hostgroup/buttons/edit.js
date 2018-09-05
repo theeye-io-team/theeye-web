@@ -5,16 +5,19 @@ import HostGroupActions from 'actions/hostgroup'
 import Modalizer from 'components/modalizer'
 import FormView from '../form'
 import bootbox from 'bootbox'
+import $ from 'jquery'
 
 module.exports = PanelButton.extend({
   initialize (options) {
-    this.title = 'Edit Bot Template'
-    this.iconClass = 'fa fa-edit'
+    this.title = 'Edit template'
+    this.iconClass = 'fa fa-edit dropdown-icon'
     this.className = 'btn btn-primary'
   },
   events: {
     click (event) {
       event.stopPropagation()
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+
       const form = new FormView({ model: this.model })
       const modal = new Modalizer({
         confirmButton: 'Save',

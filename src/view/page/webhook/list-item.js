@@ -5,23 +5,27 @@ import WebhookActions from 'actions/webhook'
 import Modalizer from 'components/modalizer'
 import merge from 'lodash/merge'
 import WebhookForm from './form'
+import $ from 'jquery'
 
 const WebhookButtons = BaseView.extend({
   template: `
     <div>
       <li>
         <button class="btn btn-primary" data-hook="workflow" title="Workflow">
-          <span class="fa fa-sitemap"></span>
+          <span class="fa fa-sitemap dropdown-icon"></span>
+          <span>Show workflow</span>
         </button>
       </li>
       <li>
         <button class="btn btn-primary" data-hook="edit" title="Edit">
-          <span class="fa fa-edit"></span>
+          <span class="fa fa-edit dropdown-icon"></span>
+          <span>Edit webhook</span>
         </button>
       </li>
       <li>
         <button class="btn btn-primary" data-hook="remove" title="Delete">
-          <span class="fa fa-trash"></span>
+          <span class="fa fa-trash dropdown-icon"></span>
+          <span>Delete webhook</span>
         </button>
       </li>
     </div>
@@ -34,17 +38,20 @@ const WebhookButtons = BaseView.extend({
   onClickWorkflow(event){
     event.preventDefault();
     event.stopPropagation();
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
     window.open('/admin/workflow/' + this.model.id, '_blank');
     return false;
   },
   onClickEdit(event){
     event.preventDefault();
     event.stopPropagation();
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
     this.edit();
   },
   onClickRemove(event){
     event.preventDefault();
     event.stopPropagation();
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
     var model = this.model;
     bootbox.confirm('Continue removing ' + model.get('name') + ' webhook ?', function(confirmed){
       if (confirmed) {

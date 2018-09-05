@@ -12,7 +12,6 @@ import Buttons from 'view/buttons'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 import CopyTaskSelect from '../copy-task-select'
-import RemoveButton from '../remove-button'
 import bootbox from 'bootbox'
 import HelpIcon from 'components/help-icon'
 
@@ -27,7 +26,6 @@ module.exports = TaskFormView.extend({
       'triggers',
       'task_arguments',
       'output_parameters',
-      'remove-button',
       'copy_task'
     ]
 
@@ -124,9 +122,6 @@ module.exports = TaskFormView.extend({
           this.setWithTask(task)
         }
       })
-    } else {
-      let removeButton = new RemoveButton({ form: this })
-      this.fields.push(removeButton)
     }
 
     TaskFormView.prototype.initialize.apply(this, arguments)

@@ -4,8 +4,10 @@ import SearchActions from 'actions/searchbox'
 import ExecTaskButton from '../task-exec-button'
 import EditTaskButton from 'view/page/task/buttons/edit'
 import CopyTaskButton from 'view/page/task/buttons/copy'
+import DeleteTaskButton from 'view/page/task/buttons/delete'
 import CollapsibleRow from 'view/page/dashboard/task/collapsible-row'
 import acls from 'lib/acls'
+import $ from 'jquery'
 
 module.exports = CollapsibleRow.extend({
   onClickToggleCollapse (event) {
@@ -31,20 +33,24 @@ const TaskButtonsView = View.extend({
   template: `
     <div>
       <li>
-        <button class="btn btn-primary tooltiped" title="Workflow" data-hook="workflow">
-          <i class="fa fa-sitemap" aria-hidden="true"></i>
+        <button class="btn btn-primary" title="Workflow" data-hook="workflow">
+          <i class="fa fa-sitemap dropdown-icon" aria-hidden="true"></i>
+          <span>View workflow</span>
         </button>
       </li>
       <span data-hook="edit-button"> </span>
       <span data-hook="copy-button"> </span>
+      <span data-hook="delete-button"> </span>
       <li>
-        <button data-hook="recipe" class="btn btn-primary tooltiped" title="Export this task recipe">
-          <i class="fa fa-file-code-o" aria-hidden="true"></i>
+        <button data-hook="recipe" class="btn btn-primary" title="Export this task recipe">
+          <i class="fa fa-file-code-o dropdown-icon" aria-hidden="true"></i>
+          <span>Export recipe</span>
         </button>
       </li>
       <li>
-        <button data-hook="search" class="btn btn-primary tooltiped" title="Search related elements">
-          <i class="fa fa-search" aria-hidden="true"></i>
+        <button data-hook="search" class="btn btn-primary" title="Search related elements">
+          <i class="fa fa-search dropdown-icon" aria-hidden="true"></i>
+          <span>Search related</span>
         </button>
       </li>
     </div>
@@ -57,18 +63,21 @@ const TaskButtonsView = View.extend({
   onClickRecipe (event) {
     event.stopPropagation()
     event.preventDefault()
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
     TaskActions.exportRecipe(this.model.id)
     return false
   },
   onClickWorkflow (event) {
-    event.stopPropagation();
-    event.preventDefault();
+    event.stopPropagation()
+    event.preventDefault()
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
     TaskActions.nodeWorkflow(this.model.id)
     return false;
   },
   onClickSearch (event) {
     event.preventDefault()
     event.stopPropagation()
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
     SearchActions.search(this.model.name)
     return false
   },
@@ -81,6 +90,9 @@ const TaskButtonsView = View.extend({
 
       var copyButton = new CopyTaskButton({ model: this.model })
       this.renderSubview(copyButton, this.queryByHook('copy-button'))
+
+      var deleteButton = new DeleteTaskButton({ model: this.model })
+      this.renderSubview(deleteButton, this.queryByHook('delete-button'))
     }
   }
 })

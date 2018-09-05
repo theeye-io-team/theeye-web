@@ -3,11 +3,12 @@ import PanelButton from 'components/list/item/panel-button'
 import HostGroupActions from 'actions/hostgroup'
 import bootbox from 'bootbox'
 const unlinkDestinationHostsTemplate = require('./unlink-destination-hosts.hbs')
+import $ from 'jquery'
 
 module.exports = PanelButton.extend({
   initialize: function (options) {
-    this.title = 'Delete Bot Template'
-    this.iconClass = 'fa fa-trash'
+    this.title = 'Delete template'
+    this.iconClass = 'fa fa-trash dropdown-icon'
     this.className = 'btn btn-primary'
   },
   deleteTemplateDialog () {
@@ -82,6 +83,7 @@ module.exports = PanelButton.extend({
     click: function (event) {
       event.stopPropagation()
       event.preventDefault()
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
       this.deleteTemplateDialog()
     }

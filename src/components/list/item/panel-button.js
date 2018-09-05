@@ -5,6 +5,7 @@ module.exports = CommonButton.extend({
     <li>
       <button>
         <span data-hook="icon-span"></span>
+        <span data-hook="title"></span>
       </button>
     </li>
   `

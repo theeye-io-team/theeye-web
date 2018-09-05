@@ -21,7 +21,6 @@ import TaskConstants from 'constants/task'
 import HelpTexts from 'language/help'
 
 import CopyTaskSelect from '../copy-task-select'
-import RemoveButton from '../remove-button'
 
 module.exports = FormView.extend({
   initialize (options) {
@@ -89,7 +88,6 @@ module.exports = FormView.extend({
       'grace_time',
       'status_code',
       'pattern',
-      'remove-button',
       'copy_task'
     ]
 
@@ -261,9 +259,6 @@ module.exports = FormView.extend({
           this.setWithTask(task)
         }
       })
-    } else {
-      let removeButton = new RemoveButton({ form: this })
-      this.fields.push(removeButton)
     }
 
     FormView.prototype.initialize.apply(this, arguments)

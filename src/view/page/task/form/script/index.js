@@ -14,7 +14,6 @@ import assign from 'lodash/assign'
 import HelpTexts from 'language/help'
 import TaskConstants from 'constants/task'
 
-import RemoveButton from '../remove-button'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 import CopyTaskSelect from '../copy-task-select'
@@ -54,7 +53,6 @@ module.exports = TaskFormView.extend({
       'triggers',
       'grace_time',
       'task_arguments',
-      'remove-button',
       'copy_task'
     ]
 
@@ -164,9 +162,6 @@ module.exports = TaskFormView.extend({
           this.setWithTask(task)
         }
       })
-    } else {
-      let removeButton = new RemoveButton({ form: this })
-      this.fields.push(removeButton)
     }
 
     TaskFormView.prototype.initialize.apply(this, arguments)

@@ -2,17 +2,19 @@ import PanelButton from 'components/list/item/panel-button'
 import merge from 'lodash/merge'
 import bootbox from 'bootbox'
 import { fetch, defaultOptions, responseHandler } from 'lib/fetch'
+import $ from 'jquery'
 
 module.exports = PanelButton.extend({
   initialize: function (options) {
-    this.tip = 'Resend invitation'
+    this.title = 'Resend invitation'
     this.order = 900
-    this.className = 'btn btn-primary reSendInvitation'
+    this.className = 'btn btn-primary dropdown-icon reSendInvitation'
     this.iconClass = 'glyphicon glyphicon-share-alt'
   },
   events: {
     'click': function resendInvitation (event) {
       event.stopPropagation()
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
       const options = merge({}, defaultOptions, { method: 'PUT' })
 

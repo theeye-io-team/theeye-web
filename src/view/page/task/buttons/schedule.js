@@ -11,6 +11,8 @@ import MinMaxTimePlugin from 'flatpickr/dist/plugins/minMaxTimePlugin'
 
 import { createSchedule } from 'actions/schedule'
 import bootbox from 'bootbox'
+import $ from 'jquery'
+
 const HelpTexts = require('language/help')
 
 const humanInterval = require('lib/human-interval')
@@ -294,8 +296,7 @@ const ScheduleForm = FormView.extend({
 })
 module.exports = PanelButton.extend({
   initialize (options) {
-    this.title = `Schedule Task ${this.model.name}`
-    this.tip = 'Schedule Task'
+    this.title = `Schedule Task`
     this.iconClass = 'fa fa-clock-o'
     this.className = 'btn btn-primary'
   },
@@ -310,6 +311,7 @@ module.exports = PanelButton.extend({
   events: {
     click (event) {
       event.stopPropagation()
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
       // TODO: schedules for dynamically argumented
       // tasks are not supported

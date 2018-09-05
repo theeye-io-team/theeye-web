@@ -1,18 +1,19 @@
-import App from 'ampersand-app'
 import PanelButton from 'components/list/item/panel-button'
 import HostGroupActions from 'actions/hostgroup'
 import bootbox from 'bootbox'
+import $ from 'jquery'
 
 module.exports = PanelButton.extend({
   initialize: function (options) {
     this.title = 'Export template'
-    this.iconClass = 'fa fa-download'
+    this.iconClass = 'fa fa-download dropdown-icon'
     this.className = 'btn btn-primary'
   },
   events: {
     click: function (event) {
       var self = this
       event.stopPropagation()
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
       bootbox.confirm({
         title: 'Export template',

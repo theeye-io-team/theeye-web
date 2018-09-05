@@ -1,16 +1,19 @@
 import App from 'ampersand-app'
 import PanelButton from 'components/list/item/panel-button'
 import bootbox from 'bootbox'
+import $ from 'jquery'
 
 module.exports = PanelButton.extend({
   initialize (options) {
-    this.tip = 'Delete Task'
-    this.iconClass = 'fa fa-trash'
+    this.title = 'Delete task'
+    this.iconClass = 'fa fa-trash dropdown-icon'
     this.className = 'btn btn-primary'
   },
   events: {
     click: function (event) {
       event.stopPropagation()
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+
       this.deleteTask(this.model)
     }
   },

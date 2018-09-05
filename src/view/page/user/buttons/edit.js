@@ -3,16 +3,18 @@ import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
 import UserActions from 'actions/user'
 import EditFormView from './edit-form'
+import $ from 'jquery'
 
 module.exports = PanelButton.extend({
   initialize (options) {
-    this.tip = 'Edit User'
-    this.iconClass = 'fa fa-edit'
+    this.title = 'Edit user'
+    this.iconClass = 'fa fa-edit dropdown-icon'
     this.className = 'btn btn-primary editButton'
   },
   events: {
     click: function (event) {
       event.stopPropagation()
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
       const form = new EditFormView({ model: this.model })
 

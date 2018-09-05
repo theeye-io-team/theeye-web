@@ -6,18 +6,21 @@ import Modalizer from 'components/modalizer'
 import merge from 'lodash/merge'
 import View from 'ampersand-view'
 import CustomerForm from './form'
+import $ from 'jquery'
 
 const CustomerButtons = BaseView.extend({
   template: `
     <div>
       <li>
         <button class="btn btn-primary" data-hook="edit" title="Edit">
-          <span class="fa fa-edit"></span>
+          <span class="fa fa-edit dropdown-icon"></span>
+          <span>Edit customer</span>
         </button>
       </li>
       <li>
         <button class="btn btn-primary" data-hook="remove" title="Delete">
-          <span class="fa fa-trash"></span>
+          <span class="fa fa-trash dropdown-icon"></span>
+          <span>Delete customer</span>
         </button>
       </li>
     </div>
@@ -29,11 +32,15 @@ const CustomerButtons = BaseView.extend({
   onClickEdit(event){
     event.preventDefault();
     event.stopPropagation();
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+
     this.edit();
   },
   onClickRemove(event){
     event.preventDefault();
     event.stopPropagation();
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+
     var model = this.model;
     bootbox.confirm('Continue removing ' + model.get('name') + ' customer ?', function(confirmed){
       if (confirmed) {

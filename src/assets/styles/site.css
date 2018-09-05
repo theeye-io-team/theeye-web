@@ -597,7 +597,6 @@ h3.light { color: #EEE}
 .admin-container .panel-heading .panel-item.icons ul.dropdown-menu {
   left:inherit;
   right:0;
-  width:40px;
   min-width:inherit;
   background:none;
   margin:0;
@@ -605,7 +604,16 @@ h3.light { color: #EEE}
   background-color:#304269;
   text-align:center;
   z-index: 1001;
+  width: 160px;
 }
+
+.admin-container .panel-heading .panel-item.icons ul.dropdown-menu .dropdown-icon {
+  padding-right: 5px;
+}
+
+.admin-container .panel-item.icons ul.dropdown-menu li .btn { text-align: left; padding: 5px 10px; width: 155px; height: 34px; border-radius: unset;}
+
+
 .admin-container .panel-heading .panel-item.icons button.dropdown-toggle { margin-left:5px; }
 .admin-container .panel-heading .panel-item .visible-badge {padding-right:5px;}
 .admin-container .panel-default.selectedItem>.panel-heading{ color: #F39B0F; }

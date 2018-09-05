@@ -7,11 +7,13 @@ import ResourceActions from 'actions/resource'
 import MonitorConstants from 'constants/monitor'
 import MonitorEditView from 'view/page/monitor/edit'
 import HelpMessages from 'language/help'
+import $ from 'jquery'
 
 const Mute = View.extend({
   template: `
-    <button class="btn btn-primary tooltiped" data-hook="mute-toggler">
-      <i class="fa" aria-hidden="true"></i>
+    <button class="btn btn-primary" data-hook="mute-toggler">
+      <i class="fa dropdown-icon" aria-hidden="true"></i>
+      <span data-hook="title_text"></span>
     </button>
   `,
   derived: {
@@ -44,9 +46,7 @@ const Mute = View.extend({
       yes: 'remark-alert'
     }],
     title_text: {
-      type: 'attribute',
-      name: 'title',
-      hook: 'mute-toggler'
+      hook: 'title_text'
     }
   },
   events: {
@@ -55,6 +55,7 @@ const Mute = View.extend({
   onClickButton: function(event){
     event.stopPropagation();
     event.preventDefault();
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
     if (this.is_muted) {
       ResourceActions.unmute(this.model.id)
@@ -68,8 +69,9 @@ const Mute = View.extend({
 
 const Edit = View.extend({
   template: `
-    <button class="btn btn-primary tooltiped" title="Edit Monitors" data-hook="edit">
-      <i class="fa fa-edit" aria-hidden="true"></i>
+    <button class="btn btn-primary" title="Edit Monitors" data-hook="edit">
+      <i class="fa fa-edit dropdown-icon" aria-hidden="true"></i>
+      <span>Edit monitor</span>
     </button>
   `,
   events: {
@@ -78,6 +80,8 @@ const Edit = View.extend({
   onClickEdit: function(event){
     event.stopPropagation();
     event.preventDefault();
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+
     if (this.model.type===MonitorConstants.TYPE_NESTED) {
       let view = new MonitorEditView(this.model)
     } else {
@@ -89,8 +93,9 @@ const Edit = View.extend({
 
 const Workflow = View.extend({
   template: `
-    <button class="btn btn-primary tooltiped" title="Workflow" data-hook="workflow">
-      <i class="fa fa-sitemap" aria-hidden="true"></i>
+    <button class="btn btn-primary" title="Workflow" data-hook="workflow">
+      <i class="fa fa-sitemap dropdown-icon" aria-hidden="true"></i>
+      <span>Show workflow</span>
     </button>
   `,
   events: {
@@ -99,6 +104,8 @@ const Workflow = View.extend({
   onClickWorkflow: function(event){
     event.stopPropagation();
     event.preventDefault();
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+
     ResourceActions.workflow(this.model.monitor.id)
     return false;
   },
@@ -106,8 +113,9 @@ const Workflow = View.extend({
 
 const Search = View.extend({
   template: `
-    <button class="btn btn-primary tooltiped" title="Search related elements" data-hook="search">
-      <i class="fa fa-search" aria-hidden="true"></i>
+    <button class="btn btn-primary" title="Search related elements" data-hook="search">
+      <i class="fa fa-search dropdown-icon" aria-hidden="true"></i>
+      <span>Search related</span>
     </button>
   `,
   events: {
@@ -116,6 +124,8 @@ const Search = View.extend({
   onClickSearch: function(event){
     event.stopPropagation();
     event.preventDefault();
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+
     SearchActions.search(this.model.name)
     return false;
   },
@@ -123,8 +133,9 @@ const Search = View.extend({
 
 const LastEvent = View.extend({
   template: `
-    <button class="btn btn-primary tooltiped" title="Last Event" data-hook="last_event">
-      <i class="fa fa-file-text-o" aria-hidden="true"></i>
+    <button class="btn btn-primary" title="Last Event" data-hook="last_event">
+      <i class="fa fa-file-text-o dropdown-icon" aria-hidden="true"></i>
+      <span>Last event</span>
     </button>
   `,
   events: {
@@ -133,6 +144,8 @@ const LastEvent = View.extend({
   onClickLastEvent (event) {
     event.preventDefault();
     event.stopPropagation();
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+
 
     const view = new JobOutput({
       output: this.model.last_event || 'it is empty'
@@ -149,8 +162,9 @@ const LastEvent = View.extend({
 
 const HostStats = View.extend({
   template: `
-    <button class="btn btn-primary tooltiped" title="Host Stats" data-hook="stats">
-      <i class="fa fa-bar-chart" aria-hidden="true"></i>
+    <button class="btn btn-primary" title="Host Stats" data-hook="stats">
+      <i class="fa fa-bar-chart dropdown-icon" aria-hidden="true"></i>
+      <span>Bot Stats</span>
     </button>
   `,
   events: {
@@ -159,6 +173,8 @@ const HostStats = View.extend({
   onClickStats (event) {
     event.stopPropagation();
     event.preventDefault();
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+
     // esto no es un action, deberia ser un navigate nomas
     // HostActions.stats(this.model.host_id)
     App.navigate('/admin/hoststats/' + this.model.host_id)
