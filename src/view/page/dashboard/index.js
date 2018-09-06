@@ -99,11 +99,14 @@ module.exports = View.extend({
     View.prototype.initialize.apply(this, arguments)
 
     this.listenTo(this.monitors, 'sync change:state', () => {
-      this.failingMonitors = this.monitors.filter(monitor => {
-        let group = this.groupedResources.find(monitor)
-        if (!group) { return false }
-        return monitor.hasError()
-      })
+      this.updateFailingMonitors()
+    })
+  },
+  updateFailingMonitors () {
+    this.failingMonitors = this.monitors.filter(monitor => {
+      let group = this.groupedResources.find(monitor)
+      if (!group) { return false }
+      return monitor.hasError()
     })
   },
   hideUpAndRunningSign () {
@@ -121,6 +124,7 @@ module.exports = View.extend({
 
     this.listenToAndRun(App.state.dashboard, 'change:resourcesDataSynced', () => {
       if (App.state.dashboard.resourcesDataSynced === true) {
+        this.updateFailingMonitors()
         this.renderMonitorsPanel()
         this.stopListening(App.state.dashboard, 'change:resourcesDataSynced')
       }
@@ -274,16 +278,6 @@ module.exports = View.extend({
       this.sortGroupedResouces()
     })
 
-    this.listenToAndRun(App.state.tasks, 'add sync reset', () => {
-      if (this.tasksFolding) {
-        if (App.state.tasks.length > 0) {
-          this.tasksFolding.showButton()
-        } else {
-          this.tasksFolding.hideButton()
-        }
-      }
-    })
-
     this.listenTo(
       this,
       'change:failingMonitors',
@@ -335,6 +329,16 @@ module.exports = View.extend({
       let task = row.model
       if (!task.canExecute) {
         this.tasksFolding.append(row.el)
+      }
+    })
+
+    this.listenToAndRun(App.state.tasks, 'add sync reset', () => {
+      if (this.tasksFolding) {
+        if (App.state.tasks.length > 0) {
+          this.tasksFolding.showButton()
+        } else {
+          this.tasksFolding.hideButton()
+        }
       }
     })
 
