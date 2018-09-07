@@ -97,7 +97,8 @@ const AppState = State.extend({
     hoststatsPage: ['state', true, () => new HostStatsPageState()],
     extendedTags: ['state', false, () => new ExtendedTagsState()],
     workflowPage: ['state', false, () => new WorkflowPageState()],
-    workflowVisualizer: ['state', false, () => new WorkflowVisualizerState()]
+    workflowVisualizer: ['state', false, () => new WorkflowVisualizerState()],
+    approval: ['state', false, () => new ApprovalState()]
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)
@@ -227,6 +228,13 @@ const RegisterState = State.extend({
 const EditorState = State.extend({
   props: {
     value: ['string',false,'']
+  }
+})
+
+const ApprovalState = State.extend({
+  props: {
+    underExecution: ['boolean', false, false],
+    newArrived: ['boolean', false, false]
   }
 })
 

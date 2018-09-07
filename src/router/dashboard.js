@@ -6,6 +6,7 @@ import search from 'lib/query-params'
 import Route from 'lib/router-route'
 import after from 'lodash/after'
 import WorkflowActions from 'actions/workflow'
+import ApprovalActions from 'actions/approval'
 
 const logger = require('lib/logger')('router:dashboard')
 
@@ -55,6 +56,8 @@ const prepareData = (options) => {
           App.state.workflows.forEach(workflow => {
             WorkflowActions.populate(workflow)
           })
+
+          ApprovalActions.check()
           step()
         },
         error: step,

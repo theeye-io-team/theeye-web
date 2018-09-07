@@ -147,11 +147,15 @@ const Schema = AppModel.extend({
       return callback() // abort
     }
 
+    let query = {task_id: this.id}
+
+    if (options.hasOwnProperty(query)) {
+      query = Object.assign({}, query, options.query)
+    }
+
     this.jobs.fetch({
       data: {
-        where: {
-          task_id: this.id
-        }
+        where: query
       },
       success: () => {
         this.alreadyFetched = true

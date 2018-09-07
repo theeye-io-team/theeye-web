@@ -11,6 +11,7 @@ import { eachSeries, each } from 'async'
 import config from 'config'
 import { Factory as JobFactory } from 'models/job'
 const logger = require('lib/logger')('actions:jobs')
+import ApprovalActions from 'actions/approval'
 
 module.exports = {
   /**
@@ -58,7 +59,7 @@ module.exports = {
       } else {
         task.jobs.add(tjob)
       }
-      this.handleApprovalTask(tjob, task)
+      isApprovalUpdate(tjob, task)
     }
   },
   /**
@@ -150,55 +151,24 @@ module.exports = {
         console.log(arguments)
       }
     })
-  },
-  /**
-   *
-   * @summary check if should show approval modal
-   * @param {Object} data job model properties
-   *
-   */
-  handleApprovalTask (job, task) {
-    var requestApproval = (
-      job._type === JobConstants.APPROVAL_TYPE &&
-      task.isApprover(App.state.session.user.id) &&
-      job.lifecycle === LifecycleConstants.ONHOLD
-    )
+  }
+}
 
-    if (requestApproval) {
-      var execApprovalJob = new ExecApprovalJob({model: job})
-      execApprovalJob.execute(true)
-    }
-  },
-  checkPedingApprovals () {
-    const userTasksToApprove = App.state.tasks.models.filter((task) => {
-      let check = (
-        task.type === TaskConstants.TYPE_APPROVAL &&
-        task.isApprover(App.state.session.user.id)
-      )
-      return check
-    })
+ /**
+ *
+ * @summary check if should show approval modal
+ * @param {Object} data job model properties
+ *
+ */
+const isApprovalUpdate = function (job, task) {
+  var requestApproval = (
+    job._type === JobConstants.APPROVAL_TYPE &&
+    task.isApprover(App.state.session.user.id) &&
+    job.lifecycle === LifecycleConstants.ONHOLD
+  )
 
-    if (userTasksToApprove.length===0) { return }
-
-    each(userTasksToApprove, function (task, done) {
-      task.fetchJobs({}, done)
-    }, function (err) {
-      if (err) { return }
-
-      let pendingApprovalJobs = []
-      userTasksToApprove.forEach(function (task) {
-        task.jobs.models.forEach(function (job) {
-          if (job.lifecycle === LifecycleConstants.ONHOLD) {
-            pendingApprovalJobs.push(job)
-          }
-        })
-      })
-
-      eachSeries(pendingApprovalJobs, function (job, done) {
-        var execApprovalJob = new ExecApprovalJob({model: job})
-        execApprovalJob.execute(true, done)
-      })
-    })
+  if (requestApproval) {
+    ApprovalActions.check(job)
   }
 }
 

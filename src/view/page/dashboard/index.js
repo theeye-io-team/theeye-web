@@ -8,7 +8,6 @@ import StatsPanelView from './stats-panel'
 import TaskRowView from './task'
 import MonitorRowView from './monitor'
 import RunAllTasksButton from './task/run-all-button'
-import JobActions from 'actions/job'
 import TaskActions from 'actions/task'
 import WorkflowActions from 'actions/workflow'
 import bootbox from 'bootbox'
@@ -394,8 +393,6 @@ module.exports = View.extend({
     }
 
     this.listenToAndRun(App.state.searchbox, 'change:search', search)
-
-    JobActions.checkPedingApprovals()
   },
   renderPlusButton () {
     this.plusButton = new PlusMenuButton()
