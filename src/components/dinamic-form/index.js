@@ -116,8 +116,8 @@ module.exports = FormView.extend({
 
     this.beforeSubmit()
     if (this.valid) {
-      for(var key in this.data) {
-        if (this.data[key] instanceof File) {
+      for (var key in this.data) {
+        if (this._fieldViews[key]._values.type === 'file') {
           this.data[key].dataUrl = this._fieldViews[key]._values.file.dataUrl
         }
       }
