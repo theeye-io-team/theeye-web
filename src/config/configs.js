@@ -5,6 +5,7 @@ let prodSuperv = 'https://supervisor.theeye.io'
 let devSuperv = 'https://supervisor.development.theeye.io'
 
 const defaultConfigs = {
+  landing_page_url: 'https://theeye.io',
   env: 'default',
   app_url: 'http://localhost:6080',
   socket_url: 'http://localhost:6080',

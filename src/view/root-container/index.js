@@ -16,15 +16,19 @@ module.exports = View.extend({
   props: {
     title: ['string',false,'TheEye']
   },
-  template: `
-  	<div class="main-container">
-			<nav></nav>
-  	  <div data-hook="page-container"></div>
-  	  <footer>
-  	    <a href="/">theeye.io</a><br> Copyright © 2018 THEEYE INC
-  	  </footer>
-  	</div>
-  `,
+  template: function () {
+    let url = App.config.landing_page_url
+    let str = `
+      <div class="main-container">
+	  		<nav></nav>
+    	  <div data-hook="page-container"></div>
+    	  <footer>
+    	    <a target="_blank" href="${url}">theeye.io</a><br> Copyright © 2018 THEEYE INC
+    	  </footer>
+    	</div>
+    `
+    return str
+  },
   initialize () {
     this.title = 'TheEye'
     View.prototype.initialize.apply(this,arguments)
