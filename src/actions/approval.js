@@ -8,9 +8,12 @@ import { ExecApprovalJob } from 'view/page/dashboard/task/task/collapse/job/exec
 import { eachSeries, each } from 'async'
 
 module.exports = {
+  skip (job) {
+    job.skip = true
+  },
   check (job) {
     if (App.state.approval.underExecution === true) {
-      App.state.approval.newArrived = true
+        App.state.approval.newArrived = true
     } else {
       this.checkPendingApprovals(job)
     }
@@ -59,7 +62,7 @@ module.exports = {
 
         userTasksToApprove.forEach(function (task) {
           task.jobs.models.forEach(function (job) {
-            if (job.lifecycle === LifecycleConstants.ONHOLD) {
+            if (job.lifecycle === LifecycleConstants.ONHOLD && !job.skip) {
               pendingApprovalJobs.push(job)
             }
           })
@@ -70,8 +73,5 @@ module.exports = {
         }
       })
     }
-  },
-  handleApprovalJob (job, task) {
-
   }
 }
