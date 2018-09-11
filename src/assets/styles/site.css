@@ -587,13 +587,13 @@ h3.light { color: #EEE}
 .admin-container .panel-heading .actions label {font-size:20px; text-align:center;}
 .admin-container .panel-heading .name,
 .admin-container .panel-heading .hostname {white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-.admin-container .panel-heading .panel-item.name {float:left; padding:0px 10px 0px 10px; line-height: 28px;}
+.admin-container .panel-heading .panel-item.name {float:left; padding:2px 10px 2px 10px; line-height: 28px;}
 .admin-container .panel-heading .panel-item.name .job-title {font-size: 14px;}
 .admin-container .panel-heading .panel-item.icons {float:right; text-align:right; padding:0;}
 .admin-container .panel-heading .panel-item.icons .host-menu.dropdown { display: inline-block; width: 38px; height: 32px; }
 .admin-container .panel-heading .panel-item.icons,
 .admin-container .panel-heading .panel-item.icons .resource-search,
-.admin-container .panel-heading .panel-item.icons .state-resource-container { float:right; /*margin-left:10px;*/ }
+.admin-container .panel-heading .panel-item.icons .state-container { float:right; /*margin-left:10px;*/ }
 .admin-container .panel-heading .panel-item.icons ul.dropdown-menu {
   left:inherit;
   right:0;
@@ -976,7 +976,7 @@ a.flowchart-icon {
   .dashboard .events-panel .panel-item.icons .flowchart-icon { background-size: 18px; width: 22px; height: 22px; }
   .dashboard .events-panel .panel-item.icons a.flowchart-icon,
   .dashboard .events-panel .panel-item.icons .btn-icon-image,
-  .admin-container .panel-heading .panel-item.icons .state-resource-container,
+  .admin-container .panel-heading .panel-item.icons .state-container,
   .admin-container .panel-heading .panel-item.icons .resource-search { margin-left:2px; }
 }
 
@@ -1042,13 +1042,24 @@ a.flowchart-icon {
 .admin-container.dashboard .monitors.admin-panel h3 span.dropdown ul.dropdown-menu li:hover { background-color: #23324C; }
 
 .admin-container.dashboard .tasks-container .panel-heading h4.panel-title-icon ,
-.admin-container.dashboard .resource-container .panel-heading h4.panel-title-icon {
-  float: left; margin-top: 0; margin-bottom: 0; font-size: 16px; color: inherit; padding: 5px; padding-left: 10px;
+.admin-container.dashboard .row-container .panel-heading h4.panel-title-icon {
+  float: left;
+  margin-top: 0;
+  margin-bottom: 0;
+  font-size: 16px;
+  color: inherit;
+  padding: 5px;
+  padding-left: 10px;
 }
 
 .admin-container.dashboard .tasks-container .panel-heading h4.panel-title-icon i ,
-.admin-container.dashboard .resource-container .panel-heading h4.panel-title-icon i {
-  min-height: 38px; width: 38px; padding-top: 5px; line-height: 28px; text-align: center; font-size: 18px;
+.admin-container.dashboard .row-container .panel-heading h4.panel-title-icon i {
+  min-height: 38px;
+  width: 38px;
+  padding-top: 6px;
+  line-height: 28px;
+  text-align: center;
+  font-size: 18px;
 }
 
 .admin-container.dashboard .tasks-container .workflow-job-row .panel-heading h4.panel-title-icon i {
@@ -1103,15 +1114,19 @@ a.flowchart-icon {
   line-height: 28px;
 }
 
+@media (max-width: 600px) {
+  .admin-container .panel-heading .panel-item.name { width:75%; }
+}
+
 @media (max-width: 767px) {
-  .admin-container .panel-heading .panel-item.name { width:72%;padding-right:20px; }
+  .admin-container .panel-heading .panel-item.name { padding-right:20px; }
   .admin-container .panel-heading .panel-title-content { position:relative; }
   button.rowSelector, button.rowSelector-not {}
   .activate-container .form-wrapper { padding: 0px 30px; }
 }
 
 @media (min-width: 768px) {
-  .admin-container .panel-heading .panel-item.name { width:75%;padding-right:5px; }
+  .admin-container .panel-heading .panel-item.name { padding-right:5px; }
   /* .admin-container.dashboard .panel-heading .panel-item.name { width:50%; } */
 }
 

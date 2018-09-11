@@ -10,59 +10,12 @@ const ResourceSchema = require('./resource-schema')
 //const ResourceTemplate = require('./resource-template')
 const Host = require('models/host/index').Model
 
+import stateIcon from 'models/state-icon'
+import stateOrder from 'models/state-order'
+import stateMeaning from 'models/state-meaning'
+
 const config = require('config')
 const urlRoot = `${config.api_url}/resource`
-const stateIcons = {
-  low: 'icon-severity-low',
-  high: 'icon-severity-high',
-  critical: 'icon-severity-critical',
-  /*
-   * failure states
-   */
-  unknown: 'icon-state-nonsense',
-  normal: 'icon-state-normal',
-  failure: 'icon-state-failure', // failing
-  updates_stopped: 'icon-state-updates_stopped', // not reporting
-  getIcon (state) {
-    var icon = (this[state.toLowerCase()]||this.unknown);
-    return icon;
-  },
-  orderOf (value) {
-    //
-    // WARNING: KEEP THE INDEXES IN ORDER !!
-    //
-    return [
-      'unknown',
-      'normal',
-      'low',
-      'high',
-      'critical',
-      // when failure_severity is not defined use the state
-      'failure',
-      'updates_stopped'
-    ].indexOf(value)
-  },
-  //classToState (iconClass) {
-  //  var self = this;
-  //  var elems = Object.keys(self).filter(function(state){
-  //    if (self[state]==iconClass) return state
-  //  })
-  //  return elems[0]
-  //},
-  //filterAlertIconClasses (iconClasses) {
-  //  var failureClasses = ['icon-info','icon-warn','icon-fatal'],
-  //    filtered = iconClasses.filter(function(idx,icon){
-  //      return failureClasses.indexOf(icon) != -1
-  //    });
-  //  return filtered;
-  //}
-}
-
-const stateMessages = {
-  normal: 'Working fine',
-  failure: 'Attention required',
-  updates_stopped: 'Stopped reporting',
-}
 
 /**
  *
@@ -217,19 +170,13 @@ const ResourceBaseModel = ResourceSchema.extend({
     stateIcon: {
       deps: ['stateSeverity'],
       fn () {
-        return stateIcons[ this.stateSeverity ]
+        return stateIcon[ this.stateSeverity ]
       }
     },
     stateOrder: {
       deps: ['stateSeverity'],
       fn () {
-        return stateIcons.orderOf( this.stateSeverity )
-      }
-    },
-    stateMessage: {
-      deps: ['state'],
-      fn () {
-        return stateMessages[this.state] || 'Cannot determine'
+        return stateOrder.orderOf( this.stateSeverity )
       }
     }
   },

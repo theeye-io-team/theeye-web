@@ -5,6 +5,7 @@ import Webhook from 'models/webhook'
 import Task from 'models/task'
 import Resource from 'models/resource'
 import Job from 'models/job'
+import Indicator from 'models/indicator'
 
 module.exports = () => {
   App.extend({
@@ -13,7 +14,8 @@ module.exports = () => {
       Task,
       Job,
       Resource,
-      Webhook
+      Webhook,
+      Indicator
     }
   })
 }

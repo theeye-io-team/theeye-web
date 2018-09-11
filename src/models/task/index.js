@@ -195,7 +195,7 @@ const Dummy = Template.Dummy.extend({
 
 
 const TaskFactory = function (attrs, options={}) {
-  if (attrs.isCollection) return
+  if (attrs.isCollection) { return attrs }
   if (attrs.isState) { return attrs } // already constructed
 
   let model
@@ -230,6 +230,9 @@ const TaskFactory = function (attrs, options={}) {
   }
 
   model = createModel()
+  if (options.collection !== App.state.tasks) {
+    App.state.tasks.add(model, {merge:true})
+  }
   return model
 }
 

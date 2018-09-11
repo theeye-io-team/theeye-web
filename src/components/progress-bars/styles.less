@@ -1,0 +1,40 @@
+.bars-component {
+}
+
+.bars-component.pull-left {
+
+  position: relative;
+
+  .title {
+    position: absolute;
+    bottom: -30px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  .progress-bar-vertical {
+    overflow: visible;
+    width: 50px;
+    display: flex;
+    align-items: flex-end;
+    float: left;
+    position: relative;
+  }
+
+  .progress-bar-vertical .progress-bar {
+    width: 100%;
+    height: 0;
+    font-size: 16px;
+    position: relative;
+  }
+
+  .progress-bar-vertical span {
+    top: -20px;
+    position: absolute;
+    left: 0;
+    width: 100%
+  }
+  
+}

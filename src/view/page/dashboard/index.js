@@ -7,6 +7,7 @@ import $ from 'jquery'
 import StatsPanelView from './stats-panel'
 import TaskRowView from './task'
 import MonitorRowView from './monitor'
+import IndicatorRowView from './indicator'
 import RunAllTasksButton from './task/run-all-button'
 import TaskActions from 'actions/task'
 import WorkflowActions from 'actions/workflow'
@@ -38,6 +39,7 @@ module.exports = View.extend({
   template: require('./page.hbs'),
   props: {
     groupedResources: 'collection',
+    indicators: 'collection',
     monitors: 'collection',
     tasks: 'collection',
     renderStats: ['boolean', false, false],
@@ -120,6 +122,13 @@ module.exports = View.extend({
   },
   render () {
     this.renderWithTemplate()
+
+    this.listenToAndRun(App.state.dashboard, 'change:indicatorsDataSynced', () => {
+      if (App.state.dashboard.indicatorsDataSynced === true) {
+        this.renderIndicatorsPanel()
+        this.stopListening(App.state.dashboard, 'change:indicatorsDataSynced')
+      }
+    })
 
     this.listenToAndRun(App.state.dashboard, 'change:resourcesDataSynced', () => {
       if (App.state.dashboard.resourcesDataSynced === true) {
@@ -288,6 +297,20 @@ module.exports = View.extend({
       App.state.dashboard.groupResources()
     })
   },
+  renderIndicatorsPanel () {
+    this.indicatorsRows = this.renderCollection(
+      this.indicators,
+      IndicatorRowView,
+      this.queryByHook('indicators-container'),
+      {
+        emptyView: EmptyIndicatorsView
+      }
+    )
+
+    const search = () => { }
+
+    this.listenToAndRun(App.state.searchbox, 'change:search', search)
+  },
   /**
    *
    * should be converted into a Tasks Panel View
@@ -437,3 +460,7 @@ const runAllTasks = (rows) => {
     })
   }
 }
+
+const EmptyIndicatorsView = View.extend({
+  template: `<div>No Indicators</div>` 
+})

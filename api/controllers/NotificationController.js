@@ -2,7 +2,7 @@ const logger = require('../libs/logger')('controllers:notification')
 const Notifications = require('../libs/notifications')
 const moment = require('moment')
 
-const handledTopics = [
+const handledNotificationTopics = [
   'monitor-state',
   'job-crud',
   'webhook-triggered'
@@ -28,7 +28,7 @@ module.exports = {
       data.model.name || 'no name property'
     )
 
-    if (handledTopics.indexOf(event.topic) > -1) {
+    if (handledNotificationTopics.indexOf(event.topic) > -1) {
       var acls = (data.model.task ? data.model.task.acl : data.model.acl) || []
 
       getUsers(event, data.organization, acls, (error, users) => {
@@ -53,7 +53,6 @@ module.exports = {
 
         // push and mail here !important
         Notifications.push.send(event, users)
-
         // Notifications.email.send('TO-DO', users)
       })
     }

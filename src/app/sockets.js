@@ -4,6 +4,7 @@
 import App from 'ampersand-app'
 import SocketsWrapper from 'lib/sockets'
 import ResourceActions from 'actions/resource'
+import IndicatorActions from 'actions/indicator'
 import HostStatsActions from 'actions/hoststats'
 import JobActions from 'actions/job'
 import NotificationActions from 'actions/notifications'
@@ -19,6 +20,7 @@ const defaultTopics = [
   //'host-processes',
   'monitor-state',
   'job-crud',
+  'indicator-crud',
   //'task-crud',
   //'task-interrupted',
   'host-integrations-crud', // host integrations changes
@@ -111,7 +113,10 @@ const createWrapper = () => {
       },
       'task-crud': (event) => {
         TaskActions.applyStateUpdate(event.model)
-      }
+      },
+      'indicator-crud': (event) => {
+        IndicatorActions.applyStateUpdate(event.model, event.operation)
+      },
     }
   })
 }

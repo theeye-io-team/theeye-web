@@ -42,7 +42,11 @@ module.exports = {
   applyStateUpdate (model) {
     var id = model.id
     const task = App.state.tasks.get(id)
-    task.set(task.parse(model))
+    if (!task) {
+      App.state.tasks.add(model)
+    } else {
+      task.set(task.parse(model))
+    }
   },
   /**
    * @param {MongoID[]} hosts

@@ -70,6 +70,7 @@ const GroupedTasksCollection = TasksCollection.extend({
 
 module.exports = AmpersandState.extend({
   props: {
+    indicatorsDataSynced: ['boolean',false,false],
     resourcesDataSynced: ['boolean',false,false],
     tasksDataSynced: ['boolean',false,false],
     monitorsGroupBy: ['object',false, () => {

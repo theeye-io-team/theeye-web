@@ -2,6 +2,7 @@ import App from 'ampersand-app'
 import AmpersandState from 'ampersand-state'
 import Collection from 'ampersand-collection'
 import uriFragment from 'lib/uri-fragment'
+import { Collection as Indicators } from 'models/indicator'
 import { Collection as Webhooks } from 'models/webhook'
 import { Collection as HostGroups } from 'models/hostgroup'
 import { Collection as Users } from 'models/user'
@@ -253,6 +254,7 @@ const _initCollections = function () {
     files: new Files([]),
     users: new Users([]),
     webhooks: new Webhooks([]),
+    indicators: new Indicators([]),
     members: new Members([]),
     events: new Events([]),
     notifications: new Notifications([]),

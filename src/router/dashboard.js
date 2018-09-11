@@ -21,8 +21,14 @@ class Dashboard extends Route {
 
 module.exports = Dashboard
 
-const prepareData = (options) => {
+const getData = (options) => {
   const { fetchTasks } = options
+
+  App.state.dashboard.indicatorsDataSynced = false
+  App.state.indicators.once('sync', () => {
+    logger.log('indicators synced')
+    App.state.dashboard.indicatorsDataSynced = true
+  })
 
   App.state.dashboard.resourcesDataSynced = false
   App.state.dashboard.groupedResources.once('reset', () => {
@@ -30,13 +36,7 @@ const prepareData = (options) => {
     App.state.dashboard.resourcesDataSynced = true
   })
 
-  App.state.dashboard.tasksDataSynced = false
-  App.state.tasks.once('sync',() => {
-    logger.log('tasks synced')
-    App.state.dashboard.tasksDataSynced = true
-  })
-
-  var resourcesToFetch = 6
+  var resourcesToFetch = 7
   if (fetchTasks) resourcesToFetch += 2
   var done = after(resourcesToFetch, () => {
     App.state.loader.visible = false
@@ -48,6 +48,12 @@ const prepareData = (options) => {
   }
 
   if (fetchTasks) {
+    App.state.dashboard.tasksDataSynced = false
+    App.state.tasks.once('sync',() => {
+      logger.log('tasks synced')
+      App.state.dashboard.tasksDataSynced = true
+    })
+
     const nextStep = () => {
       step()
       App.state.tasks.fetch({
@@ -65,6 +71,8 @@ const prepareData = (options) => {
       })
     }
     App.state.workflows.fetch({ success: nextStep, error: nextStep })
+  } else {
+    App.state.dashboard.tasksDataSynced = true
   }
 
   App.state.events.fetch({ success: step, error: step })
@@ -73,6 +81,7 @@ const prepareData = (options) => {
   App.state.hosts.fetch({ success: step, error: step })
   App.state.tags.fetch({ success: step, error: step })
   App.state.members.fetch({ success: step, error: step })
+  App.state.indicators.fetch({ success: step, error: step })
   App.state.resources.fetch({
     success: () => {
       App.state.dashboard.groupResources()
@@ -88,7 +97,7 @@ const index = (query) => {
   const tasksEnabled = Boolean(query.tasks != 'hide')
   const statsEnabled = Boolean(query.stats == 'show')
 
-  prepareData({ fetchTasks: tasksEnabled })
+  getData({ fetchTasks: tasksEnabled })
 
   return renderPageView({
     renderTasks: tasksEnabled,
@@ -105,6 +114,7 @@ const index = (query) => {
 const renderPageView = (options) => {
   return new PageView({
     groupedResources: App.state.dashboard.groupedResources,
+    indicators: App.state.indicators,
     monitors: App.state.resources,
     tasks: App.state.dashboard.groupedTasks,
     renderTasks: options.renderTasks,

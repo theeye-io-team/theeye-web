@@ -1,93 +1,19 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
+import FilteredSubcollection from 'ampersand-filtered-subcollection'
 import assign from 'lodash/assign'
 import MonitorButtonsView from './buttons'
-import FilteredSubcollection from 'ampersand-filtered-subcollection'
 import MonitorActions from 'actions/monitor'
 const CollapseContentFactory = require('./collapse-content').Factory
 import MonitorConstants from 'constants/monitor'
+import rowIconByType from '../row-icon-by-type'
 
-//const genericTypes = ['scraper','script','host','process','file']
-const iconByType = {
-  //nested: 'fa-cubes',
-  nested: 'fa-bullseye',
-  scraper: 'fa-cloud',
-  script: 'fa-code',
-  host: 'theeye-robot-solid',
-  process: 'fa-cog',
-  file: 'fa-file-o',
-  dstat: 'fa-bar-chart',
-  psaux: 'fa-cogs'
-}
-
-const NO_TYPE_ICON_COLOR = '5bc4e8'
-
-/**
- * @summary turn string into hex color code
- *
- * https://stackoverflow.com/questions/3426404/create-a-hexadecimal-colour-based-on-a-string-with-javascript
- */
-const str2rgb = (str) => {
-  function hashCode(str) { // java String#hashCode
-    var hash = 0;
-    for (var i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
-    }
-    return hash;
-  }
-
-  function intToRGB(i){
-    var c = (i & 0x00FFFFFF)
-      .toString(16)
-      .toUpperCase();
-
-    return "00000".substring(0, 6 - c.length) + c;
-  }
-
-  return intToRGB(hashCode(str))
-}
-
-const getMonitorIconAttributesByType = (type) => {
-  var iconClass = 'circle fa'
-  var bgcolor
-
-  const getIconByType = (type) => {
-    const hit = iconByType[type]
-    if (!hit) {
-      return 'fa-circle'
-    } else {
-      return hit
-    }
-  }
-
-  if (/^groupby-/.test(type) === true) {
-    const parts = type.split('-')
-    if (parts[1]==='hostname') {
-      iconClass += ` theeye-robot-solid`
-      //bgcolor = str2rgb(parts[2])
-      bgcolor = NO_TYPE_ICON_COLOR
-    }
-    else if (parts[1]==='failure_severity') {
-      iconClass += ` fa-fire severity-${parts[2].toLowerCase()}`
-    }
-    else if (parts[1]==='type') {
-      iconClass += ` ${getIconByType(parts[2])} ${parts[2]}-color`
-    }
-    else { // use value first letter as icon
-      let first = parts[2].replace(/[^A-Za-z0-9]/g, ' ').trim()[0].toLowerCase()
-      iconClass += ` fa-letter fa-letter-${first}`
-      //bgcolor = str2rgb(parts[2])
-      bgcolor = NO_TYPE_ICON_COLOR
-    }
+module.exports = function (options) {
+  const model = options.model
+  if ( /group/.test(model.type) ) {
+    return new MonitorsGroupView(options)
   } else {
-    iconClass += ` ${getIconByType(type)} ${type}-color`
-  }
-
-  return {
-    className: iconClass,
-    style: {
-      backgroundColor: `#${bgcolor}`
-    }
+    return new MonitorViewFactory(options)
   }
 }
 
@@ -172,10 +98,10 @@ const MonitorView = View.extend({
 
     this.template = `
       <div class="monitorRow">
-        <div class="resource-container panel panel-default">
+        <div class="row-container panel panel-default">
           <div class="panel-heading" role="tab" data="panel-heading"> <!-- Collapse Heading Container { -->
             <h4 class="panel-title-icon">
-              <i data-hook="monitor-icon"></i>
+              <i data-hook="row-icon"></i>
             </h4>
             <h4 class="panel-title">
               <span class="collapsed"
@@ -191,7 +117,7 @@ const MonitorView = View.extend({
                     <small><i data-hook="type"></i></small>
                   </span>
 
-                  <section data-hook="monitor-icons-block" style="float:right;">
+                  <section data-hook="buttons-block" style="float:right;">
                     <div class="panel-item icons dropdown">
                       <button class="btn dropdown-toggle btn-primary"
                         type="button"
@@ -205,7 +131,7 @@ const MonitorView = View.extend({
                   </section>
 
                   <!-- state_severity is a model object derived property, not an attribute -->
-                  <div class="panel-item tooltiped state-icon state-resource-container">
+                  <div class="panel-item tooltiped state-icon state-container">
                     <span data-hook="${this.iconHook}"></span>
                   </div>
 
@@ -227,7 +153,7 @@ const MonitorView = View.extend({
   render () {
     this.renderWithTemplate()
     this.renderButtons()
-    this.setMonitorIcon()
+    this.setRowIcon()
     this.renderCollapsedContent()
   },
   renderCollapsedContent () {
@@ -242,10 +168,10 @@ const MonitorView = View.extend({
         MonitorActions.populate(this.model)
       })
   },
-  setMonitorIcon () {
+  setRowIcon () {
     var type = this.model.type;
-    const attrs = getMonitorIconAttributesByType(type)
-    const iconEl = this.queryByHook('monitor-icon')
+    const attrs = rowIconByType(type)
+    const iconEl = this.queryByHook('row-icon')
     iconEl.className = attrs.className
     if (attrs.style) {
       if (attrs.style.backgroundColor) {
@@ -261,12 +187,72 @@ const MonitorView = View.extend({
   }
 })
 
+/**
+ * monitors grouped rows. this works when grouping is applied only
+ */
+const MonitorsGroupView = MonitorView.extend({
+  bindings: Object.assign({}, MonitorView.prototype.bindings, {
+    'model.stateIcon': {
+      type: 'class',
+      hook: 'group-state-icon'
+    },
+    'model.state': {
+      type: 'attribute',
+      name: 'title',
+      hook: 'group-state-icon'
+    },
+  }),
+  initialize () {
+    this.iconHook = 'group-state-icon'
+    MonitorView.prototype.initialize.apply(this, arguments)
+  },
+  render () {
+    this.renderWithTemplate()
+    this.queryByHook('buttons-block').remove()
+
+    this.renderCollection(
+      this.model.submonitors,
+      MonitorViewFactory,
+      this.queryByHook('collapse-container-body')
+    )
+
+    this.setRowIcon()
+  }
+})
+
+
+
+/**
+ * @summary turn string into hex color code
+ *
+ * https://stackoverflow.com/questions/3426404/create-a-hexadecimal-colour-based-on-a-string-with-javascript
+ */
+const str2rgb = (str) => {
+  function hashCode(str) { // java String#hashCode
+    var hash = 0;
+    for (var i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return hash;
+  }
+
+  function intToRGB(i){
+    var c = (i & 0x00FFFFFF)
+      .toString(16)
+      .toUpperCase();
+
+    return "00000".substring(0, 6 - c.length) + c;
+  }
+
+  return intToRGB(hashCode(str))
+}
+
 const HostMonitorGroupView = MonitorView.extend({
   render () {
     this.renderWithTemplate()
     this.renderCollapsedContent()
     this.renderButtons()
-    this.setMonitorIcon()
+    this.setRowIcon()
   },
   renderCollapsedContent () {
     // capture and handle collapse event
@@ -296,7 +282,7 @@ const NestedMonitorView = MonitorView.extend({
     this.renderWithTemplate()
     this.renderCollapsedContent()
     this.renderButtons()
-    this.setMonitorIcon()
+    this.setRowIcon()
   }
 })
 
@@ -315,46 +301,4 @@ function MonitorViewFactory (options) {
       break;
   }
   return monitor
-}
-
-/**
- * monitors grouped rows. this works when grouping is applied only
- */
-const MonitorsGroupView = MonitorView.extend({
-  bindings: Object.assign({}, MonitorView.prototype.bindings, {
-    'model.stateIcon': {
-      type: 'class',
-      hook: 'group-state-icon'
-    },
-    'model.state': {
-      type: 'attribute',
-      name: 'title',
-      hook: 'group-state-icon'
-    },
-  }),
-  initialize () {
-    this.iconHook = 'group-state-icon'
-    MonitorView.prototype.initialize.apply(this, arguments)
-  },
-  render () {
-    this.renderWithTemplate()
-    this.queryByHook('monitor-icons-block').remove()
-
-    this.renderCollection(
-      this.model.submonitors,
-      MonitorViewFactory,
-      this.queryByHook('collapse-container-body')
-    )
-
-    this.setMonitorIcon()
-  }
-})
-
-module.exports = function (options) {
-  const model = options.model
-  if ( /group/.test(model.type) ) {
-    return new MonitorsGroupView(options)
-  } else {
-    return new MonitorViewFactory(options)
-  }
 }

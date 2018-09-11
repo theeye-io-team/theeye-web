@@ -1,4 +1,4 @@
-import Loader from 'components/progress-bar'
+import Loader from 'components/loader/progress-bar'
 
 const loader = new Loader({ screenblock: true })
 loader.visible = true
