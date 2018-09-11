@@ -159,6 +159,7 @@ const ExecApprovalJob = BaseExec.extend({
     bootbox.dialog({
       message: message,
       backdrop: true,
+      closeButton: false,
       buttons: buttons
     })
   },
@@ -168,6 +169,7 @@ const ExecApprovalJob = BaseExec.extend({
     bootbox.dialog({
       message: message,
       backdrop: true,
+      closeButton: false,
       buttons: {
         cancel: {
           label: 'Cancel request',

@@ -93,7 +93,8 @@ export const Workflow = AppModel.extend({
   },
   session: {
     alreadyPopulated: ['boolean', false, false],
-    inProgressJobs: 'number'
+    inProgressJobs: 'number',
+    last_execution: 'date'
   },
   derived: {
     type: {
@@ -144,6 +145,16 @@ export const Workflow = AppModel.extend({
         } else {
           this.inProgressJobs = 0
         }
+      }
+    )
+
+    this.listenToAndRun(
+      this.jobs,
+      'add change sync reset remove',
+      function () {
+        if (this.jobs.length===0) { return }
+        let dates = this.jobs.map(e => e.creation_date)
+        this.last_execution = Math.max.apply(null, dates)
       }
     )
   },

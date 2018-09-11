@@ -30,7 +30,7 @@ const BaseJob = AppModel.extend({
     state: 'string',
     lifecycle: 'string',
     //result: ['state',false,null],
-    creation_date: 'date',
+    creation_date: ['date', false, () => { return new Date() }],
     last_update: 'date',
     event: 'any',
     event_id: 'string',

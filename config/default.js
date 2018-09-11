@@ -102,7 +102,8 @@ module.exports = {
     debug: false,
 		sockets_arn: '',
     push_notifications: {
-      application_arn: ''
+      android: '',
+      ios: ''
     }
   },
   //sockets: {

@@ -14,15 +14,27 @@ const isWorkflow = (model) => {
   return /Workflow/.test(model._type)
 }
 
+const isDate = function (date) {
+  if (!date) {
+    return false
+  } else {
+    return (date.getMonth())
+  }
+}
+
 const GroupedTasksCollection = TasksCollection.extend({
   comparator (m1, m2) {
-    if (m1.inProgressJobs > m2.inProgressJobs) { return -1 }
-    else if (m1.inProgressJobs < m2.inProgressJobs) { return 1 }
+    if (isDate(m1.last_execution) && isDate(m2.last_execution)) {
+      if (m1.last_execution > m2.last_execution) { return -1 }
+      else if (m1.last_execution < m2.last_execution) { return 1 }
+    }
+    else if (isDate(m1.last_execution)) { return -1 }
+    else if (isDate(m2.last_execution)) { return 1 }
     else {
       let m1IsWf = isWorkflow(m1)
       let m2IsWf = isWorkflow(m2)
 
-      if ( (m1IsWf && m2IsWf) || (!m1IsWf && !m2IsWf) ) {
+      if ((m1IsWf && m2IsWf) || (!m1IsWf && !m2IsWf)) {
         if (m1.name.toLowerCase()<m2.name.toLowerCase()) { return -1 }
         if (m1.name.toLowerCase()>m2.name.toLowerCase()) { return  1 }
         return 0
@@ -43,6 +55,16 @@ const GroupedTasksCollection = TasksCollection.extend({
   isModel (model) {
     const isTaskModel = TasksCollection.prototype.isModel
     return model instanceof Workflow || isTaskModel.apply(this, arguments)
+  },
+  initialize () {
+    TasksCollection.prototype.initialize.apply(this, arguments)
+
+    this.on('change', (model) => {
+      let changedAttributes = model.changedAttributes()
+      if (changedAttributes.hasOwnProperty('last_execution')) {
+        this.sort()
+      }
+    })
   }
 })
 
