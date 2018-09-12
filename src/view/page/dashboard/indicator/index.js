@@ -30,20 +30,24 @@ const IndicatorRowView = View.extend({
                 aria-controls="unbinded">
                 <div class="panel-title-content">
 
-                  <span class="panel-item name" data-hook="name">
-                    <small><i data-hook="type"></i></small>
-                  </span>
+                  <div class="panel-item-left">
+                    <span class="panel-item name" data-hook="name">
+                      <small><i data-hook="type"></i></small>
+                    </span>
 
-                  <section data-hook="buttons-block" style="float:right;">
-                  </section>
-
-                  <!-- state_severity is a model object derived property, not an attribute -->
-                  <div class="panel-item tooltiped state-icon state-container">
-                    <span data-hook="${this.iconHook}"></span>
+                    <section data-hook="gauge-container">
+                    </section>
                   </div>
 
-                  <section data-hook="gauge-container" style="float:right;">
-                  </section>
+                  <div class="panel-item-right">
+                    <section data-hook="buttons-block" style="float:right;">
+                    </section>
+
+                    <!-- state_severity is a model object derived property, not an attribute -->
+                    <div class="panel-item tooltiped state-icon state-container">
+                      <span data-hook="${this.iconHook}"></span>
+                    </div>
+                  </div>
 
                 </div>
               </span>
@@ -164,7 +168,7 @@ const IndicatorRowView = View.extend({
     var type = this.model.type;
     const iconEl = this.queryByHook('row-icon')
     iconEl.className = 'fa fa-lightbulb-o circle'
-		//iconEl.style.backgroundColor = ''
+    iconEl.style.backgroundColor = '#06D5B4'
   }
 })
 
@@ -187,35 +191,18 @@ const GaugesFactoryView = function (options) {
 
 const ProgressIndicatorView = View.extend({
   template: `
-    <div>
-      <div class="panel-item" style="float:left" data-hook="progress-bar"></div>
-      <div class="panel-item value" style="float:left" data-hook="percent-value"></div>
-    </div>
+    <div data-hook="progress-bar"></div>
   `,
-  derived: {
-    percent: {
-      deps: ['model.value'],
-      fn () {
-        return `${this.model.value} %`
-      }
-    }
-  },
-  bindings: {
-    'percent': {
-      type: 'text',
-      hook: 'percent-value'
-    }
-  },
   render () {
     this.renderWithTemplate()
 
-    //this.renderProgressBar()
+    this.renderProgressBar()
   },
   renderProgressBar () {
     this.bars = this.renderSubview(
       new ProgressBar({ percent: this.model.value }),
       this.queryByHook('progress-bar')
-    ) 
+    )
 
     this.model.on('change:value', () => {
       this.bars.percent = this.model.value

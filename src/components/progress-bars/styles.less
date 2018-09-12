@@ -1,40 +1,27 @@
-.bars-component {
+.meter {
+  width: 25%;
+  float: right;
+  right: 25%;
 }
 
-.bars-component.pull-left {
+.meter > .percent-visual {
+  position: absolute;
+  width: 25%;
+  height: 30px;
+  background: #23324C;
+}
 
-  position: relative;
+.meter > .percent-visual > span {
+  display: block;
+  height: 100%;
+  background-color: #42D5BB;
+  overflow: hidden;
+}
 
-  .title {
-    position: absolute;
-    bottom: -30px;
-    left: 0;
-    width: 100%;
-    text-align: center;
-    font-weight: bold;
-  }
-  
-  .progress-bar-vertical {
-    overflow: visible;
-    width: 50px;
-    display: flex;
-    align-items: flex-end;
-    float: left;
-    position: relative;
-  }
-
-  .progress-bar-vertical .progress-bar {
-    width: 100%;
-    height: 0;
-    font-size: 16px;
-    position: relative;
-  }
-
-  .progress-bar-vertical span {
-    top: -20px;
-    position: absolute;
-    left: 0;
-    width: 100%
-  }
-  
+.meter > .percent-text {
+  position: absolute;
+  width: 25%;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
 }
