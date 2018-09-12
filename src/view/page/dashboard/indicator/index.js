@@ -209,6 +209,9 @@ const ProgressIndicatorView = View.extend({
   render () {
     this.renderWithTemplate()
 
+    //this.renderProgressBar()
+  },
+  renderProgressBar () {
     this.bars = this.renderSubview(
       new ProgressBar({ percent: this.model.value }),
       this.queryByHook('progress-bar')

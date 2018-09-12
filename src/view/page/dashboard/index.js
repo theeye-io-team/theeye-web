@@ -298,6 +298,16 @@ module.exports = View.extend({
     })
   },
   renderIndicatorsPanel () {
+    let indicatorsContainer = this.queryByHook('indicators-panel')
+
+    this.listenToAndRun(this.indicators, 'add remove', () => {
+      if (this.indicators.length===0) {
+        indicatorsContainer.style.display = 'none'
+      } else {
+        indicatorsContainer.style.display = 'block'
+      }
+    })
+
     this.indicatorsRows = this.renderCollection(
       this.indicators,
       IndicatorRowView,
