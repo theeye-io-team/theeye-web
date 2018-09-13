@@ -13,7 +13,7 @@ module.exports = {
   },
   check (job) {
     if (App.state.approval.underExecution === true) {
-        App.state.approval.newArrived = true
+      App.state.approval.newArrived = true
     } else {
       this.checkPendingApprovals(job)
     }
@@ -21,9 +21,14 @@ module.exports = {
   checkPendingApprovals (job) {
     var self = this
 
+    const finish = function () {
+      App.state.approval.newArrived = false
+      App.state.approval.underExecution = false
+    }
+
     const executePendingApprovalJobs = function (pendingApprovalJobs) {
+      App.state.approval.underExecution = true
       eachSeries(pendingApprovalJobs, function (job, done) {
-        App.state.approval.underExecution = true
         var execApprovalJob = new ExecApprovalJob({model: job})
         execApprovalJob.execute(true, done)
       }, function (err) {
@@ -31,8 +36,7 @@ module.exports = {
           App.state.approval.newArrived = false
           self.checkPendingApprovals()
         } else {
-          App.state.approval.newArrived = false
-          App.state.approval.underExecution = false
+          finish()
         }
       })
     }
@@ -46,7 +50,10 @@ module.exports = {
       return check
     })
 
-    if (userTasksToApprove.length === 0) { return }
+    if (userTasksToApprove.length === 0) {
+      finish()
+      return
+    }
 
     if (job) {
       pendingApprovalJobs.push(job)
@@ -58,7 +65,10 @@ module.exports = {
           query: { lifecycle: LifecycleConstants.ONHOLD }
         }, done)
       }, function (err) {
-        if (err) { return }
+        if (err) {
+          finish()
+          return
+        }
 
         userTasksToApprove.forEach(function (task) {
           task.jobs.models.forEach(function (job) {
@@ -68,7 +78,10 @@ module.exports = {
           })
         })
 
-        if (pendingApprovalJobs.length) {
+        if (!pendingApprovalJobs.length) {
+          finish()
+          return
+        } else {
           executePendingApprovalJobs(pendingApprovalJobs)
         }
       })

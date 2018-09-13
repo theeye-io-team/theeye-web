@@ -4,9 +4,7 @@ import PageView from 'view/page/dashboard'
 import App from 'ampersand-app'
 import search from 'lib/query-params'
 import Route from 'lib/router-route'
-import after from 'lodash/after'
-import WorkflowActions from 'actions/workflow'
-import ApprovalActions from 'actions/approval'
+import DashboardActions from 'actions/dashboard'
 
 const logger = require('lib/logger')('router:dashboard')
 
@@ -21,7 +19,7 @@ class Dashboard extends Route {
 
 module.exports = Dashboard
 
-const getData = (options) => {
+const prepareData = (options) => {
   const { fetchTasks } = options
 
   App.state.dashboard.indicatorsDataSynced = false
@@ -36,60 +34,15 @@ const getData = (options) => {
     App.state.dashboard.resourcesDataSynced = true
   })
 
-  var resourcesToFetch = 7
-  if (fetchTasks) resourcesToFetch += 2
-  var done = after(resourcesToFetch, () => {
-    App.state.loader.visible = false
-  })
-
-  const step = () => {
-    App.state.loader.step()
-    done()
-  }
-
   if (fetchTasks) {
     App.state.dashboard.tasksDataSynced = false
     App.state.tasks.once('sync',() => {
       logger.log('tasks synced')
       App.state.dashboard.tasksDataSynced = true
     })
-
-    const nextStep = () => {
-      step()
-      App.state.tasks.fetch({
-        success: () => {
-          App.state.dashboard.groupTasks()
-          App.state.workflows.forEach(workflow => {
-            WorkflowActions.populate(workflow)
-          })
-
-          ApprovalActions.check()
-          step()
-        },
-        error: step,
-        reset: true
-      })
-    }
-    App.state.workflows.fetch({ success: nextStep, error: nextStep })
-  } else {
-    App.state.dashboard.tasksDataSynced = true
   }
 
-  App.state.events.fetch({ success: step, error: step })
-  // App.state.scripts.fetch({ success: step, error: step })
-  App.state.files.fetch({ success: step, error: step })
-  App.state.hosts.fetch({ success: step, error: step })
-  App.state.tags.fetch({ success: step, error: step })
-  App.state.members.fetch({ success: step, error: step })
-  App.state.indicators.fetch({ success: step, error: step })
-  App.state.resources.fetch({
-    success: () => {
-      App.state.dashboard.groupResources()
-      step()
-    },
-    error: step,
-    reset: true
-  })
+  DashboardActions.fetchData(options)
 }
 
 const index = (query) => {
@@ -97,7 +50,7 @@ const index = (query) => {
   const tasksEnabled = Boolean(query.tasks != 'hide')
   const statsEnabled = Boolean(query.stats == 'show')
 
-  getData({ fetchTasks: tasksEnabled })
+  prepareData({ fetchTasks: tasksEnabled })
 
   return renderPageView({
     renderTasks: tasksEnabled,
