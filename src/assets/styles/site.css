@@ -1041,6 +1041,13 @@ a.flowchart-icon {
 
 .admin-container.dashboard .monitors.admin-panel h3 span.dropdown ul.dropdown-menu li:hover { background-color: #23324C; }
 
+.admin-container.dashboard .monitors.admin-panel .section-toggle, .admin-container.dashboard .tasks-panel .section-toggle {
+  position: absolute;
+  color: #fff;
+  left: 30px;
+  padding: 8px;
+}
+
 .admin-container.dashboard .tasks-container .panel-heading h4.panel-title-icon ,
 .admin-container.dashboard .row-container .panel-heading h4.panel-title-icon {
   float: left;

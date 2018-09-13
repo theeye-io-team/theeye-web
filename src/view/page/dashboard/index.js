@@ -49,6 +49,7 @@ module.exports = View.extend({
       return typeof enabled === 'boolean' ? enabled : true
     }],
     upAndRunningSignVisible: 'boolean',
+    showTasksPanel: ['boolean', false, false],
     failingMonitors: ['array', false, () => { return [] }]
   },
   derived: {
@@ -69,11 +70,18 @@ module.exports = View.extend({
       type: 'booleanClass',
       hook: 'toggle-up-and-running',
       name: 'rotate-180'
+    },
+    showTasksPanel: {
+      type: 'booleanClass',
+      hook: 'toggle-hidden-tasks',
+      name: 'rotate-180',
+      invert: true
     }
   },
   events: {
     'click [data-hook=hide-up-and-running]': 'clickHideUpAndRunningSign',
     'click [data-hook=toggle-up-and-running]': 'clickUpAndRunningSignToggle',
+    'click [data-hook=toggle-hidden-tasks]': 'clickTasksPanelToggle'
   },
   clickHideUpAndRunningSign (event) {
     this.upAndRunningSignEnabled = false
@@ -85,6 +93,7 @@ module.exports = View.extend({
     )
   },
   clickUpAndRunningSignToggle (event) {
+    event.preventDefault()
     if (this.upAndRunningSignEnabled === true) {
       this.clickHideUpAndRunningSign(event)
     } else {
@@ -95,6 +104,10 @@ module.exports = View.extend({
         this.toggleUpAndRunningSign
       )
     }
+  },
+  clickTasksPanelToggle (event) {
+    event.preventDefault()
+    this.tasksFolding.toggleVisibility()
   },
   initialize () {
     View.prototype.initialize.apply(this, arguments)
@@ -357,6 +370,10 @@ module.exports = View.extend({
       this.queryByHook('tasks-fold-container')
     )
 
+    this.listenToAndRun(this.tasksFolding, 'change:visible', () => {
+      this.showTasksPanel = this.tasksFolding.visible
+    })
+
     taskRows.views.forEach(row => {
       let task = row.model
       if (!task.canExecute) {
@@ -472,5 +489,5 @@ const runAllTasks = (rows) => {
 }
 
 const EmptyIndicatorsView = View.extend({
-  template: `<div>No Indicators</div>` 
+  template: `<div>No Indicators</div>`
 })
