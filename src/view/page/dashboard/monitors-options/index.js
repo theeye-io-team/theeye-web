@@ -2,8 +2,33 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import DashboardActions from 'actions/dashboard'
 
+import './styles.less'
+
 module.exports = View.extend({
-  template: require('./template.hbs'),
+  template: `
+    <div data-component="monitors-options"
+        data-hook="monitors-options"
+        class="dropdown panel-item icons">
+    	<button class="dropdown-toggle btn btn-primary"
+    		title="group options"
+    		type="button"
+    		data-toggle="dropdown"
+    		aria-haspopup="true"
+    		aria-expanded="true">
+    		<i data-hook="show-more-options" class="fa fa-ellipsis-v" aria-hidden="true"></i>
+    	</button>
+    	<ul class="dropdown-menu dropdown-menu-right">
+        <div>
+          <li><button data-hook="group-by" data-prop="hostname" class="btn btn-primary">Bot</button></li>
+          <li><button data-hook="group-by" data-prop="failure_severity" class="btn btn-primary">Severity</button></li>
+          <li><button data-hook="group-by" data-prop="type" class="btn btn-primary">Type</button></li>
+          <li><button data-hook="group-by" data-prop="name" class="btn btn-primary">Name</button></li>
+  <li role="separator" class="divider"></li>
+          <li><button data-hook="group-by" data-prop class="btn btn-primary">Ungroup</button></li>
+        </div>
+      </ul>
+    </div>
+  `,
   props: {
     groupBy: 'object',
   },
@@ -30,7 +55,7 @@ module.exports = View.extend({
   },
   events: {
     'click button':'showMoreOptions',
-    'click li[data-hook=group-by]':'onClickGroupBy'
+    'click li button[data-hook=group-by]':'onClickGroupBy'
   },
   showMoreOptions (event) {
     //event.preventDefault()
@@ -41,7 +66,7 @@ module.exports = View.extend({
     const item = event.target
     const prop = item.dataset.prop
 
-    if (prop===this.groupBy.prop) return
+    if (prop===this.groupBy.prop) { return }
 
     DashboardActions.setMonitorsGroupByProperty(prop)
   },
@@ -53,9 +78,9 @@ module.exports = View.extend({
       if (!prop) {
         return
       } else {
-        const propItemSelector = `li[data-prop=${prop}]`
+        const propItemSelector = `li button[data-prop=${prop}]`
         const item = this.query(propItemSelector)
-        item.style.backgroundColor = '#ee8e40'
+        item.style.backgroundColor = '#23324C'
       }
     })
 

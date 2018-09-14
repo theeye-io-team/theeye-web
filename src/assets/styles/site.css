@@ -1008,38 +1008,6 @@ a.flowchart-icon {
 .admin-container.dashboard { }
 .admin-container.dashboard .group select {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
 .admin-container.dashboard .group .select2-container--default .select2-selection--multiple { border-radius: 0; background-color:#44567d; border:none; }
-.admin-container.dashboard .monitors.admin-panel h3 span.dropdown {
-  float:right;
-  cursor:pointer;
-  color:#44567d;
-  position:relative;
-}
-.admin-container.dashboard .monitors.admin-panel h3 span.dropdown button {
-  padding: 2px;
-  padding-left: 4px;
-  padding-right: 4px;
-  background-color: #23324c;
-  border-color: #23324c;
-  font-size: 16px;
-}
-.admin-container.dashboard .monitors.admin-panel h3 span.dropdown ul.dropdown-menu {
-  background-color: transparent;
-  border: none;
-  color: #fff;
-  padding: 10px;
-  min-width: 0;
-  box-shadow: none;
-}
-
-.admin-container.dashboard .monitors.admin-panel h3 span.dropdown ul.dropdown-menu li {
-  width:100%;
-  background-color: #192435;
-  /* text-align: right; */
-  border-radius: 20px;
-  margin-bottom: 3px;
-}
-
-.admin-container.dashboard .monitors.admin-panel h3 span.dropdown ul.dropdown-menu li:hover { background-color: #23324C; }
 
 .admin-container.dashboard .monitors.admin-panel .section-toggle, .admin-container.dashboard .tasks-panel .section-toggle {
   position: absolute;
