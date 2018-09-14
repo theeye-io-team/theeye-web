@@ -10,6 +10,11 @@ import acls from 'lib/acls'
 import $ from 'jquery'
 
 module.exports = CollapsibleRow.extend({
+  initialize () {
+    CollapsibleRow.prototype.initialize.apply(this, arguments)
+
+    this.collapse_title = 'Execution history'
+  },
   onClickToggleCollapse (event) {
     TaskActions.populate(this.model)
     return

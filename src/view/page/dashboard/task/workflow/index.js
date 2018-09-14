@@ -7,6 +7,7 @@ import CollapsibleRow from '../collapsible-row'
 import ExecButton from '../exec-button'
 import TaskJobRow from '../task/collapse/job'
 import JobExecButton from '../task/collapse/job/job-exec-button'
+import EmptyJobView from '../empty-job-view.js'
 import moment from 'moment'
 
 import './styles.less'
@@ -26,6 +27,11 @@ module.exports = CollapsibleRow.extend({
       fn: () => 'circle fa fa-sitemap workflow-color'
     }
   },
+  initialize () {
+    CollapsibleRow.prototype.initialize.apply(this, arguments)
+
+    this.collapse_title = 'Execution history'
+  },
   onClickToggleCollapse (event) {
     WorkflowActions.populate(this.model)
   },
@@ -35,7 +41,8 @@ module.exports = CollapsibleRow.extend({
       WorkflowJobRowView,
       this.queryByHook('collapse-container-body'),
       {
-        reverse: true
+        reverse: true,
+        emptyView: EmptyJobView
       }
     )
   },

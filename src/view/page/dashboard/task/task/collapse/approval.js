@@ -1,6 +1,7 @@
 import TaskCollapsibleRow from './collapsible-row'
 import TaskConstants from 'constants/task'
 import JobRow from './job'
+import EmptyJobView from '../../empty-job-view.js'
 
 module.exports = TaskCollapsibleRow.extend({
   derived: {
@@ -20,7 +21,8 @@ module.exports = TaskCollapsibleRow.extend({
       JobRow,
       this.queryByHook('collapse-container-body'),
       {
-        reverse: true
+        reverse: true,
+        emptyView: EmptyJobView
       }
     )
   }

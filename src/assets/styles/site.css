@@ -911,10 +911,17 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 
 .dashboard .events-panel .job-container h4.panel-title {
   padding-left: 0px;
+  font-size: 14px;
+}
+
+.dashboard .events-panel .workflow-job-row h4.panel-title {
+  font-size: 14px;
 }
 
 .dashboard .events-panel .panel-default .panel-title-content { padding-left:0; }
 .dashboard .events-panel h3 { height: 40px; line-height: 28px;/* h3 inherits a top/bottom padding of 6 */ }
+.dashboard .events-panel h3.collapse-title {font-weight: 500;font-size: 16px;text-align: unset;padding-left: 25px;padding-top: 15px;}
+.dashboard .events-panel .empty-job-list {padding-left:10px;}
 .dashboard .events-panel .panel-item.icons .btn-icon-image {
   float:right;
   display: inline-block;
@@ -1038,7 +1045,17 @@ a.flowchart-icon {
 }
 
 .admin-container.dashboard .tasks-container .workflow-job-row .panel-heading h4.panel-title-icon i {
-  font-size: 16px;
+  font-size: 14px;
+  line-height: 32px;
+  width: 22px;
+}
+
+.admin-container.dashboard .tasks-container .workflow-job-row .panel-heading h4.panel-title {
+  padding-left: 30px;
+}
+
+.admin-container.dashboard .tasks-container .workflow-job-row .job-container .panel-heading h4.panel-title {
+  padding-left: 22px;
 }
 
 .admin-container.dashboard .panel-item.icons { }

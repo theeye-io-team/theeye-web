@@ -4,21 +4,17 @@ import moment from 'moment'
 
 module.exports = View.extend({
   template: `
-    <div class="taskRow">
-      <div class="tasks-container panel panel-default">
-        <div class="job-container">
-          <div class="panel-heading">
-            <h4 class="panel-title">
-              <div class="panel-title-content">
-                <span class="panel-item name">
-                  <span class="title" data-hook="title"></span>
-                </span>
-                <div data-hook="job-status-container" class="panel-item icons">
-                </div>
-              </div>
-            </h4>
+    <div class="job-container">
+      <div class="panel-heading">
+        <h4 class="panel-title">
+          <div class="panel-title-content">
+            <span class="panel-item name">
+              <span class="title" data-hook="title"></span>
+            </span>
+            <div data-hook="job-status-container" class="panel-item icons">
+            </div>
           </div>
-        </div>
+        </h4>
       </div>
     </div>
   `,
