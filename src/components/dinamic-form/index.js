@@ -7,6 +7,7 @@ import Datepicker from 'components/input-view/datepicker'
 import OneLineMediaInputView from 'components/input-view/media/oneline'
 import MediaFileModel from './media-file'
 import isURL from 'validator/lib/isURL'
+import config from 'config'
 
 module.exports = FormView.extend({
   props: {
@@ -78,7 +79,7 @@ module.exports = FormView.extend({
             name: spec.order.toString(),
             value: new MediaFileModel(),
             required: spec.required,
-            maxFileSize: 300
+            maxFileSize: config.files.max_upload_size
           })
         )
       } else if (spec.type === FIELD.TYPE_REMOTE_OPTIONS) {
