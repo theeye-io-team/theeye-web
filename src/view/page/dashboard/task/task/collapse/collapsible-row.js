@@ -37,12 +37,6 @@ module.exports = CollapsibleRow.extend({
 const TaskButtonsView = View.extend({
   template: `
     <div>
-      <li>
-        <button class="btn btn-primary" title="Workflow" data-hook="workflow">
-          <i class="fa fa-sitemap dropdown-icon" aria-hidden="true"></i>
-          <span>View workflow</span>
-        </button>
-      </li>
       <span data-hook="edit-button"> </span>
       <span data-hook="copy-button"> </span>
       <span data-hook="delete-button"> </span>

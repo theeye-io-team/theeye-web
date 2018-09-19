@@ -821,6 +821,10 @@ input[type=checkbox].form-control {
   z-index: 999;
 }
 
+.workflow-viewer .workflow-component {
+  height: 300px;
+}
+
 .tag-grouper {
   border-radius: 10px;
   margin: 3px 5px;

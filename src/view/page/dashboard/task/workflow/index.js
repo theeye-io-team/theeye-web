@@ -2,6 +2,7 @@ import App from 'ampersand-app'
 import Acls from 'lib/acls'
 import View from 'ampersand-view'
 import EditWorkflowButton from 'view/page/workflow/edit-button'
+import ViewWorkflowButton from 'view/page/workflow/view-button'
 import WorkflowActions from 'actions/workflow'
 import CollapsibleRow from '../collapsible-row'
 import ExecButton from '../exec-button'
@@ -168,13 +169,20 @@ const ExecWorkflowButton = ExecButton.extend({
 })
 
 const WorkflowButtonsView = View.extend({
-  template: `<div><span data-hook="edit-button"></span></div>`,
+  template: `
+    <div>
+      <span data-hook="view-button"></span>
+      <span data-hook="edit-button"></span>
+    </div>`,
   render () {
     this.renderWithTemplate(this)
 
+    let viewButton = new ViewWorkflowButton({ model: this.model })
+    this.renderSubview(viewButton, this.queryByHook('view-button'))
+
     if (Acls.hasAccessLevel('admin')) {
-      var button = new EditWorkflowButton({ model: this.model })
-      this.renderSubview(button, this.queryByHook('edit-button'))
+      let editButton = new EditWorkflowButton({ model: this.model })
+      this.renderSubview(editButton, this.queryByHook('edit-button'))
     }
   }
 })
