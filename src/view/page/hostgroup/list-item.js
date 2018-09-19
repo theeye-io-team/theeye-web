@@ -13,9 +13,8 @@ module.exports = ListItem.extend({
       }
     },
     item_description: {
-      deps: ['model.description'],
       fn () {
-        return this.model.description
+        return ''
       }
     }
   },
@@ -36,9 +35,16 @@ module.exports = ListItem.extend({
 })
 
 const Collapsed = View.extend({
+  bindings: {
+    'model.description': {
+      type: 'text',
+      hook: 'description'
+    }
+  },
   template: `
-      <div class="col-sm-12">
-        <h4>Template Information</h4>
-      </div>
-  `,
+    <div class="col-sm-12">
+      <h4>Template Information</h4>
+      <span>Description: </span><span data-hook="description"></span>
+    </div>
+  `
 })

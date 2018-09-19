@@ -1106,19 +1106,16 @@ a.flowchart-icon {
   line-height: 28px;
 }
 
-@media (max-width: 600px) {
-  .admin-container .panel-heading .panel-item.name { width:75%; }
-}
-
 @media (max-width: 767px) {
-  .admin-container .panel-heading .panel-item.name { padding-right:20px; }
+  .admin-container .panel-heading .panel-item.name { width:72%; padding-right:20px; }
+  .admin-container .indicators-panel .panel-heading .panel-item.name { width:75%; }
   .admin-container .panel-heading .panel-title-content { position:relative; }
   button.rowSelector, button.rowSelector-not {}
   .activate-container .form-wrapper { padding: 0px 30px; }
 }
 
 @media (min-width: 768px) {
-  .admin-container .panel-heading .panel-item.name { padding-right:5px; }
+  .admin-container .panel-heading .panel-item.name { width:75%; padding-right:5px; }
   /* .admin-container.dashboard .panel-heading .panel-item.name { width:50%; } */
 }
 
