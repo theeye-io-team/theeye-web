@@ -1110,6 +1110,20 @@ a.flowchart-icon {
   line-height: 28px;
 }
 
+.admin-container .panel-default>.panel-collapse>.collapse-title-container {
+  background-color: #23324C;
+  min-height: 40px;
+}
+
+.admin-container .panel-default>.panel-collapse>.collapse-title-container>.collapse-title {
+  float: left;
+}
+
+.admin-container .panel-default>.panel-collapse>.collapse-title-container>.buttons-container {
+  float: right;
+  padding: 10px 24px;
+}
+
 @media (max-width: 767px) {
   .admin-container .panel-heading .panel-item.name { width:72%; padding-right:20px; }
   .admin-container .indicators-panel .panel-heading .panel-item.name { width:75%; }

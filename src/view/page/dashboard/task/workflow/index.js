@@ -8,6 +8,7 @@ import CollapsibleRow from '../collapsible-row'
 import ExecButton from '../exec-button'
 import TaskJobRow from '../task/collapse/job'
 import JobExecButton from '../task/collapse/job/job-exec-button'
+import DeleteJobsButton from 'view/page/dashboard/task/delete-jobs-button'
 import EmptyJobView from '../empty-job-view.js'
 import moment from 'moment'
 
@@ -58,6 +59,19 @@ module.exports = CollapsibleRow.extend({
         new ExecWorkflowButton({ model: this.model }),
         this.queryByHook('execute-button-container')
       )
+    }
+
+    if (Acls.hasAccessLevel('admin')) {
+      var deleteJobsButton = new DeleteJobsButton({ model: this.model })
+      this.renderSubview(deleteJobsButton, this.queryByHook('delete-jobs-button'))
+
+      this.listenToAndRun(this.model.jobs, 'add sync reset remove', () => {
+        if (this.model.jobs.length) {
+          deleteJobsButton.disabled = false
+        } else {
+          deleteJobsButton.disabled = true
+        }
+      })
     }
   }
 })

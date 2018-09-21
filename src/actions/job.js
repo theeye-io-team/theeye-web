@@ -156,6 +156,40 @@ module.exports = {
         console.log(arguments)
       }
     })
+  },
+  removeFinished (model) {
+    let entity
+    let deletedJobs = []
+
+    if (/Workflow/.test(model._type)) {
+      entity = App.state.workflows.get(model.id)
+    } else {
+      entity = App.state.tasks.get(model.id)
+    }
+
+    XHR.send({
+      method: 'delete',
+      url: `${config.api_v3_url}/job/finished?type=${model._type}&id=${model.id}`,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (data, xhr) {
+        entity.jobs.forEach(job => {
+          if (!LifecycleConstants.inProgress(job.lifecycle)) {
+            deletedJobs.push(job.id)
+          }
+        })
+
+        deletedJobs.forEach(jobId => {
+          entity.jobs.remove(jobId)
+        })
+      },
+      fail (err, xhr) {
+        bootbox.alert('Something goes wrong. Please refresh')
+      },
+    })
+
+
   }
 }
 

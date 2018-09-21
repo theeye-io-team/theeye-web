@@ -50,7 +50,12 @@ module.exports = View.extend({
           class="panel-collapse collapse"
           aria-labelledby="unbinded"
           role="tabpanel">
-          <h3 data-hook="collapse-title" class="collapse-title"></h3>
+          <div class="collapse-title-container">
+            <h3 data-hook="collapse-title" class="collapse-title"></h3>
+            <div class="buttons-container">
+              <span class="delete-jobs-button" data-hook="delete-jobs-button"> </span>
+            </div>
+          </div>
           <div class="panel-body" data-hook="collapse-container-body"> </div>
         </div>
         <!-- } END Collapsed Container -->

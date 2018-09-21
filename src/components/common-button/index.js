@@ -12,7 +12,8 @@ module.exports = View.extend({
     title: 'string',
     className: ['string',false,'btn btn-default'],
     iconClass: 'string',
-    show: ['boolean',false,true]
+    show: ['boolean',false,true],
+    disabled : ['boolean',false,false]
   },
   bindings: {
     tip: {
@@ -35,6 +36,11 @@ module.exports = View.extend({
       hook: 'icon-span',
       type: 'attribute',
       name: 'class',
+    },
+    disabled: {
+      type: 'booleanAttribute',
+      name: 'disabled',
+      selector: 'button'
     }
   },
   events: {

@@ -5,6 +5,7 @@ import ExecTaskButton from '../task-exec-button'
 import EditTaskButton from 'view/page/task/buttons/edit'
 import CopyTaskButton from 'view/page/task/buttons/copy'
 import DeleteTaskButton from 'view/page/task/buttons/delete'
+import DeleteJobsButton from 'view/page/dashboard/task/delete-jobs-button'
 import CollapsibleRow from 'view/page/dashboard/task/collapsible-row'
 import acls from 'lib/acls'
 import $ from 'jquery'
@@ -30,6 +31,19 @@ module.exports = CollapsibleRow.extend({
         new ExecTaskButton({ model: this.model }),
         this.queryByHook('execute-button-container')
       )
+    }
+
+    if (acls.hasAccessLevel('admin')) {
+      var deleteJobsButton = new DeleteJobsButton({ model: this.model })
+      this.renderSubview(deleteJobsButton, this.queryByHook('delete-jobs-button'))
+
+      this.listenToAndRun(this.model.jobs, 'add sync reset remove', () => {
+        if (this.model.jobs.length) {
+          deleteJobsButton.disabled = false
+        } else {
+          deleteJobsButton.disabled = true
+        }
+      })
     }
   }
 })
