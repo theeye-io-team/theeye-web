@@ -227,7 +227,7 @@ const createWorkflowJob = (workflow, args) => {
     done (job, xhr) {
       logger.debug('job created. updating workflow')
       //wait for socket update arrive and create there
-      //workflow.jobs.add(job, { merge: true })
+      workflow.jobs.add(job, { merge: true })
     },
     fail (err,xhr) {
       bootbox.alert('Job creation failed')
