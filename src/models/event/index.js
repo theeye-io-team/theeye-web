@@ -112,7 +112,11 @@ const Model = AppModel.extend({
 const taskEventSummary = (emitter, eventName) => {
   let hostname, summary
 
-  if (emitter.host) {
+  if (
+    emitter.host &&
+    typeof emitter.host === 'object' &&
+    emitter.host.hasOwnProperty('hostname')
+  ) {
     hostname = emitter.host.hostname.toLowerCase()
   }
 
