@@ -1,6 +1,5 @@
 import App from 'ampersand-app'
 import bootbox from 'bootbox'
-import config from 'config'
 import XHR from 'lib/xhr'
 import graphlib from 'graphlib'
 import { Workflow } from 'models/workflow'
@@ -13,9 +12,8 @@ const logger = require('lib/logger')('actions:workflow')
 module.exports = {
   get (id) {
     XHR.send({
-      url: `${config.api_v3_url}/workflow/triggers?node=${id}`,
+      url: `${App.config.api_v3_url}/workflow/triggers?node=${id}`,
       method: 'get',
-      timeout: 5000,
       done (graphData, xhr) {
         if (xhr.status === 200) {
           App.state.workflowPage.clear()

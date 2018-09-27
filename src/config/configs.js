@@ -5,6 +5,7 @@ let prodSuperv = 'https://supervisor.theeye.io'
 let devSuperv = 'https://supervisor.development.theeye.io'
 
 const defaultConfigs = {
+  request_timeout: 30000,
   landing_page_url: 'https://theeye.io',
   env: 'default',
   app_url: 'http://localhost:6080',

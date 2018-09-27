@@ -28,7 +28,6 @@ const Events = require('ampersand-events')
 
 const XHR = {}
 Events.createEmitter(XHR)
-
 module.exports = XHR
 
 XHR.send = (options, callback) => {
@@ -75,7 +74,6 @@ XHR.send = (options, callback) => {
   xhr.onabort = options.onabort || onerrorFn
   xhr.onprogress = options.onprogress || progressFn
   xhr.ontimeout = options.ontimeout || ontimeoutFn
-
   xhr.open(method, url)
 
   /**
@@ -110,7 +108,6 @@ XHR.send = (options, callback) => {
 
   xhr.withCredentials = (typeof options.withCredentials === 'boolean') ? options.withCredentials : XHR.defaults.withCredentials
   xhr.timeout = options.timeout || XHR.defaults.timeout
-
   xhr.send(data)
   return xhr
 }

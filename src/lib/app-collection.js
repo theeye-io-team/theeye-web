@@ -16,7 +16,7 @@ module.exports = AmpersandCollection.extend(FilterMixin, {
         Authorization: authorization
       },
       xhrFields: {
-        //timeout: 1000,
+        timeout: App.config.request_timeout,
         withCredentials: true
       }
     }

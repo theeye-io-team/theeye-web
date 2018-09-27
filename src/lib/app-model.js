@@ -27,7 +27,7 @@ module.exports = AmpersandModel.extend({
         Authorization: authorization
       },
       xhrFields: {
-        //timeout: 1000,
+        timeout: App.config.request_timeout,
         withCredentials: true
       }
     }

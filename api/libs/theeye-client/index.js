@@ -137,30 +137,20 @@ TheEyeClient.prototype = {
     next
   ){
     var connection = this
-    var statusCode = httpResponse ? httpResponse.statusCode : 500
+    var statusCode = httpResponse?httpResponse.statusCode:null
 
     var callNext = function (err, body) {
       if (next) next(err, body, httpResponse)
     }
 
     if (error || !statusCode) {
-      var err = new Error('Request failed, with status code ' + statusCode)
+      var err = new Error('Request failed')
       err.error = error
-      err.statusCode = statusCode || 500
+      if (error.code==='ESOCKETTIMEDOUT') { err.statusCode = 504 }
+      else { err.statusCode = 500 }
       err.response = httpResponse
       err.body = body
       return callNext (err)
-      //if(!body){
-      //  if(error.code && error.code === 'ETIMEDOUT') {
-      //    err = new Error('Request timeout.');
-      //    logger.error(err);
-      //    return callNext({statusCode: 500, message: 'Request timeout.'});
-      //  } else {
-      //    err = new Error('Request error.');
-      //    logger.error(err);
-      //    return callNext({statusCode: 500, message: 'Request error.'});
-      //  }
-      //}
     }
 
     if ( /20./.test(statusCode) ) {
