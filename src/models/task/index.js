@@ -230,7 +230,7 @@ const TaskFactory = function (attrs, options={}) {
   }
 
   model = createModel()
-  if (options.collection !== App.state.tasks) {
+  if (options.collection !== App.state.tasks && !model.isNew()) {
     App.state.tasks.add(model, {merge:true})
   }
   return model
