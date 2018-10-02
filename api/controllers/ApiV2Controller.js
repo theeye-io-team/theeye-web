@@ -123,16 +123,14 @@ module.exports = {
    * @route /apiv2/file
    */
   filePut (req, res, next) {
-    var url = req.originalUrl.replace(apibase,`/${req.user.current_customer}/`);
-    var params = req.params.all();
-    var buffer = new Buffer(params.data, 'base64');
-    var source = decodeURIComponent(escape(buffer.toString('ascii')));
-    var fname = '/tmp/' + req.user.id + '_' + Date.now();
+    const url = req.originalUrl.replace(apibase, `/${req.user.current_customer}/`)
+    var params = req.params.all()
+    let source = Buffer.from(params.data, 'base64').toString('utf8')
 
-    fs.writeFile(fname, source, 'ascii', err => {
-      if (err) {
-        return res.send(500, err)
-      }
+    var fname = ['/tmp/', req.user.id, '_', Date.now()].join('')
+
+    fs.writeFile(fname, source, 'utf8', err => {
+      if (err) { return res.send(500, err) }
 
       params.public = 0
       params.file = {
@@ -166,22 +164,22 @@ module.exports = {
    * @route /apiv2/file
    */
   fileGet (req, res, next) {
-    var url = req.originalUrl.replace(apibase,`/${req.user.current_customer}/`);
+    var url = req.originalUrl.replace(apibase, `/${req.user.current_customer}/`);
     var supervisor = req.supervisor;
 
     supervisor.performRequest({
       method: 'GET',
       url: url
-    }, function(error,file){
+    }, function (error, file) {
       supervisor.performRequest({
         json: false,
         method: 'GET',
         url: url + '/download'
-      },function(error, body){
-        if (error) return res.send(500,error);
-        var source = unescape(encodeURIComponent(body));
-        file.data = new Buffer(source).toString('base64');
-        res.send(200,file);
+      }, function (error, body) {
+        if (error) { return res.send(500, error) }
+
+        file.data = Buffer.from(body).toString('base64')
+        res.send(200, file);
       });
     });
   },

@@ -26,24 +26,16 @@ module.exports = AppModel.extend({
     linked_models: { type: 'array', default: () => { return [] } }
   },
   parse (args) {
-    if (args.data) args.data = this.decodeData(args.data)
+    if (args.data) {
+      args.data = decodeUnicodeData(args.data)
+    }
     args.is_script = (args._type == 'Script')
     return args
   },
   serialize (options) {
     var serial = AppModel.prototype.serialize.call(this, options)
-    serial.data = this.encodeData(serial.data)
+    serial.data = encodeUnicodeData(serial.data)
     return serial
-  },
-  encodeData (data) {
-    return window.btoa(encodeURIComponent(data).replace(/%([0-9A-F]{2})/g, (match, p1) => {
-      return String.fromCharCode('0x' + p1)
-    }))
-  },
-  decodeData (data) {
-    return decodeURIComponent(Array.prototype.map.call(window.atob(data), (c) => {
-      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-    }).join(''))
   },
   derived: {
     hasTemplate: {
@@ -65,3 +57,15 @@ module.exports = AppModel.extend({
     }
   }
 })
+
+const encodeUnicodeData = (data) => {
+  return window.btoa(encodeURIComponent(data).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+    return String.fromCharCode(parseInt(p1, 16))
+  }))
+}
+
+const decodeUnicodeData = (data) => {
+  return decodeURIComponent(Array.prototype.map.call(window.atob(data), (c) => {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+  }).join(''))
+}
