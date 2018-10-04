@@ -61,6 +61,9 @@ module.exports = View.extend({
           return 'fa fa-spin fa-refresh remark-success'
         }
         if (isCompleted(lifecycle)) {
+          if (state === StateConstants.CANCELED) {
+            return 'fa fa-exclamation remark-alert'
+          }
           if (state === StateConstants.FAILURE) {
             return 'fa fa-exclamation remark-alert'
           }
