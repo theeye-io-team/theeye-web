@@ -7,6 +7,7 @@ import SelectView from 'components/select2-view'
 import Buttons from 'view/buttons'
 import TagsSelectView from 'view/tags-select'
 import ScriptSelectView from 'view/script-select'
+import ScriptImportView from 'view/script-import'
 import MembersSelectView from 'view/members-select'
 import EventsSelectView from 'view/events-select'
 import AdvancedToggle from 'view/advanced-toggle'
@@ -20,6 +21,9 @@ import CopyTaskSelect from '../copy-task-select'
 import TaskOnBoarding from '../../taskOnboarding'
 
 module.exports = TaskFormView.extend({
+  props: {
+    isImport: ['boolean', false, false]
+  },
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew())
 
@@ -40,10 +44,19 @@ module.exports = TaskFormView.extend({
       validityClassSelector: '.control-label'
     })
 
-    this.scriptSelection = new ScriptSelectView({
-      value: this.model.script_id,
-      required: true
-    })
+    if (this.isImport) {
+      this.scriptSelection = new ScriptImportView({
+        value: App.state.taskForm.file.filename,
+        required: true,
+        name: 'script_name',
+        label: 'Script'
+      })
+    } else {
+      this.scriptSelection = new ScriptSelectView({
+        value: this.model.script_id,
+        required: true
+      })
+    }
 
     this.advancedFields = [
       'script_runas',
@@ -225,13 +238,21 @@ module.exports = TaskFormView.extend({
     }
 
     let data = this.prepareData(this.data)
-    if (!this.model.isNew()) {
-      App.actions.task.update(this.model.id, data)
+    if (this.isImport) {
+      App.actions.file.create(App.state.taskForm.file, function (err, file) {
+        data.script_id = file.id
+        delete data.script_name
+        App.actions.task.createMany(data.hosts, data)
+      })
     } else {
-      App.actions.task.createMany(data.hosts, data)
+      if (!this.model.isNew()) {
+        App.actions.task.update(this.model.id, data)
+      } else {
+        App.actions.task.createMany(data.hosts, data)
+      }
     }
 
-    next(null,true)
+    next(null, true)
     this.trigger('submitted')
   },
   prepareData (data) {

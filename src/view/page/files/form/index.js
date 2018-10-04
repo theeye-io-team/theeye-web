@@ -11,7 +11,6 @@ import FileInputView from 'components/input-view/file'
 import CommonButton from 'components/common-button'
 import { EditorView } from './editor'
 import ScriptOnBoarding from '../scriptOnboarding'
-import OnboardingActions from 'actions/onboarding'
 
 module.exports = FormView.extend({
   initialize (options) {

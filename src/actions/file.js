@@ -20,11 +20,25 @@ export default {
     file.save()
     return file
   },
-  create (data) {
+  create (data, next) {
+    next || (next = function (err, file) {
+      if (err) {
+        bootbox.alert('Error creating file')
+        return
+      }
+      return file
+    })
     const file = new File(data)
-    file.save()
-    App.state.files.add(file)
-    return file
+    file.save({}, {
+      collection: App.state.files,
+      success: function () {
+        App.state.files.add(file)
+        next(null, file)
+      },
+      error: function (err) {
+        next(err)
+      }
+    })
   },
   remove (id) {
     //check if file has vinculations

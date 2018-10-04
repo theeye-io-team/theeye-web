@@ -14,7 +14,6 @@ import { Collection as Resources } from 'models/resource'
 import { Collection as Tasks } from 'models/task'
 import { Collection as Jobs } from 'models/job'
 import { Collection as Tags } from 'models/tag'
-import { Collection as Scripts } from 'models/file/script'
 import { Collection as Files } from 'models/file'
 import { Collection as Events } from 'models/event'
 import { Workflows } from 'models/workflow'
@@ -99,7 +98,8 @@ const AppState = State.extend({
     extendedTags: ['state', false, () => new ExtendedTagsState()],
     workflowPage: ['state', false, () => new WorkflowPageState()],
     workflowVisualizer: ['state', false, () => new WorkflowVisualizerState()],
-    approval: ['state', false, () => new ApprovalState()]
+    approval: ['state', false, () => new ApprovalState()],
+    taskForm: ['state', false, () => new TaskFormState()]
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)
@@ -239,6 +239,12 @@ const ApprovalState = State.extend({
   }
 })
 
+const TaskFormState = State.extend({
+  props: {
+    file: 'object'
+  }
+})
+
 const _initCollections = function () {
   Object.assign(this, {
     customers: new Customers([]),
@@ -250,7 +256,6 @@ const _initCollections = function () {
     tasks: new Tasks([]),
     jobs: new Jobs([]),
     tags: new Tags([]),
-    scripts: new Scripts([]),
     files: new Files([]),
     users: new Users([]),
     webhooks: new Webhooks([]),

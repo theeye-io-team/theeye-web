@@ -1,4 +1,5 @@
 import AppModel from 'lib/app-model'
+import App from 'ampersand-app'
 
 module.exports = AppModel.extend({
   props: {

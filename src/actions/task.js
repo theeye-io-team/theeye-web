@@ -9,10 +9,12 @@ import assign from 'lodash/assign'
 import after from 'lodash/after'
 import OnboardingActions from 'actions/onboarding'
 import WorkflowActions from 'actions/workflow'
+import TaskFormActions from 'actions/taskform'
 import config from 'config'
 import FileSaver from 'file-saver'
 const emptyCallback = () => {}
 import { ExecTask, ExecApprovalTask } from 'view/page/dashboard/task/task/exec-task.js'
+import { Model as File } from 'models/file'
 
 const logger = require('lib/logger')('actions:tasks')
 
@@ -155,6 +157,23 @@ module.exports = {
         return next(new Error(msg))
       }
     })
+  },
+  parseRecipe (recipe) {
+    if (recipe.task.type === TaskConstants.TYPE_SCRAPER) {
+      recipe.task.remote_url = recipe.task.url
+      delete recipe.task.url
+    }
+
+    let task = TaskModel.Factory(recipe.task)
+
+    if (recipe.file) {
+      let file = new File(recipe.file, {parse: true})
+      TaskFormActions.setFile(file._values)
+    } else {
+      TaskFormActions.clearFile()
+    }
+
+    return task
   },
   execute (task) {
     var execTask

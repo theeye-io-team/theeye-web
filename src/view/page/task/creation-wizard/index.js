@@ -1,18 +1,33 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
-import TaskActions from 'actions/task'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
 import TaskFormView from '../form'
 import TaskOnBoarding from '../taskOnboarding'
+import FileInputView from 'components/input-view/file'
+import bootbox from 'bootbox'
 
 import { Script as ScriptTask } from 'models/task'
 import { Scraper as ScraperTask } from 'models/task'
 import { Approval as ApprovalTask } from 'models/task'
 import { Dummy as DummyTask } from 'models/task'
+import { Model as File } from 'models/file'
 
 import './styles.less'
+
+const ImportTaskInputView = FileInputView.extend({
+  template: `
+    <div>
+      <div class="upload-btn-wrapper">
+        <button for="file-upload" data-hook="button-label" class="btn btn-primary">
+          <i class="fa fa-upload"></i> Import
+        </button>
+        <input id="file-upload" type="file">
+      </div>
+    </div>
+  `
+})
 
 const TaskCreationWizard = View.extend({
   template: `
@@ -46,6 +61,10 @@ const TaskCreationWizard = View.extend({
           </button>
           <h2>Input<span data-hook="dummy-help"></span></h2>
         </div>
+      </div>
+      <div class="import-task-section">
+        <h1>Or you can import a task from a file</h1>
+        <div data-hook="import-task-container"></div>
       </div>
     </section>
     <section data-hook="form-container"></section>
@@ -97,19 +116,46 @@ const TaskCreationWizard = View.extend({
       this.queryByHook('script-help')
     )
 
-    if(App.state.onboarding.onboardingActive) {
+    if (App.state.onboarding.onboardingActive) {
       var taskOnBoarding = new TaskOnBoarding({parent: this})
       this.registerSubview(taskOnBoarding)
       taskOnBoarding.step1()
     }
+
+    this.importTaskInput = new ImportTaskInputView({
+      callback: (file) => {
+        if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
+          try {
+            let recipe = JSON.parse(file.contents)
+            let task = App.actions.task.parseRecipe(recipe)
+            this.createFormTask(task, {isImport: true})
+          } catch (e) {
+            console.log(e)
+            bootbox.alert('Invalid JSON file.')
+          }
+        } else {
+          bootbox.alert('File not supported, please select a JSON file.')
+        }
+        this.importTaskInput.reset()
+      }
+    })
+
+    this.renderSubview(
+      this.importTaskInput,
+      this.queryByHook('import-task-container')
+    )
+  },
+  update () {
   },
   /**
    * @param {Task} task a models/task instance
    */
-  createFormTask (task) {
+  createFormTask (task, options) {
     this.queryByHook('type-selection-container').remove()
-    const form = new TaskFormView({ model: task })
-    //form.render()
+
+    options = Object.assign({}, options, {model: task})
+
+    const form = new TaskFormView(options)
     this.renderSubview(form,this.queryByHook('form-container'))
     this.form = form
     this.listenTo(form,'submitted',() => { this.trigger('submitted') })
