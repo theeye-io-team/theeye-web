@@ -93,8 +93,8 @@ module.exports = View.extend({
     var $modal = $( this.query('.modal') )
     this.$modal = $modal
     $modal.modal({
-      keyboard: true,
-      backdrop: this.backdrop,
+      keyboard: false,
+      backdrop: this.backdrop ? 'static' : false,
       show: false
     })
 
