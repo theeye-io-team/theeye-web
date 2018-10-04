@@ -67,7 +67,8 @@ const Model = AppModel.extend({
 const Collection = AppCollection.extend({
   indexes: ['name'],
   url: urlRoot,
-  model: Model
+  model: Model,
+  comparator: 'name'
 })
 
 exports.Model = Model
