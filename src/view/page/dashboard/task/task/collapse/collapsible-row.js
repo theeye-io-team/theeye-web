@@ -61,6 +61,12 @@ const TaskButtonsView = View.extend({
         </button>
       </li>
       <li>
+        <button class="btn btn-primary" title="Workflow" data-hook="workflow">
+          <i class="fa fa-sitemap dropdown-icon" aria-hidden="true"></i>
+          <span>Show workflow</span>
+        </button>
+      </li>
+      <li>
         <button data-hook="search" class="btn btn-primary" title="Search related elements">
           <i class="fa fa-search dropdown-icon" aria-hidden="true"></i>
           <span>Search related</span>
