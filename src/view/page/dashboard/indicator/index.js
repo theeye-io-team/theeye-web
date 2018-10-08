@@ -177,6 +177,7 @@ const GaugesFactoryView = function (options) {
   let gauge
   switch (model.type) {
     case 'text':
+    case 'counter':
       gauge = new TextIndicatorView(options)
       break;
     case 'progress':

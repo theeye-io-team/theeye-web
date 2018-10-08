@@ -94,7 +94,7 @@ const Model = AppModel.extend({
           case EmitterConstants.TASK_SCRIPT:
           case EmitterConstants.TASK_SCRAPER:
           case EmitterConstants.TASK_DUMMY:
-            displayable = Boolean(eventName === EventConstants.SUCCESS)
+            displayable = true
             break
           case EmitterConstants.TASK_APPROVAL:
           case EmitterConstants.WEBHOOK:
