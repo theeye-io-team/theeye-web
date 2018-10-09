@@ -128,15 +128,16 @@ module.exports = FormView.extend({
     this.submitCallback(this.data)
   },
   submitCallback (obj) {
-    let file
+    let self = this
     let data = this.prepareData(obj)
     if (!this.model.isNew()) {
-      file = App.actions.file.update(this.model.id, data)
+      let file = App.actions.file.update(this.model.id, data)
+      this.trigger('submitted', file)
     } else {
-      file = App.actions.file.create(data)
+      App.actions.file.create(data, function (err, file) {
+        self.trigger('submitted', file)
+      })
     }
-
-    this.trigger('submitted', file)
   },
   prepareData (args) {
     let f = assign(

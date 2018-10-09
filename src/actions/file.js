@@ -21,13 +21,7 @@ export default {
     return file
   },
   create (data, next) {
-    next || (next = function (err, file) {
-      if (err) {
-        bootbox.alert('Error creating file')
-        return
-      }
-      return file
-    })
+    next || (next = function(){})
     const file = new File(data)
     file.save({}, {
       collection: App.state.files,
@@ -36,6 +30,10 @@ export default {
         next(null, file)
       },
       error: function (err) {
+        if (err) {
+          bootbox.alert('Error creating file')
+          return
+        }
         next(err)
       }
     })
