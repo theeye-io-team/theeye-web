@@ -1,22 +1,12 @@
 'use strict'
 
 import AmpersandState from 'ampersand-state'
-import AmpersandCollection from 'ampersand-collection'
+import { TaskEvents } from './task-event'
 //import gconfig from 'config'
 
 const Resources = require('models/resource').Collection
 const Tasks = require('models/task').Collection
 import { Model as File, Collection as Files } from 'models/file'
-
-const TaskEvent = AmpersandState.extend({
-  props: {
-    task_id: 'string',
-    task: 'object',
-    events: ['array',false,() => { return [] }]
-  }
-})
-
-const TaskEvents = AmpersandCollection.extend({ model: TaskEvent })
 
 // representation of a host template
 export default AmpersandState.extend({

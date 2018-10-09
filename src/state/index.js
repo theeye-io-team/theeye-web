@@ -21,7 +21,7 @@ import { Workflows } from 'models/workflow'
 import { Collection as Notifications } from 'models/notification'
 import Alerts from 'components/alerts'
 
-import HostTemplateState from './host-template'
+import TemplatePageState from './template-page'
 import DashboardPageState from './dashboard-page'
 import SessionState from './session'
 import NavbarState from './navbar'
@@ -87,7 +87,7 @@ const AppState = State.extend({
     alerts: ['state',false,() => { return new Alerts() }],
     currentPage: 'state',
     dashboard: ['state',false,() => { return new DashboardPageState() }],
-    hostGroupPage: ['state',false,() => { return new HostTemplateState() }],
+    hostGroupPage: ['state',false,() => { return new TemplatePageState() }],
     login: ['state',false,() => { return new LoginState() }],
     notify: ['state',false,() => { return new NotifyState() }],
     register: ['state',false,() => { return new RegisterState() }],
