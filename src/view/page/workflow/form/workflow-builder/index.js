@@ -113,6 +113,11 @@ module.exports = View.extend({
         })
         this.workflowGraph = workflowGraph
         this.renderSubview(workflowGraph, this.queryByHook('graph-preview'))
+
+        setTimeout(() => {
+          this.workflowGraph.updateCytoscape()
+        }, 1000)
+
         this.on('change:graph', workflowGraph.updateCytoscape, workflowGraph)
         this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(workflowGraph, 'clear', this.onClearButton)
