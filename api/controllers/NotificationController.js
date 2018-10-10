@@ -147,13 +147,13 @@ const createNotifications = (event, users, customerName, callback) => {
 
     if (!isApprovalOnHoldEvent(event)) {
       if (excludes && Array.isArray(excludes) && excludes.length > 0) {
-        isExcluded = excludes.find(exc => {
-          return matchExclusionFilter(exc, event)
+        exclusionFilter = excludes.find(exc => {
+          return hasMatchedExclusionFilter(exc, event)
         })
       }
     }
 
-    if (!isExcluded) {
+    if (exclusionFilter===undefined) {
       notifications.push({
         topic: event.topic,
         data: event.data,
@@ -174,29 +174,28 @@ const createNotifications = (event, users, customerName, callback) => {
  * @return true if any filter match
  *
  */
-const matchExclusionFilter = (excFilter, notifEvent) => {
+const hasMatchedExclusionFilter = (excFilter, notifEvent) => {
 	// every string prop value has to match
   let hasMatch = false
+  let hasMatchingData = false
+
   for (let prop in excFilter) {
     if (canCompare(excFilter[prop]) && canCompare(notifEvent[prop])) {
       hasMatch = (excFilter[prop] === notifEvent[prop])
     }
   }
 
-	// also we care about data properties
-  let hasMatchingData = false
+  if (hasMatch===true) { return true }
+
   if (excFilter.data) {
     for (let dataProp in excFilter.data) {
       if (canCompare(excFilter.data[dataProp]) && canCompare(notifEvent.data[dataProp])) {
         hasMatchingData = (notifEvent.data[dataProp] === excFilter.data[dataProp])
       }
     }
-  } else {
-    hasMatchingData = true
   }
 
-	// filters are exclusions, if matches, reject returning false
-  return hasMatch && hasMatchingData
+  return hasMatchingData
 }
 
 /**
