@@ -172,7 +172,8 @@ var CustomerController = module.exports = {
             { order: 1, value: agent.client_secret },
             { order: 2, value: customer_name },
             { order: 3, value: sails.config.supervisor.url },
-            { order: 4, value: customer_name }
+            { order: 4, value: customer_name },
+            { order: 5, value: 'latest' }
           ]
         }
 
