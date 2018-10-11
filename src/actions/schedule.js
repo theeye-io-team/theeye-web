@@ -3,6 +3,7 @@ import config from 'config'
 import bootbox from 'bootbox'
 import App from 'ampersand-app'
 
+// create
 export const createSchedule = (taskId, data, callback = () => {}) => {
   const task = App.state.tasks.get(taskId)
   XHR.send({
@@ -24,6 +25,7 @@ export const createSchedule = (taskId, data, callback = () => {}) => {
   })
 }
 
+// fetch
 export const getSchedules = taskId => {
   const task = App.state.tasks.get(taskId)
   XHR.send({
@@ -41,6 +43,7 @@ export const getSchedules = taskId => {
   })
 }
 
+// cancel
 export const cancelSchedule = (taskId, scheduleId) => {
   const task = App.state.tasks.get(taskId)
   const schedule = task.schedules.get(scheduleId)
@@ -60,3 +63,7 @@ export const cancelSchedule = (taskId, scheduleId) => {
     }
   })
 }
+
+export const fetch = getSchedules
+export const remove = cancelSchedule
+export const create = createSchedule

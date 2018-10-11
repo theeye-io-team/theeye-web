@@ -5,17 +5,14 @@ import ExecTaskButton from '../task-exec-button'
 import EditTaskButton from 'view/page/task/buttons/edit'
 import CopyTaskButton from 'view/page/task/buttons/copy'
 import DeleteTaskButton from 'view/page/task/buttons/delete'
-import DeleteJobsButton from 'view/page/dashboard/task/delete-jobs-button'
 import CollapsibleRow from 'view/page/dashboard/task/collapsible-row'
-import acls from 'lib/acls'
+import Schedules from 'view/page/task/schedules'
+import Acls from 'lib/acls'
 import $ from 'jquery'
+import JobRow from './job'
+import JobsList from 'view/page/dashboard/task/jobs-list'
 
 module.exports = CollapsibleRow.extend({
-  initialize () {
-    CollapsibleRow.prototype.initialize.apply(this, arguments)
-
-    this.collapse_title = 'Execution history'
-  },
   onClickToggleCollapse (event) {
     TaskActions.populate(this.model)
     return
@@ -26,25 +23,24 @@ module.exports = CollapsibleRow.extend({
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
     )
 
-    if (acls.hasAccessLevel('user')) {
+    if (Acls.hasAccessLevel('user')) {
       const button = this.renderSubview(
         new ExecTaskButton({ model: this.model }),
         this.queryByHook('execute-button-container')
       )
     }
 
-    if (acls.hasAccessLevel('admin')) {
-      var deleteJobsButton = new DeleteJobsButton({ model: this.model })
-      this.renderSubview(deleteJobsButton, this.queryByHook('delete-jobs-button'))
+  },
+  renderCollapsedContent () {
+    this.renderSubview(
+      new Schedules({model: this.model}),
+      this.queryByHook('collapse-container-body'),
+    )
 
-      this.listenToAndRun(this.model.jobs, 'add sync reset remove', () => {
-        if (this.model.jobs.length) {
-          deleteJobsButton.disabled = false
-        } else {
-          deleteJobsButton.disabled = true
-        }
-      })
-    }
+    this.renderSubview(
+      new JobsList({ model: this.model, rowView: JobRow }),
+      this.queryByHook('collapse-container-body'),
+    )
   }
 })
 
@@ -103,7 +99,7 @@ const TaskButtonsView = View.extend({
   render () {
     this.renderWithTemplate(this)
 
-    if (acls.hasAccessLevel('admin')) {
+    if (Acls.hasAccessLevel('admin')) {
       var editButton = new EditTaskButton({ model: this.model })
       this.renderSubview(editButton, this.queryByHook('edit-button'))
 
@@ -115,3 +111,4 @@ const TaskButtonsView = View.extend({
     }
   }
 })
+

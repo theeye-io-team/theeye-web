@@ -8,9 +8,9 @@ import CollapsibleRow from '../collapsible-row'
 import ExecButton from '../exec-button'
 import TaskJobRow from '../task/collapse/job'
 import JobExecButton from '../task/collapse/job/job-exec-button'
-import DeleteJobsButton from 'view/page/dashboard/task/delete-jobs-button'
-import EmptyJobView from '../empty-job-view.js'
+import EmptyJobView from '../empty-job-view'
 import moment from 'moment'
+import JobsList from 'view/page/dashboard/task/jobs-list'
 
 import './styles.less'
 
@@ -28,11 +28,6 @@ module.exports = CollapsibleRow.extend({
     header_type_icon: {
       fn: () => 'circle fa fa-sitemap workflow-color'
     }
-  },
-  initialize () {
-    CollapsibleRow.prototype.initialize.apply(this, arguments)
-
-    this.collapse_title = 'Execution history'
   },
   onClickToggleCollapse (event) {
     WorkflowActions.populate(this.model)
@@ -61,18 +56,6 @@ module.exports = CollapsibleRow.extend({
       )
     }
 
-    if (Acls.hasAccessLevel('admin')) {
-      var deleteJobsButton = new DeleteJobsButton({ model: this.model })
-      this.renderSubview(deleteJobsButton, this.queryByHook('delete-jobs-button'))
-
-      this.listenToAndRun(this.model.jobs, 'add sync reset remove', () => {
-        if (this.model.jobs.length) {
-          deleteJobsButton.disabled = false
-        } else {
-          deleteJobsButton.disabled = true
-        }
-      })
-    }
   }
 })
 
@@ -144,20 +127,16 @@ const WorkflowJobRowView = CollapsibleRow.extend({
       }
     }
   },
-  renderCollapsedContent () {
-    const jobRows = this.renderCollection(
-      this.model.jobs,
-      TaskJobDescriptiveRow,
-      this.queryByHook('collapse-container-body')
-      //{
-      //  reverse: true
-      //}
-    )
-  },
   renderButtons () {
     this.renderSubview(
       new WorkflowJobStatus({ model: this.model }),
       this.queryByHook('job-status-container')
+    )
+  },
+  renderCollapsedContent () {
+    this.renderSubview(
+      new JobsList({ model: this.model, rowView: TaskJobDescriptiveRow }),
+      this.queryByHook('collapse-container-body'),
     )
   }
 })

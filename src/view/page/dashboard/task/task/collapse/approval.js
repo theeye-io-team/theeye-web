@@ -1,7 +1,5 @@
 import TaskCollapsibleRow from './collapsible-row'
 import TaskConstants from 'constants/task'
-import JobRow from './job'
-import EmptyJobView from '../../empty-job-view.js'
 
 module.exports = TaskCollapsibleRow.extend({
   derived: {
@@ -14,16 +12,5 @@ module.exports = TaskCollapsibleRow.extend({
     header_type_icon: {
       fn: () => 'circle fa fa-thumbs-o-up approval-color'
     }
-  },
-  renderCollapsedContent () {
-    const jobRows = this.renderCollection(
-      this.model.jobs,
-      JobRow,
-      this.queryByHook('collapse-container-body'),
-      {
-        reverse: true,
-        emptyView: EmptyJobView
-      }
-    )
   }
 })
