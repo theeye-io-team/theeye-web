@@ -142,8 +142,8 @@ const createNotifications = (event, users, customerName, callback) => {
 
   const notifications = []
   users.forEach(user => {
+    let exclusionFilter
     let excludes = (user.notifications && user.notifications.desktopExcludes) || []
-    let isExcluded = false
 
     if (!isApprovalOnHoldEvent(event)) {
       if (excludes && Array.isArray(excludes) && excludes.length > 0) {
