@@ -13,7 +13,7 @@ import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
 const HelpTexts = require('language/help')
 
-var currentGroup
+let currentGroup
 
 module.exports = FormView.extend({
   initialize (options) {
@@ -98,14 +98,7 @@ module.exports = FormView.extend({
         validityClassSelector: '.control-label',
         tests: [
           () => {
-            const noConfig = (
-              App.state.hostGroupPage.configResources.length === 0 &&
-              App.state.hostGroupPage.configTasks.length === 0 &&
-              App.state.hostGroupPage.configTriggers.length === 0 &&
-              App.state.hostGroupPage.configFiles.length === 0
-            )
-
-            if (noConfig) {
+            if (App.state.hostGroupPage.notConfigured()) {
               return 'Configuration is required. We need something to create a template'
             }
           }
@@ -114,11 +107,7 @@ module.exports = FormView.extend({
 
       this.fields.unshift(configSelection)
     } else {
-      App.state.hostGroupPage.configResources = this.model.resources
-      App.state.hostGroupPage.configTasks = this.model.tasks
-      App.state.hostGroupPage.configTriggers = this.model.triggers
-      App.state.hostGroupPage.configFiles = this.model.files
-
+      App.state.hostGroupPage.setTemplate(this.model)
       const configs = new ConfigsView()
       configs.render()
       this.fields.unshift(configs)

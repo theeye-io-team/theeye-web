@@ -8,15 +8,14 @@ import FileSaver from 'file-saver'
 import qs from 'qs'
 
 import { Collection as Hosts } from 'models/host'
-//import { Model as HostGroup } from 'models/hostgroup'
 
 const Actions = {
   create (data, applyToSourceHost) {
     const state = App.state.hostGroupPage
-    const resources = state.configResources.serialize()
-    const tasks = state.configTasks.serialize()
-    const triggers = state.configTriggers.serialize()
-    const files = state.configFiles.serialize()
+    const resources = state.resources.serialize()
+    const tasks = state.tasks.serialize()
+    const triggers = state.triggers.serialize()
+    const files = state.files.serialize()
 
     const body = Object.assign({}, data, {
       resources,
