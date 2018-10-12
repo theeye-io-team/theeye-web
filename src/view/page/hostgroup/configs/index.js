@@ -125,12 +125,7 @@ module.exports = View.extend({
       (options) => {
         // edit only when create
         options.readonly = ! this.edit_mode
-        //if (options.readonly===true) {
-        //  return new ShowTriggerItemView(options)
-        //} else {
-        //  return new CreateTriggerItemView(options)
-        //}
-        return new CreateTriggerItemView(options)
+        return new TriggerItemView(options)
       },
       this.queryByHook('triggers')
     )
@@ -214,10 +209,6 @@ const ItemView = View.extend({
   }
 })
 
-const getFileAttachedTo = () => {
-  // nop...
-}
-
 const FileItemView = ItemView.extend({
   template: `
     <li>
@@ -256,7 +247,7 @@ const FileItemView = ItemView.extend({
 //  })
 //})
 
-const CreateTriggerItemView = ItemView.extend({
+const TriggerItemView = ItemView.extend({
   template: `
     <li>
       <span data-hook="name"></span>
