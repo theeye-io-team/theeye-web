@@ -36,11 +36,6 @@ module.exports = View.extend({
       name: 'value',
       hook: 'agent-client-secret'
     },
-    'agentToken': {
-      type: 'attribute',
-      name: 'value',
-      hook: 'agent-token'
-    },
     'theeyeToken': {
       type: 'attribute',
       name: 'value',
@@ -70,14 +65,6 @@ module.exports = View.extend({
         if (!this.agent)
           return
         return this.agent.client_secret
-      }
-    },
-    agentToken: {
-      deps: ['agent'],
-      fn: function(){
-        if (!this.agent)
-          return
-        return this.agent.token
       }
     },
     theeyeToken: {
@@ -112,7 +99,6 @@ module.exports = View.extend({
     new Clipboard( this.query('.clipboard-customer-name-btn') )
     new Clipboard( this.query('.clipboard-client-id-btn') )
     new Clipboard( this.query('.clipboard-client-secret-btn') )
-    new Clipboard( this.query('.clipboard-agent-token-btn') )
     new Clipboard( this.query('.clipboard-token-btn') )
   }
 })
