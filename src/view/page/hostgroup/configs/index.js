@@ -94,7 +94,7 @@ module.exports = View.extend({
     this.renderWithTemplate(this)
 
     this.renderCollection(
-      App.state.hostGroupPage.configResources,
+      App.state.hostGroupPage.resources,
       (options) => {
         options.readonly = ! this.edit_mode
         return new ItemView(options)
@@ -103,7 +103,7 @@ module.exports = View.extend({
     )
 
     this.renderCollection(
-      App.state.hostGroupPage.configTasks,
+      App.state.hostGroupPage.tasks,
       (options) => {
         options.readonly = ! this.edit_mode
         return new ItemView(options)
@@ -112,7 +112,7 @@ module.exports = View.extend({
     )
 
     this.renderCollection(
-      App.state.hostGroupPage.configFiles,
+      App.state.hostGroupPage.files,
       (options) => {
         options.readonly = ! this.edit_mode
         return new FileItemView(options)
@@ -121,30 +121,26 @@ module.exports = View.extend({
     )
 
     this.renderCollection(
-      App.state.hostGroupPage.configTriggers,
+      App.state.hostGroupPage.triggers,
       (options) => {
         // edit only when create
         options.readonly = ! this.edit_mode
-        if (options.readonly===true) {
-          return new ShowTriggerItemView(options)
-        } else {
-          return new CreateTriggerItemView(options)
-        }
+        return new TriggerItemView(options)
       },
       this.queryByHook('triggers')
     )
 
-    this.listenTo(App.state.hostGroupPage.configResources,'reset add remove',() => {
-      this.no_resources = (App.state.hostGroupPage.configResources.length === 0)
+    this.listenTo(App.state.hostGroupPage.resources,'reset add remove',() => {
+      this.no_resources = (App.state.hostGroupPage.resources.length === 0)
     })
-    this.listenTo(App.state.hostGroupPage.configTasks,'reset add remove',() => {
-      this.no_tasks = (App.state.hostGroupPage.configTasks.length === 0)
+    this.listenTo(App.state.hostGroupPage.tasks,'reset add remove',() => {
+      this.no_tasks = (App.state.hostGroupPage.tasks.length === 0)
     })
-    this.listenTo(App.state.hostGroupPage.configFiles,'reset add remove',() => {
-      this.no_files = (App.state.hostGroupPage.configFiles.length === 0)
+    this.listenTo(App.state.hostGroupPage.files,'reset add remove',() => {
+      this.no_files = (App.state.hostGroupPage.files.length === 0)
     })
-    this.listenTo(App.state.hostGroupPage.configTriggers,'reset add remove',() => {
-      this.no_triggers = (App.state.hostGroupPage.configTriggers.length === 0)
+    this.listenTo(App.state.hostGroupPage.triggers,'reset add remove',() => {
+      this.no_triggers = (App.state.hostGroupPage.triggers.length === 0)
     })
   }
 })
@@ -213,10 +209,6 @@ const ItemView = View.extend({
   }
 })
 
-const getFileAttachedTo = () => {
-  // nop...
-}
-
 const FileItemView = ItemView.extend({
   template: `
     <li>
@@ -241,26 +233,21 @@ const FileItemView = ItemView.extend({
  * the model data structure changes before creation
  *
  */
-const ShowTriggerItemView = ItemView.extend({
-  template: `
-    <li>
-      <b><span data-hook="task-name"></span></b>
-      trigger on <span data-hook="type"></span>
-      <span data-hook="name"></span>
-    </li>`,
-  bindings: merge({}, ItemView.prototype.bindings, {
-    'model.event_name': { hook: 'name' },
-    'model.event_type': { hook: 'type' },
-    'model.task_template.name': { hook: 'task-name' }
-  })
-})
+//const ShowTriggerItemView = ItemView.extend({
+//  template: `
+//    <li>
+//      <b><span data-hook="task-name"></span></b>
+//      trigger on <span data-hook="type"></span>
+//      <span data-hook="name"></span>
+//    </li>`,
+//  bindings: merge({}, ItemView.prototype.bindings, {
+//    'model.event_name': { hook: 'name' },
+//    'model.event_type': { hook: 'type' },
+//    'model.task_template.name': { hook: 'task-name' }
+//  })
+//})
 
-/**
- *
- * this view display different information that the above view
- *
- */
-const CreateTriggerItemView = ItemView.extend({
+const TriggerItemView = ItemView.extend({
   template: `
     <li>
       <span data-hook="name"></span>
@@ -274,12 +261,9 @@ const CreateTriggerItemView = ItemView.extend({
       type: 'text',
       hook: 'name'
     },
-    'model.events.length': [{
+    'model.events.length': {
       type: 'text',
       hook: 'count'
-    //},{
-    //  type: 'toggle',
-    //  hook: 'count-visibility'
-    }]
+    }
   })
 })
