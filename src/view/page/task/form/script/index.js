@@ -21,9 +21,6 @@ import CopyTaskSelect from '../copy-task-select'
 import TaskOnBoarding from '../../taskOnboarding'
 
 module.exports = TaskFormView.extend({
-  props: {
-    isImport: ['boolean', false, false]
-  },
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew())
 

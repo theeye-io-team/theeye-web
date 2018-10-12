@@ -100,6 +100,9 @@ module.exports = InputView.extend({
     this.flatpickr.clear()
   },
   setValue (value, skipValidation) {
+    if (!this.flatpickr) return // Flatpickr trigger ready before returning the instance
+
+    this.flatpickr.setDate(new Date(value))
     this.inputValue = value
 
     this.trigger('change:inputValue') // force change. value is always the same array

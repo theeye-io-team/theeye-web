@@ -1,9 +1,12 @@
-import FormView from 'ampersand-form-view'
+import DropableForm from 'components/dropable-form'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
 import FieldConstants from 'constants/field'
 
-export default FormView.extend({
+export default DropableForm.extend({
+  props: {
+    isImport: ['boolean', false, false]
+  },
   focus () {
     const eles = this.queryAll('.form-control')
     if (eles.length==0) { return }
@@ -44,4 +47,9 @@ export default FormView.extend({
       }
     }
   },
+  fillForm (data) {
+    if (data.task) {
+      this.setWithTask(data.task)
+    }
+  }
 })

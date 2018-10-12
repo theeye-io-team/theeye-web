@@ -2,8 +2,7 @@
 
 import App from 'ampersand-app'
 import assign from 'lodash/assign'
-import FormView from 'ampersand-form-view'
-import View from 'ampersand-view'
+import TaskFormView from '../form'
 import PatternInputView from './pattern-input'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
@@ -22,7 +21,7 @@ import HelpTexts from 'language/help'
 
 import CopyTaskSelect from '../copy-task-select'
 
-module.exports = FormView.extend({
+module.exports = TaskFormView.extend({
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew())
 
@@ -261,13 +260,13 @@ module.exports = FormView.extend({
       })
     }
 
-    FormView.prototype.initialize.apply(this, arguments)
+    TaskFormView.prototype.initialize.apply(this, arguments)
   },
   focus () {
     this.query('input[name=name]').focus()
   },
   render () {
-    FormView.prototype.render.apply(this, arguments)
+    TaskFormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
     if (this.model.isNew()) {
@@ -306,7 +305,7 @@ module.exports = FormView.extend({
     )
   },
   remove () {
-    FormView.prototype.remove.apply(this)
+    TaskFormView.prototype.remove.apply(this)
   },
   submit (next) {
     next||(next=()=>{})
@@ -347,5 +346,11 @@ module.exports = FormView.extend({
       status_code: task.status_code,
       pattern: task.pattern,
     })
+  },
+  fillForm (data) {
+    if (data.task && data.task.url) {
+      data.task.remote_url = data.task.url
+    }
+    TaskFormView.prototype.fillForm.apply(this, arguments)
   }
 })

@@ -1,5 +1,5 @@
 import FIELD from 'constants/field'
-import FormView from 'ampersand-form-view'
+import DropableForm from 'components/dropable-form'
 import InputView from 'components/input-view'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
@@ -9,7 +9,7 @@ import MediaFileModel from './media-file'
 import isURL from 'validator/lib/isURL'
 import config from 'config'
 
-module.exports = FormView.extend({
+module.exports = DropableForm.extend({
   props: {
     fieldsDefinitions: 'array'
   },
@@ -110,7 +110,7 @@ module.exports = FormView.extend({
 
     this.fields = fields
 
-    FormView.prototype.initialize.apply(this,arguments)
+    DropableForm.prototype.initialize.apply(this,arguments)
   },
   submit (next) {
     next || (next = function(){})
@@ -132,7 +132,7 @@ module.exports = FormView.extend({
     eles[0].focus()
   },
   render () {
-    FormView.prototype.render.apply(this, arguments)
+    DropableForm.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
     this.renderHelpIcons()
 
