@@ -5,7 +5,7 @@ var ScriptsPageInit = (function(){
     new HelpIcon({
       color:[255,255,255],
       category:'title_help',
-      text: HelpTexts.titles.script_page 
+      text: HelpTexts.titles.script_page
     })
       .$el
       .appendTo(
@@ -278,7 +278,7 @@ var ScriptsPageInit = (function(){
 
   /** Public script upload */
   $('.example-code').click(function(e) {
-    var scriptsPath = 'https://raw.githubusercontent.com/theeye-io-team/theeye-docs/master/scripts';
+    var scriptsPath = 'https://raw.githubusercontent.com/theeye-io/theeye-docs/master/scripts/examples/';
     var mode = $('[data-hook=editor-mode]').val();
     var url = scriptsPath + '/example.' + mode2extension(mode);
 
