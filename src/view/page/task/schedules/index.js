@@ -1,18 +1,13 @@
 import { cancelSchedule } from 'actions/schedule'
 import View from 'ampersand-view'
 import bootbox from 'bootbox'
+import moment from 'moment'
 import './style.less'
 
 export const Schedules = View.extend({
   template: `
     <div class="col-xs-12 schedules-list-component">
       <h4>Schedules for this task</h4>
-      <div class="scheduleHeader">
-        <div class="col-sm-4"><h5>Initial date:</h5></div>
-        <div class="col-sm-2"><h5>Repeats every:</h5></div>
-        <div class="col-sm-4"><h5>Next iteration:</h5></div>
-        <div class="col-sm-2"></div>
-      </div>
       <div data-hook="schedule-list"></div>
     </div>
   `,
@@ -45,13 +40,19 @@ const ScheduleRow = View.extend({
   },
   template: `
     <div class="scheduleItem row">
-      <div class="col-sm-4"><p data-hook="startDate"></p></div>
-      <div class="col-sm-2"><p data-hook="repeatsEvery"></p></div>
-      <div class="col-sm-4"><p data-hook="nextDate"></p></div>
-      <div class="col-sm-2 text-right">
-        <button type="button" class="btn btn-danger btn-sm deleteSchedule">
-          Delete <span class="fa fa-trash"></span>
-        </button>
+      <div class="col-xs-12">
+        <h4>
+          <div class="scheduleData">
+            <span class="scheduleTitle">Repeats every: </span>
+            <span data-hook="repeatsEvery"></span>
+            <span class="breakline" style="display:none;"><br></span>
+            <span class="scheduleTitle">Next iteration: </span>
+            <span data-hook="nextDate"></span>
+          </div>
+          <button type="button" class="btn btn-primary deleteSchedule">
+            <span class="fa fa-trash"></span>
+          </button>
+        </h4>
       </div>
     </div>`,
   events: {
@@ -69,19 +70,13 @@ const ScheduleRow = View.extend({
     )
   },
   bindings: {
-    'model.data.scheduleData.runDate': {
-      hook: 'startDate',
-      type: function(el, value, previousValue) {
-        el.innerHTML = new Date(value).toString()
-      }
-    },
     'model.data.scheduleData.repeatEvery': {
       hook: 'repeatsEvery'
     },
     'model.nextRunAt': {
       hook: 'nextDate',
-      type: function(el, value, previousValue) {
-        el.innerHTML = new Date(value).toString()
+      type: function (el, value, previousValue) {
+        el.innerHTML = moment(value).format('dddd, MMMM Do YYYY, h:mm:ss a')
       }
     }
   }

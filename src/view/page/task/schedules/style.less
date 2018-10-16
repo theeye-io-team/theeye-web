@@ -1,12 +1,33 @@
 .schedules-list-component {
-  h4 {
-    border-bottom: 1px solid grey;
+  border-bottom: 1px solid grey;
+  padding-bottom: 20px;
+
+  div.scheduleData {
+    float: left;
+    padding: 12px 0px 12px 10px;
   }
-  div.scheduleHeader {
+
+  span.scheduleTitle{
     color: #aaa;
   }
   div.scheduleItem p {
     /* same as button.btn padding-top*/
     margin-top: 5px;
+  }
+  button.deleteSchedule {
+    float: right;
+    margin-right: 10px;
+  }
+}
+
+@media (max-width: 767px) {
+  .schedules-list-component {
+    div.scheduleData {
+      width: 72%;
+      padding: 0px 0px 0px 10px;
+    }
+    span.breakline {
+      display: unset!important;
+    }
   }
 }
