@@ -7,9 +7,9 @@ import './styles.less'
 module.exports = View.extend({
   template: `
   <div class="col-xs-12 jobs-list-component">
-    <div class="title-container">
+    <div data-hook="header-container" class="header-container">
       <h3>
-        <span data-hook="collapse-title"></span>
+        <span data-hook="header-title"></span>
         <div class="buttons-container">
           <span class="delete-jobs-button" data-hook="delete-jobs-button"> </span>
         </div>
@@ -19,18 +19,23 @@ module.exports = View.extend({
   </div>
   `,
   props: {
-    collapse_title: ['string', false, 'Execution history'],
-    rowView: 'function'
+    headerTitle: ['string', false, 'Execution history'],
+    rowView: 'function',
+    renderHeader: ['boolean', false, true ]
   },
   bindings: {
-    collapse_title: [
+    renderHeader: {
+      type: 'toggle',
+      hook: 'header-container'
+    },
+    headerTitle: [
       {
         type: 'text',
-        hook: 'collapse-title'
+        hook: 'header-title'
       },
       {
         type: 'toggle',
-        hook: 'collapse-title'
+        hook: 'header-title'
       }
     ]
   },
@@ -50,6 +55,9 @@ module.exports = View.extend({
       })
     }
 
+    this.renderJobs()
+  },
+  renderJobs () {
     this.renderCollection(
       this.model.jobs,
       this.rowView,

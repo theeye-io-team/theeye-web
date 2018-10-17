@@ -33,14 +33,9 @@ module.exports = CollapsibleRow.extend({
     WorkflowActions.populate(this.model)
   },
   renderCollapsedContent () {
-    this.renderCollection(
-      this.model.jobs,
-      WorkflowJobRowView,
-      this.queryByHook('collapse-container-body'),
-      {
-        reverse: true,
-        emptyView: EmptyJobView
-      }
+    this.renderSubview(
+      new WorkflowJobsListView({ model: this.model }),
+      this.queryByHook('collapse-container-body')
     )
   },
   renderButtons () {
@@ -56,6 +51,20 @@ module.exports = CollapsibleRow.extend({
       )
     }
 
+  }
+})
+
+const WorkflowJobsListView = JobsList.extend({
+  renderJobs () {
+    this.renderCollection(
+      this.model.jobs,
+      WorkflowJobRowView,
+      this.queryByHook('jobs-list'),
+      {
+        reverse: true,
+        emptyView: EmptyJobView
+      }
+    )
   }
 })
 
@@ -85,6 +94,7 @@ const WorkflowJobRowView = CollapsibleRow.extend({
             </span>
           </h4>
         </div> <!-- } END Collapse Heading Container -->
+
         <!-- Collapsed Container { -->
         <div data-hook="collapse-container"
           id="unbinded"
@@ -135,7 +145,11 @@ const WorkflowJobRowView = CollapsibleRow.extend({
   },
   renderCollapsedContent () {
     this.renderSubview(
-      new JobsList({ model: this.model, rowView: TaskJobDescriptiveRow }),
+      new JobsList({
+        model: this.model,
+        rowView: TaskJobDescriptiveRow,
+        renderHeader: false
+      }),
       this.queryByHook('collapse-container-body'),
     )
   }
