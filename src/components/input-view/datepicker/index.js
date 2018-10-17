@@ -4,6 +4,10 @@ import Flatpickr from 'flatpickr'
 // import FlatpickrI18n from './lang/es'
 import 'flatpickr/dist/flatpickr.css'
 
+const isValidDate = function (date) {
+  return date instanceof Date && !isNaN(date)
+}
+
 const ClearIcon = View.extend({
   template: `<i class="fa fa-remove" style="right:22px;top:10px;position:absolute;"></i>`,
   props: {
@@ -102,7 +106,14 @@ module.exports = InputView.extend({
   setValue (value, skipValidation) {
     if (!this.flatpickr) return // Flatpickr trigger ready before returning the instance
 
-    this.flatpickr.setDate(new Date(value))
+    let date = new Date(value)
+
+    if (isValidDate(date)) {
+      this.flatpickr.setDate(date)
+    } else {
+      return
+    }
+
     this.inputValue = value
 
     this.trigger('change:inputValue') // force change. value is always the same array

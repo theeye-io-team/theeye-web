@@ -45,8 +45,6 @@ const BaseExec = State.extend({
         bodyView: form
       })
 
-      this.listenTo(modal, 'shown', () => { form.focus() })
-
       this.listenTo(modal, 'hidden', () => {
         form.remove()
         modal.remove()

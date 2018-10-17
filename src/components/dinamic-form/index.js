@@ -125,18 +125,10 @@ module.exports = DropableForm.extend({
       next(null, this.data)
     }
   },
-  focus () {
-    const eles = this.queryAll('.form-control')
-    if (eles.length==0) { return }
-    eles[0].autofocus = true
-    eles[0].focus()
-  },
   render () {
     DropableForm.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
     this.renderHelpIcons()
-
-    this.focus()
   },
   renderHelpIcons () {
     this.fieldsDefinitions.forEach(def => {
