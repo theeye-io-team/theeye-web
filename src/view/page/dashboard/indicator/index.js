@@ -59,9 +59,7 @@ const IndicatorRowView = View.extend({
             id="unbinded"
             role="tabpanel"
             aria-labelledby="unbinded">
-            <div class="panel-body" data-hook="collapse-container-body">
-
-            </div>
+            <div class="panel-body" data-hook="collapse-container-body"> </div>
           </div> <!-- Collapsed Content Container -->
         </div>
       </div>
