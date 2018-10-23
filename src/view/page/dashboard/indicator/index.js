@@ -1,8 +1,8 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-//import rowIconByType from '../row-icon-by-type'
 import ProgressBar from 'components/progress-bars'
 import BaseView from 'view/base-view'
+import Clipboard from 'clipboard'
 
 import './styles.less'
 
@@ -88,7 +88,7 @@ const IndicatorRowView = View.extend({
       fn () {
         return `#${this.collapse_container_id}`
       }
-    },
+    }
   },
   bindings: {
     collapse_toggle_href: {
@@ -141,12 +141,13 @@ const IndicatorRowView = View.extend({
     this.renderWithTemplate()
     this.setRowIcon()
     this.renderGauges()
-    //this.renderButtons()
     this.renderCollapsedContent()
   },
   renderGauges () {
-    let view = new GaugesFactoryView({ model: this.model })
-    this.renderSubview(view, this.queryByHook('gauge-container'))
+    this.renderSubview(
+      new GaugesFactoryView({ model: this.model }),
+      this.queryByHook('gauge-container')
+    )
   },
   renderCollapsedContent () {
     this.renderSubview(
@@ -172,7 +173,6 @@ const IndicatorRowView = View.extend({
     block.innerHTML = tpl
   },
   setRowIcon () {
-    var type = this.model.type;
     const iconEl = this.queryByHook('row-icon')
     iconEl.className = 'fa fa-lightbulb-o circle'
     iconEl.style.backgroundColor = '#06D5B4'
@@ -186,13 +186,13 @@ const GaugesFactoryView = function (options) {
     case 'text':
     case 'counter':
       gauge = new TextIndicatorView(options)
-      break;
+      break
     case 'progress':
       gauge = new ProgressIndicatorView(options)
-      break;
+      break
     default:
       gauge = new IndicatorView(options)
-      break;
+      break
   }
   return gauge
 }
@@ -243,5 +243,57 @@ const IndicatorView = View.extend({
 })
 
 const CollapsedContent = BaseView.extend({
-  template: require('./collapsed.hbs')
+  template: require('./collapsed.hbs'),
+  props: {
+    updateCurl: ['string', false, ''],
+    deleteCurl: ['string', false, '']
+  },
+  bindings: {
+    'updateCurl': {
+      type: 'attribute',
+      name: 'value',
+      hook: 'update-curl'
+    },
+    'deleteCurl': {
+      type: 'attribute',
+      name: 'value',
+      hook: 'delete-curl'
+    }
+  },
+  render () {
+    this.renderWithTemplate(this)
+
+    this.listenToAndRun(App.state.session.customer.tokens, 'sync', () => {
+      this.setUpdateCurl()
+      this.setDeleteCurl()
+    })
+
+    new Clipboard(this.query('.clipboard-update-btn'))
+    new Clipboard(this.query('.clipboard-delete-btn'))
+  },
+  setUpdateCurl () {
+    if (App.state.session.customer.tokens.models.length === 0) {
+      this.updateCurl = ''
+      return
+    }
+
+    let url = App.config.supervisor_api_url + '/indicator/' + this.model.id +
+      '?access_token=' + App.state.session.customer.tokens.models[0].token +
+      '&customer=' + App.state.session.customer.name
+
+    let body = "{\\\"property\\\":\\\"value\\\"}"
+
+    this.updateCurl = 'curl -X PATCH "' + url + '" --header "Content-Type: application/json" --data "' + body + '"'
+  },
+  setDeleteCurl () {
+    if (App.state.session.customer.tokens.models.length === 0) {
+      this.deleteCurl = ''
+      return
+    }
+
+    let url = '"' + App.config.supervisor_api_url + '/indicator/' + this.model.id +
+      '?access_token=' + App.state.session.customer.tokens.models[0].token +
+      '&customer=' + App.state.session.customer.name + '"'
+    this.deleteCurl = 'curl -X DELETE ' + url
+  }
 })
