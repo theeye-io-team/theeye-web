@@ -18,6 +18,13 @@ module.exports = function () {
     bodyView: wizard
   })
 
+  modal.renderSubview(
+    new HelpIconView({
+      link: 'https://docs.theeye.io/monitors'
+    }),
+    modal.queryByHook('title')
+  )
+
   modal.on('hidden',() => {
     wizard.remove()
     modal.remove()

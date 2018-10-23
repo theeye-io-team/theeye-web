@@ -175,6 +175,13 @@ module.exports = function () {
     bodyView: wizard
   })
 
+  modal.renderSubview(
+    new HelpIconView({
+      link: 'https://docs.theeye.io/tasks'
+    }),
+    modal.queryByHook('title')
+  )
+
   //this.listenTo(modal,'shown',() => { select.focus() })
   modal.on('hidden',() => {
     wizard.remove()
