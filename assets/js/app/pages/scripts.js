@@ -43,6 +43,7 @@ var ScriptsPageInit = (function(){
       case 'sh': mode = 'sh'; break;
       case 'py': mode = 'python'; break;
       case 'php': mode = 'php'; break;
+      case 'pl': extension = 'perl'; break;
     }
     return mode;
   }
@@ -56,6 +57,7 @@ var ScriptsPageInit = (function(){
       case 'sh': extension = 'sh'; break;
       case 'python': extension = 'py'; break;
       case 'php': extension = 'php'; break;
+      case 'perl': extension = 'pl'; break;
     }
     return extension;
   }
