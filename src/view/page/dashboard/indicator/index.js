@@ -2,6 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 //import rowIconByType from '../row-icon-by-type'
 import ProgressBar from 'components/progress-bars'
+import BaseView from 'view/base-view'
 
 import './styles.less'
 
@@ -58,7 +59,9 @@ const IndicatorRowView = View.extend({
             id="unbinded"
             role="tabpanel"
             aria-labelledby="unbinded">
-            <div class="panel-body" data-hook="collapse-container-body"> </div>
+            <div class="panel-body" data-hook="collapse-container-body">
+
+            </div>
           </div> <!-- Collapsed Content Container -->
         </div>
       </div>
@@ -139,13 +142,17 @@ const IndicatorRowView = View.extend({
     this.setRowIcon()
     this.renderGauges()
     //this.renderButtons()
-    //this.renderCollapsedContent()
+    this.renderCollapsedContent()
   },
   renderGauges () {
     let view = new GaugesFactoryView({ model: this.model })
     this.renderSubview(view, this.queryByHook('gauge-container'))
   },
   renderCollapsedContent () {
+    this.renderSubview(
+      new CollapsedContent({ model: this.model }),
+      this.queryByHook('collapse-container-body')
+    )
   },
   renderButtons () {
     let tpl = `
@@ -233,4 +240,8 @@ const IndicatorView = View.extend({
       hook: 'value'
     }
   }
+})
+
+const CollapsedContent = BaseView.extend({
+  template: require('./collapsed.hbs')
 })
