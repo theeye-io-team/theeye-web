@@ -4,6 +4,7 @@ import { Model as Customer } from 'models/customer'
 import after from 'lodash/after'
 const config = require('config')
 import XHR from 'lib/xhr'
+import Acls from 'lib/acls'
 
 module.exports = {
   remove (id) {
@@ -138,25 +139,27 @@ module.exports = {
     modal.hide()
   },
   getAgentCredentials () {
-    XHR.send({
-      url: `${config.app_url}/customer/agent`,
-      method: 'get',
-      done: (response,xhr) => {
-        if (xhr.status !== 200) {
+    if (Acls.hasAccessLevel('admin')) {
+      XHR.send({
+        url: `${config.app_url}/customer/agent`,
+        method: 'get',
+        done: (response,xhr) => {
+          if (xhr.status !== 200) {
+            bootbox.alert({
+              title: 'Error',
+              message: 'Error fetching bot credentials, please try again later.'
+            })
+          } else {
+            App.state.navbar.settingsMenu.agent = response.user
+          }
+        },
+        fail: (err,xhr) => {
           bootbox.alert({
             title: 'Error',
             message: 'Error fetching bot credentials, please try again later.'
           })
-        } else {
-          App.state.navbar.settingsMenu.agent = response.user
         }
-      },
-      fail: (err,xhr) => {
-        bootbox.alert({
-          title: 'Error',
-          message: 'Error fetching bot credentials, please try again later.'
-        })
-      }
-    })
+      })
+    }
   }
 }

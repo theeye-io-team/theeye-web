@@ -1,8 +1,9 @@
 import App from 'ampersand-app'
 import State from  'ampersand-state'
 import bootbox from 'bootbox'
-import Acls from 'lib/acls'
 import SessionActions from 'actions/session'
+import TokenActions from 'actions/token'
+import MemberActions from 'actions/member'
 import CustomerActions from 'actions/customer'
 
 const SettingsMenuState = State.extend({
@@ -15,20 +16,20 @@ const SettingsMenuState = State.extend({
   initialize () {
     State.prototype.initialize.apply(this,arguments)
 
-    this.listenTo(this,'change:visible',() => {
+    this.on('change:visible', () => {
       if (this.visible===true) {
         SessionActions.getUserPassport()
+        CustomerActions.getAgentCredentials()
+      }
+    })
 
-        if (Acls.hasAccessLevel('admin')) {
-          CustomerActions.getAgentCredentials()
+    this.on('change:current_tab change:visible', () =>  {
+      if (this.visible===true) {
+        if (this.current_tab==='credentials') {
+          TokenActions.fetch()
         }
-
-        if (Acls.hasAccessLevel('manager') && App.state.session.user.credential !== 'admin') {
-          App.state.members.fetch({
-            error (err,xhr) {
-              bootbox.alert('Something goes wrong. Please refresh')
-            }
-          })
+        if (this.current_tab==='members') {
+          MemberActions.fetch()
         }
       }
     })

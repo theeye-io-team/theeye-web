@@ -13,7 +13,7 @@ import { Model as Customer } from 'models/customer'
 module.exports = {
   changeCustomer (id) {
     const customer = App.state.session.user.customers.get(id)
-    if (customer.id==App.state.session.customer.id) return
+    if (customer.id === App.state.session.customer.id) { return }
 
     App.state.session.customer.name = customer.name
 
@@ -24,11 +24,11 @@ module.exports = {
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
-      done: (data,xhr) => {
+      done: (data, xhr) => {
         App.state.loader.visible = false
         App.customerChange(customer)
       },
-      fail: (err,xhr) => {
+      fail: (err, xhr) => {
         App.state.loader.visible = false
         bootbox.alert('Operation failed. Please refresh')
         console.error(arguments)

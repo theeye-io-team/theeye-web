@@ -1,8 +1,8 @@
+import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import config from 'config'
 import merge from 'lodash/merge'
-//import State from 'ampersand-state'
 
 const urlRoot = `${config.app_url}/customer`
 
@@ -34,6 +34,11 @@ const Model = AppModel.extend({
     }],
     creation_date: 'date',
     last_update: 'date'
+  },
+  collections: {
+    tokens: function (models, options) {
+      return new App.Models.Token.Collection(models, options)
+    }
   },
   derived: {
     formatted_tags: {
