@@ -1,11 +1,12 @@
+import App from 'ampersand-app'
+import State from 'ampersand-state'
 import some from 'lodash/some'
 
-import State from 'ampersand-state'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 // import config from 'config'
 
-import { Collection as Customers } from 'models/customer'
+//import { Collection as Customers } from 'models/customer'
 
 // const urlRoot = `${config.app_url}/user` // sails users
 
@@ -61,7 +62,9 @@ const Model = AppModel.extend({
     selected: ['boolean', false, false]
   },
   collections: {
-    customers: Customers
+    customers: function (models, options) {
+      return new App.Models.Customer.Collection(models, options)
+    }
   }
 })
 

@@ -2,6 +2,10 @@ import 'bootstrap'
 import config from 'config'
 
 import App from 'ampersand-app'
+//const models = require('app/models')
+// load application models definitions
+require('app/models')()
+
 import AppState from 'state'
 import Router from 'router'
 import ChatBox from 'components/chat'
@@ -10,7 +14,6 @@ import RootContainer from 'view/root-container'
 require('app/events')
 const sockets = require('app/sockets')
 const session = require('app/session')
-const models = require('app/models')
 const actions = require('app/actions')
 const experimentalFeatures = require('app/experimental')
 
@@ -33,7 +36,6 @@ App.extend({
     this.bindDocumentEvents()
     this.initState(() => {
       App.state.loader.visible = false // app finish loading.
-      models()
       actions()
       this.registerComponents()
       session()

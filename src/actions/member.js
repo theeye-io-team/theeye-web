@@ -4,6 +4,7 @@ import App from 'ampersand-app'
 const xhr = $.ajax
 import XHR from 'lib/xhr'
 import config from 'config'
+import Acls from 'lib/acls'
 import { Model as Member } from 'models/member'
 
 module.exports = {
@@ -87,5 +88,17 @@ module.exports = {
         })
       }
     });
+  },
+  fetch () {
+    if (
+      Acls.hasAccessLevel('manager') &&
+      App.state.session.user.credential !== 'admin'
+    ) {
+      App.state.members.fetch({
+        error (err,xhr) {
+          bootbox.alert('Something goes wrong fetching members. Please refresh')
+        }
+      })
+    }
   }
 }
