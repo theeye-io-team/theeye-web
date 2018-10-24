@@ -16,6 +16,34 @@ import { Model as File } from 'models/file'
 
 import './styles.less'
 
+module.exports = function () {
+  const wizard = new TaskCreationWizard()
+  wizard.render()
+  const modal = new Modalizer({
+    buttons: false,
+    title: 'Create Task',
+    bodyView: wizard
+  })
+
+  modal.renderSubview(
+    new HelpIconView({
+      link: 'https://docs.theeye.io/tasks'
+    }),
+    modal.queryByHook('title')
+  )
+
+  //this.listenTo(modal,'shown',() => { select.focus() })
+  modal.on('hidden',() => {
+    wizard.remove()
+    modal.remove()
+  })
+
+  wizard.on('submitted',() => { modal.hide() })
+  modal.show()
+  modal.wizard = wizard
+  return modal
+}
+
 const ImportTaskInputView = FileInputView.extend({
   template: `
     <div>
@@ -165,31 +193,3 @@ const TaskCreationWizard = View.extend({
     View.prototype.remove.apply(this,arguments)
   }
 })
-
-module.exports = function () {
-  const wizard = new TaskCreationWizard()
-  wizard.render()
-  const modal = new Modalizer({
-    buttons: false,
-    title: 'Create Task',
-    bodyView: wizard
-  })
-
-  modal.renderSubview(
-    new HelpIconView({
-      link: 'https://docs.theeye.io/tasks'
-    }),
-    modal.queryByHook('title')
-  )
-
-  //this.listenTo(modal,'shown',() => { select.focus() })
-  modal.on('hidden',() => {
-    wizard.remove()
-    modal.remove()
-  })
-
-  wizard.on('submitted',() => { modal.hide() })
-  modal.show()
-  modal.wizard = wizard
-  return modal
-}

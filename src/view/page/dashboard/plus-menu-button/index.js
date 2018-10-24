@@ -1,9 +1,9 @@
-
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-import TaskCreationWizard from '../../task/creation-wizard'
-import MonitorCreationWizard from '../../monitor/creation-wizard'
-import WorkflowCreationWizard from '../../workflow/creation-wizard'
+import TaskCreationWizard from 'view/page/task/creation-wizard'
+import MonitorCreationWizard from 'view/page/monitor/creation-wizard'
+import WorkflowCreationWizard from 'view/page/workflow/creation-wizard'
+import IndicatorCreationWizard from 'view/page/indicator/creation-wizard'
 
 import './style.less'
 
@@ -56,10 +56,15 @@ module.exports = View.extend({
       new WorkflowOptionsView(),
       menuOptionsContainer
     )
+
+    this.renderSubview(
+      new IndicatorsOptionsView(),
+      menuOptionsContainer
+    )
   }
 })
 
-let OptionView = View.extend({
+const OptionView = View.extend({
   props: {
     icon: ['array', false, () => { return [] }],
     tip: 'string'
@@ -91,7 +96,22 @@ let OptionView = View.extend({
   }
 })
 
-let TasksOptionsView = OptionView.extend({
+const IndicatorsOptionsView = OptionView.extend({
+  initialize () {
+    OptionView.prototype.initialize.apply(this,arguments)
+    this.icon = ['fa','fa-lightbulb-o']
+    this.tip = 'Create Indicator'
+  },
+  events: {
+    'click':'create'
+  },
+  create (event) {
+    event.preventDefault()
+    let wizard = new IndicatorCreationWizard()
+  }
+})
+
+const TasksOptionsView = OptionView.extend({
   initialize () {
     OptionView.prototype.initialize.apply(this,arguments)
     this.icon = ['fa','fa-play']
@@ -106,7 +126,7 @@ let TasksOptionsView = OptionView.extend({
   }
 })
 
-let MonitorsOptionsView = OptionView.extend({
+const MonitorsOptionsView = OptionView.extend({
   initialize () {
     OptionView.prototype.initialize.apply(this,arguments)
     this.icon = ['fa','fa-desktop']
@@ -121,7 +141,7 @@ let MonitorsOptionsView = OptionView.extend({
   }
 })
 
-let WorkflowOptionsView = OptionView.extend({
+const WorkflowOptionsView = OptionView.extend({
   initialize () {
     OptionView.prototype.initialize.apply(this,arguments)
     this.icon = ['fa','fa-sitemap']

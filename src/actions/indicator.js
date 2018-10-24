@@ -28,5 +28,20 @@ module.exports = {
         App.state.indicators.remove(indicator)
       }
     }
+  },
+  create (data) {
+    let indicator = new App.Models.Indicator.Factory(data)
+    indicator.save()
+  },
+  patch (id, data) {
+    let indicator = App.state.indicators.get(id)
+    if (!indicator) { return }
+    indicator.set(data)
+    indicator.save()
+  },
+  remove (id) {
+    let indicator = App.state.indicators.get(id)
+    if (!indicator) { return }
+    indicator.destroy()
   }
 }
