@@ -1,7 +1,8 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-//import rowIconByType from '../row-icon-by-type'
 import ProgressBar from 'components/progress-bars'
+import BaseView from 'view/base-view'
+import Clipboard from 'clipboard'
 
 import './styles.less'
 
@@ -85,7 +86,7 @@ const IndicatorRowView = View.extend({
       fn () {
         return `#${this.collapse_container_id}`
       }
-    },
+    }
   },
   bindings: {
     collapse_toggle_href: {
@@ -138,14 +139,19 @@ const IndicatorRowView = View.extend({
     this.renderWithTemplate()
     this.setRowIcon()
     this.renderGauges()
-    //this.renderButtons()
-    //this.renderCollapsedContent()
+    this.renderCollapsedContent()
   },
   renderGauges () {
-    let view = new GaugesFactoryView({ model: this.model })
-    this.renderSubview(view, this.queryByHook('gauge-container'))
+    this.renderSubview(
+      new GaugesFactoryView({ model: this.model }),
+      this.queryByHook('gauge-container')
+    )
   },
   renderCollapsedContent () {
+    this.renderSubview(
+      new CollapsedContent({ model: this.model }),
+      this.queryByHook('collapse-container-body')
+    )
   },
   renderButtons () {
     let tpl = `
@@ -165,7 +171,6 @@ const IndicatorRowView = View.extend({
     block.innerHTML = tpl
   },
   setRowIcon () {
-    var type = this.model.type;
     const iconEl = this.queryByHook('row-icon')
     iconEl.className = 'fa fa-lightbulb-o circle'
     iconEl.style.backgroundColor = '#06D5B4'
@@ -179,13 +184,13 @@ const GaugesFactoryView = function (options) {
     case 'text':
     case 'counter':
       gauge = new TextIndicatorView(options)
-      break;
+      break
     case 'progress':
       gauge = new ProgressIndicatorView(options)
-      break;
+      break
     default:
       gauge = new IndicatorView(options)
-      break;
+      break
   }
   return gauge
 }
@@ -233,4 +238,37 @@ const IndicatorView = View.extend({
       hook: 'value'
     }
   }
+})
+
+const CollapsedContent = BaseView.extend({
+  template: require('./collapsed.hbs'),
+  props: {
+    updateCurl: ['string', false, ''],
+    deleteCurl: ['string', false, '']
+  },
+  bindings: {
+    'updateCurl': {
+      type: 'attribute',
+      name: 'value',
+      hook: 'update-curl'
+    },
+    'deleteCurl': {
+      type: 'attribute',
+      name: 'value',
+      hook: 'delete-curl'
+    }
+  },
+  render () {
+    this.renderWithTemplate(this)
+
+    new Clipboard(this.query('.clipboard-update-btn'))
+    new Clipboard(this.query('.clipboard-delete-btn'))
+
+    let url = '"' + App.config.supervisor_api_url + '/indicator/' + this.model.id +
+      '?access_token=${your_access_token_here}&customer=' + App.state.session.customer.name + '"'
+
+    this.updateCurl = 'curl -X PATCH ' + url +
+      ' --header "Content-Type: application/json" --data "{\\\"${property}\\\":\\\"${value}\\\"}"'
+    this.deleteCurl = 'curl -X DELETE ' + url
+  },
 })

@@ -1,0 +1,34 @@
+<div class="indicator-details">
+  <div class="row indicator-curl">
+    <div class="col-xs-3">
+      <label>Update CURL</label>
+    </div>
+    <div class="col-xs-9">
+      <div class="input-group">
+        <input data-hook="update-curl" id="updateCurl" type=text class=form-control readonly/>
+        <span class="input-group-btn">
+          <button class="btn btn-primary clipboard-update-btn clip" type="button"
+            data-clipboard-target="#updateCurl">
+            <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="row indicator-curl" style="padding-top:10px;">
+    <div class="col-xs-3">
+      <label>Delete CURL</label>
+    </div>
+    <div class="col-xs-9">
+      <div class="input-group">
+        <input data-hook="delete-curl" id="deleteCurl" type=text class=form-control readonly/>
+        <span class="input-group-btn">
+          <button class="btn btn-primary clipboard-delete-btn clip" type="button"
+            data-clipboard-target="#deleteCurl">
+            <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+          </button>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
