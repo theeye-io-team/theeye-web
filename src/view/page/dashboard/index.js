@@ -139,7 +139,6 @@ module.exports = View.extend({
 
     this.listenToAndRun(App.state.dashboard, 'change:indicatorsDataSynced', () => {
       if (App.state.dashboard.indicatorsDataSynced === true) {
-        TokenActions.fetch()
         this.renderIndicatorsPanel()
         this.stopListening(App.state.dashboard, 'change:indicatorsDataSynced')
       }

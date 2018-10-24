@@ -261,37 +261,14 @@ const CollapsedContent = BaseView.extend({
   render () {
     this.renderWithTemplate(this)
 
-    this.listenToAndRun(App.state.session.customer.tokens, 'sync', () => {
-      this.setUpdateCurl()
-      this.setDeleteCurl()
-    })
-
     new Clipboard(this.query('.clipboard-update-btn'))
     new Clipboard(this.query('.clipboard-delete-btn'))
-  },
-  setUpdateCurl () {
-    if (App.state.session.customer.tokens.models.length === 0) {
-      this.updateCurl = ''
-      return
-    }
-
-    let url = App.config.supervisor_api_url + '/indicator/' + this.model.id +
-      '?access_token=' + App.state.session.customer.tokens.models[0].token +
-      '&customer=' + App.state.session.customer.name
-
-    let body = "{\\\"property\\\":\\\"value\\\"}"
-
-    this.updateCurl = 'curl -X PATCH "' + url + '" --header "Content-Type: application/json" --data "' + body + '"'
-  },
-  setDeleteCurl () {
-    if (App.state.session.customer.tokens.models.length === 0) {
-      this.deleteCurl = ''
-      return
-    }
 
     let url = '"' + App.config.supervisor_api_url + '/indicator/' + this.model.id +
-      '?access_token=' + App.state.session.customer.tokens.models[0].token +
-      '&customer=' + App.state.session.customer.name + '"'
+      '?access_token=${your_access_token_here}&customer=' + App.state.session.customer.name + '"'
+
+    this.updateCurl = 'curl -X PATCH ' + url +
+      ' --header "Content-Type: application/json" --data "{\\\"${property}\\\":\\\"${value}\\\"}"'
     this.deleteCurl = 'curl -X DELETE ' + url
-  }
+  },
 })
