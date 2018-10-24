@@ -11,7 +11,6 @@ import IndicatorRowView from './indicator'
 import RunAllTasksButton from './task/run-all-button'
 import TaskActions from 'actions/task'
 import WorkflowActions from 'actions/workflow'
-import TokenActions from 'actions/token'
 import bootbox from 'bootbox'
 
 const logger = require('lib/logger')('view:page:dashboard')
