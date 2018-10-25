@@ -3,6 +3,8 @@ import View from 'ampersand-view'
 import ProgressBar from 'components/progress-bars'
 import BaseView from 'view/base-view'
 import Clipboard from 'clipboard'
+import DismissIndicatorButton from './button/dismiss'
+//import EditIndicatorButton from './button/edit'
 
 import './styles.less'
 
@@ -36,13 +38,11 @@ const IndicatorRowView = View.extend({
                       <small><i data-hook="type"></i></small>
                     </span>
 
-                    <section data-hook="gauge-container">
-                    </section>
+                    <section data-hook="gauge-container"></section>
                   </div>
 
-                  <div class="panel-item-right">
-                    <section data-hook="buttons-block" style="float:right;">
-                    </section>
+                  <div class="panel-item-right" style="width:23%">
+                    <section data-hook="buttons-block"></section>
 
                     <!-- state_severity is a model object derived property, not an attribute -->
                     <div class="panel-item tooltiped state-icon state-container">
@@ -137,6 +137,7 @@ const IndicatorRowView = View.extend({
   },
   render () {
     this.renderWithTemplate()
+    this.renderButtons()
     this.setRowIcon()
     this.renderGauges()
     this.renderCollapsedContent()
@@ -154,21 +155,29 @@ const IndicatorRowView = View.extend({
     )
   },
   renderButtons () {
-    let tpl = `
-      <div class="panel-item icons dropdown">
-        <button class="btn dropdown-toggle btn-primary"
-          type="button"
-          data-toggle="dropdown"
-          aria-haspopup="true"
-          aria-expanded="true">
-          <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-        </button>
-        <ul data-hook="buttons-container" class="dropdown-menu"> </ul>
-      </div>
+    // there is only one button.
+    if (this.model.read_only===false) {
+      let tpl = `
+        <div class="panel-item icons dropdown">
+          <button class="btn dropdown-toggle btn-primary"
+            type="button"
+            data-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="true">
+            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+          </button>
+          <ul data-hook="buttons-container" class="dropdown-menu"></ul>
+        </div>
       `
 
-    let block = this.queryByHook('buttons-block')
-    block.innerHTML = tpl
+      let block = this.queryByHook('buttons-block')
+      block.innerHTML = tpl
+
+      this.renderSubview(
+        new DismissIndicatorButton({ model: this.model }),
+        block.querySelector('ul')
+      )
+    }
   },
   setRowIcon () {
     const iconEl = this.queryByHook('row-icon')
