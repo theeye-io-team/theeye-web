@@ -71,7 +71,14 @@ const ScheduleRow = View.extend({
   },
   bindings: {
     'model.data.scheduleData.repeatEvery': {
-      hook: 'repeatsEvery'
+      hook: 'repeatsEvery',
+      type: function (el, value, previousValue) {
+        if (!value) {
+          el.innerHTML = 'Runs once'
+        } else {
+          el.innerHTML = value
+        }
+      }
     },
     'model.nextRunAt': {
       hook: 'nextDate',

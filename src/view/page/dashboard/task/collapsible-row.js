@@ -1,4 +1,5 @@
 import View from 'ampersand-view'
+import './styles.less'
 
 /**
  * tasks rows
@@ -39,6 +40,11 @@ module.exports = View.extend({
 
                 <!-- RUN TASK BUTTON -->
                 <div data-hook="execute-button-container" class="panel-item icons run-task-icon">
+                </div>
+
+                <!-- HAS SCHEDULE -->
+                <div data-hook="has-schedule" class="schedule-icon-container" title="Scheduled">
+                  <i class="fa fa-clock-o" aria-hidden="true"></i>
                 </div>
               </div>
             </span>
@@ -158,6 +164,10 @@ module.exports = View.extend({
     type: { hook: 'type' },
     description: { hook: 'description' },
     hostname: { hook: 'hostname' },
+    'model.hasSchedules': {
+      type: 'toggle',
+      hook: 'has-schedule'
+    }
   },
   events: {
     'click .collapsed[data-hook=collapse-toggle]': 'onClickToggleCollapse'
