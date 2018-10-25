@@ -241,34 +241,108 @@ const IndicatorView = View.extend({
 })
 
 const CollapsedContent = BaseView.extend({
-  template: require('./collapsed.hbs'),
-  props: {
-    updateCurl: ['string', false, ''],
-    deleteCurl: ['string', false, '']
-  },
+  template: `
+    <div class="indicator-details">
+      <div class="row indicator-curl">
+        <div class="col-xs-2">
+          <label>Update CURL</label>
+        </div>
+        <div class="col-xs-10">
+          <div class="">
+            <button class="curl-copy btn btn-primary clip" type="button" data-hook="update-copy">
+              <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+            </button>
+            <div class="curl-container" data-hook="update-curl"></div>
+          </div>
+        </div>
+      </div>
+      <div class="row indicator-curl" style="padding-top:10px;">
+        <div class="col-xs-2">
+          <label>Delete CURL</label>
+        </div>
+        <div class="col-xs-10">
+          <div class="">
+            <button class="curl-copy btn btn-primary clip" type="button" data-hook="delete-copy">
+              <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+            </button>
+            <div class="curl-container" data-hook="delete-curl"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
   bindings: {
+    //'updateCurl': {
+    //  type: 'attribute',
+    //  name: 'value',
+    //  hook: 'update-curl'
+    //},
+    //'deleteCurl': {
+    //  type: 'attribute',
+    //  name: 'value',
+    //  hook: 'delete-curl'
+    //}
     'updateCurl': {
-      type: 'attribute',
-      name: 'value',
-      hook: 'update-curl'
+      hook: 'update-curl',
+      type: 'innerHTML'
     },
     'deleteCurl': {
-      type: 'attribute',
-      name: 'value',
-      hook: 'delete-curl'
+      hook: 'delete-curl',
+      type: 'innerHTML'
+    }
+  },
+  derived: {
+    indicatorUrl: {
+      deps: ['model.id'],
+      fn () {
+        const indicatorsURL = App.config.supervisor_api_url + '/indicator'
+        let url = [
+          "'",
+          indicatorsURL,
+          `/${this.model.id}`,
+          '?access_token={access_token_here}&customer=',
+          App.state.session.customer.name,
+          "'"
+        ]
+        return url.join('')
+      }
+    },
+    updateCurl: {
+      deps: ['indicatorUrl','model.state'],
+      fn () {
+        let state = this.model.state==='normal'?'failure':'normal'
+        let url = this.indicatorUrl
+        let curl = [
+          `curl -X PATCH ${url}`,
+          ` --header 'Content-Type: application/json'`,
+          ` --data '{"state":"${state}"}'`
+        ]
+        return curl.join('')
+      }
+    },
+    deleteCurl: {
+      deps: ['indicatorUrl'],
+      fn () {
+        let url = this.indicatorUrl
+        return `curl -X DELETE ${url}`
+      }
     }
   },
   render () {
     this.renderWithTemplate(this)
 
-    new Clipboard(this.query('.clipboard-update-btn'))
-    new Clipboard(this.query('.clipboard-delete-btn'))
+    new Clipboard(
+      this.queryByHook('update-copy'),
+      {
+        text: () => this.updateCurl
+      }
+    )
 
-    let url = '"' + App.config.supervisor_api_url + '/indicator/' + this.model.id +
-      '?access_token=${your_access_token_here}&customer=' + App.state.session.customer.name + '"'
-
-    this.updateCurl = 'curl -X PATCH ' + url +
-      ' --header "Content-Type: application/json" --data "{\\\"${property}\\\":\\\"${value}\\\"}"'
-    this.deleteCurl = 'curl -X DELETE ' + url
-  },
+    new Clipboard(
+      this.queryByHook('delete-copy'),
+      {
+        text: () => this.deleteCurl
+      }
+    )
+  }
 })
