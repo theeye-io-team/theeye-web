@@ -90,5 +90,7 @@ module.exports = FormView.extend({
         self._fieldViews[key].setValue(data[key])
       }
     })
+  },
+  focus () {
   }
 })
