@@ -1,7 +1,6 @@
 import App from 'ampersand-app'
 import AmpersandState from 'ampersand-state'
 import Collection from 'ampersand-collection'
-import uriFragment from 'lib/uri-fragment'
 import { Collection as Indicators } from 'models/indicator'
 import { Collection as Webhooks } from 'models/webhook'
 import { Collection as HostGroups } from 'models/hostgroup'
@@ -32,6 +31,7 @@ import ExtendedTagsState from './extended-tags'
 import WorkflowPageState from './workflow-page'
 import WorkflowVisualizerState from './workflow-visualizer'
 import LocalSettings from './local-settings'
+import SearchBoxState from './searchbox'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
@@ -175,27 +175,6 @@ const AppState = State.extend({
 })
 
 module.exports = AppState
-
-const SearchBoxState = State.extend({
-  props: {
-    search: ['string',false,'']
-  },
-  initialize () {
-    State.prototype.initialize.apply(this,arguments)
-
-    //const uri = new URI(window.location)
-    //const fragment = uri.fragment()
-    const fragment = uriFragment.get()
-
-    if (fragment.search) {
-      this.search = fragment.search
-    }
-
-    this.listenTo(this,'change:search',() => {
-      uriFragment.set('search', this.search)
-    })
-  }
-})
 
 const NotifyState = State.extend({
   props: {

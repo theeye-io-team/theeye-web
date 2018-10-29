@@ -155,16 +155,16 @@ const ResourceBaseModel = ResourceSchema.extend({
       }
     },
     formatted_tags: {
-      deps: ['name','hostname','type','state','failure_severity','tags','description'],
+      deps: ['name','hostname','type','state','failure_severity','tags','description','acl'],
       fn () {
         return [
-          'name=' + this.name,
-          'state=' + this.state,
-          'hostname=' + this.hostname,
-          'type=' + this.type,
-          'description=' + this.description,
-          'criticity=' + this.failure_severity
-        ].concat(this.tags)
+          this.name,
+          this.state,
+          this.hostname,
+          this.type,
+          this.description,
+          this.failure_severity
+        ].concat(this.acl, this.tags)
       }
     },
     stateIcon: {

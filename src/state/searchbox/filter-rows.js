@@ -1,16 +1,32 @@
 'use strict'
 
+import App from 'ampersand-app'
+import SearchActions from 'actions/searchbox'
 const logger = require('lib/logger')('lib:filter-rows')
+import uniq from 'lodash/uniq'
 
-const filterRows = (specs) => {
-  const { rows, search, onrow, onsearchend } = specs
+const filterRows = () => {
+  const rows = App.state.searchbox.rowsViews
+  const search = App.state.searchbox.search
 
   if (!search || typeof search !== 'string') {
-    onsearchend()
+    SearchActions.endSearch()
     return
   }
 
-  if (search.length < 3) return
+  if (search.length <= 3) {
+    SearchActions.clearMatches()
+    return
+  }
+
+  const parseMatches = function (matches) {
+    return uniq(matches.map(match => {
+      if (match.indexOf('=') > -1) {
+        match = match.substring(match.lastIndexOf('=') + 1)
+      }
+      return match
+    }))
+  }
 
   const parseTag = (tag) => {
     if (!tag) return null
@@ -48,6 +64,7 @@ const filterRows = (specs) => {
 
   const terms = parseTerms(search)
 
+  let totalMatches = []
   rows.forEach(row => {
     if ( !row.model.formatted_tags ) {
       logger.error('no formatted_tags property available in model')
@@ -61,10 +78,13 @@ const filterRows = (specs) => {
 
     const tags = row.model.formatted_tags
     const matches = searchTermsOverTags(terms,tags)
+    totalMatches = totalMatches.concat(matches)
     const hit = Boolean(matches.length > 0)
 
-    onrow(row, hit)
+    SearchActions.onRow(row, hit)
   })
+
+  SearchActions.setMatches(parseMatches(totalMatches))
 
   return
 }

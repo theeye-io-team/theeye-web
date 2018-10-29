@@ -57,7 +57,7 @@ const Schema = AppModel.extend({
       return new App.Models.Job.Collection(models, options)
     }
   },
-  initialize: function () {
+  initialize () {
     AppModel.prototype.initialize.apply(this,arguments)
 
     this.listenToAndRun(this.schedules, 'reset sync remove add', () => {

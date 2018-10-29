@@ -3,7 +3,8 @@ import View from 'ampersand-view'
 //import View from 'view/base-view'
 import ListItem from 'components/list/item'
 import ListHeader from 'components/list/header'
-const filterRows = require('lib/filter-rows')
+import SearchboxActions from 'actions/searchbox'
+//const filterRows = require('lib/filter-rows')
 
 module.exports = View.extend({
   autoRender: true,
@@ -22,7 +23,7 @@ module.exports = View.extend({
   `,
   props: {
     headerTitle: 'string',
-    list: 'object',
+    list: 'object'
   },
   bindings: {
     title: [
@@ -37,7 +38,7 @@ module.exports = View.extend({
     this.renderWithTemplate(this)
     this.renderHeader()
   },
-  /** 
+  /**
    *
    * Convenience method to render the page header
    * If you need a different header, just override
@@ -66,35 +67,10 @@ module.exports = View.extend({
       options || {}
     )
 
-    // search works with the list items
-    this.listenToAndRun(App.state.searchbox,'change:search',function(){
-      filterRows({
-        rows: this.list.views,
-        search: App.state.searchbox.search,
-        onrow: (row, hit) => {
-          if (hit) {
-            row.show = true
-          } else {
-            row.show = false
-            row.selected = false
-          }
-        },
-        onsearchend: () => {
-          this.list.views.forEach(row => row.show = true)
-        }
-      })
-    })
-  },
-  filterRows (input) {
-    if (!input || typeof input !== 'string' || input.length < 3) {
-      this.showAllRows()
-      return ''
-    }
-
-    const inputValue = input.toLowerCase()
-
-    this.list.views.forEach(row => {
-      if (row.tags.toLowerCase().indexOf(inputValue) !== -1) {
+    this.listenTo(App.state.searchbox, 'onrow', (data) => {
+      const row = data.row
+      const hit = data.hit
+      if (hit) {
         row.show = true
       } else {
         row.show = false
@@ -102,14 +78,17 @@ module.exports = View.extend({
       }
     })
 
-    return input
-  },
-  // Mark all models in the view's list with show:true
-  showAllRows () {
-    this.list.views.forEach(row => {
-      row.show = true
+    //this.listenToAndRun(App.state.searchbox, 'change:search', this.search)
+    //this.listenTo(App.state.searchbox, 'change:rowsViews', this.search)
+
+    // set row views when fetch is complete
+    this.listenToAndRun(this.collection, 'sync', function () {
+      SearchboxActions.resetRowsViews(this.list.views)
     })
   },
+  //search () {
+  //  filterRows()
+  //},
   selectAllRows () {
     this.list.views.forEach(row => {
       if (row.show && row.selectable) {
@@ -120,7 +99,7 @@ module.exports = View.extend({
   // Unselects all models in view's list marking them as selected:false
   deselectAll () {
     this.list.views.forEach(row => {
-      row.selected = false 
+      row.selected = false
     })
   },
   // Returns an array of selected models in the view's list
@@ -130,5 +109,5 @@ module.exports = View.extend({
         return item.selected === true
       }
     })
-  },
+  }
 })
