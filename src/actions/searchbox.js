@@ -4,7 +4,7 @@ import App from 'ampersand-app'
 module.exports = {
   search (pattern) {
     if (pattern === App.state.searchbox.search) {
-      return this.clear()
+      return
     }
     App.state.searchbox.search = pattern
     logger.log('searching')
