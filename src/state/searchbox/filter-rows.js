@@ -14,7 +14,7 @@ const filterRows = () => {
     return
   }
 
-  if (search.length <= 3) {
+  if (search.length < 3) {
     SearchActions.clearMatches()
     return
   }
