@@ -17,7 +17,7 @@ const IndicatorRowView = View.extend({
     this.iconHook = this.iconHook || 'state-icon'
 
     this.template = `
-      <div class="panel-row-container">
+      <div class="panel-row-container indicator-container">
         <div class="row-container panel panel-default">
           <div class="panel-heading" role="tab" data="panel-heading"> <!-- Collapse Heading Container { -->
             <h4 class="panel-title-icon">
@@ -38,16 +38,14 @@ const IndicatorRowView = View.extend({
                       <small><i data-hook="type"></i></small>
                     </span>
 
-                    <section data-hook="gauge-container"></section>
+                    <section data-hook="gauge-container" class="gauge-container"></section>
                   </div>
 
-                  <div class="panel-item-right" style="width:23%">
-                    <section data-hook="buttons-block"></section>
+                  <section data-hook="buttons-block"></section>
 
-                    <!-- state_severity is a model object derived property, not an attribute -->
-                    <div class="panel-item tooltiped state-icon state-container">
-                      <span data-hook="${this.iconHook}"></span>
-                    </div>
+                  <!-- state_severity is a model object derived property, not an attribute -->
+                  <div class="panel-item tooltiped state-icon state-container">
+                    <span data-hook="${this.iconHook}"></span>
                   </div>
 
                 </div>

@@ -1,15 +1,25 @@
-.panel-item-left {
-  width: 75%;
-  float: left;
+.admin-container.dashboard .indicator-container .panel-heading .panel-item.name {
+  width: 70%;
+  padding-right: 5px;
 }
 
-.panel-item-right {
-  float: right;
+.panel-item-left {
+  width: 80%;
+  float: left;
 }
 
 .panel-item.value {
   padding:2px 10px 2px 10px;
   line-height: 28px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gauge-container {
+  position: relative;
+  width: 30%;
+  float: right;
 }
 
 .panel-item {
@@ -42,4 +52,17 @@
 
 .curl-copy {
   float:right;
+}
+
+@media (max-width: 767px) {
+  .admin-container.dashboard .indicator-container .panel-heading .panel-item.name {
+    width: 65%;
+  }
+  .gauge-container {
+    width: 35%;
+  }
+
+  .panel-item-left {
+    width: 75%;
+  }
 }
