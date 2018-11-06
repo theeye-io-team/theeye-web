@@ -9,7 +9,7 @@ import ListItem from './list-item'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
 
-import MassiveDeleteButton from './buttons/massive-delete'
+// import MassiveDeleteButton from './buttons/massive-delete'
 import CreateButton from './buttons/create'
 
 module.exports = List.extend({
@@ -22,14 +22,14 @@ module.exports = List.extend({
     List.prototype.render.apply(this,arguments)
 
     this.header.addMainButton(new CreateButton())
-    this.header.addMassiveButton(new MassiveDeleteButton())
+    // this.header.addMassiveButton(new MassiveDeleteButton())
     this.renderList(ListItem,{})
 
     this.renderSubview(
       new HelpIconView({
         color: [255,255,255],
         category: 'title_help',
-        text: HelpTexts.titles.template_page 
+        text: HelpTexts.titles.template_page
       }),
       this.queryByHook('title-help')
     )

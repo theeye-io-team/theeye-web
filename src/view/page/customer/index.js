@@ -15,6 +15,7 @@ import CommonButton from 'components/common-button'
 import MassiveDeleteButton from 'components/list/header/buttons/massive-delete'
 import CustomerForm from './form'
 import CustomerRow from './list-item'
+import bootbox from 'bootbox'
 
 const CreateButton = CommonButton.extend({
   initialize (options) {
@@ -29,24 +30,26 @@ const CreateButton = CommonButton.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    const form = new CustomerForm({ model: new CustomerModel() })
-    const modal = new Modalizer({
-      confirmButton: 'Save',
-      buttons: true,
-      title: 'Create Customer',
-      bodyView: form
-    })
+    bootbox.alert('Organization creation is temporarily disabled. To create a new Organization refer to the Registration process.')
 
-    this.listenTo(modal,'hidden',function(){
-      form.remove()
-      modal.remove()
-    })
-    this.listenTo(modal,'confirm',function(){
-      form.beforeSubmit()
-      if (!form.valid) return
-      CustomerActions.create(form.data, modal)
-    })
-    modal.show()
+    // const form = new CustomerForm({ model: new CustomerModel() })
+    // const modal = new Modalizer({
+    //   confirmButton: 'Save',
+    //   buttons: true,
+    //   title: 'Create Customer',
+    //   bodyView: form
+    // })
+    //
+    // this.listenTo(modal,'hidden',function(){
+    //   form.remove()
+    //   modal.remove()
+    // })
+    // this.listenTo(modal,'confirm',function(){
+    //   form.beforeSubmit()
+    //   if (!form.valid) return
+    //   CustomerActions.create(form.data, modal)
+    // })
+    // modal.show()
   }
 })
 
