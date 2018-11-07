@@ -71,7 +71,7 @@ button {outline:none}
 .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form, .navbar-inverse .navbar-toggle {border-color:#144e77;}
 .navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover {background-color:#144e77}
 .navbar-collapse {padding:0;}
-.navbar-inverse {background:#eee;border-bottom:3px solid #d88e47}
+.navbar-inverse {background:#eee;border-bottom:3px solid #e88840}
 .navbar-right, .navbar-right li {margin:0;padding:0}
 .navbar-right li {list-style-type:none;border-bottom:1px solid #ccc}
 .navbar-right li a {display:block;font-weight:700;color:#144e77;padding:8px 12px;height:42px;}
@@ -157,7 +157,7 @@ hr {border:none;border-bottom:1px dotted #fff}
 .loginBox .or {border-top:1px dashed #fff;position:relative;margin:40px 0}
 .loginBox input, .loginBox button {width:100%;border:none;border-radius:4px;padding:10px;margin-bottom:10px;text-align:center;font-size:24px}
 .loginBox input {color:#304269;height:50px; }
-.loginBox button {color:#fff;background: #d78d47;background: -moz-linear-gradient(top,  #d78d47 0%, #af733a 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#d78d47), color-stop(100%,#af733a));background: -webkit-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: -o-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: -ms-linear-gradient(top,  #d78d47 0%,#af733a 100%);background: linear-gradient(to bottom,  #d78d47 0%,#af733a 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d78d47', endColorstr='#af733a',GradientType=0 )}
+.loginBox button {color:#fff;background: #ee8e40;}
 .loginBox .or span {background:#415c76;padding:10px;position:absolute;top:-22px;left:48%}
 .loginBox section.license a:hover { color:#ee8e40; }
 .loginBox .login-form form label { width: 100%; }
@@ -170,7 +170,7 @@ hr {border:none;border-bottom:1px dotted #fff}
 .loginBox .register-link a { color:#fff; cursor: pointer; }
 .loginBox .login-toggle { cursor:pointer; }
 .loginBox .login-back { cursor:pointer; color: #fff; font-size: 14px; font-weight: 400;}
-.loginBox .result-container h1 {    font-size: 27px; color: #d78d47;}
+.loginBox .result-container h1 {    font-size: 27px; color: #ee8e40;}
 .loginBox .result-container h2 {    font-size: 22px; color: #fff;}
 
 .register-container {
@@ -212,7 +212,7 @@ hr {border:none;border-bottom:1px dotted #fff}
 
 .register-container .list-col {
   font-family:'Montserrat', sans-serif;
-  color: #EC8E49;
+  color: #ee8e40;
   padding-left: 150px;
 }
 
@@ -265,7 +265,7 @@ hr {border:none;border-bottom:1px dotted #fff}
 }
 
 .register-container .form-col .form-container .message p {
-  color: #EC8E49;
+  color: #ee8e40;
   margin-top: -20px;
   margin-bottom: 0px;
   font-weight: 400;
@@ -329,7 +329,7 @@ hr {border:none;border-bottom:1px dotted #fff}
 
 .register-container .result-container h2 {
   font-family:'Montserrat', sans-serif;
-  color: #EC8E49;
+  color: #ee8e40;
   font-size: 22px;
   line-height: 40px;
   margin: 0px;
@@ -433,7 +433,7 @@ hr {border:none;border-bottom:1px dotted #fff}
 }
 
 .activate-container .form-container .message p {
-  color: #EC8E49;
+  color: #ee8e40;
   margin-top: -20px;
   margin-bottom: 0px;
   font-weight: 400;
@@ -446,7 +446,7 @@ hr {border:none;border-bottom:1px dotted #fff}
   margin: 20px auto;
   text-transform: uppercase;
   padding: 12px 0px;
-  background: #EC8E49;
+  background: #ee8e40;
   color: #FFF;
   font-size: 22px;
   border-radius: 36px;
@@ -616,7 +616,7 @@ h3.light { color: #EEE}
 
 .admin-container .panel-heading .panel-item.icons button.dropdown-toggle { margin-left:5px; }
 .admin-container .panel-heading .panel-item .visible-badge {padding-right:5px;}
-.admin-container .panel-default.selectedItem>.panel-heading{ color: #F39B0F; }
+.admin-container .panel-default.selectedItem>.panel-heading{ color: #e88840; }
 /*.admin-container .panel-heading .panel-item.icons .trigger-task {top:-5px;}*/
 .admin-container .editIcon,
 .admin-container .playIcon,
@@ -631,7 +631,7 @@ ol.list-group.tasks { color:#34495E }
 .navbar-right { margin:16px 0 0 0; float: right; }
 .navbar-right li { float:left; border-bottom:none; font-size:14px; }
 .navbar-right li a:hover {
-  background:#d88e47;
+  background:#e88840;
   color:#fff;
   text-shadow:none;
   -webkit-transition: background-color 250ms linear;
@@ -745,8 +745,8 @@ button.rowSelector {
 }
 
 .itemRow button.rowSelector > span { color: #bbb; }
-.itemRow.selectedItem button.rowSelector > span { color: #f39b0f; }
-.itemRow button.hilite { border: 1px solid #f39b0f; }
+.itemRow.selectedItem button.rowSelector > span { color: #e88840; }
+.itemRow button.hilite { border: 1px solid #e88840; }
 /*span.selectorIcon.glyphicon-unchecked {
   color: #BBB;
 }
@@ -841,7 +841,7 @@ input[type=checkbox].form-control {
 
 .attention:after {
   content: ' ';
-  background-color: #d88e47;
+  background-color: #e88840;
   width: 7px;
   height: 7px;
   position: absolute;
@@ -853,7 +853,7 @@ input[type=checkbox].form-control {
 
 div.js-searchable-box {width:100%;font-weight:700;font-size:14px;z-index: 1000; position: relative;}
 div.js-searchable-box input {border:none;background:#fff;padding:8px 40px 8px 12px;width:100%;color:#38688a;}
-div.js-searchable-box button {color:#fff;background:#d88e47;border:none;padding:8px 12px;position:absolute;top:0;right:0;width:39px;}
+div.js-searchable-box button {color:#fff;background:#e88840;border:none;padding:8px 12px;position:absolute;top:0;right:0;width:39px;}
 div.js-searchable-box button.clean {right:39px;color:#999;background:#ccc;}
 div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 
@@ -1069,14 +1069,16 @@ a.flowchart-icon {
 .admin-container.dashboard i.approval-color { background-color: #9fbc75 }
 .admin-container.dashboard i.dummy-color { background-color: #fb8484 }
 .admin-container.dashboard i.workflow-color { background-color: #bc9ad6 }
-.admin-container.dashboard i.webhook-color { background-color: #158df9 }
-.admin-container.dashboard i.notification-color { background-color: #f9cb5a }
+.admin-container.dashboard i.webhook-color { background-color: #0080b9 }
+.admin-container.dashboard i.notification-color { background-color: #f4bc4a }
 .admin-container.dashboard i.nested-color { background-color: #06b777 }
-.admin-container.dashboard i.process-color { background-color: #1c73b9 }
-.admin-container.dashboard i.scraper-color { background-color: #158df9 }
+.admin-container.dashboard i.process-color { background-color: #c69c6d }
+.admin-container.dashboard i.scraper-color { background-color: #0080b9 }
 .admin-container.dashboard i.file-color { background-color: #ff8a6d }
 .admin-container.dashboard i.dstat-color { background-color: #338412 }
 .admin-container.dashboard i.psaux-color { background-color: #c69c6d }
+.admin-container.dashboard i.indicator-color { background-color: #bd5e5c }
+
 
 .admin-container .table-header.admin div.icons { float: right; }
 .admin-container .table-header.admin div.panel-item.icons li {float:right; list-style:none; margin-left: 5px;}
@@ -1096,7 +1098,7 @@ a.flowchart-icon {
 .admin-container.dashboard .task-exec-button .badge {
   top: -14px;
   right: 7px;
-  background-color: #d88e47;
+  background-color: #e88840;
 }
 
 .admin-container.dashboard .job-status-icon {
