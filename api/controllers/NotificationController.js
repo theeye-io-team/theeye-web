@@ -19,10 +19,11 @@ module.exports = {
     const data = event.data
     const topic = event.topic
 
-    if (!data) return res.send(400, 'Data is required.')
-    if (!topic) return res.send(400, 'Topic is required.')
+    if (!data) { return res.send(400, 'Data is required.') }
+    if (!topic) { return res.send(400, 'Topic is required.') }
 
-    logger.debug('topic %s model_type %s model.name %s',
+    logger.debug(
+      'topic %s model_type %s model.name %s',
       topic,
       data.model_type,
       data.model.name || 'no name property'
@@ -169,45 +170,68 @@ const createNotifications = (event, users, customerName, callback) => {
 
 /**
  *
- * @prop {Object} excFilter an object with exclusion filter data
- * @prop {Object} notifEvent the notification event information (with data and topic)
+ * @summary all filters within the same group should match to match the whole filter.
+ * @prop {Object} filter an object with exclusion filter data
+ * @prop {Object} event the notification event information (with data and topic)
  * @return true if any filter match
  *
  */
-const hasMatchedExclusionFilter = (excFilter, notifEvent) => {
+const hasMatchedExclusionFilter = (filter, event) => {
 	// every string prop value has to match
-  let hasMatch = false
-  let hasMatchingData = false
+  let matchedProps = []
+  let matchedData = []
+  let hasMatches
 
-  for (let prop in excFilter) {
-    if (canCompare(excFilter[prop]) && canCompare(notifEvent[prop])) {
-      hasMatch = (excFilter[prop] === notifEvent[prop])
+  // look for matches in props
+  for (let prop in filter) {
+    if (canCompare(filter[prop], event[prop])) {
+      matchedProps.push(filter[prop] === event[prop])
     }
   }
 
-  if (hasMatch===true) { return true }
-
-  if (excFilter.data) {
-    for (let dataProp in excFilter.data) {
-      if (canCompare(excFilter.data[dataProp]) && canCompare(notifEvent.data[dataProp])) {
-        hasMatchingData = (notifEvent.data[dataProp] === excFilter.data[dataProp])
+  // if no matched every level 1 properties, then break
+  if (matchedProps.length>0) {
+    hasMatches = matchedProps.every(match => match === true)
+    if (hasMatches===false) { return false }
+  }
+ 
+  // look for matches in data prop
+  if (filter.hasOwnProperty('data')) {
+    for (let prop in filter.data) {
+      if (canCompare(filter.data[prop], event.data[prop])) {
+        matchedData.push(filter.data[prop] === event.data[prop])
       }
     }
   }
 
-  return hasMatchingData
+  if (matchedData.length>0) {
+    hasMatches = matchedData.every(match => match === true)
+    if (hasMatches===false) { return false }
+  }
+
+  return true
 }
 
 /**
- * @summary ...
- * @param {*} value
+ * @summary can compare same valid comparable types
+ * @param {*} val1
+ * @param {*} val2
  * @return {Boolean}
  */
-const canCompare = (value) => {
-  // we can compare types and null
-  let types = ['number', 'string', 'boolean', 'undefined']
-  let type = typeof value
-  return types.indexOf(type) !== -1 || value === null
+const canCompare = (val1, val2) => {
+
+  const isComparable = (value) => {
+    // we can compare types and null
+    let types = ['number','string','boolean','undefined']
+    let type = typeof value
+    return types.indexOf(type) !== -1 || value === null
+  }
+
+  if (isComparable(val1) && isComparable(val2)) {
+    return (typeof val1 === typeof val2)
+  } else {
+    return false
+  }
 }
 
 /**
