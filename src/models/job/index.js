@@ -278,9 +278,12 @@ const WorkflowJob = BaseJob.extend({
       'add change sync reset remove',
       function () {
         if (this.jobs.length) {
-          this.lifecycle = this.jobs.at(this.jobs.length - 1).lifecycle
+          let currentJob = this.jobs.at(this.jobs.length - 1)
+          this.lifecycle = currentJob.lifecycle
+          this.state = currentJob.state
         } else {
           this.lifecycle = undefined
+          this.state = undefined
         }
       }
     )

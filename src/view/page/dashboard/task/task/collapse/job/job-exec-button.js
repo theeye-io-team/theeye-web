@@ -40,7 +40,7 @@ module.exports = View.extend({
   },
   derived: {
     execution_lifecycle: {
-      deps: ['model.lifecycle'],
+      deps: ['model.lifecycle', 'model.state'],
       fn () {
         const lifecycle = this.model.lifecycle
         const state = this.model.state
@@ -71,12 +71,6 @@ module.exports = View.extend({
             return 'fa fa-question remark-warning'
           }
           return 'fa fa-check remark-success'
-        }
-        if (lifecycle === LifecycleConstants.CANCELED) {
-          return 'fa fa-ban remark-alert'
-        }
-        if (lifecycle === LifecycleConstants.ASSIGNED) {
-          return 'fa fa-ban remark-alert'
         }
         if (lifecycle === LifecycleConstants.ONHOLD) {
           return 'fa fa-exclamation remark-warning'
