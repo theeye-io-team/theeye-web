@@ -1,11 +1,12 @@
 import View from 'ampersand-view'
 import isURL from 'validator/lib/isURL'
+import './styles.less'
 
 /**
  * Check if arg is either an array with at least 1 element, or a dict with at least 1 key
  * @return boolean
  */
-function isCollapsable(arg) {
+function isCollapsable (arg) {
   return arg instanceof Object && Object.keys(arg).length > 0;
 }
 
@@ -13,7 +14,7 @@ function isCollapsable(arg) {
  * Transform a json object into html representation
  * @return string
  */
-function json2html(json) {
+function json2html (json) {
   var html = '';
   if (typeof json === 'string') {
     json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -38,7 +39,7 @@ function json2html(json) {
         html += '<li>'
         // Add toggle button if item is collapsable
         if (isCollapsable(json[i]))
-          html += '<a href class="json-toggle"></a>';
+          html += '<a href="#" data-hook="json-toggle" class="json-toggle"></a>';
 
         html += json2html(json[i]);
         // Add comma if item is not last
@@ -61,7 +62,7 @@ function json2html(json) {
           html += '<li>';
           // Add toggle button if item is collapsable
           if (isCollapsable(json[i]))
-            html += '<a href class="json-toggle">' + i + '</a>';
+            html += '<a href="#" data-hook="json-toggle" class="json-toggle">' + i + '</a>';
           else
             html += i;
 
@@ -86,48 +87,37 @@ module.exports = View.extend({
     json: ['any',true],
     collapsed: ['boolean',false,false]
   },
-  template: `<div class="json-viewer-component" style="" data-hook="container"></div>`,
+  template: `
+    <div class="json-viewer-component" data-hook="container"></div>
+  `,
   renderJson () {
     const container = this.queryByHook('container')
     const json = this.json
 
     var html = json2html(json)
     if (isCollapsable(json)) {
-      html = '<a href class="json-toggle"></a>' + html;
+      html = '<a href="#" data-hook="json-toggle" class="json-toggle"></a>' + html
     }
 
     container.innerHTML = html
   },
   events: {
-    'click a.json-placeholder': function (event) {
+    'click a[data-hook=json-toggle]': (event) => {
       event.preventDefault()
       event.stopPropagation()
 
-      return false
-    },
-    'click a.json-toggle': function (event) {
-      event.preventDefault()
-      event.stopPropagation()
+      let classList = event.target.nextElementSibling.classList
+      if (classList.contains('hidden') === true) {
+        event.target.nextElementSibling.classList.remove('hidden')
+      } else {
+        event.target.nextElementSibling.classList.add('hidden')
+      }
 
-      //var target = $(this).toggleClass('collapsed').siblings('ul.json-dict, ol.json-array');
-      //target.toggle();
-      //if (target.is(':visible')) {
-      //  target.siblings('.json-placeholder').remove();
-      //}
-      //else {
-      //  var count = target.children('li').length;
-      //  var placeholder = count + (count > 1 ? ' items' : ' item');
-      //  target.after('<a href class="json-placeholder">' + placeholder + '</a>');
-      //}
       return false
     }
   },
   render () {
     this.renderWithTemplate()
     this.renderJson()
-
-    //if (this.collapsed === true) {
-    //  $(this).find('a.json-toggle').click();
-    //}
   }
 })

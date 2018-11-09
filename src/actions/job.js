@@ -57,7 +57,11 @@ module.exports = {
         if (!wjob) { // async error?
           if (!tjob.workflow_job_id) { return }
           // add temp models to the collection
-          wjob = workflow.jobs.add({ id: tjob.workflow_job_id }, { merge: true })
+          let attrs = {
+            id: tjob.workflow_job_id,
+            type: JobConstants.WORKFLOW_TYPE
+          }
+          wjob = workflow.jobs.add(attrs, { merge: true })
         }
         wjob.jobs.add(tjob)
       } else {

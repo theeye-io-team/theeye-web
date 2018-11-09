@@ -1,17 +1,11 @@
 /* Syntax highlighting for JSON objects */
 .json-viewer-component {
-  padding-left:20px;
   overflow-x: scroll;
-  background: #222;
-  color: #eee;
+  background: #fff;
+  color: #222;
   padding:10px;
-  min-height: 100px;
+  padding-left:25px;
   font-family: monospace;
-  margin-bottom: 5px;
-  border: 1px solid orange;
-}
-
-.json-viewer-component {
 
   ul.json-dict, ol.json-array {
     list-style-type: none;
@@ -19,11 +13,13 @@
     border-left: 1px dotted #ccc;
     padding-left: 2em;
   }
+
   .json-string {
-    color: #00ff00;
+    color: #b50303;
   }
+
   .json-literal {
-    color: #d4b209;
+    color: #0845b5;
     font-weight: bold;
   }
 
@@ -57,5 +53,4 @@
   a.json-placeholder:hover {
     text-decoration: underline;
   }
-
 }

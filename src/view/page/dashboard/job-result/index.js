@@ -6,6 +6,7 @@ import Collection from 'ampersand-collection'
 import Modalizer from 'components/modalizer'
 import moment from 'moment'
 import ansi2html from 'ansi-to-html'
+import JsonViewer from 'components/json-viewer'
 
 import './styles.less'
 
@@ -22,7 +23,7 @@ module.exports = Modalizer.extend({
     Modalizer.prototype.initialize.apply(this, arguments)
 
     this.backdrop = true
-    this.title = 'Execution Output'
+    this.title = 'Execution Result'
     this.bodyView = new JobView({ job: this.job })
 
     this.listenTo(this,'hidden',() => {
@@ -43,7 +44,7 @@ const DummyJobResult = View.extend({
   props: {
     result: 'state'
   },
-  template: `<div class="result approval-result"></div>`
+  template: `<div class="result dummy-result"></div>`
 })
 
 const ScriptJobResult = View.extend({
@@ -199,7 +200,8 @@ const ScraperJobResult = View.extend({
 
 const JobView = View.extend({
   props: {
-    job: 'state'
+    job: 'state',
+    moreinfo_toggle: ['boolean', false, false]
   },
   template: `
     <div class="job-result-component">
@@ -207,8 +209,25 @@ const JobView = View.extend({
       <h4>Result <b data-hook="state"></b></h4>
       <p><i class="fa fa-user"></i> <span data-hook="user-name"></span></p>
       <p><i class="fa fa-envelope-o"></i> <span data-hook="user-email"></span></p>
-      <p><i class="fa fa-calendar"></i> <span data-hook="timestamp"></span></p>
-      <div class="text-block text-block-default" data-hook="output-container"> </div>
+      <p>
+        <i class="fa fa-hourglass-start"></i>
+        <span data-hook="creationdate"></span>
+      </p>
+      <p>
+        <i class="fa fa-hourglass-end"></i>
+        <span data-hook="lastupdate"></span>
+      </p>
+      <p>
+        <i class="fa fa-sign-in"></i> Input
+        <div data-hook="input"></div>
+      </p>
+      <p>
+        <i class="fa fa-sign-out"></i> Output
+        <div data-hook="output"></div>
+      </p>
+
+      <a class="moreinfo" data-hook="moreinfo-toggle" href="#">More Info</a>
+      <div class="text-block text-block-default" data-hook="moreinfo-container"></div>
     </div>
   `,
   bindings: {
@@ -216,41 +235,112 @@ const JobView = View.extend({
     'job.state': { hook:'state' },
     'job.user.username': { hook:'user-name' },
     'job.user.email': { hook:'user-email' },
-    timestamp: { hook:'timestamp' },
+    lastupdate: { hook:'lastupdate' },
+    creationdate: { hook:'creationdate' },
+    moreinfo_toggle: {
+      hook: 'moreinfo-container',
+      type: 'toggle'
+    },
+    //input: { hook: 'input' },
+    //output: { hook: 'output' },
   },
   derived: {
-    timestamp: {
+    output: {
+      deps: ['job.output'],
+      fn () {
+        let output = this.job.output
+        if (!output) { return '' }
+        if (Array.isArray(output)) {
+          let parsed = []
+          output.forEach(item => {
+            try {
+              parsed.push( JSON.parse(item) )
+            } catch (e) {
+              parsed.push(item)
+            }
+          })
+          return parsed
+        } else {
+          return output
+        }
+      }
+    },
+    input: {
+      deps: ['job.task_arguments_values'],
+      fn () {
+        let input = this.job.task_arguments_values
+        if (
+          !input ||
+          (Array.isArray(input) && input.length === 0)
+        ) {
+          return ''
+        }
+
+        return input
+      }
+    },
+    lastupdate: {
       deps: ['job.last_update'],
       fn () {
         return moment(this.job.last_update).format("dddd, MMMM Do YYYY, h:mm:ss a")
       }
+    },
+    creationdate: {
+      deps: ['job.creation_date'],
+      fn () {
+        return moment(this.job.creation_date).format("dddd, MMMM Do YYYY, h:mm:ss a")
+      }
     }
+  },
+  events: {
+    'click a[data-hook=moreinfo-toggle]':'onClickToggleMoreInfo'
+  },
+  onClickToggleMoreInfo (event) {
+    this.toggle('moreinfo_toggle')
+    //this.query('moreinfo-container').
   },
   render () {
     this.renderWithTemplate(this)
 
-    if (!this.job||!this.job._type) return // this task was never executed?
-
-    const type = this.job._type
-    const opts = { result: this.job.result }
-
-    if (type === 'ScriptJob') {
-      this.result = new ScriptJobResult(opts)
-    } else if (type === 'ScraperJob') {
-      this.result = new ScraperJobResult(opts)
-    } else if (type === 'ApprovalJob') {
-      this.result = new ApprovalJobResult(opts)
-    } else if (type === 'DummyJob') {
-      this.result = new DummyJobResult(opts)
-    } else {
-      if (!type) {
-        console.error('unrecognised job type %s', type)
-      }
+    if (!this.job||!this.job._type) {
+      return // this task was never executed?
     }
 
-    this.renderSubview(this.result, this.queryByHook('output-container'))
+    this.renderJsonView({
+      json: this.output,
+      el: this.queryByHook('output')
+    })
+    this.renderJsonView({
+      json: this.input,
+      el: this.queryByHook('input')
+    })
+
+    const type = this.job._type
+    if (!JobResultClassMap.hasOwnProperty(type)) {
+      return console.error('error job type')
+    } else {
+      this.result = new JobResultClassMap[type]({
+        result: this.job.result
+      })
+
+      this.renderSubview(
+        this.result,
+        this.queryByHook('moreinfo-container')
+      )
+    }
+  },
+  renderJsonView (opts) {
+    let { json, el } = opts 
+    let view = new JsonViewer({ json })
+    this.renderSubview(view, el)
   }
 })
+
+const JobResultClassMap = {}
+JobResultClassMap['ScriptJob'] = ScriptJobResult
+JobResultClassMap['ScraperJob'] = ScraperJobResult
+JobResultClassMap['ApprovalJob'] = ApprovalJobResult
+JobResultClassMap['DummyJob'] = DummyJobResult
 
 function stripHtml (html) {
   if (DOMParser) {

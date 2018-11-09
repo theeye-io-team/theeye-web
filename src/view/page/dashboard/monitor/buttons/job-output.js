@@ -20,20 +20,15 @@ module.exports = Modalizer.extend({
     this.backdrop = false
     this.title = 'Execution Output'
 
-    //if (this.model.type !== 'script') {
-      this.bodyView = new JsonViewer({
-        json: this.output
-      })
-    //} else {
-    //}
+    this.bodyView = new JsonViewer({ json: this.output })
 
-    this.listenTo(this,'hidden',() => {
+    this.listenTo(this, 'hidden', () => {
       this.bodyView.remove()
       delete this.bodyView
     })
 
     this.listenTo(this, 'change:output', () => {
-      if (!this.output) return
+      if (!this.output) { return }
       this.bodyView.json = this.output
       this.bodyView.render()
     })

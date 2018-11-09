@@ -9,21 +9,21 @@ module.exports = View.extend({
     <div data-component="monitors-options"
         data-hook="monitors-options"
         class="dropdown panel-item icons">
-    	<button class="dropdown-toggle btn btn-primary"
-    		title="group options"
-    		type="button"
-    		data-toggle="dropdown"
-    		aria-haspopup="true"
-    		aria-expanded="true">
-    		<i data-hook="show-more-options" class="fa fa-ellipsis-v" aria-hidden="true"></i>
-    	</button>
-    	<ul class="dropdown-menu dropdown-menu-right">
+      <button class="dropdown-toggle btn btn-primary"
+        title="group options"
+        type="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="true">
+        <i data-hook="show-more-options" class="fa fa-ellipsis-v" aria-hidden="true"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-right">
         <div>
           <li><button data-hook="group-by" data-prop="hostname" class="btn btn-primary">Bot</button></li>
           <li><button data-hook="group-by" data-prop="failure_severity" class="btn btn-primary">Severity</button></li>
           <li><button data-hook="group-by" data-prop="type" class="btn btn-primary">Type</button></li>
           <li><button data-hook="group-by" data-prop="name" class="btn btn-primary">Name</button></li>
-  <li role="separator" class="divider"></li>
+          <li role="separator" class="divider"></li>
           <li><button data-hook="group-by" data-prop class="btn btn-primary">Ungroup</button></li>
         </div>
       </ul>
@@ -50,7 +50,6 @@ module.exports = View.extend({
   //},
   initialize () {
     View.prototype.initialize.apply(this,arguments)
-
     this.groupBy = App.state.dashboard.monitorsGroupBy
   },
   events: {
