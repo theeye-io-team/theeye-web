@@ -16,7 +16,7 @@ module.exports = {
   },
   auth: {
     secret: '692fc164a0c06a9fd02575cf17688c9e',
-    expires: 12 * (60 * 60) // in seconds
+    expires: 3 * (60 * 60) // in seconds
   },
   /**
    *
