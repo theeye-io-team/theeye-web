@@ -66,18 +66,26 @@ const filterRows = () => {
 
   let totalMatches = []
   rows.forEach(row => {
-    if ( !row.model.formatted_tags ) {
+    if (!row.model.formatted_tags) {
       logger.error('no formatted_tags property available in model')
       return
     }
 
-    if ( ! (row.model.formatted_tags.length>0) ) {
+    if (!(row.model.formatted_tags.length > 0)) {
       logger.error('empty tags')
       return
     }
 
-    const tags = row.model.formatted_tags
-    const matches = searchTermsOverTags(terms,tags)
+    let tags = row.model.formatted_tags
+    let matches = searchTermsOverTags(terms, tags)
+
+    if (row.model.submonitors) {
+      row.model.submonitors.forEach((model) => {
+        tags = model.formatted_tags
+        matches = matches.concat(searchTermsOverTags(terms, tags))
+      })
+    }
+
     totalMatches = totalMatches.concat(matches)
     const hit = Boolean(matches.length > 0)
 

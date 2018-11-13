@@ -12,7 +12,6 @@ module.exports = {
     const qs = search.set(query)
 
     App.Router.navigate(`dashboard?${qs}`, { replace: true })
-    App.Router.reload()
   },
   loadNewRegisteredHostAgent (host) {
     App.state.loader.visible = false
