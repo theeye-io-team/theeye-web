@@ -151,27 +151,6 @@ hr {border:none;border-bottom:1px dotted #fff}
 .inlineDropdown .dropdown-menu p {background:#304269;margin:0 10px;padding:10px;font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New}
 
 .mainStatus {width:90%;margin:10% auto;border-top:1px dotted #fff;border-bottom:1px dotted #fff;padding:20px 0;text-align:center;color:#fff;font-size:20px;font-weight:700}
-.loginBox, .formContainer { width:80%; margin:110px auto 4%; text-align:center; color:#fff }
-
-.loginBox h1 {margin-bottom:24px}
-.loginBox .or {border-top:1px dashed #fff;position:relative;margin:40px 0}
-.loginBox input, .loginBox button {width:100%;border:none;border-radius:4px;padding:10px;margin-bottom:10px;text-align:center;font-size:24px}
-.loginBox input {color:#304269;height:50px; }
-.loginBox button {color:#fff;background: #ee8e40;}
-.loginBox .or span {background:#415c76;padding:10px;position:absolute;top:-22px;left:48%}
-.loginBox section.license a:hover { color:#ee8e40; }
-.loginBox .login-form form label { width: 100%; }
-.loginBox .forgot-form form label { width: 100%; }
-.loginBox .register-form form label { width: 100%; }
-.loginBox .activate-form form label { width: 100%; }
-.loginBox .customer-form form label { width: 100%; }
-.loginBox .password-form form label { width: 100%; }
-.loginBox .register-link { margin-top: 10px; cursor: pointer; }
-.loginBox .register-link a { color:#fff; cursor: pointer; }
-.loginBox .login-toggle { cursor:pointer; }
-.loginBox .login-back { cursor:pointer; color: #fff; font-size: 14px; font-weight: 400;}
-.loginBox .result-container h1 {    font-size: 27px; color: #ee8e40;}
-.loginBox .result-container h2 {    font-size: 22px; color: #fff;}
 
 .register-container {
   padding-bottom: 30px;
@@ -362,40 +341,44 @@ hr {border:none;border-bottom:1px dotted #fff}
   top: 0px;
 }
 
-.activate-container .activate-header {
+.activate-container .activate-header, .login-container .login-header{
   text-align: center;
   padding: 15px 0px 20px 0px;
   background-color: #FAFAFA;
 }
 
-.activate-container .activate-header .logo{
+.activate-container .activate-header .logo, .login-container .login-header .logo{
   width: 160px;
 }
 
-.activate-container h1 {
+.activate-container h1, .login-container h1 {
   font-family: 'Trebuchet MS', sans-serif;
   font-weight: normal;
 }
 
-.activate-container .activate-header h1 {
+.activate-container .activate-header h1, .login-container .login-header h1 {
   margin: 0px;
   margin-top: 5px;
   color: #130e40;
   font-size: 23px;
 }
 
-.activate-container .activate-main {
+.activate-container .activate-main, .login-container .login-main {
   text-align: center;
 }
 
-.activate-container .activate-main h1 {
+.activate-container .activate-main h1, .login-container .login-main h1 {
   margin-top: 40px;
   margin-bottom: 30px;
   font-size: 27px;
   color: #FFF;
 }
 
-.activate-container .activate-main h2 {
+.login-container .login-main h1.reset-title {
+ margin-bottom: 40px;
+}
+
+.activate-container .activate-main h2, .login-container .login-main h2 {
   font-family:'Montserrat', sans-serif;
   color: #FFF;
   font-size: 20px;
@@ -403,18 +386,33 @@ hr {border:none;border-bottom:1px dotted #fff}
   margin-bottom: 50px;
 }
 
-.activate-container .form-container {
+.login-container .login-main h2.or {
+  margin-bottom: 20px;
+}
+
+.activate-container .form-container, .login-container .form-container {
   width: 100%;
   max-width: 450px;
   margin: 0px auto;
 }
 
-.activate-container .form-container label {
+.login-container h2.login-toggle {
+  cursor:pointer;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.login-container h2.register-link, .login-container h2.login-link {
+  margin-top: 10px;
+  margin-bottom: 40px;
+}
+
+.activate-container .form-container label, .login-container .form-container label {
   width: 100%;
   margin-bottom: 20px;
 }
 
-.activate-container .form-container input {
+.activate-container .form-container input, .login-container .form-container input {
   width: 100%;
   border: 0;
   outline: 0;
@@ -428,18 +426,18 @@ hr {border:none;border-bottom:1px dotted #fff}
   padding-bottom: 8px;
 }
 
-.activate-container .form-container ::placeholder {
+.activate-container .form-container ::placeholder, .login-container .form-container ::placeholder {
   color: #CCC;
 }
 
-.activate-container .form-container .message p {
+.activate-container .form-container .message p, .login-container .form-container .message p {
   color: #ee8e40;
   margin-top: -20px;
   margin-bottom: 0px;
   font-weight: 400;
 }
 
-.activate-container button {
+.activate-container button, .login-container button {
   font-family: 'Trebuchet MS', sans-serif;
   width: 100%;
   max-width: 450px;
@@ -454,12 +452,13 @@ hr {border:none;border-bottom:1px dotted #fff}
   border: none;
 }
 
-.sign {padding:14px 0;color:#fff;border:1px solid #fff;border-radius:4px;width:100%;display:inline-block;font-size:18px;margin-bottom:6px}
+.sign {padding:12px 0;color:#fff;border-radius:36px;width:100%;max-width: 450px;display:inline-block;font-size:22px;font-family: 'Trebuchet MS', sans-serif;letter-spacing: 0.8px;border: none;}
+
 .sign i {font-size:24px;margin-right:6px}
 .sign:hover {color:#fff}
 .sign.facebook {background: #40579a;background: -moz-linear-gradient(top,  #40579a 0%, #34467d 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#40579a), color-stop(100%,#34467d));background: -webkit-linear-gradient(top,  #40579a 0%,#34467d 100%);background: -o-linear-gradient(top,  #40579a 0%,#34467d 100%);background: -ms-linear-gradient(top,  #40579a 0%,#34467d 100%);background: linear-gradient(to bottom,  #40579a 0%,#34467d 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#40579a', endColorstr='#34467d',GradientType=0 );}
 .sign.twitter {background: #02ace6;background: -moz-linear-gradient(top,  #02ace6 0%, #028bbb 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#02ace6), color-stop(100%,#028bbb));background: -webkit-linear-gradient(top,  #02ace6 0%,#028bbb 100%);background: -o-linear-gradient(top,  #02ace6 0%,#028bbb 100%);background: -ms-linear-gradient(top,  #02ace6 0%,#028bbb 100%);background: linear-gradient(to bottom,  #02ace6 0%,#028bbb 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#02ace6', endColorstr='#028bbb',GradientType=0 )}
-.sign.google {background: #c32f11;background: -moz-linear-gradient(top,  #c32f11 0%, #9e260e 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#c32f11), color-stop(100%,#9e260e));background: -webkit-linear-gradient(top,  #c32f11 0%,#9e260e 100%);background: -o-linear-gradient(top,  #c32f11 0%,#9e260e 100%);background: -ms-linear-gradient(top,  #c32f11 0%,#9e260e 100%);background: linear-gradient(to bottom,  #c32f11 0%,#9e260e 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#c32f11', endColorstr='#9e260e',GradientType=0 )}
+.sign.google {background: #c32f11;}
 .forgotForm {display:none}
 .forgotLink, .cancelLink {display:inline-block;cursor:pointer}
 .load {cursor:pointer; text-align:center;color:#fff;padding:20px 0 0 0;font-size:20px}
@@ -645,7 +644,6 @@ ol.list-group.tasks { color:#34495E }
   .mainStatus {font-size:40px;width:60%;padding:60px 0}
   .switch{margin:0 auto}
   .loginBox {width:50%}
-  .sign {width:32%;margin-bottom:0}
   .navData {
     font-size:14px;
     line-height: 52px;
@@ -1131,7 +1129,7 @@ a.flowchart-icon {
   .admin-container .indicators-panel .panel-heading .panel-item.name { width:75%; }
   .admin-container .panel-heading .panel-title-content { position:relative; }
   button.rowSelector, button.rowSelector-not {}
-  .activate-container .form-wrapper { padding: 0px 30px; }
+  .activate-container .form-wrapper, .login-container .form-wrapper { padding: 0px 30px; }
 }
 
 @media (min-width: 768px) {

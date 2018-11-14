@@ -1,18 +1,44 @@
-<div class="loginBox">
-  <div data-hook="login-form-container">
-    <h1>Sign In to TheEye App</h1>
-    <a href="" class="sign google" data-hook="google-login"><i class="fa fa-google-plus"></i>Google+</a>
-    <div class="or"><span>or</span></div>
-    <div data-hook="login-form" class="login-form"></div>
-    <button data-hook="start-login">Sign in</button>
-    <span class="login-toggle" data-hook="form-toggle">Forgot password?</span>
+<div class="login-container">
+  <div class="container">
+    <div class="login-main">
+      <div data-hook="login-form-container">
+        <div class="row">
+          <div class="col-xs-12">
+            <h1>Sign In to TheEye App</h1>
+            <a href="" class="sign google" data-hook="google-login"><i class="fa fa-google-plus"></i>Google+</a>
+            <h2 class="or"> - or - </h2>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <div class="form-wrapper">
+              <div data-hook="login-form" class="form-container"></div>
+              <button data-hook="start-login">Sign in</button>
+              <h2 class="login-toggle" data-hook="form-toggle">Forgot password?</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div data-hook="forgot-form-container">
+        <div class="row">
+          <div class="col-xs-12">
+            <h1>Password reset</h1>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <h2>Please enter your account email</h2>
+            <div class="form-wrapper">
+              <div data-hook="forgot-form" class="form-container"></div>
+              <button data-hook="start-forgot">Send email</button>
+              <h2 class="login-toggle" data-hook="form-toggle">Back</h2>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <a href="/register"><h2 class="register-link">Don't have an account? Register here</h2></a>
+      </div>
+    </div>
   </div>
-  <div data-hook="forgot-form-container">
-    <h1>Password reset</h1>
-    <h2>Please enter your account email</h2>
-    <div data-hook="forgot-form" class="forgot-form"></div>
-    <button data-hook="start-forgot">Send email</button>
-    <span class="login-toggle" data-hook="form-toggle">Back</span>
-  </div>
-  <div class="register-link"><a href="/register">Don't have an account? Register here</a></div>
 </div>
