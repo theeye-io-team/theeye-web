@@ -1192,3 +1192,7 @@ a.flowchart-icon {
   background: #fff;
   right: 15px;
 }
+
+.bootbox-body p {
+  word-wrap: break-word;
+}

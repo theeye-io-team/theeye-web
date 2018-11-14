@@ -5,6 +5,7 @@ import Modalizer from 'components/modalizer'
 import {BaseExec} from '../../exec-task.js'
 import FIELD from 'constants/field'
 import moment from 'moment'
+import isURL from 'validator/lib/isURL'
 
 const buildMessage = function (model) {
   let params = model.task.task_arguments
@@ -20,13 +21,17 @@ const buildMessage = function (model) {
     switch (param.type) {
       case FIELD.TYPE_FIXED:
       case FIELD.TYPE_INPUT:
-        line += values[index]
+        if (isURL(values[index])) {
+          line += `<a href='${values[index]}' download='file${index + 1}' target='_blank'>Download</a>`
+        } else {
+          line += values[index]
+        }
         break
       case FIELD.TYPE_DATE:
         line += moment(values[index]).format('D-MMM-YY, HH:mm:ss')
         break
       case FIELD.TYPE_FILE:
-        line += `<a href='${values[index]}' download='file${index + 1}'>Download</a>`
+        line += `<a href='${values[index]}' download='file${index + 1}' target='_blank'>Download</a>`
         break
       case FIELD.TYPE_SELECT:
         break
