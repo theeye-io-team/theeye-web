@@ -342,10 +342,10 @@ const HostCollapsedContent = GenericCollapsedContent.extend({
       <h4><i class="fa theeye-robot-solid"></i>
         Host monitor state: <i data-hook="host_state"></i>
       </h4>
-      <h4><i class="fa fa-cogs"></i>
+      <h4 data-hook="psaux_state_section"><i class="fa fa-cogs"></i>
         Processes monitor state: <i data-hook="psaux_state"></i>
       </h4>
-      <h4><i class="fa fa-bar-chart"></i>
+      <h4 data-hook="dstat_state_section"><i class="fa fa-bar-chart"></i>
         Health monitor state: <i data-hook="dstat_state"></i>
       </h4>
 
@@ -377,6 +377,14 @@ const HostCollapsedContent = GenericCollapsedContent.extend({
       hook: 'host_state',
       type: 'attribute',
       name: 'class'
+    },
+    'dstat': {
+      hook: 'dstat_state_section',
+      type: 'toggle'
+    },
+    'psaux': {
+      hook: 'psaux_state_section',
+      type: 'toggle'
     },
     'dstat.stateIcon': {
       hook: 'dstat_state',
