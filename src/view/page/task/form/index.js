@@ -2,6 +2,7 @@ import ScriptForm from './script'
 import ScraperForm from './scraper'
 import ApprovalForm from './approval'
 import DummyForm from './dummy'
+import NotificationForm from './notification'
 import TaskConstants from 'constants/task'
 
 module.exports = function (options) {
@@ -20,6 +21,10 @@ module.exports = function (options) {
 
   if (task.type === TaskConstants.TYPE_DUMMY) {
     return new DummyForm (options)
+  }
+
+  if (task.type === TaskConstants.TYPE_NOTIFICATION) {
+    return new NotificationForm (options)
   }
 
   throw new Error(`unrecognized task type ${task.type}`)

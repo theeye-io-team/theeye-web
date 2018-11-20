@@ -140,5 +140,16 @@ module.exports = {
       };
       mailer.sendMail(options, error => next(error));
     });
+  },
+  sendEmail: function (input, next) {
+    next || (next = () => {})
+
+    var options = {
+      to: input.user.email,
+      subject: input.data.subject,
+      html: input.data.body
+    }
+
+    mailer.sendMail(options, error => next(error))
   }
 };

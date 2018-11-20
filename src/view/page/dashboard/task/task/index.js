@@ -15,5 +15,8 @@ module.exports = function (options) {
     case TaskConstants.TYPE_DUMMY:
       return new CollapsibleRow.Dummy(options)
       break;
+    case TaskConstants.TYPE_NOTIFICATION:
+      return new CollapsibleRow.Notification(options)
+      break;
   }
 }

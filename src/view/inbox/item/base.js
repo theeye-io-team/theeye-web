@@ -5,7 +5,8 @@ const resourceType = {
   Resource: 'Resource',
   ScriptJob: 'ScriptTask',
   Webhook: 'Webhook',
-  WorkflowJob: 'Workflow'
+  WorkflowJob: 'Workflow',
+  NotificationJob: 'NotificationJob'
 }
 
 export default View.extend({
@@ -49,6 +50,7 @@ export default View.extend({
     }
 
     this.time = moment(this.model.createdAt).format(format)
+
     this.modelName = this.model.data.model.name
     this.modelType = resourceType[this.model.data.model_type]
     this.icon = ''

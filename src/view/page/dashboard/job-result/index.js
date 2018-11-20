@@ -47,6 +47,13 @@ const DummyJobResult = View.extend({
   template: `<div class="result dummy-result"></div>`
 })
 
+const NotificationJobResult = View.extend({
+  props: {
+    result: 'state'
+  },
+  template: `<div class="result approval-result"></div>`
+})
+
 const ScriptJobResult = View.extend({
   props: {
     result: 'state'
@@ -330,7 +337,7 @@ const JobView = View.extend({
     }
   },
   renderJsonView (opts) {
-    let { json, el } = opts 
+    let { json, el } = opts
     let view = new JsonViewer({ json })
     this.renderSubview(view, el)
   }
@@ -341,6 +348,7 @@ JobResultClassMap['ScriptJob'] = ScriptJobResult
 JobResultClassMap['ScraperJob'] = ScraperJobResult
 JobResultClassMap['ApprovalJob'] = ApprovalJobResult
 JobResultClassMap['DummyJob'] = DummyJobResult
+JobResultClassMap['NotificationJob'] = NotificationJobResult
 
 function stripHtml (html) {
   if (DOMParser) {

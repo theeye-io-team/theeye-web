@@ -3,6 +3,7 @@ exports.TYPE_SCRAPER = 'scraper'
 exports.TYPE_SCRIPT = 'script'
 exports.TYPE_APPROVAL = 'approval'
 exports.TYPE_DUMMY = 'dummy'
+exports.TYPE_NOTIFICATION = 'notification'
 
 exports.GRACE_TIME = Object.freeze([
   {

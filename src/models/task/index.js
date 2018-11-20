@@ -194,6 +194,41 @@ const Dummy = Template.Dummy.extend({
   }
 })
 
+const Notification = Template.Notification.extend({
+  urlRoot,
+  props: {
+    template_id: 'string'
+  },
+  derived: {
+    formatted_tags: formattedTags(),
+    canExecute: {
+      deps: [],
+      fn () {
+        return true
+      }
+    },
+    hasTemplate: {
+      deps: ['template_id'],
+      fn () {
+        return Boolean(this.template_id) === true
+      }
+    },
+    summary: {
+      deps: ['name'],
+      fn () {
+        return `notification task ${this.name}`
+      }
+    }
+  },
+  children: {
+    template: Template.Notification,
+  },
+  serialize () {
+    var serial = Template.Notification.prototype.serialize.apply(this, arguments)
+    serial.template = this.template ? this.template.id : null
+    return serial
+  }
+})
 
 const TaskFactory = function (attrs, options={}) {
   const store = App.state.tasks
@@ -223,6 +258,9 @@ const TaskFactory = function (attrs, options={}) {
       case TaskConstants.TYPE_DUMMY:
         model = new Dummy(attrs, options)
         break;
+      case TaskConstants.TYPE_NOTIFICATION:
+        model = new Notification(attrs, options)
+        break;
       default:
         let err = new Error(`unrecognized type ${type}`)
         throw err
@@ -250,7 +288,8 @@ const Collection = AppCollection.extend({
       model instanceof Scraper ||
       model instanceof Script ||
       model instanceof Approval ||
-      model instanceof Dummy
+      model instanceof Dummy ||
+      model instanceof Notification
     )
     return isModel
   }
@@ -273,5 +312,6 @@ exports.Scraper = Scraper
 exports.Script = Script
 exports.Approval = Approval
 exports.Dummy = Dummy
+exports.Notification = Notification
 exports.Collection = Collection
 exports.Factory = TaskFactory

@@ -15,55 +15,23 @@ module.exports = {
    *
    */
   create (req, res) {
-    var event = req.params.all()
-    const data = event.data
-    const topic = event.topic
-
-    if (!data) { return res.send(400, 'Data is required.') }
-    if (!topic) { return res.send(400, 'Topic is required.') }
-
-    logger.debug(
-      'topic %s model_type %s model.name %s',
-      topic,
-      data.model_type,
-      data.model.name || 'no name property'
-    )
-
-    if (handledNotificationTopics.indexOf(event.topic) > -1) {
-      var acls = (data.model.task ? data.model.task.acl : data.model.acl) || []
-
-      getUsers(event, data.organization, acls, (error, users) => {
-        if (error) return logger.error('%o', error)
-
-        // create a notification for each user
-        createNotifications(event, users, data.organization, (err, notifications) => {
-          if (err) return logger.error('%o', err)
-          if (notifications.length === 0) return
-
-          // send extra notification event via sns topic
-          Notifications.sockets.send({
-            topic: 'notification-crud',
-            data: {
-              model: notifications,
-              model_type: 'Notification',
-              operation: 'create',
-              organization: data.organization
-            }
-          })
-        })
-
-        // push and mail here !important
-        Notifications.push.send(event, users)
-        // Notifications.email.send('TO-DO', users)
-      })
+    let event = req.params.all()
+    let done = (err) => {
+      if (err) {
+        if (err.status === 400) {
+          return res.send(400, err.error.toString())
+        }
+        return res.send(500, err.toString())
+      } else {
+        return res.send(200)
+      }
     }
 
-    // notify other webs (even self) to handle
-    // socket notifications via SNS post to http
-    // endpoint (EventsController.update)
-    Notifications.sockets.send(event)
-
-    return res.send(200)
+    if (event.topic === 'notification-task') {
+      createFromNotificationTask(req, res, done)
+    } else {
+      createFromNotificationEvent(req, res, done)
+    }
   },
   /**
    *
@@ -91,25 +59,149 @@ module.exports = {
   }
 }
 
+const createFromNotificationTask = (req, res, done) => {
+  let params = req.params.all()
+  const data = params.data
+
+  if (!data) {
+    let err = new Error('Data is required')
+    err.status = 400
+    return done(err)
+  }
+  if (!data.model.task) {
+    let err = new Error('Task is required')
+    err.status = 400
+    return done(err)
+  }
+
+  let subject = data.model.task.subject
+  let body = data.model.task.body
+  let notificationTypes = data.model.task.notificationTypes
+  let acl = data.model.task.acl
+
+  getUsers(null, data.organization, acl, [], (error, users) => {
+    if (error) return done(new Error('Cant get users'))
+    if (!users.length) {
+      done()
+    }
+
+    users.forEach((user) => {
+      if (notificationTypes.socket) {
+        // TO ADD
+      }
+    })
+
+    if (notificationTypes.push) {
+      Notifications.push.dispatch({msg: subject}, users)
+    }
+
+    if (notificationTypes.email) {
+      Notifications.email.send({subject, body}, users)
+    }
+
+    if (notificationTypes.desktop) {
+      createNotifications(params, users, data.organization, (err, notifications) => {
+        if (err) return done(new Error('Error creating notification'))
+        if (notifications.length === 0) return
+
+        // send extra notification event via sns topic
+        Notifications.sockets.send({
+          topic: 'notification-crud',
+          data: {
+            model: notifications,
+            model_type: 'Notification',
+            operation: 'create',
+            organization: data.organization
+          }
+        })
+      })
+    }
+
+    done()
+  })
+}
+
+const createFromNotificationEvent = (req, res, done) => {
+  var event = req.params.all()
+  const data = event.data
+  const topic = event.topic
+
+  if (!data) {
+    let err = new Error('Data is required')
+    err.status = 400
+    return done(err)
+  }
+  if (!topic) {
+    let err = new Error('Topic is required')
+    err.status = 400
+    return done(err)
+  }
+
+  logger.debug('topic %s model_type %s model.name %s',
+    topic,
+    data.model_type,
+    data.model.name || 'no name property'
+  )
+
+  if (handledNotificationTopics.indexOf(event.topic) > -1) {
+    var acls = (data.model.task ? data.model.task.acl : data.model.acl) || []
+    var credentials = ['admin', 'owner', 'root']
+
+    getUsers(event, data.organization, acls, credentials, (error, users) => {
+      if (error) return done(new Error('Cant get users'))
+
+      // create a notification for each user
+      createNotifications(event, users, data.organization, (err, notifications) => {
+        if (err) return done(new Error('Error creating notification'))
+        if (notifications.length === 0) return
+
+        // send extra notification event via sns topic
+        Notifications.sockets.send({
+          topic: 'notification-crud',
+          data: {
+            model: notifications,
+            model_type: 'Notification',
+            operation: 'create',
+            organization: data.organization
+          }
+        })
+      })
+
+      // push and mail here !important
+      Notifications.push.send(event, users)
+      // Notifications.email.send('TO-DO', users)
+    })
+  }
+
+  // notify other webs (even self) to handle
+  // socket notifications via SNS post to http
+  // endpoint (EventsController.update)
+  Notifications.sockets.send(event)
+
+  return done()
+}
+
 // Returns a user collection for a given customer
-const getUsers = (event, customerName, acls, callback) => {
+const getUsers = (event, customerName, acls, credentials, callback) => {
   if (!customerName) {
     const err = new Error('I need a customer to find the users')
     return callback(err)
   }
 
-  var query = {
-    username: { $ne: null },
-    customers: customerName,
-    $or: [
-      { credential: { $in: ['admin', 'owner', 'root'] } },
-      { email: { $in: acls } }
-    ]
-  }
+  var query = {}
 
-  if (isApprovalOnHoldEvent(event)) {
+  if (event && isApprovalOnHoldEvent(event)) {
     query = {
       id: event.data.approver_id
+    }
+  } else {
+    query = {
+      username: { $ne: null },
+      customers: customerName,
+      $or: [
+        { credential: { $in: credentials } },
+        { email: { $in: acls } }
+      ]
     }
   }
 
@@ -154,7 +246,7 @@ const createNotifications = (event, users, customerName, callback) => {
       }
     }
 
-    if (exclusionFilter===undefined) {
+    if (exclusionFilter === undefined) {
       notifications.push({
         topic: event.topic,
         data: event.data,
@@ -194,7 +286,7 @@ const hasMatchedExclusionFilter = (filter, event) => {
     hasMatches = matchedProps.every(match => match === true)
     if (hasMatches===false) { return false }
   }
- 
+
   // look for matches in data prop
   if (filter.hasOwnProperty('data')) {
     for (let prop in filter.data) {

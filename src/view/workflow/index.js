@@ -170,7 +170,7 @@ function Node (value) {
   this.getFeatureType = function () {
     var type = (value.type || value._type).toLowerCase()
     var features = [
-      'event', 'script', 'scraper', 'approval', 'dummy', 'process',
+      'event', 'script', 'scraper', 'approval', 'dummy', 'notification', 'process',
       'webhook', 'host', 'dstat', 'psaux'
     ]
 

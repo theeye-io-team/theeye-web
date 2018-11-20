@@ -9,7 +9,7 @@ module.exports = SelectView.extend({
 
     var filters = [
       item => true,
-      item => item.type === 'approval' || item.type === 'dummy' || item.host_id
+      item => item.type === 'approval' || item.type === 'dummy' || item.type === 'notification' || item.host_id
     ]
 
     if (

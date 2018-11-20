@@ -12,6 +12,7 @@ import { Script as ScriptTask } from 'models/task'
 import { Scraper as ScraperTask } from 'models/task'
 import { Approval as ApprovalTask } from 'models/task'
 import { Dummy as DummyTask } from 'models/task'
+import { Notification as NotificationTask } from 'models/task'
 import { Model as File } from 'models/file'
 
 import './styles.less'
@@ -63,13 +64,13 @@ const TaskCreationWizard = View.extend({
     <section data-hook="type-selection-container" class="task-type-selection">
       <h1>Please, select the task type to continue</h1>
       <div class="row task-button" style="text-align:center;">
-        <div class="col-xs-3">
+        <div class="col-xs-2 col-xs-offset-1">
           <button data-hook="script" class="btn btn-default">
             <i class="icons icons-script fa fa-code"></i>
           </button>
           <h2>Script<span data-hook="script-help"></span></h2>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-2">
           <button data-hook="scraper" class="btn btn-default">
             <i class="icons icons-scraper fa fa-cloud"></i>
           </button>
@@ -77,17 +78,23 @@ const TaskCreationWizard = View.extend({
             <span data-hook="webhook-help"></span>
           </h2>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-2">
           <button data-hook="approval" class="btn btn-default">
             <i class="icons icons-approval fa fa-thumbs-o-up"></i>
           </button>
           <h2>Approval<span data-hook="approval-help"></span></h2>
         </div>
-        <div class="col-xs-3">
+        <div class="col-xs-2">
           <button data-hook="dummy" class="btn btn-default">
             <i class="icons icons-dummy fa fa-list-ul"></i>
           </button>
           <h2>Input<span data-hook="dummy-help"></span></h2>
+        </div>
+        <div class="col-xs-2">
+          <button data-hook="notification" class="btn btn-default">
+            <i class="icons icons-notification fa fa-bell-o"></i>
+          </button>
+          <h2>Notification<span data-hook="notification-help"></span></h2>
         </div>
       </div>
       <div class="import-task-section">
@@ -114,6 +121,11 @@ const TaskCreationWizard = View.extend({
       event.preventDefault()
       event.stopPropagation()
       this.createFormTask( new DummyTask() )
+    },
+    'click button[data-hook=notification]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      this.createFormTask( new NotificationTask() )
     }
   },
   launchScriptTaskForm: function (event) {

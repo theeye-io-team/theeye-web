@@ -16,17 +16,63 @@ module.exports = {
 
         if (severity === 'HIGH' || severity === 'CRITICAL') {
           data = prepareMonitorStateChangeNotification(model, monitor_event)
-          if (data.msg) dispatch(data, users)
+          if (data.msg) this.dispatch(data, users)
         }
         break
       case 'job-crud':
         data = prepareJobNotification(model)
-        if (data.msg) dispatch(data, users)
+        if (data.msg) this.dispatch(data, users)
         break
       case 'webhook-triggered':
         data = prepareWebhookNotification(model)
-        if (data.msg) dispatch(data, users)
+        if (data.msg) this.dispatch(data, users)
         break
+    }
+  },
+  dispatch (data, users) {
+    if (!data.msg) {
+      return logger.error('Error. invalid message, undefined condition')
+    }
+    var message = data.msg.replace(/['"]+/g, '')
+    var action = data.action || 'showNotificationsTab'
+
+    var params = {
+      MessageStructure: 'json',
+      Message: JSON.stringify({
+        "GCM": "{ \"data\": { \"message\": \"" + message + "\",  \"action\": \"" + action + "\", \"style\": \"inbox\", \"summaryText\": \"%n% New notifications\"} }",
+        "APNS_SANDBOX": "{ \"aps\": { \"alert\": \"" + message + "\" } }",
+        "APNS": "{ \"aps\": { \"alert\": \"" + message + "\" } }"
+      })
+    }
+
+    logger.debug('Sending push notification to users with message: ' + message)
+
+    if (users.length) {
+      users.forEach(function (user) {
+        if (user.notifications && user.notifications['push'] !== true) {
+          // user opt out
+          return
+        }
+
+        if (user.devices) {
+          user.devices.forEach(function (device) {
+            params.TargetArn = device.endpoint_arn
+            logger.debug('Sending notification to target arn: ' + params.TargetArn)
+
+            SNS.publish(params, function (error, data) {
+              if (error) {
+                logger.error('%o', error)
+                logger.error('Error sending notification, deleting endpoint arn: ' + params.TargetArn)
+                handleSNSError(user, device)
+              } else {
+                logger.debug('Push notification sent.')
+              }
+            })
+          })
+        }
+
+        dumpSNSMessage(`arn:user:${user.username}`, dumpfile, params)
+      })
     }
   }
 }
@@ -105,53 +151,6 @@ const prepareWebhookNotification = (webhook) => {
   let data = {}
   data.msg = `Webhook ${webhook.name} triggered.`
   return data
-}
-
-const dispatch = (data, users) => {
-  if (!data.msg) {
-    return logger.error('Error. invalid message, undefined condition')
-  }
-  var message = data.msg.replace(/['"]+/g, '')
-  var action = data.action || 'showNotificationsTab'
-
-  var params = {
-    MessageStructure: 'json',
-    Message: JSON.stringify({
-      "GCM": "{ \"data\": { \"message\": \"" + message + "\",  \"action\": \"" + action + "\", \"style\": \"inbox\", \"summaryText\": \"%n% New notifications\"} }",
-      "APNS_SANDBOX": "{ \"aps\": { \"alert\": \"" + message + "\" } }",
-      "APNS": "{ \"aps\": { \"alert\": \"" + message + "\" } }"
-    })
-  }
-
-  logger.debug('Sending push notification to users with message: ' + message)
-
-  if (users.length) {
-    users.forEach(function (user) {
-      if (user.notifications && user.notifications['push'] !== true) {
-        // user opt out
-        return
-      }
-
-      if (user.devices) {
-        user.devices.forEach(function (device) {
-          params.TargetArn = device.endpoint_arn
-          logger.debug('Sending notification to target arn: ' + params.TargetArn)
-
-          SNS.publish(params, function (error, data) {
-            if (error) {
-              logger.error('%o',error)
-              logger.error('Error sending notification, deleting endpoint arn: ' + params.TargetArn)
-              handleSNSError(user, device)
-            } else {
-              logger.debug('Push notification sent.')
-            }
-          })
-        })
-      }
-
-      dumpSNSMessage(`arn:user:${user.username}`, dumpfile, params)
-    })
-  }
 }
 
 const dumpSNSMessage = (dummyArn, filename, payload) => {

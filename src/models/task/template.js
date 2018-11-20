@@ -110,17 +110,6 @@ const ApprovalTask = Schema.extend({
   props: {
     approvers: ['array', false, () => { return [] }]
   },
-  parse () {
-    var attrs = Schema.prototype.parse.apply(this,arguments)
-    attrs.remote_url = attrs.url
-    delete attrs.url
-    return attrs
-  },
-  serialize () {
-    let data = Schema.prototype.serialize.apply(this,arguments)
-    data.url = data.remote_url
-    return data
-  },
   isApprover (userid) {
     if (!this.approvers) { return false }
     return this.approvers.indexOf(userid) !== -1
@@ -131,17 +120,25 @@ const DummyTask = Schema.extend({
   initialize () {
     Schema.prototype.initialize.apply(this,arguments)
     this.type = 'dummy'
+  }
+})
+
+const NotificationTask = Schema.extend({
+  initialize () {
+    Schema.prototype.initialize.apply(this,arguments)
+    this.type = 'notification'
   },
-  parse () {
-    var attrs = Schema.prototype.parse.apply(this,arguments)
-    attrs.remote_url = attrs.url
-    delete attrs.url
-    return attrs
-  },
-  serialize () {
-    let data = Schema.prototype.serialize.apply(this,arguments)
-    data.url = data.remote_url
-    return data
+  props: {
+    subject: 'string',
+    body: 'string',
+    notificationTypes: ['object', false, () => {
+      return {
+        push: true,
+        email: false,
+        socket: false,
+        desktop: false
+      }
+    }]
   }
 })
 
@@ -161,4 +158,4 @@ exports.Scraper = ScraperTask
 exports.Script = ScriptTask
 exports.Approval = ApprovalTask
 exports.Dummy = DummyTask
-//exports.Notification = NotificationTask
+exports.Notification = NotificationTask

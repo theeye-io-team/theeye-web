@@ -19,8 +19,6 @@ export default {
     // this is another improbable case, only should arrive unreaded notifications via socket
     if (notification.read) return
 
-    const type = notification.data.model._type
-
     const notifOptions = {
       icon: notificationBadge,
       badge: notificationBadge, // not happening
@@ -61,7 +59,9 @@ const createDesktopNotification = (title, options) => {
  */
 const titleFactory = (data) => {
   const type = data.model._type
-  if (type === 'Resource') {
+  if (type === 'NotificationJob') {
+    return data.model.task.name
+  } else if (type === 'Resource') {
     return 'Resource ' + data.model.name
   } else if (/WorkflowJob/.test(type) === true) {
     return 'Workflow ' + data.model.name
@@ -76,10 +76,12 @@ const titleFactory = (data) => {
 
 const messageFactory = (data) => {
   const type = data.model._type
-  let state = data.model.state
+  let state = data.model.state || ''
   state = state ? state.toLowerCase().replace(/ /g, '_') : 'unknown'
 
-  if (type === 'Resource') {
+  if (type === 'NotificationJob') {
+    return data.model.task.subject
+  } else if (type === 'Resource') {
     let eventIndex = data.custom_event || data.monitor_event
     return meaning[eventIndex] || meaning[data.monitor_event]
   } else if (/WorkflowJob/.test(type) === true) {
