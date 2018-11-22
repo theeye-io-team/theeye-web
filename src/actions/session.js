@@ -172,13 +172,13 @@ module.exports = {
   toggleExclusionFilter (filter, add) {
     App.state.loader.step()
     const notifications = App.state.session.user.notifications
-    const excludes = notifications.desktopExcludes || []
+    const excludes = notifications.notificationFilters || []
 
     // remove from filters so it doesn't dupe
     const newSettings = reject(excludes, filter)
     if (add) newSettings.push(filter)
 
-    this.updateSettings({ desktopExcludes: newSettings }, () => {
+    this.updateSettings({ notificationFilters: newSettings }, () => {
       App.state.session.user.trigger('change:notifications')
     })
   },

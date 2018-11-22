@@ -151,6 +151,8 @@ const createFromNotificationEvent = (req, res, done) => {
     getUsers(event, data.organization, acls, credentials, (error, users) => {
       if (error) return done(new Error('Cant get users'))
 
+      users = applyNotificationFilters(event, users)
+
       // create a notification for each user
       createNotifications(event, users, data.organization, (err, notifications) => {
         if (err) return done(new Error('Error creating notification'))
@@ -236,26 +238,13 @@ const createNotifications = (event, users, customerName, callback) => {
 
   const notifications = []
   users.forEach(user => {
-    let exclusionFilter
-    let excludes = (user.notifications && user.notifications.desktopExcludes) || []
-
-    if (!isApprovalOnHoldEvent(event)) {
-      if (excludes && Array.isArray(excludes) && excludes.length > 0) {
-        exclusionFilter = excludes.find(exc => {
-          return hasMatchedExclusionFilter(exc, event)
-        })
-      }
-    }
-
-    if (exclusionFilter === undefined) {
-      notifications.push({
-        topic: event.topic,
-        data: event.data,
-        event_id: event.id,
-        user_id: user.id,
-        customer_name: customerName
-      })
-    }
+    notifications.push({
+      topic: event.topic,
+      data: event.data,
+      event_id: event.id,
+      user_id: user.id,
+      customer_name: customerName
+    })
   })
 
   sails.models.notification.create(notifications).exec(callback)
@@ -340,4 +329,21 @@ const isApprovalOnHoldEvent = (event) => {
   )
 
   return isEvent
+}
+
+const applyNotificationFilters = (event, users) => {
+  return users.filter(user => {
+    let exclusionFilter
+    let excludes = (user.notifications && user.notifications.notificationFilters) || []
+
+    if (!isApprovalOnHoldEvent(event)) {
+      if (excludes && Array.isArray(excludes) && excludes.length > 0) {
+        exclusionFilter = excludes.find(exc => {
+          return hasMatchedExclusionFilter(exc, event)
+        })
+      }
+    }
+
+    return (exclusionFilter === undefined)
+  })
 }

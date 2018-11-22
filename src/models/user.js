@@ -16,10 +16,10 @@ const NotificationSettings = State.extend({
     push: ['boolean',false,true],
     email: ['boolean',false,true],
     desktop: ['boolean',false,true],
-    desktopExcludes: ['array',false,() => { return [] }]
+    notificationFilters: ['array',false,() => { return [] }]
   },
   getExclusionFilter (FILTER) {
-    return some(this.desktopExcludes, FILTER)
+    return some(this.notificationFilters, FILTER)
   }
 })
 

@@ -22,7 +22,7 @@ export default State.extend({
 
     this.listenTo(
       this.appState.session.user.notifications,
-      'change:desktopExcludes',
+      'change:notificationFilters',
       this.updateFilters
     )
   },
@@ -37,7 +37,7 @@ export default State.extend({
 const sortOnCreatedAt = (model) => -model.createdAt
 
 const buildFilterArray = (appState) => {
-  const excludes = appState.session.user.notifications.desktopExcludes
+  const excludes = appState.session.user.notifications.notificationFilters
   return excludes.map(filter => {
     return (model) => {
       // every prop has to match, including those in data
