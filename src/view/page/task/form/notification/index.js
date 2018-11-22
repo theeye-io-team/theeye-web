@@ -19,6 +19,7 @@ module.exports = TaskFormView.extend({
     this.advancedFields = [
       'description',
       'tags',
+      'acl',
       'triggers',
       'copy_task'
     ]
@@ -32,7 +33,7 @@ module.exports = TaskFormView.extend({
 
     const desktopCheckbox = new CheckboxView({
       visible: true,
-      label: 'Send desktop',
+      label: 'Send desktop notification',
       name: 'desktop',
       value: this.model.notificationTypes.desktop
     })
@@ -68,9 +69,9 @@ module.exports = TaskFormView.extend({
       new MembersSelectView({
         required: true,
         visible: true,
-        name: 'acl',
-        label: 'ACL\'s',
-        value: this.model.acl
+        name: 'recipients',
+        label: 'Send to',
+        value: this.model.recipients
       }),
       // advanced fields starts visible = false
       new AdvancedToggle({
@@ -107,6 +108,13 @@ module.exports = TaskFormView.extend({
         ],
         visible: false,
         value: this.model.triggers
+      }),
+      new MembersSelectView({
+        required: false,
+        visible: false,
+        name: 'acl',
+        label: 'ACL\'s',
+        value: this.model.acl
       })
     ]
 
@@ -140,12 +148,12 @@ module.exports = TaskFormView.extend({
     }
     this.addHelpIcon('name')
     this.addHelpIcon('subject')
-    this.addHelpIcon('body')
     this.addHelpIcon('email')
     this.addHelpIcon('desktop')
     this.addHelpIcon('description')
     this.addHelpIcon('tags')
     this.addHelpIcon('triggers')
+    this.addHelpIcon('acl')
 
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)
@@ -186,7 +194,8 @@ module.exports = TaskFormView.extend({
       triggers: task.trigger || [],
       subject: task.subject,
       body: task.body,
-      notificationTypes: task.notificationTypes
+      notificationTypes: task.notificationTypes,
+      recipients: task.recipients
     })
   }
 })

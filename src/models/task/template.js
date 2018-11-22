@@ -138,7 +138,8 @@ const NotificationTask = Schema.extend({
         socket: false,
         desktop: false
       }
-    }]
+    }],
+    recipients: 'array'
   }
 })
 

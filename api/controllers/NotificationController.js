@@ -77,9 +77,10 @@ const createFromNotificationTask = (req, res, done) => {
   let subject = data.model.task.subject
   let body = data.model.task.body
   let notificationTypes = data.model.task.notificationTypes
+  let recipients = data.model.task.recipients
   let acl = data.model.task.acl
 
-  getUsers(null, data.organization, acl, [], (error, users) => {
+  getUsers(null, data.organization, recipients, [], (error, users) => {
     if (error) return done(new Error('Cant get users'))
     if (!users.length) {
       done()
