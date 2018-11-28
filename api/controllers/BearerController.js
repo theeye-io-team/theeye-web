@@ -62,14 +62,14 @@ module.exports = {
         return res.send(500, 'error fetching profile. profile customers are empty.')
       }
 
-      const current_customer = customers.find(c => c.name==user.current_customer)
+      const current_customer = customers.find(c => c.name == user.current_customer)
 
       if (!current_customer) {
         return res.send(500,'error fetching profile. profile customer not found.')
       }
 
       req.supervisor.get({
-        route: `${current_customer.name}/customer`,
+        route: `/customer/${current_customer.name}`,
         success: customer => {
           user.current_customer = customer
           res.send(200, user)

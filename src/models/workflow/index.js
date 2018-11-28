@@ -4,7 +4,7 @@ import AppCollection from 'lib/app-collection'
 import graphlib from 'graphlib'
 
 import config from 'config'
-const urlRoot = `${config.api_v3_url}/workflow`
+const urlRoot = `${config.api_v3_url}/workflows`
 
 const formattedTags = () => {
   return {

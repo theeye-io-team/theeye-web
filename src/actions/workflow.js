@@ -12,7 +12,7 @@ const logger = require('lib/logger')('actions:workflow')
 module.exports = {
   get (id) {
     XHR.send({
-      url: `${App.config.api_v3_url}/workflow/triggers?node=${id}`,
+      url: `${App.config.api_v3_url}/workflows/triggers?node=${id}`,
       method: 'get',
       done (graphData, xhr) {
         if (xhr.status === 200) {
