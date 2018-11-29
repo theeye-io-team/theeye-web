@@ -8,7 +8,7 @@ import DefaultItem from './default'
 const Factory = (options) => {
   const type = options.model.data.model._type
 
-  if (type === 'NotificationJob') {
+  if (type === 'NotificationJob' && options.model.topic === 'notification-task') {
     return new NotificationTaskItem(options)
   } else if (type === 'Resource') {
     return new ResourceItem(options)

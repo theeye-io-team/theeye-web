@@ -298,7 +298,7 @@ const WorkflowJob = BaseJob.extend({
     jobs: Collection
   },
   session: {
-    lifecycle: 'lifecycle'
+    lifecycle: 'string'
   },
   initialize () {
     BaseJob.prototype.initialize.apply(this, arguments)
