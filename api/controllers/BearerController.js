@@ -69,7 +69,9 @@ module.exports = {
       }
 
       req.supervisor.get({
-        route: `/customer/${current_customer.name}`,
+        //replace this route
+        //route: `/customer/${current_customer.name}`,
+        route: `${current_customer.name}/customer`,
         success: customer => {
           user.current_customer = customer
           res.send(200, user)
