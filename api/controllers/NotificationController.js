@@ -68,17 +68,17 @@ const createFromNotificationTask = (req, res, done) => {
     err.status = 400
     return done(err)
   }
+
   if (!data.model.task) {
     let err = new Error('Task is required')
     err.status = 400
     return done(err)
   }
 
+  let notificationTypes = data.notificationTypes
   let subject = data.model.task.subject
   let body = data.model.task.body
-  let notificationTypes = data.model.task.notificationTypes
   let recipients = data.model.task.recipients
-  let acl = data.model.task.acl
 
   getUsers(null, data.organization, recipients, [], (error, users) => {
     if (error) return done(new Error('Cant get users'))
@@ -86,21 +86,22 @@ const createFromNotificationTask = (req, res, done) => {
       done()
     }
 
-    users.forEach((user) => {
-      if (notificationTypes.socket) {
-        // TO ADD
-      }
-    })
+    // users.forEach((user) => {
+    //   if (notificationTypes.socket) {
+    //     // TO ADD
+    //   }
+    // })
 
-    if (notificationTypes.push) {
+    // If notifications are not filtered, send all types as default
+    if (!notificationTypes || notificationTypes.push) {
       Notifications.push.dispatch({msg: subject}, users)
     }
 
-    if (notificationTypes.email) {
+    if (!notificationTypes || notificationTypes.email) {
       Notifications.email.send({subject, body}, users)
     }
 
-    if (notificationTypes.desktop) {
+    if (!notificationTypes || notificationTypes.desktop) {
       createNotifications(params, users, data.organization, (err, notifications) => {
         if (err) return done(new Error('Error creating notification'))
         if (notifications.length === 0) return
