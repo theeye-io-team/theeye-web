@@ -4,8 +4,7 @@ const moment = require('moment')
 
 const handledNotificationTopics = [
   'monitor-state',
-  'job-crud',
-  'webhook-triggered'
+  'job-crud'
 ]
 
 module.exports = {
