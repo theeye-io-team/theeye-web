@@ -59,8 +59,13 @@ module.exports = {
     const done = after(hosts.length,() => {
       App.state.alerts.success('Success', 'Tasks created.')
       App.state.events.fetch()
-      if(App.state.onboarding.onboardingActive) {
-        bootbox.alert('Congratulations!, Your first task has been created Successfully!')
+      if (App.state.onboarding.onboardingActive) {
+        bootbox.alert({
+          message: 'Congratulations!, Your first task has been created Successfully!',
+          callback: function () {
+            bootbox.alert("<p style='text-align: left;'>We're building our marketplace. Find further documentation at <a href='https://docs.theeye.io' target='_blank'>https://docs.theeye.io.</a></p><p>If you need help please email us at <a href='mailto:support@theeye.io'>support@theeye.io.</a></p>")
+          }
+        })
         OnboardingActions.updateOnboarding(true)
         OnboardingActions.hideOnboarding()
       }
