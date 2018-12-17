@@ -5,13 +5,7 @@ import config from 'config'
 module.exports = () => {
   let refreshInterval
 
-  const publics = [
-    'login',
-    'register',
-    'activate',
-    'sociallogin',
-    'passwordreset'
-  ]
+  let publics = ['login', 'sociallogin', 'register', 'activate', 'passwordreset']
 
   const refreshIntervalMs = config.session.refresh_interval
 

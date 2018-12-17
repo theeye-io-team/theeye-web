@@ -72,7 +72,32 @@ module.exports = {
         callbackURLLogin: "http://localhost:6080/auth/google/callback",
         callbackURLConnect: "http://localhost:6080/auth/google/connectcallback"
       }
-    }
+    },
+    /**
+     *
+     * ldap authentication config
+     * https://www.npmjs.com/package/passport-ldapauth
+     *
+     */
+    // ldapauth: {
+    //   provider: 'ActiveDirectory',
+    //   customerName: 'ldapOrg',
+    //   server: {
+    //     url: '',
+    //     bindDN: '',
+    //     bindCredentials: '',
+    //     searchBase: '',
+    //     searchAttributes: ['objectSid', 'name', 'mail', 'sAMAccountName', 'memberOf'],
+    //     searchFilter: '(sAMAccountName={{username}})'
+    //   },
+    //   fields: {
+    //     id: 'sAMAccountName',
+    //     name: 'name',
+    //     username: 'sAMAccountName',
+    //     email: 'mail',
+    //     groups: 'memberOf'
+    //   }
+    // }
   },
   supervisor: {
     timeout: 10000,

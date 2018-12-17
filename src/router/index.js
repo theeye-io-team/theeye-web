@@ -14,6 +14,7 @@ import DashboardRoute from './dashboard'
 import ChartsRoute from './charts'
 import WorkflowRouter from './workflow'
 import hopscotch from 'hopscotch'
+import config from 'config'
 
 module.exports = Router.extend({
   execute (callback, args) {
@@ -22,13 +23,15 @@ module.exports = Router.extend({
         hopscotch.endTour(true)
       }
 
-      let publicRoute = ['login','register','activate','sociallogin', 'passwordreset'].find(route => {
+      let publicRoutes = ['login', 'sociallogin', 'register', 'activate', 'passwordreset']
+
+      let isPublicRoute = publicRoutes.find(route => {
         let routeRegex = new RegExp(route)
         return (routeRegex.test(window.location.pathname)||routeRegex.test(window.location.hash))
       })
 
       let logged_in = App.state.session.logged_in
-      if (!publicRoute) {
+      if (!isPublicRoute) {
         // navigate to login if we dont have an access_token
         if (logged_in===undefined) {
           return // wait until it is set

@@ -26,7 +26,7 @@ const defaultConfigs = {
     url: 'https://s3.amazonaws.com/theeye.agent/TheEyeWinServiceInstaller.zip',
     name: 'TheEyeWinServiceInstaller.zip'
   },
-  lc_url: 'https://assets.theeye.io/production/bugtracking',
+  lc_url: 'https://assets.theeye.io/production/bugtracking'
 }
 
 const configs = {

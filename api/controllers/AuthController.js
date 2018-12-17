@@ -224,6 +224,9 @@ var AuthController = {
     });
   },
   registeruser: function(req, res) {
+    if (sails.config.passport.ldapauth) {
+      return res.send(400, 'ldapSet');
+    }
     var params = req.params.all();
     if(!params.name) return res.send(400, 'You must provide a name');
     if(!params.username) return res.send(400, 'You must select a username');
@@ -315,35 +318,61 @@ var AuthController = {
    * @param {Object} res
    */
   login (req, res) {
-    passport.authenticate('local', function (err, user) {
-      if (err) return res.send(500, err)
-      if (!user) return res.send(400, 'Invalid credentials')
-      if(!user.enabled) {
-        passport.sendUserActivationEmail( req.user, user, err => {
-          if(err) {
-            logger.error(err);
-            return res.send(400, 'Error re sending activation email.');
-          } else {
-            return res.send(400, {error: 'inactiveUser'})
-          }
-        });
-      } else {
-        logger.debug('passport authenticated')
+    const loginLocal = function () {
+      passport.authenticate('local', function (err, user) {
+        if (err) return res.send(500, err)
+        if (!user) return res.send(400, 'Invalid credentials')
+        if (!user.enabled) {
+          passport.sendUserActivationEmail(req.user, user, err => {
+            if (err) {
+              logger.error(err)
+              return res.send(400, 'Error re sending activation email.')
+            } else {
+              return res.send(400, {error: 'inactiveUser'})
+            }
+          })
+        } else {
+          logger.debug('passport authenticated via local strategy')
+          req.login(user, function (err) {
+            if (err) {
+              logger.error('LOGIN ERROR:')
+              logger.error('%o', err)
+              return res.send(500, err)
+            } else {
+              logger.debug('user logged in. issuing access token')
+              const accessToken = jwtoken.issue({ user_id: user.id })
+              return res.send(200, {
+                access_token: accessToken
+              })
+            }
+          })
+        }
+      })(req, res, req.next)
+    }
+
+    if (sails.config.passport.ldapauth) {
+      passport.authenticate('ldapauth', function (err, user, info) {
+        if (err || !user) return loginLocal()
+
+        logger.debug('passport authenticated via LDAP')
         req.login(user, function (err) {
           if (err) {
             logger.error('LOGIN ERROR:')
-            logger.error('%o',err);
+            logger.error('%o', err)
             return res.send(500, err)
           } else {
             logger.debug('user logged in. issuing access token')
             const accessToken = jwtoken.issue({ user_id: user.id })
             return res.send(200, {
-              access_token: accessToken
+              access_token: accessToken,
+              login_type: 'ldap'
             })
           }
         })
-      }
-    })(req,res,req.next)
+      })(req, res, req.next)
+    } else {
+      loginLocal()
+    }
   },
   //callback for login
   socialCallback(req, res) {

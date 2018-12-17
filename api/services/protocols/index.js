@@ -17,4 +17,5 @@ module.exports = {
 , theeye : require('./theeye')
 , oauth2 : require('./oauth2')
 , openid : require('./openid')
+, ldapauth : require('./ldapauth')
 };

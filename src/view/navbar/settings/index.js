@@ -66,11 +66,13 @@ module.exports = FullContainer.extend({
       this.renderSubview(integrationsTab, this.queryByHook('integrations-tab'))
     }
 
-    if (Acls.hasAccessLevel('manager') && App.state.session.user.credential !=='admin') {
-      settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#members" data-toggle="tab">Members</a></li>`))
+    if (App.state.session.accountPreferences.showMembersTab) {
+      if (Acls.hasAccessLevel('manager') && App.state.session.user.credential !=='admin') {
+        settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#members" data-toggle="tab">Members</a></li>`))
 
-      const membersTab = new MembersTab()
-      this.renderSubview(membersTab, this.queryByHook('members-tab'))
+        const membersTab = new MembersTab()
+        this.renderSubview(membersTab, this.queryByHook('members-tab'))
+      }
     }
 
     this.on('change:visible', () => {

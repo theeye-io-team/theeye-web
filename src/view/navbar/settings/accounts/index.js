@@ -71,7 +71,8 @@ module.exports = View.extend({
   props: {
     email: ['string', false, ''],
     username: ['string', false, ''],
-    name: ['string', false, '']
+    name: ['string', false, ''],
+    showAccountActions: ['boolean', false, true]
   },
   bindings: {
     'email': {
@@ -85,12 +86,23 @@ module.exports = View.extend({
     'name': {
       type: 'text',
       hook: 'account-name'
-    }
+    },
+    'showAccountActions': [
+      {
+        type: 'toggle',
+        hook: 'change-password'
+      },
+      {
+        type: 'toggle',
+        hook: 'connect-section'
+      }
+    ]
   },
   initialize () {
     this.email = App.state.session.user.email
     this.username = App.state.session.user.username
     this.name = App.state.session.user.name
+    this.showAccountActions = App.state.session.accountPreferences.showAccountActions
   },
   events: {
     'click [data-hook=change-password]': 'changePassword'
@@ -124,13 +136,15 @@ module.exports = View.extend({
   render () {
     this.renderWithTemplate(this)
 
-    const googleConnection = new SocialConnection({
-      name: 'Google +'
-    })
+    if (this.showAccountActions) {
+      const googleConnection = new SocialConnection({
+        name: 'Google +'
+      })
 
-    this.renderSubview(
-      googleConnection,
-      this.queryByHook('google-connection-container')
-    )
+      this.renderSubview(
+        googleConnection,
+        this.queryByHook('google-connection-container')
+      )
+    }
   }
 })

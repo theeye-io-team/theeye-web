@@ -34,7 +34,8 @@ const texts = {
     registerError: 'Error registering user.',
     sendUserRegistrationEmailError: 'Error sending registration email.',
     activationDefaultError: 'Account activation error, please try again later.',
-    activationSuccess: 'Registration complete'
+    activationSuccess: 'Registration complete',
+    ldapSet: 'Invalid action, please contact your domain administrator.'
   },
   es: {
     title: 'Automatización Robótica de Procesos y Sistemas.',
@@ -67,7 +68,8 @@ const texts = {
     emailTaken: 'El email ya esta en uso. Por favor use uno distinto.',
     sendActivationEmailError: 'Error al enviar email de activación.',
     registerError: 'Error al registrar usuario.',
-    sendUserRegistrationEmailError: 'Error al enviar email de registración.'
+    sendUserRegistrationEmailError: 'Error al enviar email de registración.',
+    ldapSet: 'Acción invalida, por favor contacta a tu administrador de dominio.'
   }
 }
 

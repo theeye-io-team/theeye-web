@@ -62,7 +62,7 @@ module.exports = View.extend({
   autoRender: true,
   template: require('./template.hbs'),
   props: {
-    formSwitch: ['boolean',false,false]
+    formSwitch: ['boolean', false, false]
   },
   bindings: {
     formSwitch: [
@@ -73,7 +73,7 @@ module.exports = View.extend({
       },
       {
         type: 'toggle',
-        hook: 'forgot-form-container',
+        hook: 'forgot-form-container'
       }
     ]
   },

@@ -24,6 +24,15 @@ module.exports = {
         App.state.loader.visible = false
         if (xhr.status == 200){
           App.state.session.access_token = response.access_token
+          if (response.login_type) {
+            switch (response.login_type) {
+              case 'ldap':
+                App.state.session.accountPreferences.showAccountActions = false
+                App.state.session.accountPreferences.showMembersTab = false
+                break
+              default:
+            }
+          }
         } else {
           bootbox.alert('Login error, please try again')
         }
@@ -85,11 +94,8 @@ module.exports = {
       },
       fail: (err,xhr) => {
         App.state.loader.visible = false
-        if (xhr.status == 400) {
-          bootbox.alert('User email not found')
-        } else {
-          bootbox.alert('Error, please try again')
-        }
+        let errorMsg = registerLang.getText(xhr.response.error) || registerLang.getText('defaultError')
+        bootbox.alert(errorMsg)
       }
     })
   },

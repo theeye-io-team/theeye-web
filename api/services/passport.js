@@ -9,6 +9,7 @@ var mailer = require("./mailer")
 var TheEyeClient = require('../libs/theeye-client')
 var CustomStrategy = require('passport-custom').Strategy
 var logger = require('../libs/logger')('services:passport')
+var LdapStrategy = require('passport-ldapauth')
 
 /**
  * Passport Service
@@ -589,6 +590,8 @@ function createTheeyeUser (user, input, supervisor, next) {
     });
 }
 
+passport.createTheeyeUser = createTheeyeUser
+
 function searchpassport (user, next){
   logger.debug('searching passport theeye for user "%s"', user.username);
   Passport.findOne({
@@ -701,7 +704,15 @@ passport.loadStrategies = function () {
   Object.keys(strategies).forEach(function (key) {
     var options = { passReqToCallback: true }, Strategy;
 
-    if (key === 'local') {
+    if (key === 'ldapauth') {
+
+      _.extend(options, {
+        usernameField: 'identifier',
+        server: strategies[key].server
+      })
+      self.use(new LdapStrategy(options, self.protocols.ldapauth))
+
+    } else if (key === 'local') {
 
       _.extend(options, { usernameField: 'identifier' })
       const Local = require('passport-local').Strategy
@@ -843,6 +854,29 @@ passport.connectSocialMobile = function (provider, identifier, user,  next) {
       return next(null, user);
     }
   });
+}
+
+passport.connectLdapAuth = function (provider, identifier, user, next) {
+  Passport.findOne({
+    provider: provider,
+    identifier: identifier
+  }, function (err, passport) {
+    if (err) return next(err)
+    if (!passport) {
+      var query = {
+        identifier: identifier,
+        protocol: 'ldapAuth',
+        provider: provider,
+        user: user.id
+      }
+      Passport.create(query, function (err, passport) {
+        if (err) return next(err)
+        return next(null, user)
+      })
+    } else {
+      return next(null, user)
+    }
+  })
 }
 
 module.exports = passport;

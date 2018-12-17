@@ -12,6 +12,9 @@ module.exports = {
    *
    */
   sendResetMail: function(req,res,next) {
+    if (sails.config.passport.ldapauth) {
+      return res.send(400, {error: 'ldapSet'});
+    }
     var email = req.params.all().email; // every posible param
     logger.debug('searching ' + email);
     User.findOne({ email: email },function(err,user){
@@ -54,7 +57,7 @@ module.exports = {
   },
   reset: function(req,res,next){
     var params = req.params.all();
-    
+
     if(
       ! params.token ||
       ! params.password ||
