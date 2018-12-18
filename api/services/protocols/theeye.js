@@ -49,7 +49,7 @@ exports.createUser = function (localUser, params, supervisor, next) {
       })
     },
     failure: (err) => {
-      logger.error('%o', err)
+      logger.error(err.body)
       return next(err)
     }
   })

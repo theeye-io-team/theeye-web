@@ -105,10 +105,7 @@ module.exports = function (req, profile, next) {
 
           passport.createTheeyeUser(
             newUser, theeyeuser, client, function (err, profile) {
-              if (err) {
-                logger.error('%o', err)
-                return next(err)
-              }
+              if (err) return next(err)
 
               passport.connectLdapAuth(provider, identifier, newUser, next)
             }
