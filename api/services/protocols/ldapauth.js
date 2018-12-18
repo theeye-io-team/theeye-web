@@ -29,6 +29,36 @@ const parseProfile = function (profile) {
   return data
 }
 
+const checkAndCreateCustomer = function (customerName, client, callback) {
+  client.get({
+    route: '/customer',
+    query: {
+      'name': customerName
+    },
+    success: customers => {
+      if (customers.length) {
+        callback(null)
+      } else {
+        client.create({
+          route: '/customer',
+          body: {
+            name: customerName
+          },
+          success: customer => {
+            callback(null)
+          },
+          failure: err => {
+            callback(err)
+          }
+        })
+      }
+    },
+    failure: err => {
+      callback(err)
+    }
+  })
+}
+
 const checkAndUpdateUser = function (user, data, client, callback) {
   delete data.enabled
   delete data.email
@@ -89,27 +119,31 @@ module.exports = function (req, profile, next) {
           return next(null, user)
         })
       } else {
-        passport.protocols.local.createUser(data, function (err, newUser) {
-          if (err) {
-            logger.error('%o', err)
-            return next(err)
-          }
+        checkAndCreateCustomer(data.customers[0], client, function (err) {
+          if (err) return next(err)
 
-          var theeyeuser = {
-            email: newUser.email,
-            customers: newUser.customers,
-            credential: newUser.credential,
-            enabled: true,
-            username: newUser.username || newUser.email
-          }
-
-          passport.createTheeyeUser(
-            newUser, theeyeuser, client, function (err, profile) {
-              if (err) return next(err)
-
-              passport.connectLdapAuth(provider, identifier, newUser, next)
+          passport.protocols.local.createUser(data, function (err, newUser) {
+            if (err) {
+              logger.error('%o', err)
+              return next(err)
             }
-          )
+
+            var theeyeuser = {
+              email: newUser.email,
+              customers: newUser.customers,
+              credential: newUser.credential,
+              enabled: true,
+              username: newUser.username || newUser.email
+            }
+
+            passport.createTheeyeUser(
+              newUser, theeyeuser, client, function (err, profile) {
+                if (err) return next(err)
+
+                passport.connectLdapAuth(provider, identifier, newUser, next)
+              }
+            )
+          })
         })
       }
     })
