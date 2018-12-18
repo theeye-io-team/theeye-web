@@ -31,6 +31,7 @@ class User extends Route {
             })
 
             App.state.users.set(users)
+            App.state.users.trigger('sync')
           },
           fail (err,xhr) {
             bootbox.alert('Something goes wrong. Please refresh')
