@@ -81,13 +81,19 @@ module.exports = function (req, profile, next) {
 
       if (user) {
         checkAndUpdateUser(user, data, client, function (err, user) {
-          if (err) return next(err)
+          if (err) {
+            logger.error('%o', err)
+            return next(err)
+          }
 
           return next(null, user)
         })
       } else {
         passport.protocols.local.createUser(data, function (err, newUser) {
-          if (err) return next(err)
+          if (err) {
+            logger.error('%o', err)
+            return next(err)
+          }
 
           var theeyeuser = {
             email: newUser.email,
@@ -99,7 +105,11 @@ module.exports = function (req, profile, next) {
 
           passport.createTheeyeUser(
             newUser, theeyeuser, client, function (err, profile) {
-              if (err) return next(err)
+              if (err) {
+                logger.error('%o', err)
+                return next(err)
+              }
+
               passport.connectLdapAuth(provider, identifier, newUser, next)
             }
           )

@@ -585,7 +585,11 @@ function createTheeyeUser (user, input, supervisor, next) {
     .protocols
     .theeye
     .createUser(user, client, supervisor, function(error, profile){
-      if(error) return next(error);
+      if (error) {
+        logger.error('%o', error)
+        return next(error)
+      }
+
       return next(null,profile);
     });
 }
