@@ -210,10 +210,12 @@ const isDisplayableMonitorEmitter = (emitter, eventName) => {
       eventName === EventConstants.UPDATES_STOPPED ||
       eventName === EventConstants.UPDATES_STARTED
     )
-  } else if (
-    subtype === MONITOR.TYPE_DSTAT ||
-    subtype === MONITOR.TYPE_PSAUX
-  ) {
+  } else if (subtype === MONITOR.TYPE_DSTAT) {
+    return Boolean(
+      eventName === EventConstants.RECOVERED ||
+      eventName === EventConstants.FAILURE
+    )
+  } else if (subtype === MONITOR.TYPE_PSAUX) {
     return false
   } else {
     return Boolean(
