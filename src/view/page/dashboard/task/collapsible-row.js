@@ -1,4 +1,5 @@
 import View from 'ampersand-view'
+import TagView from 'components/tag'
 import './styles.less'
 
 /**
@@ -23,6 +24,7 @@ module.exports = View.extend({
               <div class="panel-title-content">
 
                 <span class="panel-item name">
+                  <span data-hook="tags"></span>
                   <span data-hook="name" title=""></span>
                   <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
                 </span>
@@ -180,6 +182,7 @@ module.exports = View.extend({
     this.renderWithTemplate()
     this.renderButtons()
     this.renderCollapsedContent()
+    this.renderTags()
 
     let $el = $(this.query('.panel-collapse.collapse'))
     $el.on('show.bs.collapse', () => { this.collapsed = false })
@@ -193,5 +196,14 @@ module.exports = View.extend({
   },
   renderCollapsedContent () {
     return
+  },
+  renderTags () {
+    if (this.model.tagsCollection) {
+      this.renderCollection(
+        this.model.tagsCollection,
+        TagView,
+        this.queryByHook('tags')
+      )
+    }
   }
 })

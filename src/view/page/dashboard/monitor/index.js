@@ -7,6 +7,7 @@ import MonitorActions from 'actions/monitor'
 const CollapseContentFactory = require('./collapse-content').Factory
 import MonitorConstants from 'constants/monitor'
 import rowIconByType from '../row-icon-by-type'
+import TagView from 'components/tag'
 
 module.exports = function (options) {
   const model = options.model
@@ -113,7 +114,9 @@ const MonitorView = View.extend({
                 aria-controls="unbinded">
                 <div class="panel-title-content">
 
-                  <span class="panel-item name" data-hook="name">
+                  <span class="panel-item name">
+                    <span data-hook="tags"></span>
+                    <span data-hook="name"></span>
                     <small><i data-hook="type"></i></small>
                   </span>
 
@@ -155,6 +158,7 @@ const MonitorView = View.extend({
     this.renderButtons()
     this.setRowIcon()
     this.renderCollapsedContent()
+    this.renderTags()
   },
   renderCollapsedContent () {
     this.renderSubview(
@@ -184,6 +188,15 @@ const MonitorView = View.extend({
       new MonitorButtonsView({ model: this.model }),
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
     )
+  },
+  renderTags () {
+    if (this.model.tagsCollection) {
+      this.renderCollection(
+        this.model.tagsCollection,
+        TagView,
+        this.queryByHook('tags')
+      )
+    }
   }
 })
 

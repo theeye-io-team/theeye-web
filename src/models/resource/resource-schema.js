@@ -16,7 +16,7 @@ module.exports = AppModel.extend({
 		acl: 'array',
 		failure_severity: 'string',
 		alerts: 'boolean',
-    tags: 'array',
+    tags: ['array',false, () => { return [] }],
     source_model_id: 'string', // temporal , is used to create templates
     hostgroup_id: ['string', false, null] // only if belongs to
 	},
