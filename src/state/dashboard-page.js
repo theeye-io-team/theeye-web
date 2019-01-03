@@ -18,7 +18,7 @@ const isDate = function (date) {
   if (!date) {
     return false
   } else {
-    return (date.getMonth())
+    return (date instanceof Date)
   }
 }
 
