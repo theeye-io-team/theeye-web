@@ -66,11 +66,13 @@ const Schema = AppModel.extend({
     this.tagsCollection = new TagCollection([])
 
     this.listenToAndRun(this, 'change:tags', () => {
-      let tags = this.tags.map((tag, index) => {
-        return {_id: (index + 1).toString(), name: tag}
-      })
-      tags = tags.slice(0, 3)
-      this.tagsCollection.set(tags)
+      if (Array.isArray(this.tags)) {
+        let tags = this.tags.map((tag, index) => {
+          return {_id: (index + 1).toString(), name: tag}
+        })
+        tags = tags.slice(0, 3)
+        this.tagsCollection.set(tags)
+      }
     })
 
     this.listenToAndRun(this.schedules, 'reset sync remove add', () => {
