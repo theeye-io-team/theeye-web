@@ -62,7 +62,7 @@ module.exports = FullContainer.extend({
       const installerTab = new InstallerTab()
       this.renderSubview(installerTab, this.queryByHook('installer-tab'))
 
-      settingsLinks.appendChild( html2dom(`<li class="tab-item" data-hook="start-tutorial"><a href="#">Tutorial</a></li>`))
+      settingsLinks.appendChild( html2dom(`<li data-hook="start-tutorial"><a href="#">Tutorial</a></li>`))
 
       const credentialsTab = new CredentialsTab()
       this.renderSubview(credentialsTab, this.queryByHook('credentials-tab'))
