@@ -521,10 +521,10 @@ var MonitorsPageInit = (function(){
         });
       });
 
-      $form.find('input[name=cache]').val('60');
-      $form.find('input[name=mem]').val('60');
-      $form.find('input[name=cpu]').val('60');
-      $form.find('input[name=disk]').val('60');
+      $form.find('input[name=cache]').val('90');
+      $form.find('input[name=mem]').val('90');
+      $form.find('input[name=cpu]').val('90');
+      $form.find('input[name=disk]').val('90');
 
       $modal.modal('show');
       $.unblockUI();
