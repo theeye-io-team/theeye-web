@@ -21,7 +21,6 @@ module.exports = TaskFormView.extend({
 
     this.advancedFields = [
       'description',
-      'tags',
       'acl',
       'triggers',
       'task_arguments',
@@ -53,6 +52,11 @@ module.exports = TaskFormView.extend({
           }
         ],
       }),
+      new TagsSelectView({
+        required: false,
+        name: 'tags',
+        value: this.model.tags
+      }),
       // advanced fields starts visible = false
       new AdvancedToggle({
         onclick: (event) => {
@@ -71,12 +75,6 @@ module.exports = TaskFormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         value: this.model.description,
-      }),
-      new TagsSelectView({
-        required: false,
-        visible: false,
-        name: 'tags',
-        value: this.model.tags
       }),
       new MembersSelectView({
         required: false,
@@ -115,7 +113,7 @@ module.exports = TaskFormView.extend({
         type: TaskConstants.TYPE_APPROVAL,
         visible: false
       })
-      this.fields.splice(3, 0, copySelect)
+      this.fields.splice(4, 0, copySelect)
       this.listenTo(copySelect,'change',() => {
         if (copySelect.value) {
           let task = App.state.tasks.get(copySelect.value)

@@ -20,7 +20,6 @@ module.exports = TaskFormView.extend({
 
     this.advancedFields = [
       'description',
-      'tags',
       'acl',
       'triggers',
       'copy_task'
@@ -34,6 +33,11 @@ module.exports = TaskFormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         value: this.model.name,
+      }),
+      new TagsSelectView({
+        required: false,
+        name: 'tags',
+        value: this.model.tags
       }),
       new ArgumentsView({
         name: 'output_parameters',
@@ -58,12 +62,6 @@ module.exports = TaskFormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         value: this.model.description,
-      }),
-      new TagsSelectView({
-        required: false,
-        visible: false,
-        name: 'tags',
-        value: this.model.tags
       }),
       new MembersSelectView({
         required: false,
@@ -90,7 +88,7 @@ module.exports = TaskFormView.extend({
         type: TaskConstants.TYPE_DUMMY,
         visible: false
       })
-      this.fields.splice(3, 0, copySelect)
+      this.fields.splice(4, 0, copySelect)
       this.listenTo(copySelect,'change',() => {
         if (copySelect.value) {
           let task = App.state.tasks.get(copySelect.value)

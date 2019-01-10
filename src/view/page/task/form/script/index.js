@@ -58,11 +58,9 @@ module.exports = TaskFormView.extend({
     this.advancedFields = [
       'script_runas',
       'description',
-      'tags',
       'acl',
       'triggers',
       'grace_time',
-      'task_arguments',
       'copy_task'
     ]
 
@@ -77,6 +75,15 @@ module.exports = TaskFormView.extend({
       }),
       hostsSelection ,
       this.scriptSelection ,
+      new TagsSelectView({
+        required: false,
+        name: 'tags',
+        value: this.model.tags
+      }),
+      new ArgumentsView({
+        name: 'task_arguments',
+        value: this.model.task_arguments
+      }),
       // advanced fields starts visible = false
       new AdvancedToggle({
         onclick: (event) => {
@@ -105,12 +112,6 @@ module.exports = TaskFormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         value: this.model.description,
-      }),
-      new TagsSelectView({
-        required: false,
-        visible: false,
-        name: 'tags',
-        value: this.model.tags
       }),
       new MembersSelectView({
         required: false,
@@ -155,17 +156,12 @@ module.exports = TaskFormView.extend({
         unselectedText: 'Select the Trigger on-hold time',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
-      }),
-      new ArgumentsView({
-        visible: false,
-        name: 'task_arguments',
-        value: this.model.task_arguments
       })
     ]
 
     if (this.model.isNew()) {
       const copySelect = new CopyTaskSelect({ type: TaskConstants.TYPE_SCRIPT, visible: false })
-      this.fields.splice(4, 0, copySelect)
+      this.fields.splice(6, 0, copySelect)
       this.listenTo(copySelect,'change',() => {
         if (copySelect.value) {
           let task = App.state.tasks.get(copySelect.value)
