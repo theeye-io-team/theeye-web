@@ -9,7 +9,10 @@ import MembersTab from './members'
 import NotificationsTab from './notifications'
 import IntegrationsTab from './integrations'
 import Acls from 'lib/acls'
+import OnboardingActions from 'actions/onboarding'
+import TaskCreationWizard from 'view/page/task/creation-wizard'
 import html2dom from 'lib/html2dom'
+import bootbox from 'bootbox'
 
 import './settings.css'
 
@@ -59,6 +62,8 @@ module.exports = FullContainer.extend({
       const installerTab = new InstallerTab()
       this.renderSubview(installerTab, this.queryByHook('installer-tab'))
 
+      settingsLinks.appendChild( html2dom(`<li class="tab-item" data-hook="start-tutorial"><a href="#">Tutorial</a></li>`))
+
       const credentialsTab = new CredentialsTab()
       this.renderSubview(credentialsTab, this.queryByHook('credentials-tab'))
 
@@ -99,10 +104,11 @@ module.exports = FullContainer.extend({
     this.visible = state.visible
   },
   events: {
-    'click [data-hook=close-button]':'onClickCloseButton',
+    'click [data-hook=close-button]': 'onClickCloseButton',
     keydown: 'onKeyEvent',
     keypress: 'onKeyEvent',
-    'click .tab-item': 'setCurrentTab'
+    'click .tab-item': 'setCurrentTab',
+    'click [data-hook=start-tutorial]': 'onClickTutorial'
   },
   onClickCloseButton (event) {
     event.preventDefault()
@@ -110,8 +116,49 @@ module.exports = FullContainer.extend({
 
     NavbarActions.hideSettingsMenu()
   },
+  onClickTutorial (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    // if user has bots and tasks, show tutorial options
+    if (App.state.resources.length > 0 && App.state.tasks.length > 0) {
+      bootbox.dialog({
+        title: 'Tutorial',
+        message: 'Which tutorial would you like to see?',
+        closeButton: true,
+        buttons: {
+          self_provided: {
+            label: 'Bot tutorial',
+            className: 'btn-primary',
+            callback () {
+              OnboardingActions.showOnboarding()
+              NavbarActions.toggleTab('installer')
+            }
+          },
+          linux: {
+            label: 'Task tutorial',
+            className: 'btn-primary',
+            callback () {
+              OnboardingActions.showOnboarding()
+              NavbarActions.hideSettingsMenu()
+              let wizard = new TaskCreationWizard()
+            }
+          }
+        }
+      })
+    } else {
+      // if the user doesn't have bots or tasks, show the corresponding tutorial
+      OnboardingActions.showOnboarding()
+      if (App.state.resources.length === 0) {
+        NavbarActions.toggleTab('installer')
+      } else {
+        NavbarActions.hideSettingsMenu()
+        let wizard = new TaskCreationWizard()
+      }
+    }
+  },
   onKeyEvent (event) {
-    if (event.keyCode == 27) {
+    if (event.keyCode === 27) {
       event.preventDefault()
       event.stopPropagation()
 

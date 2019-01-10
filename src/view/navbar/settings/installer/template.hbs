@@ -11,8 +11,8 @@
       </div>
     </section>
     <section> <!-- INSTALLER SECTION -->
-      <h3 class="blue bold">INSTALLER</h3>
-      <i data-hook="start-onboarding"></i>
+      <h3 class="blue bold start-onboarding">INSTALLER</h3>
+      <i class="start-onboarding" data-hook="start-onboarding"></i>
       <div id="linux-installer" class="row border">
         <div class="col-xs-12">
           <h4 class="blue"><i class="fa fa-linux"></i> Linux Bot Installer</h4>
@@ -35,7 +35,6 @@
             <li data-tutorial="linux-onboarding">Wait until Spock appears telling you are done</li>
             <li data-tutorial="linux-onboarding">Check your <a data-hook="go-to-dashboard">Dashboard<i class="fa fa-dashboard"></i></a>, you should see the installed Bot.</li>
           </ol>
-          <div class="alert alert-warning">If something goes wrong, send us an email to <a href="mailto:support@theeye.io">support@theeye.io</a> indicating operating system name and version (kernel, release, distribution) and attaching the installation log file /tmp/*.theEyeInstallation.log.gz</div>
         </div>
       </div>
       <div id="windows-installer" class="row border">
@@ -67,7 +66,7 @@
       </div>
       <div id="docker-installer" class="row border">
         <div class="col-xs-12">
-          <h4 class="blue"><i class="fa fa-docker"></i> Docker Bot Installer</h4>
+          <h4 class="blue">Docker Bot Installer</h4>
           <h4 class="blue">To run a Docker version of the Bot</h4>
           <ol>
             <li data-tutorial="docker-onboarding">Open a Console</li>
@@ -85,6 +84,25 @@
             </li>
             <li data-tutorial="docker-onboarding">Wait for the installer to complete all actions.</li>
             <li data-tutorial="docker-onboarding">Check your <a data-hook="go-to-dashboard">Dashboard<i class="fa fa-dashboard"></i></a>, you should see the installed Bot.</li>
+          </ol>
+        </div>
+      </div>
+      <div id="aws-installer" class="row border">
+        <div class="col-xs-12">
+          <h4 class="blue">AWS Bot Installer</h4>
+          <h4 class="blue">To install the AWS Bot</h4>
+          <ol>
+            <li data-tutorial="aws-onboarding">Open the AWS Console</li>
+            <li data-tutorial="aws-onboarding">
+              Copy and paste the following user-data:
+              <textarea readonly id="awsAgentCurl" class="form-control" rows="4" data-hook="aws-curl-agent" style="resize: none;"></textarea>
+              <button class="btn btn-primary clipboard-aws-curl-agent-btn" type="button" data-clipboard-target="#awsAgentCurl">
+                <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+              </button>
+            </li>
+            <li data-tutorial="aws-onboarding">Launch your instances.</li>
+            <li data-tutorial="aws-onboarding">Wait until the BOT starts reporting.</li>
+            <li data-tutorial="aws-onboarding">Check your <a data-hook="go-to-dashboard">Dashboard<i class="fa fa-dashboard"></i></a>, you should see the installed Bot.</li>
           </ol>
         </div>
       </div>

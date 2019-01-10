@@ -260,6 +260,15 @@ exports.getCustomerAgentCredentials = function (customer, supervisor, done) {
         customer.name
       )
 
+      user.awsCurl = format(
+        '#!/bin/bash \n hostnamectl set-hostname %s-aws \n curl -s "%s" | bash -s "%s" "%s" "%s" ',
+        customer.name,
+        sails.config.application.agentInstallerUrl.linux,
+        user.client_id,
+        user.client_secret,
+        customer.name
+      )
+
       return done(null, user)
     },
     failure: err => done(err)

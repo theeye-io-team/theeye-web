@@ -157,6 +157,52 @@ var showOnboarding = function(platform) {
         xOffset: -20
       },
     ]
+  } else if (platform === 'aws') {
+    var el = document.getElementById("aws-installer");
+    el.scrollIntoView();
+
+    steps = [
+      {
+        target: document.querySelectorAll('[data-tutorial=aws-onboarding]')[0],
+        title: "AWS Bot installation",
+        content: "First of all, open the AWS console.",
+        placement: "left",
+        yOffset: -20,
+        xOffset: -20
+      },
+      {
+        target: document.querySelectorAll('[data-tutorial=aws-onboarding]')[1],
+        title: "AWS Bot installation",
+        content: "Copy the following user-data.",
+        placement: "left",
+        yOffset: -20,
+        xOffset: -20
+      },
+      {
+        target: document.querySelectorAll('[data-tutorial=aws-onboarding]')[2],
+        title: "AWS Bot installation",
+        content: "Launch your instances.",
+        placement: "left",
+        yOffset: -20,
+        xOffset: -20
+      },
+      {
+        target: document.querySelectorAll('[data-tutorial=aws-onboarding]')[3],
+        title: "AWS Bot installation",
+        content: "Wait until the BOT starts reporting.",
+        placement: "left",
+        yOffset: -20,
+        xOffset: -20
+      },
+      {
+        target: document.querySelectorAll('[data-tutorial=aws-onboarding]')[4],
+        title: "AWS Bot installation",
+        content: "Once installation is completed, you'll see it appears in your dashboard.",
+        placement: "left",
+        yOffset: -20,
+        xOffset: -20
+      },
+    ]
   }
 
   var installerTour = {
@@ -168,14 +214,17 @@ var showOnboarding = function(platform) {
     },
     onClose: function() {
       disableScroll.off()
+      OnboardingActions.hideOnboarding()
       return
     },
     onEnd: function() {
       disableScroll.off()
+      OnboardingActions.hideOnboarding()
       return
     },
     onError: function() {
       disableScroll.off()
+      OnboardingActions.hideOnboarding()
       return
     }
   }
@@ -217,6 +266,13 @@ module.exports = {
           className: 'btn-primary',
           callback () {
             showOnboarding('docker')
+          }
+        },
+        aws: {
+          label: 'AWS user-data',
+          className: 'btn-primary',
+          callback () {
+            showOnboarding('aws')
           }
         }
       }

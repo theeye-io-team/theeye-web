@@ -52,6 +52,10 @@ module.exports = View.extend({
       name: 'value',
       hook: 'docker-curl-agent'
     },
+    'awsCurlAgent': {
+      type: 'value',
+      hook: 'aws-curl-agent'
+    },
     'agentBinaryUrl': {
       type: 'attribute',
       name: 'href',
@@ -104,6 +108,14 @@ module.exports = View.extend({
         return this.agent.dockerCurl
       }
     },
+    awsCurlAgent: {
+      deps: ['agent'],
+      fn: function(){
+        if(!this.agent)
+          return
+        return this.agent.awsCurl
+      }
+    },
     agentBinaryUrl : {
       deps: ['agentBinary'],
       fn: function() {
@@ -131,7 +143,7 @@ module.exports = View.extend({
   },
   events: {
     'click [data-hook=go-to-dashboard]':'onClickGoToDashboard',
-    'click [data-hook=start-onboarding]':'onClickStartOnboarding',
+    'click .start-onboarding':'onClickStartOnboarding',
     'click [data-hook=start-bot]': 'onClickStartBot'
   },
   onClickStartBot (event) {
@@ -178,6 +190,7 @@ module.exports = View.extend({
     new Clipboard( this.query('.clipboard-curl-agent-btn') )
     new Clipboard( this.query('.clipboard-windows-curl-agent-btn') )
     new Clipboard( this.query('.clipboard-docker-curl-agent-btn') )
+    new Clipboard( this.query('.clipboard-aws-curl-agent-btn') )
 
     this.renderSubview(
       new HelpIconView({

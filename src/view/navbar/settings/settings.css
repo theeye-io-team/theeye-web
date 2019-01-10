@@ -377,3 +377,7 @@
   font-size: 15px;
   font-weight: 300;
 }
+
+h3.start-onboarding {
+  cursor: pointer
+}
