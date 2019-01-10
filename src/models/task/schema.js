@@ -3,7 +3,7 @@ import AppModel from 'lib/app-model'
 import AmpersandCollection from 'ampersand-collection'
 const DinamicArgument = require('./dinamic-argument').DinamicArgument
 const ScheduleCollection = require('models/schedule').Collection
-const TagCollection = require('models/schedule').Collection
+const TagCollection = require('models/tag').Collection
 
 import FIELD from 'constants/field'
 

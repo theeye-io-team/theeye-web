@@ -6,7 +6,7 @@ import MonitorConstants from 'constants/monitor'
 
 const MonitorSchema = require('./monitor-schema')
 const ResourceSchema = require('./resource-schema')
-const TagCollection = require('models/schedule').Collection
+const TagCollection = require('models/tag').Collection
 //const MonitorTemplate = require('./monitor-template')
 //const ResourceTemplate = require('./resource-template')
 const Host = require('models/host/index').Model

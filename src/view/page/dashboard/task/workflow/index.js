@@ -50,7 +50,6 @@ module.exports = CollapsibleRow.extend({
         this.queryByHook('execute-button-container')
       )
     }
-
   }
 })
 

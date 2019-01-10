@@ -266,6 +266,7 @@ const HostMonitorGroupView = MonitorView.extend({
     this.renderCollapsedContent()
     this.renderButtons()
     this.setRowIcon()
+    this.renderTags()
   },
   renderCollapsedContent () {
     // capture and handle collapse event
