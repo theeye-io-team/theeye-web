@@ -125,7 +125,7 @@ exports.updateMemberCredential = function (userId, updates, supervisor, route, d
       route: route += passport.profile.id + '/credential',
       body: updates,
       success: (res) => {
-        passport.profile = res
+        passport.profile.credential = res.credential
         passport.save((err) => doneFn(err))
       },
       failure: (err) => doneFn(err)
