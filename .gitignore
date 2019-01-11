@@ -23,3 +23,4 @@ config/env/*
 assets/**/bundles
 assets/index.html
 misc
+cypress/screenshots
