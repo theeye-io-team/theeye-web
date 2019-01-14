@@ -7,7 +7,9 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
-const NODE_ENV = process.env['NODE_ENV'] || 'local'
+const DEFAULT_NODE_ENV = 'production'
+
+const NODE_ENV = process.env['NODE_ENV'] || DEFAULT_NODE_ENV
 const IS_PRODUCTION = (NODE_ENV === 'production' || NODE_ENV === 'staging')
 const PUBLIC_PATH = typeof process.env['PUBLIC_PATH'] === 'string' ? process.env['PUBLIC_PATH'] : '/'
 

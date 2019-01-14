@@ -22,8 +22,10 @@ RUN rm -rf ${destDir}/.tmp
 RUN mkdir ${destDir}/.tmp
 #Fix Permissions.
 RUN chmod -R 1777 ${destDir}/.tmp
+
 # Bundle app source
 #RUN ${destDir}/node_modules/webpack/bin/webpack.js
+
 EXPOSE 6080
 #By default run prod, If development is requiered This command would be override by docker-compose up
 CMD ["npm","start"]
