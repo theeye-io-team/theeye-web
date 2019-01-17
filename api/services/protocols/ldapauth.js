@@ -120,10 +120,15 @@ module.exports = function (req, profile, next) {
         })
       } else {
         checkAndCreateCustomer(data.customers[0], client, function (err) {
-          if (err) return next(err)
+          if (err) {
+            logger.error('Error checking customer exists.')
+            logger.error('%o', err)
+            return next(err)
+          }
 
           passport.protocols.local.createUser(data, function (err, newUser) {
             if (err) {
+              logger.error('Error creating local passport.')
               logger.error('%o', err)
               return next(err)
             }
@@ -138,7 +143,11 @@ module.exports = function (req, profile, next) {
 
             passport.createTheeyeUser(
               newUser, theeyeuser, client, function (err, profile) {
-                if (err) return next(err)
+                if (err) {
+                  logger.error('Error creating theeye user.')
+                  logger.error('%o', err)
+                  return next(err)
+                }
 
                 passport.connectLdapAuth(provider, identifier, newUser, next)
               }

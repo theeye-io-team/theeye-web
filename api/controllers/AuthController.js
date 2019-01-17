@@ -352,7 +352,17 @@ var AuthController = {
 
     if (sails.config.passport.ldapauth) {
       passport.authenticate('ldapauth', function (err, user, info) {
-        if (err || !user) return loginLocal()
+        if (err) {
+          logger.error('LOGIN ERROR:')
+          logger.error(err)
+          return loginLocal()
+        }
+
+        if (!user) {
+          // Invalid user or password
+          logger.error('Invalid LDAP credentials.')
+          return loginLocal()
+        }
 
         logger.debug('passport authenticated via LDAP')
         req.login(user, function (err) {

@@ -862,7 +862,11 @@ passport.connectLdapAuth = function (provider, identifier, user, next) {
     provider: provider,
     identifier: identifier
   }, function (err, passport) {
-    if (err) return next(err)
+    if (err) {
+      logger.error('Error searching ldap passport')
+      logger.error('%o', err)
+      return next(err)
+    }
     if (!passport) {
       var query = {
         identifier: identifier,
@@ -871,7 +875,11 @@ passport.connectLdapAuth = function (provider, identifier, user, next) {
         user: user.id
       }
       Passport.create(query, function (err, passport) {
-        if (err) return next(err)
+        if (err) {
+          logger.error('Error creating ldap passport')
+          logger.error('%o', err)
+          return next(err)
+        }
         return next(null, user)
       })
     } else {
