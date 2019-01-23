@@ -195,7 +195,7 @@ const getUsers = (event, customerName, acls, credentials, callback) => {
 
   if (event && isApprovalOnHoldEvent(event)) {
     query = {
-      id: event.data.approver_id
+      id: { $in: event.data.approvers }
     }
   } else {
     query = {

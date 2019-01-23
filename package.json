@@ -133,7 +133,7 @@
     "core": "PORT=6080 DEBUG=*eye* node .",
     "local": "SOCKET_AUTH_URL=http://localhost:6080 NODE_ENV=localdev PORT=6080 DEBUG=*eye* ./node_modules/.bin/nodemon . -i src, node_modules",
     "inspect": "SOCKET_AUTH_URL=http://localhost:6080 NODE_ENV=localdev PORT=6080 DEBUG=*eye* ./node_modules/.bin/nodemon --inspect . -i src, node_modules",
-    "webpack": "./node_modules/webpack/bin/webpack.js -w",
+    "webpack": "NODE_ENV=local ./node_modules/webpack/bin/webpack.js -w",
     "hbs-compile": "./handlebars assets/js/app/templates/*.hbs -f assets/js/templates.js --e hbs",
     "test-danger": "npm run start & pid=$!; ./node_modules/.bin/cypress run --record --key e3a9f0ab-fc27-4659-83e2-44879aa1c915; kill -9 $pid",
     "test-record": "./node_modules/.bin/cypress run --record --key e3a9f0ab-fc27-4659-83e2-44879aa1c915",
