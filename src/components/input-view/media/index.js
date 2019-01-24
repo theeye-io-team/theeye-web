@@ -73,10 +73,7 @@ module.exports = InputView.extend({
   _loadImage (file) {
     const self = this
 
-    var type = 'file'
-    if (/image\/*/.test(file.type) === true) {
-      type = 'image'
-    }
+    let allowPreview = /image\/(?:png|jpeg|webp|gif|bmp|ico)/.test(file.type)
 
     if (this.maxFileSize && (file.size / 1024) > this.maxFileSize) {
       bootbox.alert(`La imagen no puede superar los ${this.maxFileSize} Kb`)
@@ -88,31 +85,29 @@ module.exports = InputView.extend({
     reader.onload = function (e) {
       const result = e.target.result
 
-      if(type === 'image') {
+      if (allowPreview === true) {
         var image = new Image()
         image.onload = function () {
           // 'this' is the current image being loaded
-          if (self.maxImageWidth || self.maxImageHeight) {
-            if (this.width > self.maxImageWidth || this.height > self.maxImageHeight) {
-              bootbox.alert(`La imágen no puede tener mas de ${self.maxImageWidth} x ${self.maxImageHeight}`)
-              self.clearInput()
-              return
-            }
-          }
-
-          // this will trigger a change on thie FilePreview view
-          self.file.dataUrl = result
-          self.file.type = file.type
-          self.file.name = file.name
+          //if (self.maxImageWidth || self.maxImageHeight) {
+          //  if (this.width > self.maxImageWidth || this.height > self.maxImageHeight) {
+          //    bootbox.alert(`La imágen no puede tener mas de ${self.maxImageWidth} x ${self.maxImageHeight}`)
+          //    self.clearInput()
+          //    return
+          //  }
+          //}
+          // this will trigger a change on this FilePreview view
           self.inputValue = file
         }
+
         image.src = result
       } else {
-        self.file.dataUrl = result
-        self.file.type = file.type
-        self.file.name = file.name
         self.inputValue = file
       }
+
+      self.file.dataUrl = result
+      self.file.type = file.type
+      self.file.name = file.name
     }
     reader.readAsDataURL(file)
   },

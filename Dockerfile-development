@@ -15,4 +15,4 @@ RUN chmod -R 1777 ${destDir}/.tmp
 # Bundle app source
 COPY . ${destDir}
 EXPOSE 6080
-CMD [ "npm", "run","devel" ]
+CMD ["npm","run","devel"]

@@ -129,7 +129,7 @@
   },
   "scripts": {
     "start": "./node_modules/webpack/bin/webpack.js && node .",
-    "devel": "NODE_ENV='development' PORT=6080 DEBUG=*eye* ./node_modules/.bin/nodemon .",
+    "devel": "NODE_ENV='development' PORT=6080 DEBUG=*eye* node .",
     "core": "PORT=6080 DEBUG=*eye* node .",
     "local": "SOCKET_AUTH_URL=http://localhost:6080 NODE_ENV=localdev PORT=6080 DEBUG=*eye* ./node_modules/.bin/nodemon . -i src, node_modules",
     "inspect": "SOCKET_AUTH_URL=http://localhost:6080 NODE_ENV=localdev PORT=6080 DEBUG=*eye* ./node_modules/.bin/nodemon --inspect . -i src, node_modules",
