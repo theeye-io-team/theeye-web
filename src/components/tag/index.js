@@ -4,10 +4,10 @@ import SearchboxActions from 'actions/searchbox'
 import './styles.less'
 
 module.exports = View.extend({
-  template: `<span class="tag label label-default" data-hook="name"></span>`,
+  template: `<span class="tag label label-default" data-hook="tag-name"></span>`,
   bindings: {
     'model.name': {
-      hook: 'name'
+      hook: 'tag-name'
     }
   },
   events: {
