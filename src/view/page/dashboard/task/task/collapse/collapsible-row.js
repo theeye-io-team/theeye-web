@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import TaskActions from 'actions/task'
 import View from 'ampersand-view'
 import SearchActions from 'actions/searchbox'
@@ -29,7 +30,6 @@ module.exports = CollapsibleRow.extend({
         this.queryByHook('execute-button-container')
       )
     }
-
   },
   renderCollapsedContent () {
     this.renderSubview(
@@ -48,6 +48,7 @@ const TaskButtonsView = View.extend({
   template: `
     <div>
       <span data-hook="edit-button"> </span>
+      <span data-hook="edit-script"> </span>
       <span data-hook="copy-button"> </span>
       <span data-hook="delete-button"> </span>
       <li>
@@ -103,6 +104,11 @@ const TaskButtonsView = View.extend({
       var editButton = new EditTaskButton({ model: this.model })
       this.renderSubview(editButton, this.queryByHook('edit-button'))
 
+      if (this.model._type === 'ScriptTask') {
+        var editScriptButton = new EditScriptButton ({ model: this.model })
+        this.renderSubview(editScriptButton, this.queryByHook('edit-script'))
+      }
+
       var copyButton = new CopyTaskButton({ model: this.model })
       this.renderSubview(copyButton, this.queryByHook('copy-button'))
 
@@ -112,3 +118,23 @@ const TaskButtonsView = View.extend({
   }
 })
 
+const EditScriptButton = View.extend({
+  template: `
+    <li>
+      <button class="btn btn-primary" title="Edit Script" data-hook="edit-script">
+        <i class="fa fa-code" aria-hidden="true"></i>
+        <span>Edit Script</span>
+      </button>
+    </li>
+  `,
+  events: {
+    'click button':'onClickButton',
+  },
+  onClickButton (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    if (!this.model.script_id) { return }
+    App.actions.file.edit(this.model.script_id)
+    return false
+  }
+})
