@@ -54,8 +54,13 @@ module.exports = ListItem.extend({
   render () {
     ListItem.prototype.render.apply(this,arguments)
 
+    this.renderSubview(
+      new EditButton({ model: this.model }),
+      this.queryByHook('detached-icons')
+    )
+
     this.addButtons([
-      { view: EditButton, params: { model: this.model } },
+      //{ view: EditButton, params: { model: this.model } },
       { view: DeleteButton, params: { model: this.model } },
     ])
 

@@ -1,18 +1,18 @@
 import App from 'ampersand-app'
-import PanelButton from 'components/list/item/panel-button'
+//import PanelButton from 'components/list/item/panel-button'
+import CommonButton from 'components/common-button'
 import $ from 'jquery'
 
-module.exports = PanelButton.extend({
+module.exports = CommonButton.extend({
   initialize (options) {
     this.title = 'Edit file'
-    this.iconClass = 'fa fa-edit dropdown-icon'
+    this.iconClass = 'fa fa-edit'
     this.className = 'btn btn-primary'
   },
   events: {
     click (event) {
       event.preventDefault()
       event.stopPropagation()
-      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
       App.actions.file.edit(this.model.id)
     }
