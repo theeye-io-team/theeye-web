@@ -32,7 +32,8 @@ exports.DinamicArgument = Model.extend({
     required: ['boolean',false,true],
     endpoint_url: ['string',false],
     id_attribute: ['string',false],
-    text_attribute: ['string',false]
+    text_attribute: ['string',false],
+    masked: ['boolean',false,false]
   },
   collections: {
     options: OptionsCollection

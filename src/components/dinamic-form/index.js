@@ -26,7 +26,8 @@ module.exports = DropableForm.extend({
             required: spec.required,
             invalidClass: 'text-danger',
             validityClassSelector: '.control-label',
-            value: spec.value
+            value: spec.value,
+            type: spec.masked ? 'password' : 'text'
           })
         )
       } else if (spec.type === FIELD.TYPE_SELECT) {
