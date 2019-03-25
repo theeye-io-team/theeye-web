@@ -9,7 +9,7 @@ class TasksRoute extends Route {
   indexRoute () {
     App.state.events.fetch()
     App.state.tags.fetch()
-    App.state.tasks.fetch()
+    App.state.tasks.fetch({ data: { unassigned: true } })
     App.state.resources.fetch()
     App.state.hosts.fetch()
     App.state.files.fetch()

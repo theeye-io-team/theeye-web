@@ -16,15 +16,20 @@ const urlRoot = `${config.api_url}/task`
 
 const formattedTags = () => {
   return {
-    deps: ['name','hostname','type','description','acl','tags','hasSchedules','inProgressJobs','hasTemplate'],
+    deps: [
+      'name','hostname','type',
+      'description','acl','tags',
+      'hasSchedules','inProgressJobs','hasTemplate',
+      'canExecute'
+    ],
     fn () {
       return [
         this.name,
         this.type,
         this.description,
-        (this.hostname||'no host'),
-        (this.hasSchedules?'scheduled':undefined),
-        (this.inProgressJobs?'running':undefined)
+        (this.canExecute ? 'valid' : 'invalid'),
+        (this.hasSchedules ? 'scheduled' : undefined),
+        (this.inProgressJobs ? 'running' : undefined)
       ].concat(this.acl, this.tags)
     }
   }
