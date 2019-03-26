@@ -27,6 +27,7 @@ const formattedTags = () => {
         this.name,
         this.type,
         this.description,
+        (this.hostname || undefined),
         (this.canExecute ? 'valid' : 'invalid'),
         (this.hasSchedules ? 'scheduled' : undefined),
         (this.inProgressJobs ? 'running' : undefined)
