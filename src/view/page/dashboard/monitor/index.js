@@ -46,6 +46,12 @@ const MonitorView = View.extend({
         return `#${this.collapse_container_id}`
       }
     },
+    hostname: {
+      deps: ['model.hostname'],
+      fn () {
+        return `(${this.model.hostname})` || '(Hostname not assigned)'
+      }
+    }
   },
   bindings: {
     collapse_toggle_href: {
@@ -79,7 +85,9 @@ const MonitorView = View.extend({
         hook: 'name'
       }
     ],
-    'model.hostname': { hook: 'hostname' },
+    hostname: {
+      hook: 'hostname'
+    },
     'model.type': { hook: 'type' },
     'model.stateIcon': {
       type: 'class',
@@ -117,7 +125,7 @@ const MonitorView = View.extend({
                   <span class="panel-item name">
                     <span data-hook="tags"></span>
                     <span data-hook="name"></span>
-                    <small><i data-hook="type"></i></small>
+                    <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
                   </span>
 
                   <section data-hook="buttons-block" style="float:right;">
@@ -215,6 +223,14 @@ const MonitorsGroupView = MonitorView.extend({
       hook: 'group-state-icon'
     },
   }),
+  derived: {
+    hostname: {
+      deps: ['model.hostname'],
+      fn () {
+        return ''
+      }
+    }
+  },
   initialize () {
     this.iconHook = 'group-state-icon'
     MonitorView.prototype.initialize.apply(this, arguments)

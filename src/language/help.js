@@ -38,7 +38,10 @@ module.exports = {
   task: {
     creation: {
       webhook: 'Select Outgoing Webhook to execute a HTTP requests i.e. to call a remote api method',
-      script: 'Select Script to accomplish your task automation'
+      script: 'Select Script to accomplish your task automation',
+      approval: 'Select Approval to give someone control over Workflow execution',
+      notification: 'Select Notification to send push or email from inside Workflows or triggered by Tasks',
+      dummy: 'Select Input to request for mandatory values before start the Workflow execution'
     },
     form: {
       name: 'Give this task a name',

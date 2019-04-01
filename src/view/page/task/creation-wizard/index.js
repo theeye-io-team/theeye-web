@@ -27,9 +27,7 @@ module.exports = function () {
   })
 
   modal.renderSubview(
-    new HelpIconView({
-      link: 'https://docs.theeye.io/tasks'
-    }),
+    new HelpIconView({ link: 'https://docs.theeye.io/tasks' }),
     modal.queryByHook('title')
   )
 
@@ -138,24 +136,6 @@ const TaskCreationWizard = View.extend({
   render () {
     this.renderWithTemplate(this)
 
-    this.renderSubview(
-      new HelpIconView({
-        color: [50,50,50],
-        category: 'task_help',
-        text: HelpTexts.task.creation.webhook
-      }),
-      this.queryByHook('webhook-help')
-    )
-
-    this.renderSubview(
-      new HelpIconView({
-        color: [50,50,50],
-        category: 'task_help',
-        text: HelpTexts.task.creation.script
-      }),
-      this.queryByHook('script-help')
-    )
-
     if (App.state.onboarding.onboardingActive) {
       var taskOnBoarding = new TaskOnBoarding({parent: this})
       this.registerSubview(taskOnBoarding)
@@ -180,12 +160,59 @@ const TaskCreationWizard = View.extend({
       }
     })
 
+    this.renderHelp()
+
     this.renderSubview(
       this.importTaskInput,
       this.queryByHook('import-task-container')
     )
   },
-  update () {
+  renderHelp () {
+    this.renderSubview(
+      new HelpIconView({
+        color: [50,50,50],
+        category: 'task_help',
+        text: HelpTexts.task.creation.script
+      }),
+      this.queryByHook('script-help')
+    )
+
+    this.renderSubview(
+      new HelpIconView({
+        color: [50,50,50],
+        category: 'task_help',
+        text: HelpTexts.task.creation.webhook
+      }),
+      this.queryByHook('webhook-help')
+    )
+
+    this.renderSubview(
+      new HelpIconView({
+        color: [50,50,50],
+        category: 'task_help',
+        text: HelpTexts.task.creation.approval
+      }),
+      this.queryByHook('approval-help')
+    )
+
+    this.renderSubview(
+      new HelpIconView({
+        color: [50,50,50],
+        category: 'task_help',
+        text: HelpTexts.task.creation.dummy
+      }),
+      this.queryByHook('dummy-help')
+    )
+
+    this.renderSubview(
+      new HelpIconView({
+        color: [50,50,50],
+        category: 'task_help',
+        text: HelpTexts.task.creation.notification
+      }),
+      this.queryByHook('notification-help')
+    )
+
   },
   /**
    * @param {Task} task a models/task instance

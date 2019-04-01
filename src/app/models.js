@@ -9,6 +9,7 @@ import User from 'models/user'
 import Token from 'models/token'
 import Indicator from 'models/indicator'
 import Customer from 'models/customer'
+import HostGroup from 'models/hostgroup'
 
 module.exports = () => {
   App.extend({
@@ -21,7 +22,8 @@ module.exports = () => {
       Indicator,
       User,
       Customer,
-      Token 
+      Token,
+      HostGroup
     }
   })
 }

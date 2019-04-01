@@ -37,6 +37,10 @@ const Model = AppModel.extend({
     description: 'string',
     enable: 'boolean',
     name: 'string',
+    creation_date: 'date',
+    last_update: 'date',
+    hostname_regex: 'string',
+    _type: 'string'
   },
   collections: {
     hosts: Hosts, // has many host
