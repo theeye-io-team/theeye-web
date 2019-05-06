@@ -7,6 +7,14 @@ import SelectView from 'components/select2-view'
 module.exports = FormView.extend({
   initialize: function (options) {
 
+    const credentials = App.state.credentials.filter(e => {
+      let notIn = ['owner','root']
+      if (App.state.session.user.credential === 'manager') {
+        notIn.push('admin')
+      }
+      return (notIn.indexOf(e.name) === -1)
+    })
+
     this.fields = [
       new InputView({
         name: 'name',
@@ -30,9 +38,7 @@ module.exports = FormView.extend({
         validityClassSelector: '.control-label'
       }),
       new SelectView({
-        options: App.state.credentials.filter( e => {
-          return (e.name !== 'owner' && e.name !== 'root')
-        }),
+        options: credentials,
         styles: 'form-group',
         name: 'credential',
         required: true,
@@ -44,6 +50,7 @@ module.exports = FormView.extend({
         validityClassSelector: '.control-label'
       }),
     ]
+
     FormView.prototype.initialize.apply(this, arguments)
   },
   render () {

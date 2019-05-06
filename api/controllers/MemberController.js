@@ -9,7 +9,6 @@ const PROTOCOL_THEEYE = 'theeye'
 
 var MemberController = module.exports = {
   //GET  /member
-
   fetch (req, res) {
     var supervisor = req.supervisor
     var customerName = req.user.current_customer
@@ -19,14 +18,18 @@ var MemberController = module.exports = {
     }
 
     User.native(function (err, users) {
+      const $match = {
+        username: { $ne: null },
+        customers: customerName
+      }
+
+      if (req.user.credential !== 'root') {
+        $match.credential = { $ne: 'root' }
+      }
+
       let usersCursor = users.aggregate(
         [
-          {
-            $match: {
-              username: { $ne: null },
-              customers: customerName
-            }
-          },
+          { $match },
           {
             $lookup: {
               from: 'web_passport',

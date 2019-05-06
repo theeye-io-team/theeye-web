@@ -10,11 +10,17 @@ import '../settings.css'
 
 const EditUserFormView = FormView.extend({
   initialize: function (options) {
+    const credentials = App.state.credentials.filter(e => {
+      let notIn = ['owner','root']
+      if (App.state.session.user.credential === 'manager') {
+        notIn.push('admin')
+      }
+      return (notIn.indexOf(e.name) === -1)
+    })
+
     this.fields = [
       new SelectView({
-        options: App.state.credentials.filter( e => {
-          return (e.name !== 'owner' && e.name !== 'root')
-        }),
+        options: credentials,
         value: this.model.credential,
         styles: 'form-group',
         name: 'credential',
@@ -40,27 +46,28 @@ const EditUserFormView = FormView.extend({
 
 module.exports = View.extend({
   autoRender: true,
-  template: `<div class="row border social">
-                 <div class="col-xs-6">
-                    <div class="social-container">
-                       <span class="circle" style="background:#073666"></span>
-                       <span class="legend" data-hook="username"></span>
-                       <span class="legend email" data-hook="email"></span>
-                    </div>
-                 </div>
-                 <div class="col-xs-2">
-                    <span data-hook="credential"></span>
-                 </div>
-                 <div class="col-xs-2">
-                    <span data-hook="status"></span>
-                 </div>
-                 <div class="col-xs-2">
-                    <div data-hook="member-icons" class="pull-right action-icons">
-                      <span><i class="fa fa-edit blue" data-hook="edit-user"></i></span>
-                      <span><i class="fa fa-user-times blue" data-hook="remove-user"></i></span>
-                    </div>
-                 </div>
-              </div>`,
+  template: `
+    <div class="row border social">
+      <div class="col-xs-6">
+        <div class="social-container">
+          <span class="circle" style="background:#073666"></span>
+          <span class="legend" data-hook="username"></span>
+          <span class="legend email" data-hook="email"></span>
+        </div>
+      </div>
+      <div class="col-xs-2">
+        <span data-hook="credential"></span>
+      </div>
+      <div class="col-xs-2">
+        <span data-hook="status"></span>
+      </div>
+      <div class="col-xs-2">
+        <div data-hook="member-icons" class="pull-right action-icons">
+          <span><i class="fa fa-edit blue" data-hook="edit-user"></i></span>
+          <span><i class="fa fa-user-times blue" data-hook="remove-user"></i></span>
+        </div>
+      </div>
+    </div>`,
   bindings: {
     'model.user.username': {
       hook:'username'
@@ -126,9 +133,17 @@ module.exports = View.extend({
     })
     modal.show()
   },
-  render() {
+  render () {
     this.renderWithTemplate(this)
-    if(this.model.user.id==App.state.session.user.id || ['root','owner'].includes(this.model.credential))
+
+    if ( this.model.user.id == App.state.session.user.id || ['root','owner'].includes(this.model.credential) ) {
       this.queryByHook('member-icons').remove()
+    }
+
+    if (App.state.session.user.credential==='manager') {
+      if (this.model.user.credential === 'admin') {
+        this.queryByHook('member-icons').remove()
+      }
+    }
   }
 })
