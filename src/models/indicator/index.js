@@ -39,13 +39,12 @@ const BaseSchema = AppModel.extend({
       }
     },
     formatted_tags: {
-      deps: ['title','_type','type','state','severity','tags','description','acl','read_only'],
+      deps: ['title','_type','type','state','severity','tags','acl','read_only'],
       fn () {
         return [
           this.title,
           this.state,
           this._type,
-          this.description,
           this.severity,
           (this.read_only?'read only':undefined)
         ].concat(this.acl, this.tags)

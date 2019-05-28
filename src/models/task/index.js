@@ -18,7 +18,7 @@ const formattedTags = () => {
   return {
     deps: [
       'name','hostname','type',
-      'description','acl','tags',
+      'acl','tags',
       'hasSchedules','inProgressJobs','hasTemplate',
       'canExecute'
     ],
@@ -26,7 +26,6 @@ const formattedTags = () => {
       return [
         this.name,
         this.type,
-        this.description,
         (this.hostname || undefined),
         (this.canExecute ? 'valid' : 'invalid'),
         (this.hasSchedules ? 'scheduled' : undefined),

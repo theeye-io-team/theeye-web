@@ -67,7 +67,7 @@ const Model = AppModel.extend({
         let summary = 'summary unset'
 
         if (EmitterConstants.WEBHOOK === emitterType) {
-          summary = `Incomming Webhook ${emitter.name} trigger`
+          summary = `Incoming Webhook ${emitter.name} trigger`
         } else if (EmitterConstants.MONITOR === emitterType) {
           summary = monitorEventSummary(emitter, eventName)
         } else if (/Task/.test(emitterType) === true) {

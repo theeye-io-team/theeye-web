@@ -9,7 +9,7 @@ const urlRoot = `${config.api_v3_url}/workflows`
 
 const formattedTags = () => {
   return {
-    deps: ['name','hostname','description','tags','graph'],
+    deps: ['name','hostname','tags','graph'],
     fn () {
       let graph = this.graph
       let tasksNames = []
@@ -25,8 +25,7 @@ const formattedTags = () => {
       }
       return [
         'name=' + this.name,
-        'hostname=' + this.hostname,
-        'description=' + this.description
+        'hostname=' + this.hostname
       ].concat(this.tags).concat(tasksNames)
     }
   }

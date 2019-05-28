@@ -78,6 +78,7 @@ module.exports = View.extend({
 
     document.addEventListener('click', function (e) {
       self.closeAutocompleteLists()
+      SearchActions.clearMatches()
     })
   },
   endsearch () {

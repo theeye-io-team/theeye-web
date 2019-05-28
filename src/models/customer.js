@@ -42,11 +42,10 @@ const Model = AppModel.extend({
   },
   derived: {
     formatted_tags: {
-      deps: ['name', 'description'],
+      deps: ['name'],
       fn () {
         return [
-          'name=' + this.name,
-          'description=' + this.description
+          'name=' + this.name
         ]
       }
     }

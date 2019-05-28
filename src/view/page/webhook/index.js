@@ -18,7 +18,7 @@ import WebhookRow from './list-item'
 
 const CreateButton = CommonButton.extend({
   initialize (options) {
-    this.title = 'New Incomming Webhook'
+    this.title = 'New Incoming Webhook'
     this.className = 'btn btn-primary tooltiped'
     this.iconClass = 'fa fa-plus'
   },
