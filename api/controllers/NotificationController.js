@@ -1,11 +1,6 @@
-const logger = require('../libs/logger')('controllers:notification')
+const logger = require('../libs/logger')('controller:notifications')
 const Notifications = require('../libs/notifications')
 const moment = require('moment')
-
-const handledNotificationTopics = [
-  'monitor-state',
-  'job-crud'
-]
 
 module.exports = {
   /*
@@ -14,9 +9,10 @@ module.exports = {
    *
    */
   create (req, res) {
-    let event = req.params.all()
-    let done = (err) => {
+    const event = req.params.all()
+    const done = (err) => {
       if (err) {
+        logger.error(err.message)
         if (err.status === 400) {
           return res.send(400, err.error.toString())
         }
@@ -26,11 +22,52 @@ module.exports = {
       }
     }
 
-    if (event.topic === 'notification-task') {
-      createFromNotificationTask(req, res, done)
-    } else {
-      createFromNotificationEvent(req, res, done)
+    if (!event.id) {
+      let err = new Error('id required')
+      err.status = 400
+      return done(err)
     }
+
+    if (!event.data) {
+      let err = new Error('%s|data required', event.id)
+      err.status = 400
+      return done(err)
+    }
+
+    if (!event.topic) {
+      let err = new Error('%s|topic required', event.id)
+      err.status = 400
+      return done(err)
+    }
+
+    logger.debug('%s|event arrived. %s, %s, %s',
+      event.id,
+      event.topic,
+      event.data.operation,
+      event.data.model_type
+    )
+
+    // dispatch original event to all clients
+    Notifications.sockets.send(event)
+
+    createEventNotifications(req, res, (err) => {
+      if (err) { return done(err) }
+
+      if (
+        event.data.model_type === 'NotificationJob' &&
+        event.data.operation === 'create'
+      ) {
+        if (!event.data.model.task) {
+          let err = new Error('%s|task is required', event.id)
+          err.status = 400
+          return done(err)
+        }
+
+        createCustomNotification(req, res, done)
+      } else {
+        return done()
+      }
+    })
   },
   /**
    *
@@ -58,134 +95,203 @@ module.exports = {
   }
 }
 
-const createFromNotificationTask = (req, res, done) => {
-  let params = req.params.all()
-  const data = params.data
+const createCustomNotification = (req, res, done) => {
+  const event = req.params.all()
 
-  if (!data) {
-    let err = new Error('Data is required')
-    err.status = 400
-    return done(err)
-  }
+  const notifyJob = event.data.model
+  const notifyTask = notifyJob.task
+  const notificationTypes = notifyTask.notificationTypes
 
-  if (!data.model.task) {
-    let err = new Error('Task is required')
-    err.status = 400
-    return done(err)
-  }
+  const args = (notifyJob.task_arguments_values || [])
 
-  let notificationTypes = data.notificationTypes
-  let subject = data.model.task.subject
-  let body = data.model.task.body
-  let recipients = data.model.task.recipients
+  let subject = (args[0] || notifyTask.subject)
+  let body = (args[1] || notifyTask.body)
+  let recipients = (parseRecipients(args[2]) || notifyTask.recipients)
 
-  getUsers(null, data.organization, recipients, [], (error, users) => {
-    if (error) return done(new Error('Cant get users'))
-    if (!users.length) {
-      done()
+  logger.debug('%s|%s', event.id, 'dispatching custom notifications')
+  getUsersToNotify(null, event.data.organization, recipients, [], (error, users) => {
+    if (error) {
+      let msg = 'error getting system users'
+      logger.debug('%s|%s', event.id, msg)
+      return done(new Error(msg))
     }
 
-    // users.forEach((user) => {
-    //   if (notificationTypes.socket) {
-    //     // TO ADD
-    //   }
-    // })
-
-    // If notifications are not filtered, send all types as default
-    if (!notificationTypes || notificationTypes.push) {
-      Notifications.push.dispatch({msg: subject}, users)
+    if (users.length === 0) {
+      logger.debug('%s|%s', event.id, 'dismissed. no system users to notify')
+      return done()
     }
 
-    if (!notificationTypes || notificationTypes.email) {
-      Notifications.email.send({subject, body}, users)
-    }
+    event.data.notification = { subject, body, recipients }
 
-    if (!notificationTypes || notificationTypes.desktop) {
-      createNotifications(params, users, data.organization, (err, notifications) => {
-        if (err) return done(new Error('Error creating notification'))
-        if (notifications.length === 0) return
+    //createNotifications(event, users, event.data.organization, (err, notifications) => {
+    createNotifications({
+      topic: 'notification-task',
+      data: event.data,
+      event_id: event.id,
+      customer_name: event.data.organization
+    }, users, (err, notifications) => {
+      if (err) {
+        let msg = `${event.id}|error creationg notifications`
+        logger.debug(msg)
+        return done(new Error(msg))
+      }
 
-        // send extra notification event via sns topic
+      if (!notificationTypes || notificationTypes.desktop) {
+        // send extra notification event via socket to desktop clients
         Notifications.sockets.send({
           topic: 'notification-crud',
           data: {
             model: notifications,
             model_type: 'Notification',
             operation: 'create',
-            organization: data.organization
+            organization: event.data.organization
           }
         })
-      })
-    }
+        logger.debug('%s|%s', event.id, 'by desktop notified')
+      }
 
-    done()
+      // If notifications are not filtered, send all types as default
+      if (!notificationTypes || notificationTypes.push) {
+        Notifications.push.dispatch({ msg: subject }, users)
+        logger.debug('%s|%s', event.id, 'by push notified')
+      }
+
+      if (!notificationTypes || notificationTypes.email) {
+        Notifications.email.send({ subject, body }, users)
+        logger.debug('%s|%s', event.id, 'by email notified')
+      }
+
+      // create custom socket connections and messages
+      //if (notificationTypes.socket) {
+      //  // notify user to connected sockets
+      //  users.forEach((user) => {
+      //    // TO ADD
+      //    logger.debug('%s|%s', event.id, 'by desktop notified')
+      //  }
+      //})
+
+      logger.debug('%s|%s', event.id, 'custome notifications dispatched')
+      return done()
+    })
   })
 }
 
-const createFromNotificationEvent = (req, res, done) => {
-  var event = req.params.all()
-  const data = event.data
+const parseRecipients = (emails) => {
+  let recipients = null
+  if (!emails) { return recipients }
+  if (typeof emails === 'string') {
+    try {
+      let values = JSON.parse(emails)
+      if (Array.isArray(values) && values.length > 0) {
+        recipients = values
+      } else {
+        throw new Error('invalid recipients format')
+      }
+    } catch (e) {
+      logger.error(e.message)
+      recipients = [emails]
+    }
+  }
+  return recipients
+}
+
+const createEventNotifications = (req, res, done) => {
+  const event = req.params.all()
   const topic = event.topic
 
-  if (!data) {
-    let err = new Error('Data is required')
-    err.status = 400
-    return done(err)
-  }
-  if (!topic) {
-    let err = new Error('Topic is required')
-    err.status = 400
-    return done(err)
+  logger.debug('%s|dispatching event notification.', event.id)
+
+  if (!isHandledNotificationEvent(event)) {
+    logger.debug('%s|dismissed. not handled', event.id)
+    return done()
   }
 
-  logger.debug('topic %s model_type %s model.name %s',
-    topic,
-    data.model_type,
-    data.model.name || 'no name property'
-  )
+  let model = event.data.model
+  let acls = (model.task ? model.task.acl : model.acl) || []
+  let credentials = ['admin', 'owner', 'root']
 
-  if (handledNotificationTopics.indexOf(event.topic) > -1) {
-    var acls = (data.model.task ? data.model.task.acl : data.model.acl) || []
-    var credentials = ['admin', 'owner', 'root']
+  getUsersToNotify(event, event.data.organization, acls, credentials, (error, users) => {
+    if (error) {
+      let msg = 'error getting system users'
+      logger.debug('%s|%s', event.id, msg)
+      return done(new Error(msg))
+    }
 
-    getUsers(event, data.organization, acls, credentials, (error, users) => {
-      if (error) return done(new Error('Cant get users'))
+    if (users.length === 0) {
+      logger.debug('%s|%s', event.id, 'dismissed. no system users to notify')
+      return done()
+    }
 
-      users = applyNotificationFilters(event, users)
+    users = applyNotificationFilters(event, users)
+    if (!users || !Array.isArray(users) || !users.length) {
+      logger.debug('%s|%s', event.id, 'dismissed. notification is ignored by users')
+      return done()
+    }
 
-      // create a notification for each user
-      createNotifications(event, users, data.organization, (err, notifications) => {
-        if (err) return done(new Error('Error creating notification'))
-        if (notifications.length === 0) return
+    // create a notification for each user
+    //createNotifications(event, users, event.data.organization, (err, notifications) => {
+    createNotifications({
+      topic: event.topic,
+      data: event.data,
+      event_id: event.id,
+      customer_name: event.data.organization
+    }, users, (err, notifications) => {
+      if (err) {
+        let msg = 'error creating user notifications'
+        logger.debug('%s|%s', event.id, msg)
+        return done(new Error(msg))
+      }
 
-        // send extra notification event via sns topic
-        Notifications.sockets.send({
-          topic: 'notification-crud',
-          data: {
-            model: notifications,
-            model_type: 'Notification',
-            operation: 'create',
-            organization: data.organization
-          }
-        })
+      // send extra notification event via sns topic
+      Notifications.sockets.send({
+        topic: 'notification-crud',
+        data: {
+          model: notifications,
+          model_type: 'Notification',
+          operation: 'create',
+          organization: event.data.organization
+        }
       })
+      logger.debug('%s|%s', event.id, 'by socket notified')
 
-      // push and mail here !important
       Notifications.push.send(event, users)
-      // Notifications.email.send('TO-DO', users)
+      logger.debug('%s|%s', event.id, 'by push notified')
+
+      //Notifications.email.send('TO-DO', users)
+      //logger.debug('%s|%s', event.id, 'by email notified')
+
+      logger.debug('%s|%s', event.id, 'event notifications dispatched')
+      return done()
     })
+  })
+}
+
+const handledTopics = [
+  'monitor-state',
+  'job-crud'
+]
+
+const isHandledNotificationEvent = (event) => {
+  if (handledTopics.indexOf(event.topic) === -1) {
+    return false
   }
 
-  // notify other webs (even self) to handle
-  // socket notifications via SNS post to http
-  // endpoint (EventsController.update)
-  Notifications.sockets.send(event)
+  if (
+    event.topic == 'monitor-state' &&
+    event.data.model.type !== 'host' &&
+    (
+      event.data.monitor_event == 'updates_stopped' ||
+      event.data.monitor_event == 'updates_started'
+    )
+  ) {
+    return false
+  }
 
-  return done()
+  return true
 }
 
 // Returns a user collection for a given customer
-const getUsers = (event, customerName, acls, credentials, callback) => {
+const getUsersToNotify = (event, customerName, acls, credentials, callback) => {
   if (!customerName) {
     const err = new Error('I need a customer to find the users')
     return callback(err)
@@ -209,7 +315,7 @@ const getUsers = (event, customerName, acls, credentials, callback) => {
   }
 
   User.find(query, function (error, users) {
-    if (!users || !Array.isArray(users) || !users.length) {
+    if (!users || !Array.isArray(users) || users.length === 0) {
       return callback(null, [])
     }
 
@@ -218,33 +324,13 @@ const getUsers = (event, customerName, acls, credentials, callback) => {
 }
 
 // Persist notifications
-const createNotifications = (event, users, customerName, callback) => {
-  if (!users || !Array.isArray(users) || !users.length) {
-    return callback(null, [])
-  }
-
+const createNotifications = (event, users, callback) => {
   // rulez for updates stopped/updates started.
   // only create notification for host
-  if (
-    event.topic == 'monitor-state' &&
-    (
-      event.data.monitor_event == 'updates_stopped' ||
-      event.data.monitor_event == 'updates_started'
-    ) &&
-    event.data.model.type !== 'host'
-  ) {
-    return callback(null, [])
-  }
-
   const notifications = []
+
   users.forEach(user => {
-    notifications.push({
-      topic: event.topic,
-      data: event.data,
-      event_id: event.id,
-      user_id: user.id,
-      customer_name: customerName
-    })
+    notifications.push(Object.assign({}, event, { user_id: user.id }))
   })
 
   sails.models.notification.create(notifications).exec(callback)
@@ -301,7 +387,6 @@ const hasMatchedExclusionFilter = (filter, event) => {
  * @return {Boolean}
  */
 const canCompare = (val1, val2) => {
-
   const isComparable = (value) => {
     // we can compare types and null
     let types = ['number','string','boolean','undefined']

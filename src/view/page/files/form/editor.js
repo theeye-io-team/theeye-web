@@ -9,34 +9,8 @@ window.CodeMirror = CodeMirror
 import 'codemirror/mode/meta'
 import 'codemirror/lib/codemirror.css'
 import 'codemirror/theme/3024-night.css'
-
-const Help = View.extend({
-  template: `
-    <div>
-      <p>${HelpTexts.file.shebang}</p>
-      <p>${HelpTexts.file.state}</p>
-      <p>${HelpTexts.file.env}</p>
-    </div>
-  `
-})
-const HintsWindow = View.extend({
-  template: `<a href="#">&nbsp;<span class="fa fa-question-circle"></span></a>`,
-  events: {
-    'click': (event) => {
-      let help = new Help()
-      let modal = new Modalizer({
-        buttons: false,
-        title: 'Help',
-        bodyView: help
-      })
-      let el = modal.query('.modal-dialog')
-      el.style.width = '50%'
-      el.style.top = '10%'
-
-      modal.show()
-    }
-  }
-})
+import 'codemirror/addon/display/fullscreen'
+import 'codemirror/addon/display/fullscreen.css'
 
 export const EditorView = View.extend({
   props: {
@@ -44,17 +18,37 @@ export const EditorView = View.extend({
     //data: 'string',
     validMode: ['boolean', false, undefined]
   },
-  template: `<div data-hook="editor-container"></div>`,
+  template: `<div data-hook="editor-root"><div data-hook="editor-container"></div></div>`,
   render () {
     this.renderWithTemplate(this)
-    this.codemirror = CodeMirror(this.queryByHook('editor-container'), {
+    const root = this.queryByHook('editor-root')
+    const container = this.queryByHook('editor-container')
+
+    this.codemirror = CodeMirror(container, {
       tabindex: 0,
       value: '',
       lineNumbers: true,
       theme: '3024-night',
       tabSize: 2,
       smartIndent: true,
-      mode: 'shell'
+      mode: 'shell',
+      extraKeys: {
+        "F11": function(cm) {
+          if (!cm.getOption("fullScreen")) {
+            cm.setOption("fullScreen", true)
+            container.querySelector('.CodeMirror').style.height = '800px'
+          } else {
+            cm.setOption("fullScreen", false)
+          }
+          cm.focus()
+        },
+        "Esc": function(cm) {
+          if (cm.getOption("fullScreen")) {
+            cm.setOption("fullScreen", false)
+            cm.focus()
+          }
+        }
+      }
     })
 
     this.codemirror.on('optionChange', (instance, option) => {
@@ -70,7 +64,7 @@ export const EditorView = View.extend({
     //  this.queryByHook('editor-container')
     //)
 
-    let hook = this.queryByHook('editor-container')
+    let hook = this.queryByHook(container)
     this.renderSubview(new HintsWindow(), hook)
   },
   setEditorContent (data) {
@@ -101,6 +95,35 @@ export const EditorView = View.extend({
   refresh () {
     setTimeout(() => { this.codemirror.refresh() }, 500)
   }
+})
+
+const HintsWindow = View.extend({
+  template: `<a href="#">&nbsp;<span class="fa fa-question-circle"></span></a>`,
+  events: {
+    'click': (event) => {
+      let help = new Help()
+      let modal = new Modalizer({
+        buttons: false,
+        title: 'Help',
+        bodyView: help
+      })
+      let el = modal.query('.modal-dialog')
+      el.style.width = '50%'
+      el.style.top = '10%'
+
+      modal.show()
+    }
+  }
+})
+
+const Help = View.extend({
+  template: `
+    <div>
+      <p>${HelpTexts.file.shebang}</p>
+      <p>${HelpTexts.file.state}</p>
+      <p>${HelpTexts.file.env}</p>
+    </div>
+  `
 })
 
 /**

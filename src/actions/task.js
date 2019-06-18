@@ -24,10 +24,11 @@ module.exports = {
   },
   update (id, data) {
     let task = App.state.tasks.get(id)
-    task.task_arguments.reset([])
-    task.output_parameters.reset([])
+    if (task.type == 'script') {
+      task.task_arguments.reset([])
+      task.output_parameters.reset([])
+    }
     task.set(data)
-    //task.task_arguments.reset(data.task_arguments)
     task.save({},{
       success: () => {
         if (task.workflow_id) {

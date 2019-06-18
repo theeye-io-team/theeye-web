@@ -1,4 +1,7 @@
-var logger = require('../logger')('libs:notifications:sockets')
+const logger = require('../logger')('libs:notifications:sockets')
+
+const NOTIFICATION_TOPIC = 'notification-crud'
+const CUSTOMER_CHANGED_TOPIC = 'session-customer-changed'
 
 module.exports = {
   send (message, next) {
@@ -6,48 +9,59 @@ module.exports = {
     return this.emit(message.topic, message, next)
   },
   emit (topic, message, next) {
-    const data = message.data
+    logger.debug('emit event %s', topic)
 
-    if (topic === 'notification-crud') {
-
-      if (Array.isArray(data.model)) {
-        // send a socket event for each user notification
-        for (let idx in data.model) {
-          let notification = data.model[idx]
-          const room = `${notification.data.organization}:${notification.user_id}:${topic}`
-          logger.debug(`sending message to ${room}`)
-
-          sails.io.sockets.in(room).emit(topic, {
-            model: notification,
-            model_type: 'Notification',
-            operation: 'create',
-            organization: notification.data.organization
-          })
-        }
-        return next()
-      } else {
-        let msg = `ERROR: invalid notification structure. Array expected, received ${message.data.model}`
-        logger.error(msg)
-        return next( new Error(msg) )
-      }
-
-    } else if (topic === 'session-customer-changed') {
-
-      const room = `${data.model.id}:${topic}`
-      sails.io.sockets.in(room).emit(topic, {
-        //model: data.model,
-        //model_type: 'Notification',
-        //operation: 'create',
-        organization: data.organization
-      })
-
-    } else {
-
-      const room = `${data.organization}:${topic}`
-      logger.debug(`sending message to ${room}`)
-      sails.io.sockets.in(room).emit(topic, data)
-      next()
-
+    switch (topic) {
+      case NOTIFICATION_TOPIC:
+        sendNotificationMessage(message.data, next)
+        break;
+      case CUSTOMER_CHANGED_TOPIC:
+        sendCustomerChangedMessage (message.data, next)
+        break;
+      default:
+        sendEventMessage (topic, message.data, next)
+        break;
     }
   }
+}
+
+const sendNotificationMessage = (data, next) => {
+  const topic = NOTIFICATION_TOPIC
+  if (Array.isArray(data.model)) {
+    // send a socket event for each user notification
+    for (let idx in data.model) {
+      const model = data.model[idx]
+      const room = `${model.data.organization}:${model.user_id}:${topic}`
+
+      logger.debug(`sending message to ${room}`)
+
+      sails.io.sockets.in(room).emit(topic, {
+        model,
+        model_type: 'Notification',
+        operation: 'create',
+        organization: model.data.organization,
+        notification: data.notification
+      })
+    }
+    return next()
+  } else {
+    let msg = `ERROR: invalid notification structure. Array expected, received ${data.model}`
+    logger.error(msg)
+    return next( new Error(msg) )
+  }
+}
+
+const sendCustomerChangedMessage = (data, next) => {
+  const room = `${data.model.id}:${topic}`
+  sails.io.sockets.in(room).emit(topic, {
+    organization: data.organization
+  })
+  next()
+}
+
+const sendEventMessage = (topic, data, next) => {
+  const room = `${data.organization}:${topic}`
+  logger.debug(`sending message to ${room}`)
+  sails.io.sockets.in(room).emit(topic, data)
+  next()
 }

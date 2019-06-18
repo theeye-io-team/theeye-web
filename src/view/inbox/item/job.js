@@ -2,8 +2,8 @@ import View from 'ampersand-view'
 import BaseItem from './base'
 import StateConstants from 'constants/states'
 import LifecycleConstants from 'constants/lifecycle'
-import meaning from './meaning'
 import eventIcons from './event-icons'
+import messageFactory from 'models/notification/messageFactory'
 
 const stateToColorClass = (state) => (StateConstants.STATES.indexOf(state)!==-1) ? state : null
 
@@ -12,7 +12,8 @@ module.exports = BaseItem.extend({
     // it is a task execution
     let state = this.sanitizeState(this.model.data.model.state)
     let lifecycle = this.model.data.model.lifecycle
-    this.message = meaning['lifecycle:' + lifecycle] || `${lifecycle}:${state}`
+    //this.message = meaning['lifecycle:' + lifecycle] || `${lifecycle}:${state}`
+    this.message = messageFactory(this.model)
 
     if (this.modelName === 'agent:config:update') {
       let hostname = this.model.data.model.host.hostname

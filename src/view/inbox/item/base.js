@@ -21,11 +21,11 @@ export default View.extend({
   },
   template: `
   <div class="inbox-entry">
-  <span data-hook="icon"></span>
-  <span data-hook="time"></span>
-  <span data-hook="modelType"></span>
-  <span data-hook="modelName" class="label label-primary"></span>
-  <span data-hook="message"></span>
+    <span data-hook="icon"></span>
+    <span data-hook="time"></span>
+    <span data-hook="modelType"></span>
+    <span data-hook="modelName" class="label label-primary"></span>
+    <span data-hook="message"></span>
   </div>
   `,
   bindings: {

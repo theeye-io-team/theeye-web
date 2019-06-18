@@ -13,7 +13,8 @@ const NODE_ENV = process.env['NODE_ENV'] || DEFAULT_NODE_ENV
 const IS_PRODUCTION = (NODE_ENV === 'production' || NODE_ENV === 'staging')
 const PUBLIC_PATH = typeof process.env['PUBLIC_PATH'] === 'string' ? process.env['PUBLIC_PATH'] : '/'
 
-const FILENAME = IS_PRODUCTION ? '[name].[hash:6]' : '[name]'
+//const FILENAME = IS_PRODUCTION ? '[name].[hash:6]' : '[name]'
+const FILENAME = '[name].[hash:6]'
 const TARGET_PATH = 'bundles'
 
 module.exports = {

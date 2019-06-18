@@ -3,6 +3,9 @@ import XHR from 'lib/xhr'
 import config from 'config'
 import { Model as Notification } from 'models/notification'
 import DesktopNotification from 'lib/desktop-notification'
+import notificationIcon from 'assets/images/theeyeonly_medium.png'
+import messageFactory from 'models/notification/messageFactory'
+import titleFactory from 'models/notification/titleFactory'
 
 const logger = require('lib/logger')('actions:tasks')
 
@@ -56,9 +59,25 @@ module.exports = {
       notification.read = true
       notification.save()
     }
+
     App.state.notifications.add(notification)
 
-    DesktopNotification.create(notification)
+    if (App.state.session.user.notifications.desktop === true) {
+      // older than 5'
+      if (((new Date() - notification.createdAt) / 1000 / 60) > 3) {
+        return
+      }
+
+      // is unread
+      if (notification.read) { return }
+
+      DesktopNotification.create({
+        message: messageFactory(notification),
+        title: titleFactory(notification),
+        icon: notificationIcon,
+        tag: 'TheEyeNotification'
+      })
+    }
   },
   toggleInboxOpen () {
     App.state.inbox.toggle('isOpen')
