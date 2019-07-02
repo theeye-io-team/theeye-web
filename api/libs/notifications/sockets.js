@@ -13,7 +13,7 @@ module.exports = {
 
     switch (topic) {
       case NOTIFICATION_TOPIC:
-        sendNotificationMessage(message.data, next)
+        sendNotificationMessages(message.data, next)
         break;
       case CUSTOMER_CHANGED_TOPIC:
         sendCustomerChangedMessage (message.data, next)
@@ -25,7 +25,7 @@ module.exports = {
   }
 }
 
-const sendNotificationMessage = (data, next) => {
+const sendNotificationMessages = (data, next) => {
   const topic = NOTIFICATION_TOPIC
   if (Array.isArray(data.model)) {
     // send a socket event for each user notification
@@ -35,13 +35,10 @@ const sendNotificationMessage = (data, next) => {
 
       logger.debug(`sending message to ${room}`)
 
-      sails.io.sockets.in(room).emit(topic, {
-        model,
-        model_type: 'Notification',
-        operation: 'create',
-        organization: model.data.organization,
-        notification: data.notification
-      })
+      sails.io
+        .sockets
+        .in(room)
+        .emit(topic, Object.assign({}, data, { model }))
     }
     return next()
   } else {
@@ -52,6 +49,7 @@ const sendNotificationMessage = (data, next) => {
 }
 
 const sendCustomerChangedMessage = (data, next) => {
+  const topic = CUSTOMER_CHANGED_TOPIC
   const room = `${data.model.id}:${topic}`
   sails.io.sockets.in(room).emit(topic, {
     organization: data.organization

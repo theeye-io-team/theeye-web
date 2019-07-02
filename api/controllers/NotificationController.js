@@ -139,6 +139,7 @@ const createCustomNotification = (req, res, done) => {
       if (!notificationTypes || notificationTypes.desktop) {
         // send extra notification event via socket to desktop clients
         Notifications.sockets.send({
+          id: event.id,
           topic: 'notification-crud',
           data: {
             model: notifications,
@@ -229,7 +230,6 @@ const createEventNotifications = (req, res, done) => {
     }
 
     // create a notification for each user
-    //createNotifications(event, users, event.data.organization, (err, notifications) => {
     createNotifications({
       topic: event.topic,
       data: event.data,
@@ -242,8 +242,9 @@ const createEventNotifications = (req, res, done) => {
         return done(new Error(msg))
       }
 
-      // send extra notification event via sns topic
+      // send extra notification event via socket to desktop clients
       Notifications.sockets.send({
+        id: event.id,
         topic: 'notification-crud',
         data: {
           model: notifications,

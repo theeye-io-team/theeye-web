@@ -6,10 +6,8 @@ export default (notification) => {
   let state = data.model.state || ''
   state = state ? state.toLowerCase().replace(/ /g, '_') : 'unknown'
 
-  if (type === 'NotificationJob') {
-    if (notification.topic === 'notification-task') {
-      return data.notification.subject
-    }
+  if (type === 'NotificationJob' && notification.topic === 'notification-task') {
+    return data.notification.subject
   } else if (type === 'Resource') {
     let eventIndex = data.custom_event || data.monitor_event
     return meaning[eventIndex] || meaning[data.monitor_event]
