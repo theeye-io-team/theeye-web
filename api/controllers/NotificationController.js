@@ -79,7 +79,7 @@ module.exports = {
       if (err) { return res.send(500, err) }
 
       let date = moment()
-        .subtract(3, 'days')
+        .subtract(1, 'days')
         .startOf('day')
         .toDate()
 
