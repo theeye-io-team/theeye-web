@@ -1,9 +1,14 @@
 
-const View = require('ampersand-view')
 const $ = require('jquery')
+import View from 'ampersand-view'
+import './styles.less'
 
 module.exports = View.extend({
-  template: `<span>&nbsp;<span class="fa fa-question-circle"></span></span>`,
+  template: `
+    <span data-component="help-icon" class="">
+      <span class="fa fa-question-circle"></span>
+    </span>
+  `,
   props: {
     placement: ['string', false, 'top'],
     text: 'string',
@@ -43,6 +48,7 @@ module.exports = View.extend({
     this.el.style.color = 'rgba(' + this.colorRGB + ', 0.2)'
 
     $(this.el).tooltip({
+      container: this.el,
       placement: this.placement
     })
   }

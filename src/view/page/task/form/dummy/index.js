@@ -56,7 +56,7 @@ module.exports = TaskFormView.extend({
       }),
       new TextareaView({
         visible: false,
-        label: 'More Info',
+        label: 'Description',
         name: 'description',
         required: false,
         invalidClass: 'text-danger',
