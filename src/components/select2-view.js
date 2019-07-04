@@ -67,6 +67,7 @@ module.exports = View.extend({
     }
   },
   props: {
+    sort: ['boolean',false,true],
     visible: ['boolean',false,true ],
     styles: ['string',false,'form-group'],
     tokenSeparator: ['array',false,()=>{ return [] }],
@@ -201,6 +202,13 @@ module.exports = View.extend({
           return this.createTags
         }
       })()
+    }
+
+    // sort by options
+    if (this.sort !== false) {
+      select2setup.sorter = function (items) {
+        return items.sort((a, b) => a.text < b.text ? -1 : 1)
+      }
     }
 
     if (this.options) {

@@ -140,6 +140,7 @@ module.exports = TaskFormView.extend({
         //]
       }),
       new SelectView({
+        sort: false,
         visible: false,
         label: 'Trigger on-hold time',
         name: 'grace_time',
