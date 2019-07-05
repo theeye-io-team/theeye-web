@@ -4,10 +4,11 @@ import FilteredSubcollection from 'ampersand-filtered-subcollection'
 import assign from 'lodash/assign'
 import MonitorButtonsView from './buttons'
 import MonitorActions from 'actions/monitor'
-const CollapseContentFactory = require('./collapse-content').Factory
 import MonitorConstants from 'constants/monitor'
 import rowIconByType from '../row-icon-by-type'
 import TagView from 'components/tag'
+import HelpIconView from 'components/help-icon'
+const CollapseContentFactory = require('./collapse-content').Factory
 
 module.exports = function (options) {
   const model = options.model
@@ -125,6 +126,7 @@ const MonitorView = View.extend({
                   <span class="panel-item name">
                     <span data-hook="tags"></span>
                     <span data-hook="name"></span>
+                    <span data-hook="help"></span>
                     <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
                   </span>
 
@@ -167,6 +169,20 @@ const MonitorView = View.extend({
     this.setRowIcon()
     this.renderCollapsedContent()
     this.renderTags()
+    this.renderHelp()
+  },
+  renderHelp () {
+    let icon = new HelpIconView({
+      color: [255,255,255],
+      category: 'task_row_help',
+      text: this.model.description || 'Add Description'
+    })
+
+    this.renderSubview(icon, this.queryByHook('help'))
+
+    this.listenTo(this.model, 'change:description', () => {
+      icon.el.setAttribute('data-original-title', this.model.description)
+    })
   },
   renderCollapsedContent () {
     this.renderSubview(
