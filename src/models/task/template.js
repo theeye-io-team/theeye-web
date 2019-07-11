@@ -86,8 +86,7 @@ const ScraperTask = Schema.extend({
     pattern: 'string',
     gzip: 'boolean',
     json: 'boolean',
-    status_code: 'number',
-    timeout: 'number',
+    status_code: 'number'
   },
   parse () {
     var attrs = Schema.prototype.parse.apply(this,arguments)

@@ -31,6 +31,7 @@ const Schema = AppModel.extend({
     // empty tags and triggers
     tags: ['array',false, () => { return [] }],
     triggers: ['array',false, () => { return [] }],
+    timeout: 'number',
     //_id: 'string',
     _type: 'string', // discriminator
     hasSchedules: ['boolean', true, false]

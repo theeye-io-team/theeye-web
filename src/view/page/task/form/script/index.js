@@ -61,7 +61,8 @@ module.exports = TaskFormView.extend({
       'acl',
       'triggers',
       'grace_time',
-      'copy_task'
+      'copy_task',
+      'timeout'
     ]
 
     this.fields = [
@@ -157,7 +158,52 @@ module.exports = TaskFormView.extend({
         unselectedText: 'Select the Trigger on-hold time',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
-      })
+      }),
+      new SelectView({
+        sort: false,
+        label: 'Execution Timeout',
+        visible: false,
+        name: 'timeout',
+        multiple: false,
+        tags: false,
+        options: [
+          {
+            id: 300000,
+            text: '5 mins'
+          }, {
+            id: 600000,
+            text: '10 mins'
+          }, {
+            id: 1800000,
+            text: '30 mins'
+          }, {
+            id: 3600000,
+            text: '1 hour'
+          }
+        ],
+        value: this.model.timeout || 600000,
+        required: false,
+        unselectedText: 'Select the Req. Timeout',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
+      }),
+      //new InputView({
+      //  visible: false,
+      //  label: 'Execution timeout',
+      //  name: 'timeout',
+      //  required: false,
+      //  invalidClass: 'text-danger',
+      //  validityClassSelector: '.control-label',
+      //  value: this.model.timeout || 600000,
+      //  tests: [
+      //    function (value) {
+      //      let num = Number(value)
+      //      if (!Number.isInteger(num) || num<0) {
+      //        return 'A valid numberic value is required'
+      //      }
+      //    }
+      //  ]
+      //})
     ]
 
     if (this.model.isNew()) {
@@ -193,6 +239,7 @@ module.exports = TaskFormView.extend({
     this.addHelpIcon('triggers')
     this.addHelpIcon('grace_time')
     this.addHelpIcon('task_arguments')
+    this.addHelpIcon('timeout')
 
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)
@@ -253,6 +300,7 @@ module.exports = TaskFormView.extend({
     let f = assign({}, data)
     f.type = TaskConstants.TYPE_SCRIPT
     f.grace_time = Number(data.grace_time)
+    f.timeout = Number(data.timeout)
     return f
   },
   setWithTask (task) {
@@ -263,7 +311,8 @@ module.exports = TaskFormView.extend({
       description: task.description,
       tags: task.tags,
       grace_time: task.grace_time,
-      task_arguments: task.task_arguments
+      task_arguments: task.task_arguments,
+      timeout: task.timeout
     })
   }
 })

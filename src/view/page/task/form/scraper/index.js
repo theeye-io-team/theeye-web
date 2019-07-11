@@ -202,6 +202,7 @@ module.exports = TaskFormView.extend({
       }),
       new SelectView({
         label: 'Req. Timeout',
+        sort: false,
         visible: false,
         name: 'timeout',
         multiple: false,
