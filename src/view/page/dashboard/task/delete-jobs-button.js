@@ -14,6 +14,12 @@ module.exports = CommonButton.extend({
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
       bootbox.confirm({
+        buttons: {
+          confirm: {
+            label: 'Remove execution history',
+            className: 'btn-danger'
+          }
+        },
         message: `Delete finished jobs from execution history?`,
         backdrop: true,
         callback: (confirmed) => {

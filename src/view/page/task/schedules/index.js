@@ -6,7 +6,7 @@ import './style.less'
 
 export const Schedules = View.extend({
   template: `
-    <div class="col-xs-12 schedules-list-component">
+    <div data-component="schedules-list" class="col-xs-12">
       <h4>Schedules for this task</h4>
       <div data-hook="schedule-list"></div>
     </div>
@@ -48,26 +48,32 @@ const ScheduleRow = View.extend({
             <span class="breakline" style="display:none;"><br></span>
             <span class="scheduleTitle">Next iteration: </span>
             <span data-hook="nextDate"></span>
+            <a href="#" data-hook="delete" class="btn-primary btn delete-schedule">
+              <span class="fa fa-trash"></span>
+            </a>
           </div>
-          <button type="button" class="btn btn-primary deleteSchedule">
-            <span class="fa fa-trash"></span>
-          </button>
         </h4>
       </div>
     </div>`,
   events: {
-    'click button.deleteSchedule': 'deleteSchedule'
+    'click [data-hook=delete]': 'onClickDelete'
   },
-  deleteSchedule: function (event) {
-    bootbox.confirm(
-      'The schedule will be canceled. Want to continue?',
-      confirmed => {
-        if (!confirmed) {
-          return
+  onClickDelete: function (event) {
+    bootbox.confirm({
+      buttons: {
+        confirm: {
+          label: 'Delete scheduled Task.',
+          className: 'btn-danger'
         }
-        cancelSchedule(this.task.id, this.model._id)
+      },
+      message: 'The schedule will be deleted. Want to continue?',
+      backdrop: true,
+      callback: (confirmed) => {
+        if (confirmed) {
+          cancelSchedule(this.task.id, this.model._id)
+        }
       }
-    )
+    })
   },
   bindings: {
     'model.data.scheduleData.repeatEvery': {

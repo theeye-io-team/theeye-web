@@ -1,4 +1,4 @@
-.schedules-list-component {
+[data-component=schedules-list] {
   border-bottom: 1px solid grey;
   padding-bottom: 20px;
 
@@ -10,18 +10,19 @@
   span.scheduleTitle{
     color: #aaa;
   }
+
   div.scheduleItem p {
     /* same as button.btn padding-top*/
     margin-top: 5px;
   }
-  button.deleteSchedule {
-    float: right;
-    margin-right: 10px;
-  }
-}
 
-@media (max-width: 767px) {
-  .schedules-list-component {
+  .delete-schedule {
+    padding: 4px;
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+
+  @media (max-width: 767px) {
     div.scheduleData {
       width: 72%;
       padding: 0px 0px 0px 10px;
