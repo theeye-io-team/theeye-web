@@ -236,17 +236,9 @@ const Notification = Template.Notification.extend({
 })
 
 const TaskFactory = function (attrs, options={}) {
-  const store = App.state.tasks
   if (attrs.isCollection) { return attrs }
   if (attrs.isState) { return attrs } // already constructed
-
   let model
-
-  if (attrs.id) {
-    model = store.get(attrs.id)
-    if (model) { return model }
-  }
-
   const createModel = () => {
     let type = attrs.type
     let model
@@ -275,12 +267,6 @@ const TaskFactory = function (attrs, options={}) {
   }
 
   model = createModel()
-  if (
-    options.collection !== store &&
-    !model.isNew()
-  ) {
-    store.add(model, {merge:true})
-  }
   return model
 }
 
@@ -313,6 +299,7 @@ exports.Task = Schema.extend({
     return attrs
   }
 })
+
 exports.Scraper = Scraper
 exports.Script = Script
 exports.Approval = Approval

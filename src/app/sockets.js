@@ -8,7 +8,6 @@ import IndicatorActions from 'actions/indicator'
 import HostStatsActions from 'actions/hoststats'
 import JobActions from 'actions/job'
 import NotificationActions from 'actions/notifications'
-import DashboardActions from 'actions/dashboard'
 import HostActions from 'actions/host'
 import TaskActions from 'actions/task'
 import SessionActions from 'actions/session'
@@ -109,7 +108,7 @@ const createWrapper = () => {
         HostActions.applyStateUpdate(event.model.id, event.model)
       },
       'host-registered': event => {
-        DashboardActions.loadNewRegisteredHostAgent(event.model)
+        App.actions.dashboard.loadNewRegisteredHostAgent(event.model)
       },
       'task-crud': (event) => {
         TaskActions.applyStateUpdate(event.model)

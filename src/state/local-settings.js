@@ -3,7 +3,8 @@ import localForage from 'localforage'
 
 module.exports = AmpersandState.extend({
   props: {
-    monitorsGroupBy: ['object', true, () => ({prop: 'name'})]
+    monitorsGroupBy: ['object', true, () => ({prop: 'name'})],
+    tasksGroupBy: ['object', true, () => ({prop: 'name'})]
   },
   session: {
     storage: 'object'

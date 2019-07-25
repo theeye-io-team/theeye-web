@@ -191,9 +191,6 @@ module.exports = View.extend({
     $el.on('show.bs.collapse', () => { this.collapsed = false })
     $el.on('hide.bs.collapse', () => { this.collapsed = true  })
   },
-  //remove () {
-  //  View.prototype.remove.apply(this, arguments)
-  //},
   renderButtons () {
     return
   },

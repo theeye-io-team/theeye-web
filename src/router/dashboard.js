@@ -4,7 +4,6 @@ import PageView from 'view/page/dashboard'
 import App from 'ampersand-app'
 import search from 'lib/query-params'
 import Route from 'lib/router-route'
-import DashboardActions from 'actions/dashboard'
 
 const logger = require('lib/logger')('router:dashboard')
 
@@ -13,6 +12,7 @@ class Dashboard extends Route {
     App.state.loader.visible = true
     const query = search.get()
     App.state.dashboard.setMonitorsGroupBy(query.monitorsgroupby)
+    App.state.dashboard.setTasksGroupBy(query.tasksgroupby)
     return index(query)
   }
 }
@@ -42,7 +42,7 @@ const prepareData = (options) => {
     })
   }
 
-  DashboardActions.fetchData(options)
+  App.actions.dashboard.fetchData(options)
 }
 
 const index = (query) => {

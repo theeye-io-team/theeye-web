@@ -18,5 +18,8 @@ module.exports = function (options) {
     case TaskConstants.TYPE_NOTIFICATION:
       return new CollapsibleRow.Notification(options)
       break;
+    default:
+      throw new Error(`Task Type ${options.model.type} hasn't got a view`)
+      break;
   }
 }

@@ -142,5 +142,8 @@
   },
   "main": "app.js",
   "author": "jailbirt, facugon",
-  "license": ""
+  "license": "",
+  "devDependencies": {
+    "source-map-explorer": "~2.0.1"
+  }
 }

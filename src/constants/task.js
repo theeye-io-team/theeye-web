@@ -4,6 +4,7 @@ exports.TYPE_SCRIPT = 'script'
 exports.TYPE_APPROVAL = 'approval'
 exports.TYPE_DUMMY = 'dummy'
 exports.TYPE_NOTIFICATION = 'notification'
+exports.TYPE_GROUP = 'group'
 
 exports.GRACE_TIME = Object.freeze([
   {

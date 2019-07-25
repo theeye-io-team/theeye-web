@@ -16,7 +16,6 @@ module.exports = View.extend({
       <ul class="dropdown-menu dropdown-menu-right">
         <div>
           <li><button data-hook="group-by" data-prop="hostname" class="btn btn-primary">Bot</button></li>
-          <li><button data-hook="group-by" data-prop="failure_severity" class="btn btn-primary">Severity</button></li>
           <li><button data-hook="group-by" data-prop="type" class="btn btn-primary">Type</button></li>
           <li><button data-hook="group-by" data-prop="name" class="btn btn-primary">Name</button></li>
           <li role="separator" class="divider"></li>
@@ -28,25 +27,9 @@ module.exports = View.extend({
   props: {
     groupBy: 'object',
   },
-  //derived: {
-  //  groupingMonitorsByProp: {
-  //    deps: ['groupBy'],
-  //    fn () {
-  //      return Boolean(this.groupBy.prop)
-  //    }
-  //  }
-  //},
-  //bindings: {
-  //  groupingMonitorsByProp: {
-  //    type: 'booleanClass',
-  //    hook: 'show-more-options',
-  //    yes: 'fa-toggle-on',
-  //    no: 'fa-toggle-off'
-  //  }
-  //},
   initialize () {
     View.prototype.initialize.apply(this,arguments)
-    this.groupBy = App.state.dashboard.monitorsGroupBy
+    this.groupBy = App.state.dashboard.tasksGroupBy
   },
   events: {
     'click button':'showMoreOptions',
@@ -63,7 +46,7 @@ module.exports = View.extend({
 
     if (prop===this.groupBy.prop) { return }
 
-    App.actions.dashboard.setMonitorsGroupByProperty(prop)
+    App.actions.dashboard.setTasksGroupByProperty(prop)
   },
   render () {
     this.renderWithTemplate(this)

@@ -8,10 +8,18 @@ import ApprovalActions from 'actions/approval'
 module.exports = {
   setMonitorsGroupByProperty (prop) {
     const query = search.get()
-    query.monitorsgroupby = { prop: prop }
+    query.monitorsgroupby = { prop }
     const qs = search.set(query)
 
     App.Router.navigate(`dashboard?${qs}`, { replace: true })
+  },
+  setTasksGroupByProperty (prop) {
+    const query = search.get()
+    query.tasksgroupby = { prop }
+    const qs = search.set(query)
+
+    App.Router.navigate(`dashboard?${qs}`, { replace: true })
+    //App.Router.reload()
   },
   loadNewRegisteredHostAgent (host) {
     App.state.loader.visible = false

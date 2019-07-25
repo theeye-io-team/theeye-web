@@ -3,77 +3,26 @@
 import App from 'ampersand-app'
 import uuidv4 from 'uuid/v4'
 
-import Collection from 'ampersand-collection'
+import GroupedTasksCollection from './grouped-tasks'
 import { GroupedResourceCollection, GroupedResource } from 'models/resource'
-import { Collection as TasksCollection, Scraper, Script } from 'models/task'
-import { Workflow } from 'models/workflow'
 import AmpersandState from 'ampersand-state'
-import ModelConstants from 'constants/models'
-
-const isWorkflow = (model) => {
-  return /Workflow/.test(model._type)
-}
-
-const isDate = function (date) {
-  if (!date) {
-    return false
-  } else {
-    return (date instanceof Date)
-  }
-}
-
-const GroupedTasksCollection = TasksCollection.extend({
-  comparator (m1, m2) {
-    if (isDate(m1.last_execution) && isDate(m2.last_execution)) {
-      if (m1.last_execution > m2.last_execution) { return -1 }
-      else if (m1.last_execution < m2.last_execution) { return 1 }
-    }
-    else if (isDate(m1.last_execution)) { return -1 }
-    else if (isDate(m2.last_execution)) { return 1 }
-    else {
-      let m1IsWf = isWorkflow(m1)
-      let m2IsWf = isWorkflow(m2)
-
-      if ((m1IsWf && m2IsWf) || (!m1IsWf && !m2IsWf)) {
-        if (m1.name.toLowerCase()<m2.name.toLowerCase()) { return -1 }
-        if (m1.name.toLowerCase()>m2.name.toLowerCase()) { return  1 }
-        return 0
-      }
-      else if (m1IsWf) { return -1 }
-      else if (m2IsWf) { return 1 }
-    }
-  },
-  model (attrs, options={}) {
-    const taskModel = TasksCollection.prototype.model
-
-    if (attrs._type == ModelConstants.TYPE_WORKFLOW) {
-      return new Workflow(attrs, options)
-    } else {
-      return taskModel.apply(this, arguments)
-    }
-  },
-  isModel (model) {
-    const isTaskModel = TasksCollection.prototype.isModel
-    return model instanceof Workflow || isTaskModel.apply(this, arguments)
-  },
-  initialize () {
-    TasksCollection.prototype.initialize.apply(this, arguments)
-
-    this.on('change', (model) => {
-      let changedAttributes = model.changedAttributes()
-      if (changedAttributes.hasOwnProperty('last_execution')) {
-        this.sort()
-      }
-    })
-  }
-})
 
 module.exports = AmpersandState.extend({
+  initialize () {
+    AmpersandState.prototype.initialize.apply(this, arguments)
+
+    this.listenToAndRun(this.groupedTasks, 'change:inProgressJobs', () => {
+      this.groupedTasks.sort()
+    })
+  },
   props: {
     indicatorsDataSynced: ['boolean',false,false],
     resourcesDataSynced: ['boolean',false,false],
     tasksDataSynced: ['boolean',false,false],
     monitorsGroupBy: ['object',false, () => {
+      return { prop: 'name' }
+    }],
+    tasksGroupBy: ['object',false, () => {
       return { prop: 'name' }
     }]
   },
@@ -85,55 +34,36 @@ module.exports = AmpersandState.extend({
   groupResources () {
     const resources = App.state.resources.models
     // now always group dstat and psaux into host
-    const groups = groupMonitorsBy(
+    const groups = groupModelsBy(
       groupMonitorsByHost(resources),
       this.monitorsGroupBy
     )
     this.groupedResources.reset(groups)
   },
   groupTasks () {
-    const tasks = App.state.tasks
-    this.groupedTasks.add(tasks.models.filter(m => !m.workflow_id))
+    const group = () => {
+      let models = App.state.tasks.models.filter(m => !m.workflow_id)
 
-    this.listenTo(tasks, 'add', (model) => {
-      this.groupedTasks.add(model)
-    })
-    this.listenTo(tasks, 'remove', (model) => {
-      this.groupedTasks.remove(model)
-    })
-    this.listenTo(tasks, 'reset', () => {
-      this.groupedTasks.reset(tasks.models.filter(m => !m.workflow_id))
-    })
+      //App.state.workflows.models.forEach(model => models.push(model))
+      this.groupedTasks.regroup(models, this.tasksGroupBy)
 
-    this.listenTo(tasks, 'change:workflow_id', (task) => {
-      // if task has no workflow assigned then put it into the grouped tasks collection
-      if (!task.workflow_id) {
-        this.groupedTasks.add(task)
-      } else {
-        this.groupedTasks.remove(task)
-      }
-    })
+      this.groupedTasks.add(App.state.workflows.models)
+    }
 
-    const workflows = App.state.workflows
-    this.groupedTasks.add(workflows.models)
-    this.listenTo(App.state.workflows, 'add', (model) => {
-      this.groupedTasks.add(model)
-    })
-
-    //this.groupedTasks.sort()
+    this.listenToAndRun(App.state.tasks, 'add remove reset change:workflow_id', group)
+    this.listenTo(App.state.workflows, 'add', group)
   },
   setMonitorsGroupBy (groupBy) {
     if (groupBy) {
       App.state.localSettings.monitorsGroupBy = groupBy
     }
-    this.monitorsGroupBy = parseMonitorsGroupBy(App.state.localSettings.monitorsGroupBy)
+    this.monitorsGroupBy = parseGroupBy(App.state.localSettings.monitorsGroupBy)
   },
-  initialize () {
-    AmpersandState.prototype.initialize.apply(this, arguments)
-
-    this.listenToAndRun(this.groupedTasks, 'change:inProgressJobs', () => {
-      this.groupedTasks.sort()
-    })
+  setTasksGroupBy (groupBy) {
+    if (groupBy) {
+      App.state.localSettings.tasksGroupBy = groupBy
+    }
+    this.tasksGroupBy = parseGroupBy(App.state.localSettings.tasksGroupBy)
   }
 })
 
@@ -141,17 +71,17 @@ const ucfirst = (string) => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const monitorPropertyValueDescriptionMap = (value) => {
-  const descriptions = {
-    'scraper': 'Web Request',
-    'script': 'Scripts',
-    'file': 'Files',
-    'process': 'Processes',
-    'host': 'Bots',
-    'dstat': 'Bots Stats',
-    'psaux': 'Bots Processes',
-  }
+const descriptions = {
+  'scraper': 'Web Request',
+  'script': 'Scripts',
+  'file': 'Files',
+  'process': 'Processes',
+  'host': 'Bots',
+  'dstat': 'Bots Stats',
+  'psaux': 'Bots Processes',
+}
 
+const monitorPropertyValueDescriptionMap = (value) => {
   return ( descriptions[value] || ucfirst(value) )
 }
 
@@ -159,7 +89,7 @@ const monitorPropertyValueDescriptionMap = (value) => {
  * @param {Object} query uri query string
  * @return {String[]}
  */
-const parseMonitorsGroupBy = (groupby) => {
+const parseGroupBy = (groupby) => {
   if (!groupby) return {}
   if (Array.isArray(groupby)) return {}
   if (typeof groupby != 'object') return {}
@@ -243,7 +173,7 @@ const groupMonitorsByHost = (resources) => {
  *
  * @return {GroupedResource[]}
  */
-const groupMonitorsBy = (resources, groupBy) => {
+const groupModelsBy = (resources, groupBy) => {
   const { tags, prop } = groupBy
 
   if (Object.keys(groupBy).length === 0) return null
@@ -261,7 +191,7 @@ const groupMonitorsBy = (resources, groupBy) => {
   }
 }
 
-const populateGroups = (resources, prop) => {
+const createGroups = (resources, prop) => {
   // build groups by distinct property values
   const groups = {}
 
@@ -304,11 +234,10 @@ const groupByProperty = (resources, prop) => {
     return resources
   }
 
-  const groups = populateGroups(resources, prop)
+  const groups = createGroups(resources, prop)
 
   return Object.keys(groups).map(key => groups[key])
 }
-
 
 /**
  * @summary Group resources using name property
@@ -320,7 +249,7 @@ const groupByProperty = (resources, prop) => {
  */
 const groupByName = (resources) => {
 
-  const groups = populateGroups(resources, 'name')
+  const groups = createGroups(resources, 'name')
 
   const results = Object.keys(groups).map(key => {
     if (groups[key].submonitors.length === 1) {
@@ -332,7 +261,6 @@ const groupByName = (resources) => {
 
   return results
 }
-
 
 /**
  * @summary Group resources using the tags of each model

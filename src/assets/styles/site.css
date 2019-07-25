@@ -553,7 +553,7 @@ h3.light { color: #EEE}
 .admin-container .panel-heading a div.panel-title-content { width:100%;}
 
 .admin-container .panel-default {
-  background-color: transparent;
+  background: #304269;
   border:none;
   font-size: 0px; /** to fix display:inline-block; added extra space **/
 }
@@ -1071,7 +1071,9 @@ a.flowchart-icon {
 .admin-container.dashboard i.circle { border-radius: 50%; }
 .admin-container.dashboard i.host-color { background-color: #00b4bc }
 .admin-container.dashboard i.script-color { background-color: #c6639b }
+.admin-container.dashboard i.bot-color { background-color: #5bc4e8 }
 .admin-container.dashboard i.approval-color { background-color: #9fbc75 }
+.admin-container.dashboard i.group-color { background-color: #5bc4e8 }
 .admin-container.dashboard i.dummy-color { background-color: #fb8484 }
 .admin-container.dashboard i.workflow-color { background-color: #bc9ad6 }
 .admin-container.dashboard i.webhook-color { background-color: #0080b9 }
