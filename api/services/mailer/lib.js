@@ -48,6 +48,14 @@ module.exports = {
       options.bcc = config.support.join(',')
     }
 
+    if (options.to) {
+      options.to = options.to.toLowerCase()
+    }
+
+    if (options.bcc) {
+      options.bcc = options.bcc.toLowerCase()
+    }
+
     transporter.sendMail(options, callback)
   }
 }

@@ -5,9 +5,9 @@ var mailer = require('./lib');
 var logger = require('../../libs/logger')('services:mailer')
 
 module.exports = {
-  sendActivationMail: function(input, next) {
+  sendActivationMail: function (input, next) {
     var data = { locals: input };
-    ejs.renderFile("views/email/activation.ejs", data, function(error, html) {
+    ejs.renderFile("views/email/activation.ejs", data, function (error, html) {
       if(error) {
         logger.error('Error parsing "views/email/activation.ejs"');
         logger.error(error);
@@ -15,9 +15,9 @@ module.exports = {
       }
 
       var options = {
-        'to': input.invitee.email,
-        'subject': 'TheEye Invitation',
-        'html': html
+        to: input.invitee.email,
+        subject: 'TheEye Invitation',
+        html: html
       };
 
       mailer.sendMail(options, function(error, info) {
@@ -27,7 +27,7 @@ module.exports = {
       });
     });
   },
-  sendUserActivatedEMail: function(input, next) {
+  sendUserActivatedEMail: function (input, next) {
     var data = { locals: input };
     ejs.renderFile("views/email/activated.ejs", data, function(error, html) {
       if(error) {
@@ -37,9 +37,9 @@ module.exports = {
       }
 
       var options = {
-        'to': input.invitee.email,
-        'subject': 'TheEye Invitation',
-        'html': html
+        to: input.invitee.email,
+        subject: 'TheEye Invitation',
+        html: html
       };
 
       mailer.sendMail(options, function(error, info) {
@@ -49,7 +49,7 @@ module.exports = {
       });
     });
   },
-  sendRegistrationMail: function(input, next) {
+  sendRegistrationMail: function (input, next) {
     var data = { locals: input };
     ejs.renderFile("views/email/registration.ejs", data, function(error, html) {
       if(error) {
@@ -59,10 +59,9 @@ module.exports = {
       }
 
       var options = {
-        'to': input.invitee.email,
-        // 'subject': 'TheEye Registration confirmation',
-        'subject': 'Confirma tu registro en TheEye',
-        'html': html
+        to: input.invitee.email,
+        subject: 'Confirma tu registro en TheEye',
+        html: html
       };
 
       mailer.sendMail(options, function(error, info) {
@@ -75,7 +74,7 @@ module.exports = {
   sendPasswordRecoveryEMail: function(data, next) {
     ejs.renderFile("views/email/retrive-password.ejs", {
       locals: data
-    }, function(error, html) {
+    }, function (error, html) {
       var options = {
         to: data.user.email,
         subject: 'TheEye Password Restore',
