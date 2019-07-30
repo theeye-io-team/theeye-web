@@ -1,3 +1,4 @@
+import config from 'config'
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
@@ -17,6 +18,8 @@ import { Model as File } from 'models/file'
 
 import './styles.less'
 
+const docsLink = 'core-concepts/tasks/'
+
 module.exports = function () {
   const wizard = new TaskCreationWizard()
   wizard.render()
@@ -27,7 +30,7 @@ module.exports = function () {
   })
 
   modal.renderSubview(
-    new HelpIconView({ link: 'https://docs.theeye.io/tasks' }),
+    new HelpIconView({ link: `${config.docs}/${docsLink}` }),
     modal.queryByHook('title')
   )
 

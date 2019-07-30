@@ -4,10 +4,13 @@ import Modalizer from 'components/modalizer'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
 import WorkflowFormView from '../form'
+import config from 'config'
 
 import { Workflow } from 'models/workflow'
 
 import './styles.less'
+
+const docsLink = 'core-concepts/tasks/tasks_workflows/'
 
 module.exports = function () {
   const wizard = new WorkflowCreationWizard()
@@ -21,7 +24,7 @@ module.exports = function () {
 
   modal.renderSubview(
     new HelpIconView({
-      link: 'https://docs.theeye.io/workflows'
+      link: `${config.docs}/${docsLink}`
     }),
     modal.queryByHook('title')
   )

@@ -1,5 +1,3 @@
-'use strict'
-
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
 import bootbox from 'bootbox'

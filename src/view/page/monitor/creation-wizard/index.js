@@ -4,10 +4,12 @@ import Modalizer from 'components/modalizer'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
 import MonitorFormView from '../form'
+import config from 'config'
 
 import { Nested as NestedMonitors } from 'models/resource'
 
 import './styles.less'
+const docsLink = 'core-concepts/monitors/#monitor-type'
 
 module.exports = function () {
   const wizard = new ResourceCreationWizard()
@@ -20,7 +22,7 @@ module.exports = function () {
 
   modal.renderSubview(
     new HelpIconView({
-      link: 'https://docs.theeye.io/monitors'
+      link: `${config.docs}/${docsLink}`
     }),
     modal.queryByHook('title')
   )

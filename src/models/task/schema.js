@@ -45,6 +45,7 @@ const Schema = AppModel.extend({
     }
   },
   session: {
+    credentials: ['object', false, null],
     hasDinamicArguments: 'boolean',
     hasDinamicOutputs: 'boolean',
     alreadyFetched: ['boolean', false, false],

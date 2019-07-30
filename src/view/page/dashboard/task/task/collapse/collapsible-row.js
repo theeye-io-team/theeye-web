@@ -1,8 +1,8 @@
 import App from 'ampersand-app'
-import TaskActions from 'actions/task'
 import View from 'ampersand-view'
 import SearchActions from 'actions/searchbox'
 import ExecTaskButton from '../task-exec-button'
+import TaskIntegrationButton from 'view/page/task/buttons/integrations'
 import EditTaskButton from 'view/page/task/buttons/edit'
 import CopyTaskButton from 'view/page/task/buttons/copy'
 import DeleteTaskButton from 'view/page/task/buttons/delete'
@@ -15,7 +15,7 @@ import JobsList from 'view/page/dashboard/task/jobs-list'
 
 module.exports = CollapsibleRow.extend({
   onClickToggleCollapse (event) {
-    TaskActions.populate(this.model)
+    App.actions.task.populate(this.model)
     return
   },
   renderButtons () {
@@ -69,6 +69,7 @@ const TaskButtonsView = View.extend({
           <span>Search related</span>
         </button>
       </li>
+      <span data-hook="integration-button"> </span>
     </div>
   `,
   events: {
@@ -80,15 +81,15 @@ const TaskButtonsView = View.extend({
     event.stopPropagation()
     event.preventDefault()
     $('.dropdown.open .dropdown-toggle').dropdown('toggle')
-    TaskActions.exportRecipe(this.model.id)
+    App.actions.task.exportRecipe(this.model.id)
     return false
   },
   onClickWorkflow (event) {
     event.stopPropagation()
     event.preventDefault()
     $('.dropdown.open .dropdown-toggle').dropdown('toggle')
-    TaskActions.nodeWorkflow(this.model.id)
-    return false;
+    App.actions.task.nodeWorkflow(this.model.id)
+    return false
   },
   onClickSearch (event) {
     event.preventDefault()
@@ -103,6 +104,9 @@ const TaskButtonsView = View.extend({
     if (Acls.hasAccessLevel('admin')) {
       var editButton = new EditTaskButton({ model: this.model })
       this.renderSubview(editButton, this.queryByHook('edit-button'))
+
+      var integrationButton = new TaskIntegrationButton({ model: this.model })
+      this.renderSubview(integrationButton, this.queryByHook('integration-button'))
 
       if (this.model._type === 'ScriptTask') {
         var editScriptButton = new EditScriptButton ({ model: this.model })

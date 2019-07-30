@@ -22,6 +22,23 @@ module.exports = {
   nodeWorkflow (node) {
     App.navigate('/admin/workflow/' + node)
   },
+  getCredentials (id, next) {
+    next || (next=()=>{})
+    let task = App.state.tasks.get(id)
+
+    XHR.send({
+      method: 'GET',
+      url: `${config.api_v3_url}/task/${id}/credentials`,
+      done (credentials) {
+        task.credentials = credentials
+      },
+      fail (err, xhr) {
+        let msg = 'Error retrieving task integrations credentials.'
+        bootbox.alert(msg)
+        return next(new Error(msg))
+      }
+    })
+  },
   update (id, data) {
     let task = App.state.tasks.get(id)
     if (task.type == 'script') {
@@ -66,7 +83,7 @@ module.exports = {
         bootbox.alert({
           message: 'Congratulations!, Your first task has been created Successfully!',
           callback: function () {
-            bootbox.alert("<p style='text-align: left;'>We're building our marketplace. Find further documentation at <a href='https://docs.theeye.io' target='_blank'>https://docs.theeye.io.</a></p><p>If you need help please email us at <a href='mailto:support@theeye.io'>support@theeye.io.</a></p>")
+            bootbox.alert(`<p style='text-align: left;'>We're building our marketplace. Find further documentation at <a href='${config.docs}' target='_blank'>${config.docs}</a></p><p>If you need help please email us at <a href='mailto:support@theeye.io'>support@theeye.io.</a></p>`)
           }
         })
         OnboardingActions.updateOnboarding(true)

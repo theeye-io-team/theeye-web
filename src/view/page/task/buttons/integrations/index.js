@@ -1,0 +1,155 @@
+import App from 'ampersand-app'
+import PanelButton from 'components/list/item/panel-button'
+import Modalizer from 'components/modalizer'
+import $ from 'jquery'
+import View from 'ampersand-view'
+import './style.less'
+import 'highlight.js/styles/github.css'
+import Clipboard from 'clipboard'
+import config from 'config'
+
+import hljs from 'highlight.js/lib/highlight'
+import bash from 'highlight.js/lib/languages/bash'
+hljs.registerLanguage('bash', bash)
+
+const docsLink = 'integrations/api/api_resources_task/#2-using-the-task-secret-key-40recommended41'
+
+export default PanelButton.extend({
+  initialize (options) {
+    this.title = 'Integration'
+    this.iconClass = 'fa fa-chain dropdown-icon'
+    this.className = 'btn btn-primary'
+  },
+  events: {
+    click (event) {
+      event.stopPropagation()
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+
+      let view = new CredentialsView({ model: this.model })
+
+      const modal = new Modalizer({
+        buttons: false,
+        title: this.title,
+        bodyView: view
+      })
+
+      this.listenTo(modal, 'hidden', () => {
+        view.remove()
+        modal.remove()
+      })
+
+      modal.show()
+
+      App.actions.task.getCredentials(this.model.id)
+    }
+  }
+})
+
+const CredentialsView = View.extend({
+  template: `
+    <div data-component="task-credentials">
+			<div class="form-group">
+		  	<label>Integration ID</label>
+        <div class="input-group">
+      	  <input class="form-control form-input" id="integrationId" readonly type="text" data-hook="id" value="">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" data-clipboard-target="#integrationId">
+              <span class="fa fa-copy" alt="copy to clipboard"></span>
+            </button>
+          </span>
+			  </div>
+			</div>
+			<div class="form-group">
+		  	<label>Integration Secret</label>
+        <div class="input-group">
+      	  <input class="form-control form-input" id="integrationSecret" readonly type="text" data-hook="secret" value="">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" data-clipboard-target="#integrationSecret">
+              <span class="fa fa-copy" alt="copy to clipboard"></span>
+            </button>
+          </span>
+			  </div>
+			</div>
+      <div class="form-group">
+        <a class="toggle" href="javascript:void(0)" data-hook="toggle-trigger">sample curl</a>
+      </div>
+      <div class="hidden-data form-group" data-hook="toggle-target">
+        <label>curl sample using unix shell</label>
+        <pre data-hook="sample-code"><code class="bash">task="<span data-hook="task_id"></span>"
+secret="<span data-hook="task_secret"></span>"
+customer="<span data-hook="task_customer"></span>"
+
+curl -i -sS -X POST "https://supervisor.theeye.io/job/secret/\$\{secret\}" \\
+  --header 'Content-Type: application/json' \\
+  --data '{"customer":"'\$\{customer\}'","task":"'\$\{task\}'","task_arguments":["value_arg1","value_arg2","value_arg3"]}'</code></pre>
+        <a href="${config.docs}/${docsLink}" target="_blank">Find more info in the docs</a>
+      </div>
+    </div>
+  `,
+  props: {
+    id: 'string',
+    secret: 'string',
+    customer: 'string'
+  },
+  initialize () {
+    View.prototype.initialize.apply(this, arguments)
+
+    this.id = null
+    this.secret = null
+    this.customer = App.state.session.customer.name
+
+    this.listenToAndRun(this.model, 'change:credentials', this.updateState)
+  },
+  render () {
+    View.prototype.render.apply(this,arguments)
+
+    let el = this.el.querySelector('[data-hook=sample-code]')
+    hljs.highlightBlock(el)
+
+    this.clipId = new Clipboard( this.query('[data-hook=id]') )
+    this.clipSecret = new Clipboard( this.query('[data-hook=secret]') )
+  },
+  events: {
+    'click [data-hook=toggle-trigger]':'onClickToggle'
+  },
+  onClickToggle () {
+    this.el.querySelector('.hidden-data').classList.toggle('visible')
+  },
+  updateState () {
+    let credentials = this.model.credentials
+
+    if (
+      credentials &&
+      typeof credentials == 'object' &&
+      credentials.hasOwnProperty('id') &&
+      credentials.hasOwnProperty('secret')
+    ) {
+      this.id = credentials.id
+      this.secret = credentials.secret
+    }
+  },
+  bindings: {
+    id: [{
+      hook: 'id',
+      type: 'attribute',
+      name: 'value'
+    },{
+      hook: 'task_id'
+    }],
+    secret: [{
+      hook: 'secret',
+      type: 'attribute',
+      name: 'value'
+    },{
+      hook: 'task_secret'
+    }],
+    customer: {
+      hook: 'task_customer'
+    }
+  },
+  remove () {
+    this.clipId.destroy()
+    this.clipSecret.destroy()
+    View.prototype.remove.apply(this, arguments)
+  }
+})
