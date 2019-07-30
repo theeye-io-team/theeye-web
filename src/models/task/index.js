@@ -300,6 +300,30 @@ exports.Task = Schema.extend({
   }
 })
 
+const Group = Schema.extend({
+  initialize (attrs) {
+    Schema.prototype.initialize.apply(this,arguments)
+    this.type = 'group'
+
+    this.listenToAndRun(this.submodels, 'change:inProgressJobs', () => {
+      this.inProgressJobs = this.submodels.models
+        .map(model => model.inProgressJobs)
+        .reduce((count, curr) => count + curr, 0)
+    })
+  },
+  collections: {
+    submodels: Collection
+  },
+  derived: {
+    formatted_tags: formattedTags()
+  },
+  props: {
+    groupby: ['string'],
+    canExecute: ['boolean', false, true]
+  }
+})
+
+
 exports.Scraper = Scraper
 exports.Script = Script
 exports.Approval = Approval
@@ -307,3 +331,4 @@ exports.Dummy = Dummy
 exports.Notification = Notification
 exports.Collection = Collection
 exports.Factory = TaskFactory
+exports.Group = Group

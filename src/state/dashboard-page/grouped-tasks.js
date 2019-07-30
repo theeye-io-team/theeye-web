@@ -1,7 +1,6 @@
 import ModelConstants from 'constants/models'
 import { Workflow } from 'models/workflow'
-import { Collection as TasksCollection } from 'models/task'
-import TaskSchema from 'models/task/schema'
+import { Group as TaskGroup, Collection as TasksCollection } from 'models/task'
 import uuidv4 from 'uuid/v4'
 
 export default TasksCollection.extend({
@@ -176,26 +175,6 @@ const groupByTags = (models, tags) => {
 
   return groups
 }
-
-const TaskGroup = TaskSchema.extend({
-  initialize (attrs) {
-    TaskSchema.prototype.initialize.apply(this,arguments)
-    this.type = 'group'
-
-    this.listenToAndRun(this.submodels, 'change:inProgressJobs', () => {
-      this.inProgressJobs = this.submodels.models
-        .map(model => model.inProgressJobs)
-        .reduce((count, curr) => count + curr, 0)
-    })
-  },
-  collections: {
-    submodels: TasksCollection
-  },
-  props: {
-    groupby: ['string'],
-    canExecute: ['boolean',false,true]
-  }
-}) 
 
 const jsUcfirst = (text) => {
   return (
