@@ -221,23 +221,19 @@ const JobFactory = function (attrs, options={}) {
 
   let model
 
-  //if (attrs.id) {
-  //  model = App.state.jobs.get(attrs.id)
-  //  if (model) {
-  //    // reset
-  //    //model.clear()
-  //    //model.result.clear()
-  //    // and update
-  //    model.set(attrs)
-  //    if (model.result) {
-  //      model.result.set(attrs.result)
-  //    }
-  //    if (attrs.user) {
-  //      model.user.set(attrs.user)
-  //    }
-  //    return model
-  //  }
-  //}
+  if (attrs.id) {
+    model = App.state.jobs.get(attrs.id)
+    if (model) {
+      model.set(attrs)
+      if (model.result) {
+        model.result.set(attrs.result)
+      }
+      if (attrs.user) {
+        model.user.set(attrs.user)
+      }
+      return model
+    }
+  }
 
   const createModel = () => {
     let type = attrs._type
@@ -270,9 +266,9 @@ const JobFactory = function (attrs, options={}) {
   }
 
   model = createModel()
-  //if (options.collection !== App.state.jobs) {
-  //  App.state.jobs.add(model, {merge:true})
-  //}
+  if (options.collection !== App.state.jobs) {
+    App.state.jobs.add(model, {merge:true})
+  }
   return model
 }
 

@@ -132,7 +132,7 @@
     "start": "./node_modules/webpack/bin/webpack.js && node .",
     "devel": "NODE_ENV='development' PORT=6080 DEBUG=*eye* node .",
     "core": "PORT=6080 DEBUG=*eye* node .",
-    "local": "SOCKET_AUTH_URL=http://localhost:6080 NODE_ENV=localdev PORT=6080 ./node_modules/.bin/nodemon . -i src, node_modules",
+    "local": "SOCKET_AUTH_URL=http://localhost:6080 NODE_ENV=localdev PORT=6080 node . -i src, node_modules",
     "inspect": "SOCKET_AUTH_URL=http://localhost:6080 NODE_ENV=localdev PORT=6080 ./node_modules/.bin/nodemon --inspect . -i src, node_modules",
     "webpack": "NODE_ENV=local ./node_modules/webpack/bin/webpack.js -w",
     "hbs-compile": "./handlebars assets/js/app/templates/*.hbs -f assets/js/templates.js --e hbs",
