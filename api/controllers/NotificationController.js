@@ -181,6 +181,7 @@ const parseRecipients = (emails) => {
   let recipients = null
   if (!emails) { return recipients }
   if (typeof emails === 'string') {
+    emails = emails.toLowerCase()
     try {
       let values = JSON.parse(emails)
       if (Array.isArray(values) && values.length > 0) {
