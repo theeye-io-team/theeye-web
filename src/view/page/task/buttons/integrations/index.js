@@ -81,7 +81,7 @@ customer="<span data-hook="task_customer"></span>"
 
 curl -i -sS -X POST "${config.supervisor_api_url}/job/secret/\$\{secret\}" \\
   --header 'Content-Type: application/json' \\
-  --data '{"customer":"'\$\{customer\}'","task":"'\$\{task\}'","task_arguments":["value_arg1","value_arg2","value_arg3"]}'</code></pre>
+  --data '{"customer":"'\$\{customer\}'","task":"'\$\{task\}'","task_arguments":[<span data-hook="task_args"></span>]}'</code></pre>
         <a href="${config.docs}/${docsLink}" target="_blank">Find more info in the docs</a>
       </div>
     </div>
@@ -89,14 +89,16 @@ curl -i -sS -X POST "${config.supervisor_api_url}/job/secret/\$\{secret\}" \\
   props: {
     id: 'string',
     secret: 'string',
-    customer: 'string'
+    customer: 'string',
+    args: 'string'
   },
   initialize () {
     View.prototype.initialize.apply(this, arguments)
 
-    this.id = null
-    this.secret = null
     this.customer = App.state.session.customer.name
+    this.id = ''
+    this.secret = ''
+    this.args = ''
 
     this.listenToAndRun(this.model, 'change:credentials', this.updateState)
   },
@@ -127,6 +129,13 @@ curl -i -sS -X POST "${config.supervisor_api_url}/job/secret/\$\{secret\}" \\
       this.id = credentials.id
       this.secret = credentials.secret
     }
+
+    if (this.model.task_arguments.models.length > 0) {
+      this.args = this.model
+        .task_arguments
+        .models.map(arg => `\"'\$\{${arg.label}\}'\"`)
+        .join(',')
+    }
   },
   bindings: {
     id: [{
@@ -145,6 +154,9 @@ curl -i -sS -X POST "${config.supervisor_api_url}/job/secret/\$\{secret\}" \\
     }],
     customer: {
       hook: 'task_customer'
+    },
+    args: {
+      hook: 'task_args'
     }
   },
   remove () {
