@@ -280,7 +280,7 @@ module.exports = FormView.extend({
           required: true,
           invalidClass: 'text-danger',
           validityClassSelector: '.control-label',
-          value: this.model.label || 'FixedValue',
+          value: this.model.label,
         }),
         new InputView({
           label: 'Value *',

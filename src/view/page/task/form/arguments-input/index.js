@@ -126,7 +126,7 @@ module.exports = View.extend({
 
     // fixed arguments does not has a label
     if (argument.type===FieldConstants.TYPE_FIXED) {
-      argument.label = `FixedArg${this.taskArguments.length}`
+      //argument.label = `FixedArg${this.taskArguments.length}`
       argument.readonly = true
     }
 
