@@ -275,6 +275,14 @@ module.exports = FormView.extend({
     if (this.model.type === FIELD.TYPE_FIXED) {
       this.fields.push(
         new InputView({
+          label: 'Label *',
+          name: 'label',
+          required: true,
+          invalidClass: 'text-danger',
+          validityClassSelector: '.control-label',
+          value: this.model.label || 'FixedValue',
+        }),
+        new InputView({
           label: 'Value *',
           name: 'value',
           required: true,
