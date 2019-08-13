@@ -21,7 +21,7 @@ var Scraper = (function Scraper(){
   }
 
   var FormView = BaseView.extend({
-    template : Templates['assets/templates/scraper-form.hbs'],
+    template : Templates['assets/templates/scraper-form'],
     initialize : function(options){
       var self = this;
 
@@ -207,7 +207,7 @@ var Scraper = (function Scraper(){
       this.find('[data-hook=looptime-container]').remove();
 
       var advancedSection = this.queryByHook('advanced');
-      var triggerInputsHTML = Templates['assets/templates/trigger-inputs.hbs']();
+      var triggerInputsHTML = Templates['assets/templates/trigger-inputs']();
       advancedSection.append( triggerInputsHTML );
 
       this.setupSelect();

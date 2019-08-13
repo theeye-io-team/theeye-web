@@ -8,7 +8,7 @@ var TaskSelect = BaseView.extend({
   autoRender:true,
   tagName:'div',
   className:'form-group form-horizontal',
-  template: Templates['assets/templates/components/task-select.hbs'],
+  template: Templates['assets/templates/components/task-select'],
   initialize:function(options){
     this.label = (options.label||'Copy Task');
 

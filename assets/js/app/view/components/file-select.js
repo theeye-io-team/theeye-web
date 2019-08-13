@@ -51,7 +51,7 @@ var FileSelect = (function(){
     autoRender: true,
     tagName: 'div',
     className: 'form-group form-horizontal',
-    template: Templates['assets/templates/components/input-select.hbs'],
+    template: Templates['assets/templates/components/input-select'],
     initialize: function(options){
       this.label = 'Files';
       this.name = 'file';

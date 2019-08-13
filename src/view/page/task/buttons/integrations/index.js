@@ -100,7 +100,11 @@ curl -i -sS -X POST "${config.supervisor_api_url}/job/secret/\$\{secret\}" \\
     this.secret = ''
     this.args = ''
 
-    this.listenToAndRun(this.model, 'change:credentials', this.updateState)
+    this.listenToAndRun(
+      this.model,
+      'change:credentials change:task_arguments',
+      this.updateState
+    )
   },
   render () {
     View.prototype.render.apply(this,arguments)

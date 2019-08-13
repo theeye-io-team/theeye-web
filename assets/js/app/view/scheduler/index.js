@@ -74,10 +74,10 @@ var SchedulerPageView = (function(){
 
   var SchedulerPage = BaseView.extend({
     autoRender: true,
-    template: Templates['assets/js/app/view/scheduler/page.hbs'],
+    template: Templates['assets/js/app/view/scheduler/page'],
     container: $('div[data-hook=scheduler-page-container]')[0],
     events: {},
-    taskTemplate: Templates['assets/js/app/view/scheduler/task-modal-body.hbs'],
+    taskTemplate: Templates['assets/js/app/view/scheduler/task-modal-body'],
     onCalendarViewRender: function () {
       if (!this._rendered) return;
       this.$calendar.fullCalendar('removeEventSources');

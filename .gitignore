@@ -19,7 +19,7 @@ newrelic*.log
 config/env/production.js
 config/env/*
 *.orig
-assets/**/bundles
-assets/index.html
 misc
 cypress/screenshots
+assets/**/bundles
+assets/index.html

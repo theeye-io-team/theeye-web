@@ -260,7 +260,7 @@ function StatsPage () {
   }
 
   var VerticalBarView = BaseView.extend({
-    template: Templates['assets/templates/stats-page/progress-bar-vertical.hbs'],
+    template: Templates['assets/templates/stats-page/progress-bar-vertical'],
     render: function(){
       this.renderTemplate();
       this.queryByHook('percent').css('height', this.percent + '%');
@@ -345,7 +345,7 @@ function StatsPage () {
   });
 
   var HostView = BaseView.extend({
-    template: Templates['assets/templates/stats-page/host.hbs'],
+    template: Templates['assets/templates/stats-page/host'],
     initialize: function(){
       BaseView.prototype.initialize.apply(this,arguments);
 
@@ -396,7 +396,7 @@ function StatsPage () {
   });
 
   var IndexView = BaseView.extend({
-    template: Templates['assets/templates/stats-page/index.hbs'],
+    template: Templates['assets/templates/stats-page/index'],
     initialize: function(options){
       BaseView.prototype.initialize.apply(this,arguments);
     },

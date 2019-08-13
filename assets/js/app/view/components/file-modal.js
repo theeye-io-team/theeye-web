@@ -153,7 +153,7 @@ var FileModal = (function(){
   });
 
   var FormView = BaseView.extend({
-    template: Templates['assets/templates/file-form.hbs'],
+    template: Templates['assets/templates/file-form'],
     initialize:function(options){
       var self = this;
       // initialize parent to autoRender

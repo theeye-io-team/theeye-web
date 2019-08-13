@@ -9,7 +9,7 @@ var MonitorSelect = BaseView.extend({
   autoRender: true,
   tagName: 'div',
   className: 'form-group form-horizontal',
-  template: Templates['assets/templates/components/monitor-select.hbs'],
+  template: Templates['assets/templates/components/monitor-select'],
   initialize: function(options){
     this.label = options.label||'Copy Monitor';
 

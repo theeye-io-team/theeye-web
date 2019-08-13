@@ -7,7 +7,7 @@
 var UsersSelect = BaseView.extend({
   tagName: 'div',
   className: 'form-group form-horizontal',
-  template: Templates['assets/templates/components/users-select.hbs'],
+  template: Templates['assets/templates/components/users-select'],
   initialize: function(options){
     this.label = (options.label||'ACL\'s');
     this.name = (options.name||'acl');

@@ -15,7 +15,7 @@ var PermanentFile = new (function(){
   var DEFAULT_PATH_SEPARATOR = '/';
 
   var TargetPathView = BaseView.extend({
-    template: Templates['assets/templates/filepath-input.hbs'],
+    template: Templates['assets/templates/filepath-input'],
     initialize: function(options){
       BaseView.prototype.initialize.apply(this,arguments);
 
@@ -156,7 +156,7 @@ var PermanentFile = new (function(){
   });
 
   var FormView = BaseView.extend({
-    template: Templates['assets/templates/permanent-file-form.hbs'],
+    template: Templates['assets/templates/permanent-file-form'],
     initialize: function(options){
       BaseView.prototype.initialize.apply(this,arguments);
 

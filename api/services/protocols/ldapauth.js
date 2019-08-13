@@ -3,13 +3,13 @@ var logger = require('../../libs/logger')('services:ldapauth')
 var _ = require('underscore')
 
 const getUserCredential = function (groups) {
-  if (/Theeye_Owners/.test(groups)) {
+  if (/theeye_owners/i.test(groups)) {
     return 'owner'
-  } else if (/Theeye_Admins/.test(groups)) {
+  } else if (/theeye_admins/i.test(groups)) {
     return 'admin'
-  } else if (/Theeye_Managers/.test(groups)) {
+  } else if (/theeye_managers/i.test(groups)) {
     return 'manager'
-  } else if (/Theeye_Users/.test(groups)) {
+  } else if (/theeye_users/i.test(groups)) {
     return 'user'
   } else {
     return 'viewer'

@@ -8,7 +8,7 @@ var HostsSelect = BaseView.extend({
   autoRender:true,
   tagName:'div',
   className:'form-group form-horizontal',
-  template: Templates['assets/templates/components/hosts-select.hbs'],
+  template: Templates['assets/templates/components/hosts-select'],
   initialize:function(){
     this.label = 'Copy to';
 

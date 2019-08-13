@@ -17,7 +17,7 @@
  *
  */
 var Modal = function (specs) {
-  var _template = Templates['assets/templates/modal.hbs'];
+  var _template = Templates['assets/templates/modal'];
 
   this.specs = specs||(specs={});
   if(this.specs.autoRender === true){

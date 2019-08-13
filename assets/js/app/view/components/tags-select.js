@@ -9,7 +9,7 @@ var TagsSelect = (function(){
   var View = BaseView.extend({
     tagName:'div',
     className:'form-group form-horizontal',
-    template: Templates['assets/templates/components/tags-select.hbs'],
+    template: Templates['assets/templates/components/tags-select'],
     initialize:function(){
       this.title = 'Tags [optional]';
       this.name = 'tags';

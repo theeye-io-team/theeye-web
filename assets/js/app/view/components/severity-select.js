@@ -8,7 +8,7 @@ var SeveritySelect = BaseView.extend({
   autoRender: true,
   tagName: 'div',
   className: 'form-group form-horizontal',
-  template: Templates['assets/templates/components/input-select.hbs'],
+  template: Templates['assets/templates/components/input-select'],
   initialize: function(options){
     this.label = 'Severity';
     this.name = 'failure_severity';
