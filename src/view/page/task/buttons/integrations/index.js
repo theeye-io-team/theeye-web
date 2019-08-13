@@ -79,7 +79,7 @@ const CredentialsView = View.extend({
 secret="<span data-hook="task_secret"></span>"
 customer="<span data-hook="task_customer"></span>"
 
-curl -i -sS -X POST "https://supervisor.theeye.io/job/secret/\$\{secret\}" \\
+curl -i -sS -X POST "${config.supervisor_api_url}/job/secret/\$\{secret\}" \\
   --header 'Content-Type: application/json' \\
   --data '{"customer":"'\$\{customer\}'","task":"'\$\{task\}'","task_arguments":["value_arg1","value_arg2","value_arg3"]}'</code></pre>
         <a href="${config.docs}/${docsLink}" target="_blank">Find more info in the docs</a>

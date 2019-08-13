@@ -34,6 +34,11 @@ const configs = {
   default: defaultConfigs,
 
   local: Object.assign({}, defaultConfigs, {
+    app_url: 'http://192.168.1.114:6080',
+    socket_url: 'http://192.168.1.114:6080',
+    api_url: 'http://192.168.1.114:6080/apiv2',
+    api_v3_url: 'http://192.168.1.114:6080/apiv3',
+    supervisor_api_url: 'http://192.168.1.114:60080',
     env: 'local',
     dashboard: {
       // upandrunningSign: false
