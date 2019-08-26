@@ -40,14 +40,14 @@ export default PanelButton.extend({
 
       modal.show()
 
-      App.actions.task.getCredentials(this.model.id)
+      App.actions.workflow.getCredentials(this.model.id)
     }
   }
 })
 
 const CredentialsView = View.extend({
   template: `
-    <div data-component="task-credentials">
+    <div data-component="wf-credentials">
 			<div class="form-group">
 		  	<label>Integration ID</label>
         <div class="input-group">
@@ -75,13 +75,13 @@ const CredentialsView = View.extend({
       </div>
       <div class="hidden-data form-group" data-hook="toggle-target">
         <label>curl sample using unix shell</label>
-        <pre data-hook="sample-code"><code class="bash">task="<span data-hook="task_id"></span>"
-secret="<span data-hook="task_secret"></span>"
-customer="<span data-hook="task_customer"></span>"
+        <pre data-hook="sample-code"><code class="bash">workflow="<span data-hook="workflow_id"></span>"
+secret="<span data-hook="workflow_secret"></span>"
+customer="<span data-hook="workflow_customer"></span>"
 
-curl -i -sS -X POST "${config.supervisor_api_url}/job/secret/\$\{secret\}" \\
+curl -i -sS -X POST "${config.supervisor_api_url}/workflows/\$\{workflow\}/secret/\$\{secret\}/job" \\
   --header 'Content-Type: application/json' \\
-  --data '{"customer":"'\$\{customer\}'","task":"'\$\{task\}'","task_arguments":[<span data-hook="task_args"></span>]}'</code></pre>
+  --data '{"customer":"'\$\{customer\}'","task_arguments":[<span data-hook="task_args"></span>]}'</code></pre>
         <a href="${config.docs}/${docsLink}" target="_blank">Find more info in the docs</a>
       </div>
     </div>
@@ -134,8 +134,9 @@ curl -i -sS -X POST "${config.supervisor_api_url}/job/secret/\$\{secret\}" \\
       this.secret = credentials.secret
     }
 
-    if (this.model.task_arguments.models.length > 0) {
+    if (this.model.start_task.task_arguments.models.length > 0) {
       this.args = this.model
+        .start_task
         .task_arguments
         .models.map(arg => `\"'\$\{${arg.label}\}'\"`)
         .join(',')
@@ -147,17 +148,17 @@ curl -i -sS -X POST "${config.supervisor_api_url}/job/secret/\$\{secret\}" \\
       type: 'attribute',
       name: 'value'
     },{
-      hook: 'task_id'
+      hook: 'workflow_id'
     }],
     secret: [{
       hook: 'secret',
       type: 'attribute',
       name: 'value'
     },{
-      hook: 'task_secret'
+      hook: 'workflow_secret'
     }],
     customer: {
-      hook: 'task_customer'
+      hook: 'workflow_customer'
     },
     args: {
       hook: 'task_args'

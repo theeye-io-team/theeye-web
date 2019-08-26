@@ -8,6 +8,7 @@ import union from 'lodash/union'
 import uniq from 'lodash/uniq'
 import difference from 'lodash/difference'
 const logger = require('lib/logger')('actions:workflow')
+import config from 'config'
 
 module.exports = {
   get (id) {
@@ -119,6 +120,23 @@ module.exports = {
         }
       })
     }
+  },
+  getCredentials (id, next) {
+    next || (next = () => {})
+    let workflow = App.state.workflows.get(id)
+
+    XHR.send({
+      method: 'GET',
+      url: `${config.api_v3_url}/workflow/${id}/credentials`,
+      done (credentials) {
+        workflow.credentials = credentials
+      },
+      fail (err, xhr) {
+        let msg = 'Error retrieving workflow integrations credentials.'
+        bootbox.alert(msg)
+        return next(new Error(msg))
+      }
+    })
   }
 }
 

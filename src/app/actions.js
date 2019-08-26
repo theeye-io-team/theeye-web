@@ -6,6 +6,7 @@ import FileActions from 'actions/file'
 import TaskActions from 'actions/task'
 import ApprovalActions from 'actions/approval'
 import IndicatorActions from 'actions/indicator'
+import WorkflowActions from 'actions/workflow'
 import { cancelSchedule, getSchedules, createSchedule } from 'actions/schedule'
 
 module.exports = () => {
@@ -21,7 +22,8 @@ module.exports = () => {
         create: createSchedule,
         fetch: getSchedules
       },
-      task: TaskActions
+      task: TaskActions,
+      workflow: WorkflowActions
     }
   })
 }

@@ -95,7 +95,8 @@ export const Workflow = AppModel.extend({
     alreadyPopulated: ['boolean', false, false],
     inProgressJobs: 'number',
     last_execution: 'date',
-    tagsCollection: 'collection'
+    tagsCollection: 'collection',
+    credentials: ['object', false, null]
   },
   derived: {
     type: {

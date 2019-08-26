@@ -1,6 +1,6 @@
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
-import FormView from './form'
+import FormView from '../form'
 import $ from 'jquery'
 
 module.exports = PanelButton.extend({
