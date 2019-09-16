@@ -48,9 +48,6 @@ module.exports = {
     task.set(data)
     task.save({},{
       success: () => {
-        if (task.workflow_id) {
-          WorkflowActions.updateAcl(task.workflow_id)
-        }
         App.state.alerts.success('Success', 'Tasks Updated')
         App.state.events.fetch()
         App.state.tags.fetch()

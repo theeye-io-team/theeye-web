@@ -54,7 +54,7 @@ const BaseJob = AppModel.extend({
     _type: 'string',
     task: 'object',
     task_arguments_values: 'array',
-    output: 'array',
+    output: 'any',
     workflow_id: 'string',
     workflow_job_id: 'string'
   },

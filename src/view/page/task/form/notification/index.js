@@ -83,6 +83,7 @@ module.exports = TaskFormView.extend({
           this.advancedFields.forEach(name => {
             var field = this._fieldViews[name]
             if (!field) return
+            if (name === 'acl' && this.model.workflow_id) return
             field.toggle('visible')
           })
         }

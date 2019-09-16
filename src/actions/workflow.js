@@ -38,7 +38,7 @@ module.exports = {
         workflow.set(tmp.serialize())
         workflow.alreadyPopulated = false // reset to repopulate
         this.populate(workflow)
-        this.updateAcl(id)
+        workflow.tasks.fetch()
       },
       error: (err) => {
         logger.error(err)
@@ -52,7 +52,7 @@ module.exports = {
       success: () => {
         App.state.workflows.add(workflow)
         this.populate(workflow)
-        this.updateAcl(workflow.id)
+        workflow.tasks.fetch()
       },
       error: (err) => {
         logger.error(err)
@@ -101,25 +101,6 @@ module.exports = {
   },
   run (workflow) {
     JobActions.createFromTask(workflow.start_task)
-  },
-  updateAcl (id) {
-    let workflow = App.state.workflows.get(id)
-    let acl, allAcls = []
-    allAcls.push(workflow.acl)
-    workflow.tasks.forEach(task => allAcls.push(task.acl))
-    acl = union.apply(union, allAcls)
-
-    if (difference(acl, workflow.acl).length>0) {
-      workflow.acl = acl
-      workflow.save({}, {
-        success: () => {
-        },
-        error: (err) => {
-          logger.error(err)
-          bootbox.alert('Something went wrong. Please refresh')
-        }
-      })
-    }
   },
   getCredentials (id, next) {
     next || (next = () => {})
