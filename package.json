@@ -70,7 +70,6 @@
     "jsonwebtoken": "7.1.9",
     "jwt-decode": "^2.2.0",
     "kerberos": "0.0.21",
-    "ladda": "1.0.1",
     "less": "2.7.2",
     "less-loader": "4.0.5",
     "local-links": "1.4.1",

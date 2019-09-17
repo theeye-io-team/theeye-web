@@ -1,5 +1,25 @@
 
-.workflow-job-row {
-  background-color: #304269;
-  cursor: pointer;
+[data-component="workflow-collapsible-row"] {
+  .workflow-job-row {
+    background-color: #304269;
+    cursor: pointer;
+  }
+
+  .status-icons {
+    width: 30px;
+    padding-right: 10px;
+    text-align: center;
+
+    i[data-hook="execution_lifecycle_icon"] {
+      font-size: 16px;
+      line-height: 28px;
+    }
+
+    i[data-hook="execution_progress_icon"] {
+      top:-6px;
+      position:relative;
+      right:4px;
+      font-size:12px;
+    }
+  }
 }

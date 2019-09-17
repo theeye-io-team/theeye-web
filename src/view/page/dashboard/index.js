@@ -25,6 +25,7 @@ import PlusMenuButton from './plus-menu-button'
 import acls from 'lib/acls'
 
 import onBoarding from './onboarding'
+import './styles.less'
 
 /**
  *

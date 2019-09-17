@@ -28,12 +28,9 @@ module.exports = View.extend({
   },
   template: `
     <section>
-      <button class="btn btn-danger btn-block ladda-button"
-        data-style="zoom-in"
-        style="padding:14px; font-size:16px;">
+      <button class="btn btn-danger btn-block" style="padding:14px; font-size:16px;">
         <span>Run all these tasks</span>&nbsp;
-        <i class="fa fa-forward"
-          style="font-size: xx-large; position: absolute; top: 10px;"></i>
+        <i class="fa fa-forward" style="font-size: xx-large; position: absolute; top: 10px;"></i>
       </button>
     </section>
   `

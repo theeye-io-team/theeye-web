@@ -1,6 +1,5 @@
 require('./font-awesome-alfanum.css')
 require('./select2.min.css')
-require('./ladda-themeless.min.css')
 require('./theeye-font.css')
 require('./site.css')
 require('./navbar.css')

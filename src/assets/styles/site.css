@@ -545,7 +545,6 @@ h3.light { color: #EEE}
 .admin-container { width:100%; color:white; }
 .admin-container h3 { background-color: #23324C;margin: 0;padding: 6px;color: #fff;font-size: 14px;text-align: center; }
 .admin-container .admin-panel { position:relative; }
-.admin-container .ladda-button {border: none;text-shadow: none;box-shadow: none}
 .admin-container .panel-group { margin-bottom:0; }
 
 /*.admin-container .panel-heading a { text-decoration:none; border:none; }*/
@@ -1067,7 +1066,6 @@ a.flowchart-icon {
   padding-left: 22px;
 }
 
-.admin-container.dashboard .panel-item.icons { }
 .admin-container.dashboard i.circle { border-radius: 50%; }
 .admin-container.dashboard i.host-color { background-color: #00b4bc }
 .admin-container.dashboard i.script-color { background-color: #c6639b }
@@ -1092,11 +1090,15 @@ a.flowchart-icon {
 /*.admin-container .table-header.admin div.panel-item.icons.dropdown {right:5px;}*/
 .admin-container .table-header.admin div.panel-item.icons.dropdown ul.dropdown-menu {left:inherit;right:0;width:40px;min-width:inherit;background:none;margin:0;padding:0;}
 .admin-container.dashboard .panel-heading .panel-item.name {padding-right:5px;}
+
+/**
+.admin-container.dashboard .panel-item.icons { }
 .admin-container.dashboard .panel-item.icons li {display:block;}
 .admin-container.dashboard .panel-item.icons li .btn {padding:5px 10px; width:36px; height: 34px;}
-.admin-container.dashboard .panel-item.state-icon { text-align:right; width:30px; float:right; padding:5px; font-size:20px; }
 .admin-container.dashboard .panel-item.icons .dropdown-menu>li>a {color:inherit;background-color:inherit;}
 .admin-container.dashboard .panel-item.icons .dropdown-menu>li>a:hover {background-image: none;background-color: #286090;}
+.admin-container.dashboard .panel-item.state-icon { text-align:right; width:30px; float:right; padding:5px; font-size:20px; }
+*/
 
 .admin-container.dashboard .instructions-list-container { color:#555;padding:20px;  }
 .admin-container.dashboard .instructions-list-container .instructions-list { padding:20px; background-color:#fff; text-align:left; }

@@ -4,31 +4,53 @@ import JobConstants from 'constants/job'
 import StateConstants from 'constants/states'
 import { ExecJob, ExecApprovalJob } from './exec-job.js'
 import JobResult from 'view/page/dashboard/job-result'
+import './styles.less'
 
 module.exports = View.extend({
+  /*
   template: `
-    <li class="task-exec-button">
-      <button
-        class="ladda-button btn btn-primary tooltiped"
-        data-hook="action_button"
-        data-spinner-size="30"
-        data-style="zoom-in">
-        <i data-hook="action_button_icon" aria-hidden="true"></i>
-        <i data-hook="job_lifecycle" style="top:-6px;position:relative;right:4px;font-size:12px"></i>
-      </button>
-    </li>
+    <div data-component="job-exec-button">
+      <li class="button-container">
+        <button class="btn btn-primary tooltiped" data-hook="execution_button">
+          <i data-hook="execution_button_icon" aria-hidden="true" class="fa fa-file-text-o"></i>
+        </button>
+      </li>
+      <li class="button-container">
+        <button class="btn btn-primary tooltiped" data-hook="action_button">
+          <i data-hook="execution_icon" aria-hidden="true"></i>
+          <i data-hook="job_lifecycle" style="top:-6px;position:relative;right:4px;font-size:12px"></i>
+        </button>
+      </li>
+    </div>
+  `,
+  */
+  template: `
+    <div data-component="job-exec-button">
+      <li class="button-container">
+        <button class="btn btn-primary tooltiped" data-hook="execution_button">
+          <i aria-hidden="true" class="fa fa-file-text-o"></i>
+        </button>
+      </li>
+      <li class="button-container">
+        <button class="btn btn-primary tooltiped" data-hook="action_button">
+          <i data-hook="execution_lifecycle_icon" aria-hidden="true"></i>
+          <i data-hook="execution_progress_icon" style="top:-6px;position:relative;right:4px;font-size:12px"></i>
+        </button>
+      </li>
+    </div>
   `,
   events: {
-    'click button[data-hook=action_button]': 'onClick'
+    'click button[data-hook=action_button]': 'onClickActionButton',
+    'click button[data-hook=execution_button]': 'onClickExecutionButton'
   },
   bindings: {
-    execution_lifecycle: {
-      hook: 'job_lifecycle',
+    execution_progress_icon: {
+      hook: 'execution_progress_icon',
       type: 'attribute',
       name: 'class'
     },
-    action_button_icon: {
-      hook: 'action_button_icon',
+    execution_lifecycle_icon: {
+      hook: 'execution_lifecycle_icon',
       type: 'attribute',
       name: 'class'
     },
@@ -39,68 +61,51 @@ module.exports = View.extend({
     }
   },
   derived: {
-    execution_lifecycle: {
-      deps: ['model.lifecycle', 'model.state'],
+    execution_progress_icon: {
+      deps: ['model.lifecycle','model.state'],
+      fn () {
+        const lifecycle = this.model.lifecycle
+
+        if (lifecycle === LifecycleConstants.READY) {
+          return 'fa fa-spin fa-refresh'
+        }
+
+        if (lifecycle === LifecycleConstants.ASSIGNED) {
+          return 'fa fa-spin fa-refresh remark-success'
+        }
+
+        //if (lifecycle === LifecycleConstants.ONHOLD) {
+        //  return 'fa fa-clock-o remark-warning'
+        //  return 'fa fa-exclamation remark-warning'
+        //}
+
+        return ''
+      }
+    },
+    execution_lifecycle_icon: {
+      deps: ['model.lifecycle'],
       fn () {
         const lifecycle = this.model.lifecycle
         const state = this.model.state
 
-        const isCompleted = (lifecycle) => {
-          return [
-            LifecycleConstants.COMPLETED,
-            LifecycleConstants.TERMINATED,
-            LifecycleConstants.FINISHED
-          ].indexOf(lifecycle) !== -1
-        }
-
-        if (!lifecycle) return ''
-        if (lifecycle === LifecycleConstants.READY) {
-          return 'fa fa-spin fa-refresh'
-        }
-        if (lifecycle === LifecycleConstants.ASSIGNED) {
-          return 'fa fa-spin fa-refresh remark-success'
-        }
         if (isCompleted(lifecycle)) {
-          if (state === StateConstants.CANCELED) {
-            return 'fa fa-exclamation remark-alert'
-          }
-          if (state === StateConstants.FAILURE) {
-            return 'fa fa-exclamation remark-alert'
-          }
-          if (state === StateConstants.ERROR) {
-            return 'fa fa-question remark-warning'
-          }
+          if (state === StateConstants.CANCELED) { return 'fa fa-exclamation remark-alert' }
+          if (state === StateConstants.FAILURE) { return 'fa fa-exclamation remark-alert' }
+          if (state === StateConstants.ERROR) { return 'fa fa-question remark-warning' }
           return 'fa fa-check remark-success'
         }
         if (lifecycle === LifecycleConstants.ONHOLD) {
-          return 'fa fa-exclamation remark-warning'
+          //return 'fa fa-exclamation remark-warning'
+          return 'fa fa-clock-o remark-warning'
         }
-        return 'fa fa-question remark-alert'
-      }
-    },
-    action_button_icon: {
-      deps: ['model.lifecycle'],
-      fn () {
-        const lifecycle = this.model.lifecycle
-        switch (lifecycle) {
-          case LifecycleConstants.FINISHED:
-          case LifecycleConstants.TERMINATED:
-          case LifecycleConstants.COMPLETED:
-          case LifecycleConstants.EXPIRED:
-          case LifecycleConstants.CANCELED:
-            return 'fa fa-file-text-o'
-            break
-          case LifecycleConstants.READY:
-          case LifecycleConstants.ASSIGNED:
-            return 'fa fa-stop remark-alert'
-            break
-          case LifecycleConstants.ONHOLD:
-            return 'fa fa-clock-o remark-warning'
-            break
-          default:
-            return 'fa fa-play'
-            break
+        if (
+          lifecycle === LifecycleConstants.READY ||
+          lifecycle === LifecycleConstants.ASSIGNED
+        ) {
+          return 'fa fa-stop remark-alert'
         }
+        //return 'fa fa-question remark-alert'
+        return 'fa fa-play'
       }
     },
     action_button_title: {
@@ -147,21 +152,24 @@ module.exports = View.extend({
       }
     }
   },
-  onClick (event) {
+  onClickActionButton (event) {
     event.stopPropagation()
     event.preventDefault()
-
-    if (this.show_execution_output) {
-      this.showExecutionOutput()
-    } else {
+    if (!this.show_execution_output) {
       this.execute()
     }
-
+    return false
+  },
+  onClickExecutionButton (event) {
+    event.stopPropagation()
+    event.preventDefault()
+    this.showExecutionOutput()
     return false
   },
   showExecutionOutput () {
     const view = new JobResult({ job: this.model })
     view.show()
+    return view
   },
   execute () {
     var execJob
@@ -176,3 +184,12 @@ module.exports = View.extend({
     View.prototype.render.apply(this, arguments)
   }
 })
+
+const isCompleted = (lifecycle) => {
+  return [
+    LifecycleConstants.COMPLETED,
+    LifecycleConstants.FINISHED,
+    LifecycleConstants.EXPIRED, // take to much time to complete
+    LifecycleConstants.TERMINATED // abruptly
+  ].indexOf(lifecycle) !== -1
+}

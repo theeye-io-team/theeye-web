@@ -70,7 +70,7 @@ const WorkflowJobsListView = JobsList.extend({
 
 const WorkflowJobRowView = CollapsibleRow.extend({
   template: `
-    <div class="workflow-job-row">
+    <div data-component="workflow-collapsible-row" class="workflow-job-row">
       <div class="panel panel-default">
         <div class="panel-heading"
           role="tab"
@@ -204,8 +204,9 @@ const WorkflowButtonsView = View.extend({
 
 const WorkflowJobStatus = JobExecButton.extend({
   template: `
-    <div class="job-status-icon">
-      <i data-hook="job_lifecycle"></i>
+    <div data-component="job-exec-button" class="status-icons">
+      <i data-hook="execution_lifecycle_icon"></i>
+      <i data-hook="execution_progress_icon"></i>
     </div>
   `
 })
