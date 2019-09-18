@@ -1,9 +1,7 @@
 module.exports = {
-	is_cluster: true, // is this the only web instance or there are more instances?
   application: {
     baseUrl: "http://localhost:6080",
     port: 6080,
-    environment: 'localdev', // local development
     secret: '692fc164a0c06a9fd02575cf17688c9e',
     agentInstallerUrl: {
       linux: 'https://s3.amazonaws.com/theeye.agent/linux/setup.sh',

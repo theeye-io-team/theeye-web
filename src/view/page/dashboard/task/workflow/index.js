@@ -189,9 +189,7 @@ const WorkflowButtonsView = View.extend({
   render () {
     this.renderWithTemplate(this)
 
-    let viewButton = new ViewWorkflowButton({ model: this.model })
-    this.renderSubview(viewButton, this.queryByHook('view-button'))
-
+    // edit comes before view
     if (Acls.hasAccessLevel('admin')) {
       let editButton = new EditWorkflowButton({ model: this.model })
       this.renderSubview(editButton, this.queryByHook('edit-button'))
@@ -199,6 +197,9 @@ const WorkflowButtonsView = View.extend({
       let integrationsButton = new IntegrationsWorkflowButton({ model: this.model })
       this.renderSubview(integrationsButton, this.queryByHook('integrations-button'))
     }
+
+    let viewButton = new ViewWorkflowButton({ model: this.model })
+    this.renderSubview(viewButton, this.queryByHook('view-button'))
   }
 })
 

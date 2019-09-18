@@ -46,9 +46,9 @@ module.exports = function serverError (errors) {
     errorsToDisplay[i] = errorToJSON;
   }
 
-  // Only include errors if application environment is set to 'development'
-  // In production, don't display any identifying information about the error(s)
-  if (sails.config.environment === 'development') {
+  // Only include errors if application environment is not set to 'production'
+  // don't display any identifying information about the error(s)
+  if (process.env.NODE_ENV !== 'production') {
     result.errors = errorsToDisplay;
   }
 

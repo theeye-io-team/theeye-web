@@ -5,7 +5,7 @@ import Modalizer from 'components/modalizer'
 import MemberActions from 'actions/member'
 import UserRow from './user-row'
 
-import '../settings.css'
+//import '../settings.css'
 
 module.exports = View.extend({
   template: require('./template.hbs'),

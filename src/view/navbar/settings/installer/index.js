@@ -12,7 +12,7 @@ import { startBot } from 'actions/integrations'
 
 const config = require('config')
 
-import '../settings.css'
+//import '../settings.css'
 
 module.exports = View.extend({
   template: require('./template.hbs'),

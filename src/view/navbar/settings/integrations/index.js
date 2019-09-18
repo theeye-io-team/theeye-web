@@ -8,7 +8,7 @@ import NetbrainsFormView from './netbrains-form'
 import KibanaFormView from './kibana-form'
 import Ngrok from './ngrok'
 
-import '../settings.css'
+//import '../settings.css'
 
 module.exports = View.extend({
   template: require('./template.hbs'),

@@ -3,7 +3,7 @@ import App from 'ampersand-app'
 import Modalizer from 'components/modalizer'
 import ChangePasswordFormView from './password-form'
 import AuthActions from 'actions/auth'
-import '../settings.css'
+//import '../settings.css'
 
 const SocialConnection = View.extend({
   template: `

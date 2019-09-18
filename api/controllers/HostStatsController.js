@@ -1,10 +1,6 @@
 'use strict';
 
 var debug = require('debug')('eye:web:hoststats');
-var snsreceiver = require('../services/snshandler');
-var roomNameFormat = ':customer:_:hostname:_:resource:';
-var resources = ['host-stats', 'psaux'];
-var eventNameFormat = ':resource:_:action:';
 
 module.exports = {
   /**
@@ -27,8 +23,8 @@ module.exports = {
       } else if (!host) {
         res.send(400,{ message: 'host not found' });
       } else {
-        if (resources.indexOf(resource) != -1) {
-          var room = roomNameFormat
+        if (['host-stats', 'psaux'].indexOf(resource) != -1) {
+          var room = ':customer:_:hostname:_:resource:'
             .replace(':customer:', req.user.current_customer)
             .replace(':hostname:', host.hostname)
             .replace(':resource:', resource);
@@ -43,27 +39,5 @@ module.exports = {
         }
       }
     });
-  },
-  // sns updates received
-  //update: function(req, res) {
-  //  var body = req.body;
-  //  debug('host stat update received');
-  //  snsreceiver.handleSubscription(body, function(error,action){
-  //    if (action == 'continue') {
-  //      var message = JSON.parse(body.Message);
-  //      var room = roomNameFormat
-  //        .replace(':customer:', message.customer_name)
-  //        .replace(':hostname:', message.hostname)
-  //        .replace(':resource:', message.type);
-  //      var io = sails.io;
-  //      var eventName = eventNameFormat
-  //        .replace(':resource:', message.type)
-  //        .replace(':action:', 'update');
-  //      debug('sending "%s" via socket to room "%s"', eventName, room);
-  //      io.sockets.in(room).emit(eventName, message);
-  //      res.json({ message: 'host stats updates sent' });
-  //    }
-  //    else res.json();
-  //  });
-  //},
-};
+  }
+}

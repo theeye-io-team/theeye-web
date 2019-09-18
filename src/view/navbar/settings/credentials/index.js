@@ -3,7 +3,7 @@ import App from 'ampersand-app'
 import Clipboard from 'clipboard'
 import TokenActions from 'actions/token'
 
-import '../settings.css'
+//import '../settings.css'
 
 module.exports = View.extend({
   template: `<div></div>`,

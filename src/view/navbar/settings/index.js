@@ -14,14 +14,14 @@ import TaskCreationWizard from 'view/page/task/creation-wizard'
 import html2dom from 'lib/html2dom'
 import bootbox from 'bootbox'
 
-import './settings.css'
+import './settings.less'
 
 const Content = View.extend({
   template: require('./template.hbs'),
 })
 
 module.exports = FullContainer.extend({
-  template: `<div id="settings-container" class="full-page-container settings-container"></div>`,
+  template: `<div id="settings-container" data-component="settings-container" class="full-page-container settings-container"></div>`,
   autoRender: true,
   props: {
     visible: ['boolean',false,false]

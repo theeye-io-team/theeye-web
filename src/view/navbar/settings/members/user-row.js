@@ -6,7 +6,7 @@ import Modalizer from 'components/modalizer'
 import FormView from 'ampersand-form-view'
 import SelectView from 'components/select2-view'
 
-import '../settings.css'
+//import '../settings.css'
 
 const EditUserFormView = FormView.extend({
   initialize: function (options) {
