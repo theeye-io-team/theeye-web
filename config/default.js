@@ -14,6 +14,11 @@ module.exports = {
       name: 'theEyeInstallerx64.exe'
     }
   },
+  grecaptcha: {
+    v2_secret: null,
+    v3_secret: null,
+    url: 'https://www.google.com/recaptcha/api/siteverify'
+  },
   auth: {
     secret: '692fc164a0c06a9fd02575cf17688c9e',
     expires: 3 * (60 * 60) // in seconds

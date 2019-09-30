@@ -21,6 +21,9 @@ module.exports = {
   entry: {
     app: `${__dirname}/src/main.js`
   },
+  externals: {
+    grecaptcha: 'grecaptcha'
+  },
   devtool: IS_PRODUCTION ? 'source-map' : '#inline-source-map',
   output: {
     path: path.join(__dirname, '/assets/'),

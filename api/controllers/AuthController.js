@@ -1,11 +1,10 @@
 /* global passport, sails, User */
 var GoogleAuth = require('google-auth-library');
-
 const CLIENT_ID = sails.config.passport.google.options.clientID;
-
 const logger = require('../libs/logger')('controllers:auth')
+const request = require('request')
 
-var AuthController = {
+module.exports = {
   /**
    * Log out a user and return them to the homepage
    *
@@ -223,46 +222,63 @@ var AuthController = {
 
     });
   },
-  registeruser: function(req, res) {
+  registeruser: function (req, res) {
+
     if (sails.config.passport.ldapauth) {
-      return res.send(400, 'ldapSet');
+      return res.send(400, 'ldapSet')
     }
-    var params = req.params.all();
-    if(!params.name) return res.send(400, 'You must provide a name');
-    if(!params.username) return res.send(400, 'You must select a username');
-    if(!params.email) return res.send(400, 'You must select an email');
-    User.findOne({
-      or: [
-        {email: params.email},
-        {username: params.username}
-      ]
-    }).exec((error,user) => {
-      if (user) {
-        if(user.enabled) {
-          if(user.username == params.username)
-          return res.send(400, 'usernameTaken');
-          if(user.email == params.email)
-          return res.send(400, 'emailTaken');
+
+    const params = req.params.all()
+    verifyGoogleReCaptcha(params.grecaptcha, (err) => {
+      if (err) {
+        return res.send(err.statusCode, err.message)
+      }
+
+      if (!params.name) {
+        return res.send(400, 'You must provide a name')
+      }
+
+      if (!params.username) {
+        return res.send(400, 'You must select a username');
+      }
+
+      if (!params.email) {
+        return res.send(400, 'You must select an email');
+      }
+
+      User.findOne({
+        or: [
+          {email: params.email},
+          {username: params.username}
+        ]
+      }).exec((error,user) => {
+        if (user) {
+          if(user.enabled) {
+            if(user.username == params.username)
+              return res.send(400, 'usernameTaken');
+            if(user.email == params.email)
+              return res.send(400, 'emailTaken');
+          } else {
+            passport.sendUserActivationEmail( req.user, user, err => {
+              if(err) {
+                logger.error(err);
+                return res.send(400, 'sendActivationEmailError');
+              } else return res.json({message: 'success'});
+            });
+          }
         } else {
-          passport.sendUserActivationEmail( req.user, user, err => {
+          passport.registerUser(req, res, function(err, user) {
             if(err) {
               logger.error(err);
-              return res.send(400, 'sendActivationEmailError');
+              var errMsg = 'registerError'
+              if(err.code && err.code == 'CredentialsError')
+                errMsg = 'sendUserRegistrationEmailError'
+              return res.send(400, errMsg);
             } else return res.json({message: 'success'});
           });
         }
-      } else {
-        passport.registerUser(req, res, function(err, user) {
-          if(err) {
-            logger.error(err);
-            var errMsg = 'registerError'
-            if(err.code && err.code == 'CredentialsError')
-              errMsg = 'sendUserRegistrationEmailError'
-            return res.send(400, errMsg);
-          } else return res.json({message: 'success'});
-        });
-      }
-    });
+      });
+    })
   },
   checkUsernameActivation (req, res) {
     var username = req.query.username;
@@ -510,7 +526,44 @@ var AuthController = {
         });
       })(req,res,req.next)
     });
-  },
+  }
 }
 
-module.exports = AuthController;
+const verifyGoogleReCaptcha = (response, callback) => {
+  if (!response) {
+    let err = new Error('grecaptcha required')
+    err.statusCode = 400
+    return callback(err)
+  }
+
+  const config = sails.config.grecaptcha
+  const secret = config.v2_secret
+  const url = config.url
+
+  request.post({
+    url,
+    form : { secret, response }
+  }, (err, http, body) => {
+    if (err) {
+      return callback(err)
+    }
+
+    try {
+      let json = JSON.parse(body)
+      if (json.success === true) {
+        logger.log('captch verification success')
+        return callback()
+      }
+
+      err = new Error('grecaptcha verification failed')
+      err.statusCode = 400
+      return callback(err)
+    } catch (e) {
+      logger.error(e.message)
+
+      err = new Error('grecaptcha verification failed')
+      err.statusCode = 500
+      return callback(err)
+    }
+  })
+}

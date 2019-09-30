@@ -1,7 +1,7 @@
 'use strict'
 
-var InputView = require('ampersand-input-view')
-var assign = require('lodash/assign')
+const InputView = require('ampersand-input-view')
+const assign = require('lodash/assign')
 
 /**
  *

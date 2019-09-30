@@ -5,6 +5,9 @@ let prodSuperv = 'https://supervisor.theeye.io'
 let devSuperv = 'https://supervisor.development.theeye.io'
 
 const defaultConfigs = {
+  grecaptcha: {
+    sitekey: '6LfaIrsUAAAAAKmZPeN5ZqmFDvJZLEdtK0dev2eV',
+  },
   docs: 'https://documentation.theeye.io',
   request_timeout: 30000,
   landing_page_url: 'https://theeye.io',
@@ -67,6 +70,9 @@ const configs = {
 
   // cloud production enviroment
   production: Object.assign({}, defaultConfigs, {
+    grecaptcha: {
+      sitekey: '6LfaIrsUAAAAAKmZPeN5ZqmFDvJZLEdtK0dev2eV',
+    },
     env: 'production',
     app_url: 'https://app.theeye.io',
     socket_url: 'https://app.theeye.io',
