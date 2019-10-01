@@ -171,6 +171,14 @@ module.exports = {
       method: 'GET',
       url: url
     }, function (error, file) {
+      if (err) {
+        return res.send(500, err.message)
+      }
+
+      if (!file) {
+        return res.send(500, 'file could not be found')
+      }
+
       supervisor.performRequest({
         json: false,
         method: 'GET',
