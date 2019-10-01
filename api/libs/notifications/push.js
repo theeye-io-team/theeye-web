@@ -84,7 +84,7 @@ const prepareJobNotification = (job) => {
       data = prepareApprovalJobNotification(job)
       break
     default:
-      logger.error('job type %s not handled', job._type)
+      logger.log('job type %s not handled', job._type)
       break
   }
   return data
@@ -115,7 +115,7 @@ const prepareMonitorStateChangeNotification = (monitor, monitor_event) => {
       data = prepareDefaultNotification(monitor, monitor_event)
       break
     default:
-      logger.error('monitor type %s not handled', monitor.type)
+      logger.log('monitor type %s not handled', monitor.type)
       break
   }
   return data
