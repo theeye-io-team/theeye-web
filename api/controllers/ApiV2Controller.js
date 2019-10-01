@@ -171,8 +171,8 @@ module.exports = {
       method: 'GET',
       url: url
     }, function (error, file) {
-      if (err) {
-        return res.send(500, err.message)
+      if (error) {
+        return res.send(500, error.message)
       }
 
       if (!file) {
