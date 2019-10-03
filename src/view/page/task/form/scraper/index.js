@@ -86,7 +86,8 @@ module.exports = TaskFormView.extend({
       'grace_time',
       'status_code',
       'pattern',
-      'copy_task'
+      'copy_task',
+      'multitasking'
     ]
 
     this.fields = [
@@ -243,6 +244,12 @@ module.exports = TaskFormView.extend({
         name: 'pattern',
         pattern_value: this.model.pattern,
         use_parser: this.model.parser
+      }),
+      new CheckboxView({
+        visible: false,
+        label: 'Multitasking',
+        name: 'multitasking',
+        value: this.model.multitasking
       })
     ]
 

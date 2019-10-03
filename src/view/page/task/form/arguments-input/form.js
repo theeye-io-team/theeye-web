@@ -4,6 +4,7 @@ import View from 'ampersand-view'
 import State from 'ampersand-state'
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
+import CheckboxView from 'components/checkbox-view'
 import FIELD from 'constants/field'
 import { ValueOption as ArgumentValueOption } from 'models/task/dinamic-argument'
 import isURL from 'validator/lib/isURL'
@@ -289,6 +290,11 @@ module.exports = FormView.extend({
           invalidClass: 'text-danger',
           validityClassSelector: '.control-label',
           value: this.model.value,
+        }),
+        new CheckboxView({
+          label: 'Hide value',
+          name: 'masked',
+          value: this.model.masked
         })
       )
     } else {
@@ -312,6 +318,15 @@ module.exports = FormView.extend({
 
       this.fields.push(label)
       this.fields.push(help)
+
+      if (this.model.type === FIELD.TYPE_INPUT) {
+        let masked = new CheckboxView({
+          label: 'Hide value',
+          name: 'masked',
+          value: this.model.masked
+        })
+        this.fields.push(masked)
+      }
 
       if (this.model.type === FIELD.TYPE_SELECT) {
         let options = new SelectOptionsView({

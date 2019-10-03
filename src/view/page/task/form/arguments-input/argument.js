@@ -28,6 +28,11 @@ module.exports = View.extend({
     'model.label': { hook: 'label' },
     'model.type': { hook: 'type' },
     'model.value': { hook: 'value' },
+    'model.masked': {
+      type: 'booleanClass',
+      name: 'blurry-text',
+      hook: 'value'
+    }
   },
   events: {
     'click [data-hook=edit-script-argument]':'onClickEditScriptArgument',

@@ -10,6 +10,7 @@ import ScriptSelectView from 'view/script-select'
 import ScriptImportView from 'view/script-import'
 import MembersSelectView from 'view/members-select'
 import EventsSelectView from 'view/events-select'
+import CheckboxView from 'components/checkbox-view'
 import AdvancedToggle from 'view/advanced-toggle'
 import assign from 'lodash/assign'
 import HelpTexts from 'language/help'
@@ -62,7 +63,9 @@ module.exports = TaskFormView.extend({
       'triggers',
       'grace_time',
       'copy_task',
-      'timeout'
+      'timeout',
+      'multitasking',
+      'env'
     ]
 
     this.fields = [
@@ -187,6 +190,31 @@ module.exports = TaskFormView.extend({
         unselectedText: 'Select the Req. Timeout',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
+      }),
+      new CheckboxView({
+        visible: false,
+        label: 'Multitasking',
+        name: 'multitasking',
+        value: this.model.multitasking
+      }),
+      new InputView({
+        visible: false,
+        label: 'Env (JSON)',
+        name: 'env',
+        placeholder: '',
+        required: false,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.env,
+        tests: [
+          function (value) {
+            try {
+              JSON.parse(value)
+            } catch (e) {
+              return 'Invalid JSON string'
+            }
+          }
+        ]
       }),
       //new InputView({
       //  visible: false,
