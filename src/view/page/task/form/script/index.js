@@ -199,17 +199,24 @@ module.exports = TaskFormView.extend({
       }),
       new InputView({
         visible: false,
-        label: 'Env (JSON)',
+        label: 'Environment (env)',
         name: 'env',
         placeholder: '',
         required: false,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        value: this.model.env,
+        value: JSON.stringify(this.model.env),
         tests: [
-          function (value) {
+          value => {
+            if (value === '') return
             try {
-              JSON.parse(value)
+              let parsed = JSON.parse(value)
+              if (Array.isArray(parsed)) {
+                return 'Use {Key:Value} format'
+              }
+              if (parsed.hasOwnProperty("")) {
+                return 'Please, don\'t do that..'
+              }
             } catch (e) {
               return 'Invalid JSON string'
             }
@@ -269,6 +276,8 @@ module.exports = TaskFormView.extend({
     this.addHelpIcon('grace_time')
     this.addHelpIcon('task_arguments')
     this.addHelpIcon('timeout')
+    this.addHelpIcon('env')
+    this.addHelpIcon('multitasking')
 
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)
@@ -330,6 +339,12 @@ module.exports = TaskFormView.extend({
     f.type = TaskConstants.TYPE_SCRIPT
     f.grace_time = Number(data.grace_time)
     f.timeout = Number(data.timeout)
+    if (data.env) {
+      f.env = JSON.parse(data.env)
+    } else {
+      f.env = {}
+    }
+
     return f
   },
   setWithTask (task) {

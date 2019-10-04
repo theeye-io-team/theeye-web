@@ -65,6 +65,8 @@ module.exports = {
       script_id: 'Scripts are sets of instructions writen in a programming language to achive something automatically',
       script_timeout: 'Time to wait before the task is killed. Default timeout is 5 minutes.',
       script_runas: 'Execute the selected script using a different username. You have to use \'%script%\' in the place where the script has to be included. This "keyword" will be replaced during execution with the real script path. This is the perfect place to use "sudo". Windows users, requires to mimic this action putting the password for the first time.',
+      env: 'Set environment variables during script execution. Use a JSON object key:value format',
+      multitasking: 'Allowes Bots to run multiple instances of this Task in parallel',
       approval_task_arguments: 'Data submitted by the approval request (from previous task)',
       approval_output_parameters: 'Data submitted by the approver (for next task)'
     },
@@ -78,9 +80,7 @@ module.exports = {
     permissions: 'Permissions in octal format. Default is 0755',
     select: 'Select a file',
     state: "Error Handling. Print 'fail', 'failure' or 'error' for unsuccessful execution.",
-    shebang: 'Keep in mind that the  shebang (#!) is required when writing a Linux/Unix script.',
-    //env: 'Workflow. You can get the result of the previous task execution by inquiring the env variable THEEYE_WF_LASTLINE. Check in advance that the env variable THEEYE_WF is defined'
-    env: 'Workflow. You can get the result of the previous task execution by inquiring the env variable THEEYE_WF_LASTLINE.'
+    shebang: 'Keep in mind that the  shebang (#!) is required when writing a Linux/Unix script.'
   },
   titles:{
     user_page: 'Users CRUD operations',

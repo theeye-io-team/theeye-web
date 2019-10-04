@@ -43,7 +43,7 @@ const Script = Template.Script.extend({
     host_id: 'string',
     template_id: 'string',
     multitasking: ['boolean',false,true],
-    env: 'string'
+    env: 'object'
   },
   derived: {
     formatted_tags: formattedTags(),
