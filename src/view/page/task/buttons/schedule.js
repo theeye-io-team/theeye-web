@@ -315,7 +315,7 @@ module.exports = PanelButton.extend({
 
       // TODO: schedules for dynamically argumented
       // tasks are not supported
-      if (this.model.hasDinamicArguments) {
+      if (this.model.hasDynamicArguments) {
         let deniedMessage = [
           'Scheduling tasks with dynamic arguments',
           '(input/select) is not supported'

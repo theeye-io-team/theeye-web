@@ -1,7 +1,7 @@
 import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AmpersandCollection from 'ampersand-collection'
-const DinamicArgument = require('./dinamic-argument').DinamicArgument
+const DynamicArgument = require('./dynamic-argument').DynamicArgument
 const ScheduleCollection = require('models/schedule').Collection
 const TagCollection = require('models/tag').Collection
 
@@ -10,7 +10,7 @@ import FIELD from 'constants/field'
 const TaskArguments = AmpersandCollection.extend({
   mainIndex: 'id',
   indexes: ['label','order'],
-  model: DinamicArgument
+  model: DynamicArgument
 })
 
 const Schema = AppModel.extend({
@@ -46,8 +46,8 @@ const Schema = AppModel.extend({
   },
   session: {
     credentials: ['object', false, null],
-    hasDinamicArguments: 'boolean',
-    hasDinamicOutputs: 'boolean',
+    hasDynamicArguments: 'boolean',
+    hasDynamicOutputs: 'boolean',
     alreadyFetched: ['boolean', false, false],
     inProgressJobs: 'number',
     last_execution: 'date',
@@ -105,7 +105,7 @@ const Schema = AppModel.extend({
     )
 
     this.listenToAndRun(this.task_arguments, 'add remove change reset sync', () => {
-      this.hasDinamicArguments = Boolean(
+      this.hasDynamicArguments = Boolean(
         this.task_arguments.models.find(arg => {
           return arg.type && (
             arg.type===FIELD.TYPE_INPUT ||
@@ -119,7 +119,7 @@ const Schema = AppModel.extend({
     })
 
     this.listenToAndRun(this.output_parameters, 'add remove change reset sync', () => {
-      this.hasDinamicOutputs = Boolean(
+      this.hasDynamicOutputs = Boolean(
         this.output_parameters.models.find(arg => {
           return arg.type && (
             arg.type===FIELD.TYPE_INPUT ||

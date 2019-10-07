@@ -75,11 +75,11 @@ const BaseJob = AppModel.extend({
         return new App.Models.Task.Factory(this.task, {})
       }
     },
-    hasDinamicOutputs: {
+    hasDynamicOutputs: {
       deps: ['task'],
       fn () {
         if (!this.task) return false
-        let hasDinamicOutputs = Boolean(
+        let hasDynamicOutputs = Boolean(
           this.task.output_parameters.find(arg => {
             return arg.type && (
               arg.type === FIELD.TYPE_INPUT ||
@@ -90,7 +90,7 @@ const BaseJob = AppModel.extend({
             )
           })
         )
-        return hasDinamicOutputs
+        return hasDynamicOutputs
       }
     }
   }

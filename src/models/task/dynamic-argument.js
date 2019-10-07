@@ -18,7 +18,7 @@ const OptionsCollection = Collection.extend({
   model: ValueOption
 })
 
-exports.DinamicArgument = Model.extend({
+exports.DynamicArgument = Model.extend({
   props: {
     id: ['number',true], // incremental id
     _id: 'string',

@@ -309,7 +309,7 @@ module.exports = TaskFormView.extend({
     // for scheduled tasks
     if (this.model.hasSchedules) {
       // this evaluation is copied from
-      // model/task/template:hasDinamicArguments
+      // model/task/template:hasDynamicArguments
       if (hasDynamicArguments) {
         bootbox.alert(HelpTexts.task.cannot_schedule)
         return next(null, false)

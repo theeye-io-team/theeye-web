@@ -3,10 +3,8 @@ import State from 'ampersand-state'
 const runTaskWithArgsMessage = require('./run-task-message.hbs')
 import bootbox from 'bootbox'
 import TaskConstants from 'constants/task'
-
-import DinamicForm from 'components/dinamic-form'
+import DynamicForm from 'components/dynamic-form'
 import Modalizer from 'components/modalizer'
-
 import ConfirmExecution from './confirm-execution'
 
 const BaseExec = State.extend({
@@ -34,9 +32,9 @@ const BaseExec = State.extend({
 
     return args
   },
-  getDinamicArguments (next) {
-    if (this.model.hasDinamicArguments) {
-      const form = new DinamicForm({
+  getDynamicArguments (next) {
+    if (this.model.hasDynamicArguments) {
+      const form = new DynamicForm({
         fieldsDefinitions: this.model.task_arguments.models
       })
 
@@ -128,17 +126,17 @@ const BaseExec = State.extend({
     }
 
     if (this.model.type === TaskConstants.TYPE_DUMMY) {
-      this.getDinamicOutputs(callback)
+      this.getDynamicOutputs(callback)
     } else {
-      this.getDinamicArguments(callback)
+      this.getDynamicArguments(callback)
     }
   }
 })
 
 const ExecTask = BaseExec.extend({
-  getDinamicOutputs (next) {
-    if (this.model.hasDinamicOutputs) {
-      const form = new DinamicForm({
+  getDynamicOutputs (next) {
+    if (this.model.hasDynamicOutputs) {
+      const form = new DynamicForm({
         fieldsDefinitions: this.model.output_parameters.models
       })
 

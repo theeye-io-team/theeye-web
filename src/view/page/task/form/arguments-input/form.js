@@ -6,7 +6,7 @@ import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import CheckboxView from 'components/checkbox-view'
 import FIELD from 'constants/field'
-import { ValueOption as ArgumentValueOption } from 'models/task/dinamic-argument'
+import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
 import isURL from 'validator/lib/isURL'
 
 const SimpleInputView = InputView.extend({

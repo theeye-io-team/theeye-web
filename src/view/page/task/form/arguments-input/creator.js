@@ -1,6 +1,6 @@
 import View from 'ampersand-view'
 import ArgumentForm from './form'
-import { DinamicArgument as ScriptArgument } from 'models/task/dinamic-argument'
+import { DynamicArgument as ScriptArgument } from 'models/task/dynamic-argument'
 import FIELD from 'constants/field'
 module.exports = View.extend({
   template: `

@@ -3,7 +3,7 @@
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import Collection from 'ampersand-collection'
-import { DinamicArgument as TaskArgument } from 'models/task/dinamic-argument'
+import { DynamicArgument as TaskArgument } from 'models/task/dynamic-argument'
 import FieldConstants from 'constants/field'
 import HelpIcon from 'components/help-icon'
 
