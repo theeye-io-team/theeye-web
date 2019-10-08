@@ -15,101 +15,14 @@ module.exports = DropableForm.extend({
   },
   initialize (options) {
     const fieldsSpecs = options.fieldsDefinitions
-    const fields = []
+    this.fields = []
 
     fieldsSpecs.forEach(spec => {
-      if (spec.type === FIELD.TYPE_INPUT) {
-        fields.push(
-          new InputView({
-            label: spec.label,
-            name: spec.order.toString(),
-            required: spec.required,
-            invalidClass: 'text-danger',
-            validityClassSelector: '.control-label',
-            value: spec.value,
-            type: spec.masked ? 'password' : 'text'
-          })
-        )
-      } else if (spec.type === FIELD.TYPE_SELECT) {
-        fields.push(
-          new SelectView({
-            label: spec.label,
-            name: spec.order.toString(),
-            multiple: false,
-            tags: false,
-            options: spec.options,
-            value: spec.value,
-            required: spec.required,
-            idAttribute: 'id',
-            textAttribute: 'label',
-            //styles: 'form-group',
-            unselectedText: `Select a ${spec.label}`,
-            requiredMessage: 'Selection required',
-            invalidClass: 'text-danger',
-            validityClassSelector: '.control-label'
-          })
-        )
-      }  else if (spec.type === FIELD.TYPE_DATE) {
-        fields.push(
-          new Datepicker({
-            label: spec.label,
-            name: spec.order.toString(),
-            required: spec.required,
-            enableTime: true,
-            dateFormat: 'F J, Y at H:i',
-            value: spec.value,
-            invalidClass: 'text-danger',
-            validityClassSelector: '.control-label',
-            placeholder: `Select a date`,
-            mode: 'single',
-            tests: [
-              items => {
-                if (items.length === 0) {
-                  return 'Please provide a value.'
-                }
-                return
-              },
-            ]
-          })
-        )
-      }  else if (spec.type === FIELD.TYPE_FILE) {
-        fields.push(
-          new OneLineMediaInputView({
-            type: 'file',
-            label: spec.label,
-            name: spec.order.toString(),
-            value: new MediaFileModel(),
-            required: spec.required,
-            maxFileSize: config.files.max_upload_size
-          })
-        )
-      } else if (spec.type === FIELD.TYPE_REMOTE_OPTIONS) {
-        var options = {
-          label: spec.label,
-          name: spec.order.toString(),
-          multiple: false,
-          tags: false,
-          required: spec.required,
-          unselectedText: `Select a ${spec.label}`,
-          requiredMessage: 'Selection required',
-          invalidClass: 'text-danger',
-          validityClassSelector: '.control-label',
-          idAttribute: spec.id_attribute,
-          textAttribute: spec.text_attribute
-        }
-
-        if (isURL(spec.endpoint_url, {
-          protocols: ['http', 'https'],
-          require_protocol: true
-        })) {
-          options.ajaxUrl = spec.endpoint_url
-        }
-
-        fields.push(new SelectView(options))
+      let field = this.fieldFactory(spec)
+      if (field !== null) {
+        this.fields.push(field)
       }
     })
-
-    this.fields = fields
 
     DropableForm.prototype.initialize.apply(this,arguments)
   },
@@ -144,5 +57,111 @@ module.exports = DropableForm.extend({
         )
       }
     })
+  },
+  fieldFactory (spec) {
+    let field = null
+    switch (spec.type) {
+      case FIELD.TYPE_INPUT:
+        field = this.buildTextField(spec)
+        break
+      case FIELD.TYPE_SELECT:
+        field = this.buildOptionsField(spec)
+        break
+      case FIELD.TYPE_DATE:
+        field = this.buildDateField(spec)
+        break
+      case FIELD.TYPE_FILE:
+        field = this.buildFileField(spec)
+        break
+      case FIELD.TYPE_REMOTE_OPTIONS:
+        field = this.buildRemoteOptionsField(spec)
+        break
+    }
+    return field
+  },
+  buildTextField (spec) {
+    return new InputView({
+      label: spec.label,
+      name: spec.order.toString(),
+      required: spec.required,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      value: spec.value,
+      type: spec.masked ? 'password' : 'text'
+    })
+  },
+  buildDateField (spec) {
+    return new Datepicker({
+      label: spec.label,
+      name: spec.order.toString(),
+      required: spec.required,
+      enableTime: true,
+      dateFormat: 'F J, Y at H:i',
+      value: spec.value,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      placeholder: `Select a date`,
+      mode: 'single',
+      tests: [
+        items => {
+          if (items.length === 0) {
+            return 'Please provide a value.'
+          }
+          return
+        },
+      ]
+    })
+  },
+  buildFileField (spec) {
+    return new OneLineMediaInputView({
+      type: 'file',
+      label: spec.label,
+      name: spec.order.toString(),
+      value: new MediaFileModel(),
+      required: spec.required,
+      maxFileSize: config.files.max_upload_size
+    })
+  },
+  buildOptionsField (spec) {
+    return new SelectView({
+      label: spec.label,
+      name: spec.order.toString(),
+      multiple: false,
+      tags: false,
+      options: spec.options,
+      value: spec.value,
+      required: spec.required,
+      idAttribute: 'id',
+      textAttribute: 'label',
+      //styles: 'form-group',
+      unselectedText: `Select a ${spec.label}`,
+      requiredMessage: 'Selection required',
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label'
+    })
+  },
+  buildRemoteOptionsField (spec) {
+    var options = {
+      label: spec.label,
+      name: spec.order.toString(),
+      multiple: false,
+      tags: false,
+      required: spec.required,
+      unselectedText: `Select a ${spec.label}`,
+      requiredMessage: 'Selection required',
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      idAttribute: spec.id_attribute,
+      textAttribute: spec.text_attribute
+    }
+
+    if (isURL(spec.endpoint_url, {
+      protocols: ['http', 'https'],
+      require_protocol: true
+    })) {
+      options.ajaxUrl = spec.endpoint_url
+    }
+
+    return new SelectView(options)
   }
 })

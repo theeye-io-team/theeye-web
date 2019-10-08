@@ -3,7 +3,7 @@ import State from 'ampersand-state'
 const runTaskWithArgsMessage = require('./run-task-message.hbs')
 import bootbox from 'bootbox'
 import TaskConstants from 'constants/task'
-import DynamicForm from 'components/dynamic-form'
+import DynamicForm from 'view/dynamic-form'
 import Modalizer from 'components/modalizer'
 import ConfirmExecution from './confirm-execution'
 
