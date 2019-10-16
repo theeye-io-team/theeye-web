@@ -52,21 +52,7 @@ module.exports = {
 
     createEventNotifications(req, res, (err) => {
       if (err) { return done(err) }
-
-      if (
-        event.data.model_type === 'NotificationJob' &&
-        event.data.operation === 'create'
-      ) {
-        if (!event.data.model.task) {
-          let err = new Error('%s|task is required', event.id)
-          err.status = 400
-          return done(err)
-        }
-
-        createCustomNotification(req, res, done)
-      } else {
-        return done()
-      }
+      sendTaskEventNotification(req, res, done)
     })
   },
   /**
@@ -95,21 +81,44 @@ module.exports = {
   }
 }
 
+const sendTaskEventNotification = (req, res, next) => {
+  const event = req.params.all()
+  if (
+    event.data.model_type === 'NotificationJob' &&
+    event.data.operation === 'create'
+  ) {
+    if (!event.data.model.task) {
+      let err = new Error('%s|task is required', event.id)
+      err.status = 400
+      return done(err)
+    }
+
+    createCustomNotification(req, res, next)
+  } else {
+    return next()
+  }
+}
+
+/**
+ *
+ * custom notifications can be sent to any user registered in the eye
+ *
+ */
 const createCustomNotification = (req, res, done) => {
   const event = req.params.all()
-
   const notifyJob = event.data.model
   const notifyTask = notifyJob.task
   const notificationTypes = notifyTask.notificationTypes
-
   const args = (notifyJob.task_arguments_values || [])
 
   let subject = (args[0] || notifyTask.subject)
   let body = (args[1] || notifyTask.body)
   let recipients = (parseRecipients(args[2]) || notifyTask.recipients)
+  let organization = event.data.organization
 
   logger.debug('%s|%s', event.id, 'dispatching custom notifications')
-  getUsersToNotify(null, event.data.organization, recipients, [], (error, users) => {
+
+  getUsersToNotify(null, null, recipients, [], (error, users) => {
     if (error) {
       let msg = 'error getting system users'
       logger.debug('%s|%s', event.id, msg)
@@ -123,12 +132,12 @@ const createCustomNotification = (req, res, done) => {
 
     event.data.notification = { subject, body, recipients }
 
-    //createNotifications(event, users, event.data.organization, (err, notifications) => {
+    //createNotifications(event, users, event.data.organization, (err, notifications) => {})
     createNotifications({
       topic: 'notification-task',
       data: event.data,
       event_id: event.id,
-      customer_name: event.data.organization
+      customer_name: organization
     }, users, (err, notifications) => {
       if (err) {
         let msg = `${event.id}|error creationg notifications`
@@ -145,7 +154,7 @@ const createCustomNotification = (req, res, done) => {
             model: notifications,
             model_type: 'Notification',
             operation: 'create',
-            organization: event.data.organization
+            organization: organization
           }
         })
         logger.debug('%s|%s', event.id, 'by desktop notified')
@@ -197,6 +206,13 @@ const parseRecipients = (emails) => {
   return recipients
 }
 
+/*
+ *
+ * events belong to organization/customers
+ *
+ * should only be notified to the organization users
+ *
+ */
 const createEventNotifications = (req, res, done) => {
   const event = req.params.all()
   const topic = event.topic
@@ -211,8 +227,9 @@ const createEventNotifications = (req, res, done) => {
   let model = event.data.model
   let acls = (model.task ? model.task.acl : model.acl) || []
   let credentials = ['admin', 'owner', 'root']
+  let organization = event.data.organization
 
-  getUsersToNotify(event, event.data.organization, acls, credentials, (error, users) => {
+  getUsersToNotify(event, organization, acls, credentials, (error, users) => {
     if (error) {
       let msg = 'error getting system users'
       logger.debug('%s|%s', event.id, msg)
@@ -235,7 +252,7 @@ const createEventNotifications = (req, res, done) => {
       topic: event.topic,
       data: event.data,
       event_id: event.id,
-      customer_name: event.data.organization
+      customer_name: organization
     }, users, (err, notifications) => {
       if (err) {
         let msg = 'error creating user notifications'
@@ -251,7 +268,7 @@ const createEventNotifications = (req, res, done) => {
           model: notifications,
           model_type: 'Notification',
           operation: 'create',
-          organization: event.data.organization
+          organization: organization
         }
       })
       logger.debug('%s|%s', event.id, 'by socket notified')
@@ -294,11 +311,6 @@ const isHandledNotificationEvent = (event) => {
 
 // Returns a user collection for a given customer
 const getUsersToNotify = (event, customerName, acls, credentials, callback) => {
-  if (!customerName) {
-    const err = new Error('I need a customer to find the users')
-    return callback(err)
-  }
-
   var query = {}
 
   if (event && isApprovalOnHoldEvent(event)) {
@@ -308,11 +320,16 @@ const getUsersToNotify = (event, customerName, acls, credentials, callback) => {
   } else {
     query = {
       username: { $ne: null },
-      customers: customerName,
+      email: { $ne: null },
+      enabled: true,
       $or: [
         { credential: { $in: credentials } },
         { email: { $in: acls } }
       ]
+    }
+
+    if (customerName) {
+      query.customers = customerName
     }
   }
 

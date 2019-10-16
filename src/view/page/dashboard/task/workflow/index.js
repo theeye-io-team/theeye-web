@@ -1,9 +1,6 @@
 import App from 'ampersand-app'
 import Acls from 'lib/acls'
 import View from 'ampersand-view'
-import EditWorkflowButton from 'view/page/workflow/buttons/edit'
-import ViewWorkflowButton from 'view/page/workflow/buttons/view'
-import IntegrationsWorkflowButton from 'view/page/workflow/buttons/integrations'
 import WorkflowActions from 'actions/workflow'
 import CollapsibleRow from '../collapsible-row'
 import ExecButton from '../exec-button'
@@ -12,6 +9,12 @@ import JobExecButton from '../task/collapse/job/job-exec-button'
 import EmptyJobView from '../empty-job-view'
 import moment from 'moment'
 import JobsList from 'view/page/dashboard/task/jobs-list'
+
+// menu buttons
+import RemoveWorkflowButton from 'view/page/workflow/buttons/remove'
+import EditWorkflowButton from 'view/page/workflow/buttons/edit'
+import ViewWorkflowButton from 'view/page/workflow/buttons/view'
+import IntegrationsWorkflowButton from 'view/page/workflow/buttons/integrations'
 
 import './styles.less'
 
@@ -185,6 +188,7 @@ const WorkflowButtonsView = View.extend({
       <span data-hook="view-button"></span>
       <span data-hook="edit-button"></span>
       <span data-hook="integrations-button"></span>
+      <span data-hook="remove-button"></span>
     </div>`,
   render () {
     this.renderWithTemplate(this)
@@ -196,6 +200,9 @@ const WorkflowButtonsView = View.extend({
 
       let integrationsButton = new IntegrationsWorkflowButton({ model: this.model })
       this.renderSubview(integrationsButton, this.queryByHook('integrations-button'))
+
+      let removeButton = new RemoveWorkflowButton({ model: this.model })
+      this.renderSubview(removeButton, this.queryByHook('remote-button'))
     }
 
     let viewButton = new ViewWorkflowButton({ model: this.model })

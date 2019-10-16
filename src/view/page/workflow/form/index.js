@@ -1,6 +1,5 @@
 import App from 'ampersand-app'
 import AdvancedToggle from 'view/advanced-toggle'
-import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import FormButtons from 'view/buttons'
 import SelectView from 'components/select2-view'
@@ -11,30 +10,11 @@ import MembersSelectView from 'view/members-select'
 import TaskSelectView from 'view/task-select'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
-import WorkflowActions from 'actions/workflow'
+//import WorkflowActions from 'actions/workflow'
 import WorkflowBuilder from './workflow-builder'
 import assign from 'lodash/assign'
 import EventsSelectView from 'view/events-select'
 import bootbox from 'bootbox'
-
-const StartingTaskSelectionView = TaskSelectView.extend({
-  initialize (specs) {
-    TaskSelectView.prototype.initialize.apply(this,arguments)
-
-    this.required = true
-    this.label = 'Starting Task'
-    this.name = 'start_task_id'
-    this.invalidClass = 'text-danger'
-
-    const emptyFn = function(){}
-    this.onOpenning = specs.onOpenning || emptyFn
-  },
-  render () {
-    TaskSelectView.prototype.render.apply(this, arguments)
-
-    this.$select.on('select2:opening', this.onOpenning)
-  }
-})
 
 export default FormView.extend({
   initialize (options) {
@@ -44,11 +24,10 @@ export default FormView.extend({
       'acl',
       'tags',
       'description',
-      'remove-workflow-button',
       'triggers'
     ]
 
-    WorkflowActions.populate(this.model)
+    App.action.workflow.populate(this.model)
 
     const workflowBuilder = new WorkflowBuilder({
       workflow_id: this.model.id,
@@ -120,36 +99,6 @@ export default FormView.extend({
       })
     ]
 
-    if (!isNew) {
-      let removeButton = new RemoveWorkflowButton({
-        visible: false,
-        onClick: (event) => {
-          bootbox.confirm({
-            title: 'Confirm Workflow removal',
-            message: 'Remove the workflow and release tasks from it?',
-            backdrop: true,
-            buttons: {
-              confirm: {
-                label: 'Yes, please',
-                className: 'btn-danger'
-              },
-              cancel: {
-                label: 'I\m not sure',
-                className: 'btn-default'
-              }
-            },
-            callback: (confirmed) => {
-              if (confirmed===true) {
-                WorkflowActions.remove(this.model.id)
-                this.remove()
-              }
-            }
-          })
-        }
-      })
-      this.fields.push(removeButton)
-    }
-
     this.listenTo(workflowBuilder, 'change:workflowTasksCollection', () => {
       startingTaskSelect.options = workflowBuilder.workflowTasksCollection
     })
@@ -198,9 +147,9 @@ export default FormView.extend({
     let data = this.prepareData(this.data)
     //data.looptime = this._fieldViews.looptime.selected().id
     if (!this.model.isNew()) {
-      WorkflowActions.update(this.model.id, data)
+      App.action.workflow.update(this.model.id, data)
     } else {
-      WorkflowActions.create(data)
+      App.action.workflow.create(data)
     }
 
     this.trigger('submitted')
@@ -209,40 +158,25 @@ export default FormView.extend({
   prepareData (data) {
     let f = assign({}, data)
     delete f['advanced-toggler']
-    delete f['remove-workflow-button']
     return f
   }
 })
 
-const RemoveWorkflowButton = View.extend({
-  template: `
-    <div class="form-group">
-      <label class="col-sm-3 control-label" data-hook="label">Remove Workflow</label>
-      <div class="col-sm-9">
-        <div style="padding-bottom: 15px;">
-          <button data-hook="build" title="remove the workflow" class="btn btn-danger">
-            <i class="fa fa-trash"></i>
-          </button>
-        </div>
-      </div>
-    </div>
-  `,
-  props: {
-    onClick: ['any',true],
-    name: ['string',false,'remove-workflow-button'],
-    visible: ['boolean',false,true]
+const StartingTaskSelectionView = TaskSelectView.extend({
+  initialize (specs) {
+    TaskSelectView.prototype.initialize.apply(this,arguments)
+
+    this.required = true
+    this.label = 'Starting Task'
+    this.name = 'start_task_id'
+    this.invalidClass = 'text-danger'
+
+    const emptyFn = function(){}
+    this.onOpenning = specs.onOpenning || emptyFn
   },
-  bindings: {
-    visible: {
-      type: 'toggle'
-    }
-  },
-  session: {
-    valid: ['boolean',false,true]
-  },
-  events: {
-    'click button': function (event) {
-      if (this.onClick) this.onClick(event)
-    }
+  render () {
+    TaskSelectView.prototype.render.apply(this, arguments)
+
+    this.$select.on('select2:opening', this.onOpenning)
   }
 })
