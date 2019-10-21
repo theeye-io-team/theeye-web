@@ -27,7 +27,7 @@ export default FormView.extend({
       'triggers'
     ]
 
-    App.action.workflow.populate(this.model)
+    App.actions.workflow.populate(this.model)
 
     const workflowBuilder = new WorkflowBuilder({
       workflow_id: this.model.id,
