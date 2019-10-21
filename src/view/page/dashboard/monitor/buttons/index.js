@@ -188,15 +188,23 @@ module.exports = View.extend({
   render () {
     this.renderWithTemplate()
 
-    this.renderButtonsByMonitorType(this.model.type)
+    this.renderButtonsByMonitorType(this.model)
   },
-  renderButtonsByMonitorType (type) {
+  renderButtonsByMonitorType (model) {
     const container = this.el
+    const type = model.type
     let buttons
 
     switch (type) {
       case MonitorConstants.TYPE_HOST:
-        buttons = [ HostStats, Workflow, Search, Mute ]
+        buttons = [ Workflow, Search, Mute ]
+        const submonitors = this.model.submonitors.models
+        let showHostStats = submonitors.some((submonitor) => {
+          return submonitor.type === 'dstat'
+        })
+        if (showHostStats) {
+          buttons.unshift(HostStats)
+        }
         break;
       case MonitorConstants.TYPE_NESTED:
         buttons = [ null, Workflow, Search, Mute ]
