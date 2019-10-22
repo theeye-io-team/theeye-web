@@ -147,9 +147,9 @@ export default FormView.extend({
     let data = this.prepareData(this.data)
     //data.looptime = this._fieldViews.looptime.selected().id
     if (!this.model.isNew()) {
-      App.action.workflow.update(this.model.id, data)
+      App.actions.workflow.update(this.model.id, data)
     } else {
-      App.action.workflow.create(data)
+      App.actions.workflow.create(data)
     }
 
     this.trigger('submitted')
