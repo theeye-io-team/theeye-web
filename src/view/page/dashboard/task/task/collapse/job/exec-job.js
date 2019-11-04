@@ -6,8 +6,9 @@ import { BaseExec } from '../../exec-task.js'
 import FIELD from 'constants/field'
 import moment from 'moment'
 import isURL from 'validator/lib/isURL'
+import JobConstants from 'constants/job'
 
-const ExecJob = BaseExec.extend({
+exports.ExecJob = BaseExec.extend({
   execute () {
     if (this.model.inProgress) {
       const message = `Cancel <b>${this.model.name}</b> the execution of this task?
@@ -26,88 +27,81 @@ const ExecJob = BaseExec.extend({
   }
 })
 
-exports.ExecJob = ExecJob
-
-const ExecApprovalJob = BaseExec.extend({
-  getDynamicOutputs (next) {
-    if (this.model.hasDynamicOutputs) {
-      const form = new DynamicForm({
-        fieldsDefinitions: this.model.task.output_parameters
-      })
-
-      const modal = new Modalizer({
-        buttons: true,
-        confirmButton: 'Run',
-        title: `Run ${this.model.name} with dynamic arguments`,
-        bodyView: form
-      })
-
-      this.listenTo(modal, 'shown', () => { form.focus() })
-
-      this.listenTo(modal, 'hidden', () => {
-        form.remove()
-        modal.remove()
-      })
-
-      this.listenTo(modal, 'confirm', () => {
-        /**
-         * @param {Object} args a {key0: value0, key1: value1, ...} object with each task argument
-         */
-        form.submit((err, args) => {
-          const orders = Object.keys(args)
-          next(
-            orders.map((order) => {
-              return {
-                order: parseInt(order),
-                label: this.model.taskModel.output_parameters.get(parseInt(order), 'order').label,
-                value: args[order],
-                type: this.model.taskModel.output_parameters.get(parseInt(order), 'order').type
-              }
-            })
-          )
-          modal.hide()
-        })
-      })
-      modal.show()
-    } else {
-      next([])
-    }
-  },
+exports.ExecOnHoldJob = BaseExec.extend({
   execute (isPendingCheck, done) {
     if (this.model.inProgress) {
-      if (this.model.isApprover(App.state.session.user.id)) {
-        this.requestApproval(isPendingCheck, done)
-      } else {
-        if (!isPendingCheck) {
-          this.updateApprovalRequest(done)
+      if (this.model._type === JobConstants.APPROVAL_TYPE) {
+        if (this.model.isApprover(App.state.session.user.id)) {
+          this.requestApproval(isPendingCheck, done)
+        } else {
+          if (!isPendingCheck) {
+            this.updateApprovalRequest(done)
+          }
         }
+      } else {
+        this.requestInput(isPendingCheck, done)
       }
     }
   },
-  requestApproval (isPendingCheck, done) {
-    let message = buildMessage(this.model)
+  getDynamicArguments (next) {
+    const task = new App.Models.Task.Factory(this.model.task)
+    const form = new DynamicForm({
+      fieldsDefinitions: task.task_arguments.models
+    })
 
+    const modal = new Modalizer({
+      buttons: true,
+      confirmButton: 'Run',
+      title: `Run ${task.name} with dynamic arguments`,
+      bodyView: form
+    })
+
+    this.listenTo(modal, 'hidden', () => {
+      form.remove()
+      modal.remove()
+    })
+
+    this.listenTo(modal, 'confirm', () => {
+      /**
+      * @param {Object} args a {key0: value0, key1: value1, ...} object with each task argument
+      */
+      form.submit((err, args) => {
+        const orders = Object.keys(args)
+        next(
+          orders.map((order) => {
+            return {
+              order: parseInt(order),
+              label: task.task_arguments.get(parseInt(order), 'order').label,
+              value: args[order],
+              type: task.task_arguments.get(parseInt(order), 'order').type,
+              masked: task.task_arguments.get(parseInt(order), 'order').masked
+            }
+          })
+        )
+        modal.hide()
+      })
+    })
+    modal.show()
+  },
+  requestInput (isPendingCheck, done) {
     var buttons = {
-      reject: {
-        label: 'Reject',
-        className: 'btn btn-danger',
+      accept: {
+        label: 'Accept',
+        className: 'btn btn-primary',
         callback: () => {
-          this.getDynamicOutputs(jobArgs => {
+          this.getDynamicArguments(jobArgs => {
             jobArgs = this.parseArgs(jobArgs)
-            App.actions.job.reject(this.model, jobArgs)
+            App.actions.job.submitInputs(this.model, jobArgs)
             if (done) done()
           })
         }
       },
-      approve: {
-        label: 'Approve',
-        className: 'btn btn-primary',
+      cancel: {
+        label: 'Cancel job',
+        className: 'btn btn-danger',
         callback: () => {
-          this.getDynamicOutputs(jobArgs => {
-            jobArgs = this.parseArgs(jobArgs)
-            App.actions.job.approve(this.model, jobArgs)
-            if (done) done()
-          })
+          App.actions.job.cancel(this.model)
+          if (done) done()
         }
       }
     }
@@ -117,7 +111,57 @@ const ExecApprovalJob = BaseExec.extend({
         label: 'Skip',
         className: 'btn btn-default',
         callback: () => {
-          App.actions.approval.skip(this.model)
+          App.actions.onHold.skip(this.model)
+          if (done) done()
+        }
+      }
+    }
+
+    bootbox.dialog({
+      message: `<p>Task <b>${this.model.name}</b> needs input to continue.</p>`,
+      backdrop: true,
+      closeButton: (App.state.session.user.credential === 'root'),
+      buttons: buttons
+    })
+  },
+  requestApproval (isPendingCheck, done) {
+    let message = buildApprovalMessage(this.model)
+    let args = this.model.task_arguments_values
+    const orders = Object.keys(args)
+    const jobArgs = orders.map((order) => {
+      return {
+        order: parseInt(order),
+        label: this.model.taskModel.task_arguments.get(parseInt(order), 'order').label,
+        value: args[order],
+        type: this.model.taskModel.task_arguments.get(parseInt(order), 'order').type
+      }
+    })
+
+    var buttons = {
+      reject: {
+        label: 'Reject',
+        className: 'btn btn-danger',
+        callback: () => {
+          App.actions.job.reject(this.model, jobArgs)
+          if (done) done()
+        }
+      },
+      approve: {
+        label: 'Approve',
+        className: 'btn btn-primary',
+        callback: () => {
+          App.actions.job.approve(this.model, jobArgs)
+          if (done) done()
+        }
+      }
+    }
+
+    if (isPendingCheck) {
+      buttons.skip = {
+        label: 'Skip',
+        className: 'btn btn-default',
+        callback: () => {
+          App.actions.onHold.skip(this.model)
           if (done) done()
         }
       }
@@ -151,9 +195,7 @@ const ExecApprovalJob = BaseExec.extend({
   }
 })
 
-exports.ExecApprovalJob = ExecApprovalJob
-
-const buildMessage = (model) => {
+const buildApprovalMessage = (model) => {
   let params = model.task.task_arguments
   let values = model.task_arguments_values
   let message = `<p>Task <b>${model.name}</b> needs your approval to continue.</p>`
@@ -164,20 +206,21 @@ const buildMessage = (model) => {
 
   params.forEach(function (param, index) {
     let line = `<p>${param.label}: `
+    let value = values[index]
     switch (param.type) {
       case FIELD.TYPE_FIXED:
       case FIELD.TYPE_INPUT:
-        if (isURL(values[index])) {
-          line += `<a href='${values[index]}' download='file${index + 1}' target='_blank'>Download</a>`
+        if (value && isURL(value)) {
+          line += `<a href='${value}' download='file${index + 1}' target='_blank'>Download</a>`
         } else {
-          line += values[index]
+          line += value
         }
         break
       case FIELD.TYPE_DATE:
-        line += moment(values[index]).format('D-MMM-YY, HH:mm:ss')
+        line += moment(value).format('D-MMM-YY, HH:mm:ss')
         break
       case FIELD.TYPE_FILE:
-        line += `<a href='${values[index]}' download='file${index + 1}' target='_blank'>Download</a>`
+        line += `<a href='${value}' download='file${index + 1}' target='_blank'>Download</a>`
         break
       case FIELD.TYPE_SELECT:
         break

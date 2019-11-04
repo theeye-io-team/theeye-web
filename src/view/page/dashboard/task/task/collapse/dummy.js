@@ -4,7 +4,7 @@ import TaskConstants from 'constants/task'
 module.exports = TaskCollapsibleRow.extend({
   derived: {
     type: {
-      fn: () => TaskConstants.TYPE_DUMMY
+      fn: () => 'input'
     },
     type_icon: {
       fn: () => 'fa fa-list-ul'

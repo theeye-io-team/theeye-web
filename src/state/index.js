@@ -104,7 +104,7 @@ const AppState = State.extend({
     extendedTags: ['state', false, () => new ExtendedTagsState()],
     workflowPage: ['state', false, () => new WorkflowPageState()],
     workflowVisualizer: ['state', false, () => new WorkflowVisualizerState()],
-    approval: ['state', false, () => new ApprovalState()],
+    onHold: ['state', false, () => new OnHoldState()],
     taskForm: ['state', false, () => new TaskFormState()]
   },
   initialize () {
@@ -218,7 +218,7 @@ const EditorState = State.extend({
   }
 })
 
-const ApprovalState = State.extend({
+const OnHoldState = State.extend({
   props: {
     underExecution: ['boolean', false, false],
     newArrived: ['boolean', false, false]

@@ -3,7 +3,7 @@ import App from 'ampersand-app'
 import after from 'lodash/after'
 import NavbarActions from 'actions/navbar'
 import WorkflowActions from 'actions/workflow'
-import ApprovalActions from 'actions/approval'
+import OnHoldActions from 'actions/onHold'
 
 module.exports = {
   setMonitorsGroupByProperty (prop) {
@@ -59,7 +59,7 @@ module.exports = {
               WorkflowActions.populate(workflow)
             })
 
-            ApprovalActions.check()
+            OnHoldActions.check()
             step()
           },
           error: step,

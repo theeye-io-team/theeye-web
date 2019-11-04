@@ -55,7 +55,7 @@ const ArgRow = View.extend({
 module.exports = View.extend({
   template: `
   <div>
-    <h2>You are going to run the task <b data-hook="name"></b> with the following parameters:</h2>
+    <h2>You are going to run the task <b data-hook="name"></b>.</h2>
     <div class="row" data-hook="args-header">
       <div class="col-sm-3"><b>Label</b></div>
       <div class="col-sm-8"><b>Value</b></div>

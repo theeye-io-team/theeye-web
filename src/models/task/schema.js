@@ -47,7 +47,6 @@ const Schema = AppModel.extend({
   session: {
     credentials: ['object', false, null],
     hasDynamicArguments: 'boolean',
-    hasDynamicOutputs: 'boolean',
     alreadyFetched: ['boolean', false, false],
     inProgressJobs: 'number',
     last_execution: 'date',
@@ -56,7 +55,6 @@ const Schema = AppModel.extend({
   collections: {
     //triggers: Events,
     task_arguments: TaskArguments,
-    output_parameters: TaskArguments,
     schedules: ScheduleCollection,
     jobs: function (models, options) {
       return new App.Models.Job.Collection(models, options)
@@ -117,20 +115,6 @@ const Schema = AppModel.extend({
         })
       )
     })
-
-    this.listenToAndRun(this.output_parameters, 'add remove change reset sync', () => {
-      this.hasDynamicOutputs = Boolean(
-        this.output_parameters.models.find(arg => {
-          return arg.type && (
-            arg.type===FIELD.TYPE_INPUT ||
-            arg.type===FIELD.TYPE_SELECT ||
-            arg.type===FIELD.TYPE_DATE ||
-            arg.type===FIELD.TYPE_FILE ||
-            arg.type===FIELD.TYPE_REMOTE_OPTIONS
-          )
-        })
-      )
-    })
   },
   serialize (options) {
     var serial = AppModel.prototype.serialize.call(this, options)
@@ -162,6 +146,14 @@ const Schema = AppModel.extend({
       return resource.host_id == this.host_id && resource.type == 'host'
     })
     return host
+  },
+  hasHost () {
+    let host = this.hostResource()
+    if (host) {
+      return true
+    } else {
+      return false
+    }
   },
   hostIsReporting () {
     let host = this.hostResource()

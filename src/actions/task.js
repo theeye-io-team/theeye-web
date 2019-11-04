@@ -13,7 +13,7 @@ import TaskFormActions from 'actions/taskform'
 import config from 'config'
 import FileSaver from 'file-saver'
 const emptyCallback = () => {}
-import { ExecTask, ExecApprovalTask } from 'view/page/dashboard/task/task/exec-task.js'
+import { ExecTask, ExecTaskWithNoHost } from 'view/page/dashboard/task/task/exec-task.js'
 import { Model as File } from 'models/file'
 
 const logger = require('lib/logger')('actions:tasks')
@@ -43,7 +43,6 @@ module.exports = {
     let task = App.state.tasks.get(id)
     if (task.type == 'script') {
       task.task_arguments.reset([])
-      task.output_parameters.reset([])
     }
     task.set(data)
     task.save({},{
@@ -201,10 +200,10 @@ module.exports = {
   execute (task) {
     var execTask
     if (!App.state.session.licenseExpired) {
-      if (task.type === TaskConstants.TYPE_APPROVAL) {
-        execTask = new ExecApprovalTask({ model: task })
-      } else {
+      if (task.hasHost()) {
         execTask = new ExecTask({ model: task })
+      } else {
+        execTask = new ExecTaskWithNoHost({ model: task })
       }
       execTask.execute()
     } else {

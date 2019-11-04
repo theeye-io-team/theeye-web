@@ -1,8 +1,7 @@
 import App from 'ampersand-app'
 import State from 'ampersand-state'
-const runTaskWithArgsMessage = require('./run-task-message.hbs')
 import bootbox from 'bootbox'
-import TaskConstants from 'constants/task'
+import JobConstants from 'constants/job'
 import DynamicForm from 'view/dynamic-form'
 import Modalizer from 'components/modalizer'
 import ConfirmExecution from './confirm-execution'
@@ -48,6 +47,10 @@ const BaseExec = State.extend({
       this.listenTo(modal, 'hidden', () => {
         form.remove()
         modal.remove()
+      })
+
+      this.listenTo(modal, 'customevent', () => {
+        console.log('customevent')
       })
 
       this.listenTo(modal, 'confirm', () => {
@@ -125,59 +128,11 @@ const BaseExec = State.extend({
       modal.show()
     }
 
-    if (this.model.type === TaskConstants.TYPE_DUMMY) {
-      this.getDynamicOutputs(callback)
-    } else {
-      this.getDynamicArguments(callback)
-    }
+    this.getDynamicArguments(callback)
   }
 })
 
 const ExecTask = BaseExec.extend({
-  getDynamicOutputs (next) {
-    if (this.model.hasDynamicOutputs) {
-      const form = new DynamicForm({
-        fieldsDefinitions: this.model.output_parameters.models
-      })
-
-      const modal = new Modalizer({
-        buttons: true,
-        confirmButton: 'Run',
-        title: `Run ${this.model.name} with dynamic arguments`,
-        bodyView: form
-      })
-
-      this.listenTo(modal, 'shown', () => { form.focus() })
-
-      this.listenTo(modal, 'hidden', () => {
-        form.remove()
-        modal.remove()
-      })
-
-      this.listenTo(modal, 'confirm', () => {
-        /**
-         * @param {Object} args a {key0: value0, key1: value1, ...} object with each task argument
-         */
-        form.submit((err, args) => {
-          const orders = Object.keys(args)
-          next(
-            orders.map((order) => {
-              return {
-                order: parseInt(order),
-                label: this.model.output_parameters.get(parseInt(order), 'order').label,
-                value: args[order],
-                type: this.model.output_parameters.get(parseInt(order), 'order').type
-              }
-            })
-          )
-          modal.hide()
-        })
-      })
-      modal.show()
-    } else {
-      next([])
-    }
-  },
   execute () {
     if (!this.model.canExecute) return
 
@@ -198,7 +153,7 @@ const ExecTask = BaseExec.extend({
   }
 })
 
-const ExecApprovalTask = BaseExec.extend({
+const ExecTaskWithNoHost = BaseExec.extend({
   execute () {
     this.checkInProgress()
   }
@@ -206,4 +161,4 @@ const ExecApprovalTask = BaseExec.extend({
 
 exports.BaseExec = BaseExec
 exports.ExecTask = ExecTask
-exports.ExecApprovalTask = ExecApprovalTask
+exports.ExecTaskWithNoHost = ExecTaskWithNoHost

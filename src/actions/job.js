@@ -6,12 +6,11 @@ import bootbox from 'bootbox'
 import TaskConstants from 'constants/task'
 import LifecycleConstants from 'constants/lifecycle'
 import JobConstants from 'constants/job'
-import { ExecApprovalJob } from 'view/page/dashboard/task/task/collapse/job/exec-job'
+import { ExecOnHoldJob } from 'view/page/dashboard/task/task/collapse/job/exec-job'
 import { eachSeries, each } from 'async'
 import config from 'config'
 import { Factory as JobFactory } from 'models/job'
 const logger = require('lib/logger')('actions:jobs')
-import ApprovalActions from 'actions/approval'
 
 module.exports = {
   /**
@@ -21,53 +20,24 @@ module.exports = {
    *
    */
   applyStateUpdate (data) {
-    let workflow
-    if (data._type==='WorkflowJob') {
-      workflow = App.state.workflows.get(data.workflow_id)
-
-      if (!workflow) {
-        logger.error('workflow not found in state')
-        logger.error('%o', data)
-        return
-      }
-      // workflow job created
-      workflow.jobs.add(data, { merge: true })
-    } else {
-      const task = App.state.tasks.get(data.task_id)
-
-      if (!task) {
-        logger.error('task not found in state')
-        logger.error('%o', data)
-        return
-      }
-
-      const tjob = new JobFactory(data, {})
-
-      if (task.workflow_id) {
-        // get the workflow
-        workflow = App.state.workflows.get(task.workflow_id)
-        if (!workflow) { // error
-          logger.error('workflow not found in state')
+    try {
+      let workflow
+      if (data._type === 'WorkflowJob') {
+        addWorkflowJobToState(data)
+      } else {
+        // task definition not in state
+        const task = App.state.tasks.get(data.task_id)
+        if (!task) {
+          logger.error('task not found in state')
           logger.error('%o', data)
           return
         }
 
-        // get the job
-        let wjob = workflow.jobs.get(tjob.workflow_job_id)
-        if (!wjob) { // async error?
-          if (!tjob.workflow_job_id) { return }
-          // add temp models to the collection
-          let attrs = {
-            id: tjob.workflow_job_id,
-            type: JobConstants.WORKFLOW_TYPE
-          }
-          wjob = workflow.jobs.add(attrs, { merge: true })
-        }
-        wjob.jobs.add(tjob, { merge: true })
-      } else {
-        task.jobs.add(tjob, { merge: true })
+        const taskJob = addTaskJobToState(data, task)
+        isOnHoldUpdate(taskJob, task)
       }
-      isApprovalUpdate(tjob, task)
+    } catch (e) {
+      console.error(e)
     }
   },
   /**
@@ -103,28 +73,17 @@ module.exports = {
     })
   },
   approve (job, args) {
-    args = args || []
+    args || (args = [])
     job.set('lifecycle', LifecycleConstants.FINISHED)
     XHR.send({
       method: 'put',
       url: `${config.api_v3_url}/job/${job.id}/approve`,
-      jsonData: {
-        result: {
-          state: 'success',
-          data: {
-            args,
-            output: args.map(arg => arg.value)
-          }
-        }
-      },
+      //jsonData: { args },
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
       done (data,xhr) {
         logger.debug('job approved')
-        //job.clear()
-        //job.result.clear()
-        //job.set('lifecycle', LifecycleConstants.CANCELED)
       },
       fail (err,xhr) {
         bootbox.alert('something goes wrong')
@@ -133,30 +92,38 @@ module.exports = {
     })
   },
   reject (job, args) {
-    args = args || []
+    args || (args = [])
     job.set('lifecycle', LifecycleConstants.FINISHED)
     XHR.send({
       method: 'put',
       url: `${config.api_v3_url}/job/${job.id}/reject`,
-      jsonData: {
-        result: {
-          state: 'failure',
-          data: {
-            args,
-            output: args.map(arg => arg.value)
-          }
-        }
-      },
+      //jsonData: { args },
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
       done (data,xhr) {
         logger.debug('job rejected')
-        //job.clear()
-        //job.result.clear()
-        //job.set('lifecycle',LifecycleConstants.CANCELED)
       },
       fail (err,xhr) {
+        bootbox.alert('something goes wrong')
+        console.log(arguments)
+      }
+    })
+  },
+  submitInputs (job, args) {
+    args || (args = [])
+    //job.set('lifecycle', LifecycleConstants.FINISHED)
+    XHR.send({
+      method: 'put',
+      url: `${config.api_v3_url}/job/${job.id}/input`,
+      jsonData: { args },
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (data, xhr) {
+        logger.debug('job inputs submited')
+      },
+      fail (err, xhr) {
         bootbox.alert('something goes wrong')
         console.log(arguments)
       }
@@ -191,28 +158,8 @@ module.exports = {
       },
       fail (err, xhr) {
         bootbox.alert('Something goes wrong. Please refresh')
-      },
+      }
     })
-
-
-  }
-}
-
- /**
- *
- * @summary check if should show approval modal
- * @param {Object} data job model properties
- *
- */
-const isApprovalUpdate = function (job, task) {
-  var requestApproval = (
-    job._type === JobConstants.APPROVAL_TYPE &&
-    task.isApprover(App.state.session.user.id) &&
-    job.lifecycle === LifecycleConstants.ONHOLD
-  )
-
-  if (requestApproval) {
-    ApprovalActions.check(job)
   }
 }
 
@@ -263,4 +210,84 @@ const createSingleTaskJob = (task, args) => {
       console.log(arguments)
     }
   })
+}
+
+const addWorkflowJobToState = (data) => {
+  let workflow = App.state.workflows.get(data.workflow_id)
+  if (!workflow) {
+    logger.error('workflow not found in state')
+    logger.error('%o', data)
+    return
+  }
+  // workflow job created
+  workflow.jobs.add(data, { merge: true })
+}
+
+const addTaskJobToState = (data, task) => {
+  let taskJob = new JobFactory(data, {})
+
+  if (!task.workflow_id) {
+    task.jobs.add(taskJob, { merge: true })
+    return taskJob
+  }
+  // else
+
+  // get the workflow
+  let workflow = App.state.workflows.get(task.workflow_id)
+  if (!workflow) { // error
+    let err = new Error(msg)
+    err.data = data
+    throw err
+  }
+
+  // get the workflow job
+  let workflowJob = workflow.jobs.get(taskJob.workflow_job_id)
+  if (!workflowJob) { // async error?
+    if (!taskJob.workflow_job_id) { return }
+    // add temp models to the collection
+    let attrs = {
+      id: taskJob.workflow_job_id,
+      type: JobConstants.WORKFLOW_TYPE
+    }
+    workflowJob = workflow.jobs.add(attrs, { merge: true })
+  }
+  workflowJob.jobs.add(taskJob, { merge: true })
+
+  return taskJob
+}
+
+/**
+ *
+ * @summary check if should show approval modal
+ * @param {Object} data job model properties
+ *
+ */
+const isOnHoldUpdate = (job, task) => {
+  if (job.lifecycle !== LifecycleConstants.ONHOLD) {
+    return
+  }
+
+  if (job._type === JobConstants.DUMMY_TYPE) {
+    if (job.workflow_job_id) {
+      const workflowJob = App.state.jobs.get(job.workflow_job_id)
+
+      // workflow job is present only if user has visibility of it
+      // just in case of error
+      if (!workflowJob) { return }
+
+      if (workflowJob.isOwner(App.state.session.user.email)) {
+        App.actions.onHold.check(job)
+      }
+    } else {
+      if (job.isOwner(App.state.session.user.email)) {
+        App.actions.onHold.check(job)
+      }
+    }
+  } else if (
+    job._type === JobConstants.APPROVAL_TYPE &&
+    task.isApprover(App.state.session.user.id)
+  ) {
+    App.actions.onHold.check(job)
+  }
+  // else not handled
 }

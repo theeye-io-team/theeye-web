@@ -67,8 +67,7 @@ module.exports = {
       script_runas: 'Execute the selected script using a different username. You have to use \'%script%\' in the place where the script has to be included. This "keyword" will be replaced during execution with the real script path. This is the perfect place to use "sudo". Windows users, requires to mimic this action putting the password for the first time.',
       env: 'Set environment variables during script execution. Use a JSON object key:value format',
       multitasking: 'Allowes Bots to run multiple instances of this Task in parallel',
-      approval_task_arguments: 'Data submitted by the approval request (from previous task)',
-      approval_output_parameters: 'Data submitted by the approver (for next task)'
+      approval_task_arguments: 'Data submitted by the approval request (from previous task)'
     },
     cannot_schedule: 'A Scheduled Task cannot have dynamic input/select arguments',
     cannot_trigger: 'A Task with dynamic arguments cannot be automatically triggered by Workflow',

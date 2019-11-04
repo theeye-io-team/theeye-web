@@ -21,8 +21,6 @@ module.exports = {
     logger.debug('getting api url ' + req.originalUrl)
     var route = req.originalUrl.replace(apibase,'')
 
-    req.query.web_user_id = req.user.id
-
     req.supervisor.get({
       route: route,
       query: req.query,
@@ -39,8 +37,6 @@ module.exports = {
   fetch (req, res, next) {
     logger.debug('fetching api url ' + req.originalUrl)
     var route = req.originalUrl.replace(apibase,'')
-
-    req.query.web_user_id = req.user.id
 
     req.supervisor.fetch({
       route: route,
@@ -60,7 +56,7 @@ module.exports = {
     logger.debug('patching api url ' + req.originalUrl);
     var route = req.originalUrl.replace(apibase,'')
 
-    req.body.web_user_id = req.user.id
+    req.query.web_user_id = req.user.id
 
     req.supervisor.patch({
       route: route,
@@ -81,7 +77,7 @@ module.exports = {
     logger.debug('putting api url ' + req.originalUrl);
     var route = req.originalUrl.replace(apibase,'')
 
-    req.body.web_user_id = req.user.id
+    req.query.web_user_id = req.user.id
 
     req.supervisor.update({
       route: route,
@@ -102,8 +98,6 @@ module.exports = {
     logger.debug('remove api url ' + req.originalUrl)
     var route = req.originalUrl.replace(apibase, '')
 
-    req.query.web_user_id = req.user.id
-
     req.supervisor.remove({
       route: route,
       query: req.query,
@@ -120,8 +114,6 @@ module.exports = {
   create (req, res, next){
     logger.debug('post api url ' + req.originalUrl)
     var route = req.originalUrl.replace(apibase, '')
-
-    req.body.web_user_id = req.user.id
 
     req.supervisor.create({
       route: route,

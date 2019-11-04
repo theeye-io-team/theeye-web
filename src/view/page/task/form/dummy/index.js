@@ -40,9 +40,9 @@ module.exports = TaskFormView.extend({
         value: this.model.tags
       }),
       new ArgumentsView({
-        name: 'output_parameters',
-        label: 'Output values',
-        value: this.model.output_parameters
+        name: 'task_arguments',
+        label: 'Input values',
+        value: this.model.task_arguments
       }),
       // advanced fields starts visible = false
       new AdvancedToggle({
@@ -123,7 +123,7 @@ module.exports = TaskFormView.extend({
 
     this.beforeSubmit()
     if (!this.valid) { return next(null, false) }
-    if (!this.data.output_parameters.length) {
+    if (!this.data.task_arguments.length) {
       bootbox.alert('Please add at least one argument.')
       return next(null, false)
     }
@@ -149,7 +149,7 @@ module.exports = TaskFormView.extend({
       description: task.description,
       tags: task.tags,
       triggers: task.trigger || [],
-      output_parameters: task.output_parameters || []
+      task_arguments: task.task_arguments || []
     })
   }
 })

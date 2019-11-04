@@ -4,7 +4,7 @@ import DashboardActions from 'actions/dashboard'
 import JobActions from 'actions/job'
 import FileActions from 'actions/file'
 import TaskActions from 'actions/task'
-import ApprovalActions from 'actions/approval'
+import OnHoldActions from 'actions/onHold'
 import IndicatorActions from 'actions/indicator'
 import WorkflowActions from 'actions/workflow'
 import { cancelSchedule, getSchedules, createSchedule } from 'actions/schedule'
@@ -12,7 +12,7 @@ import { cancelSchedule, getSchedules, createSchedule } from 'actions/schedule'
 module.exports = () => {
   App.extend({
     actions: {
-      approval: ApprovalActions,
+      onHold: OnHoldActions,
       dashboard: DashboardActions,
       file: FileActions,
       indicator: IndicatorActions,

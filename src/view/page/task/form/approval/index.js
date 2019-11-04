@@ -24,7 +24,6 @@ module.exports = TaskFormView.extend({
       'acl',
       'triggers',
       'task_arguments',
-      'output_parameters',
       'copy_task'
     ]
 
@@ -100,12 +99,6 @@ module.exports = TaskFormView.extend({
         name: 'task_arguments',
         label: 'Expected input',
         value: this.model.task_arguments
-      }),
-      new ArgumentsView({
-        visible: false,
-        name: 'output_parameters',
-        label: 'Output values',
-        value: this.model.output_parameters
       })
     ]
 
@@ -145,14 +138,6 @@ module.exports = TaskFormView.extend({
         text: HelpTexts.task.form['approval_task_arguments']
       }),
       taskArgumentsView.query('label')
-    )
-
-    const outputParametersView = this._fieldViews['output_parameters']
-    outputParametersView.renderSubview(
-      new HelpIcon({
-        text: HelpTexts.task.form['approval_output_parameters']
-      }),
-      outputParametersView.query('label')
     )
 
     const buttons = this.buttons = new Buttons()
@@ -204,8 +189,7 @@ module.exports = TaskFormView.extend({
       description: task.description,
       tags: task.tags,
       triggers: task.trigger || [],
-      task_arguments: task.task_arguments || [],
-      output_parameters: task.output_parameters || []
+      task_arguments: task.task_arguments || []
     })
   }
 })

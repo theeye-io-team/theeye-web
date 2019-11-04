@@ -1,8 +1,7 @@
 import View from 'ampersand-view'
 import LifecycleConstants from 'constants/lifecycle'
-import JobConstants from 'constants/job'
 import StateConstants from 'constants/states'
-import { ExecJob, ExecApprovalJob } from './exec-job.js'
+import { ExecJob, ExecOnHoldJob } from './exec-job.js'
 import JobResult from 'view/page/dashboard/job-result'
 import './styles.less'
 
@@ -83,12 +82,12 @@ module.exports = View.extend({
       }
     },
     execution_lifecycle_icon: {
-      deps: ['model.lifecycle'],
+      deps: ['model.lifecycle','model.state'],
       fn () {
         const lifecycle = this.model.lifecycle
         const state = this.model.state
 
-        if (isCompleted(lifecycle)) {
+        if (LifecycleConstants.isCompleted(lifecycle)) {
           if (state === StateConstants.CANCELED) { return 'fa fa-exclamation remark-alert' }
           if (state === StateConstants.FAILURE) { return 'fa fa-exclamation remark-alert' }
           if (state === StateConstants.ERROR) { return 'fa fa-question remark-warning' }
@@ -125,7 +124,7 @@ module.exports = View.extend({
             return 'Task running, click to Cancel execution'
             break
           case LifecycleConstants.ONHOLD:
-            return 'Waiting for assignee approval'
+            return 'Waiting for action'
             break
           default:
             return 'Job execution'
@@ -173,10 +172,10 @@ module.exports = View.extend({
   },
   execute () {
     var execJob
-    if (this.model._type === JobConstants.APPROVAL_TYPE) {
-      execJob = new ExecApprovalJob({model: this.model})
+    if (this.model.lifecycle === LifecycleConstants.ONHOLD) {
+      execJob = new ExecOnHoldJob({ model: this.model })
     } else {
-      execJob = new ExecJob({model: this.model})
+      execJob = new ExecJob({ model: this.model })
     }
     execJob.execute()
   },
@@ -184,12 +183,3 @@ module.exports = View.extend({
     View.prototype.render.apply(this, arguments)
   }
 })
-
-const isCompleted = (lifecycle) => {
-  return [
-    LifecycleConstants.COMPLETED,
-    LifecycleConstants.FINISHED,
-    LifecycleConstants.EXPIRED, // take to much time to complete
-    LifecycleConstants.TERMINATED // abruptly
-  ].indexOf(lifecycle) !== -1
-}

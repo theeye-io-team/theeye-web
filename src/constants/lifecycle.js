@@ -23,6 +23,18 @@ exports.inProgress = (lifecycle) => {
   )
 }
 
+exports.isCompleted = (lifecycle) => {
+  let completed = [
+    CANCELED,
+    COMPLETED,
+    FINISHED,
+    EXPIRED, // take to much time to complete
+    TERMINATED // abruptly
+  ].indexOf(lifecycle) !== -1
+
+  return completed
+}
+
 exports.isValidNewLifecycle = (currentVal, newVal) => {
   let valid
   switch (currentVal) {
@@ -30,10 +42,10 @@ exports.isValidNewLifecycle = (currentVal, newVal) => {
       valid = true
       break
     case ASSIGNED:
-      valid = (newVal !== READY)
+      valid = newVal !== READY
       break
     case ONHOLD:
-      valid = (newVal !== READY && newVal !== ASSIGNED)
+      valid = newVal !== ASSIGNED
       break
     case FINISHED:
     case TERMINATED:

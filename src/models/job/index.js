@@ -61,6 +61,11 @@ const BaseJob = AppModel.extend({
   children: {
     user: User,
   },
+  isOwner (email) {
+    if (!this.user||!this.user.email) { return false }
+
+    return (email.toLowerCase() === this.user.email.toLowerCase())
+  },
   derived: {
     inProgress: {
       deps: ['lifecycle'],
@@ -73,24 +78,6 @@ const BaseJob = AppModel.extend({
       fn () {
         if (!this.task) { return {} }
         return new App.Models.Task.Factory(this.task, {})
-      }
-    },
-    hasDynamicOutputs: {
-      deps: ['task'],
-      fn () {
-        if (!this.task) return false
-        let hasDynamicOutputs = Boolean(
-          this.task.output_parameters.find(arg => {
-            return arg.type && (
-              arg.type === FIELD.TYPE_INPUT ||
-              arg.type === FIELD.TYPE_SELECT ||
-              arg.type === FIELD.TYPE_DATE ||
-              arg.type === FIELD.TYPE_FILE ||
-              arg.type === FIELD.TYPE_REMOTE_OPTIONS
-            )
-          })
-        )
-        return hasDynamicOutputs
       }
     }
   }

@@ -108,9 +108,6 @@ module.exports = {
     client_secret: '4611b7a50f63c2bb259aa72e0b8b54ae54c326c6',
     url: 'http://127.0.0.1:60080',
     port: 60080,
-    palancas: {
-      resource: 'job'
-    },
     // supervisor incoming requests secret passphrase
     incoming_secret: '77E0EAF3B83DD7A7A4004602626446EADED31BF794956FC9BBAD051FA5A25038',
     integrations: {
