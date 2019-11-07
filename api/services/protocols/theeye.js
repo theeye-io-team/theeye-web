@@ -235,19 +235,21 @@ exports.getCustomerAgentCredentials = function (customer, supervisor, done) {
       var customer = user.customers[0]
 
       user.curl = format(
-        'curl -s "%s" | bash -s "%s" "%s" "%s" ',
+        'curl -s "%s" | bash -s "%s" "%s" "%s" "%s"',
         sails.config.application.agentInstallerUrl.linux,
         user.client_id,
         user.client_secret,
-        customer.name
+        customer.name,
+        sails.config.supervisor.url
       )
 
       user.windowsCurl = format(
-        'powershell -command "& {&"Invoke-WebRequest" -uri "%s" -outFile agent-installer.ps1}" && powershell.exe -ExecutionPolicy ByPass -File agent-installer.ps1 "%s" "%s" "%s" ',
+        'powershell -command "& {&"Invoke-WebRequest" -uri "%s" -outFile agent-installer.ps1}" && powershell.exe -ExecutionPolicy ByPass -File agent-installer.ps1 "%s" "%s" "%s" "%s"',
         sails.config.application.agentInstallerUrl.windows,
         user.client_id,
         user.client_secret,
-        customer.name
+        customer.name,
+        sails.config.supervisor.url
       )
 
       user.dockerCurl = format(
@@ -261,12 +263,13 @@ exports.getCustomerAgentCredentials = function (customer, supervisor, done) {
       )
 
       user.awsCurl = format(
-        '#!/bin/bash \n hostnamectl set-hostname %s-aws \n curl -s "%s" | bash -s "%s" "%s" "%s" ',
+        '#!/bin/bash \n hostnamectl set-hostname %s-aws \n curl -s "%s" | bash -s "%s" "%s" "%s" "%s"',
         customer.name,
         sails.config.application.agentInstallerUrl.linux,
         user.client_id,
         user.client_secret,
-        customer.name
+        customer.name,
+        sails.config.supervisor.url
       )
 
       return done(null, user)

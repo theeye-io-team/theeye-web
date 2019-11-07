@@ -16,6 +16,29 @@ const config = require('config')
 
 module.exports = View.extend({
   template: require('./template.hbs'),
+  initialize() {
+    this.customerName = App.state.session.customer.name
+    this.agentBinary = config.agentBinary
+
+    this.listenToAndRun(App.state.navbar.settingsMenu, 'change:agent', () => {
+      this.updateState(App.state.navbar.settingsMenu)
+    })
+
+    this.listenTo(App.state.navbar.settingsMenu,'change:current_tab change:visible change:agent',() => {
+      if (hopscotch.getCurrTour()) {
+        hopscotch.endTour(true)
+      }
+      if(App.state.navbar.settingsMenu.visible === true &&
+        App.state.navbar.settingsMenu.current_tab === 'installer' &&
+        App.state.onboarding.onboardingActive &&
+        App.state.navbar.settingsMenu.agent !== undefined) {
+          onboarding.start()
+      }
+    })
+  },
+  updateState(state) {
+    this.agent = state.agent
+  },
   props: {
     customerName: ['string',false,''],
     agentBinary: ['object',false,() => { return {} }],
@@ -158,29 +181,6 @@ module.exports = View.extend({
   },
   onClickStartOnboarding() {
     onboarding.start()
-  },
-  initialize() {
-    this.customerName = App.state.session.customer.name
-    this.agentBinary = config.agentBinary
-
-    this.listenToAndRun(App.state.navbar.settingsMenu,'change',() => {
-      this.updateState(App.state.navbar.settingsMenu)
-    })
-
-    this.listenTo(App.state.navbar.settingsMenu,'change:current_tab change:visible change:agent',() => {
-      if (hopscotch.getCurrTour()) {
-        hopscotch.endTour(true)
-      }
-      if(App.state.navbar.settingsMenu.visible === true &&
-        App.state.navbar.settingsMenu.current_tab === 'installer' &&
-        App.state.onboarding.onboardingActive &&
-        App.state.navbar.settingsMenu.agent !== undefined) {
-          onboarding.start()
-      }
-    })
-  },
-  updateState(state) {
-    this.agent = state.agent
   },
   render() {
     this.renderWithTemplate(this)

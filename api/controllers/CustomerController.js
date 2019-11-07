@@ -124,16 +124,20 @@ var CustomerController = module.exports = {
    * @route /customer/agent
    */
   getuseragent (req, res) {
-    var supervisor = req.supervisor;
-    var customer_name = req.user.current_customer
-    var theeye = passport.protocols.theeye;
+    const supervisor = req.supervisor
+    const customer_name = req.user.current_customer
+    const theeye = passport.protocols.theeye
     theeye.getCustomerAgentCredentials(
       customer_name,
       supervisor,
-      function(err, user){
-        if(err) return res.send(500);
-        if(!user) return res.send(404);
-        return res.send(200, { user: user });
+      (err, user) => {
+        if (err) {
+          return res.send(500)
+        }
+        if (!user) {
+          return res.send(404)
+        }
+        return res.send(200, { user })
       }
     )
   },
