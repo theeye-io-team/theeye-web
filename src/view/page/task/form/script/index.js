@@ -197,18 +197,19 @@ module.exports = TaskFormView.extend({
         name: 'multitasking',
         value: this.model.multitasking
       }),
-      new InputView({
+      new TextareaView({
+        prettyJson: true,
         visible: false,
         label: 'Environment (env)',
         name: 'env',
-        placeholder: '',
+        //placeholder: '',
         required: false,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         value: JSON.stringify(this.model.env),
         tests: [
           value => {
-            if (value === '') return
+            if (value === '') { return }
             try {
               let parsed = JSON.parse(value)
               if (Array.isArray(parsed)) {

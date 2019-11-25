@@ -1,10 +1,13 @@
 import assign from 'lodash/assign'
 import InputView from 'components/input-view'
 
+import './styles.less'
+
 module.exports = InputView.extend({
   props: {
     counter: 'number',
-    maxlength: 'number'
+    maxlength: 'number',
+    prettyJson: ['boolean', false, false]
   },
   bindings: assign({}, InputView.prototype.bindings, {
     counter: { hook: 'counter' },
@@ -15,11 +18,11 @@ module.exports = InputView.extend({
     }
   }),
   template: `
-    <div>
+    <div data-component="theeye-textarea">
       <label data-hook="label" class="col-sm-3 control-label"></label>
       <div class="col-sm-9">
-        <span data-hook="counter" style="position: absolute; right: 26px; bottom: 7px; color: #888;"></span>
-        <textarea class="form-input form-control" style="height:100px; resize:none;"> </textarea>
+        <span data-hook="counter" class="textarea-counter"></span>
+        <textarea class="form-input form-control"> </textarea>
         <div data-hook="message-container" class="message message-below message-error">
           <p data-hook="message-text"></p>
         </div>
@@ -29,9 +32,28 @@ module.exports = InputView.extend({
 	initialize () {
     this.type = 'textarea'
 		InputView.prototype.initialize.apply(this, arguments)
+
 		// listen for changes to input value
-		this.listenTo(this,'change:inputValue',this.renderCharactersCount)
+		this.listenTo(this, 'change:inputValue', this.renderCharactersCount)
 	},
+  render () {
+		InputView.prototype.render.apply(this, arguments)
+
+    this.el
+      .querySelector('textarea')
+      .addEventListener('blur', this.onTextareaLeave.bind(this), false)
+
+    this.onTextareaLeave()
+  },
+  onTextareaLeave () {
+    if (this.prettyJson === true) {
+      try {
+        let value = JSON.parse(this.input.value)
+        this.input.value = JSON.stringify(value,undefined,2)
+      } catch (e) {
+      }
+    }
+  },
   renderCharactersCount () {
     if (this.timeout) window.clearTimeout(this.timeout)
     this.counter = this.inputValue.length

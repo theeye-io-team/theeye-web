@@ -1,36 +1,17 @@
 module.exports = {
   application: {
-    baseUrl: "http://localhost:6080",
-    port: 6080,
+    baseUrl: 'http://127.0.0.1:6080',
+    port: 6080, // internal port
+    environment: '',
     secret: '692fc164a0c06a9fd02575cf17688c9e',
     agentInstallerUrl: {
       linux: 'https://s3.amazonaws.com/theeye.agent/linux/setup.sh',
       windows: 'https://s3.amazonaws.com/theeye.agent/windows/agent-installer.ps1'
     },
-    agentBinary:{
+    agentBinary: {
       url: 'https://s3.amazonaws.com/theeye.agent/theEyeInstallerx64.exe',
       name: 'theEyeInstallerx64.exe'
     }
-  },
-  grecaptcha: {
-    v2_secret: null,
-    v3_secret: null,
-    url: 'https://www.google.com/recaptcha/api/siteverify'
-  },
-  auth: {
-    secret: '692fc164a0c06a9fd02575cf17688c9e',
-    expires: 3 * (60 * 60) // in seconds
-  },
-  /**
-   *
-   * redis options to pass directly to node redis client
-   * https://www.npmjs.com/package/redis
-   *
-   */
-  redis: {
-    prefix: 'app_',
-    host: '127.0.0.1',
-    port: 6379
   },
   connections: {
     mongo: {
@@ -48,6 +29,12 @@ module.exports = {
     db: 'theeye',
     collection: 'web_session'
   },
+  sockets: {
+    adapter: 'redis',
+    host: '127.0.0.1',
+    port: 6379,
+    db: 'theeye-web'
+  },
   mailer: {
     from: 'TheEye.io <support@theeye.io>',
     replyTo: 'Support <support@theeye.io>',
@@ -56,14 +43,19 @@ module.exports = {
     support: [],
     invitation: 'contact@theeye.io',
     transport: {
-      type: "sendmail"
+      type: 'sendmail'
     }
   },
   passport: {
     local: {
       strategy: require('passport-local').Strategy,
-      activateUrl: 'http://localhost:6080/activate?'
+      activateUrl: 'http://127.0.0.1:6080/activate?'
     },
+    /**
+     *
+     * google oauth authentication config
+     *
+     */
     google: {
       name: 'Google',
       protocol: 'oauth2',
@@ -72,8 +64,8 @@ module.exports = {
       options: {
         clientID: '714923395260-9jd45ige6gg86mffrvf419dvuh85360t.apps.googleusercontent.com',
         clientSecret: 'k6eNjkeiRriseEUgPBWlGiHr',
-        callbackURLLogin: "http://localhost:6080/auth/google/callback",
-        callbackURLConnect: "http://localhost:6080/auth/google/connectcallback"
+        callbackURLLogin: 'http://localhost:6080/auth/google/callback',
+        callbackURLConnect: 'http://localhost:6080/auth/google/connectcallback'
       }
     },
     /**
@@ -108,8 +100,7 @@ module.exports = {
     client_secret: '4611b7a50f63c2bb259aa72e0b8b54ae54c326c6',
     url: 'http://127.0.0.1:60080',
     port: 60080,
-    // supervisor incoming requests secret passphrase
-    incoming_secret: '77E0EAF3B83DD7A7A4004602626446EADED31BF794956FC9BBAD051FA5A25038',
+    incoming_secret: '77E0EAF3B83DD7A7A4004602626446EADED31BF794956FC9BBAD051FA5A25038', // supervisor incoming requests secret passphrase
     integrations: {
       autobot: {
         task_id: '5b57a27be79f800c3ff8b52d',
@@ -118,24 +109,47 @@ module.exports = {
       }
     }
   },
-	aws: {
-		username: '',
-		accessKeyId: '',
-		secretAccessKey: '',
-		region: ''
-	},
+  /**
+   *
+   * this aws credentials provides SNS access
+   *
+   */
+  aws: {
+    username: '',
+    accessKeyId: '',
+    secretAccessKey: '',
+    region: ''
+  },
   sns: {
     debug: false,
-		sockets_arn: '',
     push_notifications: {
       android: '',
       ios: ''
     }
   },
-  //sockets: {
-  //  adapter: 'redis',
-  //  host: 'redis-prod.theeye.io',
-  //  port: 6379,
-  //  db: 'theeye-web'
-  //},
+  /**
+   *
+   * redis options to pass directly to node redis client
+   * https://www.npmjs.com/package/redis
+   *
+   */
+  redis: {
+    prefix: 'app_',
+    host: '127.0.0.1',
+    port: 6379
+  },
+  /**
+   *
+   * google recaptcha
+   *
+   */
+  grecaptcha: {
+    v2_secret: null,
+    v3_secret: null,
+    url: 'https://www.google.com/recaptcha/api/siteverify'
+  },
+  auth: {
+    secret: '692fc164a0c06a9fd02575cf17688c9e',
+    expires: 3 * (60 * 60) // in seconds
+  }
 }
