@@ -75,10 +75,14 @@ module.exports = View.extend({
     }
   },
   events: {
-    'click button[data-hook=confirm]':'onClickConfirm'
+    'click button[data-hook=confirm]':'onClickConfirm',
+    'click button[data-hook=cancel]':'onClickCancel',
   },
   onClickConfirm () {
     this.trigger('confirm')
+  },
+  onClickCancel () {
+    this.trigger('cancel')
   },
   initialize (options) {
     this._triggerShown = this._triggerShown.bind(this)
@@ -178,6 +182,7 @@ const ButtonsView = View.extend({
       <div class="col-xs-12 col-md-6">
         <button type="button"
           class="btn btn-default"
+          data-hook="cancel"
           data-dismiss="modal">
           Cancel
         </button>

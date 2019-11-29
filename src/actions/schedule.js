@@ -26,7 +26,7 @@ export const createSchedule = (taskId, data, callback = () => {}) => {
 }
 
 // fetch
-export const getSchedules = taskId => {
+export const getSchedules = (taskId) => {
   const task = App.state.tasks.get(taskId)
   XHR.send({
     url: `${config.api_url}/task/${task.id}/schedule`,

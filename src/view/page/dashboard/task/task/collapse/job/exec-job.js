@@ -31,7 +31,7 @@ exports.ExecOnHoldJob = BaseExec.extend({
   execute (isPendingCheck, done) {
     if (this.model.inProgress) {
       if (this.model._type === JobConstants.APPROVAL_TYPE) {
-        if (this.model.isApprover(App.state.session.user.id)) {
+        if (this.model.isApprover(App.state.session.user)) {
           this.requestApproval(isPendingCheck, done)
         } else {
           if (!isPendingCheck) {
@@ -45,20 +45,23 @@ exports.ExecOnHoldJob = BaseExec.extend({
   },
   getDynamicArguments (next) {
     const task = new App.Models.Task.Factory(this.model.task)
-    const form = new DynamicForm({
-      fieldsDefinitions: task.task_arguments.models
-    })
-
+    const form = new DynamicForm({ fieldsDefinitions: task.task_arguments.models })
     const modal = new Modalizer({
       buttons: true,
       confirmButton: 'Run',
-      title: `Run ${task.name} with dynamic arguments`,
+      title: `Run task: ${task.name}`,
       bodyView: form
     })
+
 
     this.listenTo(modal, 'hidden', () => {
       form.remove()
       modal.remove()
+    })
+
+    this.listenTo(modal, 'cancel', () => {
+      modal.hide()
+      next(null, true)
     })
 
     this.listenTo(modal, 'confirm', () => {
@@ -67,61 +70,58 @@ exports.ExecOnHoldJob = BaseExec.extend({
       */
       form.submit((err, args) => {
         const orders = Object.keys(args)
-        next(
-          orders.map((order) => {
-            return {
-              order: parseInt(order),
-              label: task.task_arguments.get(parseInt(order), 'order').label,
-              value: args[order],
-              type: task.task_arguments.get(parseInt(order), 'order').type,
-              masked: task.task_arguments.get(parseInt(order), 'order').masked
-            }
+        const taskArgs = []
+        orders.forEach(order => {
+          taskArgs.push({
+            order: parseInt(order),
+            label: task.task_arguments.get(parseInt(order), 'order').label,
+            value: args[order],
+            type: task.task_arguments.get(parseInt(order), 'order').type,
+            masked: task.task_arguments.get(parseInt(order), 'order').masked
           })
-        )
+        })
+
         modal.hide()
+        next(this.parseArgs(taskArgs))
       })
     })
+
     modal.show()
+    return modal
   },
   requestInput (isPendingCheck, done) {
-    var buttons = {
-      accept: {
-        label: 'Accept',
-        className: 'btn btn-primary',
-        callback: () => {
-          this.getDynamicArguments(jobArgs => {
-            jobArgs = this.parseArgs(jobArgs)
-            App.actions.job.submitInputs(this.model, jobArgs)
-            if (done) done()
+    done || (done=()=>{})
+    this.getDynamicArguments((jobArgs, canceled) => {
+      if (canceled) {
+        if (isPendingCheck) {
+          App.actions.onHold.skip(this.model)
+          return done()
+        } else {
+          // ask confirmation
+          bootbox.confirm({
+            message: 'Do you want to cancel the execution?',
+            backdrop: true,
+            buttons: {
+              cancel: {
+                label: 'No'
+              },
+              confirm: {
+                label: 'Yes',
+                className: 'btn-danger'
+              }
+            },
+            callback: (confirmed) => {
+              if (confirmed) {
+                App.actions.job.cancel(this.model)
+                return done()
+              }
+            }
           })
         }
-      },
-      cancel: {
-        label: 'Cancel job',
-        className: 'btn btn-danger',
-        callback: () => {
-          App.actions.job.cancel(this.model)
-          if (done) done()
-        }
+      } else {
+        App.actions.job.submitInputs(this.model, jobArgs)
+        return done()
       }
-    }
-
-    if (isPendingCheck) {
-      buttons.skip = {
-        label: 'Skip',
-        className: 'btn btn-default',
-        callback: () => {
-          App.actions.onHold.skip(this.model)
-          if (done) done()
-        }
-      }
-    }
-
-    bootbox.dialog({
-      message: `<p>Task <b>${this.model.name}</b> needs input to continue.</p>`,
-      backdrop: true,
-      closeButton: (App.state.session.user.credential === 'root'),
-      buttons: buttons
     })
   },
   requestApproval (isPendingCheck, done) {

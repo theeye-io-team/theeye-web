@@ -65,7 +65,8 @@ module.exports = TaskFormView.extend({
       'copy_task',
       'timeout',
       'multitasking',
-      'env'
+      'env',
+      'user_inputs'
     ]
 
     this.fields = [
@@ -197,6 +198,12 @@ module.exports = TaskFormView.extend({
         name: 'multitasking',
         value: this.model.multitasking
       }),
+      new CheckboxView({
+        visible: false,
+        label: 'Require user inputs',
+        name: 'user_inputs',
+        value: this.model.user_inputs
+      }),
       new TextareaView({
         prettyJson: true,
         visible: false,
@@ -279,6 +286,7 @@ module.exports = TaskFormView.extend({
     this.addHelpIcon('timeout')
     this.addHelpIcon('env')
     this.addHelpIcon('multitasking')
+    this.addHelpIcon('user_inputs')
 
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)

@@ -23,7 +23,6 @@ module.exports = TaskFormView.extend({
       'description',
       'acl',
       'triggers',
-      'task_arguments',
       'copy_task'
     ]
 
@@ -56,13 +55,18 @@ module.exports = TaskFormView.extend({
         name: 'tags',
         value: this.model.tags
       }),
+      new ArgumentsView({
+        name: 'task_arguments',
+        label: 'Expected input',
+        value: this.model.task_arguments
+      }),
       // advanced fields starts visible = false
       new AdvancedToggle({
         onclick: (event) => {
           this.advancedFields.forEach(name => {
             var field = this._fieldViews[name]
-            if (!field) return
-            if (name === 'acl' && this.model.workflow_id) return
+            if (!field) { return }
+            if (name === 'acl' && this.model.workflow_id) { return }
             field.toggle('visible')
           })
         }
@@ -93,12 +97,6 @@ module.exports = TaskFormView.extend({
         ],
         visible: false,
         value: this.model.triggers
-      }),
-      new ArgumentsView({
-        visible: false,
-        name: 'task_arguments',
-        label: 'Expected input',
-        value: this.model.task_arguments
       })
     ]
 

@@ -287,7 +287,8 @@ const createEventNotifications = (req, res, done) => {
 
 const handledTopics = [
   'monitor-state',
-  'job-crud'
+  'job-crud',
+  'job-scheduler-crud'
 ]
 
 const isHandledNotificationEvent = (event) => {

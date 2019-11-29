@@ -23,19 +23,20 @@ module.exports = {
     try {
       let workflow
       if (data._type === 'WorkflowJob') {
-        addWorkflowJobToState(data)
-      } else {
-        // task definition not in state
-        const task = App.state.tasks.get(data.task_id)
-        if (!task) {
-          logger.error('task not found in state')
-          logger.error('%o', data)
-          return
-        }
-
-        const taskJob = addTaskJobToState(data, task)
-        isOnHoldUpdate(taskJob, task)
+        // update state
+        return addWorkflowJobToState(data)
       }
+
+      // task definition not in state
+      const task = App.state.tasks.get(data.task_id)
+      if (!task) {
+        logger.error('task not found in state')
+        logger.error('%o', data)
+        return
+      }
+
+      const taskJob = addTaskJobToState(data, task)
+      isOnHoldUpdate(taskJob)
     } catch (e) {
       console.error(e)
     }
@@ -48,11 +49,11 @@ module.exports = {
   createFromTask (task, args) {
     if (!task.workflow_id) {
       logger.log('creating new job with task %o', task)
-      createSingleTaskJob(task, args)
+      createSingleTaskJob(task, args, (err, job) => { })
     } else {
       let workflow = App.state.workflows.get(task.workflow_id)
       logger.log('creating new job with workflow %o', workflow)
-      createWorkflowJob(workflow, args)
+      createWorkflowJob(workflow, args, (err, job) => { })
     }
   },
   cancel (job) {
@@ -163,7 +164,7 @@ module.exports = {
   }
 }
 
-const createWorkflowJob = (workflow, args) => {
+const createWorkflowJob = (workflow, args, next) => {
   let body = {
     task: workflow.start_task_id,
     task_arguments: args
@@ -176,19 +177,25 @@ const createWorkflowJob = (workflow, args) => {
     headers: {
       Accept: 'application/json;charset=UTF-8'
     },
-    done (job, xhr) {
+    done (data, xhr) {
       logger.debug('job created. updating workflow')
       //wait for socket update arrive and create there
-      workflow.jobs.add(job, { merge: true })
+      if (task.grace_time > 0) {
+        App.actions.scheduler.fetch(task.id)
+      } else {
+        let job = workflow.jobs.add(data, { merge: true })
+      }
+      next(null, data)
     },
     fail (err,xhr) {
       bootbox.alert('Job creation failed')
       console.log(arguments)
+      next(err)
     }
   })
 }
 
-const createSingleTaskJob = (task, args) => {
+const createSingleTaskJob = (task, args, next) => {
   let body = {
     task: task.id,
     task_arguments: args
@@ -203,11 +210,17 @@ const createSingleTaskJob = (task, args) => {
     },
     done (data,xhr) {
       logger.debug('job created. updating task')
-      task.jobs.add(data, { merge: true })
+      if (task.grace_time > 0) {
+        App.actions.scheduler.fetch(task.id)
+      } else {
+        let job = task.jobs.add(data, { merge: true })
+      }
+      next(null, data)
     },
     fail (err,xhr) {
       bootbox.alert('Job creation failed')
       console.log(arguments)
+      next(err)
     }
   })
 }
@@ -228,66 +241,59 @@ const addTaskJobToState = (data, task) => {
 
   if (!task.workflow_id) {
     task.jobs.add(taskJob, { merge: true })
-    return taskJob
-  }
-  // else
-
-  // get the workflow
-  let workflow = App.state.workflows.get(task.workflow_id)
-  if (!workflow) { // error
-    let err = new Error(msg)
-    err.data = data
-    throw err
-  }
-
-  // get the workflow job
-  let workflowJob = workflow.jobs.get(taskJob.workflow_job_id)
-  if (!workflowJob) { // async error?
-    if (!taskJob.workflow_job_id) { return }
-    // add temp models to the collection
-    let attrs = {
-      id: taskJob.workflow_job_id,
-      type: JobConstants.WORKFLOW_TYPE
+  } else {
+    // get the workflow
+    let workflow = App.state.workflows.get(task.workflow_id)
+    if (!workflow) { // error
+      let err = new Error(msg)
+      err.data = data
+      throw err
     }
-    workflowJob = workflow.jobs.add(attrs, { merge: true })
+
+    // get the workflow job
+    let workflowJob = workflow.jobs.get(taskJob.workflow_job_id)
+    if (!workflowJob) { // async error?
+      if (!taskJob.workflow_job_id) {
+        throw new Error('task definition error. workflow id is missing')
+      }
+      // add temp models to the collection
+      let attrs = {
+        id: taskJob.workflow_job_id,
+        type: JobConstants.WORKFLOW_TYPE
+      }
+      workflowJob = workflow.jobs.add(attrs, { merge: true })
+    }
+    workflowJob.jobs.add(taskJob, { merge: true })
   }
-  workflowJob.jobs.add(taskJob, { merge: true })
+
+  if (task.hasOnHoldExecution && data.lifecycle === LifecycleConstants.READY) {
+    App.actions.scheduler.fetch(task.id)
+  }
 
   return taskJob
 }
 
 /**
  *
- * @summary check if should show approval modal
- * @param {Object} data job model properties
+ * @summary check if job is on hold and requires intervention from user
+ *
+ * @param {Object} job object model properties
  *
  */
-const isOnHoldUpdate = (job, task) => {
+const isOnHoldUpdate = (job) => {
   if (job.lifecycle !== LifecycleConstants.ONHOLD) {
     return
   }
 
-  if (job._type === JobConstants.DUMMY_TYPE) {
-    if (job.workflow_job_id) {
-      const workflowJob = App.state.jobs.get(job.workflow_job_id)
+  const user = App.state.session.user
 
-      // workflow job is present only if user has visibility of it
-      // just in case of error
-      if (!workflowJob) { return }
-
-      if (workflowJob.isOwner(App.state.session.user.email)) {
-        App.actions.onHold.check(job)
-      }
-    } else {
-      if (job.isOwner(App.state.session.user.email)) {
-        App.actions.onHold.check(job)
-      }
+  if (job._type === JobConstants.APPROVAL_TYPE) {
+    if (job.isApprover(user)) {
+      App.actions.onHold.check(job)
     }
-  } else if (
-    job._type === JobConstants.APPROVAL_TYPE &&
-    task.isApprover(App.state.session.user.id)
-  ) {
-    App.actions.onHold.check(job)
+  } else {
+    if (job.isOwner(user)) {
+      App.actions.onHold.check(job)
+    }
   }
-  // else not handled
 }

@@ -15,14 +15,11 @@ const logger = require('lib/logger')('app:sockets')
 import OperationsConstants from 'constants/operations'
 
 const defaultTopics = [
-  //'host-stats',
-  //'host-processes',
   'monitor-state',
   'job-crud',
+  'job-scheduler-crud',
   'indicator-crud',
-  //'task-crud',
-  //'task-interrupted',
-  'host-integrations-crud', // host integrations changes
+  host-integrations-crud', // host integrations changes
   'host-registered'
 ]
 
@@ -93,6 +90,8 @@ const createWrapper = () => {
       // subscribed by default. see defaultTopics definition
       'monitor-state': (event) => {
         ResourceActions.applyStateUpdate(event.model.id, event.model)
+      },
+      'job-scheduler-crud': (event) => {
       },
       'job-crud': (event) => {
         if (

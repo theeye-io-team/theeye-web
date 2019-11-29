@@ -4,6 +4,7 @@ import AppCollection from 'lib/app-collection'
 import AppModel from 'lib/app-model'
 import LifecycleConstants from 'constants/lifecycle'
 import JobConstants from 'constants/job'
+import TaskConstants from 'constants/task'
 import { Model as User } from 'models/user'
 import FIELD from 'constants/field'
 
@@ -52,19 +53,29 @@ const BaseJob = AppModel.extend({
     event: 'any',
     event_id: 'string',
     _type: 'string',
-    task: 'object',
+    //task: 'object',
     task_arguments_values: 'array',
     output: 'any',
     workflow_id: 'string',
     workflow_job_id: 'string'
   },
   children: {
-    user: User,
+    user: User
   },
-  isOwner (email) {
-    if (!this.user||!this.user.email) { return false }
-
-    return (email.toLowerCase() === this.user.email.toLowerCase())
+  isOwner (user) {
+    if (!user.email) { return false }
+    // this job belongs to a workflow
+    if (this.workflow_job_id) {
+      // get the workflow
+      const workflowJob = App.state.jobs.get(this.workflow_job_id)
+      // workflow job is present only if user has visibility of it
+      // just in case of error
+      if (!workflowJob) { return false }
+      if (workflowJob.isOwner(user)) { return true }
+    } else {
+      if (!this.user || !this.user.email) { return false }
+      return (user.email.toLowerCase() === this.user.email.toLowerCase())
+    }
   },
   derived: {
     inProgress: {
@@ -153,25 +164,43 @@ const NgrokIntegrationResult = State.extend({
   }
 })
 
+/**
+ *
+ * returns a function with a defined Type
+ *
+ */
+const TaskTypeInitializer = (type) => {
+  return (attrs, opts) => {
+    if (!attrs || !attrs._type) {
+      attrs._type = type
+      attrs.type = type
+    }
+
+    return App.Models.Task.Factory(attrs, opts)
+  }
+}
+
 const ScriptJob = BaseJob.extend({
   children: {
-    result: ScriptJobResult
+    result: ScriptJobResult,
+    task: TaskTypeInitializer(TaskConstants.TYPE_SCRIPT)
   }
 })
 
 const ScraperJob = BaseJob.extend({
   children: {
-    result: ScraperJobResult
+    result: ScraperJobResult,
+    task: TaskTypeInitializer(TaskConstants.TYPE_SCRAPER)
   }
 })
 
 const ApprovalJob = BaseJob.extend({
   children: {
-    result: ApprovalJobResult
+    result: ApprovalJobResult,
+    task: TaskTypeInitializer(TaskConstants.TYPE_APPROVAL)
   },
-  isApprover (userid) {
-    if (!this.task.approvers) { return false }
-    return this.task.approvers.indexOf(userid) !== -1
+  isApprover (user) {
+    return this.task.isApprover(user)
   },
   session: {
     skip: ['boolean', false, false]
@@ -180,13 +209,15 @@ const ApprovalJob = BaseJob.extend({
 
 const DummyJob = BaseJob.extend({
   children: {
-    result: DummyJobResult
+    result: DummyJobResult,
+    task: TaskTypeInitializer(TaskConstants.TYPE_DUMMY)
   }
 })
 
 const NotificationJob = BaseJob.extend({
   children: {
-    result: NotificationJobResult
+    result: NotificationJobResult,
+    task: TaskTypeInitializer(TaskConstants.TYPE_NOTIFICATION)
   }
 })
 
@@ -299,6 +330,18 @@ const WorkflowJob = BaseJob.extend({
         }
       }
     )
+  },
+  /**
+   * workflow is owned by the user who execute it first
+   */
+  isOwner (user) {
+    if (!user.email) {
+      return false
+    }
+    if (!this.user || !this.user.email) {
+      return false
+    }
+    return (user.email.toLowerCase() === this.user.email.toLowerCase())
   }
 })
 

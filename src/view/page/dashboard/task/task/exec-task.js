@@ -40,7 +40,7 @@ const BaseExec = State.extend({
       const modal = new Modalizer({
         buttons: true,
         confirmButton: 'Run',
-        title: `Run ${this.model.name} with dynamic arguments`,
+        title: `Run task: ${this.model.name}`,
         bodyView: form
       })
 
@@ -111,7 +111,7 @@ const BaseExec = State.extend({
       const modal = new Modalizer({
         buttons: true,
         confirmButton: 'Run',
-        title: `Run ${this.model.name} with dynamic arguments`,
+        title: `Run task: ${this.model.name}`,
         bodyView: confirmView
       })
 

@@ -16,93 +16,88 @@ module.exports = {
     if (App.state.onHold.underExecution === true) {
       App.state.onHold.newArrived = true
     } else {
-      this.checkOnHold(job)
+      checkOnHold(job)
     }
   },
-  checkOnHold (job) {
-    var self = this
-
-    const finish = function () {
-      App.state.onHold.newArrived = false
-      App.state.onHold.underExecution = false
-    }
-
-    const executeOnHoldJobs = function (onHoldJobs) {
-      App.state.onHold.underExecution = true
-      eachSeries(onHoldJobs, function (job, done) {
-        job.fetch({
-          success: () => {
-            var execOnHoldJob = new ExecOnHoldJob({model: job})
-            execOnHoldJob.execute(true, done)
-          }
-        })
-      }, function (err) {
-        if (App.state.onHold.newArrived) {
-          App.state.onHold.newArrived = false
-          self.checkOnHold()
-        } else {
-          finish()
-        }
-      })
-    }
-
-    let onHoldJobs = []
-
-    if (job) {
-      // si tengo un job inicio la execucion
-      onHoldJobs.push(job)
-      executeOnHoldJobs(onHoldJobs)
-    } else {
-      // si no tengo un job actual, busco pendientes
-
-      // busco tareas de aprobacion
-      const userTasksToCheck = App.state.tasks.models.filter((task) => {
-        let check = (
-          task.type === TaskConstants.TYPE_APPROVAL &&
-          task.isApprover(App.state.session.user.id)
-        ) || task.type === TaskConstants.TYPE_DUMMY
-        return check
-      })
-
-      if (userTasksToCheck.length === 0) {
-        finish()
-        return
-      }
-
-      each(userTasksToCheck, function (task, done) {
-        task.fetchJobs({
-          forceFetch: true,
-          query: { lifecycle: LifecycleConstants.ONHOLD }
-        }, done)
-      }, function (err) {
-        if (err) {
-          finish()
-          return
-        }
-
-        userTasksToCheck.forEach(function (task) {
-          task.jobs.models.forEach(function (job) {
-            if (job.lifecycle === LifecycleConstants.ONHOLD && !job.skip) {
-              // si es de tipo dummy verifico que sea el owner del workflowjob
-              if (job._type === JobConstants.DUMMY_TYPE && job.workflow_job_id) {
-                const workflowJob = App.state.jobs.get(job.workflow_job_id)
-                if (workflowJob.isOwner(App.state.session.user.email)) {
-                  onHoldJobs.push(job)
-                }
-              } else {
-                onHoldJobs.push(job)
-              }
-            }
-          })
-        })
-
-        if (!onHoldJobs.length) {
-          finish()
-          return
-        } else {
-          executeOnHoldJobs(onHoldJobs)
-        }
-      })
-    }
+  release () {
+    App.state.onHold.newArrived = false
+    App.state.onHold.underExecution = false
   }
+}
+
+const checkOnHold = (job) => {
+  if (job) {
+    // execute on a single job
+    executeOnHoldJobs([job])
+  } else {
+    // search for approval task to check
+    const userTasksToCheck = App.state.tasks.models.filter(task => {
+      let check = (
+        task.type === TaskConstants.TYPE_APPROVAL &&
+        task.isApprover(App.state.session.user)
+      ) || task.type === TaskConstants.TYPE_SCRIPT
+
+      return check
+    })
+
+    if (userTasksToCheck.length === 0) {
+      App.actions.onHold.release()
+      return
+    }
+
+    checkUserTasks(userTasksToCheck, err => {
+      App.actions.onHold.release()
+    })
+  }
+}
+
+const executeOnHoldJobs = (onHoldJobs) => {
+  App.state.onHold.underExecution = true
+  eachSeries(onHoldJobs, function (job, done) {
+    job.fetch({
+      success: () => {
+        var execOnHoldJob = new ExecOnHoldJob({model: job})
+        execOnHoldJob.execute(true, done)
+      }
+    })
+  }, function (err) {
+    if (App.state.onHold.newArrived) {
+      App.state.onHold.newArrived = false
+      checkOnHold()
+    } else {
+      App.actions.onHold.release()
+    }
+  })
+}
+
+const checkUserTasks = (userTasksToCheck, callback) => {
+  let onHoldJobs = []
+  each(userTasksToCheck, (task, done) => {
+    task.fetchJobs({
+      forceFetch: true,
+      query: { lifecycle: LifecycleConstants.ONHOLD }
+    }, done)
+  }, err => {
+    if (err) { return callback(err) }
+
+    userTasksToCheck.forEach(task => {
+      task.jobs.models.forEach(job => {
+        if (job.lifecycle === LifecycleConstants.ONHOLD && ! job.skip) {
+          if (job._type === JobConstants.APPROVAL_TYPE) {
+            onHoldJobs.push(job)
+          } else if (job._type === JobConstants.SCRIPT_TYPE && job.workflow_job_id) {
+            if (job.isOwner(App.state.session.user)) {
+              onHoldJobs.push(job)
+            }
+          }
+        }
+      })
+    })
+
+    if (onHoldJobs.length === 0) {
+      return callback()
+    } else {
+      executeOnHoldJobs(onHoldJobs)
+    }
+  })
 }

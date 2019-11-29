@@ -34,13 +34,19 @@ const Schema = AppModel.extend({
     timeout: 'number',
     //_id: 'string',
     _type: 'string', // discriminator
-    hasSchedules: ['boolean', true, false]
+    user_inputs: ['boolean',false,false]
   },
   derived: {
     hasWorkflow: {
       deps: ['workflow_id'],
       fn () {
         return Boolean(this.workflow_id) === true
+      }
+    },
+    hasOnHoldExecution: {
+      deps: ['grace_time'],
+      fn () {
+        return this.grace_time > 0
       }
     }
   },
@@ -50,7 +56,8 @@ const Schema = AppModel.extend({
     alreadyFetched: ['boolean', false, false],
     inProgressJobs: 'number',
     last_execution: 'date',
-    tagsCollection: 'collection'
+    tagsCollection: 'collection',
+    hasSchedules: ['boolean', true, false]
   },
   collections: {
     //triggers: Events,

@@ -109,7 +109,8 @@ const ApprovalTask = Schema.extend({
   props: {
     approvers: ['array', false, () => { return [] }]
   },
-  isApprover (userid) {
+  isApprover (user) {
+    let userid = user.id
     if (!this.approvers) { return false }
     return this.approvers.indexOf(userid) !== -1
   }
