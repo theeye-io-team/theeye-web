@@ -7,21 +7,19 @@ import TaskActions from 'actions/task'
 import OnHoldActions from 'actions/onHold'
 import IndicatorActions from 'actions/indicator'
 import WorkflowActions from 'actions/workflow'
-import { cancelSchedule, getSchedules, createSchedule } from 'actions/schedule'
+import PopupActions from 'actions/popup'
+import SchedulerActions from 'actions/schedule'
 
 module.exports = () => {
   App.extend({
     actions: {
+      popup: PopupActions,
       onHold: OnHoldActions,
       dashboard: DashboardActions,
       file: FileActions,
       indicator: IndicatorActions,
       job: JobActions,
-      scheduler: { // remap redundant
-        cancel: cancelSchedule,
-        create: createSchedule,
-        fetch: getSchedules
-      },
+      scheduler: SchedulerActions,
       task: TaskActions,
       workflow: WorkflowActions
     }

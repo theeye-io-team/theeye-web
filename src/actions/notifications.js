@@ -6,6 +6,9 @@ import DesktopNotification from 'lib/desktop-notification'
 import notificationIcon from 'assets/images/theeyeonly_medium.png'
 import messageFactory from 'models/notification/messageFactory'
 import titleFactory from 'models/notification/titleFactory'
+import LifecycleConstants from 'constants/lifecycle'
+import NotificationConstants from 'constants/notifications'
+import StateConstants from 'constants/states'
 
 const logger = require('lib/logger')('actions:tasks')
 
@@ -77,6 +80,26 @@ module.exports = {
         icon: notificationIcon,
         tag: 'TheEyeNotification'
       })
+    }
+  },
+  handleResultNotification (job) {
+    /**
+     *
+     * job.output is an array of arguments
+     *
+     */
+    let output = job.output.map(arg => {
+      try {
+        return JSON.parse(arg)
+      } catch (e) {
+        logger.error(e.message)
+        return arg
+      }
+    })
+
+    let popup = output.find(out => out.popup_component)
+    if (popup) {
+      App.actions.popup.show(popup.popup_component, `Message from ${job.name}`)
     }
   },
   toggleInboxOpen () {

@@ -32,6 +32,7 @@ module.exports = {
 
     // forced subscriptions
     joinRoom(`${customer}:${req.user.id}:notification-crud`)
+    joinRoom(`${customer}:${req.user.id}:job-result-render`)
     joinRoom(`${req.user.id}:session-customer-changed`)
 
     if (!Array.isArray(topics)) topics = []

@@ -4,12 +4,9 @@
 import App from 'ampersand-app'
 import SocketsWrapper from 'lib/sockets'
 import ResourceActions from 'actions/resource'
-import IndicatorActions from 'actions/indicator'
 import HostStatsActions from 'actions/hoststats'
-import JobActions from 'actions/job'
 import NotificationActions from 'actions/notifications'
 import HostActions from 'actions/host'
-import TaskActions from 'actions/task'
 import SessionActions from 'actions/session'
 const logger = require('lib/logger')('app:sockets')
 import OperationsConstants from 'constants/operations'
@@ -19,7 +16,7 @@ const defaultTopics = [
   'job-crud',
   'job-scheduler-crud',
   'indicator-crud',
-  host-integrations-crud', // host integrations changes
+  'host-integrations-crud', // host integrations changes
   'host-registered'
 ]
 
@@ -91,18 +88,6 @@ const createWrapper = () => {
       'monitor-state': (event) => {
         ResourceActions.applyStateUpdate(event.model.id, event.model)
       },
-      'job-scheduler-crud': (event) => {
-      },
-      'job-crud': (event) => {
-        if (
-          event.operation === OperationsConstants.UPDATE ||
-          event.operation === OperationsConstants.CREATE ||
-          event.operation === OperationsConstants.REPLACE
-        ) {
-          JobActions.applyStateUpdate(event.model)
-          HostActions.applyIntegrationJobStateUpdates(event.model)
-        }
-      },
       'host-integrations-crud': (event) => {
         HostActions.applyStateUpdate(event.model.id, event.model)
       },
@@ -110,11 +95,28 @@ const createWrapper = () => {
         App.actions.dashboard.loadNewRegisteredHostAgent(event.model)
       },
       'task-crud': (event) => {
-        TaskActions.applyStateUpdate(event.model)
+        App.actions.task.applyStateUpdate(event.model)
       },
       'indicator-crud': (event) => {
-        IndicatorActions.applyStateUpdate(event.model, event.operation)
+        App.actions.indicator.applyStateUpdate(event.model, event.operation)
       },
+      'job-crud': (event) => {
+        if (
+          event.operation === OperationsConstants.UPDATE ||
+          event.operation === OperationsConstants.CREATE ||
+          event.operation === OperationsConstants.REPLACE
+        ) {
+          App.actions.job.applyStateUpdate(event.model)
+          HostActions.applyIntegrationJobStateUpdates(event.model)
+        }
+      },
+      'job-scheduler-crud': (event) => {
+        // model is a scheduler job
+        App.actions.scheduler.applyStateUpdate(event.model)
+      },
+      'job-result-render': event => { // always subscribed
+        NotificationActions.handleResultNotification(event.model)
+      }
     }
   })
 }

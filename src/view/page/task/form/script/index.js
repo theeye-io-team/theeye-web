@@ -66,7 +66,8 @@ module.exports = TaskFormView.extend({
       'timeout',
       'multitasking',
       'env',
-      'user_inputs'
+      'user_inputs',
+      'show_result'
     ]
 
     this.fields = [
@@ -136,14 +137,6 @@ module.exports = TaskFormView.extend({
         ],
         visible: false,
         value: this.model.triggers,
-        //tests: [
-        //  (values) => {
-        //    if (values.length===0) return
-        //    if (this.hasDynamicArguments()) {
-        //      return HelpTexts.task.cannot_trigger
-        //    }
-        //  }
-        //]
       }),
       new SelectView({
         sort: false,
@@ -204,6 +197,12 @@ module.exports = TaskFormView.extend({
         name: 'user_inputs',
         value: this.model.user_inputs
       }),
+      new CheckboxView({
+        visible: false,
+        label: 'Result Popup',
+        name: 'show_result',
+        value: this.model.show_result
+      }),
       new TextareaView({
         prettyJson: true,
         visible: false,
@@ -230,24 +229,7 @@ module.exports = TaskFormView.extend({
             }
           }
         ]
-      }),
-      //new InputView({
-      //  visible: false,
-      //  label: 'Execution timeout',
-      //  name: 'timeout',
-      //  required: false,
-      //  invalidClass: 'text-danger',
-      //  validityClassSelector: '.control-label',
-      //  value: this.model.timeout || 600000,
-      //  tests: [
-      //    function (value) {
-      //      let num = Number(value)
-      //      if (!Number.isInteger(num) || num<0) {
-      //        return 'A valid numberic value is required'
-      //      }
-      //    }
-      //  ]
-      //})
+      })
     ]
 
     if (this.model.isNew()) {
@@ -287,6 +269,7 @@ module.exports = TaskFormView.extend({
     this.addHelpIcon('env')
     this.addHelpIcon('multitasking')
     this.addHelpIcon('user_inputs')
+    this.addHelpIcon('show_result')
 
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)
@@ -307,22 +290,11 @@ module.exports = TaskFormView.extend({
     }
   },
   submit (next) {
-    next||(next=()=>{})
+    next || (next=()=>{})
 
     this.beforeSubmit()
-    if (!this.valid) return next(null, false)
-
-    const hasDynamicArguments = this.hasDynamicArguments()
-
-    // TODO: temporary NON-dynamic arguments validation
-    // for scheduled tasks
-    if (this.model.hasSchedules) {
-      // this evaluation is copied from
-      // model/task/template:hasDynamicArguments
-      if (hasDynamicArguments) {
-        bootbox.alert(HelpTexts.task.cannot_schedule)
-        return next(null, false)
-      }
+    if (!this.valid) {
+      return next(null, false)
     }
 
     let data = this.prepareData(this.data)

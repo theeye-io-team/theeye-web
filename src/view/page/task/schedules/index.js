@@ -1,4 +1,4 @@
-import { cancelSchedule } from 'actions/schedule'
+import App from 'ampersand-app'
 import View from 'ampersand-view'
 import bootbox from 'bootbox'
 import moment from 'moment'
@@ -70,7 +70,7 @@ const ScheduleRow = View.extend({
       backdrop: true,
       callback: (confirmed) => {
         if (confirmed) {
-          cancelSchedule(this.task.id, this.model._id)
+          App.actions.scheduler.cancel(this.task.id, this.model._id)
         }
       }
     })

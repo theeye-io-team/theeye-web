@@ -83,20 +83,54 @@ module.exports = {
 
 const sendTaskEventNotification = (req, res, next) => {
   const event = req.params.all()
-  if (
-    event.data.model_type === 'NotificationJob' &&
-    event.data.operation === 'create'
-  ) {
-    if (!event.data.model.task) {
-      let err = new Error('%s|task is required', event.id)
-      err.status = 400
-      return done(err)
-    }
 
-    createCustomNotification(req, res, next)
+  // can't send task event notifications without a task ...
+  if ( ! (event.data.model && event.data.model.task) ) {
+    logger.debug('%s|not a task notification', event.id)
+    return next()
+  }
+
+  if (isTaskNotificationEvent(event)) {
+    createTaskCustomNotification(req, res, next)
+  } else if (isResultNotificationEvent(event)){
+    createTaskResultNotification(req, res, next)
   } else {
     return next()
   }
+}
+
+const createTaskResultNotification = (req, res, done) => {
+  const event = req.params.all()
+  const organization = event.data.organization
+  const model = event.data.model
+  let recipient
+
+  if (model.workflow_job) {
+    recipient = model.workflow_job.user.email
+  } else {
+    recipient = model.user.email
+  }
+
+  User.findOne({email: recipient}).exec((err, user) => {
+    if (err) { return done(err) }
+    if (!user) { return done(new Error('User not found')) }
+
+    // falta filtrar notifications
+    Notifications.sockets.send({
+      id: event.id,
+      topic: 'job-result-render',
+      data: {
+        model: model,
+        model_type: 'Job',
+        user_id: user.id,
+        organization: organization
+      }
+    })
+
+    logger.debug('%s|%s', event.id, 'by socket notified')
+
+    return done()
+  })
 }
 
 /**
@@ -104,7 +138,7 @@ const sendTaskEventNotification = (req, res, next) => {
  * custom notifications can be sent to any user registered in the eye
  *
  */
-const createCustomNotification = (req, res, done) => {
+const createTaskCustomNotification = (req, res, done) => {
   const event = req.params.all()
   const notifyJob = event.data.model
   const notifyTask = notifyJob.task
@@ -451,4 +485,28 @@ const applyNotificationFilters = (event, users) => {
 
     return (exclusionFilter === undefined)
   })
+}
+const isCompleted = (lifecycle) => {
+  let completed = [
+    'canceled',
+    'completed',
+    'finished',
+    'expired', // take to much time to complete
+    'terminated' // abruptly
+  ].indexOf(lifecycle) !== -1
+
+  return completed
+}
+
+const isTaskNotificationEvent = (event) => {
+  let itIs = (
+    event.data.model_type === 'NotificationJob' &&
+    event.data.operation === 'create'
+  )
+  return itIs
+}
+const isResultNotificationEvent = (event) => {
+  if (event.topic !== 'job-crud') { return false }
+  if (event.data.model.task.show_result !== true) { return false }
+  return isCompleted(event.data.model.lifecycle)
 }

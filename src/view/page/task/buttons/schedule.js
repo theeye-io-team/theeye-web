@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import View from 'ampersand-view'
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
@@ -8,13 +9,10 @@ import Datepicker from 'components/input-view/datepicker'
 import AmpersandCollection from 'ampersand-collection'
 import AmpersandModel from 'ampersand-model'
 import MinMaxTimePlugin from 'flatpickr/dist/plugins/minMaxTimePlugin'
-
-import { createSchedule } from 'actions/schedule'
 import bootbox from 'bootbox'
 import $ from 'jquery'
 
 const HelpTexts = require('language/help')
-
 const humanInterval = require('lib/human-interval')
 const CronTime = require('cron').CronTime
 const moment = require('moment-timezone')
@@ -236,11 +234,7 @@ const ScheduleForm = FormView.extend({
 
     const data = this.prepareData(this.data)
 
-    createSchedule(this.model.id, data, () => {
-      if (this.isCron) {
-        // FuzzyMessage()
-      }
-    })
+    App.actions.scheduler.create(this.model.id, data)
     this.trigger('submitted')
   },
   computeFromInterval (initialDate, interval) {

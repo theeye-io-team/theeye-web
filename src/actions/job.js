@@ -266,7 +266,10 @@ const addTaskJobToState = (data, task) => {
     workflowJob.jobs.add(taskJob, { merge: true })
   }
 
-  if (task.hasOnHoldExecution && data.lifecycle === LifecycleConstants.READY) {
+  if (
+    task.hasOnHoldExecution &&
+    data.lifecycle === LifecycleConstants.READY
+  ) {
     App.actions.scheduler.fetch(task.id)
   }
 

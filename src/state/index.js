@@ -105,7 +105,8 @@ const AppState = State.extend({
     workflowPage: ['state', false, () => new WorkflowPageState()],
     workflowVisualizer: ['state', false, () => new WorkflowVisualizerState()],
     onHold: ['state', false, () => new OnHoldState()],
-    taskForm: ['state', false, () => new TaskFormState()]
+    taskForm: ['state', false, () => new TaskFormState()],
+    popup: ['state', false, () => new PopupState()]
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)
@@ -228,6 +229,14 @@ const OnHoldState = State.extend({
 const TaskFormState = State.extend({
   props: {
     file: 'object'
+  }
+})
+
+const PopupState = State.extend({
+  props: {
+    visible: ['boolean', false, false],
+    content: ['any', false, ''],
+    title: ['string', false, 'TheEye Says:']
   }
 })
 

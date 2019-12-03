@@ -34,6 +34,7 @@ const Schema = AppModel.extend({
     timeout: 'number',
     //_id: 'string',
     _type: 'string', // discriminator
+    show_result: ['boolean', false, false],
     user_inputs: ['boolean',false,false]
   },
   derived: {
@@ -55,7 +56,7 @@ const Schema = AppModel.extend({
     hasDynamicArguments: 'boolean',
     alreadyFetched: ['boolean', false, false],
     inProgressJobs: 'number',
-    last_execution: 'date',
+    lastExecution: 'date',
     tagsCollection: 'collection',
     hasSchedules: ['boolean', true, false]
   },
@@ -105,7 +106,7 @@ const Schema = AppModel.extend({
       function () {
         if (this.jobs.length===0) { return }
         let dates = this.jobs.map(e => e.creation_date)
-        this.last_execution = Math.max.apply(null, dates)
+        this.lastExecution = Math.max.apply(null, dates)
       }
     )
 

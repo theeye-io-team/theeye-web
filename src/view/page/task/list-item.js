@@ -1,4 +1,4 @@
-'use strict'
+import App from 'ampersand-app'
 import $ from 'jquery'
 import ListItem from 'components/list/item'
 import View from 'ampersand-view'
@@ -8,7 +8,6 @@ import DeleteButton from './buttons/delete'
 import assign from 'lodash/assign'
 import ScheduleButton from './buttons/schedule'
 import bootbox from 'bootbox'
-import { getSchedules } from 'actions/schedule'
 import TaskConstants from 'constants/task'
 import Schedules from './schedules'
 
@@ -95,7 +94,7 @@ const Item = ListItem.extend({
 
     const collapse = this.query('.itemRow > .collapse')
     $(collapse).on('show.bs.collapse', (event) => {
-      getSchedules(this.model.id)
+      App.actions.scheduler.fetch(this.model.id)
     })
   }
 })

@@ -4,7 +4,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import ViewSwitcher from 'ampersand-view-switcher'
 import localLinks from 'local-links'
-
+import PopupView from 'components/popup'
 import Navbar from 'view/navbar'
 
 const EmptyView = View.extend({
@@ -21,6 +21,7 @@ module.exports = View.extend({
     let str = `
       <div class="main-container">
 	  		<nav></nav>
+        <div data-hook="popup"></div>
     	  <div data-hook="page-container"></div>
     	  <footer>
     	    <a target="_blank" href="${url}">theeye.io</a><br> Copyright © 2018 THEEYE INC
@@ -59,6 +60,11 @@ module.exports = View.extend({
 
     this.registerSubview(
       new Navbar({ el: this.query('nav') })
+    )
+
+    this.renderSubview(
+      new PopupView({}),
+      this.queryByHook('popup')
     )
 
     // init and configure our page switcher

@@ -1,6 +1,7 @@
 const logger = require('../logger')('libs:notifications:sockets')
 
 const NOTIFICATION_TOPIC = 'notification-crud'
+const RESULT_RENDER_TOPIC = 'job-result-render'
 const CUSTOMER_CHANGED_TOPIC = 'session-customer-changed'
 
 module.exports = {
@@ -14,6 +15,9 @@ module.exports = {
     switch (topic) {
       case NOTIFICATION_TOPIC:
         sendNotificationMessages(message.data, next)
+        break;
+      case RESULT_RENDER_TOPIC:
+        sendUserNotificationMessage(topic, message.data, next)
         break;
       case CUSTOMER_CHANGED_TOPIC:
         sendCustomerChangedMessage (message.data, next)
@@ -46,6 +50,21 @@ const sendNotificationMessages = (data, next) => {
     logger.error(msg)
     return next( new Error(msg) )
   }
+}
+
+const sendUserNotificationMessage = (topic, data, next) => {
+  const model = data.model
+  const user_id = data.user_id
+  const room = `${data.organization}:${user_id}:${topic}`
+
+  logger.debug(`sending message to ${room}`)
+
+  sails.io
+    .sockets
+    .in(room)
+    .emit(topic, data)
+
+  return next()
 }
 
 const sendCustomerChangedMessage = (data, next) => {
