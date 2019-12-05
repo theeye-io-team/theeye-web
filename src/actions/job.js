@@ -180,11 +180,7 @@ const createWorkflowJob = (workflow, args, next) => {
     done (data, xhr) {
       logger.debug('job created. updating workflow')
       //wait for socket update arrive and create there
-      if (task.grace_time > 0) {
-        App.actions.scheduler.fetch(task.id)
-      } else {
-        let job = workflow.jobs.add(data, { merge: true })
-      }
+      let job = workflow.jobs.add(data, { merge: true })
       next(null, data)
     },
     fail (err,xhr) {
