@@ -56,7 +56,7 @@ const Schema = AppModel.extend({
     hasDynamicArguments: 'boolean',
     alreadyFetched: ['boolean', false, false],
     inProgressJobs: 'number',
-    lastExecution: 'date',
+    last_execution: 'date',
     tagsCollection: 'collection',
     hasSchedules: ['boolean', true, false]
   },
@@ -106,7 +106,7 @@ const Schema = AppModel.extend({
       function () {
         if (this.jobs.length===0) { return }
         let dates = this.jobs.map(e => e.creation_date)
-        this.lastExecution = Math.max.apply(null, dates)
+        this.last_execution = Math.max.apply(null, dates)
       }
     )
 
