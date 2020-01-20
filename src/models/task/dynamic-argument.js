@@ -33,13 +33,13 @@ exports.DynamicArgument = Model.extend({
     endpoint_url: ['string',false],
     id_attribute: ['string',false],
     text_attribute: ['string',false],
-    masked: ['boolean',false,false]
+    masked: ['boolean',false,false],
+    charsmin: ['number',false],
+    charsmax: ['number',false],
+    charset: ['string',false],
+    pattern: ['string',false]
   },
   collections: {
     options: OptionsCollection
-  },
-  //parse (attrs) {
-  //  attrs.id = Number(attrs.id)
-  //  return attrs
-  //}
+  }
 })

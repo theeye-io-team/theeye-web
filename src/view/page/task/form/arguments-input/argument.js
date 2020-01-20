@@ -2,6 +2,7 @@ import View from 'ampersand-view'
 import ArgumentForm from './form'
 import Modalizer from 'components/modalizer'
 import SelectView from 'ampersand-select-view'
+
 module.exports = View.extend({
   template: `
     <li class="list-group-item">

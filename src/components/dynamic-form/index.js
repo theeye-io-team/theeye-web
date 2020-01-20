@@ -7,6 +7,7 @@ import Datepicker from 'components/input-view/datepicker'
 import OneLineMediaInputView from 'components/input-view/media/oneline'
 import MediaFileModel from './media-file'
 import isURL from 'validator/lib/isURL'
+import isEmail from 'validator/lib/isEmail'
 import config from 'config'
 
 module.exports = DropableForm.extend({
@@ -61,6 +62,12 @@ module.exports = DropableForm.extend({
   fieldFactory (spec) {
     let field = null
     switch (spec.type) {
+      case FIELD.TYPE_EMAIL:
+        field = this.buildEmailField(spec)
+        break
+      case FIELD.TYPE_REGEXP:
+        field = this.buildRegexpField(spec)
+        break
       case FIELD.TYPE_INPUT:
         field = this.buildTextField(spec)
         break
@@ -87,7 +94,81 @@ module.exports = DropableForm.extend({
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label',
       value: spec.value,
-      type: spec.masked ? 'password' : 'text'
+      type: spec.masked ? 'password' : 'text',
+      tests: [
+        value => {
+          const { pattern, charset, charsmin, charsmax } = spec
+
+          if (charset) {
+            switch (charset) {
+              case 'alnum':
+                break;
+              case 'alpha':
+                break;
+              case 'num':
+                break;
+            }
+          }
+          if (charsmin && charsmin > 0) {
+            if (value.length < charsmin) {
+              return `Value must be at least ${charsmin} length`
+            }
+          }
+          if (charsmax && charsmax > 0) {
+            if (value.length > charsmax) {
+              return `Value must be at most ${charsmax} length`
+            }
+          }
+          if (pattern) {
+            try {
+              let regex = new RegExp(pattern)
+              if (regex.test(value) === false) {
+                return `The value is not correctly formatted`
+              }
+            } catch (e) {
+              return `Cannot verify value. Contact an administrator`
+            }
+          }
+        }
+      ]
+    })
+  },
+  buildEmailField (spec) {
+    return new InputView({
+      label: spec.label,
+      name: spec.order.toString(),
+      required: spec.required,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      value: spec.value,
+      type: 'email',
+      tests: [
+        value => {
+          if (!isEmail(value)) {
+            return 'Enter a valid email'
+          }
+        },
+      ]
+    })
+  },
+  buildRegexpField (spec) {
+    return new InputView({
+      label: spec.label,
+      name: spec.order.toString(),
+      required: spec.required,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      value: spec.value,
+      type: 'text',
+      tests: [
+        pattern => {
+          try {
+            new RegExp(pattern)
+          } catch (e) {
+            return 'Regular Expression is not valid'
+          }
+        },
+      ]
     })
   },
   buildDateField (spec) {

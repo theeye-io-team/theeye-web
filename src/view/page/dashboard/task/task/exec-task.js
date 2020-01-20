@@ -61,13 +61,14 @@ const BaseExec = State.extend({
           const orders = Object.keys(args)
           next(
             orders.map((order) => {
-              return {
+              let data = {
                 order: parseInt(order),
                 label: this.model.task_arguments.get(parseInt(order), 'order').label,
                 value: args[order],
                 type: this.model.task_arguments.get(parseInt(order), 'order').type,
                 masked: this.model.task_arguments.get(parseInt(order), 'order').masked
               }
+              return data
             })
           )
           modal.hide()

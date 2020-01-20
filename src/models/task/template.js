@@ -43,14 +43,16 @@ const ScriptTask = Schema.extend({
   },
   parse () {
     var attrs = Schema.prototype.parse.apply(this,arguments)
-    // convert old script_arguments into task_arguments
-    if (Array.isArray(attrs.script_arguments)) {
-      if (attrs.script_arguments.length>0) {
+
+    if (attrs.script_arguments && !attrs.task_arguments) {
+      // convert old script_arguments into task_arguments
+      if (Array.isArray(attrs.script_arguments) && attrs.script_arguments.length > 0) {
         attrs.task_arguments = filterScriptArguments(attrs.script_arguments)
       } else {
         attrs.task_arguments = []
       }
     }
+
     return attrs
   },
   props: {

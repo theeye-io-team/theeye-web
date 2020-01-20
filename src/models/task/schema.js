@@ -113,13 +113,12 @@ const Schema = AppModel.extend({
     this.listenToAndRun(this.task_arguments, 'add remove change reset sync', () => {
       this.hasDynamicArguments = Boolean(
         this.task_arguments.models.find(arg => {
-          return arg.type && (
-            arg.type===FIELD.TYPE_INPUT ||
-            arg.type===FIELD.TYPE_SELECT ||
-            arg.type===FIELD.TYPE_DATE ||
-            arg.type===FIELD.TYPE_FILE ||
-            arg.type===FIELD.TYPE_REMOTE_OPTIONS
-          )
+          return arg.type && arg.type !== FIELD.TYPE_FIXED
+            //arg.type===FIELD.TYPE_INPUT ||
+            //arg.type===FIELD.TYPE_SELECT ||
+            //arg.type===FIELD.TYPE_DATE ||
+            //arg.type===FIELD.TYPE_FILE ||
+            //arg.type===FIELD.TYPE_REMOTE_OPTIONS
         })
       )
     })

@@ -37,7 +37,8 @@ const BaseJob = AppModel.extend({
     task_id: 'string',
     host_id: 'string',
     script_id: 'string',
-    script_arguments: 'array',
+    //script_arguments: 'array',
+    task_arguments: 'array',
     customer_id: 'string',
     customer_name: 'string',
     //script: 'object', // embedded

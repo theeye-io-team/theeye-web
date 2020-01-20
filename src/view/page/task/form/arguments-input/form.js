@@ -4,10 +4,240 @@ import View from 'ampersand-view'
 import State from 'ampersand-state'
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
+import SelectView from 'components/select2-view'
 import CheckboxView from 'components/checkbox-view'
 import FIELD from 'constants/field'
 import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
 import isURL from 'validator/lib/isURL'
+
+module.exports = FormView.extend({
+  initialize (options) {
+    const isNewArgument = this.model.isNew()
+    this.fields = [
+      { // dummy view
+        el: document.createElement(`${this.model.type}-argument`),
+        name: 'type',
+        valid: true,
+        value: this.model.type,
+        render () { return '' },
+        remove () { this.el.remove() }
+      },
+    ]
+
+    if (this.model.type === FIELD.TYPE_FIXED) {
+      this.fields.push(
+        new InputView({
+          label: 'Label *',
+          name: 'label',
+          required: true,
+          invalidClass: 'text-danger',
+          validityClassSelector: '.control-label',
+          value: this.model.label,
+        }),
+        new InputView({
+          label: 'Value *',
+          name: 'value',
+          required: true,
+          invalidClass: 'text-danger',
+          validityClassSelector: '.control-label',
+          value: this.model.value,
+        }),
+        new CheckboxView({
+          label: 'Hide value',
+          name: 'masked',
+          value: this.model.masked
+        })
+      )
+    } else {
+      this.fields.push(new InputView({
+        label: 'Label *',
+        name: 'label',
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.label,
+      }))
+
+      this.fields.push(new InputView({
+        label: 'Help',
+        name: 'help',
+        required: false,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.help,
+      }))
+
+      switch (this.model.type) {
+        case FIELD.TYPE_INPUT:
+
+          this.fields.push(
+            new SelectView({
+              label: 'Accepted Characters',
+              name: 'charset',
+              required: false,
+              options: [
+                { id: 'all', value: 'All' },
+                { id: 'alpha', value: 'Alpha' },
+                { id: 'num', value: 'Num' },
+                { id: 'alnum', value: 'Alnum' }
+              ],
+              value: this.model.charset,
+              unselectedText: 'select the accepted characters',
+              idAttribute: 'id',
+              textAttribute: 'value',
+              invalidClass: 'text-danger',
+              validityClassSelector: '.control-label'
+            }),
+            new IntegerInputView({
+              label: 'Min',
+              name: 'charsmin',
+              required: false,
+              value: this.model.charsmin
+            }),
+            new IntegerInputView({
+              label: 'Max',
+              name: 'charsmax',
+              required: false,
+              value: this.model.charsmax
+            }),
+            new InputView({
+              label: 'Pattern (regexp)',
+              name: 'pattern',
+              invalidClass: 'text-danger',
+              validityClassSelector: '.control-label',
+              value: this.model.pattern,
+              required: false,
+              tests: [
+                value => {
+                  if (!value) return
+                  try {
+                    new RegExp(value)
+                  } catch (e) {
+                    return 'Regular expression is not valid'
+                  }
+                }
+              ]
+            }),
+            new CheckboxView({
+              label: 'Hide value',
+              name: 'masked',
+              value: this.model.masked
+            })
+          )
+
+          break
+
+        case FIELD.TYPE_SELECT:
+
+          this.fields.push(new SelectOptionsView({
+            value: this.model.options
+          }))
+
+          break
+
+        case FIELD.TYPE_REMOTE_OPTIONS:
+
+          this.fields.push(
+            new InputView({
+              label: 'Endpoint URL *',
+              name: 'endpoint_url',
+              required: true,
+              invalidClass: 'text-danger',
+              validityClassSelector: '.control-label',
+              value: this.model.endpoint_url,
+              tests: [
+                function (value) {
+                  if (!isURL(value, {
+                    protocols: ['http', 'https'],
+                    require_protocol: true
+                  })) {
+                    return 'Must be a valid URL (include protocol)'
+                  }
+                }
+              ]
+            }),
+            new InputView({
+              label: 'Value attribute *',
+              name: 'id_attribute',
+              required: true,
+              invalidClass: 'text-danger',
+              validityClassSelector: '.control-label',
+              value: this.model.id_attribute
+            }),
+            new InputView({
+              label: 'Text attribute *',
+              name: 'text_attribute',
+              required: true,
+              invalidClass: 'text-danger',
+              validityClassSelector: '.control-label',
+              value: this.model.text_attribute
+            })
+          )
+
+          break
+      }
+    }
+
+    const button = new ArgumentButton({
+      buttonLabel: (isNewArgument ? 'Add' : 'Update'),
+      //icon: 'fa-plus'
+    })
+
+    this.fields.push(button)
+    this.listenTo(button, 'click', () => this.submit())
+
+    FormView.prototype.initialize.apply(this, arguments)
+  },
+  focus () {
+    let input = this.query('input')
+    input.focus()
+  },
+  render () {
+    FormView.prototype.render.apply(this, arguments)
+    this.query('form').classList.add('form-horizontal')
+  },
+  submit (next) {
+    this.beforeSubmit()
+    if (!this.valid) return
+    if (next) next(true)
+    this.trigger('submitted')
+  }
+})
+
+const IntegerInputView = InputView.extend({
+  initialize () {
+    InputView.prototype.initialize.apply(this, arguments)
+
+    this.tests = [
+      value => {
+        let num = Number(value)
+        if (isNaN(num)) {
+          return 'Invalid number'
+        }
+
+        if (!Number.isInteger(num)) {
+          return 'Enter a valid integer number'
+        }
+
+        if (num === 0) {
+          return 'Choose a number higher than 0'
+        }
+      }
+    ]
+
+    this.invalidClass = 'text-danger'
+    this.validityClassSelector = '.control-label'
+  },
+  derived: {
+    value: {
+      deps: ['inputValue'],
+      fn () {
+        if (!this.inputValue) return 0
+        return Number(this.inputValue)
+      }
+    }
+  }
+})
 
 const SimpleInputView = InputView.extend({
   template: `
@@ -256,151 +486,5 @@ const SelectOptionsView = View.extend({
   },
   reset () {
     this.options.reset([])
-  }
-})
-
-module.exports = FormView.extend({
-  initialize (options) {
-    const isNewArgument = this.model.isNew()
-    this.fields = [
-      { // dummy view
-        el: document.createElement(`${this.model.type}-argument`),
-        name: 'type',
-        valid: true,
-        value: this.model.type,
-        render () { return '' },
-        remove () { this.el.remove() }
-      },
-    ]
-
-    if (this.model.type === FIELD.TYPE_FIXED) {
-      this.fields.push(
-        new InputView({
-          label: 'Label *',
-          name: 'label',
-          required: true,
-          invalidClass: 'text-danger',
-          validityClassSelector: '.control-label',
-          value: this.model.label,
-        }),
-        new InputView({
-          label: 'Value *',
-          name: 'value',
-          required: true,
-          invalidClass: 'text-danger',
-          validityClassSelector: '.control-label',
-          value: this.model.value,
-        }),
-        new CheckboxView({
-          label: 'Hide value',
-          name: 'masked',
-          value: this.model.masked
-        })
-      )
-    } else {
-      let label = new InputView({
-        label: 'Label *',
-        name: 'label',
-        required: true,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        value: this.model.label,
-      })
-
-      let help = new InputView({
-        label: 'Help',
-        name: 'help',
-        required: false,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        value: this.model.help,
-      })
-
-      this.fields.push(label)
-      this.fields.push(help)
-
-      if (this.model.type === FIELD.TYPE_INPUT) {
-        let masked = new CheckboxView({
-          label: 'Hide value',
-          name: 'masked',
-          value: this.model.masked
-        })
-        this.fields.push(masked)
-      }
-
-      if (this.model.type === FIELD.TYPE_SELECT) {
-        let options = new SelectOptionsView({
-          value: this.model.options
-        })
-        this.fields.push(options)
-      }
-
-      if (this.model.type === FIELD.TYPE_REMOTE_OPTIONS) {
-        let endpointUrl = new InputView({
-          label: 'Endpoint URL *',
-          name: 'endpoint_url',
-          required: true,
-          invalidClass: 'text-danger',
-          validityClassSelector: '.control-label',
-          value: this.model.endpoint_url,
-          tests: [
-            function (value) {
-              if (!isURL(value, {
-                protocols: ['http', 'https'],
-                require_protocol: true
-              })) {
-                return 'Must be a valid URL (include protocol)'
-              }
-            }
-          ]
-        })
-        this.fields.push(endpointUrl)
-
-        let idAttribute = new InputView({
-          label: 'Value attribute *',
-          name: 'id_attribute',
-          required: true,
-          invalidClass: 'text-danger',
-          validityClassSelector: '.control-label',
-          value: this.model.id_attribute
-        })
-        this.fields.push(idAttribute)
-
-        let textAttribute = new InputView({
-          label: 'Text attribute *',
-          name: 'text_attribute',
-          required: true,
-          invalidClass: 'text-danger',
-          validityClassSelector: '.control-label',
-          value: this.model.text_attribute
-        })
-        this.fields.push(textAttribute)
-      }
-    }
-
-    const button = new ArgumentButton({
-      buttonLabel: (isNewArgument?'Add':'Update'),
-      //icon: 'fa-plus'
-    })
-    this.fields.push(button)
-    this.listenTo(button,'click',() => {
-      this.submit()
-    })
-
-    FormView.prototype.initialize.apply(this, arguments)
-  },
-  focus () {
-    let input = this.query('input')
-    input.focus()
-  },
-  render () {
-    FormView.prototype.render.apply(this, arguments)
-    this.query('form').classList.add('form-horizontal')
-  },
-  submit (next) {
-    this.beforeSubmit()
-    if (!this.valid) return
-    if (next) next(true)
-    this.trigger('submitted')
   }
 })

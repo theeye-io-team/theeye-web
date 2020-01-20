@@ -1,7 +1,8 @@
 import View from 'ampersand-view'
 import ArgumentForm from './form'
-import { DynamicArgument as ScriptArgument } from 'models/task/dynamic-argument'
+import { DynamicArgument as TaskArgument } from 'models/task/dynamic-argument'
 import FIELD from 'constants/field'
+
 module.exports = View.extend({
   template: `
   <div>
@@ -10,51 +11,51 @@ module.exports = View.extend({
       <div class="row task-button" style="text-align:center;">
         <div class="col-xs-2">
           <button data-hook="fixed" class="btn btn-default">
-            <i class="icons icons-script fa fa-chain"></i>
+            <i class="fa fa-lock"></i>
           </button>
-          <h2>Fixed Value
-            <span data-hook="script-help"></span>
-          </h2>
+          <h2>Fixed Value <span data-hook="script-help"></span></h2>
         </div>
         <div class="col-xs-2">
           <button data-hook="input" class="btn btn-default">
-            <i class="icons icons-scraper fa fa-terminal"></i>
+            <i class="fa fa-font"></i>
           </button>
-          <h2>Text Input
-            <span data-hook="webhook-help"></span>
-          </h2>
+          <h2>Text Input <span data-hook="webhook-help"></span></h2>
         </div>
         <div class="col-xs-2">
           <button data-hook="select" class="btn btn-default">
-            <i class="icons icons-scraper fa fa-list-ol"></i>
+            <i class="fa fa-list-ol"></i>
           </button>
-          <h2>Options Selection
-            <span data-hook="webhook-help"></span>
-          </h2>
+          <h2>Options Selection <span data-hook="webhook-help"></span></h2>
         </div>
         <div class="col-xs-2">
           <button data-hook="remote-options" class="btn btn-default">
-            <i class="icons icons-scraper fa fa-list-ol"></i>
+            <i class="fa fa-list-ol"></i>
           </button>
-          <h2>Remote Options
-            <span data-hook="webhook-help"></span>
-          </h2>
+          <h2>Remote Options <span data-hook="webhook-help"></span></h2>
         </div>
         <div class="col-xs-2">
           <button data-hook="date" class="btn btn-default">
-            <i class="icons icons-scraper fa fa-calendar"></i>
+            <i class="fa fa-calendar"></i>
           </button>
-          <h2>Date Input
-            <span data-hook="webhook-help"></span>
-          </h2>
+          <h2>Date Input <span data-hook="webhook-help"></span></h2>
+        </div>
+        <div class="col-xs-2">
+          <button data-hook="email" class="btn btn-default">
+            <i class="fa fa-at"></i>
+          </button>
+          <h2>Email Input <span data-hook="webhook-help"></span></h2>
+        </div>
+        <div class="col-xs-2">
+          <button data-hook="regexp" class="btn btn-default">
+            <i class="fa fa-code"></i>
+          </button>
+          <h2>RegExp Input <span data-hook="webhook-help"></span></h2>
         </div>
         <div class="col-xs-2">
           <button data-hook="file" class="btn btn-default">
-            <i class="icons icons-scraper fa fa-file-o"></i>
+            <i class="fa fa-file-o"></i>
           </button>
-          <h2>File Input
-            <span data-hook="webhook-help"></span>
-          </h2>
+          <h2>File Input <span data-hook="webhook-help"></span></h2>
         </div>
       </div>
     </section>
@@ -74,6 +75,8 @@ module.exports = View.extend({
     current_type: { hook: 'current_type' }
   },
   events: {
+    'click [data-hook=regexp]':'onClickRegexp',
+    'click [data-hook=email]':'onClickEmail',
     'click [data-hook=fixed]':'onClickFixed',
     'click [data-hook=input]':'onClickInput',
     'click [data-hook=select]':'onClickSelect',
@@ -84,13 +87,23 @@ module.exports = View.extend({
     keypress: 'onKeyEvent'
   },
   onKeyEvent (event) {
-    if(event.target.nodeName.toUpperCase()=='INPUT') {
+    if (event.target.nodeName.toUpperCase() == 'INPUT') {
       if (event.keyCode == 13) {
         event.preventDefault()
         event.stopPropagation()
         return false
       }
     }
+  },
+  onClickRegexp (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.renderArgumentForm(FIELD.TYPE_REGEXP)
+  },
+  onClickEmail (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.renderArgumentForm(FIELD.TYPE_EMAIL)
   },
   onClickFixed (event) {
     event.preventDefault()
@@ -135,7 +148,7 @@ module.exports = View.extend({
     }
 
     this.current_type = type
-    const argument = new ScriptArgument({ type: this.current_type })
+    const argument = new TaskArgument({ type: this.current_type })
 
     var form = new ArgumentForm({ model: argument })
     this.renderSubview(form, this.queryByHook('form-container'))
