@@ -120,6 +120,7 @@
     "core": "PORT=6080 DEBUG=*eye* node .",
     "local": "PORT=6080 NODE_ENV=localdev node .",
     "n_local": "PORT=6080 DEBUG=*eye* NODE_ENV=localdev /usr/local/n/versions/node/6.16.0/bin/node .",
+    "n_home": "PORT=6080 DEBUG=*eye* NODE_ENV=localdev ~/n/n/versions/node/6.16.0/bin/node .",
     "inspect": "PORT=6080 NODE_ENV=localdev node --inspect .",
     "webpack": "NODE_ENV=local ./node_modules/webpack/bin/webpack.js -w",
     "handlebars-compile": "./node_modules/.bin/handlebars assets/templates -f assets/js/app/templates.js -e hbs --root --namespace Templates"

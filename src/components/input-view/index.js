@@ -2,7 +2,7 @@
 
 const InputView = require('ampersand-input-view')
 const assign = require('lodash/assign')
-
+import './styles.less'
 /**
  *
  * This is a custom template InputView
@@ -15,6 +15,7 @@ module.exports = InputView.extend({
       <label class="col-sm-3 control-label" data-hook="label"></label>
       <div data-hook="input-container" class="col-sm-9">
         <input class="form-control form-input">
+        <span data-hook="mask-toggle" class="glyphicon form-control-feedback"></span>
         <div data-hook="message-container" class="message message-below message-error">
           <p data-hook="message-text"></p>
         </div>
@@ -22,8 +23,9 @@ module.exports = InputView.extend({
     </div>
   `,
   props: {
-    visible: ['boolean',false,true ],
-    styles: ['string',false,'form-group']
+    visible: ['boolean',false,true],
+    styles: ['string',false,'form-group'],
+    maskToggle: ['boolean',false,true]
   },
   bindings: assign({}, InputView.prototype.bindings, {
     visible: {
@@ -32,6 +34,33 @@ module.exports = InputView.extend({
     styles: {
       type: 'attribute',
       name: 'class'
+    },
+    showMaskToggle: {
+      hook: 'mask-toggle',
+      type: 'toggle'
+    },
+    maskToggle: {
+      type: 'booleanClass',
+      hook: 'mask-toggle',
+      yes: 'glyphicon-eye-close',
+      no: 'glyphicon-eye-open'
     }
-  })
+  }),
+  events: {
+    'click [data-hook=mask-toggle]':'onclickMaskToggle'
+  },
+  onclickMaskToggle (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.toggle('maskToggle')
+    if (this.type === 'password') {
+      this.type = 'input'
+    } else {
+      this.type = 'password'
+    }
+  },
+  initialize (options) {
+    this.showMaskToggle = (options.type === 'password')
+    InputView.prototype.initialize.apply(this,arguments)
+  }
 })
