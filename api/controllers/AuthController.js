@@ -367,6 +367,11 @@ module.exports = {
     }
 
     if (sails.config.passport.ldapauth) {
+      if (!sails.config.passport.ldapauth.fields || !sails.config.passport.ldapauth.provider || !sails.config.passport.ldapauth.customerName) {
+        logger.error('LDAP config is not set correctly.')
+        return loginLocal()
+      }
+
       passport.authenticate('ldapauth', function (err, user, info) {
         if (err) {
           logger.error('LOGIN ERROR:')

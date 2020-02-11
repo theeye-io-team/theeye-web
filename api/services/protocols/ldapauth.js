@@ -2,7 +2,7 @@ var TheEyeClient = require('../../libs/theeye-client')
 var logger = require('../../libs/logger')('services:ldapauth')
 var _ = require('underscore')
 
-const fields = sails.config.passport['ldapauth'].fields
+const ldapConfig = sails.config.passport['ldapauth']
 
 const getUserCredential = function (groups) {
   if (/theeye_owners/i.test(groups)) {
@@ -20,11 +20,11 @@ const getUserCredential = function (groups) {
 
 const parseProfile = function (profile) {
   let data = {
-    username: profile[fields.username],
-    name: profile[fields.name],
-    email: profile[fields.email],
-    customers: [sails.config.passport['ldapauth'].customerName],
-    credential: getUserCredential(profile[fields.groups]),
+    username: profile[ldapConfig.fields.username],
+    name: profile[ldapConfig.fields.name],
+    email: profile[ldapConfig.fields.email],
+    customers: [ldapConfig.customerName],
+    credential: getUserCredential(profile[ldapConfig.fields.groups]),
     enabled: true
   }
   return data
@@ -85,12 +85,12 @@ const checkAndUpdateUser = function (user, data, client, callback) {
 }
 
 module.exports = function (req, profile, next) {
-  let provider = sails.config.passport['ldapauth'].provider
-  let identifier = profile[sails.config.passport['ldapauth'].fields.id]
+  let provider = ldapConfig.provider
+  let identifier = profile[ldapConfig.fields.id]
 
   logger.log('Parsing LDAP profile.')
 
-  if(!profile[fields.username] || !profile[fields.email]) {
+  if(!profile[ldapConfig.fields.username] || !profile[ldapConfig.fields.email]) {
     logger.error('Invalid LDAP Profile.')
     logger.error(profile)
     let profileError = new Error('Missing LDAP Profile values.')
