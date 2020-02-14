@@ -206,36 +206,20 @@ module.exports = FormView.extend({
 
 const IntegerInputView = InputView.extend({
   initialize () {
+    this.type = 'number'
     InputView.prototype.initialize.apply(this, arguments)
-
     this.tests = [
       value => {
-        let num = Number(value)
-        if (isNaN(num)) {
-          return 'Invalid number'
-        }
-
-        if (!Number.isInteger(num)) {
+        if (!Number.isInteger(value)) {
           return 'Enter a valid integer number'
         }
-
-        if (num === 0) {
-          return 'Choose a number higher than 0'
+        if (value < 0) {
+          return 'Enter a positive number'
         }
       }
     ]
-
     this.invalidClass = 'text-danger'
     this.validityClassSelector = '.control-label'
-  },
-  derived: {
-    value: {
-      deps: ['inputValue'],
-      fn () {
-        if (!this.inputValue) return 0
-        return Number(this.inputValue)
-      }
-    }
   }
 })
 

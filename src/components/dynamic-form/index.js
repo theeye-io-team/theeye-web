@@ -102,10 +102,19 @@ module.exports = DropableForm.extend({
           if (charset) {
             switch (charset) {
               case 'alnum':
+                if (/^[a-z0-9]+$/i.test(value) === false) {
+                  return `The value should be alphanumeric`
+                }
                 break;
               case 'alpha':
+                if (/^[a-z]+$/i.test(value) === false) {
+                  return `The value should be alphabetical`
+                }
                 break;
               case 'num':
+                if (/^[0-9]+$/i.test(value) === false) {
+                  return `The value should be a number`
+                }
                 break;
             }
           }

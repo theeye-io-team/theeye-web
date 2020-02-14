@@ -60,7 +60,9 @@ module.exports = InputView.extend({
     }
   },
   initialize (options) {
-    this.showMaskToggle = (options.type === 'password')
+    if (options && options.type) {
+      this.showMaskToggle = (options.type === 'password')
+    }
     InputView.prototype.initialize.apply(this,arguments)
   }
 })
