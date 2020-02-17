@@ -4,6 +4,7 @@ import ProgressBar from 'components/progress-bars'
 import BaseView from 'view/base-view'
 import Clipboard from 'clipboard'
 import DismissIndicatorButton from './button/dismiss'
+import TagView from 'components/tag'
 //import EditIndicatorButton from './button/edit'
 
 import './styles.less'
@@ -34,7 +35,9 @@ const IndicatorRowView = View.extend({
                 <div class="panel-title-content">
 
                   <div class="panel-item-left">
-                    <span class="panel-item name" data-hook="name">
+                    <span class="panel-item name">
+                      <span data-hook="tags"></span>
+                      <span data-hook="name" title=""></span>
                       <small><i data-hook="type"></i></small>
                     </span>
 
@@ -139,6 +142,16 @@ const IndicatorRowView = View.extend({
     this.setRowIcon()
     this.renderGauges()
     this.renderCollapsedContent()
+    this.renderTags()
+  },
+  renderTags () {
+    if (this.model.tagsCollection) {
+      this.renderCollection(
+        this.model.tagsCollection,
+        TagView,
+        this.queryByHook('tags')
+      )
+    }
   },
   renderGauges () {
     this.renderSubview(

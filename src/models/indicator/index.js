@@ -5,6 +5,7 @@ import AppModel from 'lib/app-model'
 import stateIcon from 'models/state-icon'
 import stateOrder from 'models/state-order'
 import IndicatorConstants from 'constants/indicator'
+const TagCollection = require('models/tag').Collection
 const config = require('config')
 
 const urlRoot = `${config.api_v3_url}/indicator`
@@ -24,12 +25,16 @@ const BaseSchema = AppModel.extend({
     last_update: 'date',
     secret: 'string',
     title: ['string'],
+    tags: ['array',false, () => { return [] }],
     severity: ['string',false,'low'],
     state: ['string',false,'normal'],
     acl: ['array', false, () => { return [] }],
     enable: ['boolean',false,true],
     sticky: ['boolean',false,false],
     read_only: ['boolean',false,false]
+  },
+  session: {
+    tagsCollection: 'collection'
   },
   derived: {
     order: {
@@ -75,6 +80,23 @@ const BaseSchema = AppModel.extend({
         return stateOrder.orderOf( this.stateSeverity )
       }
     },
+  },
+  initialize () {
+    AppModel.prototype.initialize.apply(this,arguments)
+
+    this.bindTagsEvents()
+  },
+  bindTagsEvents () {
+    this.tagsCollection = new TagCollection([])
+    this.listenToAndRun(this, 'change:tags', () => {
+      if (Array.isArray(this.tags)) {
+        let tags = this.tags.map((tag, index) => {
+          return {_id: (index + 1).toString(), name: tag}
+        })
+        tags = tags.slice(0, 3)
+        this.tagsCollection.set(tags)
+      }
+    })
   }
   //children: {
   //  user: User,
