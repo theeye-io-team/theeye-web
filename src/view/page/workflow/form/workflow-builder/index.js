@@ -157,7 +157,8 @@ module.exports = View.extend({
     }
 
     if (/Task$/.test(node.value._type) === true) {
-      var menu = new Menu({})
+      var task = App.state.tasks.get(node.id)
+      var menu = new Menu({ model: task })
       menu.render()
       menu.el.style.position = 'absolute'
       menu.el.style.top = (event.cyRenderedPosition.y + 120) + 'px'
@@ -169,17 +170,13 @@ module.exports = View.extend({
 
       // this is a task node
       menu.on('click:edit', () => {
-        menu.remove()
-        var task = App.state.tasks.get(node.id)
-        if(!task) return
         self.stopListening(task, 'change:name')
         self.listenTo(task, 'change:name', function() {
           self.trigger('change:graph', self.graph)
         })
-        App.actions.task.edit(task.id)
       })
+
       menu.on('click:remove', () => {
-        menu.remove()
         this.removeNodeDialog(node)
       })
     } else {
@@ -390,25 +387,34 @@ const Menu = View.extend({
       <ul class="dropdown-menu" style="display: block;">
         <li><a data-hook="edit" href="#">Edit</a></li>
         <li><a data-hook="remove" href="#">Remove</a></li>
+        <li><a data-hook="export" href="#">Export Recipe</a></li>
       </ul>
     </div>
   `,
   events: {
     'click [data-hook=edit]': 'onClickEdit',
+    'click [data-hook=export]': 'onClickExport',
     'click [data-hook=remove]': 'onClickRemove'
   },
   onClickEdit (event) {
     event.preventDefault()
     event.stopPropagation()
-
+    App.actions.task.edit(this.model.id)
     this.trigger('click:edit')
+    this.remove()
   },
   onClickRemove (event) {
     event.preventDefault()
     event.stopPropagation()
-
     this.trigger('click:remove')
-  }
+    this.remove()
+  },
+  onClickExport (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    App.actions.task.exportRecipe(this.model.id)
+    this.remove()
+  },
 })
 
 const pointerPosition = (e) => {

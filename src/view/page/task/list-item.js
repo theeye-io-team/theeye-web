@@ -7,6 +7,7 @@ import CopyButton from './buttons/copy'
 import DeleteButton from './buttons/delete'
 import assign from 'lodash/assign'
 import ScheduleButton from './buttons/schedule'
+import ExportButton from './buttons/export'
 import bootbox from 'bootbox'
 import TaskConstants from 'constants/task'
 import Schedules from './schedules'
@@ -29,7 +30,6 @@ function Factory (options) {
     return new NotificationItem(options)
   }
   throw new Error(`unrecognized type ${model.type}`)
-  //return new Item(options)
 }
 
 module.exports = Factory
@@ -85,6 +85,7 @@ const Item = ListItem.extend({
       { view: CopyButton, params: { model: this.model } },
       { view: EditButton, params: { model: this.model } },
       { view: DeleteButton, params: { model: this.model } },
+      { view: ExportButton, params: { model: this.model } },
     ])
 
     this.renderSubview(

@@ -20,6 +20,8 @@ import { Workflows } from 'models/workflow'
 import { Collection as Notifications } from 'models/notification'
 import Alerts from 'components/alerts'
 
+import IndicatorConstants from 'constants/indicator'
+
 import TemplatePageState from './template-page'
 import DashboardPageState from './dashboard-page'
 import SessionState from './session'
@@ -62,9 +64,9 @@ const severities = [
 ]
 
 const indicatorTypes = [
-  { id: 'TextIndicator', text: 'Text' },
-  { id: 'ProgressIndicator', text: 'Progress' },
-  { id: 'CounterIndicator', text: 'Counter' }
+  { id: IndicatorConstants.TEXT_TYPE, text: 'Text' },
+  { id: IndicatorConstants.PROGRESS_TYPE, text: 'Progress' },
+  { id: IndicatorConstants.COUNTER_TYPE, text: 'Counter' }
 ]
 
 const CredentialsCollection = Collection.extend({

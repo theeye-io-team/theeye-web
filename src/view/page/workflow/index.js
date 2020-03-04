@@ -12,7 +12,7 @@ module.exports = View.extend({
       </div>
     </div>
   `,
-  render() {
+  render () {
     this.renderWithTemplate(this)
     this.renderWorkflowView()
   },

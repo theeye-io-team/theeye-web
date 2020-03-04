@@ -17,6 +17,58 @@ const humanInterval = require('lib/human-interval')
 const CronTime = require('cron').CronTime
 const moment = require('moment-timezone')
 
+module.exports = PanelButton.extend({
+  initialize (options) {
+    this.title = 'Schedule Task'
+    this.iconClass = 'fa fa-clock-o dropdown-icon'
+    this.className = 'btn btn-primary'
+  },
+  bindings: Object.assign({}, PanelButton.prototype.bindings, {
+    'model.hasSchedules': {
+      type: 'booleanClass',
+      yes: 'hilite',
+      no: '',
+      selector: 'button'
+    }
+  }),
+  events: {
+    click (event) {
+      event.stopPropagation()
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+
+      // TODO: schedules for dynamically argumented
+      // tasks are not supported
+      if (this.model.hasDynamicArguments) {
+        let deniedMessage = [
+          'Scheduling tasks with dynamic arguments',
+          '(input/select) is not supported'
+        ].join(' ')
+        bootbox.alert(deniedMessage)
+        return
+      }
+
+      const form = new ScheduleForm({
+        model: this.model
+      })
+
+      const modal = new Modalizer({
+        buttons: false,
+        title: this.title,
+        bodyView: form
+      })
+
+      this.listenTo(modal, 'hidden', () => {
+        form.remove()
+        modal.remove()
+      })
+
+      this.listenTo(form, 'submitted', modal.hide.bind(modal))
+
+      modal.show()
+    }
+  }
+})
+
 const ModalButtons = View.extend({
   template: `
     <div id="schedule-form-buttons" data-hook="buttons-container">
@@ -286,56 +338,5 @@ const ScheduleForm = FormView.extend({
         }
       }
     )
-  }
-})
-module.exports = PanelButton.extend({
-  initialize (options) {
-    this.title = `Schedule Task`
-    this.iconClass = 'fa fa-clock-o'
-    this.className = 'btn btn-primary'
-  },
-  bindings: Object.assign({}, PanelButton.prototype.bindings, {
-    'model.hasSchedules': {
-      type: 'booleanClass',
-      yes: 'hilite',
-      no: '',
-      selector: 'button'
-    }
-  }),
-  events: {
-    click (event) {
-      event.stopPropagation()
-      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
-
-      // TODO: schedules for dynamically argumented
-      // tasks are not supported
-      if (this.model.hasDynamicArguments) {
-        let deniedMessage = [
-          'Scheduling tasks with dynamic arguments',
-          '(input/select) is not supported'
-        ].join(' ')
-        bootbox.alert(deniedMessage)
-        return
-      }
-
-      const form = new ScheduleForm({
-        model: this.model
-      })
-
-      const modal = new Modalizer({
-        buttons: false,
-        title: this.title,
-        bodyView: form
-      })
-
-      this.listenTo(modal, 'hidden', () => {
-        form.remove()
-        modal.remove()
-      })
-
-      this.listenTo(form, 'submitted', modal.hide.bind(modal))
-
-      modal.show()
-    }
   }
 })

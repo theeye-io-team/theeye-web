@@ -1,5 +1,3 @@
-'use strict'
-
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
 import bootbox from 'bootbox'
@@ -17,37 +15,33 @@ module.exports = PanelButton.extend({
       event.stopPropagation()
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
-      return import(/* webpackChunkName: "task-form" */ '../form').then(FormView => {
+      return import(/* webpackChunkName: "task-form" */ '../form')
+        .then(FormView => {
+          const task = new TaskFactory({ type: this.model.type })
+          const form = new FormView({ model: task })
+          const modal = new Modalizer({
+            buttons: false,
+            title: this.title,
+            bodyView: form
+          })
 
-        const task = new TaskFactory({type: this.model.type})
+          this.listenTo(modal,'shown',() => {
+            form.focus()
+            form.setWithTask(this.model)
+            form._fieldViews.name.input.value += ' (copy)'
+          })
 
-        const form = new FormView({
-          model: task
+          this.listenTo(modal,'hidden',() => {
+            form.remove()
+            modal.remove()
+          })
+
+          this.listenTo(form,'submitted',() => {
+            modal.hide()
+          })
+
+          modal.show()
         })
-
-        const modal = new Modalizer({
-          buttons: false,
-          title: this.title,
-          bodyView: form
-        })
-
-        this.listenTo(modal,'shown',() => {
-          form.focus()
-          form.setWithTask(this.model)
-          form._fieldViews.name.input.value = ''
-        })
-
-        this.listenTo(modal,'hidden',() => {
-          form.remove()
-          modal.remove()
-        })
-
-        this.listenTo(form,'submitted',() => {
-          modal.hide()
-        })
-
-        modal.show()
-      })
     }
   }
 })

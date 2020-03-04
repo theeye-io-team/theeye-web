@@ -17,9 +17,6 @@ module.exports = {
         App.state.indicators.add(model)
       } else {
         // update/replace
-        if (operation === OperationsConstants.REPLACE) {
-          indicator.clear({ silent: true })
-        }
         indicator.set(indicator.parse(model))
       }
     } else {

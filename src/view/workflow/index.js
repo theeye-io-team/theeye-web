@@ -97,6 +97,7 @@ module.exports = View.extend({
         data: { source: e.v, target: e.w }
       })
     })
+
     return elems
   },
   updateCytoscape () {

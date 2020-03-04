@@ -6,6 +6,7 @@ import TaskIntegrationButton from 'view/page/task/buttons/integrations'
 import EditTaskButton from 'view/page/task/buttons/edit'
 import CopyTaskButton from 'view/page/task/buttons/copy'
 import DeleteTaskButton from 'view/page/task/buttons/delete'
+import ExportTaskButton from 'view/page/task/buttons/export'
 import CollapsibleRow from 'view/page/dashboard/task/collapsible-row'
 import Schedules from 'view/page/task/schedules'
 import Acls from 'lib/acls'
@@ -51,12 +52,7 @@ const TaskButtonsView = View.extend({
       <span data-hook="edit-script"> </span>
       <span data-hook="copy-button"> </span>
       <span data-hook="delete-button"> </span>
-      <li>
-        <button data-hook="recipe" class="btn btn-primary" title="Export this task recipe">
-          <i class="fa fa-file-code-o dropdown-icon" aria-hidden="true"></i>
-          <span>Export recipe</span>
-        </button>
-      </li>
+      <span data-hook="export-button"> </span>
       <li>
         <button class="btn btn-primary" title="Workflow" data-hook="workflow">
           <i class="fa fa-sitemap dropdown-icon" aria-hidden="true"></i>
@@ -75,14 +71,6 @@ const TaskButtonsView = View.extend({
   events: {
     'click button[data-hook=search]':'onClickSearch',
     'click button[data-hook=workflow]':'onClickWorkflow',
-    'click button[data-hook=recipe]':'onClickRecipe',
-  },
-  onClickRecipe (event) {
-    event.stopPropagation()
-    event.preventDefault()
-    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
-    App.actions.task.exportRecipe(this.model.id)
-    return false
   },
   onClickWorkflow (event) {
     event.stopPropagation()
@@ -109,12 +97,15 @@ const TaskButtonsView = View.extend({
       this.renderSubview(integrationButton, this.queryByHook('integration-button'))
 
       if (this.model._type === 'ScriptTask') {
-        var editScriptButton = new EditScriptButton ({ model: this.model })
+        var editScriptButton = new EditScriptButton({ model: this.model })
         this.renderSubview(editScriptButton, this.queryByHook('edit-script'))
       }
 
       var copyButton = new CopyTaskButton({ model: this.model })
       this.renderSubview(copyButton, this.queryByHook('copy-button'))
+
+      var exportButton = new ExportTaskButton({ model: this.model })
+      this.renderSubview(exportButton, this.queryByHook('export-button'))
 
       var deleteButton = new DeleteTaskButton({ model: this.model })
       this.renderSubview(deleteButton, this.queryByHook('delete-button'))
