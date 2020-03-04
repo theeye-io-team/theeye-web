@@ -21,6 +21,7 @@ import { Collection as Notifications } from 'models/notification'
 import Alerts from 'components/alerts'
 
 import IndicatorConstants from 'constants/indicator'
+import TaskConstants from 'constants/task'
 
 import TemplatePageState from './template-page'
 import DashboardPageState from './dashboard-page'
@@ -126,6 +127,7 @@ const AppState = State.extend({
     this.looptimes = new Collection(looptimes)
     this.severities = new Collection(severities)
     this.indicatorTypes = new Collection(indicatorTypes)
+    this.runners = new Collection([])
 
     this.inbox = new InboxState({ appState: this })
   },
@@ -156,12 +158,10 @@ const AppState = State.extend({
     })
 
     /**
-     *
      * customer switch
-     *
      */
-    this.listenToAndRun(this.session.customer,'change:id', () => {
-      if (!this.session.customer.id) return
+    this.listenToAndRun(this.session.customer, 'change:id', () => {
+      if (!this.session.customer.id) { return }
       this.notifications.fetch({ reset: true })
     })
   },
@@ -260,8 +260,21 @@ const _initCollections = function () {
     members: new Members([]),
     events: new Events([]),
     notifications: new Notifications([]),
+    workflows: new Workflows([]),
     //emitters: new Emitters([]),
-    workflows: new Workflows([])
+  })
+
+  this.tasks.on('change', (model) => {
+    if (model.type === TaskConstants.TYPE_SCRIPT) {
+      if (model.script_runas) {
+        getHash(model.script_runas, hash => {
+          this.runners.add({
+            runner: model.script_runas,
+            id: hash
+          })
+        })
+      }
+    }
   })
 
   //_syncEmitters.apply(this)
@@ -287,3 +300,15 @@ const _initCollections = function () {
 //  this.listenTo(this.resources, 'all', onCollectionEvent)
 //  this.listenTo(this.webhooks, 'all', onCollectionEvent)
 //}
+
+const getHash = (data, cb) => {
+  let encoded = new TextEncoder().encode(data)
+  let digest = crypto.subtle.digest('SHA-1', encoded)
+  digest.then(bytes => {
+    let hash = Array
+      .from(new Uint8Array(bytes))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('')
+    cb(hash)
+  })
+}

@@ -28,7 +28,7 @@ module.exports = TaskFormView.extend({
     // multiple only if new, allows to create multiple tasks at once
     let hostsSelection = new SelectView({
       label: 'Bots',
-      name: (isNewTask?'hosts':'host_id'),
+      name: (isNewTask ? 'hosts' : 'host_id'),
       multiple: isNewTask,
       tags: isNewTask,
       options: App.state.hosts,
@@ -41,6 +41,22 @@ module.exports = TaskFormView.extend({
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label'
     })
+
+    if (isNewTask) {
+      this.listenTo(hostsSelection, 'change', () => {
+        if (hostsSelection.value) {
+          let hosts = []
+          hostsSelection.value.forEach(hostId => {
+            hosts.push( App.state.hosts.get(hostId) )
+          })
+
+          let os = hosts.map(host => host.os_name)
+          if (os.length > 1) {
+            bootbox.alert('BOT\'s with different OS versions has been selected.')
+          }
+        }
+      })
+    }
 
     if (this.isImport) {
       this.scriptSelection = new ScriptImportView({
@@ -57,7 +73,6 @@ module.exports = TaskFormView.extend({
     }
 
     this.advancedFields = [
-      'script_runas',
       'description',
       'acl',
       'triggers',
@@ -86,6 +101,31 @@ module.exports = TaskFormView.extend({
         name: 'tags',
         value: this.model.tags
       }),
+      new SelectView({
+        label: 'Run As',
+        name: 'script_runas',
+        multiple: false,
+        tags: true,
+        allowCreateTags: true,
+        options: App.state.runners,
+        value: this.model.script_runas,
+        required: true,
+        unselectedText: 'select a runner',
+        idAttribute: 'runner',
+        textAttribute: 'runner',
+        requiredMessage: 'Selection required',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
+      }),
+      //new InputView({
+      //  label: 'Run As',
+      //  name: 'script_runas',
+      //  placeholder: 'sudo -u the_user %script%',
+      //  required: true,
+      //  invalidClass: 'text-danger',
+      //  validityClassSelector: '.control-label',
+      //  value: this.model.script_runas
+      //}),
       new ArgumentsView({
         name: 'task_arguments',
         value: this.model.task_arguments
@@ -100,16 +140,6 @@ module.exports = TaskFormView.extend({
             field.toggle('visible')
           })
         }
-      }),
-      new InputView({
-        visible: false,
-        label: 'Run As',
-        name: 'script_runas',
-        placeholder: 'sudo -u the_user %script%',
-        required: false,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        value: this.model.script_runas,
       }),
       new TextareaView({
         visible: false,
