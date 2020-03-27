@@ -9,6 +9,8 @@ import IndicatorActions from 'actions/indicator'
 import WorkflowActions from 'actions/workflow'
 import PopupActions from 'actions/popup'
 import SchedulerActions from 'actions/schedule'
+import TabsActions from 'actions/tabs'
+import ChatActions from 'actions/chat'
 
 module.exports = () => {
   App.extend({
@@ -21,7 +23,9 @@ module.exports = () => {
       job: JobActions,
       scheduler: SchedulerActions,
       task: TaskActions,
-      workflow: WorkflowActions
+      workflow: WorkflowActions,
+      tabs: TabsActions,
+      chat: ChatActions
     }
   })
 }

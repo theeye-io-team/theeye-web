@@ -1,0 +1,20 @@
+.menu-container {
+  position:fixed;
+  height:100%;
+  display:flex;
+  z-index:999;
+  transition:0.5s;
+}
+
+.page-container {
+  transition: 0.5s;
+}
+
+.menu-container.menu-container-expand {width:250px}
+.menu-container.menu-container-expand .eyemenu-switch-panels {display: inline-flex;}
+.menu-container.menu-container-contract {width:80px}
+.menu-container.menu-container-contract .eyemenu-switch-panels {display: none;}
+
+.page-container-contract { margin-left: 250px!important; }
+.page-container-expand { margin-left: 80px!important; }
+.page-container-nomenu { margin-left: 0px!important; }

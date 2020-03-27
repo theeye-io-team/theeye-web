@@ -34,5 +34,11 @@ module.exports = {
   },
   onRow (row, hit) {
     App.state.searchbox.trigger('onrow', {row, hit})
+  },
+  clearResults () {
+    App.state.searchbox.results.set([])
+  },
+  addResults(results) {
+    App.state.searchbox.results.add(results)
   }
 }

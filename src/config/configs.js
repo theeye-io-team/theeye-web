@@ -8,6 +8,10 @@ const defaultConfigs = {
   grecaptcha: {
     sitekey: '6LfaIrsUAAAAAKmZPeN5ZqmFDvJZLEdtK0dev2eV',
   },
+  fcWidget: {
+    token: 'f7fba515-c579-4783-8e0e-6c3fef764d8b',
+    host: 'https://wchat.freshchat.com'
+  },
   docs: 'https://documentation.theeye.io',
   request_timeout: 30000,
   landing_page_url: 'https://theeye.io',
@@ -72,6 +76,10 @@ const configs = {
   production: Object.assign({}, defaultConfigs, {
     grecaptcha: {
       sitekey: '6LfaIrsUAAAAAKmZPeN5ZqmFDvJZLEdtK0dev2eV',
+    },
+    fcWidget: {
+      token: 'f7fba515-c579-4783-8e0e-6c3fef764d8b',
+      host: 'https://wchat.freshchat.com'
     },
     env: 'production',
     app_url: 'https://app.theeye.io',

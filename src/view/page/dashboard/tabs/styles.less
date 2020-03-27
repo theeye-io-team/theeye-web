@@ -1,0 +1,93 @@
+div.dashboard-tabs {
+  height: 50px;
+  width: 100%;
+  background-color: #23324C;
+  text-align: center;
+  font-size: 16px;
+  color: #fff;
+  font-weight: 400;
+  position: fixed;
+  z-index: 1000;
+  padding-right: 250px;
+
+  div.dashboard-tab {
+    float: left;
+    line-height: 50px;
+    cursor: pointer;
+    text-transform: capitalize;
+    position: relative;
+
+    .has-notification {
+      width: 15px;
+      height: 15px;
+      position: absolute;
+      top: 10px;
+      z-index: 1025;
+      right: 15%;
+
+      &:before {
+        content: '';
+        position: relative;
+        display: block;
+        width: 260%;
+        height: 260%;
+        box-sizing: border-box;
+        margin-left: -80%;
+        margin-top: -80%;
+        border-radius: 45px;
+        background-color: #E88840;
+        animation: pulse-ring 1.25s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+      }
+
+      &:after {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-color: #E88840;
+        border-radius: 15px;
+        animation: pulse-dot 1.25s cubic-bezier(0.455, 0.03, 0.515, 0.955) -.4s infinite;
+      }
+    }
+  }
+  div.dashboard-tab:hover {
+    background-color: #1a2538;
+  }
+
+  div.dashboard-tab.active {
+    box-shadow: inset 0px -3px 0px #E88840;
+    background-color: #1a2538;
+  }
+}
+
+@keyframes pulse-ring {
+  0% {
+    transform: scale(.33);
+  }
+  80%, 100% {
+    opacity: 0;
+  }
+}
+
+@keyframes pulse-dot {
+  0% {
+    transform: scale(.8);
+  }
+  50% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(.8);
+  }
+}
+
+.page-container-contract div.dashboard-tabs {
+  padding-right: 250px;
+}
+
+.page-container-expand div.dashboard-tabs {
+  padding-right: 80px;
+}

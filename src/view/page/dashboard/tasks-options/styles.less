@@ -1,17 +1,20 @@
 [data-component=group-options] {
   cursor: pointer;
-  color: #44567d;
-  position: absolute;
-  right: 25px;
-  top: 5px;
+  float: right;
+  line-height: 25px;
 
   button.dropdown-toggle {
-    padding: 2px;
+    padding: 0px;
     padding-left: 12px;
     padding-right: 12px;
-    background-color: #23324c;
-    border-color: #23324c;
-    font-size: 16px;
+    background-color: #1a2538;
+    border-color: #1a2538;
+    font-size: 14px;
+  }
+
+  .btn-primary.active, .btn-primary.focus, .btn-primary:active, .btn-primary:focus, .btn-primary:hover, .open>.dropdown-toggle.btn-primary {
+    background-color: #23324C;
+    border-color: #23324C;
   }
 
   ul.dropdown-menu {
@@ -19,6 +22,7 @@
     color: #FFF;
     min-width: 0;
     padding: 0;
+    line-height: normal;
   }
 
   ul.dropdown-menu li {

@@ -1,0 +1,21 @@
+module.exports = {
+  'lifecycle:ready': 'Queued',
+  'lifecycle:assigned': 'Task is being executed',
+  'lifecycle:finished': 'Finished running',
+  'lifecycle:canceled': 'Has been canceled',
+  'lifecycle:terminated': 'Terminated abnormally',
+  'lifecycle:completed': 'Completed',
+  'lifecycle:onhold': 'On hold',
+  'updates_stopped': 'Has gone silent',
+  'updates_started': 'Came back to life',
+  'failure': 'Requires your attention',
+  'recovered': 'Came back to normal',
+  'file:restored': 'File restored',
+  'host:stats:normal': 'Bot stats back to normal',
+  'host:stats:cpu:high': 'Bot CPU high',
+  'host:stats:mem:high': 'Bot memory high',
+  'host:stats:disk:high': 'Bot disk high',
+  'host:stats:cache:high': 'Bot cache high',
+  'webhook': 'Triggered',
+  'job:create': 'Started'
+}

@@ -19,7 +19,7 @@ module.exports = {
     const qs = search.set(query)
 
     App.Router.navigate(`dashboard?${qs}`, { replace: true })
-    //App.Router.reload()
+    // App.Router.reload()
   },
   loadNewRegisteredHostAgent (host) {
     App.state.loader.visible = false
@@ -29,17 +29,14 @@ module.exports = {
       if (resourcesWasEmpty) {
         App.state.onboarding.trigger('first-host-registered')
       }
-      //App.state.dashboard.groupResources()
+      // App.state.dashboard.groupResources()
     })
 
     App.state.resources.fetch({ success: step, error: step })
     App.state.hosts.fetch({ success: step, error: step })
   },
   fetchData (options) {
-    const { fetchTasks } = options
-
-    var resourcesToFetch = 7
-    if (fetchTasks) resourcesToFetch += 2
+    var resourcesToFetch = 9
     var done = after(resourcesToFetch, () => {
       App.state.loader.visible = false
     })
@@ -49,26 +46,24 @@ module.exports = {
       done()
     }
 
-    if (fetchTasks) {
-      const nextStep = () => {
-        step()
-        App.state.tasks.fetch({
-          success: () => {
-            App.state.dashboard.groupTasks()
-            App.state.workflows.forEach(workflow => {
-              WorkflowActions.populate(workflow)
-            })
+    const nextStep = () => {
+      step()
+      App.state.tasks.fetch({
+        success: () => {
+          App.state.dashboard.groupTasks()
+          App.state.workflows.forEach(workflow => {
+            WorkflowActions.populate(workflow)
+          })
 
-            OnHoldActions.check()
-            step()
-          },
-          error: step,
-          reset: true
-        })
-      }
-      App.state.workflows.fetch({ success: nextStep, error: nextStep })
+          OnHoldActions.check()
+          step()
+        },
+        error: step,
+        reset: true
+      })
     }
 
+    App.state.workflows.fetch({ success: nextStep, error: nextStep })
     App.state.events.fetch({ success: step, error: step })
     // App.state.scripts.fetch({ success: step, error: step })
     App.state.files.fetch({ success: step, error: step })

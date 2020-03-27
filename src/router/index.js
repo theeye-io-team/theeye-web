@@ -12,6 +12,7 @@ const CustomerRoute = require('./customer')
 const WebhookRoute = require('./webhook')
 import DashboardRoute from './dashboard'
 import ChartsRoute from './charts'
+import HelpRoute from './help'
 import WorkflowRouter from './workflow'
 import hopscotch from 'hopscotch'
 import config from 'config'
@@ -53,6 +54,10 @@ module.exports = Router.extend({
   routes: {
     'dashboard': () => {
       const route = new DashboardRoute()
+      route.route('index')
+    },
+    'help': () => {
+      const route = new HelpRoute()
       route.route('index')
     },
     'admin/user': () => {

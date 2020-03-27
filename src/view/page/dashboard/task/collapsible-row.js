@@ -70,6 +70,7 @@ module.exports = View.extend({
   props: {
     collapsed: ['boolean', false, true],
     show: ['boolean',false,true],
+    hash: ['string', false, () => { return (new Date()).getTime() } ]
   },
   derived: {
     row_text: {
@@ -81,13 +82,13 @@ module.exports = View.extend({
     collapse_header_id: {
       deps: ['model.id'],
       fn () {
-        return `collapse_header_${this.model.id}`
+        return `collapse_header_${this.hash}_${this.model.id}`
       }
     },
     collapse_container_id: {
       deps: ['model.id'],
       fn () {
-        return `collapse_container_${this.model.id}`
+        return `collapse_container_${this.hash}_${this.model.id}`
       }
     },
     collapse_toggle_href: {

@@ -61,7 +61,7 @@ h1 {font-weight:700}
 button {outline:none}
 .fleft {float:left}
 .fright {float:right}
-.big-icon{ font-size: 45px }
+.big-icon{ font-size: 80px }
 /* header */
 .navbar {margin-bottom:0px;}
 .navbar-header {width:100%;}
@@ -71,7 +71,7 @@ button {outline:none}
 .navbar-inverse .navbar-collapse, .navbar-inverse .navbar-form, .navbar-inverse .navbar-toggle {border-color:#144e77;}
 .navbar-inverse .navbar-toggle:focus, .navbar-inverse .navbar-toggle:hover {background-color:#144e77}
 .navbar-collapse {padding:0;}
-.navbar-inverse {background:#eee;border-bottom:3px solid #e88840}
+.navbar-inverse {background:#eee}
 .navbar-right, .navbar-right li {margin:0;padding:0}
 .navbar-right li {list-style-type:none;border-bottom:1px solid #ccc}
 .navbar-right li a {display:block;font-weight:700;color:#144e77;padding:8px 12px;height:42px;}
@@ -99,7 +99,7 @@ button {outline:none}
 body {
   margin: 0;
   padding: 0;
-  font-family: 'Lato', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  font-family: 'Roboto', sans-serif;
   font-size: 14px;
   background-color: #EFEFEF;
   background:#304269;
@@ -120,6 +120,10 @@ hr {border:none;border-bottom:1px dotted #fff}
 .actions .dropdown-menu li:last-child a {border-bottom:none}
 .actions .dropdown-menu span.glyphicon-triangle-top, .inlineDropdown span.glyphicon-triangle-top{color:#fff;position:absolute;top:-8px;right:5px}
 */
+
+.page-container {
+  margin-left: 250px;
+}
 
 .status {width:2.5%;display:inline-block;text-align:left;font-size:24px;vertical-align:top;padding-top:4px}
 .glyphicon-refresh-animate {padding-top:0;margin-top:2px}
@@ -469,13 +473,19 @@ footer {
   bottom:0;
   left:0;
   right:0;
-  background:#EEE;
-  color: #555;
+  background:#1a2538;
+  color: #fff;
   padding: 5px;
   position:fixed;
   text-align:center;
   z-index: 999;
+  height: 30px;
 }
+
+footer a {
+  color: #fff;
+}
+
 footer a.image {padding:6px;display:inline-block}
 footer a.image img {margin-top:-4px}
 @media (max-width: 500px) {
@@ -543,7 +553,8 @@ h3.light { color: #EEE}
 .panel-group .panel+.panel { margin-top:0; }
 
 .admin-container { width:100%; color:white; }
-.admin-container h3 { background-color: #23324C;margin: 0;padding: 6px;color: #fff;font-size: 14px;text-align: center; }
+.admin-container h3 { margin: 0;padding: 6px;color: #fff;font-size: 16px;font-weight:400;text-align: center; }
+.admin-container h3.list-title { padding: 10px; background-color: #1a2538; }
 .admin-container .admin-panel { position:relative; }
 .admin-container .panel-group { margin-bottom:0; }
 
@@ -572,6 +583,9 @@ h3.light { color: #EEE}
           transition: background-color 300ms linear}
 .admin-container .panel-default.panelActive>.panel-heading {background:#212F48;border-bottom:1px dotted #aaa}
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body {border:none;color:#fff;background:#23324C; width: 100%;font-size: 14px;}
+.admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body h4, .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body td {font-weight: 300;}
+.admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body th {font-weight: 400;}
+
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body>.task-container {overflow-x: scroll}
 .admin-container .panel-default .panel-title-content {min-height:50px; padding:10px;}
 .admin-container .panel-collapse .btn-stats { float:right; margin-top:-12px; }
@@ -716,9 +730,9 @@ ol.list-group.tasks { color:#34495E }
 .remark-warning { color: #ffff00; }
 .remark-default { color: #ffffff; }
 
-.main-status { width: 100%; padding: 10px; cursor:pointer; }
-.main-status h4 { display: block; margin: 0px; padding-left: 50px; font-size: 16px; line-height: 45px; }
-.main-status i { display: block; float: left; }
+.main-status { width: 100%; padding: 40px 10px; cursor: pointer; text-align: center;}
+.main-status h4 { margin: 0px; padding: 15px; font-size: 20px; font-weight: 400;}
+.main-status span { font-weight: 300; text-decoration: underline; }
 form.admin-form .form-group div.buttons { padding-bottom: 5px; }
 
 /**
@@ -801,9 +815,10 @@ input[type=checkbox].form-control {
 .main-container {
   /*position:absolute; width: 100%;*/
   padding-bottom: 50px;
-  padding-top: 76px;
+  padding-top: 74px;
   width:100%;
   position: absolute;
+  margin-bottom: 30px;
 }
 
 @media (max-width:767px) {
@@ -901,10 +916,15 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
  *
  */
 
-.dashboard { padding-left: 6%; padding-right: 6%; padding-top: 30px; }
+/*.dashboard { padding-left: 6%; padding-right: 6%; padding-top: 30px; }*/
 .dashboard .panel-group .monitorRow {background-color: #304269;}
-.dashboard .events-panel { padding-left: 10; padding-right: 10; }
-/*.dashboard .events-panel.resources-panel { border-right:2px solid #23324C; }*/
+.dashboard .events-panel { padding-left: 0px; padding-right: 0px; }
+.dashboard .events-panel.indicators-panel, .dashboard .events-panel.resources-panel, .dashboard .events-panel.tasks-panel, .events-panel.notifications-panel {
+  top: 50px;
+  float: left;
+  width: 100%;
+}
+/*.dashboard .events-panel.resources-panel { border-.main-container:2px solid #23324C; }*/
 /*.dashboard .events-panel.tasks-panel { border-left:2px solid #23324C; }*/
 /*.dashboard .events-panel.tasks-panel { float: right; }*/
 
@@ -913,6 +933,7 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
   background-repeat: no-repeat;
   background-size: 36px;
   background-position: 7px 7px;
+  font-weight: 300;
 }
 
 .dashboard .events-panel h4.panel-title .collapse { display: block;  }
@@ -927,7 +948,12 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 }
 
 .dashboard .events-panel .panel-default .panel-title-content { padding-left:0; }
-.dashboard .events-panel h3 { height: 40px; line-height: 28px;/* h3 inherits a top/bottom padding of 6 */ }
+.dashboard .events-panel .section-header { height: 25px; background-color: #1a2538; position: fixed; width: 100%; padding-right: 250px;z-index:1;}
+.dashboard .events-panel .section-header .options-container {margin-right: 15px;}
+.page-container-contract .dashboard .events-panel .section-header {padding-right: 250px;}
+.page-container-expand .dashboard .events-panel .section-header {padding-right: 80px;}
+.dashboard .events-panel .section-container {margin-top: 25px;}
+.dashboard .events-panel h3 { height: 50px; line-height: 28px; }
 .dashboard .events-panel h3.collapse-title {font-weight: 500;font-size: 16px;text-align: unset;padding-left: 25px;padding-top: 15px;}
 .dashboard .events-panel .empty-job-list {padding-left:10px;}
 .dashboard .events-panel .panel-item.icons .btn-icon-image {
@@ -1025,13 +1051,14 @@ a.flowchart-icon {
 .admin-container.dashboard .group .select2-container--default .select2-selection--multiple { border-radius: 0; background-color:#44567d; border:none; }
 
 .admin-container.dashboard .monitors.admin-panel .section-toggle, .admin-container.dashboard .tasks-panel .section-toggle {
-  position: absolute;
   color: #fff;
-  left: 30px;
-  padding: 8px;
+  padding: 7px;
+  float: right;
+  line-height: 11px;
 }
 
 .admin-container.dashboard .tasks-container .panel-heading h4.panel-title-icon ,
+.admin-container.dashboard .inbox-container .panel-heading h4.panel-title-icon ,
 .admin-container.dashboard .row-container .panel-heading h4.panel-title-icon {
   float: left;
   margin-top: 0;
@@ -1043,6 +1070,7 @@ a.flowchart-icon {
 }
 
 .admin-container.dashboard .tasks-container .panel-heading h4.panel-title-icon i ,
+.admin-container.dashboard .inbox-container .panel-heading h4.panel-title-icon i ,
 .admin-container.dashboard .row-container .panel-heading h4.panel-title-icon i {
   min-height: 38px;
   width: 38px;
@@ -1204,4 +1232,8 @@ a.flowchart-icon {
 
 .bootbox-body p {
   word-wrap: break-word;
+}
+
+#fc_frame {
+  bottom: 45px!important;
 }

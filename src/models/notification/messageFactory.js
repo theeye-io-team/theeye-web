@@ -1,4 +1,4 @@
-import meaning from 'view/inbox/item/meaning'
+import meaning from 'view/page/dashboard/inbox/item/meaning'
 
 export default (notification) => {
   const data = notification.data

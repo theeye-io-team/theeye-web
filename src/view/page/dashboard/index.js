@@ -4,25 +4,23 @@ import App from 'ampersand-app'
 import config from 'config'
 import View from 'ampersand-view'
 import $ from 'jquery'
-import StatsPanelView from './stats-panel'
 import TaskRowView from './task'
 import MonitorRowView from './monitor'
 import IndicatorRowView from './indicator'
-import RunAllTasksButton from './task/run-all-button'
-import TaskActions from 'actions/task'
-import WorkflowActions from 'actions/workflow'
 import SearchboxActions from 'actions/searchbox'
-import bootbox from 'bootbox'
 
 const logger = require('lib/logger')('view:page:dashboard')
 const ItemsFolding = require('./panel-items-fold')
 
 import MonitorsOptions from './monitors-options'
 import TasksOptions from './tasks-options'
+import NotificationsOptions from './notifications-options'
 import MonitoringOboardingPanel from './monitoring-onboarding'
 import TasksOboardingPanel from './tasks-onboarding'
-import PlusMenuButton from './plus-menu-button'
-import acls from 'lib/acls'
+import TabsView from './tabs'
+import TabsConstants from 'constants/tabs'
+import InboxView from './inbox'
+import ResultView from './result'
 
 import onBoarding from './onboarding'
 import './styles.less'
@@ -44,15 +42,14 @@ module.exports = View.extend({
     indicators: 'collection',
     monitors: 'collection',
     tasks: 'collection',
-    renderStats: ['boolean', false, false],
-    renderTasks: ['boolean', false, true],
     upAndRunningSignEnabled: ['boolean', false, () => {
       let enabled = config.dashboard.upandrunningSign
       return typeof enabled === 'boolean' ? enabled : true
     }],
     upAndRunningSignVisible: 'boolean',
     showTasksPanel: ['boolean', false, false],
-    failingMonitors: ['array', false, () => { return [] }]
+    failingMonitors: ['array', false, () => { return [] }],
+    notifications: 'collection'
   },
   derived: {
     failingMonitorsCount: {
@@ -71,13 +68,13 @@ module.exports = View.extend({
     upAndRunningSignVisible: {
       type: 'booleanClass',
       hook: 'toggle-up-and-running',
-      name: 'rotate-180'
+      name: 'rotate-90',
+      invert: true
     },
     showTasksPanel: {
       type: 'booleanClass',
       hook: 'toggle-hidden-tasks',
-      name: 'rotate-180',
-      invert: true
+      name: 'rotate-90',
     }
   },
   events: {
@@ -117,6 +114,8 @@ module.exports = View.extend({
     this.listenTo(this.monitors, 'sync change:state', () => {
       this.updateFailingMonitors()
     })
+
+    this.tabContentViews = []
   },
   updateFailingMonitors () {
     this.failingMonitors = this.monitors.filter(monitor => {
@@ -155,91 +154,53 @@ module.exports = View.extend({
       }
     })
 
-    if (this.renderTasks === true) {
-      this.listenToAndRun(App.state.dashboard, 'change:tasksDataSynced', () => {
-        if (App.state.dashboard.tasksDataSynced === true) {
-          this.renderTasksPanel()
-          this.stopListening(App.state.dashboard, 'change:tasksDataSynced')
-        }
-      })
-    } else {
-      // remove panel container
-      this.queryByHook('tasks-panel').remove()
-    }
-
-    if (this.renderStats === true) {
-      this.renderSubview(
-        new StatsPanelView(),
-        this.queryByHook('.admin-container.dashboard')
-      )
-    }
-
-    this.onBoarding = new onBoarding()
-
-    if (acls.hasAccessLevel('admin')) {
-      this.renderPlusButton()
-    }
-
-    this.listenTo(App.state.searchbox, 'onrow', (data) => {
-      const row = data.row
-      const hit = data.hit
-      if (/Task/.test(row.model._type) || /Workflow/.test(row.model._type)) {
-        if (row.model.canExecute) {
-          row.show = Boolean(hit)
-        }
-      } else {
-        row.show = Boolean(hit)
+    this.listenToAndRun(App.state.dashboard, 'change:tasksDataSynced', () => {
+      if (App.state.dashboard.tasksDataSynced === true) {
+        this.renderTasksPanel()
+        this.stopListening(App.state.dashboard, 'change:tasksDataSynced')
       }
     })
 
-    this.listenToAndRun(App.state.searchbox, 'change:search', this.search)
-    this.listenTo(App.state.searchbox, 'change:rowsViews', this.search)
+    this.onBoarding = new onBoarding()
+
+    this.renderSubview(
+      new TabsView(),
+      this.queryByHook('tabs-container')
+    )
+
+    // this.listenToAndRun(App.state.dashboard, 'change:dataSynced', () => {
+    //   if (App.state.dashboard.dataSynced) {
+    //
+    //     this.stopListening(App.state.dashboard, 'change:dataSynced')
+    //   }
+    // })
+
+    let indicatorsTabView = this.queryByHook('indicators-tabview')
+    this.tabContentViews.push({name: TabsConstants.INDICATORS, view: indicatorsTabView})
+
+    let monitorsTabView = this.queryByHook('monitors-tabview')
+    this.tabContentViews.push({name: TabsConstants.MONITORS, view: monitorsTabView})
+
+    let workflowsTabView = this.queryByHook('workflows-tabview')
+    this.tabContentViews.push({name: TabsConstants.WORKFLOWS, view: workflowsTabView})
+
+    let notificationsTabView = this.queryByHook('notifications-tabview')
+    this.tabContentViews.push({name: TabsConstants.NOTIFICATIONS, view: notificationsTabView})
+
+    this.listenToAndRun(App.state.tabs, 'change:currentTab', () => {
+      for (const contentView of this.tabContentViews) {
+        if (contentView.name === App.state.tabs.currentTab) {
+          contentView.view.style.display = 'block'
+        } else {
+          contentView.view.style.display = 'none'
+        }
+      }
+    })
+
+    this.renderNotificationsPanel()
+    this.renderResultView()
 
     document.getElementsByClassName('navbar')[0].style.display = 'block'
-  },
-  search () {
-    if (this.monitorRows) {
-      if (App.state.searchbox.search) {
-        this.hideUpAndRunningSign()
-        this.monitorsFolding.unfold()
-      } else {
-        this.monitorsFolding.fold()
-        this.toggleUpAndRunningSign()
-      }
-    }
-
-    if (this.taskRows) {
-      this.runAllButton.visible = Boolean(App.state.searchbox.search)
-
-      if (App.state.searchbox.search.length > 3) {
-        const rows = this.taskRows.views.filter(row => row.show === true)
-        if (!rows || rows.length === 0) {
-          // no rows to show
-          this.runAllButton.disabled = true
-        } else {
-          // verify if all the tasks are not being executed
-          const nonExecutableTasks = rows
-          .map(row => row.model)
-          .find(task => {
-            if (/Task/.test(task._type)) {
-              return !task.canBatchExecute
-            }
-            if (/Workflow/.test(task._type)) {
-              var WFNotExecutable = false
-              task.tasks.models.forEach(function (wfTask) {
-                if (!wfTask.canBatchExecute) {
-                  WFNotExecutable = true
-                }
-              })
-              return WFNotExecutable
-            }
-          })
-          this.runAllButton.disabled = (nonExecutableTasks !== undefined)
-        }
-      } else {
-        this.runAllButton.disabled = true
-      }
-    }
   },
   toggleUpAndRunningSign () {
     // upandrunning is disabled
@@ -298,11 +259,6 @@ module.exports = View.extend({
       this.queryByHook('monitors-panel-header')
     )
 
-    this.renderSubview(
-      new TasksOptions(),
-      this.queryByHook('tasks-panel-header')
-    )
-
     this.monitorRows = this.renderCollection(
       this.groupedResources,
       MonitorRowView,
@@ -321,6 +277,7 @@ module.exports = View.extend({
     )
 
     this.listenToOnce(App.state.onboarding, 'first-host-registered', () => {
+      App.actions.tabs.setCurrentTab(TabsConstants.WORKFLOWS)
       this.onBoarding.onboardingStart()
     })
 
@@ -358,16 +315,6 @@ module.exports = View.extend({
     SearchboxActions.addRowsViews(this.monitorRows.views)
   },
   renderIndicatorsPanel () {
-    let indicatorsContainer = this.queryByHook('indicators-panel')
-
-    this.listenToAndRun(this.indicators, 'add remove', () => {
-      if (this.indicators.length===0) {
-        indicatorsContainer.style.display = 'none'
-      } else {
-        indicatorsContainer.style.display = 'block'
-      }
-    })
-
     this.indicatorsRows = this.renderCollection(
       this.indicators,
       IndicatorRowView,
@@ -379,12 +326,33 @@ module.exports = View.extend({
 
     SearchboxActions.addRowsViews(this.indicatorsRows.views)
   },
+  renderNotificationsPanel () {
+    this.inbox = new InboxView({collection: this.notifications})
+    this.renderSubview(
+      this.inbox,
+      this.queryByHook('notifications-container')
+    )
+
+    this.renderSubview(
+      new NotificationsOptions(),
+      this.queryByHook('notifications-panel-header')
+    )
+  },
+  renderResultView () {
+    this.resultView = new ResultView()
+    this.registerSubview(this.resultView)
+  },
   /**
    *
    * should be converted into a Tasks Panel View
    *
    */
   renderTasksPanel () {
+    this.renderSubview(
+      new TasksOptions(),
+      this.queryByHook('tasks-panel-header')
+    )
+
     this.taskRows = this.renderCollection(
       this.tasks,
       TaskRowView,
@@ -393,19 +361,6 @@ module.exports = View.extend({
         emptyView: TasksOboardingPanel
       }
     )
-
-    this.runAllButton = new RunAllTasksButton({
-      el: this.queryByHook('run-all-tasks')
-    })
-    this.runAllButton.render()
-    this.registerSubview(this.runAllButton)
-
-    this.listenTo(this.runAllButton, 'runall', () => {
-      const rows = this.taskRows.views.filter(row => {
-        return row.model.canExecute && row.show === true
-      })
-      runAllTasks(rows)
-    })
 
     const rowtooltips = this.query('[data-hook=tasks-container] .tooltiped')
     $(rowtooltips).tooltip()
@@ -437,50 +392,8 @@ module.exports = View.extend({
     //    }
     //  }
     //})
-  },
-  renderPlusButton () {
-    this.plusButton = new PlusMenuButton()
-    this.renderSubview(this.plusButton)
   }
 })
-
-const runAllTasks = (rows) => {
-  // doble check here
-  if (rows.length > 0) {
-    const tasks = rows.map(row => row.model)
-
-    const boxTitle = `With great power comes great responsibility`
-    const boxMessage = `You are going to run various tasks.<br> This operation cannot be canceled`
-
-    bootbox.confirm({
-      title: boxTitle,
-      message: boxMessage,
-      backdrop: true,
-      buttons: {
-        confirm: {
-          label: 'Run All',
-          className: 'btn-danger'
-        },
-        cancel: {
-          label: 'Maybe another time...',
-          className: 'btn-default'
-        }
-      },
-      callback (confirmed) {
-        if (confirmed === true) {
-
-          tasks.forEach(task => {
-            if (/Workflow/.test(task._type)) {
-              WorkflowActions.triggerExecution(task)
-            } else {
-              TaskActions.execute(task)
-            }
-          })
-        }
-      }
-    })
-  }
-}
 
 const EmptyIndicatorsView = View.extend({
   template: `<div>No Indicators</div>`

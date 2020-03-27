@@ -19,6 +19,7 @@ module.exports = AmpersandState.extend({
     indicatorsDataSynced: ['boolean',false,false],
     resourcesDataSynced: ['boolean',false,false],
     tasksDataSynced: ['boolean',false,false],
+    dataSynced: ['boolean',false,false],
     monitorsGroupBy: ['object',false, () => {
       return { prop: 'name' }
     }],
@@ -206,7 +207,8 @@ const createGroups = (resources, prop) => {
         type: `groupby-${prop}-${name}`,
         tags: keys,
         name: monitorPropertyValueDescriptionMap( name.toLowerCase() ),
-        description: `Grouped monitors by ${prop} property with value ${name}`
+        description: `Grouped monitors by ${prop} property with value ${name}`,
+        _type: 'ResourceGroup'
       })
     }
 

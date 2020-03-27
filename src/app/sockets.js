@@ -8,8 +8,10 @@ import HostStatsActions from 'actions/hoststats'
 import NotificationActions from 'actions/notifications'
 import HostActions from 'actions/host'
 import SessionActions from 'actions/session'
+import TabsActions from 'actions/tabs'
 const logger = require('lib/logger')('app:sockets')
 import OperationsConstants from 'constants/operations'
+import TabsConstants from 'constants/tabs'
 
 const defaultTopics = [
   'monitor-state',
@@ -72,6 +74,7 @@ const createWrapper = () => {
       // socket events handlers
       'notification-crud': event => { // always subscribed
         NotificationActions.handleNotification(event.model)
+        TabsActions.showNotification(TabsConstants.NOTIFICATIONS)
       },
       'session-customer-changed': event => { // temporal fix
         SessionActions.verifyCustomerChange(event.organization)
@@ -87,18 +90,7 @@ const createWrapper = () => {
       // subscribed by default. see defaultTopics definition
       'monitor-state': (event) => {
         ResourceActions.applyStateUpdate(event.model.id, event.model)
-      },
-      'host-integrations-crud': (event) => {
-        HostActions.applyStateUpdate(event.model.id, event.model)
-      },
-      'host-registered': event => {
-        App.actions.dashboard.loadNewRegisteredHostAgent(event.model)
-      },
-      'task-crud': (event) => {
-        App.actions.task.applyStateUpdate(event.model)
-      },
-      'indicator-crud': (event) => {
-        App.actions.indicator.applyStateUpdate(event.model, event.operation)
+        TabsActions.showNotification(TabsConstants.MONITORS)
       },
       'job-crud': (event) => {
         if (
@@ -108,15 +100,31 @@ const createWrapper = () => {
         ) {
           App.actions.job.applyStateUpdate(event.model)
           HostActions.applyIntegrationJobStateUpdates(event.model)
+          TabsActions.showNotification(TabsConstants.WORKFLOWS)
         }
       },
-      'job-scheduler-crud': (event) => {
+      'job-scheduler-crud': event => {
         // model is a scheduler job
         App.actions.scheduler.applyStateUpdate(event.model)
       },
-      'job-result-render': event => { // always subscribed
+      'job-result-render': event => { // always subscribed by default
         NotificationActions.handleResultNotification(event.model)
-      }
+      },
+      'host-integrations-crud': (event) => {
+        HostActions.applyStateUpdate(event.model.id, event.model)
+      },
+      'host-registered': event => {
+        App.actions.dashboard.loadNewRegisteredHostAgent(event.model)
+        TabsActions.showNotification(TabsConstants.MONITORS)
+      },
+      'task-crud': (event) => {
+        App.actions.task.applyStateUpdate(event.model)
+        TabsActions.showNotification(TabsConstants.WORKFLOWS)
+      },
+      'indicator-crud': (event) => {
+        App.actions.indicator.applyStateUpdate(event.model, event.operation)
+        TabsActions.showNotification(TabsConstants.INDICATORS)
+      },
     }
   })
 }

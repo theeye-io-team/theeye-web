@@ -20,8 +20,6 @@ class Dashboard extends Route {
 module.exports = Dashboard
 
 const prepareData = (options) => {
-  const { fetchTasks } = options
-
   App.state.dashboard.indicatorsDataSynced = false
   App.state.indicators.once('sync', () => {
     logger.log('indicators synced')
@@ -34,34 +32,29 @@ const prepareData = (options) => {
     App.state.dashboard.resourcesDataSynced = true
   })
 
-  if (fetchTasks) {
-    App.state.dashboard.tasksDataSynced = false
-    App.state.tasks.once('sync',() => {
-      logger.log('tasks synced')
-      App.state.dashboard.tasksDataSynced = true
-    })
-  }
+  App.state.dashboard.tasksDataSynced = false
+  App.state.tasks.once('sync', () => {
+    logger.log('tasks synced')
+    App.state.dashboard.tasksDataSynced = true
+  })
+
+  App.state.listenToAndRun(App.state.dashboard, 'change:indicatorsDataSynced change:resourcesDataSynced change:tasksDataSynced', () => {
+    if (App.state.dashboard.indicatorsDataSynced && App.state.dashboard.resourcesDataSynced && App.state.dashboard.tasksDataSynced) {
+      App.state.dashboard.dataSynced = true
+    }
+  })
 
   App.actions.dashboard.fetchData(options)
 }
 
 const index = (query) => {
   // const credential = App.state.session.user.credential
-  const tasksEnabled = Boolean(query.tasks != 'hide')
-  const statsEnabled = Boolean(query.stats == 'show')
-
-  prepareData({ fetchTasks: tasksEnabled })
-
-  return renderPageView({
-    renderTasks: tasksEnabled,
-    renderStats: statsEnabled
-  })
+  prepareData()
+  return renderPageView()
 }
 
 /**
  * @param {Object} options
- * @property {Mixed[]} options.renderStats
- * @property {Mixed[]} options.renderTasks
  * @return {AmpersandView} page view
  */
 const renderPageView = (options) => {
@@ -70,7 +63,6 @@ const renderPageView = (options) => {
     indicators: App.state.indicators,
     monitors: App.state.resources,
     tasks: App.state.dashboard.groupedTasks,
-    renderTasks: options.renderTasks,
-    renderStats: options.renderStats
+    notifications: App.state.inbox.filteredNotifications
   })
 }

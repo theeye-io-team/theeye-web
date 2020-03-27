@@ -143,7 +143,8 @@ const groupByTags = (models, tags) => {
         groupby: lctag,
         id: uuidv4(),
         name: lctag,
-        description: lctag
+        description: lctag,
+        _type: 'TaskGroup'
       })
     )
   })

@@ -8,7 +8,6 @@ require('app/models')()
 
 import AppState from 'state'
 import Router from 'router'
-import ChatBox from 'components/chat'
 import RootContainer from 'view/root-container'
 
 require('app/events')
@@ -55,8 +54,6 @@ App.extend({
   },
   registerComponents () {
     const state = App.state
-
-    const chat = new ChatBox.ChatBoxBaloon()
 
     const root = new RootContainer({ el: document.getElementById('root') })
     state.on('change:currentPage', () => {

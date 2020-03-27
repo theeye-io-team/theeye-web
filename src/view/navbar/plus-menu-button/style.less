@@ -1,0 +1,54 @@
+.plus-menu-button {
+  i.plus-icon {
+    font-size: 32px;
+    margin-top: 1px;
+    line-height: 30px;
+  }
+
+  .plus-menu-popup {
+    cursor: auto;
+    position: absolute;
+    right: 3px;
+    border: none;
+    min-width: 175px;
+    background-color: #FFF;
+    top: 65px;
+    border-radius: 2px;
+    box-shadow: 0 8px 6px -6px rgba(0,0,0,0.2), 0 2px 10px rgba(0,0,0,.2);
+
+    .plus-menu-links, .plus-menu-links li {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      width: 100%;
+    }
+
+    .plus-menu-links li  a {
+      padding: 15px 60px;
+      display: block;
+      position: relative;
+      text-shadow: none;
+      font-size: 16px;
+      font-weight: 400;
+      color: #23324C;
+      line-height: 14px;
+    }
+
+    .plus-menu-links li a:hover {
+      background-color: #f6f6f6;
+      color: #23324C;
+    }
+
+    .plus-menu-links li a:before {
+      position: absolute;
+      top: 14px;
+      left: 20px;
+      width: 24px;
+      height: 24px;
+      font-family: FontAwesome;
+      display: inline-block;
+      color: #23324C;
+      text-align: center;
+    }
+  }
+}

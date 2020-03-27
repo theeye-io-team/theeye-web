@@ -13,3 +13,7 @@ exports.JOB_START_NOTIFICATION = {
 exports.JOB_NOTIFICATION = {
   topic: 'job-crud'
 }
+
+exports.WEBHOOK_NOTIFICATION = {
+  topic: 'webhook-triggered'
+}

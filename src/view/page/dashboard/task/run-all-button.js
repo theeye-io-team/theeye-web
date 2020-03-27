@@ -30,7 +30,7 @@ module.exports = View.extend({
     <section>
       <button class="btn btn-danger btn-block" style="padding:14px; font-size:16px;">
         <span>Run all these tasks</span>&nbsp;
-        <i class="fa fa-forward" style="font-size: xx-large; position: absolute; top: 10px;"></i>
+        <i class="fa fa-forward" style="font-size: 25px;display: inline-flex;position: absolute;margin-left: 5px;line-height: 21px;"></i>
       </button>
     </section>
   `

@@ -65,6 +65,8 @@ const filterRows = () => {
   const terms = parseTerms(search)
 
   let totalMatches = []
+  SearchActions.clearResults()
+
   rows.forEach(row => {
     if (!row.model.formatted_tags) {
       logger.error('no formatted_tags property available in model')
@@ -90,6 +92,10 @@ const filterRows = () => {
     const hit = Boolean(matches.length > 0)
 
     SearchActions.onRow(row, hit)
+
+    if (hit) {
+      SearchActions.addResults(row.model)
+    }
   })
 
   SearchActions.setMatches(parseMatches(totalMatches))

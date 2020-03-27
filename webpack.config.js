@@ -22,7 +22,8 @@ module.exports = {
     app: `${__dirname}/src/main.js`
   },
   externals: {
-    grecaptcha: 'grecaptcha'
+    grecaptcha: 'grecaptcha',
+    fcWidget: 'fcWidget'
   },
   devtool: IS_PRODUCTION ? 'source-map' : '#inline-source-map',
   output: {

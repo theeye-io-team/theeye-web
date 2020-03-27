@@ -1,12 +1,16 @@
 import State from 'ampersand-state'
 import filterRows from './filter-rows'
 import uriFragment from 'lib/uri-fragment'
+import AmpersandCollection from 'ampersand-collection'
 
 const SearchBoxState = State.extend({
   props: {
     search: ['string', false, ''],
     matches: ['array', false, () => { return [] }],
     rowsViews: ['array', false, () => { return [] }]
+  },
+  collections: {
+    results: AmpersandCollection
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)

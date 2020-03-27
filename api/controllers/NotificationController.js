@@ -322,7 +322,8 @@ const createEventNotifications = (req, res, done) => {
 const handledTopics = [
   'monitor-state',
   'job-crud',
-  'job-scheduler-crud'
+  'job-scheduler-crud',
+  'webhook-triggered'
 ]
 
 const isHandledNotificationEvent = (event) => {

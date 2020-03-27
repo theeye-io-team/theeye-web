@@ -16,7 +16,7 @@ module.exports = View.extend({
   template: `
     <section>
       <div style="text-align:center; font-size:16px;">
-        <h2>You don't have any Task.</h2>
+        <h2 style="display:inline-block;">You don't have any Task.</h2>
         <h2 data-hook="no-agent">You have to install a Bot before you create a task.</h2>
         <div data-tutorial="task-onboarding" data-hook="create-task" style="display:inline-block">
       </div>

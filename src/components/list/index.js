@@ -11,7 +11,7 @@ module.exports = View.extend({
   template: `
     <div class="admin-container">
       <div class="admin-panel">
-        <h3 data-hook="list-title"></h3>
+        <h3 class="list-title" data-hook="list-title"></h3>
         <div>
           <div data-hook="header-container"></div>
           <div id="new-accordion" data-hook="list-container"

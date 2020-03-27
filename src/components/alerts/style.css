@@ -4,6 +4,7 @@
   right: 10px;
   top: 85px;
   width: 300px;
+  z-index: 1001;
 }
 
 .alert-container .alert {

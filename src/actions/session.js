@@ -5,6 +5,7 @@ const config = require('config')
 import bootbox from 'bootbox'
 import assign from 'lodash/assign'
 import reject from 'lodash/reject'
+import ChatActions from './chat'
 
 import jwtDecode from 'jwt-decode'
 
@@ -101,6 +102,7 @@ module.exports = {
           sessionState.user.customers.set(customers)
         }
         sessionState.logged_in = true
+        ChatActions.setUser()
         next()
       },
       fail: (err,xhr) => {

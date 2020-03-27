@@ -35,6 +35,8 @@ import WorkflowPageState from './workflow-page'
 import WorkflowVisualizerState from './workflow-visualizer'
 import LocalSettings from './local-settings'
 import SearchBoxState from './searchbox'
+import TabsState from './tabs'
+import SideMenuState from './sideMenu'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
@@ -109,7 +111,8 @@ const AppState = State.extend({
     workflowVisualizer: ['state', false, () => new WorkflowVisualizerState()],
     onHold: ['state', false, () => new OnHoldState()],
     taskForm: ['state', false, () => new TaskFormState()],
-    popup: ['state', false, () => new PopupState()]
+    popup: ['state', false, () => new PopupState()],
+    tabs: ['state', false, () => new TabsState()]
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)
@@ -123,6 +126,7 @@ const AppState = State.extend({
     this.session = new SessionState()
     this.localSettings = new LocalSettings()
     this.navbar = new NavbarState()
+    this.sideMenu = new SideMenuState()
     this.credentials = new CredentialsCollection()
     this.looptimes = new Collection(looptimes)
     this.severities = new Collection(severities)
@@ -260,8 +264,20 @@ const _initCollections = function () {
     members: new Members([]),
     events: new Events([]),
     notifications: new Notifications([]),
-    workflows: new Workflows([]),
-    //emitters: new Emitters([]),
+    workflows: new Workflows([])
+  })
+
+  this.tasks.on('change', (model) => {
+    if (model.type === TaskConstants.TYPE_SCRIPT) {
+      if (model.script_runas) {
+        getHash(model.script_runas, hash => {
+          this.runners.add({
+            runner: model.script_runas,
+            id: hash
+          })
+        })
+      }
+    }
   })
 
   this.tasks.on('change', (model) => {

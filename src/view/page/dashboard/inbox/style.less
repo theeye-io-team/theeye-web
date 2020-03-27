@@ -1,0 +1,51 @@
+.inbox-container {
+  .panel-body {
+    padding: 15px 15px 15px 60px;
+  }
+
+  .capitalize {
+    text-transform: capitalize;
+  }
+
+  .inbox-entry.success [data-hook=icon],
+  .inbox-entry.recovered [data-hook=icon],
+  .inbox-entry.normal [data-hook=icon] {
+    color: #50d841;
+  }
+
+  .inbox-entry.failure [data-hook=icon],
+  .inbox-entry.updates_stopped [data-hook=icon] {
+    color: #ff4d4d;
+  }
+
+  .inbox-entry.NotificationJob [data-hook=icon] { color: #f4bc4a; }
+
+  .no-notifications {
+    height: 100%;
+    text-align: center;
+    padding: 80px 0px;
+    color: #FFF;
+    font-size: 18px;
+  }
+
+  .icon-check { color: #50d841; }
+  .icon-info { color: #00dcff; }
+  .icon-warn { color: #ffff00; }
+  .icon-fatal { color: #ff4d4d; }
+  .icon-error { color: #ff4d4d; }
+
+  .inbox-entry.severity-low [data-hook=icon] { color: #0085ff; }
+  .inbox-entry.severity-high [data-hook=icon] { color: #ff8640; }
+  .inbox-entry.severity-critical [data-hook=icon] { color: #ff4d4d; }
+
+  [data-hook=icon] {
+    font-size: 24px;
+    line-height: 24px;
+  }
+
+  [data-hook=modelName] {
+    font-weight: 400;
+  }
+
+  .default-color { background-color: #d88e47; }
+}

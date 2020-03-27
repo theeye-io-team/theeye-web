@@ -1,77 +1,14 @@
-/* left panel styles */
-.eyemenu-panel {
-  position:fixed;
-  left:-360px;
-  top:0;
-  bottom:0;
-  height:100%;
-  width:360px;
-  background:#23324c;
-  color:#fff;
-  z-index:999;
-  display:block;
-  transition: 0.5s;
-  overflow-x: hidden;
-}
-.eyemenu-panel a {text-shadow:none;color:#fff}
-.eyemenu-panel .eyemenu-links, .eyemenu-panel .eyemenu-links li {list-style:none;margin:0;padding:0}
-.eyemenu-panel .eyemenu-links li a {padding:15px 36px 15px 76px;display:block;-o-transition:.25s;-ms-transition:.25s;-moz-transition:.25s;-webkit-transition:.25s;transition:.25s;position:relative}
-.eyemenu-panel .eyemenu-links li a:hover {background:#192435}
-.eyemenu-panel .eyemenu-links li a:before {position:absolute;top:14px;left:35px;content:'';width:24px;height:24px;  font-family: FontAwesome;display: inline-block;}
-.eyemenu-panel .eyemenu-links li a.eyemenu-dashboard:before {content: "\f015";}
-.eyemenu-panel .eyemenu-links li a.eyemenu-monitors:before {content: "\f108";}
-.eyemenu-panel .eyemenu-links li a.eyemenu-tasks:before {content: "\f04b";}
-.eyemenu-panel .eyemenu-links li a.eyemenu-webhooks:before {content: "\f0ec";}
-.eyemenu-panel .eyemenu-links li a.eyemenu-scripts:before {content: "\f120";}
-.eyemenu-panel .eyemenu-links li a.eyemenu-templates:before {content: "\f0ad";}
-.eyemenu-panel .eyemenu-links li a.eyemenu-users:before {content: "\f0c0";}
-.eyemenu-panel .eyemenu-links li a.eyemenu-organizations:before {content: "\f19c";}
-.eyemenu-panel .eyemenu-links li a.eyemenu-profile:before {content: "\f2bd";}
-.eyemenu-panel .eyemenu-links li a.eyemenu-settings:before {content: "\f013";}
-.eyemenu-panel .eyemenu-links li a.eyemenu-logout:before {content: "\f08b";}
-.eyemenu-panel .eyemenu-links li a.eyemenu-charts:before {content: "\f201";}
-
-.eyemenu-panel .eyemenu-top-panel {background:#192435;padding:10px 24px 20px 36px;width:100%;border-bottom:1px solid #23324c;height:124px;}
-.eyemenu-panel .eyemenu-bot-panel {width:100%;overflow-y:scroll;overflow-x:hidden;}
-.eyemenu-panel .eyemenu-main-user {width:43%;}
-.eyemenu-panel .eyemenu-main-user h4, .eyemenu-panel .eyemenu-main-user a {width:136px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.eyemenu-panel .eyemenu-main-user i {border-radius:50%;font-size:48px;color:#f6b2b1;background:#e93e3c}
-.eyemenu-panel .eyemenu-main-user h4 {font-weight:600;margin-bottom:0}
-.eyemenu-panel .eyemenu-secondary-users {width:43%;text-align:center;}
-.eyemenu-panel .eyemenu-secondary-users i {border-radius:50%;font-size:30px;margin:12px 5px 14px;color:#dbdbda;background:#b8b7b5}
-.eyemenu-panel .eyemenu-secondary-users i.active {color:#f7d197;background:#f4aa4a}
-.eyemenu-panel .eyemenu-switch-panels {font-size:24px;padding:10px;cursor:pointer;width:12%;}
-.eyemenu-panel .eyemenu-clients .eyemenu-client span {vertical-align:super;margin-left:12px;color:#b8bdc6}
-.eyemenu-panel .eyemenu-links .eyemenu-client a:before {display:none}
-.eyemenu-panel .eyemenu-links .eyemenu-client a {padding-left:34px}
-.eyemenu-panel .eyemenu-clients .eyemenu-client.active span {font-weight:bold;color:#fff}
-.eyemenu-panel .eyemenu-clients i {border-radius:50%;font-size:30px;color:#dbdbda;background:#b8b7b5;}
-.eyemenu-panel .eyemenu-clients i.fa-angle-right {font-size:18px}
-.eyemenu-results-panel.eyemenu-panel .eyemenu-client i.fa-angle-right {margin-top:4px}
-.eyemenu-panel .eyemenu-clients i.fa-angle-right {border-radius:0;color:#fff;background:transparent}
-.eyemenu-panel .eyemenu-clients .eyemenu-client.active i {color:#f7d197;background:#f4aa4a}
-
-.eyemenu-panel-show {left:0px}
-.eyemenu-panel-hide {left:-360px}
-
-/* results panel style */
-.eyemenu-results-panel {position:absolute;display:none;left:0;top:0;background:#23324c;top:57px;width:100%;float:left;height:auto;bottom:inherit}
-.eyemenu-results-panel.eyemenu-panel .eyemenu-clients {display:block}
-.eyemenu-results-panel.eyemenu-panel .eyemenu-clients li {float:none;display:block;font-size:14px}
-.eyemenu-results-panel.eyemenu-panel .eyemenu-clients li a {height:auto;font-weight:normal;color:#fff}
-
 /* header styles */
 .navbar-eyemenu {background:#fff}
-.navbar-eyemenu .eyemenu-panel-launcher {cursor:pointer;color:#003166;font-size:24px;}
+.navbar-eyemenu .eyemenu-panel-launcher {cursor:pointer;color:#23324C;font-size:24px;}
 .navbar-eyemenu .eyemenu-panel-innerlauncher {
   height:54px;
-  background: #192435;
+  background: #1a2538;
   width: 100%;
   top: 0px;
   position: relative;
   left: 0;
-  color: #344158;
-  /*color: #23324c;*/
+  color: #23324C;
   margin: 0;
   padding-top: 10px;
   padding-left: 15px;
@@ -81,30 +18,30 @@
 .navbar-eyemenu .eyemenu-panel-innerlauncher i { color: #fff; padding-left:8px; }
 .navbar-eyemenu .navbar-brand {border:none;height:auto;padding:10px 15px;}
 
-.navbar-eyemenu input::-webkit-input-placeholder {color: #005580}
-.navbar-eyemenu input::-moz-placeholder {color: #005580}
-.navbar-eyemenu input:-ms-input-placeholder {color: #005580}
-.navbar-eyemenu input:-moz-placeholder {color: #005580}
-.navbar-eyemenu .eyemenu-search-panel-desktop input {padding:6px 48px;color:#005580;border:none;font-size:21px;width:85%;outline:none!important;margin-top:14px;background:#f8f8f8}
+.navbar-eyemenu input::-webkit-input-placeholder {color: #23324C}
+.navbar-eyemenu input::-moz-placeholder {color: #23324C}
+.navbar-eyemenu input:-ms-input-placeholder {color: #23324C}
+.navbar-eyemenu input:-moz-placeholder {color: #23324C}
+.navbar-eyemenu .eyemenu-search-panel-desktop input {padding:6px 48px;color:#23324C;border:none;font-size:21px;width:75%;outline:none!important;margin-top:14px;background:none;border-bottom:1px solid;}
 .navbar-eyemenu .eyemenu-search-panel-desktop .fa-search {
   position: absolute;
   left: 10px;
   top: 10px;
   font-size: 24px;
   padding: 11px 15px 11px 0;
-  color: #005580;
+  color: #23324C;
 }
 .navbar-eyemenu .eyemenu-search-panel-desktop .fa-times-circle {
   position: absolute;
-  right: 14%;
+  right: 24%;
   top: 12px;
   font-size: 24px;
   padding: 11px 15px 11px 0;
-  color: #00558080;
+  color: #23324C;
   cursor: pointer;
 }
 .navbar-eyemenu .eyemenu-search-panel-desktop .fa-times-circle:hover {
-  color: #005580;
+  color: #23324C;
 }
 .navbar-eyemenu .navbar-right {margin:0;position:relative}
 .navbar-eyemenu .eyemenu-search-panel-clear {position:absolute;right:0;top:0;font-size:24px;color:#ccc;padding:11px 15px;cursor:pointer;color:#005580;display:none}
@@ -123,38 +60,34 @@
 /* responsiveness */
 @media (max-width: 767px) {
 	.navbar-eyemenu .eyemenu-search-panel-mobile {position:fixed;top:0;left:0;right:0;background:#fff;height:50px;}
-	.navbar-eyemenu .eyemenu-search-panel-mobile input {padding:12px;color:#005580;border:none;font-size:18px;outline:none!important;margin-left:36px;width:90%}
-	.navbar-eyemenu .eyemenu-search-panel-mobile .fa-arrow-left {position:absolute;left:0;top:0;color:#ccc;padding:17px;cursor:pointer;color:#005580}
+	.navbar-eyemenu .eyemenu-search-panel-mobile input {padding:12px;color:#23324C;border:none;font-size:18px;outline:none!important;margin-left:36px;width:90%}
+	.navbar-eyemenu .eyemenu-search-panel-mobile .fa-arrow-left {position:absolute;left:0;top:0;color:#ccc;padding:17px;cursor:pointer;color:#23324C}
   .navbar-eyemenu .eyemenu-search-panel-mobile .fa-times-circle {
     position: absolute;
     right: 1%;
     top: 3px;
     font-size: 24px;
     padding: 11px 15px 11px 0;
-    color: #00558080;
+    color: #23324C;
     cursor: pointer;
   }
   .navbar-eyemenu .eyemenu-search-panel-mobile .fa-times-circle:hover {
-    color: #005580;
+    color: #23324C;
   }
-	.navbar-eyemenu .eyemenu-search-icon.hidden-sm {padding:10px 15px 10px 15px;font-size:21px;float:right;top:0;right:0;color:#ccc;cursor:pointer;color:#005982}
+	.navbar-eyemenu .eyemenu-search-icon.hidden-sm {padding:10px 15px 10px 15px;font-size:21px;float:right;top:0;right:0;color:#ccc;cursor:pointer;color:#23324C}
 	.navbar-eyemenu .eyemenu-panel-launcher {padding:10px 15px 10px 15px;font-size:21px;}
 	.navbar-eyemenu .eyemenu-panel-launcher.eyemenu-panel-innerlauncher {margin:0;}
-
-	.eyemenu-results-panel {width:100%;position:fixed;left:0;right:0;top:55px;border-bottom:1px solid #526897}
-	.eyemenu-results-panel.eyemenu-panel .eyemenu-links li a {padding:15px 16px 15px 56px}
-	.eyemenu-results-panel.eyemenu-panel .eyemenu-links .eyemenu-client a {padding-left:14px}
-	.eyemenu-results-panel.eyemenu-panel .eyemenu-links li a:before {left:15px}
 
   .navbar-eyemenu .navbar-brand {padding:9px 10px;}
   .navbar-eyemenu .navbar-brand>img {height:32px;}
 }
 
 @media (min-width: 768px) {
-	.eyemenu-panel {top:76px}
-	.navbar-eyemenu .eyemenu-panel-launcher {padding:19px 15px; padding-left:29px;}
+  .navbar-eyemenu .navbar-right {right:20px;}
+	.navbar-eyemenu .eyemenu-panel-launcher {padding:19px;}
+  .navbar-eyemenu .eyemenu-panel-launcher.burger-button {padding-left:31px;}
 	.navbar-eyemenu .hidden-sm {display:none!important}
 	.navbar-eyemenu .eyemenu-search-panel-clear {right:15%;top:12px}
-	.eyemenu-results-panel {width:85%}
   .navbar-eyemenu .navbar-brand>img {height:52px;}
+  .navbar-eyemenu .navbar-buttons {left: 10px;position: relative;}
 }
