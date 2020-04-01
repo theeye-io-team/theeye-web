@@ -1,5 +1,5 @@
 import State from 'ampersand-state'
-import filterRows from './filter-rows'
+import {filterRows, findMatches} from './filter-rows'
 import uriFragment from 'lib/uri-fragment'
 import AmpersandCollection from 'ampersand-collection'
 
@@ -14,9 +14,6 @@ const SearchBoxState = State.extend({
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)
-
-    //const uri = new URI(window.location)
-    //const fragment = uri.fragment()
     const fragment = uriFragment.get()
 
     if (fragment.search) {
@@ -31,6 +28,9 @@ const SearchBoxState = State.extend({
     this.listenTo(this, 'change:rowsViews', () => {
       filterRows()
     })
+  },
+  findMatches (search) {
+    findMatches(search)
   }
 })
 

@@ -9,6 +9,12 @@ module.exports = {
     App.state.searchbox.search = pattern
     logger.log('searching')
   },
+  findMatches (pattern) {
+    if (pattern === App.state.searchbox.search) {
+      return
+    }
+    App.state.searchbox.findMatches(pattern)
+  },
   clear () {
     App.state.searchbox.search = ''
     logger.log('search ended')

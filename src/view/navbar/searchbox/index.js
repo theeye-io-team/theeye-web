@@ -38,13 +38,27 @@ module.exports = View.extend({
   },
   events: {
     'input input': 'oninput',
+    'keypress input': 'onkeypress',
     'click [data-hook=search-button-mobile]': 'onClickSearchMobile',
     'click [data-hook=endsearch-button-mobile]': 'onClickEndSearchMobile',
     'click [data-hook=endsearch-icon]': 'onClickEndSearchMobile'
   },
   oninput (event) {
     this.showDeleteButton = event.target.value.length > 0
-    SearchActions.search(event.target.value)
+    if (event.target.value.length === 0) {
+      this.endsearch()
+    } else {
+      SearchActions.clear()
+      SearchActions.findMatches(event.target.value)
+    }
+  },
+  onkeypress (event) {
+    if (event.keyCode === 13) {
+      SearchActions.search(event.target.value)
+      this.closeAutocompleteLists()
+      SearchActions.clearMatches()
+      return
+    }
   },
   onClickSearchMobile (event) {
     this.showMobileInput = true
