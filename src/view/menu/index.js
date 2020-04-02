@@ -271,9 +271,5 @@ module.exports = View.extend({
   renderSettingsMenu () {
     this.settings = new SettingsMenu()
     this.registerSubview(this.settings)
-  },
-  remove () {
-    View.prototype.remove.apply()
-    console.log("remove fired")
   }
 })
