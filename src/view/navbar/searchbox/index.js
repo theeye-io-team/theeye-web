@@ -5,7 +5,6 @@ import App from 'ampersand-app'
 import './styles.less'
 
 module.exports = View.extend({
-  autoRender: true,
   template: require('./template.hbs'),
   props: {
     inputValue: ['string', false, ''],
