@@ -104,7 +104,8 @@ module.exports = View.extend({
       }
     }],
     removeEmptyValues: ['boolean', false, false],
-    ajaxUrl: ['string', false, '']
+    ajaxUrl: ['string', false, ''],
+    enabled: 'boolean'
   },
   derived: {
     value: {
@@ -249,6 +250,16 @@ module.exports = View.extend({
 
     // the change:options will trigger only when the options object is completelly replaced
     this.listenTo(this, 'change:options', this.updateOptions)
+
+    this.listenToAndRun(this, 'change:enabled', () => {
+      if (typeof this.enabled !== 'boolean') return
+
+      if (this.enabled === true) {
+        this.$select.removeAttr('disabled')
+      } else if (this.enabled === false) {
+        this.$select.attr('disabled', true)
+      }
+    })
   },
   getTextAttribute (attrs) {
     // use a custom user function to build the display text
@@ -403,5 +414,5 @@ module.exports = View.extend({
       })
     }
     return selected
-  }
+  },
 })

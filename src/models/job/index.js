@@ -54,7 +54,6 @@ const BaseJob = AppModel.extend({
     event: 'any',
     event_id: 'string',
     _type: 'string',
-    //task: 'object',
     task_arguments_values: 'array',
     output: 'any',
     workflow_id: 'string',
@@ -62,6 +61,17 @@ const BaseJob = AppModel.extend({
   },
   children: {
     user: User
+  },
+  requireUserInteraction (user) {
+    let task = this.task
+    let interact = false
+    if (task.user_inputs === true) {
+      let members = task.user_inputs_members
+      if (Array.isArray(members) && members.length > 0) {
+        interact = (members.indexOf(user.id) !== -1)
+      }
+    }
+    return interact || this.isOwner(user)
   },
   isOwner (user) {
     if (!user.email) { return false }
@@ -88,8 +98,11 @@ const BaseJob = AppModel.extend({
     taskModel: {
       deps: ['task'],
       fn () {
-        if (!this.task) { return {} }
-        return new App.Models.Task.Factory(this.task, {})
+        return this.task
+        //if (!this.task) {
+        //  return {}
+        //}
+        //return new App.Models.Task.Factory(this.task, {})
       }
     }
   }
@@ -284,6 +297,16 @@ const JobFactory = function (attrs, options={}) {
     return model
   }
 
+  // this model is being added to a task.collection
+  //if (
+  //  options.collection &&
+  //  options.collection.parent &&
+  //  !options.collection.parent.isCollection &&
+  //  /Task/.test(options.collection.parent._type) === true
+  //) {
+  //  attrs.task = options.collection.parent
+  //}
+
   model = createModel()
   if (options.collection !== App.state.jobs) {
     App.state.jobs.add(model, {merge:true})
@@ -294,7 +317,14 @@ const JobFactory = function (attrs, options={}) {
 const Collection = AppCollection.extend({
   comparator: 'creation_date',
   url: urlRoot,
-  model: JobFactory,
+  model: (attrs, options) => {
+    let model = new JobFactory(attrs, options)
+    if (options.collection.child_of) {
+      let task = options.collection.child_of
+      model.task.set(task.serialize())
+    }
+    return model
+  },
   isModel (model) {
     let isModel = (
       model instanceof ScraperJob ||
@@ -304,6 +334,12 @@ const Collection = AppCollection.extend({
       model instanceof NotificationJob
     )
     return isModel
+  },
+  initialize (models, options) {
+    if (options && options.child_of) {
+      this.child_of = options.child_of
+    }
+    AppCollection.prototype.initialize.apply(this, arguments)
   }
 })
 

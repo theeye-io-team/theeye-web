@@ -82,8 +82,38 @@ module.exports = TaskFormView.extend({
       'multitasking',
       'env',
       'user_inputs',
+      'user_inputs_members',
       'show_result'
     ]
+
+    const requireUserInputs = new CheckboxView({
+      visible: false,
+      label: 'Require user interaction',
+      name: 'user_inputs',
+      value: this.model.user_inputs
+    })
+
+    const userInputsMembers = new MembersSelectView({
+      //multiple: true,
+      required: false,
+      visible: false,
+      name: 'user_inputs_members',
+      value: this.model.user_inputs_members,
+      label: 'Specific users interaction',
+      idAttribute: 'id',
+      textAttribute: 'label',
+      filterOptions: [
+        item => {
+          return item.credential !== 'viewer'
+        }
+      ],
+      enabled: (this.model.user_inputs === true)
+    })
+
+    let form = this
+    requireUserInputs.on('change:value', (elem) => {
+      userInputsMembers.enabled = (elem.value === true)
+    })
 
     this.fields = [
       new InputView({
@@ -221,12 +251,8 @@ module.exports = TaskFormView.extend({
         name: 'multitasking',
         value: this.model.multitasking
       }),
-      new CheckboxView({
-        visible: false,
-        label: 'Require user inputs',
-        name: 'user_inputs',
-        value: this.model.user_inputs
-      }),
+      requireUserInputs,
+      userInputsMembers,
       new CheckboxView({
         visible: false,
         label: 'Result Popup',
@@ -299,6 +325,7 @@ module.exports = TaskFormView.extend({
     this.addHelpIcon('env')
     this.addHelpIcon('multitasking')
     this.addHelpIcon('user_inputs')
+    this.addHelpIcon('user_inputs_members')
     this.addHelpIcon('show_result')
 
     const buttons = this.buttons = new Buttons()

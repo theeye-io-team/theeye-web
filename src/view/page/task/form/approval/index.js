@@ -36,7 +36,7 @@ module.exports = TaskFormView.extend({
         value: this.model.name,
       }),
       new MembersSelectView({
-        multiple: true,
+        //multiple: true,
         required: true,
         visible: true,
         name: 'approvers',

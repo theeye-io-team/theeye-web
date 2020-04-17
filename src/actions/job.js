@@ -291,7 +291,7 @@ const isOnHoldUpdate = (job) => {
       App.actions.onHold.check(job)
     }
   } else {
-    if (job.isOwner(user)) {
+    if (job.requireUserInteraction(user)) {
       App.actions.onHold.check(job)
     }
   }

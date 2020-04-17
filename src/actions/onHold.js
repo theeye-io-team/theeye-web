@@ -35,8 +35,10 @@ const checkOnHold = (job) => {
       let check = (
         task.type === TaskConstants.TYPE_APPROVAL &&
         task.isApprover(App.state.session.user)
-      ) || task.type === TaskConstants.TYPE_SCRIPT
-
+      ) || (
+        task.type === TaskConstants.TYPE_SCRIPT &&
+        task.user_inputs === true
+      )
       return check
     })
 
@@ -49,6 +51,40 @@ const checkOnHold = (job) => {
       App.actions.onHold.release()
     })
   }
+}
+
+const checkUserTasks = (userTasksToCheck, callback) => {
+  let onHoldJobs = []
+  each(userTasksToCheck, (task, done) => {
+    task.fetchJobs({
+      forceFetch: true,
+      query: { lifecycle: LifecycleConstants.ONHOLD }
+    }, done)
+  }, err => {
+    if (err) {
+      return callback(err)
+    }
+    userTasksToCheck.forEach(task => {
+      task.jobs.models.forEach(job => {
+        //job.task.set(
+        if (job.lifecycle === LifecycleConstants.ONHOLD && ! job.skip) {
+          if (job._type === JobConstants.APPROVAL_TYPE) {
+            onHoldJobs.push(job)
+          } else if (job._type === JobConstants.SCRIPT_TYPE) {
+            if (job.requireUserInteraction(App.state.session.user)) {
+              onHoldJobs.push(job)
+            }
+          }
+        }
+      })
+    })
+
+    if (onHoldJobs.length === 0) {
+      return callback()
+    } else {
+      executeOnHoldJobs(onHoldJobs)
+    }
+  })
 }
 
 const executeOnHoldJobs = (onHoldJobs) => {
@@ -66,38 +102,6 @@ const executeOnHoldJobs = (onHoldJobs) => {
       checkOnHold()
     } else {
       App.actions.onHold.release()
-    }
-  })
-}
-
-const checkUserTasks = (userTasksToCheck, callback) => {
-  let onHoldJobs = []
-  each(userTasksToCheck, (task, done) => {
-    task.fetchJobs({
-      forceFetch: true,
-      query: { lifecycle: LifecycleConstants.ONHOLD }
-    }, done)
-  }, err => {
-    if (err) { return callback(err) }
-
-    userTasksToCheck.forEach(task => {
-      task.jobs.models.forEach(job => {
-        if (job.lifecycle === LifecycleConstants.ONHOLD && ! job.skip) {
-          if (job._type === JobConstants.APPROVAL_TYPE) {
-            onHoldJobs.push(job)
-          } else if (job._type === JobConstants.SCRIPT_TYPE && job.workflow_job_id) {
-            if (job.isOwner(App.state.session.user)) {
-              onHoldJobs.push(job)
-            }
-          }
-        }
-      })
-    })
-
-    if (onHoldJobs.length === 0) {
-      return callback()
-    } else {
-      executeOnHoldJobs(onHoldJobs)
     }
   })
 }

@@ -22,7 +22,7 @@ const Schema = AppModel.extend({
     workflow_id: 'string',
     public: 'boolean',
     name: 'string',
-    description: ['string',false,''],
+    description: 'string',
     acl: 'array',
     secret: 'string',
     grace_time: 'number',
@@ -34,8 +34,9 @@ const Schema = AppModel.extend({
     timeout: 'number',
     //_id: 'string',
     _type: 'string', // discriminator
-    show_result: ['boolean', false, false],
-    user_inputs: ['boolean',false,false]
+    show_result: 'boolean',
+    user_inputs: 'boolean',
+    user_inputs_members: 'array'
   },
   derived: {
     hasWorkflow: {
@@ -65,6 +66,7 @@ const Schema = AppModel.extend({
     task_arguments: TaskArguments,
     schedules: ScheduleCollection,
     jobs: function (models, options) {
+      options.child_of = options.parent
       return new App.Models.Job.Collection(models, options)
     }
   },
