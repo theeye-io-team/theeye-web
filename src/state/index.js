@@ -121,18 +121,11 @@ const AppState = State.extend({
 
     App.loader.screenblock = true
     this.loader = App.loader
-
     this.session = new SessionState()
     this.localSettings = new LocalSettings()
     this.navbar = new NavbarState()
     this.sideMenu = new SideMenuState()
     this.searchbox = new SearchBoxState()
-    this.credentials = new CredentialsCollection()
-    this.looptimes = new Collection(looptimes)
-    this.severities = new Collection(severities)
-    this.indicatorTypes = new Collection(indicatorTypes)
-    this.runners = new Collection([])
-
     this.inbox = new InboxState({ appState: this })
   },
   appInit () {
@@ -267,11 +260,17 @@ const _initCollections = function () {
     workflows: new Workflows([])
   })
 
-  this.tasks.on('change', (model) => {
+    const runners = this.runners = new Collection([])
+    this.credentials = new CredentialsCollection()
+    this.looptimes = new Collection(looptimes)
+    this.severities = new Collection(severities)
+    this.indicatorTypes = new Collection(indicatorTypes)
+
+  this.tasks.on('change:script_runas add', function (model) {
     if (model.type === TaskConstants.TYPE_SCRIPT) {
       if (model.script_runas) {
         getHash(model.script_runas, hash => {
-          this.runners.add({
+          runners.add({
             runner: model.script_runas,
             id: hash
           })
@@ -280,15 +279,18 @@ const _initCollections = function () {
     }
   })
 
-  this.tasks.on('change', (model) => {
-    if (model.type === TaskConstants.TYPE_SCRIPT) {
-      if (model.script_runas) {
-        getHash(model.script_runas, hash => {
-          this.runners.add({
-            runner: model.script_runas,
-            id: hash
+  this.tasks.on('sync', function (tasks) {
+    for (let index in tasks.models) {
+      let model = tasks.models[index]
+      if (model.type === TaskConstants.TYPE_SCRIPT) {
+        if (model.script_runas) {
+          getHash(model.script_runas, hash => {
+            runners.add({
+              runner: model.script_runas,
+              id: hash
+            })
           })
-        })
+        }
       }
     }
   })
