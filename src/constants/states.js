@@ -12,6 +12,7 @@ const INTEGRATION_STARTED = 'started'
 const INTEGRATION_STOPPED = 'stopped'
 const UNKNOWN = 'unknown'
 const IN_PROGRESS = 'in_progress'
+const TIMEOUT = 'timeout'
 
 exports.INTEGRATION_STARTED = INTEGRATION_STARTED
 exports.INTEGRATION_STOPPED = INTEGRATION_STOPPED
@@ -27,6 +28,7 @@ exports.CHANGED = CHANGED
 exports.ERROR = ERROR
 exports.UNKNOWN = UNKNOWN
 exports.IN_PROGRESS = IN_PROGRESS
+exports.TIMEOUT = TIMEOUT
 
 exports.STATES = [
   INTEGRATION_STARTED,
@@ -41,5 +43,5 @@ exports.STATES = [
   CHANGED,
   ERROR,
   UNKNOWN,
-  IN_PROGRESS
+  IN_PROGRESS, TIMEOUT
 ]

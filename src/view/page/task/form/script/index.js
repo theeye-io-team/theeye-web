@@ -226,6 +226,15 @@ module.exports = TaskFormView.extend({
         tags: false,
         options: [
           {
+            id: 10000,
+            text: '10 secs'
+          }, {
+            id: 30000,
+            text: '30 secs'
+          }, {
+            id: 60000,
+            text: '1 min'
+          }, {
             id: 300000,
             text: '5 mins'
           }, {

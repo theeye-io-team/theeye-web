@@ -88,6 +88,7 @@ module.exports = View.extend({
         const state = this.model.state
 
         if (LifecycleConstants.isCompleted(lifecycle)) {
+          if (state === StateConstants.TIMEOUT) { return 'fa fa-clock-o remark-alert' }
           if (state === StateConstants.CANCELED) { return 'fa fa-exclamation remark-alert' }
           if (state === StateConstants.FAILURE) { return 'fa fa-exclamation remark-alert' }
           if (state === StateConstants.ERROR) { return 'fa fa-question remark-warning' }
@@ -117,7 +118,7 @@ module.exports = View.extend({
           case LifecycleConstants.COMPLETED:
           case LifecycleConstants.EXPIRED:
           case LifecycleConstants.CANCELED:
-            return 'Click to see job execution output'
+            return 'Job execution completed'
             break
           case LifecycleConstants.READY:
           case LifecycleConstants.ASSIGNED:
