@@ -227,5 +227,7 @@ const TaskCreationWizard = View.extend({
   remove () {
     if (this.form) this.form.remove()
     View.prototype.remove.apply(this,arguments)
+  },
+  update () {
   }
 })

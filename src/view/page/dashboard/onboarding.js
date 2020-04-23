@@ -7,6 +7,7 @@ import hopscotch from 'hopscotch'
 import 'hopscotch/dist/css/hopscotch.min.css'
 import acls from 'lib/acls'
 import TaskCreationWizard from 'view/page/task/creation-wizard'
+import TabsConstants from 'constants/tabs'
 
 module.exports = State.extend({
   props: {
@@ -72,6 +73,7 @@ module.exports = State.extend({
     hopscotch.startTour(monitorTour)
   },
   showTaskOnboarding() {
+    App.actions.tabs.setCurrentTab(TabsConstants.WORKFLOWS)
     var self = this
     var taskTour = {
       id: "taskTour",

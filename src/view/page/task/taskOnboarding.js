@@ -117,9 +117,19 @@ class TaskOnBoarding {
     var taskTour4 = {
       id: "taskTour4",
       i18n: {
-        stepNums : ["10"]
+        stepNums : ["10","11"]
       },
       steps: [
+        {
+          target: self.parent._fieldViews.script_runas.query('div.col-sm-9'),
+          title: "Task Tutorial",
+          content: "Set the script Run As | Interpreter",
+          placement: "top",
+          delay: 1000,
+          onNext: function() {
+            self.parent._fieldViews.script_runas.setValue(self.parent._fieldViews.script_runas.options.models[0].runner)
+          }
+        },
         {
           target: self.parent.queryByHook('confirm'),
           title: "Task Tutorial",

@@ -43,6 +43,11 @@ module.exports = TaskFormView.extend({
     })
 
     if (isNewTask) {
+      if(App.state.onboarding.onboardingActive) {
+        App.state.runners.add({
+          runner: '/usr/bin/env bash %script%'
+        })
+      }
       this.listenTo(hostsSelection, 'change', () => {
         if (hostsSelection.value) {
           let hosts = []

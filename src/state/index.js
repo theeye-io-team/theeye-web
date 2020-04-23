@@ -110,7 +110,6 @@ const AppState = State.extend({
     workflowVisualizer: ['state', false, () => new WorkflowVisualizerState()],
     onHold: ['state', false, () => new OnHoldState()],
     taskForm: ['state', false, () => new TaskFormState()],
-    popup: ['state', false, () => new PopupState()],
     tabs: ['state', false, () => new TabsState()]
   },
   initialize () {
@@ -127,6 +126,7 @@ const AppState = State.extend({
     this.sideMenu = new SideMenuState()
     this.searchbox = new SearchBoxState()
     this.inbox = new InboxState({ appState: this })
+    this.popup = new PopupState()
   },
   appInit () {
     this.localSettings.appInit()
