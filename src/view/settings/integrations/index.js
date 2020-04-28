@@ -7,26 +7,84 @@ import ElasticsearchFormView from './elasticsearch-form'
 import NetbrainsFormView from './netbrains-form'
 import KibanaFormView from './kibana-form'
 //import Ngrok from './ngrok'
+import Logger from './logger'
 
 module.exports = View.extend({
-  template: require('./template.hbs'),
+  template: `
+    <div>
+      <div data-hook="agent-set">
+        <h3 class="blue bold">INTEGRATIONS</h3>
+        <section data-hook="integrations-container">
+    
+          <div class="row border">
+            <div class="col-xs-6">
+              <span>Kibana</span>
+            </div>
+            <div class="col-xs-4">
+              <span class="orange" data-hook="kibana-enabled"><a href="/admin/charts">Enabled</a></span>
+              <span data-hook="kibana-disabled">Disabled</span>
+            </div>
+            <div class="col-xs-2">
+              <div class="pull-right action-icons">
+                <span><i class="fa fa-edit blue" data-hook="edit-kibana"></i></span>
+              </div>
+            </div>
+          </div>
+    
+          <div class="row border">
+            <div class="col-xs-6">
+              <span>Elasticsearch</span>
+            </div>
+            <div class="col-xs-4">
+              <span class="orange" data-hook="elasticsearch-enabled">Enabled</span>
+              <span data-hook="elasticsearch-disabled">Disabled</span>
+            </div>
+            <div class="col-xs-2">
+              <div class="pull-right action-icons">
+                <span><i class="fa fa-edit blue" data-hook="edit-elasticsearch-url"></i></span>
+              </div>
+            </div>
+          </div>
+    
+          <div class="row border">
+            <div class="col-xs-6">
+              <span>Netbrains</span>
+            </div>
+            <div class="col-xs-4">
+              <span class="orange" data-hook="netbrains-enabled">Enabled</span>
+              <span data-hook="netbrains-disabled">Disabled</span>
+            </div>
+            <div class="col-xs-2">
+              <div class="pull-right action-icons">
+                <span><i class="fa fa-edit blue" data-hook="edit-netbrains"></i></span>
+              </div>
+            </div>
+          </div>
+    
+        </section>
+      </div>
+    </div>
+  `,
   derived: {
     netbrainsEnabled: {
       deps: ['model.config'],
-      fn: function () {
-        return this.model.config.netbrains && this.model.config.netbrains.enabled
+      fn () {
+        let cfg = this.model.config.netbrains
+        return cfg && cfg.enabled === true
       }
     },
     elasticsearchEnabled: {
       deps: ['model.config'],
-      fn: function () {
-        return this.model.config.elasticsearch && this.model.config.elasticsearch.enabled
+      fn () {
+        let cfg = this.model.config.elasticsearch
+        return cfg && cfg.enabled === true
       }
     },
     kibanaEnabled: {
       deps: ['model.config'],
-      fn: function () {
-        return this.model.config.kibana && this.model.config.kibana.enabled
+      fn () {
+        let cfg = this.model.config.kibana
+        return cfg && cfg.enabled === true
       }
     }
   },
@@ -181,5 +239,11 @@ module.exports = View.extend({
     //  ngrok.updateState(App.state.session.customer.config)
     //})
     //this.renderSubview(ngrok, this.queryByHook('integrations-container'))
+
+    const logger = new Logger()
+    this.listenToAndRun(App.state.session.customer, 'change:config', () => {
+      logger.updateState(App.state.session.customer.config)
+    })
+    this.renderSubview(logger, this.queryByHook('integrations-container'))
   }
 })
