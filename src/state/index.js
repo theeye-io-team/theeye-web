@@ -40,49 +40,73 @@ import SideMenuState from './sideMenu'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
-const credentials = [
-  { order: 1, id: 'viewer', name: 'viewer', description: 'Viewer' },
-  { order: 2, id: 'user', name: 'user', description: 'User' },
-  { order: 3, id: 'manager', name: 'manager', description: 'Manager' },
-  { order: 4, id: 'admin', name: 'admin', description: 'Admin' },
-  { order: 5, id: 'owner', name: 'owner', description: 'Owner' }
-]
-
-const looptimes = [
-  { id: 10000, text: '10 seconds' },
-  { id: 15000, text: '0.25' },
-  { id: 30000, text: '0.5' },
-  { id: 60000, text: '1' },
-  { id: 90000, text: '1.5' },
-  { id: 300000, text: '5' },
-  { id: 900000, text: '15' },
-  { id: 1800000, text: '30' },
-  { id: 3600000, text: '60' }
-]
-
-const severities = [
-  { id: 'LOW', text: 'LOW' },
-  { id: 'HIGH', text: 'HIGH' },
-  { id: 'CRITICAL', text: 'CRITICAL' }
-]
-
-const indicatorTypes = [
-  { id: IndicatorConstants.TEXT_TYPE, text: 'Text' },
-  { id: IndicatorConstants.PROGRESS_TYPE, text: 'Progress' },
-  { id: IndicatorConstants.COUNTER_TYPE, text: 'Counter' }
-]
-
-const CredentialsCollection = Collection.extend({
+const ClearCollection = Collection.extend({
+  initialize () {
+    Collection.prototype.initialize.apply(this, arguments)
+    this.reset()
+  },
   reset (models) {
     const reset = Collection.prototype.reset
     if (!models) {
-      reset.call(this, credentials) // reset to original state
+      reset.call(this, this.initialState) // reset to original state
     } else {
       reset.call(this, models)
     }
   },
   clear () {
     this.reset([])
+  }
+})
+
+const CredentialsCollection = ClearCollection.extend({
+  initialize () {
+    this.initialState = [
+      { order: 1, id: 'viewer', name: 'viewer', description: 'Viewer' },
+      { order: 2, id: 'user', name: 'user', description: 'User' },
+      { order: 3, id: 'manager', name: 'manager', description: 'Manager' },
+      { order: 4, id: 'admin', name: 'admin', description: 'Admin' },
+      { order: 5, id: 'owner', name: 'owner', description: 'Owner' }
+    ]
+    ClearCollection.prototype.initialize.apply(this, arguments)
+  }
+})
+
+const LooptimesCollection = ClearCollection.extend({
+  initialize () {
+    this.initialState = [
+      { id: 10000, text: '10 seconds' },
+      { id: 15000, text: '0.25' },
+      { id: 30000, text: '0.5' },
+      { id: 60000, text: '1' },
+      { id: 90000, text: '1.5' },
+      { id: 300000, text: '5' },
+      { id: 900000, text: '15' },
+      { id: 1800000, text: '30' },
+      { id: 3600000, text: '60' }
+    ]
+    ClearCollection.prototype.initialize.apply(this, arguments)
+  }
+})
+
+const IndicatorTypesCollection = ClearCollection.extend({
+  initialize () {
+    this.initialState = [
+      { id: IndicatorConstants.TEXT_TYPE, text: 'Text' },
+      { id: IndicatorConstants.PROGRESS_TYPE, text: 'Progress' },
+      { id: IndicatorConstants.COUNTER_TYPE, text: 'Counter' }
+    ]
+    ClearCollection.prototype.initialize.apply(this, arguments)
+  }
+})
+
+const SeveritiesCollection = ClearCollection.extend({
+  initialize () {
+    this.initialState = [
+      { id: 'LOW', text: 'LOW' },
+      { id: 'HIGH', text: 'HIGH' },
+      { id: 'CRITICAL', text: 'CRITICAL' }
+    ]
+    ClearCollection.prototype.initialize.apply(this, arguments)
   }
 })
 
@@ -165,11 +189,13 @@ const AppState = State.extend({
   reset () {
     this.clear() // will reset all components state
 
-    // call reset on every collections.
-    // do not REPLACE REFERENCES! this will only reset to empty collections data
+    // reset collections.
+    // this will call "reset" to empty the collections data and keep references
     Object.keys(this).forEach(prop => {
       let val = this[prop]
-      if (val && val.isCollection) val.reset()
+      if (val && val.isCollection) {
+        val.reset()
+      }
     })
   }
 })
@@ -260,11 +286,11 @@ const _initCollections = function () {
     workflows: new Workflows([])
   })
 
-    const runners = this.runners = new Collection([])
-    this.credentials = new CredentialsCollection()
-    this.looptimes = new Collection(looptimes)
-    this.severities = new Collection(severities)
-    this.indicatorTypes = new Collection(indicatorTypes)
+  const runners = this.runners = new Collection([])
+  this.credentials = new CredentialsCollection()
+  this.looptimes = new LooptimesCollection()
+  this.severities = new SeveritiesCollection()
+  this.indicatorTypes = new IndicatorTypesCollection()
 
   this.tasks.on('change:script_runas add', function (model) {
     if (model.type === TaskConstants.TYPE_SCRIPT) {
