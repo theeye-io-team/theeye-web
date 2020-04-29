@@ -1,6 +1,12 @@
 import App from 'ampersand-app'
 import InputView from 'ampersand-input-view'
-import grecaptcha from 'grecaptcha'
+
+let grecaptcha
+try {
+  grecaptcha = require('grecaptcha')
+} catch (err) {
+  console.error(err)
+}
 
 const RecaptchaInputView = InputView.extend({
   template: `
@@ -31,6 +37,10 @@ const RecaptchaInputView = InputView.extend({
   render () {
     InputView.prototype.render.apply(this, arguments)
     
+    if (!grecaptcha) {
+      return
+    }
+
     let widget_id = grecaptcha.render(
       this.query('[data-hook=input-container]'),
       {

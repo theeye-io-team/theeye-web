@@ -394,10 +394,7 @@ module.exports = {
           } else {
             logger.debug('user logged in. issuing access token')
             const accessToken = jwtoken.issue({ user_id: user.id })
-            return res.send(200, {
-              access_token: accessToken,
-              login_type: 'ldap'
-            })
+            return res.send(200, { access_token: accessToken })
           }
         })
       })(req, res, req.next)

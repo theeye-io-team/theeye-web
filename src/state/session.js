@@ -11,10 +11,10 @@ module.exports = AmpersandState.extend({
   props: {
     last_access: ['number', false],
     access_token: ['string', false],
-    accountPreferences: ['object', false, () => ({
-      showAccountActions: true,
-      showMembersTab: true
-    })]
+    //accountPreferences: ['object', false, () => ({
+    //  showAccountActions: true,
+    //  showMembersTab: true
+    //})]
   },
   session: {
     storage: 'object',
@@ -87,7 +87,7 @@ module.exports = AmpersandState.extend({
   },
   clear () {
     this.unset('access_token') // this triggers session unset
-    this.unset('accountPreferences')
+    //this.unset('accountPreferences')
     // mantein user & customer references
     this.user.customers.reset()
     this.user.clear()

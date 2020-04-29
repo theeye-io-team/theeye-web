@@ -101,7 +101,7 @@ module.exports = View.extend({
     this.email = App.state.session.user.email
     this.username = App.state.session.user.username
     this.name = App.state.session.user.name
-    this.showAccountActions = App.state.session.accountPreferences.showAccountActions
+    //this.showAccountActions = App.state.session.accountPreferences.showAccountActions
   },
   events: {
     'click [data-hook=change-password]': 'changePassword'

@@ -22,17 +22,17 @@ module.exports = {
       },
       done: (response,xhr) => {
         App.state.loader.visible = false
-        if (xhr.status == 200){
+        if (xhr.status == 200) {
           App.state.session.access_token = response.access_token
-          if (response.login_type) {
-            switch (response.login_type) {
-              case 'ldap':
-                App.state.session.accountPreferences.showAccountActions = false
-                App.state.session.accountPreferences.showMembersTab = false
-                break
-              default:
-            }
-          }
+          //if (response.login_type) {
+          //  switch (response.login_type) {
+          //    case 'ldap':
+          //      App.state.session.accountPreferences.showAccountActions = false
+          //      App.state.session.accountPreferences.showMembersTab = false
+          //      break
+          //    default:
+          //  }
+          //}
         } else {
           bootbox.alert('Login error, please try again')
         }
