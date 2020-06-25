@@ -1,9 +1,4 @@
-const DELETE = 'delete'
-const UPDATE = 'update'
-const CREATE = 'create'
-const REPLACE = 'replace'
-
-exports.DELETE = DELETE
-exports.UPDATE = UPDATE
-exports.CREATE = CREATE
-exports.REPLACE = REPLACE
+export const DELETE = 'delete'
+export const UPDATE = 'update'
+export const CREATE = 'create'
+export const REPLACE = 'replace'

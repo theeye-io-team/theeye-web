@@ -1,6 +1,6 @@
 'use strict'
 import CommonButton from 'components/common-button'
-module.exports = CommonButton.extend({
+export default CommonButton.extend({
   template: `
     <li>
       <button>

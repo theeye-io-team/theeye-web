@@ -2,10 +2,9 @@ import App from 'ampersand-app'
 import PanelButton from 'components/list/item/panel-button'
 import HostGroupActions from 'actions/hostgroup'
 import bootbox from 'bootbox'
-const unlinkDestinationHostsTemplate = require('./unlink-destination-hosts.hbs')
 import $ from 'jquery'
 
-module.exports = PanelButton.extend({
+export default PanelButton.extend({
   initialize: function (options) {
     this.title = 'Delete template'
     this.iconClass = 'fa fa-trash dropdown-icon'
@@ -16,8 +15,8 @@ module.exports = PanelButton.extend({
     const model = this.model
 
     const confirmUnlinkDestinationHosts = () => {
-      const msg = unlinkDestinationHostsTemplate({
-        hosts: model.hosts.models.map(i => {
+      const msg = unlinkMessage({
+        hostnames: model.hosts.models.map(i => {
           if (!i.hostname) {
             let host = App.state.hosts.get(i.id)
             return host.hostname
@@ -89,3 +88,18 @@ module.exports = PanelButton.extend({
     }
   }
 })
+
+const unlinkMessage = (opts) => {
+  let hostnames = opts.hostnames
+  let names = hostnames.map(name => `<strong>${name}</strong><br />`)
+
+  let html = `
+    <p style="padding-top:15px">Remove template monitors and tasks from the following destination Bots?</p>
+    ${names}
+    <br />
+    <p><b>NO:</b> Only delete the template.</p>
+    <p><b>YES:</b> Delete the template and also delete the template monitors and tasks from the destination Bots.</p>
+  `
+
+  return html
+}

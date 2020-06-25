@@ -5,16 +5,16 @@
  * https://en.wikipedia.org/wiki/Task_management
  *
  **/
-const READY = exports.READY = 'ready'
-const ASSIGNED = exports.ASSIGNED = 'assigned'
-const ONHOLD = exports.ONHOLD = 'onhold'
-const FINISHED = exports.FINISHED = 'finished'
-const TERMINATED = exports.TERMINATED = 'terminated'
-const CANCELED = exports.CANCELED = 'canceled'
-const EXPIRED = exports.EXPIRED = 'expired'
-const COMPLETED = exports.COMPLETED = 'completed'
+export const READY = 'ready'
+export const ASSIGNED = 'assigned'
+export const ONHOLD = 'onhold'
+export const FINISHED = 'finished'
+export const TERMINATED = 'terminated'
+export const CANCELED = 'canceled'
+export const EXPIRED = 'expired'
+export const COMPLETED = 'completed'
 
-exports.inProgress = (lifecycle) => {
+export const inProgress = (lifecycle) => {
   if (!lifecycle) return false
   return (
     lifecycle === READY ||
@@ -23,7 +23,7 @@ exports.inProgress = (lifecycle) => {
   )
 }
 
-exports.isCompleted = (lifecycle) => {
+export const isCompleted = (lifecycle) => {
   let completed = [
     CANCELED,
     COMPLETED,
@@ -35,7 +35,7 @@ exports.isCompleted = (lifecycle) => {
   return completed
 }
 
-exports.isValidNewLifecycle = (currentVal, newVal) => {
+export const isValidNewLifecycle = (currentVal, newVal) => {
   let valid
   switch (currentVal) {
     case READY:

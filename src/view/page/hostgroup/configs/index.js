@@ -6,7 +6,7 @@ import HostGroupActions from 'actions/hostgroup'
 
 import './styles.css'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="template-configs" style="padding:10px;">
       <div class="toggle" data-hook="configs-toggler">

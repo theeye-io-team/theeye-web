@@ -2,7 +2,7 @@
 
 import App from 'ampersand-app'
 import SearchActions from 'actions/searchbox'
-const logger = require('lib/logger')('lib:filter-rows')
+import loggerModule from 'lib/logger'; const logger = loggerModule('lib:filter-rows')
 import uniq from 'lodash/uniq'
 
 const parseMatches = function (matches) {
@@ -136,5 +136,4 @@ const filterRows = () => {
   return
 }
 
-module.exports.filterRows = filterRows
-module.exports.findMatches = findMatches
+export { filterRows, findMatches }

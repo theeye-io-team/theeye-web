@@ -10,7 +10,7 @@ import Modalizer from 'components/modalizer'
  * @summary modal to display jobs output
  *
  */
-module.exports = Modalizer.extend({
+export default Modalizer.extend({
   props: {
     output: 'any'
   },

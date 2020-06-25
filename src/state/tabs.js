@@ -1,7 +1,7 @@
 import App from 'ampersand-app'
 import State from 'ampersand-state'
 import { Model as Tab, Collection as Tabs } from 'models/tab'
-import TabsConstants from 'constants/tabs'
+import * as TabsConstants from 'constants/tabs'
 
 export default State.extend({
   props: {
@@ -12,9 +12,9 @@ export default State.extend({
   },
   initialize () {
     let tabs = {
+      workflows: new Tab({name: TabsConstants.WORKFLOWS}),
       indicators: new Tab({name: TabsConstants.INDICATORS}),
       monitors: new Tab({name: TabsConstants.MONITORS}),
-      workflows: new Tab({name: TabsConstants.WORKFLOWS}),
       notifications: new Tab({name: TabsConstants.NOTIFICATIONS})
     }
 

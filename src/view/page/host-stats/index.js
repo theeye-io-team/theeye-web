@@ -7,8 +7,6 @@ import each from 'lodash/each'
 import debounce from 'lodash/debounce'
 import './styles.less'
 
-import NgrokIntegrationActions from 'actions/integrations/ngrok'
-
 export default View.extend({
   template: `
     <div class="stats-container container-fluid">
@@ -37,7 +35,7 @@ export default View.extend({
           <div data-hook="stat-graph-container" class="main-stats gray-zebra"> </div>
         </div>
 
-        <div class="col-xs-12 col-md-6 stats-section">
+        <!--<div class="col-xs-12 col-md-6 stats-section">
           <div class="stats-icon-container">
             <span class="stats-icon">
               <i class="fa fa-puzzle-piece" aria-hidden="true"></i>
@@ -45,7 +43,7 @@ export default View.extend({
             <h3>Host Interfaces</h3>
           </div>
           <div data-hook="interfaces-container"></div>
-        </div>
+        </div>-->
 
         <div class="col-xs-12 col-md-6 stats-section">
           <div data-hook="processes-container"> </div>
@@ -56,14 +54,14 @@ export default View.extend({
   `,
   props: {
     hostId: ['string', true],
-    host: ['state'],
-    resource: ['state'],
-    dstat: ['object'],
-    psaux: ['object']
+    //host: ['state'],
+    //resource: ['state'],
+    //dstat: ['object'],
+    //psaux: ['object']
   },
   initialize (options) {
-    this.listenToAndRun(App.state.hoststatsPage, 'change:dstat', this.updateDstat)
-    this.listenToAndRun(App.state.hoststatsPage, 'change:psaux', this.updatePsaux)
+    //this.listenToAndRun(App.state.hoststatsPage, 'change:dstat', this.updateDstat)
+    //this.listenToAndRun(App.state.hoststatsPage, 'change:psaux', this.updatePsaux)
 
     this.on('change:host', () => {
       console.log('host reference changed')
@@ -71,179 +69,49 @@ export default View.extend({
       this.render()
     })
   },
-  updatePsaux: function () {
-    this.psaux = App.state.hoststatsPage.psaux
-    this.trigger('change:psaux')
-  },
-  updateDstat: function () {
-    this.dstat = App.state.hoststatsPage.dstat
-    this.trigger('change:dstat')
-  },
-  render: function () {
-    this.renderWithTemplate(this)
-    this.renderSubview(
-      new HostView({
-        parent: this,
-        host: this.host,
-        resource: this.resource
-      }),
-      this.queryByHook('host-container')
-    )
-
-    this.renderSubview(
-      new GraphView({parent: this}),
-      this.queryByHook('stat-graph-container')
-    )
-
-    this.renderSubview(
-      new PsauxView({parent: this}),
-      this.queryByHook('processes-container')
-    )
-
-    this.renderSubview(
-      new IpsView({parent: this}),
-      this.queryByHook('interfaces-container')
-    )
-  }
-})
-
-function getBlueToRed (percent) {
-  var b = percent < 50 ? 255 : Math.floor(255 - (percent * 2 - 100) * 255 / 100)
-  var r = percent > 50 ? 255 : Math.floor((percent * 2) * 150 / 100)
-  return 'rgb(' + r + ', 0, ' + b + ')'
-}
-
-const VerticalBarView = View.extend({
-  template: `
-    <div class="pull-left">
-      <div class="progress progress-bar-vertical">
-        <div data-hook="percent" class="progress-bar">
-          <span data-hook="percent_tag"></span>
-        </div>
-      </div>
-      <span data-hook="tag" class="title"></span>
-    </div>`,
-  props: {
-    percent: 'number',
-    percent_tag: 'number',
-    tag: 'string'
-  },
-  derived: {
-    percentTag: {
-      deps: ['percent_tag'],
-      fn: function () {
-        return this.percent_tag + ' %'
-      }
-    }
-  },
-  bindings: {
-    percent: {
-      type: function (el, value, previousValue) {
-        el.style.height = value + '%'
-        el.style.background = getBlueToRed(value)
-      },
-      hook: 'percent'
-    },
-    percentTag: {
-      hook: 'percent_tag'
-    },
-    tag: {
-      hook: 'tag'
-    }
-  }
-})
-
-const IpsEntry = AmpersandModel.extend({
-  props: {
-    name: 'string',
-    receive: 'number',
-    send: 'number'
-  },
-  idAttribute: 'name'
-})
-const IpsCollection = AmpersandCollection.extend({
-  model: IpsEntry,
-  mainIndex: 'name'
-})
-const IpsRowView = View.extend({
-  template: `
-    <tr>
-      <td data-hook="name"></td>
-      <td data-hook="receive"></td>
-      <td data-hook="send"></td>
-    </tr>`,
-  bindings: {
-    'model.name': {hook: 'name'},
-    'model.receive': {hook: 'receive'},
-    'model.send': {hook: 'send'}
-  }
-})
-const IpsView = View.extend({
-  template: `
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Interface</th>
-          <th>Receive</th>
-          <th>Send</th>
-        </tr>
-      </thead>
-      <tbody data-hook="items"></tbody>
-    </table>`,
-  props: {
-    dstat: ['object', true, () => { return {} }]
-  },
-  initialize: function () {
-    this.collection = new IpsCollection()
-    this.listenToAndRun(this.parent, 'change:dstat', this.update)
-  },
-  update: function () {
-    if (!this.parent.dstat) return
-    this.dstat = this.parent.dstat
-    const ips = this.dstat.stats && this.dstat.stats.net
-    if (!ips) return
-
-    this.collection.reset(Object.keys(ips).map(iface => {
-      return new IpsEntry({
-        name: iface,
-        receive: ips[iface].receive,
-        send: ips[iface].send
-      })
-    }))
-  },
+  //updatePsaux: function () {
+  //  this.psaux = App.state.hoststatsPage.psaux
+  //  this.trigger('change:psaux')
+  //},
+  //updateDstat: function () {
+  //  this.dstat = App.state.hoststatsPage.dstat
+  //  this.trigger('change:dstat')
+  //},
   render: function () {
     this.renderWithTemplate(this)
 
-    this.renderCollection(
-      this.collection,
-      IpsRowView,
-      this.queryByHook('items')
-    )
+    this.renderSubview(new HostView(), this.queryByHook('host-container'))
+    this.renderSubview(new StatsGraphView(), this.queryByHook('stat-graph-container'))
+    this.renderSubview(new PsauxView(), this.queryByHook('processes-container'))
+
+    //this.renderSubview(
+    //  new IpsView({parent: this}),
+    //  this.queryByHook('interfaces-container')
+    //)
   }
 })
 
-const GraphView = View.extend({
+const StatsGraphView = View.extend({
   props: {
     dstat: ['object', true, () => { return {} }]
   },
   template: '<div></div>',
-  initialize: function (options) {
-    this.listenToAndRun(this.parent, 'change:dstat', this.update)
-
+  initialize (options) {
+    View.prototype.initialize.apply(this,arguments)
+    this.listenToAndRun(App.state.hoststatsPage, 'change:dstat', this.updateState)
     this.resizeHandler = this.progressBarWidth.bind(this)
     window.addEventListener('resize', this.resizeHandler)
   },
-  remove: function () {
+  remove () {
     View.prototype.remove.apply(this, arguments)
     window.removeEventListener('resize', this.resizeHandler)
   },
-  update: function () {
-    if (!this.parent.dstat) return
-    this.dstat = this.parent.dstat
+  updateState () {
+    this.dstat = App.state.hoststatsPage.dstat
     this.render()
   },
   // resize bars event
-  progressBarWidth: function (event) {
+  progressBarWidth (event) {
     var elems = this.$el.find('.pull-left')
 
     const value = this.$el.width() / elems.length
@@ -262,7 +130,7 @@ const GraphView = View.extend({
       else $texts.css('font-size', '11px')
     })
   },
-  render: function () {
+  render () {
     this.renderWithTemplate(this)
     this.$el = $(this.el)
 
@@ -316,6 +184,13 @@ const GraphView = View.extend({
 })
 
 const PsauxView = View.extend({
+  props: {
+    psaux: 'object',
+    filter: ['string', true, ''],
+    sortOn: 'string',
+    sortAsc: ['boolean', true, true],
+    rows: ['array', true, () => []]
+  },
   template: `
     <div class="psaux-container">
       <!-- TITLE -->
@@ -360,14 +235,35 @@ const PsauxView = View.extend({
           <tbody data-hook="process-list"></tbody>
         </table>
       </div>
-    </div>`,
-  props: {
-    psaux: 'object',
-    config: 'object',
-    filter: ['string', true, ''],
-    sortOn: 'string',
-    sortAsc: ['boolean', true, true],
-    rows: ['array', true, () => []]
+    </div>
+  `,
+  initialize () {
+    View.prototype.initialize.apply(this,arguments)
+    this.listenToAndRun(App.state.hoststatsPage, 'change:psaux', this.updateState)
+  },
+  updateState () {
+    let psaux = App.state.hoststatsPage.psaux
+    this.psaux = psaux
+
+    if (!psaux || !psaux.stats) { return }
+
+    this.rows = psaux.stats.map(function (stat) {
+      return {
+        'user': stat['user'],
+        'pid': stat['pid'],
+        '%cpu': stat['%cpu'],
+        '%mem': stat['%mem'],
+        'vsz': stat['vsz'],
+        'rss': stat['rss'],
+        'tty': stat['tty'],
+        'state': stat['state'],
+        'started': stat['started'],
+        'time': stat['time'],
+        'command': stat['command']
+      }
+    })
+
+    this.renderRows()
   },
   derived: {
     uiRows: {
@@ -389,45 +285,15 @@ const PsauxView = View.extend({
       }
     }
   },
-  initialize: function () {
-    // onSocketConnected(function(){
-    //   // connect and subscribe psaux notifications
-    //   log('psaux listening socket updates');
-    //   io.socket.on('psaux_update', psaux.update);
-    // })
-    this.listenToAndRun(this.parent, 'change:psaux', this.update)
-  },
   events: {
     'click th[data-sort]': 'processSort',
     'keyup #ps-search': 'processFilterWrapper'
   },
-  update: function () {
-    this.set({psaux: this.parent.psaux})
-    if (!this.psaux || !this.psaux.stats) return
-    this.set({
-      rows: this.psaux.stats.map(function (stat) {
-        return {
-          'user': stat['user'],
-          'pid': stat['pid'],
-          '%cpu': stat['%cpu'],
-          '%mem': stat['%mem'],
-          'vsz': stat['vsz'],
-          'rss': stat['rss'],
-          'tty': stat['tty'],
-          'state': stat['state'],
-          'started': stat['started'],
-          'time': stat['time'],
-          'command': stat['command']
-        }
-      })
-    })
-    this.renderRows()
-  },
-  processFilterWrapper: function (event) {
+  processFilterWrapper (event) {
     // debounce for hostile filtering
     debounce(this.processFilter.bind(this), 300)()
   },
-  processSort: function (event) {
+  processSort (event) {
     const newSort = event.target.dataset.sort
     if (this.sortOn === newSort) {
       this.toggle('sortAsc')
@@ -437,11 +303,11 @@ const PsauxView = View.extend({
     }
     this.renderRows()
   },
-  processFilter: function () {
+  processFilter () {
     this.filter = this.$psauxSearchInput.val()
     this.renderRows()
   },
-  renderRows: function () {
+  renderRows () {
     if (!this.$el) return
     this.$psauxTbody.find('tr').remove()
     var $rows = this.uiRows.map(ps => {
@@ -457,7 +323,7 @@ const PsauxView = View.extend({
     })
     this.$psauxTbody.append($rows)
   },
-  render: function () {
+  render () {
     this.renderWithTemplate(this)
     this.$el = $(this.el)
     this.$psauxTbody = this.$el.find('#psaux-table tbody')
@@ -468,6 +334,33 @@ const PsauxView = View.extend({
 })
 
 const HostView = View.extend({
+  initialize () {
+    View.prototype.initialize.apply(this,arguments)
+
+    this.listenToAndRun(App.state.hoststatsPage.host, 'change', this.updateHost)
+    this.listenToAndRun(App.state.hoststatsPage.resource, 'change', this.updateResource)
+
+    this.listenToAndRun(App.state.hoststatsPage, 'change:dstat', () => {
+      this.dstat = App.state.hoststatsPage.dstat
+    })
+
+    this.listenToAndRun(App.state.hoststatsPage, 'change:psaux', () => {
+      this.psaux = App.state.hoststatsPage.psaux
+    })
+  },
+  updateHost () {
+    let host = App.state.hoststatsPage.host
+    if (!host.id) { return }
+    this.hostname = host.hostname
+    this.agent_version = host.agent_version
+    this.os_name = host.os_name
+  },
+  updateResource () {
+    let resource = App.state.hoststatsPage.resource
+    if (!resource.id) { return }
+    this.state = resource.state
+    this.last_update = resource.last_update
+  },
   template: `
     <div>
       <span class="stats-icon">
@@ -475,7 +368,7 @@ const HostView = View.extend({
       </span>
       <h3>Server</h3>
       <section data-hook="server">
-        <span class="fa fa-server"></span> <i data-hook="name"></i>
+        <span class="fa fa-server"></span> <i data-hook="hostname"></i>
         <br>
         Bot Version <small data-hook="agent_version"></small>
         <p>
@@ -494,24 +387,30 @@ const HostView = View.extend({
           </p>
         </div>
       </section>
-      <section class="integrations">
+      <!-- <section class="integrations" style="display:none;visibility:hidden;">
         <br/>
         <h3>Integrations</h3>
         <div data-hook="integrations"></div>
-      </section>
-    </div>`,
+      </section> -->
+    </div>
+  `,
   props: {
-    host: ['state'],
-    resource: ['state'],
+    hostname: 'string',
+    agent_version: 'string',
+    os_name: 'string',
+    last_update: 'date',
+    state: 'string',
+    //host: ['state'],
+    //resource: ['state'],
     dstat: ['object'],
     psaux: ['object']
   },
   derived: {
     state_text: {
-      deps: ['resource.state'],
+      deps: ['state'],
       fn: function () {
         let text = 'state is unknown'
-        switch (this.resource.state) {
+        switch (this.state) {
           case 'updates_stopped':
             text = 'has stopped reporting updates'
             break
@@ -526,10 +425,10 @@ const HostView = View.extend({
       }
     },
     state_color: {
-      deps: ['resource.state'],
+      deps: ['state'],
       fn: function () {
         let color = 'color: rgb(255,0,0);'
-        switch (this.resource.state) {
+        switch (this.state) {
           case 'updates_stopped':
             color = 'color: rgb(255,0,0);'
             break
@@ -569,126 +468,236 @@ const HostView = View.extend({
     }
   },
   bindings: {
-    'host.hostname': {hook: 'name'},
-    'host.agent_version': {hook: 'agent_version'},
-    'host.os_name': {hook: 'os_name'},
+    hostname: {hook: 'hostname'},
+    agent_version: {hook: 'agent_version'},
+    os_name: {hook: 'os_name'},
     state_text: {hook: 'state_message'},
     state_color: {
       hook: 'state_message',
       type: 'attribute',
       name: 'style'
     },
-    'resource.formatted_last_update': {hook: 'last_update'},
+    last_update: {hook: 'last_update'},
     load1minute: {hook: 'load_average_1'},
     load5minute: {hook: 'load_average_5'},
     load15minute: {hook: 'load_average_15'}
   },
-  initialize: function () {
-    this.listenToAndRun(this.parent, 'change:dstat', this.update)
-  },
-  update: function () {
-    this.dstat = this.parent.dstat
-  },
-  render () {
-    this.renderWithTemplate(this)
-
-    this.renderIntegrations()
-  },
-  renderIntegrations () {
-    let ngrok = App.state.session.customer.config.ngrok
-    if (ngrok && ngrok.enabled === true) {
-      let view = new NgrokIntegrationsView({
-        model: this.host.integrations.ngrok,
-        host: this.host
-      })
-      this.renderSubview(view, this.queryByHook('integrations'))
-    }
-  }
+  //render () {
+  //  this.renderWithTemplate(this)
+  //  this.renderIntegrations()
+  //},
+  //renderIntegrations () {
+  //  let ngrok = App.state.session.customer.config.ngrok
+  //  if (ngrok && ngrok.enabled === true) {
+  //    let view = new NgrokIntegrationsView({
+  //      model: this.host.integrations.ngrok,
+  //      host: this.host
+  //    })
+  //    this.renderSubview(view, this.queryByHook('integrations'))
+  //  }
+  //}
 })
 
-const NgrokIntegrationsView = View.extend({
+const VerticalBarView = View.extend({
   template: `
-    <div class="ngrok">
-      <div class="loading-overlay" data-hook="loading-overlay"> </div>
-      <div class="ngrok-data">
-        <div>Ngrok tunnel <span data-hook="ngrok-state"></span></div>
-        <div>
-          <i class="ngrok-switch fa" data-hook="ngrok-button"></i>
-          <span data-hook="tunnel_url"></span>
-          <span data-hook="ngrok_error"></span>
+    <div class="pull-left">
+      <div class="progress progress-bar-vertical">
+        <div data-hook="percent" class="progress-bar">
+          <span data-hook="percent_tag"></span>
         </div>
       </div>
-    </div>
-  `,
+      <span data-hook="tag" class="title"></span>
+    </div>`,
   props: {
-    host: 'state'
+    percent: 'number',
+    percent_tag: 'number',
+    tag: 'string'
   },
   derived: {
-    ngrok_switch: {
-      deps: ['model.active'],
-      fn () {
-        return this.model.active
-      }
-    },
-    ngrok_switch_html: {
-      deps: ['model.active'],
-      fn () {
-        return this.model.active ? 'Stop' : 'Start'
-      }
-    },
-    ngrok_state_html: {
-      deps: ['model.active', 'model.last_job.inProgress'],
-      fn () {
-        if (this.model.last_job.inProgress) {
-          return this.model.active ?
-            ' shutting down...wait <i class="fa fa-spin fa-cog"></i>' :
-            ' establishing tunnel...wait <i class="fa fa-spin fa-cog"></i>'
-        }
-        return this.model.active ? ' is established' : 'is down'
+    percentTag: {
+      deps: ['percent_tag'],
+      fn: function () {
+        return this.percent_tag + ' %'
       }
     }
   },
   bindings: {
-    'model.last_job.inProgress': {
-      hook: 'loading-overlay',
-      type: 'toggle'
+    percent: {
+      type: function (el, value, previousValue) {
+        el.style.height = value + '%'
+        el.style.background = getBlueToRed(value)
+      },
+      hook: 'percent'
     },
-    ngrok_switch: [{
-      hook: 'ngrok-button',
-      type: 'booleanClass',
-      yes: 'fa-stop',
-      no: 'fa-play'
-    }, {
-      hook: 'ngrok-button',
-      type: 'booleanClass',
-      yes: 'red',
-      no: 'green'
-    }],
-    ngrok_switch_html: {
-      hook: 'ngrok-button',
-      type: 'innerHTML'
+    percentTag: {
+      hook: 'percent_tag'
     },
-    ngrok_state_html: {
-      hook: 'ngrok-state',
-      type: 'innerHTML'
-    },
-    'model.tunnel_url': { hook: 'tunnel_url' },
-    'model.ngrok_error': { hook: 'ngrok_error' },
-  },
-  events: {
-    'click [data-hook=ngrok-button]': 'onClickNgrokButton',
-    'click [data-hook=ngrok-settings]': function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-      App.state.navbar.settingsMenu.visible = true
-      App.state.navbar.settingsMenu.current_tab = 'integrations'
-    }
-  },
-  onClickNgrokButton (event) {
-    if (this.model.active === true) {
-      NgrokIntegrationActions.stopTunnel(this.host.id)
-    } else {
-      NgrokIntegrationActions.startTunnel(this.host.id)
+    tag: {
+      hook: 'tag'
     }
   }
 })
+
+function getBlueToRed (percent) {
+  var b = percent < 50 ? 255 : Math.floor(255 - (percent * 2 - 100) * 255 / 100)
+  var r = percent > 50 ? 255 : Math.floor((percent * 2) * 150 / 100)
+  return 'rgb(' + r + ', 0, ' + b + ')'
+}
+
+const IpsEntry = AmpersandModel.extend({
+  props: {
+    name: 'string',
+    receive: 'number',
+    send: 'number'
+  },
+  idAttribute: 'name'
+})
+const IpsCollection = AmpersandCollection.extend({
+  model: IpsEntry,
+  mainIndex: 'name'
+})
+const IpsRowView = View.extend({
+  template: `
+    <tr>
+      <td data-hook="name"></td>
+      <td data-hook="receive"></td>
+      <td data-hook="send"></td>
+    </tr>`,
+  bindings: {
+    'model.name': {hook: 'name'},
+    'model.receive': {hook: 'receive'},
+    'model.send': {hook: 'send'}
+  }
+})
+//const IpsView = View.extend({
+//  template: `
+//    <table class="table">
+//      <thead>
+//        <tr>
+//          <th>Interface</th>
+//          <th>Receive</th>
+//          <th>Send</th>
+//        </tr>
+//      </thead>
+//      <tbody data-hook="items"></tbody>
+//    </table>`,
+//  props: {
+//    dstat: ['object', true, () => { return {} }]
+//  },
+//  initialize: function () {
+//    this.collection = new IpsCollection()
+//    this.listenToAndRun(this.parent, 'change:dstat', this.update)
+//  },
+//  update: function () {
+//    if (!this.parent.dstat) return
+//    this.dstat = this.parent.dstat
+//    const ips = this.dstat.stats && this.dstat.stats.net
+//    if (!ips) return
+//
+//    this.collection.reset(Object.keys(ips).map(iface => {
+//      return new IpsEntry({
+//        name: iface,
+//        receive: ips[iface].receive,
+//        send: ips[iface].send
+//      })
+//    }))
+//  },
+//  render: function () {
+//    this.renderWithTemplate(this)
+//
+//    this.renderCollection(
+//      this.collection,
+//      IpsRowView,
+//      this.queryByHook('items')
+//    )
+//  }
+//})
+
+//import NgrokIntegrationActions from 'actions/integrations/ngrok'
+//
+//const NgrokIntegrationsView = View.extend({
+//  template: `
+//    <div class="ngrok">
+//      <div class="loading-overlay" data-hook="loading-overlay"> </div>
+//      <div class="ngrok-data">
+//        <div>Ngrok tunnel <span data-hook="ngrok-state"></span></div>
+//        <div>
+//          <i class="ngrok-switch fa" data-hook="ngrok-button"></i>
+//          <span data-hook="tunnel_url"></span>
+//          <span data-hook="ngrok_error"></span>
+//        </div>
+//      </div>
+//    </div>
+//  `,
+//  props: {
+//    host: 'state'
+//  },
+//  derived: {
+//    ngrok_switch: {
+//      deps: ['model.active'],
+//      fn () {
+//        return this.model.active
+//      }
+//    },
+//    ngrok_switch_html: {
+//      deps: ['model.active'],
+//      fn () {
+//        return this.model.active ? 'Stop' : 'Start'
+//      }
+//    },
+//    ngrok_state_html: {
+//      deps: ['model.active', 'model.last_job.inProgress'],
+//      fn () {
+//        if (this.model.last_job.inProgress) {
+//          return this.model.active ?
+//            ' shutting down...wait <i class="fa fa-spin fa-cog"></i>' :
+//            ' establishing tunnel...wait <i class="fa fa-spin fa-cog"></i>'
+//        }
+//        return this.model.active ? ' is established' : 'is down'
+//      }
+//    }
+//  },
+//  bindings: {
+//    'model.last_job.inProgress': {
+//      hook: 'loading-overlay',
+//      type: 'toggle'
+//    },
+//    ngrok_switch: [{
+//      hook: 'ngrok-button',
+//      type: 'booleanClass',
+//      yes: 'fa-stop',
+//      no: 'fa-play'
+//    }, {
+//      hook: 'ngrok-button',
+//      type: 'booleanClass',
+//      yes: 'red',
+//      no: 'green'
+//    }],
+//    ngrok_switch_html: {
+//      hook: 'ngrok-button',
+//      type: 'innerHTML'
+//    },
+//    ngrok_state_html: {
+//      hook: 'ngrok-state',
+//      type: 'innerHTML'
+//    },
+//    'model.tunnel_url': { hook: 'tunnel_url' },
+//    'model.ngrok_error': { hook: 'ngrok_error' },
+//  },
+//  events: {
+//    'click [data-hook=ngrok-button]': 'onClickNgrokButton',
+//    'click [data-hook=ngrok-settings]': function (event) {
+//      event.preventDefault()
+//      event.stopPropagation()
+//      App.actions.settingsMenu.show('customer')
+//      App.actions.settingsMenu.toggleTab('customer','integrations')
+//    }
+//  },
+//  onClickNgrokButton (event) {
+//    if (this.model.active === true) {
+//      NgrokIntegrationActions.stopTunnel(this.host.id)
+//    } else {
+//      NgrokIntegrationActions.startTunnel(this.host.id)
+//    }
+//  }
+//})

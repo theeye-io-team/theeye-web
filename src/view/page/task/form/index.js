@@ -3,9 +3,9 @@ import ScraperForm from './scraper'
 import ApprovalForm from './approval'
 import DummyForm from './dummy'
 import NotificationForm from './notification'
-import TaskConstants from 'constants/task'
+import * as TaskConstants from 'constants/task'
 
-module.exports = function (options) {
+export default function (options) {
   const task = options.model
   if (task.type === TaskConstants.TYPE_SCRIPT) {
     return new ScriptForm (options)

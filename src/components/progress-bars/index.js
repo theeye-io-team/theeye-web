@@ -1,7 +1,7 @@
 import View from 'ampersand-view'
 import './styles.less'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="meter">
       <div class="percent-visual">

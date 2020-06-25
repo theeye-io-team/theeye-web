@@ -3,14 +3,13 @@ import View from 'ampersand-view'
 import FilteredSubcollection from 'ampersand-filtered-subcollection'
 import assign from 'lodash/assign'
 import MonitorButtonsView from './buttons'
-import MonitorActions from 'actions/monitor'
-import MonitorConstants from 'constants/monitor'
+import * as MonitorConstants from 'constants/monitor'
 import rowIconByType from '../row-icon-by-type'
 import TagView from 'components/tag'
 import HelpIconView from 'components/help-icon'
-const CollapseContentFactory = require('./collapse-content').Factory
+import { Factory as CollapseContentFactory } from './collapse-content'
 
-module.exports = function (options) {
+export default function (options) {
   const model = options.model
   if ( /group/.test(model.type) ) {
     return new MonitorsGroupView(options)
@@ -194,7 +193,7 @@ const MonitorView = View.extend({
     // capture and handle collapse event
     $(this.queryByHook('collapse-container'))
       .on('show.bs.collapse', () => {
-        MonitorActions.populate(this.model)
+        App.actions.monitor.populate(this.model)
       })
   },
   setRowIcon () {
@@ -304,7 +303,7 @@ const HostMonitorGroupView = MonitorView.extend({
   renderCollapsedContent () {
     // capture and handle collapse event
     $( this.queryByHook('collapse-container') ).on('show.bs.collapse', () => {
-      MonitorActions.populate(this.model)
+      App.actions.monitor.populate(this.model)
     })
 
     var monitors = this.model.submonitors.models.reduce((acum, item) => {
@@ -324,14 +323,7 @@ const HostMonitorGroupView = MonitorView.extend({
   }
 })
 
-const NestedMonitorView = MonitorView.extend({
-  render () {
-    this.renderWithTemplate()
-    this.renderCollapsedContent()
-    this.renderButtons()
-    this.setRowIcon()
-  }
-})
+//const NestedMonitorView = MonitorView.extend({ })
 
 function MonitorViewFactory (options) {
   const model = options.model;
@@ -340,9 +332,9 @@ function MonitorViewFactory (options) {
     case MonitorConstants.TYPE_HOST:
       monitor = new HostMonitorGroupView(options)
       break;
-    case MonitorConstants.TYPE_NESTED:
-      monitor = new NestedMonitorView(options)
-      break;
+    //case MonitorConstants.TYPE_NESTED:
+    //  monitor = new NestedMonitorView(options)
+    //  break;
     default:
       monitor = new MonitorView(options)
       break;

@@ -3,17 +3,7 @@ import NotificationActions from 'actions/notifications'
 import Modalizer from 'components/modalizer'
 import './styles.less'
 
-const DeleteNotificationsView = View.extend({
-  template: `
-    <div>
-      <span>Delete read notifications?</span>
-      <div style="bottom:0; position:absolute;">
-      </div>
-    </div>
-  `
-})
-
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div data-component="notifications-options">
       <span data-hook="empty-inbox-notifications" class="delete-all fa fa-trash-o"></span>
@@ -46,8 +36,15 @@ module.exports = View.extend({
     })
 
     modal.show()
-  },
-  render () {
-    this.renderWithTemplate(this)
   }
+})
+
+const DeleteNotificationsView = View.extend({
+  template: `
+    <div>
+      <span>Delete read notifications?</span>
+      <div style="bottom:0; position:absolute;">
+      </div>
+    </div>
+  `
 })

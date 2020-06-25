@@ -1,8 +1,6 @@
 import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import InputView from 'ampersand-input-view'
-import AuthActions from 'actions/auth'
-import NavbarActions from 'actions/navbar'
 import App from 'ampersand-app'
 import validator from 'validator'
 import activationLang from 'language/activation'
@@ -99,7 +97,7 @@ const SetCustomerForm = FormView.extend({
   }
 })
 
-module.exports = View.extend({
+export default View.extend({
   initialize () {
     View.prototype.initialize.apply(this, arguments)
     this.username = App.state.activate.username
@@ -141,7 +139,7 @@ module.exports = View.extend({
                 <h2>${activationLang.getText('orgTitle')}</h2>
                 <div class="form-wrapper">
                   <div data-hook="customer-form" class="form-container"></div>
-                  <button data-hook="start-activate">${activationLang.getText('btnFinish')}</button>
+                  <button data-hook="finish-registration">${activationLang.getText('btnFinish')}</button>
                 </div>
               </div>
             </div>
@@ -181,10 +179,10 @@ module.exports = View.extend({
       event.stopPropagation()
       this.activateForm.beforeSubmit()
       if (this.activateForm.valid) {
-        AuthActions.checkUsernameActivation(this.activateForm.data.username, App.state.activate.invitation_token)
+        App.actions.auth.checkUsername(this.activateForm.data.username, App.state.activate.invitation_token)
       }
     },
-    'click button[data-hook=start-activate]': function (event) {
+    'click button[data-hook=finish-registration]': function (event) {
       event.preventDefault()
       event.stopPropagation()
       this.activateForm.beforeSubmit()
@@ -192,10 +190,11 @@ module.exports = View.extend({
         var data = {
           username: App.state.activate.username,
           password: this.activateForm.data.password,
+          email: App.state.activate.email,
           invitation_token: App.state.activate.invitation_token,
           customername: this.customerForm.data.customer
         }
-        AuthActions.activateStep(data, this.token)
+        App.actions.auth.finishRegistration(data)
       }
     }
   },
@@ -207,6 +206,6 @@ module.exports = View.extend({
     this.renderSubview(this.activateForm, this.queryByHook('activate-form'))
     this.renderSubview(this.customerForm, this.queryByHook('customer-form'))
 
-    NavbarActions.setVisibility(false)
+    App.actions.navbar.setVisibility(false)
   }
 })

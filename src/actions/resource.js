@@ -1,15 +1,13 @@
 import App from 'ampersand-app'
-const logger = require('lib/logger')('actions:resource')
+import loggerModule from 'lib/logger'; const logger = loggerModule('actions:resource')
 import after from 'lodash/after'
 import bootbox from 'bootbox'
 import assign from 'lodash/assign'
 import ResourceModels from 'models/resource'
 import XHR from 'lib/xhr'
-const config = require('config')
 
-const create = (data, next = function(){}) => {
-  let resource = ResourceModels.Factory(data)
-  // only send form "data" to the api
+const create = (data, next=function(){}) => {
+  let resource = App.Models.Resource.Factory(data)
   resource.save({}, {
     success: () => {
       App.state.resources.add(resource)
@@ -22,23 +20,35 @@ const create = (data, next = function(){}) => {
   })
 }
 
-module.exports = {
-  create: create,
+export default {
+  create,
   // remote server update
   update (id, data) {
-    let resource = App.state.resources.get(id)
+    const resource = App.state.resources.get(id)
     // monitor and resource share almost the same properties.
     // should be unified into a single model
     resource.set(data)
     resource.monitor.set(data)
-    //resource.save(data,{
-    //  patch: true,
     resource.save({},{
       success: () => {
         bootbox.alert('Monitor Updated')
       },
       error: () => {
         bootbox.alert('Something goes wrong updating the Monitor')
+      }
+    })
+  },
+  remove (id) {
+    const resource = App.state.resources.get(id)
+    resource.destroy({
+      success () {
+        App.state.alerts.success('Success', 'Monitor Removed.')
+        if (resource.type === "host") {
+          App.Router.reload()
+        } else {
+          App.state.resources.remove( resource )
+          App.state.events.fetch()
+        }
       }
     })
   },
@@ -55,19 +65,19 @@ module.exports = {
     model.set(data)
     App.state.resources.sort()
   },
-  edit (id) {
-    window.location = "/admin/monitor#search=" + id
-  },
   workflow (id) {
     App.navigate('/admin/workflow/' + id)
   },
-  createMany (hosts, data) {
+  createMany (data) {
+    let hosts = data.hosts
+    delete data.hosts
+
     const done = after(hosts.length, () => {
       App.state.alerts.success('Success', 'Monitor created.')
     })
 
-    hosts.forEach(host => {
-      let monitorData = assign({}, data, { host_id: host })
+    hosts.forEach(host_id => {
+      let monitorData = assign({}, data, { host_id })
       create(monitorData, done)
     })
   },
@@ -75,7 +85,7 @@ module.exports = {
     changeAlerts (id, false, function(err){
       if (!err) {
         App.state.alerts.success('Alerts are disabled.')
-      } else { 
+      } else {
         App.state.alerts.danger('An error has ocurr updating the monitor')
       }
     })
@@ -89,12 +99,11 @@ module.exports = {
       }
     })
   }
-
 }
 
 const changeAlerts = (id, value, next) => {
   const resource = App.state.resources.get(id)
-  const url = `${config.api_url}/resource/${id}/alerts`
+  const url = `${App.config.supervisor_api_url}/monitor/${id}/alerts`
   next || (next = function(){})
 
   if (typeof value === 'boolean') {

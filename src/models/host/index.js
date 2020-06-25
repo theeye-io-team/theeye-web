@@ -1,15 +1,18 @@
+import App from 'ampersand-app'
 import State from 'ampersand-state'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
-const config = require('config')
+import config from 'config'
 
 import { Model as Customer } from 'models/customer'
 import Integrations from './integrations'
 
-const urlRoot = `${config.api_url}/host`
+const urlRoot = function () {
+  return `${config.supervisor_api_url}/${App.state.session.customer.name}/host`
+}
 
-const Model = AppModel.extend({
-  urlRoot: urlRoot,
+export const Model = AppModel.extend({
+  urlRoot,
 	props: {
     id: 'string',
 		customer_name: 'string',
@@ -29,10 +32,7 @@ const Model = AppModel.extend({
   }
 })
 
-const Collection = AppCollection.extend({
+export const Collection = AppCollection.extend({
   model: Model,
   url: urlRoot
 })
-
-exports.Model = Model
-exports.Collection = Collection

@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import AmpersandModel from 'ampersand-model'
 import XHR from 'lib/xhr'
 
-module.exports = AmpersandModel.extend({
+export default AmpersandModel.extend({
   dataTypes: {
     collection: {
       set: function (newVal) {

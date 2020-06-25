@@ -7,7 +7,7 @@ const EmptyView = View.extend({
   template: `<div class="no-notifications" data-hook="no-notifications">No notifications</div>`
 })
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="inbox-container">
       <div data-hook="inbox-items-container"></div>

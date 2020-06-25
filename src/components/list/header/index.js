@@ -3,36 +3,24 @@ import AmpersandCollection from 'ampersand-collection'
 import CommonButton from 'components/common-button'
 import extend from 'lodash/assign'
 
-const MassSelectorButton = CommonButton.extend({
-  props: {
-    checked: 'boolean'
-  },
-  events: {
-    click: 'onclick'
-  },
-  initialize () {
-    CommonButton.prototype.initialize.apply(this,arguments)
-    this.iconClass = 'fa'
-  },
-  onclick (event) {
-    event.stopPropagation()
-    this.toggle('checked')
-  },
-  bindings: extend({}, CommonButton.prototype.bindings, {
-    checked: {
-      type: 'booleanClass',
-      selector: 'span',
-      yes: 'fa-check-square-o',
-      no: 'fa-square-o'
-      //yes: 'fa-check-square-o',
-      //no: 'fa-square-o'
-    }
-  })
-})
+export default BaseView.extend({
+  template: () => {
+    let html = `
+      <div class="table-header admin">
+        <!-- select all models button -->
+        <span data-hook="left-container"></span>
+        <span class="title">
+          <span data-hook="title"></span>
+          <i data-hook="title-help"></i>
+        </span>
+        <span class="title separator">|</span>
+        <div data-hook="main-buttons-container" style="display:inline-block"></div>
+        <div data-hook="massive-buttons-container" class="pull-right"></div>
+      </div>
+    `
 
-module.exports = BaseView.extend({
-  autoRender: false,
-  template: require('./template.hbs'),
+    return html
+  },
   props: {
     title: ['string', false, 'Items'],
     massiveSelector: ['boolean', false, true],
@@ -84,4 +72,31 @@ module.exports = BaseView.extend({
       }
     }
   }
+})
+
+const MassSelectorButton = CommonButton.extend({
+  props: {
+    checked: 'boolean'
+  },
+  events: {
+    click: 'onclick'
+  },
+  initialize () {
+    CommonButton.prototype.initialize.apply(this,arguments)
+    this.iconClass = 'fa'
+  },
+  onclick (event) {
+    event.stopPropagation()
+    this.toggle('checked')
+  },
+  bindings: extend({}, CommonButton.prototype.bindings, {
+    checked: {
+      type: 'booleanClass',
+      selector: 'span',
+      yes: 'fa-check-square-o',
+      no: 'fa-square-o'
+      //yes: 'fa-check-square-o',
+      //no: 'fa-square-o'
+    }
+  })
 })

@@ -5,7 +5,7 @@ import config from 'config'
 const swallow = () => {
   App.state.session.licenseExpired = false
 }
-module.exports = () => {
+export default () => {
   const customerName = App.state.session.customer.name
   const loggedIn = App.state.session.logged_in
 

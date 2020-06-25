@@ -20,7 +20,7 @@ import './styles.less'
 
 const docsLink = 'core-concepts/tasks/'
 
-module.exports = function () {
+export default function () {
   const wizard = new TaskCreationWizard()
   wizard.render()
   const modal = new Modalizer({

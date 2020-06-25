@@ -3,7 +3,7 @@ import View from 'ampersand-view'
 //import WorkflowView from 'view/workflow'
 import './style.less'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="workflow-page admin-container">
       <div class="admin-panel">
@@ -18,7 +18,7 @@ module.exports = View.extend({
   },
   renderWorkflowView () {
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
-      .then(WorkflowView => {
+      .then(({ default: WorkflowView }) => {
 
         var workflow = this.workflow = new WorkflowView({
           graph: App.state.workflowPage.currentWorkflow

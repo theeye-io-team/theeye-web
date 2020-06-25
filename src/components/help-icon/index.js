@@ -3,7 +3,7 @@ const $ = require('jquery')
 import View from 'ampersand-view'
 import './styles.less'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <span data-component="help-icon" class="">
       <span class="fa fa-question-circle"></span>
@@ -36,10 +36,11 @@ module.exports = View.extend({
     mouseout: function (e) {
       this.el.style.color = 'rgba(' + this.colorRGB + ', 0.2)'
     },
-    click: function (e) {
-      if (!this.link) return
-      window.open(this.link, '_blank')
-    }
+    //click: function (e) {
+    //  $(this.el).tooltip('toggle')
+    //  //if (!this.link) { return }
+    //  //window.open(this.link, '_blank')
+    //}
   },
   render () {
     this.renderWithTemplate(this)
@@ -48,6 +49,8 @@ module.exports = View.extend({
     this.el.style.color = 'rgba(' + this.colorRGB + ', 0.2)'
 
     $(this.el).tooltip({
+      html: true,
+      trigger: 'hover click',
       container: this.el,
       placement: this.placement
     })

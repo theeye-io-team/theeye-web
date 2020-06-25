@@ -10,4 +10,4 @@ class Workflow extends Route {
   }
 }
 
-module.exports = Workflow
+export default Workflow

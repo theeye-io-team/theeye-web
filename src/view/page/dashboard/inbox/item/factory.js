@@ -23,4 +23,4 @@ const Factory = (options) => {
   }
 }
 
-module.exports = Factory
+export default Factory

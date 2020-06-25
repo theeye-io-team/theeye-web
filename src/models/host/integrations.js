@@ -1,5 +1,5 @@
 import State from 'ampersand-state'
-import JobModels from 'models/job'
+import * as JobModels from 'models/job'
 
 const Ngrok = State.extend({
   props: {

@@ -1,5 +1,5 @@
 
-exports.INDICATOR_TYPE = 'Indicator'
-exports.COUNTER_TYPE = 'CounterIndicator'
-exports.TEXT_TYPE = 'TextIndicator'
-exports.PROGRESS_TYPE = 'ProgressIndicator'
+export const INDICATOR_TYPE = 'Indicator'
+export const COUNTER_TYPE = 'CounterIndicator'
+export const TEXT_TYPE = 'TextIndicator'
+export const PROGRESS_TYPE = 'ProgressIndicator'

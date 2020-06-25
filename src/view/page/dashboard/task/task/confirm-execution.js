@@ -52,7 +52,7 @@ const ArgRow = View.extend({
   }
 })
 
-module.exports = View.extend({
+export default View.extend({
   template: `
   <div>
     <h2>You are going to run the task <b data-hook="name"></b>.</h2>

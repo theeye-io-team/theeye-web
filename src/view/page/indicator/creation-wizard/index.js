@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import FormView from '../form'
 import Modalizer from 'components/modalizer'
 
-module.exports = function () {
+export default function () {
   let model = new App.Models.Indicator.Indicator()
   let form = new FormView({ model })
 

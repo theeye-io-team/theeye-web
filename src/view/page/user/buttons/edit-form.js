@@ -6,7 +6,7 @@ import CheckboxView from 'components/checkbox-view'
 import App from 'ampersand-app'
 import isEmail from 'validator/lib/isEmail'
 
-module.exports = FormView.extend({
+export default FormView.extend({
   initialize: function (options) {
     this.fields = [
       new InputView({
@@ -23,7 +23,14 @@ module.exports = FormView.extend({
         value: this.model.username,
         required: true,
         invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
+        validityClassSelector: '.control-label',
+        tests: [
+          function (value) {
+            if (!isEmail(value) && !isEmail(value + '@theeye.io')) {
+              return 'Please provide a valid username'
+            }
+          }
+        ]
       }),
       new InputView({
         name: 'email',
@@ -37,35 +44,6 @@ module.exports = FormView.extend({
           }
         ],
         required: true,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
-      }),
-      new SelectView({
-        multiple: true,
-        tags: true,
-        options: App.state.customers,
-        value: this.model.customers,
-        styles: 'form-group',
-        name: 'customers',
-        required: true,
-        label: 'Customers',
-        unselectedText: 'organizations',
-        idAttribute: 'id',
-        textAttribute: 'name',
-        requiredMessage: 'Selection required',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
-      }),
-      new SelectView({
-        options: App.state.credentials,
-        value: this.model.credential,
-        styles: 'form-group',
-        name: 'credential',
-        required: true,
-        label: 'Credential',
-        unselectedText: 'credential',
-        idAttribute: 'name',
-        textAttribute: 'name',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       }),

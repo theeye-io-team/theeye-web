@@ -1,10 +1,8 @@
-'use strict'
 
-const State = require('ampersand-state')
-const AlertView = require('./view')
-const extend = require('lodash/extend')
+import State from 'ampersand-state'
+import AlertView from './view'
 
-require('./style.css')
+import './style.css'
 
 const ServerErrorType = {
   set (newVal) {
@@ -56,7 +54,7 @@ const AlertsType = {
   }
 }
 
-module.exports = State.extend({
+export default State.extend({
   dataTypes: {
     serverError: ServerErrorType,
     alerts: AlertsType
@@ -104,7 +102,7 @@ module.exports = State.extend({
     if (xhr.response) {
       var response = xhr.response
       var error = new Error(response.error.message)
-      extend(error, response.error)
+      Object.assign(error, response.error)
       error.xhr = xhr
       error.footprint = Date.now()
 

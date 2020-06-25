@@ -19,12 +19,9 @@ class FilesRoute extends Route {
     App.state.tags.fetch()
 
     // pre fetch extra file data
-    const file = new File({ id: id })
-    file.fetch({
-      success: () => {
-        const editView = new EditModalizer({ model: file })
-        editView.show()
-      }
+    const file = App.actions.file.get(id, function (err, file) {
+      const editView = new EditModalizer({ model: file })
+      editView.show()
     })
 
     if (!App.state.currentPage) {
@@ -33,4 +30,4 @@ class FilesRoute extends Route {
   }
 }
 
-module.exports = FilesRoute
+export default FilesRoute

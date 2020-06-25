@@ -4,7 +4,7 @@ import App from 'ampersand-app'
 import SelectView from 'components/select2-view'
 import SubCollection from 'ampersand-filtered-subcollection'
 
-module.exports = SelectView.extend({
+export default SelectView.extend({
   props: {
     type: 'string'
   },

@@ -1,16 +1,19 @@
+import App from 'ampersand-app'
 import AmpersandState from 'ampersand-state'
 import AmpersandCollection from 'ampersand-collection'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 
-const Customer = require('models/customer').Model
-const Hosts = require('models/host').Collection
-const Tasks = require('models/task').Collection
-const Resources = require('models/resource').Collection
-const Files = require('models/file').Collection
-const config = require('config')
+import { Model as Customer } from 'models/customer'
+import { Collection as Hosts } from 'models/host'
+import { Collection as Tasks } from 'models/task'
+import { Collection as Resources } from 'models/resource'
+import { Collection as Files } from 'models/file'
+import config from 'config'
 
-const urlRoot = `${config.api_url}/hostgroup`
+const urlRoot = function () {
+  return `${config.supervisor_api_url}/${App.state.session.customer.name}/hostgroup`
+}
 
 const EventTemplate = AmpersandState.extend({
 	props: {
@@ -27,8 +30,8 @@ const EventTemplates = AmpersandCollection.extend({
   model: EventTemplate
 })
 
-const Model = AppModel.extend({
-  urlRoot: urlRoot,
+export const Model = AppModel.extend({
+  urlRoot,
   props: {
     id: 'string',
     customer_id: 'string',
@@ -51,10 +54,7 @@ const Model = AppModel.extend({
   }
 })
 
-const Collection = AppCollection.extend({
+export const Collection = AppCollection.extend({
   model: Model,
   url: urlRoot
 })
-
-exports.Model = Model
-exports.Collection = Collection

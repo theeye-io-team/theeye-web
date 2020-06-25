@@ -1,7 +1,7 @@
-import TaskConstants from 'constants/task'
-import CollapsibleRow from './collapse'
+import * as TaskConstants from 'constants/task'
+import * as CollapsibleRow from './collapse'
 
-module.exports = function (options) {
+export default function (options) {
   switch (options.model.type) {
     case TaskConstants.TYPE_SCRIPT:
       return new CollapsibleRow.Script(options)

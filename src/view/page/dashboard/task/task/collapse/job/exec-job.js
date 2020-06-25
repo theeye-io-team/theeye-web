@@ -3,12 +3,12 @@ import bootbox from 'bootbox'
 import DynamicForm from 'view/dynamic-form'
 import Modalizer from 'components/modalizer'
 import { BaseExec } from '../../exec-task.js'
-import FIELD from 'constants/field'
+import * as FIELD from 'constants/field'
 import moment from 'moment'
 import isURL from 'validator/lib/isURL'
-import JobConstants from 'constants/job'
+import * as JobConstants from 'constants/job'
 
-exports.ExecJob = BaseExec.extend({
+const ExecJob = BaseExec.extend({
   execute () {
     if (this.model.inProgress) {
       const message = `Cancel <b>${this.model.name}</b> the execution of this task?
@@ -27,7 +27,7 @@ exports.ExecJob = BaseExec.extend({
   }
 })
 
-exports.ExecOnHoldJob = BaseExec.extend({
+const ExecOnHoldJob = BaseExec.extend({
   execute (isPendingCheck, done) {
     if (this.model.inProgress) {
       if (this.model._type === JobConstants.APPROVAL_TYPE) {
@@ -234,3 +234,5 @@ const buildApprovalMessage = (model) => {
 
   return message
 }
+
+export { ExecJob, ExecOnHoldJob }

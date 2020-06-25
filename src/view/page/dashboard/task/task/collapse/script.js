@@ -1,8 +1,8 @@
 import TaskCollapsibleRow from './collapsible-row'
-import TaskConstants from 'constants/task'
+import * as TaskConstants from 'constants/task'
 import ScheduleTaskButton from 'view/page/task/buttons/schedule'
 
-module.exports = TaskCollapsibleRow.extend({
+export default TaskCollapsibleRow.extend({
   derived: {
     hostname: {
       deps: ['model.hostname'],

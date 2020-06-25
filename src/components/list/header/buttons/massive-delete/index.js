@@ -1,11 +1,7 @@
 import MassiveButton from '../massive-action'
 import bootbox from 'bootbox'
-import map from 'lodash/map'
 
-const confirmTemplate = require('./confirm.hbs')
-const reconfirmTemplate = require('./reconfirm.hbs')
-
-module.exports = MassiveButton.extend({
+export default MassiveButton.extend({
   props: {
     name: 'string', // what is being deleted ?
     displayProperty: 'string' // which property of the item are we going to display
@@ -31,17 +27,11 @@ module.exports = MassiveButton.extend({
   askConfirmation (items) {
     const self = this
     const confirmModalStart = new Date()
-    const propsToDisplay = map(items, this.displayProperty)
-    var confirmMessage
-      
-    confirmMessage = confirmTemplate({
-      name: this.name,
-      items: propsToDisplay
-    })
+    const propsToDisplay = items.map(item => item[this.displayProperty])
 
     bootbox.confirm({
       title: 'Massive delete',
-      message: confirmMessage,
+      message: confirmTemplate({ name: this.name, items: propsToDisplay }),
       buttons: {
         confirm: {
           label: 'Yes',
@@ -55,18 +45,12 @@ module.exports = MassiveButton.extend({
       callback: confirm => {
         if (!confirm) { return }
         const timeToDecide = new Date() - confirmModalStart
-        const tooFast = timeToDecide < 3000
-
-        confirmMessage = reconfirmTemplate({
-          name: this.name,
-          items: propsToDisplay,
-          tooFast: tooFast,
-          timeTaken: timeToDecide / 1000
-        })
-
         bootbox.confirm({
           title: '<h2>Heads up!</h2>',
-          message: confirmMessage,
+          message: reconfirmTemplate({
+            name: this.name,
+            items: propsToDisplay
+          }),
           buttons: {
             confirm: {
               label: 'Yes',
@@ -91,3 +75,36 @@ module.exports = MassiveButton.extend({
     bootbox.alert('Hey! I do not know how to delete this items. I am sorry...')
   }
 })
+
+const confirmTemplate = (state) => {
+  const { name, items } = state
+  let message = items.map(item => `<strong>${item}</strong><br />`)
+
+  let html = `
+    <p class="bg-danger" style="padding:15px">You are about to delete these ${name}:</p>
+    ${message}
+    <br/><br/>
+    <h3>Are you sure?</h3>
+    `
+
+  return html
+}
+
+const reconfirmTemplate = (state) => {
+  const { name, items } = state
+
+  let message = items.map(item => `<strong>${item}</strong><br />`)
+
+  let html = `
+    <p class="lead">You are deleting <strong>${name}</strong>.
+      Take a good look at them,
+      'cos they will be gone forever when you hit that <span class="label label-danger">Yes</span> button.
+      <br /><br />
+      ${message}
+    </p>
+    <br/>
+    <h3>Are you <strong>completely</strong> sure?</h3>
+  `
+
+  return html
+}

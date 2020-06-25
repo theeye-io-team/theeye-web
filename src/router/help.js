@@ -8,4 +8,4 @@ class Help extends Route {
   }
 }
 
-module.exports = Help
+export default Help

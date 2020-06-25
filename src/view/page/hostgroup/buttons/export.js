@@ -3,7 +3,7 @@ import HostGroupActions from 'actions/hostgroup'
 import bootbox from 'bootbox'
 import $ from 'jquery'
 
-module.exports = PanelButton.extend({
+export default PanelButton.extend({
   initialize: function (options) {
     this.title = 'Export template'
     this.iconClass = 'fa fa-download dropdown-icon'

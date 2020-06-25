@@ -15,7 +15,7 @@ import './styles.less'
  * @summary modal to display jobs output
  *
  */
-module.exports = Modalizer.extend({
+export default Modalizer.extend({
   props: {
     job: 'state'
   },

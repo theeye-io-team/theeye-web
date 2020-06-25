@@ -1,5 +1,5 @@
 
-module.exports = {
+export default {
   get (options={}) {
     var search
     var params

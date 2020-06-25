@@ -4,14 +4,14 @@ import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import Collection from 'ampersand-collection'
 import { DynamicArgument as TaskArgument } from 'models/task/dynamic-argument'
-import FieldConstants from 'constants/field'
+import * as FieldConstants from 'constants/field'
 import HelpIcon from 'components/help-icon'
 
 // component dependencies
 import ArgumentsCreator from './creator'
 import ArgumentView from './argument'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
 	  <div class="form-group">
       <label class="col-sm-3 control-label" data-hook="label">Input Arguments</label>

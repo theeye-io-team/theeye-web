@@ -1,9 +1,9 @@
 window.$ = window.jQuery = require('jquery')
-var bootstrap = require('bootstrap')
-var tagsinput = require('bootstrap-tagsinput')
-var typeaheadjs = require('typeahead.js-browserify')
+const bootstrap = require('bootstrap')
+const tagsinput = require('bootstrap-tagsinput')
+const typeaheadjs = require('typeahead.js-browserify')
 typeaheadjs.loadjQueryPlugin()
-var InputView = require('components/input-view')
+import InputView from 'components/input-view'
 
 var TagsInput = InputView.extend({
   props: {
@@ -113,4 +113,4 @@ var TagsInput = InputView.extend({
   }
 })
 
-module.exports = TagsInput
+export default TagsInput

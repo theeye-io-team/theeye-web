@@ -1,16 +1,21 @@
+import App from 'ampersand-app'
 import AppCollection from 'lib/app-collection'
-const Schema = require('./schema')
-const config = require('config')
+import Schema from './schema'
+import config from 'config'
 
-const urlRoot = `${config.api_url}/file`
-const Model = Schema.extend({ urlRoot: urlRoot })
+const urlRoot = function () {
+  return `${config.supervisor_api_url}/${App.state.session.customer.name}/file`
+}
 
-const Collection = AppCollection.extend({
+export const Model = Schema.extend({
+  urlRoot,
+  props: {
+    _type: ['string', false, 'File']
+  }
+})
+
+export const Collection = AppCollection.extend({
   comparator: 'filename',
   model: Model,
   url: urlRoot,
 })
-
-exports.Model = Model
-exports.Collection = Collection
-//exports.Template 

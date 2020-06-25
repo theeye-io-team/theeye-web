@@ -1,7 +1,7 @@
 import CreationWizard from '../creation-wizard'
 import CommonButton from 'components/common-button'
 
-module.exports = CommonButton.extend({
+export default CommonButton.extend({
   initialize (options) {
     this.title = 'Create a New Task'
     this.className = (options && options.className) || 'btn btn-primary'

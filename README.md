@@ -1,49 +1,37 @@
 # TheEye-Web
 
 ## Requirements
-Tested under node 6.11.0 - npm 4.0.5
-
-You'll need a `supervisor` instance to be able to run this web client (magical it is not)
+Tested under node 10.17.0 - npm 6.11.3
 
 ## Installation
 
 ```bash
-git clone https://bitbucket.org/interactar/web
-cd web
+git clone
 npm install
 ```
 
-**NOTE:** After `npm` has installed you'll have to manually install a `sails` dependency
-due to a minor flaw on `sails` dependencies declaration:
+## Building
 
-```bash
-cd node_modules/sails
-npm install grunt-cli
+For compiling the assets and create the js/css bundles, it is required to choose a configuration file that should be placed in the directory src/config/ 
+Use NODE_ENV to choose the required configuration env.
+
+### Development
+
+Hereunder we are assuming a file called src/config/dev.js exists and exports the config. See src/config/development.js for references.
+
+
+```shell
+NODE_ENV=development npm run build-dev
+
 ```
 
-## Running
+### Production
 
-Default `npm` script `local` uses `NODE_ENV=localdev`, so you should create your
-`config/localdev.js` and adjust it to your needs. Then run:
+```shell
+NODE_ENV=production npm run build-prod
 
-```bash
-npm run local
 ```
 
-Changes are monitored by `nodemon` so whenever you save a file the client is restarted
-to reflect the changes.
-
-####  Start your engines
-
-```bash
-npm run local
-```
-
-Another terminal:
-
-```bash
-npm run webpack
-```
 
 #### Web developer tools
 
@@ -78,16 +66,3 @@ It is not enforced. Yet. Read on the [StandardJS page][1] for more information a
 
 [1]: https://github.com/feross/standard
 
-### Pending
-
-  [ ] Add production build steps in readme
-
-  [ ] Enhance double build system
-
-  [ ] Improve `devtool` setup for better readability
-
-  [X] Be able of proper `css` requiring
-
-  [x] Add mention about **Standard** implementation
-
-  [ ] Bring changes guideline document from molaa repo

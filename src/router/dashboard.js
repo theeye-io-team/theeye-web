@@ -5,7 +5,7 @@ import App from 'ampersand-app'
 import search from 'lib/query-params'
 import Route from 'lib/router-route'
 
-const logger = require('lib/logger')('router:dashboard')
+import loggerModule from 'lib/logger'; const logger = loggerModule('router:dashboard')
 
 class Dashboard extends Route {
   indexRoute () {
@@ -17,7 +17,7 @@ class Dashboard extends Route {
   }
 }
 
-module.exports = Dashboard
+export default Dashboard
 
 const prepareData = (options) => {
   App.state.dashboard.indicatorsDataSynced = false
@@ -48,9 +48,8 @@ const prepareData = (options) => {
 }
 
 const index = (query) => {
-  // const credential = App.state.session.user.credential
   prepareData()
-  return renderPageView()
+  return renderPageView({})
 }
 
 /**

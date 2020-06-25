@@ -14,7 +14,7 @@ import $ from 'jquery'
 import JobRow from './job'
 import JobsList from 'view/page/dashboard/task/jobs-list'
 
-module.exports = CollapsibleRow.extend({
+export default CollapsibleRow.extend({
   onClickToggleCollapse (event) {
     App.actions.task.populate(this.model)
     return

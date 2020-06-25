@@ -1,6 +1,5 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
-import config from 'config'
 
 export default {
   startTunnel (host_id) {
@@ -10,7 +9,7 @@ export default {
 
     // start tunnel
     XHR.send({
-      url: `${config.api_v3_url}/integrations/ngrok/start`,
+      url: `${App.config.api_v3_url}/integrations/ngrok/start`,
       method: 'PUT',
       jsonData: { host: host_id },
       done: (jobData, xhr) => {
@@ -29,7 +28,7 @@ export default {
 
     // start tunnel
     XHR.send({
-      url: `${config.api_v3_url}/integrations/ngrok/stop`,
+      url: `${App.config.api_v3_url}/integrations/ngrok/stop`,
       method: 'PUT',
       jsonData: { host: host_id },
       done: (jobData, xhr) => {
@@ -40,5 +39,5 @@ export default {
         console.log(xhr)
       }
     })
-  },
+  }
 }

@@ -497,8 +497,8 @@ footer a.image img {margin-top:-4px}
 
 /* custom switch */
 /*.checkbox{display:none}*/
-.switch{width: 62px;height: 30px;z-index: 0;padding: 0;appearance: none;border: none;cursor: pointer;position: relative;border-radius:16px; //IE 11-moz-border-radius:16px; //Mozilla-webkit-border-radius:16px; margin:0}
-.switch:before{content: ' ';position: absolute;left: 1px;top: 6px;width: 60px;height: 18px;background: #8096ad;z-index: 1;border-radius:16px; //IE 11-moz-border-radius:16px; //Mozilla-webkit-border-radius:16px;-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";filter: alpha(opacity=40);-moz-opacity: 0.4;-khtml-opacity: 0.4;opacity: 0.4;}
+.switch{width: 62px;height: 30px;z-index: 0;padding: 0;appearance: none;border: none;cursor: pointer;position: relative;border-radius:16px; margin:0}
+.switch:before{content: ' ';position: absolute;left: 1px;top: 6px;width: 60px;height: 18px;background: #8096ad;z-index: 1;border-radius:16px; -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";filter: alpha(opacity=40);-moz-opacity: 0.4;-khtml-opacity: 0.4;opacity: 0.4;}
 .switch:after {content: ' ';height: 27px;width: 27px;border-radius: 26px;background: #aaa;position: absolute;z-index: 2;top: 1px;left: 1px;-webkit-transition-duration: 300ms;transition-duration: 300ms;-webkit-box-shadow: 0 2px 3px #666;box-shadow: 0 2px 3px #666;}
 .switchOn:before{background: #4c9689 !important;-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";filter: alpha(opacity=40);-moz-opacity: 0.4;-khtml-opacity: 0.4;opacity: 0.4;}
 .switchOn:after{left: 33px !important;background:#4c9689 !important}
@@ -581,6 +581,7 @@ h3.light { color: #EEE}
        -o-transition: background-color 300ms linear;
       -ms-transition: background-color 300ms linear;
           transition: background-color 300ms linear}
+.admin-container .members-container .panel-default>.panel-heading:hover {background-color: unset}
 .admin-container .panel-default.panelActive>.panel-heading {background:#212F48;border-bottom:1px dotted #aaa}
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body {border:none;color:#fff;background:#23324C; width: 100%;font-size: 14px;}
 .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body h4, .admin-container .panel-default>.panel-heading+.panel-collapse>.panel-body td {font-weight: 300;}
@@ -835,10 +836,6 @@ input[type=checkbox].form-control {
   left: 0;
   top: 103px;
   z-index: 999;
-}
-
-.workflow-viewer .workflow-component {
-  height: 300px;
 }
 
 .tag-grouper {
@@ -1203,10 +1200,6 @@ a.flowchart-icon {
  * } SETTINGS FOR NEW ADMIN PAGES MOBILE BUTTON
  *
  */
-
-.tooltip {
-  min-width: 150px;
-}
 
 .col-nopadding {
   padding: 0 !important;

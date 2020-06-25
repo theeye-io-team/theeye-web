@@ -7,7 +7,7 @@ import FormView from '../form'
 import bootbox from 'bootbox'
 import $ from 'jquery'
 
-module.exports = PanelButton.extend({
+export default PanelButton.extend({
   initialize (options) {
     this.title = 'Edit template'
     this.iconClass = 'fa fa-edit dropdown-icon'

@@ -4,7 +4,7 @@ import bootbox from 'bootbox'
 import { Factory as TaskFactory } from 'models/task'
 import $ from 'jquery'
 
-module.exports = PanelButton.extend({
+export default PanelButton.extend({
   initialize (options) {
     this.title = 'Copy task'
     this.iconClass = 'fa fa-copy dropdown-icon'
@@ -16,7 +16,7 @@ module.exports = PanelButton.extend({
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
       return import(/* webpackChunkName: "task-form" */ '../form')
-        .then(FormView => {
+        .then(({ default: FormView }) => {
           const task = new TaskFactory({ type: this.model.type })
           const form = new FormView({ model: task })
           const modal = new Modalizer({

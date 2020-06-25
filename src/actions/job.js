@@ -3,16 +3,17 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
-import TaskConstants from 'constants/task'
-import LifecycleConstants from 'constants/lifecycle'
-import JobConstants from 'constants/job'
+import * as TaskConstants from 'constants/task'
+import * as LifecycleConstants from 'constants/lifecycle'
+import * as JobConstants from 'constants/job'
 import { ExecOnHoldJob } from 'view/page/dashboard/task/task/collapse/job/exec-job'
 import { eachSeries, each } from 'async'
-import config from 'config'
-import { Factory as JobFactory } from 'models/job'
-const logger = require('lib/logger')('actions:jobs')
+import qs from 'qs'
 
-module.exports = {
+import loggerModule from 'lib/logger'
+const logger = loggerModule('actions:jobs')
+
+export default {
   /**
    *
    * @summary this is being updated via socket event
@@ -60,7 +61,7 @@ module.exports = {
     job.set('lifecycle', LifecycleConstants.CANCELED)
     XHR.send({
       method: 'put',
-      url: `${config.api_url}/job/${job.id}/cancel`,
+      url: `${job.url()}/cancel`,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
@@ -78,7 +79,7 @@ module.exports = {
     job.set('lifecycle', LifecycleConstants.FINISHED)
     XHR.send({
       method: 'put',
-      url: `${config.api_v3_url}/job/${job.id}/approve`,
+      url: `${job.url()}/approve`,
       //jsonData: { args },
       headers: {
         Accept: 'application/json;charset=UTF-8'
@@ -97,7 +98,7 @@ module.exports = {
     job.set('lifecycle', LifecycleConstants.FINISHED)
     XHR.send({
       method: 'put',
-      url: `${config.api_v3_url}/job/${job.id}/reject`,
+      url: `${job.url()}/reject`,
       //jsonData: { args },
       headers: {
         Accept: 'application/json;charset=UTF-8'
@@ -116,7 +117,7 @@ module.exports = {
     //job.set('lifecycle', LifecycleConstants.FINISHED)
     XHR.send({
       method: 'put',
-      url: `${config.api_v3_url}/job/${job.id}/input`,
+      url: `${job.url()}/input`,
       jsonData: { args },
       headers: {
         Accept: 'application/json;charset=UTF-8'
@@ -130,57 +131,78 @@ module.exports = {
       }
     })
   },
+  /**
+   * model should be a workflow or a task
+   */
   removeFinished (model) {
-    let entity
-    let deletedJobs = []
-
-    if (/Workflow/.test(model._type)) {
-      entity = App.state.workflows.get(model.id)
-    } else {
-      entity = App.state.tasks.get(model.id)
-    }
-
     XHR.send({
       method: 'delete',
-      url: `${config.api_v3_url}/job/finished?type=${model._type}&id=${model.id}`,
+      url: `${model.url()}/job?lifecycle=finished`,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
       done (data, xhr) {
-        entity.jobs.forEach(job => {
+        let deletedJobs = []
+        model.jobs.forEach(job => {
           if (!LifecycleConstants.inProgress(job.lifecycle)) {
             deletedJobs.push(job.id)
           }
         })
-
         deletedJobs.forEach(jobId => {
-          entity.jobs.remove(jobId)
+          model.jobs.remove(jobId)
         })
       },
       fail (err, xhr) {
-        bootbox.alert('Something goes wrong. Please refresh')
+        bootbox.alert('Something goes wrong. Please try again later')
+      }
+    })
+  },
+  cleanQueue (model, query) {
+    query || (query = {})
+    XHR.send({
+      method: 'delete',
+      url: `${model.url()}/job?${qs.stringify(query)}`,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (data, xhr) {
+        let deletedJobs = []
+        model.jobs.forEach(job => {
+          if (!LifecycleConstants.inProgress(job.lifecycle)) {
+            deletedJobs.push(job.id)
+          }
+        })
+        deletedJobs.forEach(jobId => {
+          model.jobs.remove(jobId)
+        })
+      },
+      fail (err, xhr) {
+        bootbox.alert('Something goes wrong. Please try again later')
       }
     })
   }
 }
 
-const createWorkflowJob = (workflow, args, next) => {
+const createSingleTaskJob = (task, args, next) => {
   let body = {
-    task: workflow.start_task_id,
+    task: task.id,
     task_arguments: args
   }
 
   XHR.send({
-    method: 'post',
-    url: `${config.api_v3_url}/workflows/${workflow.id}/job`,
+    method: 'POST',
+    url: `${task.url()}/job`,
     jsonData: body,
     headers: {
       Accept: 'application/json;charset=UTF-8'
     },
     done (data, xhr) {
-      logger.debug('job created. updating workflow')
-      //wait for socket update arrive and create there
-      let job = workflow.jobs.add(data, { merge: true })
+      logger.debug('job created. updating task')
+      if (task.grace_time > 0) {
+        App.actions.scheduler.fetch(task.id)
+      } else {
+        let job = task.jobs.add(data, { merge: true })
+      }
       next(null, data)
     },
     fail (err,xhr) {
@@ -191,26 +213,23 @@ const createWorkflowJob = (workflow, args, next) => {
   })
 }
 
-const createSingleTaskJob = (task, args, next) => {
+const createWorkflowJob = (workflow, args, next) => {
   let body = {
-    task: task.id,
+    task: workflow.start_task_id,
     task_arguments: args
   }
 
   XHR.send({
-    method: 'post',
-    url: `${config.api_url}/job`,
+    method: 'POST',
+    url: `${workflow.url()}/job`,
     jsonData: body,
     headers: {
       Accept: 'application/json;charset=UTF-8'
     },
-    done (data,xhr) {
-      logger.debug('job created. updating task')
-      if (task.grace_time > 0) {
-        App.actions.scheduler.fetch(task.id)
-      } else {
-        let job = task.jobs.add(data, { merge: true })
-      }
+    done (data, xhr) {
+      logger.debug('job created. updating workflow')
+      //wait for socket update arrive and create there
+      let job = workflow.jobs.add(data, { merge: true })
       next(null, data)
     },
     fail (err,xhr) {
@@ -233,7 +252,7 @@ const addWorkflowJobToState = (data) => {
 }
 
 const addTaskJobToState = (data, task) => {
-  let taskJob = new JobFactory(data, {})
+  let taskJob = new App.Models.Job.Factory(data, {})
 
   if (!task.workflow_id) {
     task.jobs.add(taskJob, { merge: true })

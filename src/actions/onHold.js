@@ -2,13 +2,13 @@
 'use strict'
 
 import App from 'ampersand-app'
-import TaskConstants from 'constants/task'
-import LifecycleConstants from 'constants/lifecycle'
-import JobConstants from 'constants/job'
+import * as TaskConstants from 'constants/task'
+import * as LifecycleConstants from 'constants/lifecycle'
+import * as JobConstants from 'constants/job'
 import { ExecOnHoldJob } from 'view/page/dashboard/task/task/collapse/job/exec-job'
 import { eachSeries, each } from 'async'
 
-module.exports = {
+export default {
   skip (job) {
     job.skip = true
   },

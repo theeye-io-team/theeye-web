@@ -3,7 +3,7 @@ import App from 'ampersand-app'
 import CommonButton from 'components/common-button'
 import $ from 'jquery'
 
-module.exports = CommonButton.extend({
+export default CommonButton.extend({
   initialize (options) {
     this.title = 'Edit file'
     this.iconClass = 'fa fa-edit'

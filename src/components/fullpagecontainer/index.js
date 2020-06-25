@@ -1,7 +1,7 @@
 import View from 'ampersand-view'
 import './styles.css'
 
-module.exports = View.extend({
+export default View.extend({
   template: `<div class="full-page-container"></div>`,
   props: {
     autoAppend: ['boolean',false,false],

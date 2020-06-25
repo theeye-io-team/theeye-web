@@ -18,5 +18,5 @@ Flatpickr.l10ns.es.ordinal = function(){
 
 Flatpickr.l10ns.es.firstDayOfWeek = 1;
 if (typeof module !== "undefined") {
-	module.exports = Flatpickr.l10ns;
+	export default Flatpickr.l10ns;
 }

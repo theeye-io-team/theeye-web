@@ -1,11 +1,11 @@
 
 import App from 'ampersand-app'
 
-const logger = require('lib/logger')('actions:taskform')
+import loggerModule from 'lib/logger'; const logger = loggerModule('actions:taskform')
 
-module.exports = {
-  setFile (data) {
-    App.state.taskForm.file = data
+export default {
+  setFile (file) {
+    App.state.taskForm.file = file
   },
   clearFile () {
     App.state.taskForm.file = {}

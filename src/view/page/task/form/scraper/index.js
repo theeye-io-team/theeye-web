@@ -15,13 +15,13 @@ import CheckboxView from 'components/checkbox-view'
 import FormButtons from 'view/buttons'
 import AdvancedToggle from 'view/advanced-toggle'
 import isURL from 'validator/lib/isURL'
-import WebhooksConstants from 'constants/webhooks'
-import TaskConstants from 'constants/task'
+import * as WebhooksConstants from 'constants/webhooks'
+import * as TaskConstants from 'constants/task'
 import HelpTexts from 'language/help'
 
 import CopyTaskSelect from '../copy-task-select'
 
-module.exports = TaskFormView.extend({
+export default TaskFormView.extend({
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew())
 

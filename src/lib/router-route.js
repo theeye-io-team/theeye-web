@@ -1,8 +1,6 @@
-'use strict'
 
 import App from 'ampersand-app'
 import Events from 'ampersand-events'
-import assign from 'lodash/assign'
 
 class Route {
   /**
@@ -32,6 +30,6 @@ class Route {
   }
 }
 
-assign(Route.prototype, Events)
+Object.assign(Route.prototype, Events)
 
 export default Route

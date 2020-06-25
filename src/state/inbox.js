@@ -16,7 +16,7 @@ export default State.extend({
     this.filteredNotifications = new FilteredSubcollection(
       this.appState.notifications, {
         filters: buildFilterArray(this.appState),
-        comparator: sortOnCreatedAt
+        comparator: sortOnCreationDate
       }
     )
 
@@ -28,13 +28,13 @@ export default State.extend({
   },
   updateFilters () {
     this.filteredNotifications.configure({
-      comparator: sortOnCreatedAt,
+      comparator: sortOnCreationDate,
       filters: buildFilterArray(this.appState)
     }, true)
   }
 })
 
-const sortOnCreatedAt = (model) => -model.createdAt
+const sortOnCreationDate = (model) => -model.creation_date
 
 const buildFilterArray = (appState) => {
   const excludes = appState.session.user.notifications.notificationFilters

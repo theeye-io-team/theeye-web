@@ -1,5 +1,5 @@
 import TaskCollapsibleRow from '../collapsible-row'
-import TaskConstants from 'constants/task'
+import * as TaskConstants from 'constants/task'
 import TaskRowView from '../task'
 
 let taskIcons = {
@@ -10,7 +10,7 @@ let taskIcons = {
   dummy: 'fa fa-list-ul'
 }
 
-module.exports = TaskCollapsibleRow.extend({
+export default TaskCollapsibleRow.extend({
   derived: {
     hostname: {
       deps: [],

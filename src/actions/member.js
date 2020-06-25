@@ -1,16 +1,14 @@
 //import jquery from 'jquery'
 import bootbox from 'bootbox'
 import App from 'ampersand-app'
-const xhr = $.ajax
-import XHR from 'lib/xhr'
-import config from 'config'
 import Acls from 'lib/acls'
-import { Model as Member } from 'models/member'
+import config from 'config'
+import XHR from 'lib/xhr'
 
-module.exports = {
-  removeMember: function(data) {
+export default {
+  removeMember: function(member) {
     App.state.loader.visible = true
-    var member = new Member({ id: data.userId })
+
     member.destroy({
       success: function() {
         App.state.loader.visible = false
@@ -29,12 +27,12 @@ module.exports = {
       }
     });
   },
-  updateMemberCredential: function(userId, data) {
+  updateCredential: function(member, data) {
     App.state.loader.visible = true
-    var member = new Member({ id: userId })
-    data.user = {credential: data.credential}
+
     member.set(data)
-    member.save({},{
+    member.save(data,{
+      patch: true,
       collection: App.state.members,
       success: function(result, response){
         App.state.loader.visible = false
@@ -53,9 +51,10 @@ module.exports = {
       }
     })
   },
-  inviteMember: function(data) {
+  inviteMember (data) {
     App.state.loader.visible = true
-    var member = new Member()
+
+    var member = new App.Models.Member.Model({})
     data.user = {}
     data.user.username = data.email
     data.user.email = data.email
@@ -65,27 +64,20 @@ module.exports = {
 
     member.set(data)
     member.save({},{
-      success: function(result, response) {
+      success: (result, newMember) => {
         App.state.loader.visible = false
         var message = 'Invitation sent.'
-        if(response.resend)
-          message = 'The user is already a member of this organization. <br> A new invitation email has been sent.'
-        member.set({user_id: member.id})
-        App.state.members.add(response.member)
-        bootbox.alert({
-          title: 'Success',
-          message: message
-        })
+        member.set({user_id: newMember.id})
+        App.state.members.add(member)
+        bootbox.alert({ title: 'Success', message })
       },
-      error: function(err, response) {
+      error: (err, response) => {
         App.state.loader.visible = false
         var message = 'Error sending user invitation.'
-        if(response.body === 'activeMember')
-          message = 'The user is already a member of this organization.'
-        bootbox.alert({
-          title: 'Error',
-          message: message
-        })
+        if (err.code === 'AlreadyActiveMember') {
+          message = 'The user is already a member of the organization.'
+        }
+        bootbox.alert({ title: 'Error', message })
       }
     });
   },
@@ -97,6 +89,94 @@ module.exports = {
       App.state.members.fetch({
         error (err,xhr) {
           bootbox.alert('Something goes wrong fetching members. Please refresh')
+        }
+      })
+    }
+  },
+  admin: {
+    create (data) {
+      App.state.loader.visible = true
+
+      data.user = {}
+      data.user.username = data.email
+      data.user.email = data.email
+      data.user.name = data.name
+      data.user.credential = data.credential
+      delete data.email
+
+      XHR.send({
+        url: `${config.api_url}/admin/member`,
+        method: 'post',
+        jsonData: data,
+        headers: {
+          Accept: 'application/json;charset=UTF-8'
+        },
+        done (member, xhr) {
+          App.state.loader.visible = false
+          var message = 'Invitation sent.'
+          App.state.admin.members.add(member)
+          bootbox.alert({ title: 'Success', message })
+        },
+        fail (err, xhr) {
+          App.state.loader.visible = false
+          var message = 'Error sending user invitation.'
+          if (err.code === 'AlreadyActiveMember') {
+            message = 'The user is already a member of the organization.'
+          }
+          bootbox.alert({ title: 'Error', message })
+        }
+      })
+    },
+    remove: (id) => {
+      App.state.loader.visible = true
+
+      XHR.send({
+        url: `${config.api_url}/admin/member/${id}`,
+        method: 'delete',
+        headers: {
+          Accept: 'application/json;charset=UTF-8'
+        },
+        done (response,xhr) {
+          App.state.loader.visible = false
+          App.state.admin.members.remove(id)
+          bootbox.alert({
+            title: 'Success',
+            message: 'Member removed.'
+          })
+        },
+        fail (err,xhr) {
+          App.state.loader.visible = false
+          bootbox.alert({
+            title: 'Error',
+            message: 'Error updating member access.'
+          })
+        }
+      })
+    },
+    updateCredential: (id, data) => {
+      App.state.loader.visible = true
+      console.log(data)
+      XHR.send({
+        url: `${config.api_url}/admin/member/${id}`,
+        method: 'PATCH',
+        jsonData: data,
+        headers: { Accept: 'application/json;charset=UTF-8' },
+        done (response,xhr) {
+          App.state.loader.visible = false
+          bootbox.alert({
+            title: 'Success',
+            message: 'Member updated.'
+          })
+          App.state.admin.members.add(response, {merge: true})
+        },
+        fail (err,xhr) {
+          console.log(err)
+          console.log(xhr.response)
+          App.state.loader.visible = false
+          bootbox.alert({
+            title: 'Error',
+            message: 'Error updating member.'
+          })
         }
       })
     }

@@ -5,7 +5,7 @@ import { Collection as Indicators } from 'models/indicator'
 import { Collection as Webhooks } from 'models/webhook'
 import { Collection as HostGroups } from 'models/hostgroup'
 import { Collection as Users } from 'models/user'
-import { Collection as Members } from 'models/member'
+import { Collection as Members, AdminCollection as AdminMembers } from 'models/member'
 import { Collection as Customers } from 'models/customer'
 import { Collection as Hosts } from 'models/host'
 import { Collection as Schedules } from 'models/schedule'
@@ -20,13 +20,14 @@ import { Workflows } from 'models/workflow'
 import { Collection as Notifications } from 'models/notification'
 import Alerts from 'components/alerts'
 
-import IndicatorConstants from 'constants/indicator'
-import TaskConstants from 'constants/task'
+import * as IndicatorConstants from 'constants/indicator'
+import * as TaskConstants from 'constants/task'
 
 import TemplatePageState from './template-page'
 import DashboardPageState from './dashboard-page'
 import SessionState from './session'
 import NavbarState from './navbar'
+import SettingsMenuState from './settings-menu'
 import HostStatsPageState from './hoststats-page'
 import InboxState from './inbox'
 import OnboardingState from './onboarding'
@@ -147,6 +148,7 @@ const AppState = State.extend({
     this.session = new SessionState()
     this.localSettings = new LocalSettings()
     this.navbar = new NavbarState()
+    this.settingsMenu = new SettingsMenuState()
     this.sideMenu = new SideMenuState()
     this.searchbox = new SearchBoxState()
     this.inbox = new InboxState({ appState: this })
@@ -200,7 +202,7 @@ const AppState = State.extend({
   }
 })
 
-module.exports = AppState
+export default AppState
 
 const NotifyState = State.extend({
   props: {
@@ -267,7 +269,6 @@ const PopupState = State.extend({
 
 const _initCollections = function () {
   Object.assign(this, {
-    customers: new Customers([]),
     hostGroups: new HostGroups([]),
     hosts: new Hosts([]),
     hostsByRegex: new Hosts([]),
@@ -277,13 +278,17 @@ const _initCollections = function () {
     jobs: new Jobs([]),
     tags: new Tags([]),
     files: new Files([]),
-    users: new Users([]),
     webhooks: new Webhooks([]),
     indicators: new Indicators([]),
     members: new Members([]),
     events: new Events([]),
     notifications: new Notifications([]),
-    workflows: new Workflows([])
+    workflows: new Workflows([]),
+    admin: {
+      users: new Users([]),
+      customers: new Customers([]),
+      members: new AdminMembers([])
+    }
   })
 
   const runners = this.runners = new Collection([])
@@ -292,8 +297,19 @@ const _initCollections = function () {
   this.severities = new SeveritiesCollection()
   this.indicatorTypes = new IndicatorTypesCollection()
 
-  this.tasks.on('change:script_runas add', function (model) {
-    if (model.type === TaskConstants.TYPE_SCRIPT) {
+  const runnersAdd = (model) => {
+    if (model.script_runas) {
+      getHash(model.script_runas, hash => {
+        runners.add({
+          runner: model.script_runas,
+          id: hash
+        })
+      })
+    }
+  }
+
+  const runnersSync = (models) => {
+    for (let model of models) {
       if (model.script_runas) {
         getHash(model.script_runas, hash => {
           runners.add({
@@ -303,21 +319,27 @@ const _initCollections = function () {
         })
       }
     }
+  }
+
+  // tasks
+  this.tasks.on('change:script_runas add', runnersAdd)
+  this.tasks.on('sync', (state) => {
+    if (state.isCollection) {
+      runnersSync(state.models)
+    } else {
+      runnersAdd(state)
+    }
   })
 
-  this.tasks.on('sync', function (tasks) {
-    for (let index in tasks.models) {
-      let model = tasks.models[index]
-      if (model.type === TaskConstants.TYPE_SCRIPT) {
-        if (model.script_runas) {
-          getHash(model.script_runas, hash => {
-            runners.add({
-              runner: model.script_runas,
-              id: hash
-            })
-          })
-        }
-      }
+  // monitors
+  this.resources.on('change:script_runas add', runnersAdd)
+  //this.resources.on('sync', runnersSync)
+  this.resources.on('sync', (state) => {
+    if (state.isCollection) {
+      let monitors = state.models.map(resource => resource.monitor)
+      runnersSync(monitors)
+    } else {
+      runnersAdd(state.monitor)
     }
   })
 

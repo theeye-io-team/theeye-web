@@ -10,15 +10,13 @@ const ValueOption = State.extend({
   }
 })
 
-exports.ValueOption = ValueOption
-
 const OptionsCollection = Collection.extend({
   mainIndex: 'id',
   indexes: ['id','label'],
   model: ValueOption
 })
 
-exports.DynamicArgument = Model.extend({
+const DynamicArgument = Model.extend({
   props: {
     id: ['number',true], // incremental id
     _id: 'string',
@@ -43,3 +41,5 @@ exports.DynamicArgument = Model.extend({
     options: OptionsCollection
   }
 })
+
+export { ValueOption, DynamicArgument }

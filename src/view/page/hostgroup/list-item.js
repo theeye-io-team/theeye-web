@@ -5,7 +5,7 @@ import DeleteButton from './buttons/delete'
 import ExportButton from './buttons/export'
 import moment from 'moment'
 
-module.exports = ListItem.extend({
+export default ListItem.extend({
   derived: {
     item_name: {
       deps: ['model.name'],

@@ -1,7 +1,7 @@
 import TaskCollapsibleRow from './collapsible-row'
-import TaskConstants from 'constants/task'
+import * as TaskConstants from 'constants/task'
 
-module.exports = TaskCollapsibleRow.extend({
+export default TaskCollapsibleRow.extend({
   derived: {
     type: {
       fn: () => TaskConstants.TYPE_NOTIFICATION

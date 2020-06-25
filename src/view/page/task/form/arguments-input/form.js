@@ -6,11 +6,11 @@ import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import SelectView from 'components/select2-view'
 import CheckboxView from 'components/checkbox-view'
-import FIELD from 'constants/field'
+import * as FIELD from 'constants/field'
 import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
 import isURL from 'validator/lib/isURL'
 
-module.exports = FormView.extend({
+export default FormView.extend({
   initialize (options) {
     const isNewArgument = this.model.isNew()
     this.fields = [

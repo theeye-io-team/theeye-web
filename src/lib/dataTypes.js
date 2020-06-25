@@ -1,7 +1,7 @@
 import { Model as User } from 'models/user'
 import { Model as Customer } from 'models/customer'
 
-module.exports = {
+export default {
   userType: {
     set (newVal) {
       if (!newVal.isState) {

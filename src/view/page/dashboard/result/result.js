@@ -6,7 +6,7 @@ import WorkflowsPanel from './workflows'
 
 import './styles.less'
 
-module.exports = View.extend({
+export default View.extend({
   template: `<div data-component="dashboard-page" class="admin-container dashboard">
     <div data-hook="indicators-panel">
     </div>

@@ -5,7 +5,7 @@ import SelectView from 'components/select2-view'
 import FilteredCollection from 'ampersand-filtered-subcollection'
 //import isEmail from 'validator/lib/isEmail'
 
-module.exports = SelectView.extend({
+export default SelectView.extend({
   initialize (options) {
     var filters = [
       item => item.displayable == true

@@ -12,7 +12,7 @@ import './styles.less'
 
 const docsLink = 'core-concepts/tasks/tasks_workflows/'
 
-module.exports = function () {
+export default function () {
   const wizard = new WorkflowCreationWizard()
   wizard.render()
 

@@ -5,7 +5,7 @@ import Backdrop from 'components/backdrop'
 import './style.css'
 import roboto from './roboto_loader.gif'
 
-module.exports = Backdrop.extend({
+export default Backdrop.extend({
   template: `
     <div class="modal-backdrop fade in">
       <div class="loader-component">

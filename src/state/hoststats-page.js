@@ -7,6 +7,8 @@ export default AmpersandState.extend({
   props: {
     _dstat: ['object', true, () => { return {} }],
     _psaux: ['object', true, () => { return {} }],
+    //dstat: ['object', true, () => { return {} }],
+    //psaux: ['object', true, () => { return {} }],
     stats: 'any'
   },
   children: {
@@ -15,6 +17,7 @@ export default AmpersandState.extend({
   },
   initialize: function () {
     const self = this
+
     // mock props with proxies to handle change properly
     Object.defineProperty(this, 'psaux', {
       get: function () {
@@ -26,6 +29,7 @@ export default AmpersandState.extend({
         return self
       }
     })
+
     Object.defineProperty(this, 'dstat', {
       get: function () {
         return self._dstat
@@ -36,5 +40,11 @@ export default AmpersandState.extend({
         return self
       }
     })
-  }
+  },
+  clear () {
+    this.resource.clear()
+    this.host.clear()
+    this.dstat = {}
+    this.psaux = {}
+  },
 })

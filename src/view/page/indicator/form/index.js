@@ -13,9 +13,9 @@ import TextareaView from 'components/input-view/textarea'
 import CheckboxView from 'components/checkbox-view'
 import AdvancedToggle from 'view/advanced-toggle'
 
-import IndicatorConstants from 'constants/indicator'
+import * as IndicatorConstants from 'constants/indicator'
 
-module.exports = DropableForm.extend({
+export default DropableForm.extend({
   initialize (options) {
     //const isNewTask = Boolean(this.model.isNew())
 

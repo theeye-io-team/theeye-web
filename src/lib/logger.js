@@ -1,15 +1,12 @@
-'use strict'
+import debug from 'debug'
 
-const debug = require('debug')
-
-function Logger (name) {
-  var self = {};
-
-  var dlog   = debug('theeye:log:' + name);
-  var derror = debug('theeye:error:' + name);
-  var ddata  = debug('theeye:data:' + name);
-  var ddebug = debug('theeye:debug:' + name);
-  var dwarn  = debug('theeye:warn:' + name);
+export default function Logger (name) {
+  let self = {}
+  let dlog   = debug('theeye:log:' + name)
+  let derror = debug('theeye:error:' + name)
+  let ddata  = debug('theeye:data:' + name)
+  let ddebug = debug('theeye:debug:' + name)
+  let dwarn  = debug('theeye:warn:' + name)
 
   self.log = function flog(){
     dlog.apply(self, arguments);
@@ -33,5 +30,3 @@ function Logger (name) {
 
   return self
 }
-
-module.exports =  Logger

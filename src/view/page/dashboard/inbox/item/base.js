@@ -25,6 +25,9 @@ const resourceType = {
 }
 
 export default View.extend({
+  template () {
+    return rowTemplate(this)
+  },
   props: {
     colorClass: 'string',
     modelType: 'string',
@@ -36,7 +39,6 @@ export default View.extend({
     text: 'string',
     hostName: 'string'
   },
-  template: require('./inboxRow.hbs'),
   bindings: {
     message: { hook: 'message' },
     time: { hook: 'time' },
@@ -52,7 +54,7 @@ export default View.extend({
     hostName: { hook: 'hostName' }
   },
   derived: {
-    collapsedHeaderId: {
+    collapseHeaderId: {
       deps: ['model.id'],
       fn () {
         return `collapse_heading_${this.model.id}`
@@ -70,13 +72,13 @@ export default View.extend({
   },
   inboxify () {
     let format = 'L [at] LT'
-    if (new Date().toDateString() === new Date(this.model.createdAt).toDateString()) {
+    if (new Date().toDateString() === new Date(this.model.creation_date).toDateString()) {
       format = '[Today at] LT'
     }
 
     const type = this.model.data.model._type
 
-    this.time = moment(this.model.createdAt).format(format)
+    this.time = moment(this.model.creation_date).format(format)
 
     this.modelName = this.model.data.model.name
     this.modelType = resourceType[this.model.data.model_type]
@@ -111,3 +113,58 @@ export default View.extend({
     iconEl.className = iconClass
   }
 })
+
+const rowTemplate = (state) => {
+  const { collapseHeaderId, collapseContainerId } = state
+  let html = `
+    <div class="inbox-entry panel panel-default">
+      <div class="panel-heading" role="tab" id="${ collapseHeaderId }">
+        <h4 class="panel-title-icon"><i data-hook="model-icon"></i></h4>
+        <h4 class="panel-title inbox-title">
+          <span class="collapsed"
+            href="#${ collapseContainerId }"
+            data-hook="collapse-toggle"
+            data-toggle="collapse"
+            data-parent="#notifications-accordion"
+            aria-expanded="false"
+            aria-controls="${ collapseContainerId }">
+            <div class="panel-title-content">
+              <div class="panel-item name entry-text">
+                <span class="capitalize" data-hook="modelType"></span>
+                <span data-hook="modelName"></span>
+                <span data-hook="message"></span>
+
+              </div>
+              <div class="panel-item state-icon">
+                <span data-hook="icon"></span>
+              </div>
+            </div>
+          </span>
+        </h4>
+      </div>
+      <div class="panel-collapse collapse"
+        data-hook="collapse-container"
+        id="${ collapseContainerId }"
+        role="tabpanel"
+        aria-labelledby="${ collapseHeaderId }">
+        <div class="panel-body" data-hook="collapse-container-body">
+          <div>
+            <span>Event: </span>
+            <span class="capitalize" data-hook="modelType"></span>
+            <span data-hook="modelName"></span>
+            <span data-hook="message"></span>
+          </div>
+          <div>
+            <span>Time: </span>
+            <span data-hook="time"></span>
+          </div>
+          <div>
+            <span>Bot: </span>
+            <span class="capitalize" data-hook="hostName"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+      `
+  return html
+}

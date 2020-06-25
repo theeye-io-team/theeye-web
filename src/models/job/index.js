@@ -2,15 +2,17 @@ import App from 'ampersand-app'
 import State from 'ampersand-state'
 import AppCollection from 'lib/app-collection'
 import AppModel from 'lib/app-model'
-import LifecycleConstants from 'constants/lifecycle'
-import JobConstants from 'constants/job'
-import TaskConstants from 'constants/task'
+import * as LifecycleConstants from 'constants/lifecycle'
+import * as JobConstants from 'constants/job'
+import * as TaskConstants from 'constants/task'
 import { Model as User } from 'models/user'
-import FIELD from 'constants/field'
+import * as FIELD from 'constants/field'
 
-const config = require('config')
+import config from 'config'
 
-const urlRoot = `${config.api_url}/job`
+const urlRoot = function () {
+  return `${config.supervisor_api_url}/${App.state.session.customer.name}/job`
+}
 
 const BaseJob = AppModel.extend({
   dataTypes: {
@@ -30,7 +32,7 @@ const BaseJob = AppModel.extend({
       }
     }
   },
-  urlRoot: urlRoot,
+  urlRoot,
   props: {
     id: 'string',
     user_id: 'string',
@@ -314,7 +316,7 @@ const JobFactory = function (attrs, options={}) {
   return model
 }
 
-const Collection = AppCollection.extend({
+export const Collection = AppCollection.extend({
   comparator: 'creation_date',
   url: urlRoot,
   model: (attrs, options) => {
@@ -382,13 +384,11 @@ const WorkflowJob = BaseJob.extend({
   }
 })
 
-exports.Approval = ApprovalJob
-exports.Script = ScriptJob
-exports.Scraper = ScraperJob
-exports.Dummy = DummyJob
-exports.Notification = NotificationJob
-exports.Workflow = WorkflowJob
-exports.NgrokIntegration = NgrokIntegrationJob
-
-exports.Factory = JobFactory
-exports.Collection = Collection
+export const Approval = ApprovalJob
+export const Script = ScriptJob
+export const Scraper = ScraperJob
+export const Dummy = DummyJob
+export const Notification = NotificationJob
+export const Workflow = WorkflowJob
+export const NgrokIntegration = NgrokIntegrationJob
+export const Factory = JobFactory

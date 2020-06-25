@@ -3,24 +3,22 @@ import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import config from 'config'
 
+const urlRoot = function () {
+  return `${config.api_url}/token`
+}
+
 const Model = AppModel.extend({
-  urlRoot () {
-    let _id = App.state.session.customer.id
-    return `${config.api_v3_url}/customer/${_id}/token`
-  },
+  urlRoot,
   props: {
+    id: 'string', // TOKEN ID: id of the member model for this integration
     token: 'string',
     username: 'string'
   }
 })
 
 const Collection = AppCollection.extend({
-  url () {
-    let _id = App.state.session.customer.id
-    return `${config.api_v3_url}/customer/${_id}/token`
-  },
+  url: urlRoot,
   model: Model
 })
 
-exports.Model = Model
-exports.Collection = Collection
+export { Model, Collection }

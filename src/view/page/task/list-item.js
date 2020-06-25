@@ -9,7 +9,7 @@ import assign from 'lodash/assign'
 import ScheduleButton from './buttons/schedule'
 import ExportButton from './buttons/export'
 import bootbox from 'bootbox'
-import TaskConstants from 'constants/task'
+import * as TaskConstants from 'constants/task'
 import Schedules from './schedules'
 
 function Factory (options) {
@@ -32,7 +32,7 @@ function Factory (options) {
   throw new Error(`unrecognized type ${model.type}`)
 }
 
-module.exports = Factory
+export default Factory
 
 const Item = ListItem.extend({
   derived: {

@@ -3,7 +3,7 @@
 import PanelButton from 'components/list/item/panel-button'
 import EditView from '../edit'
 
-module.exports = PanelButton.extend({
+export default PanelButton.extend({
   initialize (options) {
     this.title = 'Edit Monitor'
     this.tip = 'Edit Monitor'

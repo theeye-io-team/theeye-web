@@ -14,4 +14,4 @@ class Webhook extends Route {
   }
 }
 
-module.exports = Webhook
+export default Webhook

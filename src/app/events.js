@@ -1,7 +1,7 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
-const logger = require('lib/logger')('app:events')
+import loggerModule from 'lib/logger'; const logger = loggerModule('app:events')
 
 App.listenTo(XHR, 'unauthorized', () => {
   if (!App.state) return

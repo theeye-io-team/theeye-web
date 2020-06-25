@@ -73,7 +73,7 @@ const texts = {
   }
 }
 
-module.exports = {
+export default {
   getText (key) {
     return texts[App.language][key]
   }

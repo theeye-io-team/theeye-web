@@ -5,7 +5,7 @@ day, week, month = 1 day, 1 week, 1 month
 */
 
 /* Ported from assets/js/human-interval for proper module export */
-module.exports = humanInterval
+export default humanInterval
 
 function humanInterval (time) {
   if (!time) return time

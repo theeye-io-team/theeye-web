@@ -1,30 +1,33 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
-const logger = require('lib/logger')('actions:onboarding')
-const config = require('config')
+import loggerModule from 'lib/logger'; const logger = loggerModule('actions:onboarding')
 import bootbox from 'bootbox'
 import assign from 'lodash/assign'
 
-module.exports = {
+export default {
   updateOnboarding (value) {
     const user = App.state.session.user
-
-    var body = {}
-    body.onboardingCompleted = value
+    user.onboardingCompleted = value
 
     XHR.send({
-      url: `${config.app_url}/session/profile/onboarding`,
+      url: `${App.config.api_url}/session/profile/onboarding`,
       method: 'PUT',
-      jsonData: body,
-      fail: (err) => {
-      },
-      done: (settings) => {
-        user.set(settings)
-      }
+      jsonData: { onboardingCompleted: value }
     })
   },
-  showOnboarding () {
-    App.state.onboarding.onboardingActive = true
+  onboardingCompleted () {
+    const user = App.state.session.user
+    user.onboardingCompleted = true
+    this.hideOnboarding()
+    XHR.send({
+      url: `${App.config.api_url}/session/profile/onboarding/completed`,
+      method: 'PUT'
+    })
+  },
+  activateOnboarding (force) {
+    if (force === true || App.state.session.user.onboardingCompleted !== true) {
+      App.state.onboarding.onboardingActive = true
+    }
   },
   hideOnboarding () {
     App.state.onboarding.onboardingActive = false

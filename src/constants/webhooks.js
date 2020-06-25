@@ -1,8 +1,8 @@
-exports.HTTP_METHODS = Object.freeze([
+export const HTTP_METHODS = Object.freeze([
   'GET','POST','PUT','PATCH','DELETE','OPTIONS','HEAD'
 ])
 
-exports.TIMEOUTS = Object.freeze([
+export const TIMEOUTS = Object.freeze([
   {
     ms: 5000,
     secs: 5,

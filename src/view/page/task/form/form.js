@@ -1,7 +1,7 @@
 import DropableForm from 'components/dropable-form'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
-import FieldConstants from 'constants/field'
+import * as FieldConstants from 'constants/field'
 
 export default DropableForm.extend({
   props: {

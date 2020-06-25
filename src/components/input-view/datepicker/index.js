@@ -43,7 +43,7 @@ const ClearIcon = View.extend({
  * in most of the cases the parent methods(base behaviour) has been rewrited
  *
  */
-module.exports = InputView.extend({
+export default InputView.extend({
   props: {
     selector: ['string', false, 'input']
   },

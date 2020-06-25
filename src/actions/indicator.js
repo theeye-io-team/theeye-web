@@ -1,8 +1,8 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
-import OperationsConstants from 'constants/operations'
+import * as OperationsConstants from 'constants/operations'
 
-module.exports = {
+export default {
   applyStateUpdate (model, operation) {
     var id = model.id
     const indicator = App.state.indicators.get(id)

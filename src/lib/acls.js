@@ -5,7 +5,7 @@ import App from 'ampersand-app'
 // order matters
 const credentials = ['viewer','user','manager','admin','owner','root']
 
-module.exports = {
+export default {
   accessLevel (credential) {
     return credentials.indexOf(credential)
   },

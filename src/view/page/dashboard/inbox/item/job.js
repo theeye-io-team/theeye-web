@@ -1,12 +1,12 @@
 import BaseItem from './base'
-import StateConstants from 'constants/states'
-import LifecycleConstants from 'constants/lifecycle'
+import * as StateConstants from 'constants/states'
+import * as LifecycleConstants from 'constants/lifecycle'
 import eventIcons from './event-icons'
 import messageFactory from 'models/notification/messageFactory'
 
 const stateToColorClass = (state) => (StateConstants.STATES.indexOf(state)!==-1) ? state : null
 
-module.exports = BaseItem.extend({
+export default BaseItem.extend({
   customizeItem () {
     // it is a task execution
 

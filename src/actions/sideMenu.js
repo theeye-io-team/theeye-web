@@ -1,6 +1,6 @@
 import App from 'ampersand-app'
 
-module.exports = {
+export default {
   customerSearch (input) {
     if (input === App.state.sideMenu.customerSearch) {
       return

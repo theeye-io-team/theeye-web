@@ -14,14 +14,14 @@ import CheckboxView from 'components/checkbox-view'
 import AdvancedToggle from 'view/advanced-toggle'
 import assign from 'lodash/assign'
 import HelpTexts from 'language/help'
-import TaskConstants from 'constants/task'
+import * as TaskConstants from 'constants/task'
 
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 import CopyTaskSelect from '../copy-task-select'
 import TaskOnBoarding from '../../taskOnboarding'
 
-module.exports = TaskFormView.extend({
+export default TaskFormView.extend({
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew())
 
@@ -304,7 +304,7 @@ module.exports = TaskFormView.extend({
 
     if (this.model.isNew()) {
       const copySelect = new CopyTaskSelect({ type: TaskConstants.TYPE_SCRIPT, visible: false })
-      this.fields.splice(6, 0, copySelect)
+      this.fields.splice(7, 0, copySelect)
       this.listenTo(copySelect,'change',() => {
         if (copySelect.value) {
           let task = App.state.tasks.get(copySelect.value)

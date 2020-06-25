@@ -4,11 +4,11 @@ import AppCollection from 'lib/app-collection'
 import AppModel from 'lib/app-model'
 import stateIcon from 'models/state-icon'
 import stateOrder from 'models/state-order'
-import IndicatorConstants from 'constants/indicator'
-const TagCollection = require('models/tag').Collection
-const config = require('config')
+import * as IndicatorConstants from 'constants/indicator'
+import { Collection as TagCollection } from 'models/tag'
+import config from 'config'
 
-const urlRoot = `${config.api_v3_url}/indicator`
+const urlRoot = `${config.supervisor_api_url}/indicator`
 
 const BaseSchema = AppModel.extend({
   idAttribute: 'id',
@@ -104,7 +104,7 @@ const BaseSchema = AppModel.extend({
   //},
 })
 
-const Indicator = BaseSchema.extend({
+export const Indicator = BaseSchema.extend({
   urlRoot,
   session: {
     _all: 'object' // keep properties returned by the server as is
@@ -188,7 +188,7 @@ function IndicatorFactory (attrs, options={}) {
   return model
 }
 
-const Collection = AppCollection.extend({
+export const Collection = AppCollection.extend({
   //comparator: 'creation_date',
   comparator (m1,m2) {
     // sort by state order
@@ -218,9 +218,7 @@ const Collection = AppCollection.extend({
   }
 })
 
-exports.Indicator = Indicator
-exports.Counter = CounterIndicator
-exports.Progress = ProgressIndicator
-exports.Text = TextIndicator
-exports.Factory = IndicatorFactory
-exports.Collection = Collection
+export const Counter = CounterIndicator
+export const Progress = ProgressIndicator
+export const Text = TextIndicator
+export const Factory = IndicatorFactory

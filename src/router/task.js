@@ -1,22 +1,22 @@
 import App from 'ampersand-app'
 import EditModalizer from 'view/page/task/edit-modalizer'
-import TasksPage from 'view/page/task'
+// import TasksPage from 'view/page/task'
 import { Task } from 'models/task'
 import Route from 'lib/router-route'
 //import bootbox from 'bootbox'
 
 class TasksRoute extends Route {
-  indexRoute () {
-    App.state.events.fetch()
-    App.state.tags.fetch()
-    App.state.tasks.fetch({ data: { unassigned: true } })
-    App.state.resources.fetch()
-    App.state.hosts.fetch()
-    App.state.files.fetch()
-    App.state.members.fetch()
-
-    return new TasksPage({ collection: App.state.tasks })
-  }
+  // indexRoute () {
+  //   App.state.events.fetch()
+  //   App.state.tags.fetch()
+  //   App.state.tasks.fetch({ data: { unassigned: true } })
+  //   App.state.resources.fetch()
+  //   App.state.hosts.fetch()
+  //   App.state.files.fetch()
+  //   App.state.members.fetch()
+  //
+  //   return new TasksPage({ collection: App.state.tasks })
+  // }
 
   editRoute (options) {
     const id = options.id
@@ -34,10 +34,10 @@ class TasksRoute extends Route {
       }
     })
 
-    if (!App.state.currentPage) {
-      return this.indexRoute()
-    }
+    // if (!App.state.currentPage) {
+    //   return this.indexRoute()
+    // }
   }
 }
 
-module.exports = TasksRoute
+export default TasksRoute

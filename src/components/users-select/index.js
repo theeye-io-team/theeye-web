@@ -3,14 +3,40 @@ import BaseView from 'view/base-view'
 import 'select2'
 import * as Select2Data from 'lib/select2data'
 
-module.exports = BaseView.extend({
+export default BaseView.extend({
   tagName: 'div',
   className: 'form-group form-horizontal',
-  template: require('./template.hbs'),
-  initialize: function (options) {
+  template () {
+    let optional = this.optional ? '<small>[optional]</small>' : ''
+    let html = `
+      <div>
+        <label for="users" class="col-sm-3 control-label">
+          ${this.title} ${optional}
+          <span style="cursor:help"
+            title="Add permissions to specific users. Users will receive notifications"
+            class="tooltiped fa fa-question">
+          </span>
+        </label>
+        <div class="col-sm-9">
+          <div>
+            <select data-hook="${this.name}"
+              class="form-control select"
+              title="${this.title}"
+              name="${this.name}"
+              multiple
+              style="width:100%">
+              <option></option>
+            </select>
+          </div>
+        </div>
+        <span class="clear" style="clear: left;display: block;"></span>
+      </div>
+    `
+    return html
+  },
+  initialize (options) {
     this.title = (options.title || 'ACL')
     this.name = (options.name || 'acl')
-
     this.optional = (options.optional || true)
 
     BaseView.prototype.initialize.apply(this, arguments)
@@ -25,7 +51,7 @@ module.exports = BaseView.extend({
       }
     })
   },
-  render: function () {
+  render () {
     this.renderWithTemplate()
 
     this.find('select').select2({

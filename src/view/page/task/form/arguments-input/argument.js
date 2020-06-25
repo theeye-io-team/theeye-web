@@ -3,7 +3,7 @@ import ArgumentForm from './form'
 import Modalizer from 'components/modalizer'
 import SelectView from 'ampersand-select-view'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <li class="list-group-item">
       <div class="row" style="line-height: 30px;">

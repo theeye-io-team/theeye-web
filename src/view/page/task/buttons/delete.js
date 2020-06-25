@@ -3,7 +3,7 @@ import PanelButton from 'components/list/item/panel-button'
 import bootbox from 'bootbox'
 import $ from 'jquery'
 
-module.exports = PanelButton.extend({
+export default PanelButton.extend({
   initialize (options) {
     this.title = 'Delete task'
     this.iconClass = 'fa fa-trash dropdown-icon'

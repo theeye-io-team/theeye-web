@@ -1,11 +1,11 @@
 import View from 'ampersand-view'
-import LifecycleConstants from 'constants/lifecycle'
-import StateConstants from 'constants/states'
+import * as LifecycleConstants from 'constants/lifecycle'
+import * as StateConstants from 'constants/states'
 import { ExecJob, ExecOnHoldJob } from './exec-job.js'
 import JobResult from 'view/page/dashboard/job-result'
 import './styles.less'
 
-module.exports = View.extend({
+export default View.extend({
   /*
   template: `
     <div data-component="job-exec-button">

@@ -1,5 +1,5 @@
-exports.Script = require('./script')
-exports.Scraper = require('./scraper')
-exports.Approval = require('./approval')
-exports.Dummy = require('./dummy')
-exports.Notification = require('./notification')
+export const Script = require('./script').default
+export const Scraper = require('./scraper').default
+export const Approval = require('./approval').default
+export const Dummy = require('./dummy').default
+export const Notification = require('./notification').default

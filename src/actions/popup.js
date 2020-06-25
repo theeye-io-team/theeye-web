@@ -1,6 +1,6 @@
 import App from 'ampersand-app'
 
-module.exports = {
+export default {
   hide () {
     App.state.popup.visible = false
   },

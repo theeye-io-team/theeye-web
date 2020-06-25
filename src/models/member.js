@@ -6,14 +6,16 @@ import config from 'config'
 import { Model as User } from './user'
 //import { Model as Customer } from './customer'
 
-const urlRoot = `${config.app_url}/member`
+const urlRoot = `${config.api_url}/member`
+const adminUrlRoot = `${config.api_url}/admin/member`
 
-const Model = BaseModel.extend({
+export const Model = BaseModel.extend({
   urlRoot: urlRoot,
   props: {
     id: 'string',
     user_id: 'string',
-    credential: 'string'
+    credential: 'string',
+    customer_id: 'string'
   },
   children: {
     user: User
@@ -46,10 +48,12 @@ const Model = BaseModel.extend({
   }
 })
 
-const Collection = BaseCollection.extend({
+export const Collection = BaseCollection.extend({
   url: urlRoot,
   model: Model
 })
 
-exports.Model = Model
-exports.Collection = Collection
+export const AdminCollection = BaseCollection.extend({
+  url: adminUrlRoot,
+  model: Model
+})

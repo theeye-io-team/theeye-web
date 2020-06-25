@@ -64,7 +64,7 @@ const MassDelete = MassiveDeleteButton.extend({
   }
 })
 
-module.exports = List.extend({
+export default List.extend({
   autoRender: true,
   initialize (options) {
     options = options || {}

@@ -6,7 +6,7 @@ import Modalizer from 'components/modalizer'
 import './styles.less'
 import linkify from 'linkifyjs/string'
 
-module.exports = Modalizer.extend({
+export default Modalizer.extend({
   initialize () {
     this.title = 'Theeye says:'
     this.class = 'popup'

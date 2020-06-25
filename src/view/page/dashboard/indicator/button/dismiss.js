@@ -1,7 +1,7 @@
 import ButtonView from 'components/list/item/panel-button'
 import IndicatorActions from 'actions/indicator'
 
-module.exports = ButtonView.extend({
+export default ButtonView.extend({
   initialize (options) {
     this.title = 'Dismiss'
     this.className = (options && options.className) || 'btn btn-primary'

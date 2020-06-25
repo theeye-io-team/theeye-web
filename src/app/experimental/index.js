@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import templates from 'actions/hostgroup'
 import HandleMe from 'lib/handle-me'
 
-module.exports = () => {
+export default () => {
 
   const me = new HandleMe()
 

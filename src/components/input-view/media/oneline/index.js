@@ -2,7 +2,7 @@ import MediaInputView from 'components/input-view/media'
 import InputView from 'components/input-view'
 import extend from 'lodash/assign'
 
-module.exports = MediaInputView.extend({
+export default MediaInputView.extend({
   template: `
     <div class="file-input">
       <label data-hook="label" class="col-sm-3 control-label"></label>

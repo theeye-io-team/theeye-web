@@ -1,7 +1,7 @@
 
 const NO_TYPE_ICON_COLOR = '5bc4e8'
 
-module.exports = (type) => {
+export default (type) => {
   var iconClass = 'circle fa'
   var bgcolor
 

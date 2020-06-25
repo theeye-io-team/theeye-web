@@ -3,7 +3,7 @@ import Modalizer from 'components/modalizer'
 import FormView from '../form'
 import $ from 'jquery'
 
-module.exports = PanelButton.extend({
+export default PanelButton.extend({
   initialize (options) {
     this.title = 'Edit workflow'
     this.iconClass = 'fa fa-edit dropdown-icon'

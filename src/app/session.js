@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import SessionActions from 'actions/session'
 import config from 'config'
 
-module.exports = () => {
+export default () => {
   let refreshInterval
 
   let publics = ['login', 'sociallogin', 'register', 'activate', 'passwordreset']
@@ -15,8 +15,6 @@ module.exports = () => {
       return routeRegex.test(pathname)
     })
   }
-
-  const isLoggingOut = (pathname) => /logout/.test(pathname) === true
 
   App.listenToAndRun(App.state.session, 'change:logged_in', () => {
     let loggedIn = App.state.session.logged_in
@@ -47,25 +45,13 @@ module.exports = () => {
 
   App.listenToAndRun(App.state.session, 'change:logged_in', () => {
     if (App.state.session.logged_in === true) {
-      // refresh token
-      SessionActions.refreshAccessToken()
       // set next refresh interval
       refreshInterval = setInterval(() => {
-        SessionActions.refreshAccessToken()
+        App.actions.session.refreshAccessToken()
       }, refreshIntervalMs)
     } else {
       if (refreshInterval) {
         clearInterval(refreshInterval)
-      }
-    }
-  })
-
-  // refresh access token on each router navigate
-  App.Router.on('route', () => {
-    if (App.state.session.logged_in === true) {
-      let path = window.location.pathname
-      if (!isPublicRoute(path) && !isLoggingOut(path)) {
-        SessionActions.refreshAccessToken()
       }
     }
   })

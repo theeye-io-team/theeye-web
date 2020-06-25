@@ -4,80 +4,43 @@ import SessionActions from 'actions/session'
 import SideMenuActions from 'actions/sideMenu'
 import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
-import SettingsMenu from '../settings'
+import CustomerSettings from 'view/settings/customer'
 
 import './style.less'
 
-const CustomerItemList = View.extend({
-  props: {
-    active: ['boolean', false, false],
-    show: ['boolean', false, true]
-  },
-  template: `
-    <li data-hook="active" class="eyemenu-client">
-      <a href="#">
-        <i class="fa fa-user-circle" aria-hidden="true"></i>
-        <span data-hook="name">Client Name 1</span>
-      </a>
-    </li>
-  `,
-  bindings: {
-    'model.name': {
-      type: 'text',
-      hook: 'name'
-    },
-    active: {
-      type: 'booleanClass',
-      name: 'active',
-      hook: 'active'
-    },
-    show: {
-      type: 'toggle'
-    }
-  },
-  events: {
-    'click a': 'onClickCustomer'
-  },
-  onClickCustomer (event) {
-    event.preventDefault()
-    // event.stopPropagation()
-    SideMenuActions.clearCustomerSearch()
-    SessionActions.changeCustomer(this.model.id)
-  },
-  initialize () {
-    View.prototype.initialize.apply(this, arguments)
+export default View.extend({
+  template () {
+    let html = `
+      <div data-hook="menu" class="eyemenu-panel eyemenu-panel-left">
+        <!-- PROFILE MENU HEADER { -->
+        <div data-hook="profile-container" class="eyemenu-top-panel">
+          <div data-hook="session-customer"></div>
 
-    this.listenToAndRun(App.state.session, 'change:logged_id', () => {
-      if (!App.state.session.logged_in) return
-
-      this.listenToAndRun(App.state.session.customer, 'change:id', () => {
-        const customer = App.state.session.customer
-        if (!customer.id) return
-        if (this.model.id === customer.id) {
-          this.active = true
-        } else if (this.active) this.active = false
-      })
-    })
-  }
-})
-
-const CurrentCustomerItem = View.extend({
-  template: `
-    <div class="eyemenu-secondary-users">
-      <i data-hook="active" class="fa fa-user-circle active" aria-hidden="true"></i>
-      <p data-hook="name" class="customer-name"></p>
-    </div>
-  `,
-  bindings: {
-    'model.name': {
-      type: 'text',
-      hook: 'name'
-    }
-  }
-})
-
-module.exports = View.extend({
-  template: require('./menu.hbs'),
+          <div data-hook="customers-toggle" class="eyemenu-switch-panels">
+            <i class="fa fa-angle-down" aria-hidden="true"></i>
+          </div>
+        </div>
+        <!-- } END PROFILE MENU HEADER -->
+        <div class="eyemenu-bot-panel">
+          <ul data-hook="customers-container" class="eyemenu-links eyemenu-clients">
+            <div class="customers-search">
+              <i class="fa fa-search" aria-hidden="true"></i>
+              <input autocomplete="off" data-hook="customers-input" class="customers-input" placeholder="Search">
+            </div>
+          </ul>
+          <!-- LINKS CONTAINER { -->
+          <ul data-hook="links-container" class="eyemenu-links eyemenu-actions">
+            <li><a href="/dashboard" class="eyemenu-icon eyemenu-dashboard"> Home </a></li>
+            <span class="charts-link"></span>
+            <span class="default-links"></span>
+            <li><a href="/help" class="eyemenu-icon eyemenu-help"> Help </a></li>
+          </ul>
+          <!-- } END LINKS CONTAINER -->
+        </div>
+      </div>
+    `
+    return html
+  },
   props: {
     customers_switch: ['boolean', false, false],
     customerSearch: ['string', false, '']
@@ -109,9 +72,6 @@ module.exports = View.extend({
       this.toggle('customers_switch')
       return false
     },
-    'click [data-hook=mvc-link]': function (event) {
-      window.location.href = event.target.href
-    },
     'input [data-hook=customers-input]': 'onSearchInput',
   },
   initialize () {
@@ -126,19 +86,22 @@ module.exports = View.extend({
     })
 
     this.listenToAndRun(App.state.sideMenu, 'change:customerSearch', () => {
-        this.customerSearch = App.state.sideMenu.customerSearch
+      this.customerSearch = App.state.sideMenu.customerSearch
     })
   },
   render () {
     this.renderWithTemplate(this)
     this.renderCustomers()
+
+    this.registerSubview(new CustomerSettings())
+
     this.listenToAndRun(App.state.session.user, 'change:credential', () => {
       this.renderMenuLinks()
     })
+
     this.listenToAndRun(App.state.session.customer, 'change:config', () => {
       this.setChartsLink()
     })
-    this.renderSettingsMenu()
   },
   onSearchInput (event) {
     SideMenuActions.customerSearch(event.target.value)
@@ -175,34 +138,23 @@ module.exports = View.extend({
 
     if (App.state.session.user.credential) {
       if (Acls.hasAccessLevel('admin')) {
-        container.appendChild(html2dom(`<li><a data-hook='mvc-link' href="/admin/monitor" class="eyemenu-icon eyemenu-monitors"> Monitors </a></li>`))
-        container.appendChild(html2dom(`<li><a href="/admin/task" class="eyemenu-icon eyemenu-tasks"> Tasks </a></li>`))
         container.appendChild(html2dom(`<li><a href="/admin/file" class="eyemenu-icon eyemenu-scripts"> Files & Scripts </a></li>`))
         container.appendChild(html2dom(`<li><a href="/admin/webhook" class="eyemenu-icon eyemenu-webhooks"> Webhooks </a></li>`))
         container.appendChild(html2dom(`<li><a href="/admin/hostgroup" class="eyemenu-icon eyemenu-templates"> Templates </a></li>`))
       }
 
+      if (Acls.hasAccessLevel('manager')) {
+        let link = html2dom(`<li><a href="" data-hook="settings-menu" class="eyemenu-icon eyemenu-settings"> Settings </a></li>`)
+        link.onclick = () => App.actions.settingsMenu.show('customer')
+        container.appendChild(link)
+      }
+
       if (Acls.hasAccessLevel('root')) {
         container.appendChild(html2dom(`<li><a href="/admin/user" class="eyemenu-icon eyemenu-users"> Users </a></li>`))
         container.appendChild(html2dom(`<li><a href="/admin/customer" class="eyemenu-icon eyemenu-organizations"> Organizations </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/member" class="eyemenu-icon eyemenu-users"> Members </a></li>`))
       }
     }
-
-    // // on window resize recalculate links container height
-    // const recalculateLinksHeight = (event) => {
-    //   const links = this.queryByHook('links-container')
-    //   let height = window.innerHeight - 178
-    //   if (window.innerWidth > 768) {
-    //     height -= 75
-    //   }
-    //   links.style.height = String(height) + 'px'
-    // }
-    //
-    // const self = this
-    // window.addEventListener('resize', function (event) {
-    //   recalculateLinksHeight.call(self, event)
-    // }, false)
-    // window.dispatchEvent(new window.Event('resize'))
   },
   renderCustomers () {
     // in sync with the session
@@ -226,22 +178,6 @@ module.exports = View.extend({
     this.listenToAndRun(App.state.sideMenu, 'change:customerSearch', function () {
       this.filterViews(App.state.sideMenu.customerSearch)
     })
-
-    // // on window resize recalculate links container height
-    // const recalculateCustomersHeight = (event) => {
-    //   const customers = this.queryByHook('customers-container')
-    //   let height = window.innerHeight - 178
-    //   if (window.innerWidth > 768) {
-    //     height -= 75
-    //   }
-    //
-    //   customers.style.height = String(height) + 'px'
-    // }
-    // const self = this
-    // window.addEventListener('resize', function (event) {
-    //   recalculateCustomersHeight.call(self, event)
-    // }, false)
-    // window.dispatchEvent(new window.Event('resize'))
   },
   filterViews (search) {
     const views = this.customersListViews
@@ -268,8 +204,72 @@ module.exports = View.extend({
       view.show = true
     })
   },
-  renderSettingsMenu () {
-    this.settings = new SettingsMenu()
-    this.registerSubview(this.settings)
+})
+
+const CustomerItemList = View.extend({
+  props: {
+    active: ['boolean', false, false],
+    show: ['boolean', false, true]
+  },
+  template: `
+    <li data-hook="active" class="eyemenu-client">
+      <a href="#">
+        <i class="fa fa-user-circle" aria-hidden="true"></i>
+        <span data-hook="name">Client Name 1</span>
+      </a>
+    </li>
+  `,
+  bindings: {
+    'model.name': {
+      type: 'text',
+      hook: 'name'
+    },
+    active: {
+      type: 'booleanClass',
+      name: 'active',
+      hook: 'active'
+    },
+    show: {
+      type: 'toggle'
+    }
+  },
+  events: {
+    'click a': 'onClickCustomer',
+  },
+  onClickCustomer (event) {
+    event.preventDefault()
+    // event.stopPropagation()
+    SideMenuActions.clearCustomerSearch()
+    SessionActions.changeCustomer(this.model.id)
+  },
+  initialize () {
+    View.prototype.initialize.apply(this, arguments)
+
+    this.listenToAndRun(App.state.session, 'change:logged_id', () => {
+      if (!App.state.session.logged_in) return
+
+      this.listenToAndRun(App.state.session.customer, 'change:id', () => {
+        const customer = App.state.session.customer
+        if (!customer.id) return
+        if (this.model.id === customer.id) {
+          this.active = true
+        } else if (this.active) this.active = false
+      })
+    })
+  }
+})
+
+const CurrentCustomerItem = View.extend({
+  template: `
+    <div class="eyemenu-secondary-users">
+      <i data-hook="active" class="fa fa-user-circle active" aria-hidden="true"></i>
+      <p data-hook="name" class="customer-name"></p>
+    </div>
+  `,
+  bindings: {
+    'model.name': {
+      type: 'text',
+      hook: 'name'
+    }
   }
 })

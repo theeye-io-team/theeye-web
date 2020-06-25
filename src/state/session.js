@@ -1,20 +1,16 @@
-'use strict'
-
 import App from 'ampersand-app'
 import AmpersandState from 'ampersand-state'
 import XHR from 'lib/xhr'
 import localforage from 'localforage'
-import SessionActions from 'actions/session'
 import checkLicense from 'app/license'
+import jwtDecode from 'jwt-decode'
 
-module.exports = AmpersandState.extend({
+export default AmpersandState.extend({
   props: {
     last_access: ['number', false],
     access_token: ['string', false],
-    //accountPreferences: ['object', false, () => ({
-    //  showAccountActions: true,
-    //  showMembersTab: true
-    //})]
+    protocol: 'string',
+    //showMembersTab: true
   },
   session: {
     storage: 'object',
@@ -28,8 +24,17 @@ module.exports = AmpersandState.extend({
     authorization: 'string',
     restored: 'boolean',
     relogin_message: ['boolean',false,false],
- // why this prop name is camelcase when all other properties are underscore separated? why !!
+ // why this prop name is camelcase when all other properties are underscore separated? why?, why ?!!
     licenseExpired: ['boolean', true, false]
+  },
+  derived: {
+    show_account_actions: {
+      deps: ['protocol'],
+      fn () {
+        if (this.protocol === 'ldap') { return false }
+        return true
+      }
+    }
   },
   appInit () {
     this.storage = localforage.createInstance({
@@ -56,24 +61,23 @@ module.exports = AmpersandState.extend({
 
     const done = () => {
       this.persist()
-      if (next) { next() }
+      next && next()
     }
 
-    SessionActions.verifyAccessToken(token, (err) => {
-      if (err) {
-        XHR.authorization = this.authorization = ''
-        this.logged_in = false
-        done()
+    let valid = isValidAccessToken(token)
+    if (!valid) {
+      XHR.authorization = this.authorization = ''
+      this.logged_in = false
+      done()
+    } else {
+      XHR.authorization = this.authorization = `Bearer ${token}`
+      if (!this.logged_in) { // valid access token
+        // try to login by fetching the profile with the access_token
+        App.actions.session.fetchProfile(done)
       } else {
-        XHR.authorization = this.authorization = `Bearer ${token}`
-        if (!this.logged_in) { // valid access token
-          // try to login by fetching the profile with the access_token
-          SessionActions.fetchProfile(done)
-        } else {
-          done()
-        }
+        done()
       }
-    })
+    }
   },
   restoreFromStorage (next) {
     this.storage
@@ -82,12 +86,13 @@ module.exports = AmpersandState.extend({
         data || (data={})
         if (!data.access_token) { data.access_token = null }
         this.set(data, { silent: true })
-        next()
+        next(null, data)
       })
   },
   clear () {
     this.unset('access_token') // this triggers session unset
-    //this.unset('accountPreferences')
+    this.unset('show_account_actions') // @TODO: is this required here?
+
     // mantein user & customer references
     this.user.customers.reset()
     this.user.clear()
@@ -112,3 +117,19 @@ module.exports = AmpersandState.extend({
   //  return done()
   //}
 })
+
+const isValidAccessToken = (token) => {
+  const isValidFormat = Boolean(token)
+  if (!isValidFormat) { // empty or not set
+    return false
+  }
+
+  let decoded = jwtDecode(token)
+  let date = new Date()
+
+  if ((decoded.exp * 1000) <= date.getTime()) {
+    return false
+  }
+
+  return true
+}

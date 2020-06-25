@@ -11,7 +11,7 @@ const PatternValue = Input.extend({
   template: ` <input data-hook="pattern" class="form-control"> `
 })
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="form-group">
       <label data-hook="label" for="pattern" class="col-sm-3 control-label"></label>
@@ -117,8 +117,6 @@ module.exports = View.extend({
     this.checkbox = this.queryByHook('checkbox')
     this.checkbox.checked = Boolean(this.use_parser)
     this.input = this.renderPatternInputView()
-
-    window.view = this
   },
   renderPatternInputView () {
     const placeholder = "I.E '<h1>My Site Title</h1>', using RegEx ^[a-zA-Z0-9]{24}$"

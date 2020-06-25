@@ -3,7 +3,7 @@ import html2dom from 'lib/html2dom'
 
 import './style.less'
 
-module.exports = View.extend({
+export default View.extend({
   props: {
     url: 'string'
   },

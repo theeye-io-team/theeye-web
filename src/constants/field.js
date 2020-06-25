@@ -1,22 +1,13 @@
-const TYPE_FIXED = 'fixed'
-const TYPE_INPUT = 'input'
-const TYPE_SELECT = 'select'
-const TYPE_DATE = 'date'
-const TYPE_EMAIL = 'email'
-const TYPE_REGEXP = 'regexp'
-const TYPE_FILE = 'file'
-const TYPE_REMOTE_OPTIONS = 'remote-options'
+export const TYPE_FIXED = 'fixed'
+export const TYPE_INPUT = 'input'
+export const TYPE_SELECT = 'select'
+export const TYPE_DATE = 'date'
+export const TYPE_EMAIL = 'email'
+export const TYPE_REGEXP = 'regexp'
+export const TYPE_FILE = 'file'
+export const TYPE_REMOTE_OPTIONS = 'remote-options'
 
-exports.TYPE_EMAIL = TYPE_EMAIL
-exports.TYPE_REGEXP = TYPE_REGEXP
-exports.TYPE_FIXED = TYPE_FIXED
-exports.TYPE_INPUT = TYPE_INPUT
-exports.TYPE_SELECT = TYPE_SELECT
-exports.TYPE_DATE = TYPE_DATE
-exports.TYPE_FILE = TYPE_FILE
-exports.TYPE_REMOTE_OPTIONS = TYPE_REMOTE_OPTIONS
-
-exports.TYPES = Object.freeze([
+export const TYPES = Object.freeze([
   { id: TYPE_REGEXP, text: 'Regular Expresion' },
   { id: TYPE_EMAIL, text: 'Email' },
   { id: TYPE_FIXED, text: 'Fixed' },

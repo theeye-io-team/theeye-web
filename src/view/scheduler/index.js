@@ -5,15 +5,18 @@ import BaseView from 'view/base-view'
 import CalendarView from 'components/calendar'
 import bootbox from 'bootbox'
 
-//import React from 'react'
-//import ReactDOM from 'react-dom'
-//import SimpleClock from 'components/simple-clock.jsx'
-
 import './custom.css'
 
-module.exports = BaseView.extend({
-  template: require('./page.hbs'),
-  taskTemplate: require('./modal-body.hbs'),
+export default BaseView.extend({
+  template ()  {
+    let html = `
+      <div class="admin-panel">
+        <h3 data-hook="list-title">Scheduler <span class="thaClock"></span></h3>
+        <div class="" data-hook="calendar-container"></div>
+      </div>
+      `
+    return html
+  },
   subviews: {
     calendar: {
       hook: 'calendar-container',
@@ -23,10 +26,11 @@ module.exports = BaseView.extend({
           collection: this.collection,
           eventClickHandler: (scheduleEvent, mouseEvent, fullcalendar) => {
             let alertTitle = `Scheduled task: ${scheduleEvent.title}`
-            let alertBody = this.taskTemplate({
+            let alertBody = modalTemplate({
               taskText: scheduleEvent.start.calendar(),
               taskId: scheduleEvent.source.scheduleData.data.task_id
             })
+
             bootbox.alert({
               message: alertBody,
               title: alertTitle
@@ -35,9 +39,21 @@ module.exports = BaseView.extend({
         })
       }
     }
-  },
-//  render: function () {
-//    this.renderWithTemplate(this)
-//    ReactDOM.render(<SimpleClock />, this.el.querySelector('.thaClock'))
-//  }
+  }
 })
+
+const modalTemplate = (opts) => {
+  const {taskId, taskText} = opts
+  let html = `
+    <div class="row">
+      <div class="col-sm-12">
+        ${taskText}
+        <a href="/admin/task#search=${taskId}" class="btn btn-primary pull-right">
+          <span class="fa fa-edit"></span>
+          Edit
+        </a>
+      </div>
+    </div>
+  `
+  return html
+}

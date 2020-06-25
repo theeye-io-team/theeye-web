@@ -5,7 +5,7 @@ import UserActions from 'actions/user'
 import EditFormView from './edit-form'
 import $ from 'jquery'
 
-module.exports = PanelButton.extend({
+export default PanelButton.extend({
   initialize (options) {
     this.title = 'Edit user'
     this.iconClass = 'fa fa-edit dropdown-icon'

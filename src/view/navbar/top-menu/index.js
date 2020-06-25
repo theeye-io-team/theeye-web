@@ -2,6 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Backdrop from 'components/backdrop'
 import NavbarActions from 'actions/navbar'
+import ProfileSettings from 'view/settings/user'
 
 import './style.less'
 
@@ -24,7 +25,7 @@ const UserProfile = View.extend({
   }
 })
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="profile eyemenu-panel-launcher pull-left">
       <i data-hook="user-menu-toggle" class="fa fa-user-circle-o user-icon"></i>
@@ -56,7 +57,7 @@ module.exports = View.extend({
       event.preventDefault()
       event.stopPropagation()
       NavbarActions.toggleTopMenu()
-      NavbarActions.toggleSettingsMenu()
+      App.actions.settingsMenu.show('user')
       return false
     },
     'click [data-hook=logout]': function (event) {
@@ -76,6 +77,8 @@ module.exports = View.extend({
     this.renderWithTemplate(this)
     this.renderProfile()
     this.renderBackdrop()
+
+    this.registerSubview(new ProfileSettings())
   },
   renderProfile () {
     const profile = new UserProfile({

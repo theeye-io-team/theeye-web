@@ -8,7 +8,7 @@ import validator from 'validator'
 import registerLang from 'language/register'
 import RecaptchaInputView from 'components/input-view/grecaptcha'
 
-module.exports = View.extend({
+export default View.extend({
   autoRender: true,
   props: {
     formSwitch: ['boolean', false, false]

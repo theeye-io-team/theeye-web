@@ -1,15 +1,15 @@
 import bootbox from 'bootbox'
 import App from 'ampersand-app'
 import $ from 'jquery'
+import XHR from 'lib/xhr'
 const xhr = $.ajax
-import config from 'config'
 
-module.exports = {
+export default {
   create (data) {
     App.state.loader.visible = true
 
-    var body = {}
-    body.sendInvitation = !data.enabled
+    let body = {}
+    body.enabled = data.enabled
     body.email = data.email
     body.username = data.username
     body.name = data.name
@@ -17,104 +17,81 @@ module.exports = {
       body.password = data.password
       body.confirmPassword = data.confirmPassword
     }
-    body.credential = data.credential
-    body.customers = data.customers.map(id => {
-      return App.state.customers.get(id).name
-    })
 
-    const req = xhr({
-      url: '/user',
-      type: 'POST',
-      data: JSON.stringify(body),
-      dataType: 'json',
-      contentType: 'application/json; charset=utf-8',
-    })
+    const urlRoot = `${App.config.api_url}/admin/user`
 
-    req.done(function(){
-      App.state.loader.visible = false
-      bootbox.alert({
-        title: 'User created',
-        message: `You have successfully created ${body.username}`,
-        callback: () => {
-          App.Router.reload()
-        }
-      })
-    })
-    req.fail(function(jqXHR, textStatus, errorThrown){
-      App.state.loader.visible = false
-      bootbox.alert({
-        title: 'User creation error - ' + errorThrown,
-        message: jqXHR.responseText,
-        callback: () => {
-          App.Router.reload()
-        }
-      })
+    XHR.send({
+      url: `${urlRoot}`,
+      method: 'POST',
+      jsonData: body,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done: (response,xhr) => {
+        App.state.loader.visible = false
+        let user = new App.Models.User.Model(response)
+        App.state.admin.users.add(user)
+        bootbox.alert('User created')
+      },
+      fail: (err,xhr) => {
+        App.state.loader.visible = false
+        bootbox.alert('Error creating user')
+      }
     })
   },
   update (id, data) {
-    var body = {}
-    body.email = data.email
-    body.username = data.username
-    body.name = data.name
-    body.credential = data.credential
-    body.customers = data.customers.map(id => {
-      return App.state.customers.get(id).name
-    })
-
     App.state.loader.visible = true
-    const req = xhr({
-      url: `/user/${id}`,
-      type: 'PUT',
-      data: JSON.stringify(body),
-      dataType: 'json',
-      contentType: 'application/json; charset=utf-8',
-    })
 
-    req.done(function(){
-      App.state.loader.visible = false
-      bootbox.alert({
-        title: 'User updated',
-        message: `You have successfully updated ${body.username}`,
-        callback: () => {
-          App.Router.reload()
-        }
-      })
-    })
-
-    req.fail(function(jqXHR, textStatus, errorThrown){
-      App.state.loader.visible = false
-      bootbox.alert({
-        title: `User update error - ${errorThrown}`,
-        message: jqXHR.responseText,
-        callback: () => {
-          App.Router.reload()
-        }
-      })
+    let user = App.state.admin.users.get(id)
+    user.set(data)
+    user.save({}, {
+      collection: App.state.admin.user,
+      success: function () {
+        App.state.loader.visible = false
+        bootbox.alert('User Updated')
+        App.state.admin.users.add(user, {merge: true})
+      },
+      error: function (err) {
+        App.state.loader.visible = false
+        bootbox.alert('Error updating user')
+      }
     })
   },
   remove (id) {
-    const req = xhr({
-      url: `/user/${id}`,
-      type: 'DELETE'
-    })
+    App.state.loader.visible = true
 
-    req.done((data, textStatus, jqXHR) => {
-      App.state.loader.visible = false
-      bootbox.alert({
-        title: 'User Removed',
-        message: `user has been removed.`,
-        callback: () => {
-          App.Router.reload()
-        }
-      })
-    })
+    let user = new App.Models.User.Model({ id: id })
 
-    req.fail((jqXHR, textStatus, errorThrown) => {
-      const errorMessage = jqXHR.responseText || textStatus
-      bootbox.alert({
-        title: 'User Remove error',
-        message: errorMessage
-      })
+    user.destroy({
+      success: function () {
+        App.state.loader.visible = false
+        bootbox.alert('User Deleted')
+        App.state.admin.users.remove(user)
+      },
+      error: function (err) {
+        App.state.loader.visible = false
+        bootbox.alert('Error removing user')
+      }
+    })
+  },
+  resendInvitation (id) {
+    App.state.loader.visible = true
+    const urlRoot = `${App.config.api_url}/admin/user`
+    XHR.send({
+      url: `${urlRoot}/${id}/reinvite`,
+      method: 'PUT',
+      jsonData: {},
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done: (response,xhr) => {
+        App.state.loader.visible = false
+        bootbox.alert('Invitation sent.')
+      },
+      fail: (err,xhr) => {
+        App.state.loader.visible = false
+        bootbox.alert('Error sending invitation')
+      }
     })
   }
 }

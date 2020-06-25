@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   orderOf (value) {
     //
     // WARNING: KEEP THE INDEXES IN ORDER !!

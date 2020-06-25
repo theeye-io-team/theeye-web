@@ -7,15 +7,14 @@ import PlusMenuButton from './plus-menu-button'
 
 import acls from 'lib/acls'
 import logo from './logo.png'
-const template = require('./nav.hbs')
 
 const MenuButton = View.extend({
   template: `
-  <div>
-    <span data-hook="menu-toggle" class="eyemenu-panel-launcher burger-button pull-left">
-      <i class="fa fa-bars" aria-hidden="true"></i>
-    </span>
-  </div>
+    <div>
+      <span data-hook="menu-toggle" class="eyemenu-panel-launcher burger-button pull-left">
+        <i class="fa fa-bars" aria-hidden="true"></i>
+      </span>
+    </div>
   `,
   events: {
     'click [data-hook=menu-toggle]': function (event) {
@@ -27,7 +26,7 @@ const MenuButton = View.extend({
   }
 })
 
-module.exports = View.extend({
+export default View.extend({
   autoRender: true,
   props: {
     licenseExpired: ['boolean', true, false],
@@ -57,7 +56,31 @@ module.exports = View.extend({
     }
   },
   template: () => {
-    return template.call(this, { logo: logo })
+    let html = `
+      <nav class="navbar navbar-inverse navbar-fixed-top navbar-eyemenu">
+      	<div class="navbar-header">
+          <div>
+            <div data-hook="menu-button-container"></div>
+            <a class="navbar-brand" data-hook="theeye-logo">
+              <img src="${logo}" alt="TheEye">
+            </a>
+      		</div>
+          <div class="license-header col-xs-10 col-sm-8 col-md-9">
+            <p class="alert alert-warning">
+              Your license has expired!
+              <br />
+              Please contact your service provider to activate the product again
+            </p>
+          </div>
+          <div class="header-tools navbar-right col-xs-5 col-sm-8 col-md-9">
+            <div data-hook="buttons-container" class="navbar-buttons navbar-right"></div>
+            <div data-hook="searchbox-container"></div>
+          </div>
+      	</div>
+      </nav>
+    `
+
+    return html
   },
   render () {
     this.renderWithTemplate()

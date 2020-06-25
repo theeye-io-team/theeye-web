@@ -25,4 +25,4 @@ class Charts extends Route {
   }
 }
 
-module.exports = Charts
+export default Charts

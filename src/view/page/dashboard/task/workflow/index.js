@@ -18,7 +18,7 @@ import IntegrationsWorkflowButton from 'view/page/workflow/buttons/integrations'
 
 import './styles.less'
 
-module.exports = CollapsibleRow.extend({
+export default CollapsibleRow.extend({
   derived: {
     hostname: {
       fn: () => ''

@@ -3,7 +3,7 @@ import InputView from 'components/input-view'
 
 import './styles.less'
 
-module.exports = InputView.extend({
+export default InputView.extend({
   props: {
     counter: 'number',
     maxlength: 'number',

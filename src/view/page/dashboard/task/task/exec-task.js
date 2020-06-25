@@ -1,7 +1,7 @@
 import App from 'ampersand-app'
 import State from 'ampersand-state'
 import bootbox from 'bootbox'
-import JobConstants from 'constants/job'
+import * as JobConstants from 'constants/job'
 import DynamicForm from 'view/dynamic-form'
 import Modalizer from 'components/modalizer'
 import ConfirmExecution from './confirm-execution'
@@ -160,6 +160,4 @@ const ExecTaskWithNoHost = BaseExec.extend({
   }
 })
 
-exports.BaseExec = BaseExec
-exports.ExecTask = ExecTask
-exports.ExecTaskWithNoHost = ExecTaskWithNoHost
+export { BaseExec, ExecTask, ExecTaskWithNoHost }

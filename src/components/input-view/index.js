@@ -1,7 +1,5 @@
-'use strict'
 
-const InputView = require('ampersand-input-view')
-const assign = require('lodash/assign')
+import InputView from 'ampersand-input-view'
 import './styles.less'
 /**
  *
@@ -9,13 +7,13 @@ import './styles.less'
  * that use <div> instead of <label>
  *
  */
-module.exports = InputView.extend({
+export default InputView.extend({
   template: `
     <div>
       <label class="col-sm-3 control-label" data-hook="label"></label>
       <div data-hook="input-container" class="col-sm-9">
         <input class="form-control form-input">
-        <span data-hook="mask-toggle" class="glyphicon form-control-feedback"></span>
+        <span data-hook="mask-toggle" class="fa form-control-feedback"></span>
         <div data-hook="message-container" class="message message-below message-error">
           <p data-hook="message-text"></p>
         </div>
@@ -25,9 +23,11 @@ module.exports = InputView.extend({
   props: {
     visible: ['boolean',false,true],
     styles: ['string',false,'form-group'],
-    maskToggle: ['boolean',false,true]
+    maskToggle: ['boolean',false,true],
+    disabled: ['boolean',false,false],
+    readonly: ['boolean',false,false],
   },
-  bindings: assign({}, InputView.prototype.bindings, {
+  bindings: Object.assign({}, InputView.prototype.bindings, {
     visible: {
       type: 'toggle'
     },
@@ -42,8 +42,22 @@ module.exports = InputView.extend({
     maskToggle: {
       type: 'booleanClass',
       hook: 'mask-toggle',
-      yes: 'glyphicon-eye-close',
-      no: 'glyphicon-eye-open'
+      yes: 'fa-eye-slash',
+      no: 'fa-eye'
+    },
+    disabled: [{
+      type: 'booleanAttribute',
+      name: 'disabled',
+      selector: 'input'
+    },{
+      type: 'booleanClass',
+      selector: 'input',
+      yes: 'disabled-appearance'
+    }],
+    readonly: {
+      type: 'booleanAttribute',
+      name: 'readonly',
+      selector: 'input'
     }
   }),
   events: {
@@ -64,6 +78,6 @@ module.exports = InputView.extend({
       this.showMaskToggle = (options.type === 'password')
     }
 
-    InputView.prototype.initialize.apply(this,arguments)
+    InputView.prototype.initialize.apply(this, arguments)
   }
 })

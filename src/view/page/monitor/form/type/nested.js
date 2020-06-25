@@ -1,11 +1,9 @@
 import App from 'ampersand-app'
-import FormView from 'ampersand-form-view'
 import CopyMonitorSelect from '../copy-monitor-select'
-import MonitorConstants from 'constants/monitor'
-import ResourceActions from 'actions/resource'
+import * as MonitorConstants from 'constants/monitor'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
-const HelpTexts = require('language/help')
+import HelpTexts from 'language/help'
 //import CheckboxView from 'components/checkbox-view'
 import TextareaView from 'components/input-view/textarea'
 import TagsSelectView from 'view/tags-select'
@@ -16,12 +14,16 @@ import MonitorSelectView from 'view/monitor-select'
 import InputView from 'components/input-view'
 import AdvancedToggle from 'view/advanced-toggle'
 import FormButtons from 'view/buttons'
+import MonitorFormView from '../monitor-form'
 
 import assign from 'lodash/assign'
 
-module.exports = FormView.extend({
+export default MonitorFormView.extend({
   initialize (options) {
-    const isNewMonitor = Boolean(this.model.isNew())
+    let resource = this.model
+    let monitor = resource.monitor
+
+    const isNewMonitor = Boolean(resource.isNew())
 
     // multiple only if new, allows to create multiple tasks at once
     this.advancedFields = [
@@ -29,12 +31,12 @@ module.exports = FormView.extend({
     ]
 
     let nestedMonitors = []
-    if (this.model.monitor.config.monitors) {
-      this.model.monitor.config.monitors.forEach(mon => {
+    if (monitor.monitors) {
+      monitor.monitors.forEach(mon => {
         if (mon.id) {
           nestedMonitors.push(mon.id)
         } else {
-          console.warn('malkformed config.monitors data')
+          console.warn('malkformed monitors data')
         }
       })
     }
@@ -46,19 +48,14 @@ module.exports = FormView.extend({
         required: true,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        value: this.model.name,
+        value: resource.name,
       }),
-      //new LooptimeSelectView({
-      //  invalidClass: 'text-danger',
-      //  required: true,
-      //  value: this.model.monitor.looptime
-      //}),
       new MonitorSelectView({
         invalidClass: 'text-danger',
         required: true,
         value: nestedMonitors,
         optionsFilter: (item) => {
-          return item.id !== this.model.id
+          return item.id !== resource.id
         }
       }),
       // advanced fields starts visible = false
@@ -76,51 +73,53 @@ module.exports = FormView.extend({
         required: false,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        value: this.model.description,
+        value: resource.description,
       }),
       new TagsSelectView({
         required: false,
         visible: false,
         name: 'tags',
-        value: this.model.tags
+        value: resource.tags
       }),
       new MembersSelectView({
         required: false,
         visible: false,
         name: 'acl',
         label: 'ACL\'s',
-        value: this.model.acl
+        value: resource.acl
       }),
       new SeveritySelectView({
         required: false,
         visible: false,
         //name: 'failure_severity',
         //label: 'Severity',
-        value: this.model.failure_severity
+        value: resource.failure_severity
       })
     ]
 
     if (isNewMonitor) {
+      this.advancedFields.push('copy')
       const copySelect = new CopyMonitorSelect({
-        type: MonitorConstants.TYPE_NESTED
+        type: MonitorConstants.TYPE_NESTED,
+        visible: false
       })
 
-      this.fields.unshift(copySelect)
-      this.listenTo(copySelect,'change',() => {
+      this.fields.splice(3, 0, copySelect)
+      this.listenTo(copySelect, 'change:value', () => {
         if (copySelect.value) {
-          let monitor = App.state.resources.get(copySelect.value)
-          this.setWithMonitor(monitor)
+          let resource = App.state.resources.get(copySelect.value)
+          this.setWith(resource)
         }
       })
     }
 
-    FormView.prototype.initialize.apply(this, arguments)
+    MonitorFormView.prototype.initialize.apply(this, arguments)
   },
   focus () {
     this.query('input[name=name]').focus()
   },
   render () {
-    FormView.prototype.render.apply(this, arguments)
+    MonitorFormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
     if (this.model.isNew()) {
@@ -142,46 +141,40 @@ module.exports = FormView.extend({
     if (!view) return
     view.renderSubview(
       new HelpIcon({
-        text: HelpTexts.monitor[field]
+        text: HelpTexts.monitor.form[field]
       }),
       view.query('label')
     )
   },
-  remove () {
-    FormView.prototype.remove.apply(this)
-  },
-  submit (next) {
-    next||(next=()=>{})
-
-    this.beforeSubmit()
-    if (!this.valid) return next(null,false) // cancel submit
-
-    // id property is the required value, with "numeric" data type
-
-    let data = this.prepareData(this.data)
-    //data.looptime = this._fieldViews.looptime.selected().id
-    if (!this.model.isNew()) {
-      ResourceActions.update(this.model.id, data)
-    } else {
-      ResourceActions.create(data)
-    }
-
-    this.trigger('submitted')
-    next(null,true)
-  },
+  //submit (next) {
+  //  next||(next=()=>{})
+  //  this.beforeSubmit()
+  //  if (!this.valid) {
+  //    return next(null,false) // cancel submit
+  //  }
+  //  // id property is the required value, with "numeric" data type
+  //  let data = this.prepareData(this.data)
+  //  //data.looptime = this._fieldViews.looptime.selected().id
+  //  if (!this.model.isNew()) {
+  //    App.actions.resource.update(this.model.id, data)
+  //  } else {
+  //    App.actions.resource.createMany(data)
+  //  }
+  //  this.trigger('submitted')
+  //  next(null, true)
+  //},
   prepareData (data) {
-    let f = assign({ config: {} }, data)
+    let f = data
     f.type = MonitorConstants.TYPE_NESTED
-    f.config.monitors = data.monitors.map(m => { return { id: m } })
-    delete f.monitors
+    f.monitors = data.monitors.map(m => { return { id: m } })
     return f
   },
-  setWithMonitor (resource) {
+  setWith (resource) {
     this.setValues({
       name: resource.name,
       description: resource.description,
       tags: resource.tags,
-      monitors: resource.monitor.config.monitors,
+      monitors: resource.monitor.monitors,
       acl: resource.acl,
       failure_severity: resource.failure_severity
     })

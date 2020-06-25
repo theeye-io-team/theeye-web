@@ -3,7 +3,7 @@ import InputView from 'components/input-view'
 import extend from 'lodash/assign'
 import bootbox from 'bootbox'
 
-module.exports = InputView.extend({
+export default InputView.extend({
   props: {
     file: 'state',
     maxImageWidth: 'number',

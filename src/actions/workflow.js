@@ -7,13 +7,12 @@ import JobActions from 'actions/job'
 import union from 'lodash/union'
 import uniq from 'lodash/uniq'
 import difference from 'lodash/difference'
-const logger = require('lib/logger')('actions:workflow')
-import config from 'config'
+import loggerModule from 'lib/logger'; const logger = loggerModule('actions:workflow')
 
-module.exports = {
+export default {
   get (id) {
     XHR.send({
-      url: `${App.config.api_v3_url}/workflows/triggers?node=${id}`,
+      url: `${App.config.supervisor_api_url}/workflows/triggers?node=${id}`,
       method: 'get',
       done (graphData, xhr) {
         if (xhr.status === 200) {
@@ -30,12 +29,13 @@ module.exports = {
     })
   },
   update (id, data) {
-    let tmp = new Workflow(data)
-    tmp.id = id
-    tmp.save({},{
+    let model = new Workflow(data)
+    model.id = id
+    model.save({},{
       success: () => {
+        App.state.alerts.success('Success', 'Workflow updated')
         const workflow = App.state.workflows.get(id)
-        workflow.set(tmp.serialize())
+        workflow.set(model.serialize())
         workflow.alreadyPopulated = false // reset to repopulate
         this.populate(workflow)
         workflow.tasks.fetch()
@@ -50,6 +50,7 @@ module.exports = {
     let workflow = new Workflow(data)
     workflow.save({},{
       success: () => {
+        App.state.alerts.success('Success', 'Workflow created')
         App.state.workflows.add(workflow)
         this.populate(workflow)
         workflow.tasks.fetch()
@@ -64,7 +65,7 @@ module.exports = {
     const workflow = App.state.workflows.get(id)
     workflow.destroy({
       success () {
-        bootbox.alert('Workflow deleted')
+        App.state.alerts.success('Success', 'Workflow removed')
         App.state.workflows.remove(workflow)
         unlinkTasks(workflow)
       }
@@ -80,7 +81,7 @@ module.exports = {
       var node = workflow.graph.node(id)
       if (node && !/Event/.test(node._type)) {
         let task = App.state.tasks.get(id)
-        if (!task) return
+        if (!task) { return }
         tasks.push(task)
       }
     })
@@ -108,7 +109,7 @@ module.exports = {
 
     XHR.send({
       method: 'GET',
-      url: `${config.api_v3_url}/workflow/${id}/credentials`,
+      url: `${App.config.supervisor_api_url}/workflows/${id}/credentials`,
       done (credentials) {
         workflow.credentials = credentials
       },

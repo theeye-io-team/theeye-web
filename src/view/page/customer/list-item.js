@@ -87,7 +87,7 @@ const Collapsed = View.extend({
   }
 })
 
-module.exports = ListItem.extend({
+export default ListItem.extend({
   derived: {
     item_name: {
       deps: ['model.name'],

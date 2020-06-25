@@ -1,6 +1,6 @@
 import View from 'ampersand-view'
 //import HelpIcon from 'components/help-icon'
-const HelpTexts = require('language/help')
+import HelpTexts from 'language/help'
 import Modalizer from 'components/modalizer'
 
 import CodeMirror from 'codemirror/lib/codemirror'
@@ -77,7 +77,7 @@ export const EditorView = View.extend({
     this.codemirror.setValue('')
     this.refresh()
   },
-  setEditorMode (extension) {
+  setEditorMode (extension, next) {
     if (extension) {
       let info = CodeMirror.findModeByExtension(extension)
       this.validMode = Boolean(info)
@@ -85,8 +85,13 @@ export const EditorView = View.extend({
         autoLoadMode(this.codemirror, info.mode, () => {
           //this.file.mimetype = info.mime
           this.codemirror.setOption('mode', info.mime)
+          next(null, info.mime)
         })
+      } else {
+        next(null, 'text/plain')
       }
+    } else {
+      next(null, 'text/plain')
     }
   },
   focus () {

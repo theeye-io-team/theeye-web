@@ -1,7 +1,7 @@
-const logger = require('lib/logger')('actions:searchbox')
+import loggerModule from 'lib/logger'; const logger = loggerModule('actions:searchbox')
 import App from 'ampersand-app'
 
-module.exports = {
+export default {
   search (pattern) {
     if (pattern === App.state.searchbox.search) {
       return

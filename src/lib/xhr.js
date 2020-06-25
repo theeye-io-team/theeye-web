@@ -23,12 +23,14 @@
  * @return {XMLHttpRequest}
  *
  */
-const debug = require('debug')('theeye:lib:xhr')
-const Events = require('ampersand-events')
+import debugModule from 'debug'
+const debug = debugModule('theeye:lib:xhr')
+
+import Events from 'ampersand-events'
 
 const XHR = {}
 Events.createEmitter(XHR)
-module.exports = XHR
+export default XHR
 
 XHR.send = (options, callback) => {
   callback||(callback = function(){})
@@ -39,7 +41,6 @@ XHR.send = (options, callback) => {
 
   xhr = new XMLHttpRequest()
   xhr.responseType = options.responseType || 'json'
-  // include cookies and accept cross site cookies
 
   const onloadFn = (ev) => {
     var data = xhr.response
@@ -98,6 +99,10 @@ XHR.send = (options, callback) => {
   if (options.jsonData) {
     data = JSON.stringify(options.jsonData)
     xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8')
+  }
+
+  if (options.formData) {
+    data = options.formData
   }
 
   if (options.authorization) {

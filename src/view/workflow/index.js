@@ -1,18 +1,23 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-import cytoscape from 'cytoscape'
-import cydagre from 'cytoscape-dagre'
 import qs from 'qs'
 import './style.less'
+import cytoscape from 'cytoscape'
+import cydagre from 'cytoscape-dagre'
+cydagre(cytoscape)
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="workflow-component">
-      <button class="btn btn-default" data-hook="fit">Fit</button>
-      <button class="btn btn-default" data-hook="center">Center</button>
-      <button class="btn btn-default" data-hook="redraw">Re-draw</button>
-      <button class="btn btn-danger" data-hook="clear">Clear!</button>
-      <div class="workflow-graph-container" data-hook="graph-container"> </div>
+      <div class="workflow-buttons">
+        <button class="btn btn-default" data-hook="fit">Fit</button>
+        <button class="btn btn-default" data-hook="center">Center</button>
+        <button class="btn btn-default" data-hook="redraw">Re-draw</button>
+        <button class="btn btn-danger" data-hook="clear">Clear!</button>
+      </div>
+      <div class="workflow-container">
+        <div class="workflow-graph-container" data-hook="graph-container"> </div>
+      </div>
     </div>
   `,
   props: {
@@ -101,15 +106,12 @@ module.exports = View.extend({
     return elems
   },
   updateCytoscape () {
-    if (this.cy) {
-      this.cy.destroy()
-    }
+    if (this.cy) { this.cy.destroy() }
     this.renderCytoscape()
   },
   renderCytoscape () {
     if (!this.graph) return
     const elems = this.getCytoscapeElements()
-    cydagre(cytoscape)
 
     const cy = cytoscape({
       container: this.queryByHook('graph-container'),
@@ -120,6 +122,7 @@ module.exports = View.extend({
         fit: true,
         name: 'dagre',
         center: true,
+        //rankDir: 'TB'
         rankDir: 'LR'
       },
       style: [{

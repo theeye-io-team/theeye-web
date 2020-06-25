@@ -14,5 +14,4 @@ const Collection = AppCollection.extend({
   model: Model
 })
 
-exports.Model = Model
-exports.Collection = Collection
+export { Model, Collection }

@@ -1,15 +1,13 @@
 import App from 'ampersand-app'
 import bootbox from 'bootbox'
-import OnboardingActions from 'actions/onboarding'
 import State from 'ampersand-state'
-import NavbarActions from 'actions/navbar'
 import hopscotch from 'hopscotch'
 import 'hopscotch/dist/css/hopscotch.min.css'
 import acls from 'lib/acls'
 import TaskCreationWizard from 'view/page/task/creation-wizard'
-import TabsConstants from 'constants/tabs'
+import * as TabsConstants from 'constants/tabs'
 
-module.exports = State.extend({
+export default State.extend({
   props: {
     active: ['boolean',false,false]
   },
@@ -47,9 +45,9 @@ module.exports = State.extend({
           showCTAButton: true,
           ctaLabel: 'Done',
           onCTA: function() {
-            OnboardingActions.showOnboarding()
-            NavbarActions.toggleSettingsMenu()
-            NavbarActions.toggleTab('installer')
+            App.actions.onboarding.activateOnboarding()
+            App.actions.settingsMenu.show('customer')
+            App.actions.settingsMenu.toggleTab('customer','installer')
             hopscotch.endTour(true)
           }
         }
@@ -116,20 +114,16 @@ module.exports = State.extend({
   onboardingStart() {
     if(!this.active) {
       var self = this
-      if (App.state.session.user.onboardingCompleted===true) {
-        return
-      }
+      if (App.state.session.user.onboardingCompleted === true) { return }
 
-      if (!acls.hasAccessLevel('admin')) {
-        return
-      }
-      if(App.state.resources.length > 0 && App.state.tasks.length > 0) {
-        return
-      }
+      if (!acls.hasAccessLevel('admin')) { return }
+
+      if(App.state.resources.length > 0 && App.state.tasks.length > 0) { return }
 
       this.active = true
-      var message = ''
-      if(App.state.resources.length == 0) {
+      let message = ''
+
+      if (App.state.resources.length == 0) {
         message = "You don't have any monitors, do you wan't to see the bot installation tutorial?"
       } else {
         message = "Your Bot is up and running!, would you like to see the task creation tutorial next?"
@@ -149,8 +143,8 @@ module.exports = State.extend({
               } else {
                 self.showTaskOnboarding()
               }
-              OnboardingActions.updateOnboarding(false)
-              OnboardingActions.showOnboarding()
+              //App.actions.onboarding.updateOnboarding(false)
+              App.actions.onboarding.activateOnboarding()
             }
           },
           cancel: {
@@ -158,8 +152,7 @@ module.exports = State.extend({
             className: 'btn-danger',
             callback () {
               this.active = false
-              OnboardingActions.updateOnboarding(true)
-              OnboardingActions.hideOnboarding()
+              App.actions.onboarding.onboardingCompleted()
             }
           },
           later: {
@@ -167,7 +160,7 @@ module.exports = State.extend({
             className: 'btn-default',
             callback () {
               this.active = false
-              OnboardingActions.hideOnboarding()
+              App.actions.onboarding.hideOnboarding()
             }
           }
         }

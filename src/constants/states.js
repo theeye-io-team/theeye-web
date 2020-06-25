@@ -1,36 +1,23 @@
 
-const FAILURE = 'failure'
-const SUCCESS = 'success'
-const NORMAL = 'normal'
-const RECOVERED = 'recovered'
-const MONITOR_STOPPED = 'updates_stopped'
-const MONITOR_STARTED = 'updates_started'
-const CHANGED = 'changed'
-const ERROR = 'error'
-const CANCELED = 'canceled'
-const INTEGRATION_STARTED = 'started'
-const INTEGRATION_STOPPED = 'stopped'
-const UNKNOWN = 'unknown'
-const IN_PROGRESS = 'in_progress'
-const TIMEOUT = 'timeout'
-
-exports.INTEGRATION_STARTED = INTEGRATION_STARTED
-exports.INTEGRATION_STOPPED = INTEGRATION_STOPPED
-exports.FAILURE = FAILURE
-exports.SUCCESS = SUCCESS
-exports.NORMAL = NORMAL
-exports.CANCELED = CANCELED
-exports.RECOVERED = RECOVERED
+export const FAILURE = 'failure'
+export const SUCCESS = 'success'
+export const NORMAL = 'normal'
+export const RECOVERED = 'recovered'
+export const MONITOR_STOPPED = 'updates_stopped'
+export const MONITOR_STARTED = 'updates_started'
+export const CHANGED = 'changed'
+export const ERROR = 'error'
+export const CANCELED = 'canceled'
+export const INTEGRATION_STARTED = 'started'
+export const INTEGRATION_STOPPED = 'stopped'
+export const UNKNOWN = 'unknown'
+export const IN_PROGRESS = 'in_progress'
+export const TIMEOUT = 'timeout'
 // already in used, cannot be renamed easily
-exports.STOPPED = MONITOR_STOPPED
-exports.STARTED = MONITOR_STARTED
-exports.CHANGED = CHANGED
-exports.ERROR = ERROR
-exports.UNKNOWN = UNKNOWN
-exports.IN_PROGRESS = IN_PROGRESS
-exports.TIMEOUT = TIMEOUT
+export const STOPPED = MONITOR_STOPPED
+export const STARTED = MONITOR_STARTED
 
-exports.STATES = [
+export const STATES = [
   INTEGRATION_STARTED,
   INTEGRATION_STOPPED,
   FAILURE,

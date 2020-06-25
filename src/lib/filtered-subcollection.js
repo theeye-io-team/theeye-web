@@ -424,4 +424,4 @@ collectionMethods.forEach(function (method) {
 
 FilteredCollection.extend = classExtend
 
-module.exports = FilteredCollection
+export default FilteredCollection

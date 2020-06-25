@@ -1,15 +1,14 @@
-var merge = require('lodash/merge')
-var AmpersandCollection = require('ampersand-rest-collection')
+import AmpersandCollection from 'ampersand-rest-collection'
 
-var FetchOptions = function (input) {
-  var output = {
+const FetchOptions = function (input) {
+  let output = {
     'success': function (data, response, options) { },
     'error': function (data, response, options) { }
   }
   return extend({}, output, input)
 }
 
-module.exports = {
+export default {
   /**
    *
    *
@@ -43,7 +42,7 @@ module.exports = {
       }
     }
     return AmpersandCollection.prototype
-      .fetch.call(this, merge({}, query, options))
+      .fetch.call(this, Object.assign({}, query, options))
   },
   filterFetch (filter) {
     return this.fetch({

@@ -12,12 +12,12 @@ import MinMaxTimePlugin from 'flatpickr/dist/plugins/minMaxTimePlugin'
 import bootbox from 'bootbox'
 import $ from 'jquery'
 
-const HelpTexts = require('language/help')
-const humanInterval = require('lib/human-interval')
-const CronTime = require('cron').CronTime
-const moment = require('moment-timezone')
+import HelpTexts from 'language/help'
+import humanInterval from 'lib/human-interval'
+import { CronTime } from 'cron'
+import moment from 'moment-timezone'
 
-module.exports = PanelButton.extend({
+export default PanelButton.extend({
   initialize (options) {
     this.title = 'Schedule Task'
     this.iconClass = 'fa fa-clock-o dropdown-icon'

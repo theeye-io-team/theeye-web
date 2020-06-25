@@ -4,11 +4,11 @@ import App from 'ampersand-app'
 import SelectView from 'components/select2-view'
 import FileForm from 'view/page/files/form'
 import Modalizer from 'components/modalizer'
-import { Model as FileModel } from 'models/file'
+import { Model as ScriptModel } from 'models/file/script'
 import OnboardingActions from 'actions/onboarding'
 import SubCollection from 'ampersand-filtered-subcollection'
 
-module.exports = SelectView.extend({
+export default SelectView.extend({
   template: `
     <div>
       <div>
@@ -33,7 +33,7 @@ module.exports = SelectView.extend({
     this.name = 'script_id'
     this.styles = 'form-group'
     this.idAttribute = 'id'
-    this.textAttribute = 'filename'
+    this.textAttribute = 'summary'
     this.allowCreateTags = false
     this.allowClear = true
     this.unselectedText = 'select a script'
@@ -62,7 +62,7 @@ module.exports = SelectView.extend({
 
     let file
     if (!this.value) {
-      file = new FileModel({ _type: 'Script' })
+      file = new ScriptModel()
     } else {
       file = App.state.files.get(this.value)
       App.actions.file.get(this.value)

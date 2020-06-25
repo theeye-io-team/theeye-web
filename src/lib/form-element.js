@@ -30,7 +30,7 @@ function FormElement (el) {
   this.$el = (el instanceof jQuery) ? el : $(el)
 }
 
-module.exports = FormElement
+export default FormElement
 
 FormElement.prototype.reset = function () {
   this.$el[0].reset()

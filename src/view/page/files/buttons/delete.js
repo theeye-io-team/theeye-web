@@ -3,7 +3,7 @@ import bootbox from 'bootbox'
 import App from 'ampersand-app'
 import $ from 'jquery'
 
-module.exports = PanelButton.extend({
+export default PanelButton.extend({
   initialize (options) {
     this.title = 'Delete file'
     this.iconClass = 'fa fa-trash dropdown-icon'

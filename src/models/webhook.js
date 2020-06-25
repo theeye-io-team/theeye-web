@@ -1,13 +1,15 @@
+import App from 'ampersand-app'
 import BaseModel from 'lib/app-model'
 import BaseCollection from 'lib/app-collection'
-import Cookies from 'js-cookie'
 import { Model as Customer } from './customer'
-const config = require('config')
+import config from 'config'
 
-const urlRoot = `${config.api_url}/webhook`
+const urlRoot = function () {
+  return `${config.supervisor_api_url}/${App.state.session.customer.name}/webhook`
+}
 
 const Model = BaseModel.extend({
-  urlRoot: urlRoot,
+  urlRoot,
   props: {
     id:'string',
     name:'string',
@@ -50,5 +52,4 @@ const Collection = BaseCollection.extend({
   model: Model
 })
 
-exports.Model = Model
-exports.Collection = Collection
+export { Model, Collection }

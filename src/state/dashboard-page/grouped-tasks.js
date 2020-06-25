@@ -1,4 +1,4 @@
-import ModelConstants from 'constants/models'
+import * as ModelConstants from 'constants/models'
 import { Workflow } from 'models/workflow'
 import { Group as TaskGroup, Collection as TasksCollection } from 'models/task'
 import uuidv4 from 'uuid/v4'

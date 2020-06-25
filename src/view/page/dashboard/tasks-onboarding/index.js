@@ -7,12 +7,12 @@ import OnboardingActions from 'actions/onboarding'
 
 const TutorialCreateButton = CreateButton.extend({
   onClick: function(event) {
-    OnboardingActions.showOnboarding()
+    App.actions.onboarding.activateOnboarding()
     CreateButton.prototype.onClick.apply(this, arguments)
   }
 })
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <section>
       <div style="text-align:center; font-size:16px;">

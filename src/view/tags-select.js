@@ -3,7 +3,7 @@
 import App from 'ampersand-app'
 import SelectView from 'components/select2-view'
 
-module.exports = SelectView.extend({
+export default SelectView.extend({
   initialize () {
     this.options = App.state.extendedTags.tags
     this.multiple = true

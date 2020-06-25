@@ -3,7 +3,7 @@ import bootbox from 'bootbox'
 import { Model as Webhook } from 'models/webhook'
 import after from 'lodash/after'
 
-module.exports = {
+export default {
   remove: function(id){
     var webhook = new Webhook({ id: id })
     webhook.destroy({

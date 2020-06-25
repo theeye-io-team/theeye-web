@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import State from  'ampersand-state'
 import graphlib from 'graphlib'
 
-module.exports = State.extend({
+export default State.extend({
   //graphlib,
   props: {
     graph: 'object'

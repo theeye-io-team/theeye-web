@@ -1,13 +1,16 @@
+import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import config from 'config'
 
 import { Model as Customer } from 'models/customer'
 
-const urlRoot = `${config.api_url}/tag` // sails users
+const urlRoot = function () {
+  return `${config.supervisor_api_url}/${App.state.session.customer.name}/tag`
+}
 
 const Model = AppModel.extend({
-  urlRoot: urlRoot,
+  urlRoot,
   props: {
     id: 'string',
     name: 'string',
@@ -25,5 +28,4 @@ const Collection = AppCollection.extend({
   model: Model
 })
 
-exports.Collection = Collection
-exports.Model = Model
+export { Collection, Model }

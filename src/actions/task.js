@@ -2,33 +2,30 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
-import TaskModel from 'models/task'
-import TaskConstants from 'constants/task'
+import { Factory as TaskModelFactory } from 'models/task'
+import * as TaskConstants from 'constants/task'
 import TaskRouter from 'router/task'
 import assign from 'lodash/assign'
 import after from 'lodash/after'
-import OnboardingActions from 'actions/onboarding'
-import WorkflowActions from 'actions/workflow'
 import TaskFormActions from 'actions/taskform'
-import config from 'config'
 import FileSaver from 'file-saver'
 const emptyCallback = () => {}
 import { ExecTask, ExecTaskWithNoHost } from 'view/page/dashboard/task/task/exec-task.js'
 import { Model as File } from 'models/file'
 
-const logger = require('lib/logger')('actions:tasks')
+import loggerModule from 'lib/logger'; const logger = loggerModule('actions:tasks')
 
-module.exports = {
+export default {
   nodeWorkflow (node) {
     App.navigate('/admin/workflow/' + node)
   },
   getCredentials (id, next) {
     next || (next=()=>{})
-    let task = App.state.tasks.get(id)
+    const task = App.state.tasks.get(id)
 
     XHR.send({
       method: 'GET',
-      url: `${config.api_v3_url}/task/${id}/credentials`,
+      url: `${task.url()}/credentials`,
       done (credentials) {
         task.credentials = credentials
       },
@@ -79,11 +76,10 @@ module.exports = {
         bootbox.alert({
           message: 'Congratulations!, Your first task has been created Successfully!',
           callback: function () {
-            bootbox.alert(`<p style='text-align: left;'>We're building our marketplace. Find further documentation at <a href='${config.docs}' target='_blank'>${config.docs}</a></p><p>If you need help please email us at <a href='mailto:support@theeye.io'>support@theeye.io.</a></p>`)
+            bootbox.alert(`<p style='text-align: left;'>We're building our marketplace. Find further documentation at <a href='${App.config.docs}' target='_blank'>${App.config.docs}</a></p><p>If you need help please email us at <a href='mailto:support@theeye.io'>support@theeye.io.</a></p>`)
           }
         })
-        OnboardingActions.updateOnboarding(true)
-        OnboardingActions.hideOnboarding()
+        App.actions.onboarding.onboardingCompleted(true)
       }
     })
     hosts.forEach(host => {
@@ -169,10 +165,13 @@ module.exports = {
   },
   fetchRecipe (id, next) {
     next || (next = emptyCallback)
+    const task = App.state.tasks.get(id)
     XHR.send({
       method: 'GET',
-      url: `${config.api_v3_url}/task/${id}/recipe`,
-      done: recipe => next(null, recipe),
+      url: `${task.url()}/recipe`,
+      done (recipe) {
+        next(null, recipe)
+      },
       fail (err, xhr) {
         let msg = 'Error retrieving task recipe.'
         bootbox.alert(msg)
@@ -186,10 +185,11 @@ module.exports = {
       delete recipe.task.url
     }
 
-    let task = TaskModel.Factory(recipe.task)
+    let task = TaskModelFactory(recipe.task)
 
     if (recipe.file) {
-      let file = new File(recipe.file, {parse: true})
+      let file = new File(recipe.file, { parse: true })
+      file.dataFromBase64(recipe.file.data)
       TaskFormActions.setFile(file._values)
     } else {
       TaskFormActions.clearFile()
@@ -223,9 +223,9 @@ module.exports = {
  */
 const create = function (data, next) {
   next || (next = emptyCallback)
-  const task = TaskModel.Factory(data)
+  const task = TaskModelFactory(data)
   XHR.send({
-    url: task.urlRoot,
+    url: task.url(),
     method: 'POST',
     jsonData: task.serialize(),
     headers: {

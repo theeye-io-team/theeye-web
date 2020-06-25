@@ -2,19 +2,18 @@ import 'bootstrap'
 import config from 'config'
 
 import App from 'ampersand-app'
-//const models = require('app/models')
 // load application models definitions
-require('app/models')()
+require('app/models')
+require('app/events')
 
 import AppState from 'state'
 import Router from 'router'
 import RootContainer from 'view/root-container'
 
-require('app/events')
-const sockets = require('app/sockets')
-const session = require('app/session')
-const actions = require('app/actions')
-const experimentalFeatures = require('app/experimental')
+import sockets from 'app/sockets'
+import session from 'app/session'
+import actions from 'app/actions'
+import experimentalFeatures from 'app/experimental'
 
 import 'assets/styles'
 
@@ -25,17 +24,16 @@ function getUserLanguage () {
 }
 
 // Extends our main app singleton
-App.extend({
+App.extend(actions, {
   language: getUserLanguage(),
   config: config,
-  EasterEggs: require('components/easter-eggs'),
+  EasterEggs: require('components/easter-eggs').default,
   Router: new Router(),
   state: new AppState(),
   init () {
     this.bindDocumentEvents()
     this.initState(() => {
       App.state.loader.visible = false // app finish loading.
-      actions()
       this.registerComponents()
       session()
       sockets()
@@ -91,16 +89,6 @@ App.extend({
     }
     document.addEventListener('keydown', onkeydown, false)
   },
-  /**
-   * @summary replace current session customer
-   */
-  customerChange (customer) {
-    this.state.session.customer.clear()
-    this.state.session.customer.set(customer.serialize())
-    this.state.session.customer.fetch()
-    this.state.reset()
-    this.Router.reload()
-  }
 })
 
 App.init()

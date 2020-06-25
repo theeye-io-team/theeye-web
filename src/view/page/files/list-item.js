@@ -4,7 +4,7 @@ import assign from 'lodash/assign'
 import EditButton from './buttons/edit'
 import DeleteButton from './buttons/delete'
 
-module.exports = ListItem.extend({
+export default ListItem.extend({
   derived: {
     item_name: {
       deps: ['model.filename'],

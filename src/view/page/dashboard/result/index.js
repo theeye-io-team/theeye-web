@@ -5,7 +5,7 @@ import SearchboxActions from 'actions/searchbox'
 
 import './styles.less'
 
-module.exports = FullContainer.extend({
+export default FullContainer.extend({
   template: `<div data-component="result-container" class="full-page-container"></div>`,
   autoRender: true,
   props: {

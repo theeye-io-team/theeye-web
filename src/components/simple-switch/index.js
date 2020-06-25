@@ -1,7 +1,7 @@
 import View from 'ampersand-view'
 import './style.css'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <span class="simple-switch">
       <input type="checkbox" />

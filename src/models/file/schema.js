@@ -1,12 +1,12 @@
 import AppModel from 'lib/app-model'
 import App from 'ampersand-app'
+import moment from 'moment'
 
-module.exports = AppModel.extend({
+export default AppModel.extend({
   props: {
     id: 'string',
     customer_id: { type: 'string' },
     customer_name: { type: 'string' },
-    user_id: { type: 'string' },
     filename: { type: 'string' },
     keyname: { type: 'string' },
     mimetype: { type: 'string' },
@@ -17,9 +17,10 @@ module.exports = AppModel.extend({
     public: { type: 'boolean', default: false },
     tags: { type: 'array', default: () => { return [] } },
     input_mode: { type: 'string', default: 'editor' },
-    _type: { type: 'string', default: 'File' },
+    //_type: { type: 'string', default: 'File' },
     template_id: 'string',
     source_model_id: 'string', // temporal , is used to create templates
+    last_update: { type: 'date', default: () => { return new Date() } },
     data: { type: 'string' }
 	},
   session: {
@@ -27,18 +28,17 @@ module.exports = AppModel.extend({
     linked_models: { type: 'array', default: () => { return [] } }
   },
   parse (args) {
-    if (args.data) {
-      args.data = decodeUnicodeData(args.data)
-    }
     args.is_script = (args._type == 'Script')
     return args
   },
-  serialize (options) {
-    var serial = AppModel.prototype.serialize.call(this, options)
-    serial.data = encodeUnicodeData(serial.data)
-    return serial
-  },
   derived: {
+    summary: {
+      deps: ['filename','last_update','tags'],
+      fn () {
+        let date = moment(this.last_update).format('YYYY/MM/DD HH:mm A')
+        return `${this.filename} - ${date}`
+      }
+    },
     hasTemplate: {
       deps: ['template_id'],
       fn () {
@@ -46,16 +46,26 @@ module.exports = AppModel.extend({
       }
     },
     formatted_tags: {
-      deps: ['name', 'filename', 'tags', 'extension', 'mimetype'],
+      deps: ['name','filename','tags','extension','mimetype','linked_models'],
       fn () {
-        return [
+        let tags = [
           'name=' + this.name,
           'filename=' + this.filename,
           'extension=' + this.extension,
           'mimetype=' + this.mimetype
-        ].concat(this.tags)
+        ]
+
+        if (this.linked_models.length > 0) {
+          tags.push('linked_models')
+        }
+
+        return tags.concat(this.tags)
       }
     }
+  },
+  dataFromBase64 (data) {
+    this.data = decodeUnicodeData(data)
+    return this.data
   }
 })
 

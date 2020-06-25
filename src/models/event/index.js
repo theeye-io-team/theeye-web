@@ -1,13 +1,11 @@
-'use strict'
-
 import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import Collection from 'ampersand-collection'
-const config = require('config')
-import EventConstants from 'constants/event'
-import EmitterConstants from 'constants/emitter'
-import MONITOR from 'constants/monitor'
+import config from 'config'
+import * as EventConstants from 'constants/event'
+import * as EmitterConstants from 'constants/emitter'
+import * as MonitorConstants from 'constants/monitor'
 
 class EmitterFactory {
   constructor (attrs, options) {
@@ -34,9 +32,12 @@ class EmitterFactory {
   }
 }
 
-const urlRoot = `${config.api_url}/event`
+const urlRoot = function () {
+  return `${config.supervisor_api_url}/${App.state.session.customer.name}/event`
+}
+
 const Model = AppModel.extend({
-  urlRoot: urlRoot,
+  urlRoot,
   props: {
     id: 'string',
     emitter_id: 'string',
@@ -164,7 +165,7 @@ const monitorEventSummary = (emitter, eventName) => {
   }
 
   if (eventName === EventConstants.RECOVERED) {
-    if (emitter.type === MONITOR.TYPE_FILE) {
+    if (emitter.type === MonitorConstants.TYPE_FILE) {
       summary = `Monitor ${typeStr}, ${emitter.name}, ${hostname} created`
     } else {
       summary = `Monitor ${typeStr}, ${emitter.name}, ${hostname} recovered`
@@ -187,35 +188,35 @@ const monitorEventSummary = (emitter, eventName) => {
 
 const displayMonitorType = (emitter) => {
   const type = emitter.type
-  if (type===MONITOR.TYPE_FILE) return 'file'
-  if (type===MONITOR.TYPE_PROCESS) return 'process'
-  if (type===MONITOR.TYPE_SCRAPER) return 'webcheck'
-  if (type===MONITOR.TYPE_HOST) return 'host'
-  if (type===MONITOR.TYPE_SCRIPT) return 'script'
-  if (type===MONITOR.TYPE_DSTAT) return 'health'
-  if (type===MONITOR.TYPE_PSAUX) return 'processes'
+  if (type===MonitorConstants.TYPE_FILE) return 'file'
+  if (type===MonitorConstants.TYPE_PROCESS) return 'process'
+  if (type===MonitorConstants.TYPE_SCRAPER) return 'webcheck'
+  if (type===MonitorConstants.TYPE_HOST) return 'host'
+  if (type===MonitorConstants.TYPE_SCRIPT) return 'script'
+  if (type===MonitorConstants.TYPE_DSTAT) return 'health'
+  if (type===MonitorConstants.TYPE_PSAUX) return 'processes'
 }
 
 const isDisplayableMonitorEmitter = (emitter, eventName) => {
   let subtype = emitter.type // only monitors has subtype for now
   // ignore "updates_stopped"
-  if (subtype === MONITOR.TYPE_FILE) {
+  if (subtype === MonitorConstants.TYPE_FILE) {
     return Boolean(
       eventName === EventConstants.RECOVERED ||
       eventName === EventConstants.CHANGED
     )
-  } else if (subtype === MONITOR.TYPE_HOST) {
+  } else if (subtype === MonitorConstants.TYPE_HOST) {
     return Boolean(
       //eventName === EventConstants.RECOVERED ||
       eventName === EventConstants.UPDATES_STOPPED ||
       eventName === EventConstants.UPDATES_STARTED
     )
-  } else if (subtype === MONITOR.TYPE_DSTAT) {
+  } else if (subtype === MonitorConstants.TYPE_DSTAT) {
     return Boolean(
       eventName === EventConstants.RECOVERED ||
       eventName === EventConstants.FAILURE
     )
-  } else if (subtype === MONITOR.TYPE_PSAUX) {
+  } else if (subtype === MonitorConstants.TYPE_PSAUX) {
     return false
   } else {
     return Boolean(
@@ -271,7 +272,4 @@ const EventsCollection = AppCollection.extend({
   }
 })
 
-exports.EmitterCollection = EmitterCollection
-exports.Collection = EventsCollection
-exports.Model = Model
-exports.EmitterFactory = EmitterFactory
+export { EmitterFactory, Model, EmitterCollection, EventsCollection as Collection }

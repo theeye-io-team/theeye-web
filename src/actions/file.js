@@ -1,40 +1,94 @@
-'use strict'
-
 import App from 'ampersand-app'
-import { Model as File } from 'models/file'
 import FileRouter from 'router/files'
 import bootbox from 'bootbox'
-const config = require('config')
 import XHR from 'lib/xhr'
 import after from 'lodash/after'
 
 export default {
-  get (id) {
+  get (id, next) {
+    next || (next=()=>{})
     const file = App.state.files.get(id)
-    file.fetch()
-    return file
+    file.fetch({
+      success: () => {
+        XHR.send({
+          url: `${App.config.supervisor_api_url}/${App.state.session.customer.name}/file/${id}/download`,
+          method: 'GET',
+          responseType: 'text',
+          done: (response,xhr) => {
+            if (response && xhr.status === 200) {
+              file.data = response
+              next(null, file)
+            } else {
+              bootbox.alert('Error getting file')
+              return
+            }
+          },
+          fail: (err,xhr) => {
+            bootbox.alert('Error getting file')
+            return
+          }
+        })
+      }
+    })
   },
-  update (id, data) {
-    const file = App.state.files.get(id)
-    file.set(data)
-    file.save()
-    return file
+  update (id, data, next) {
+    let formData = new FormData()
+
+    formData.append('filename', data.filename)
+    formData.append('description', data.description)
+    formData.append('is_script', data.is_script)
+    formData.append('extension', data.filename.split('.').pop())
+    formData.append('mimetype', data.mimetype)
+
+    let fileBlob = new Blob([data.data], { type: data.mimetype })
+    formData.append('file', fileBlob, data.filename)
+
+    XHR.send({
+      url: `${App.config.supervisor_api_url}/${App.state.session.customer.name}/file/${id}`,
+      method: 'PUT',
+      formData: formData,
+      done: (response,xhr) => {
+        if (response && xhr.status === 200) {
+          const file = App.state.files.get(id)
+          response.is_script = data.is_script
+          file.set(response)
+          next(null, file)
+        } else {
+          bootbox.alert('Error updating file')
+          return
+        }
+      },
+      fail: (err,xhr) => {
+        bootbox.alert('Error updating file')
+        return
+      }
+    })
   },
   create (data, next) {
-    next || (next = function(){})
-    const file = new File(data)
-    file.save({}, {
-      collection: App.state.files,
-      success: function () {
+    let formData = new FormData()
+
+    formData.append('filename', data.filename)
+    formData.append('description', data.description)
+    formData.append('is_script', data.is_script)
+    formData.append('extension', data.filename.split('.').pop())
+    formData.append('mimetype', data.mimetype)
+
+    let fileBlob = new Blob([data.data], { type: data.mimetype })
+    formData.append('file', fileBlob, data.filename)
+
+    XHR.send({
+      url: `${App.config.supervisor_api_url}/${App.state.session.customer.name}/file`,
+      method: 'POST',
+      formData: formData,
+      done: (response,xhr) => {
+        response.is_script = data.is_script
+        const file = new App.Models.File.Model(response)
         App.state.files.add(file)
         next(null, file)
       },
-      error: function (err) {
-        if (err) {
-          bootbox.alert('Error creating file')
-          return
-        }
-        next(err)
+      fail: (err,xhr) => {
+        bootbox.alert('Error creating file')
+        return
       }
     })
   },
@@ -88,9 +142,9 @@ export default {
   syncLinkedModels (id, next) {
     const file = App.state.files.get(id)
     XHR.send({
-      url: `${config.app_url}/apiv3/file/${id}/linkedmodels`,
+      url: `${App.config.supervisor_api_url}/${App.state.session.customer.name}/file/${id}/linkedmodels`,
       method: 'get',
-      headers: { Accept: 'application/json;charset=UTF-8' },
+      responseType: 'json',
       done: (models, xhr) => {
         if (xhr.status === 200 && Array.isArray(models)) {
           file.linked_models = models

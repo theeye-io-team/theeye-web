@@ -4,11 +4,9 @@ import some from 'lodash/some'
 
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
-// import config from 'config'
+import config from 'config'
 
-//import { Collection as Customers } from 'models/customer'
-
-// const urlRoot = `${config.app_url}/user` // sails users
+const urlRoot = `${config.api_url}/admin/user`
 
 const NotificationSettings = State.extend({
   props: {
@@ -24,6 +22,7 @@ const NotificationSettings = State.extend({
 })
 
 const Model = AppModel.extend({
+  urlRoot,
   props: {
     id: 'string',
     name: 'string',
@@ -32,8 +31,8 @@ const Model = AppModel.extend({
     email: 'string',
     enabled: ['boolean', false, false],
     invitation_token: 'string',
-    createdAt: 'date',
-    updatedAt: 'date',
+    creation_date: 'date',
+    last_update: 'date',
     onboardingCompleted: ['boolean', false, false]
     //notifications: ['object', true, () => {
     //  return {
@@ -69,9 +68,8 @@ const Model = AppModel.extend({
 })
 
 const Collection = AppCollection.extend({
-  //url: urlRoot,
+  url: urlRoot,
   model: Model
 })
 
-exports.Model = Model
-exports.Collection = Collection
+export { Model, Collection }

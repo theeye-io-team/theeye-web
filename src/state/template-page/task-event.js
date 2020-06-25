@@ -9,4 +9,4 @@ const TaskEvent = AmpersandState.extend({
   }
 })
 
-module.exports = AmpersandCollection.extend({ model: TaskEvent })
+export default AmpersandCollection.extend({ model: TaskEvent })

@@ -1,11 +1,10 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import acls from 'lib/acls'
-import NavbarActions from 'actions/navbar'
 import OnboardingActions from 'actions/onboarding'
 import { startBot } from 'actions/integrations'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <section>
       <div style="text-align:center; font-size:16px;">
@@ -31,9 +30,9 @@ module.exports = View.extend({
   showInstaller (event) {
     event.preventDefault()
     event.stopPropagation()
-    OnboardingActions.showOnboarding()
-    NavbarActions.toggleSettingsMenu()
-    NavbarActions.toggleTab('installer')
+    App.actions.onboarding.activateOnboarding()
+    App.actions.settingsMenu.toggle('customer')
+    App.actions.settingsMenu.toggleTab('customer','installer')
   },
   render () {
     this.renderWithTemplate(this)

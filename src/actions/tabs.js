@@ -1,6 +1,6 @@
 import App from 'ampersand-app'
 
-module.exports = {
+export default {
   setCurrentTab (tabName) {
     for (const tab of App.state.tabs.tabs.models) {
       if (tab.name === tabName) {

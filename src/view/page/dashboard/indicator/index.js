@@ -9,7 +9,7 @@ import TagView from 'components/tag'
 
 import './styles.less'
 
-module.exports = function (options) {
+export default function (options) {
   return new IndicatorRowView(options)
 }
 
@@ -271,7 +271,7 @@ const CollapsedContent = BaseView.extend({
         <div class="col-xs-10">
           <div class="">
             <button class="curl-copy btn btn-primary clip" type="button" data-hook="update-copy">
-              <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+              <span class="fa fa-files-o" alt="copy to clipboard"></span>
             </button>
             <div class="curl-container" data-hook="update-curl"></div>
           </div>
@@ -284,7 +284,7 @@ const CollapsedContent = BaseView.extend({
         <div class="col-xs-10">
           <div class="">
             <button class="curl-copy btn btn-primary clip" type="button" data-hook="delete-copy">
-              <span class="glyphicon glyphicon-copy" alt="copy to clipboard"></span>
+              <span class="fa fa-files-o" alt="copy to clipboard"></span>
             </button>
             <div class="curl-container" data-hook="delete-curl"></div>
           </div>

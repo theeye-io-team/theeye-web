@@ -2,14 +2,15 @@
 
 import App from 'ampersand-app'
 import Router from 'ampersand-router'
-import AuthActions from 'actions/auth'
-const logger = require('lib/logger')('router')
+import SessionActions from 'actions/session'
+import loggerModule from 'lib/logger'; const logger = loggerModule('router')
 
 // routes
-const AuthRoute = require('./auth')
-const UserRoute = require('./user')
-const CustomerRoute = require('./customer')
-const WebhookRoute = require('./webhook')
+import AuthRoute from './auth'
+import UserRoute from './user'
+import CustomerRoute from './customer'
+import MemberRoute from './member'
+import WebhookRoute from './webhook'
 import DashboardRoute from './dashboard'
 import ChartsRoute from './charts'
 import HelpRoute from './help'
@@ -17,14 +18,14 @@ import WorkflowRouter from './workflow'
 import hopscotch from 'hopscotch'
 import config from 'config'
 
-module.exports = Router.extend({
+export default Router.extend({
   execute (callback, args) {
     if (callback) {
       if (hopscotch.getCurrTour()) {
         hopscotch.endTour(true)
       }
 
-      let publicRoutes = ['login', 'sociallogin', 'register', 'activate', 'passwordreset']
+      let publicRoutes = ['login', 'sociallogin', 'register', 'activate', 'passwordreset', 'finishregistration']
 
       let isPublicRoute = publicRoutes.find(route => {
         let routeRegex = new RegExp(route)
@@ -68,33 +69,52 @@ module.exports = Router.extend({
       const route = new CustomerRoute()
       route.route('index')
     },
+    'admin/member': () => {
+      const route = new MemberRoute()
+      route.route('index')
+    },
     'admin/webhook': () => {
       const route = new WebhookRoute()
       route.route('index')
     },
     'admin/hostgroup': () => {
-      return import(/* webpackChunkName: "router-hostgroup" */ './hostgroup').then(HostGroupRoute => {
-        const route = new HostGroupRoute()
-        route.route('index')
-      })
+      return import(/* webpackChunkName: "router-hostgroup" */ './hostgroup')
+        .then(({ default: HostGroupRoute }) => {
+          const route = new HostGroupRoute()
+          route.route('index')
+        })
     },
-    'admin/task': () => {
-      return import(/* webpackChunkName: "router-task" */ './task').then(TasksRoute => {
-        const route = new TasksRoute()
-        route.route('index')
-      })
-    },
+    // 'admin/task': () => {
+    //   return import(/* webpackChunkName: "router-task" */ './task')
+    //     .then(({ default: TasksRoute }) => {
+    //       const route = new TasksRoute()
+    //       route.route('index')
+    //     })
+    // },
     'admin/file': () => {
-      return import(/* webpackChunkName: "router-files" */ './files').then(FilesRoute => {
-        const route = new FilesRoute()
-        route.route('index')
-      })
+      return import(/* webpackChunkName: "router-files" */ './files')
+        .then(({ default: FilesRoute }) => {
+          const route = new FilesRoute()
+          route.route('index')
+        })
     },
     'admin/scheduler': () => {
-      return import(/* webpackChunkName: "router-scheduler" */ './scheduler').then(SchedulerRoute => {
-        const route = new SchedulerRoute()
-        route.route('index')
-      })
+      return import(/* webpackChunkName: "router-scheduler" */ './scheduler')
+        .then(({ default: SchedulerRoute }) => {
+          const route = new SchedulerRoute()
+          route.route('index')
+        })
+    },
+    'admin/hoststats/:id': function (id) {
+      return import(/* webpackChunkName: "router-hoststats" */ './hoststats')
+        .then(({ default: HostStatsRouter }) => {
+          const route = new HostStatsRouter()
+          route.route('index', { id })
+        })
+    },
+    'admin/workflow/:id': (id) => {
+      const route = new WorkflowRouter()
+      route.route('index', {id: id})
     },
     'admin/charts/:integration': (integration) => {
       const route = new ChartsRoute()
@@ -105,7 +125,7 @@ module.exports = Router.extend({
       route.route('login')
     },
     'logout': () => {
-      AuthActions.logout()
+      SessionActions.logout()
     },
     'register': () => {
       const route = new AuthRoute()
@@ -114,6 +134,10 @@ module.exports = Router.extend({
     'activate': () => {
       const route = new AuthRoute()
       route.activateRoute()
+    },
+    'finishregistration': () => {
+      const route = new AuthRoute()
+      route.finishregistrationRoute()
     },
     'sociallogin': () => {
       const route = new AuthRoute()
@@ -127,19 +151,8 @@ module.exports = Router.extend({
       const route = new AuthRoute()
       route.passwordResetRoute()
     },
-    'admin/hoststats/:id': function (id) {
-      return import(/* webpackChunkName: "router-hoststats" */ './hoststats')
-        .then(HostStatsRouter => {
-          const route = new HostStatsRouter()
-          route.route('index', {id: id})
-        })
-    },
-    'admin/workflow/:id': (id) => {
-      const route = new WorkflowRouter()
-      route.route('index', {id: id})
-    },
     '(*path)': function () {
       App.navigate('dashboard')
-    }
+    },
   }
 })

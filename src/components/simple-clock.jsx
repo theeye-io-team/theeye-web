@@ -39,4 +39,4 @@ class Clock extends Component {
   }
 }
 
-module.exports = Clock
+export default Clock

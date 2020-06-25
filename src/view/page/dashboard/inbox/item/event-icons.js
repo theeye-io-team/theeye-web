@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   'lifecycle:ready': 'fa fa-clock-o',
   'lifecycle:assigned': 'fa fa-clock-o',
   'lifecycle:finished': 'fa fa-check-circle',

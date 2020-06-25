@@ -1,11 +1,11 @@
 import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AmpersandCollection from 'ampersand-collection'
-const DynamicArgument = require('./dynamic-argument').DynamicArgument
-const ScheduleCollection = require('models/schedule').Collection
-const TagCollection = require('models/tag').Collection
+import { DynamicArgument } from './dynamic-argument'
+import { Collection as ScheduleCollection } from 'models/schedule'
+import { Collection as TagCollection } from 'models/tag'
 
-import FIELD from 'constants/field'
+import * as FIELD from 'constants/field'
 
 const TaskArguments = AmpersandCollection.extend({
   mainIndex: 'id',
@@ -194,7 +194,28 @@ const Schema = AppModel.extend({
         callback( new Error(arg1) )
       }
     })
+  },
+  buildTaskSummary () {
+    let tagsString
+    if (this.tags.length === 0) {
+      tagsString = ''
+    }
+    if (this.tags.length === 1) {
+      tagsString = `[${this.tags[0]}]`
+    }
+    if (this.tags.length === 2) {
+      tagsString = `[${this.tags[0]}] [${this.tags[1]}]`
+    }
+    if (this.tags.length >= 3) {
+      tagsString = `[${this.tags[0]}] [${this.tags[1]}] [${this.tags[2]}]`
+    }
+
+    if (this.hostname) {
+      return `${this.type.toUpperCase()} - ${this.name} (${this.hostname}) ${tagsString}` 
+    } else {
+      return `${this.type.toUpperCase()} - ${this.name} ${tagsString}` 
+    }
   }
 })
 
-module.exports = Schema
+export default Schema

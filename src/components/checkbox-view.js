@@ -3,7 +3,7 @@
 import CheckboxView from 'ampersand-checkbox-view'
 import assign from 'lodash/assign'
 
-module.exports = CheckboxView.extend({
+export default CheckboxView.extend({
   template: `
     <div class="form-group">
       <label data-hook="label" class="col-sm-3 control-label"></label>

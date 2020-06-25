@@ -1,18 +1,18 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
-import config from 'config'
 import { Model as Notification } from 'models/notification'
 import DesktopNotification from 'lib/desktop-notification'
 import notificationIcon from 'assets/images/theeyeonly_medium.png'
 import messageFactory from 'models/notification/messageFactory'
 import titleFactory from 'models/notification/titleFactory'
-import LifecycleConstants from 'constants/lifecycle'
-import NotificationConstants from 'constants/notifications'
-import StateConstants from 'constants/states'
+import * as LifecycleConstants from 'constants/lifecycle'
+import * as NotificationConstants from 'constants/notifications'
+import * as StateConstants from 'constants/states'
 
-const logger = require('lib/logger')('actions:tasks')
+import loggerModule from 'lib/logger'
+const logger = loggerModule('actions:tasks')
 
-module.exports = {
+export default {
   /**
    *
    * @param {Boolean} removeAll remove all notifications
@@ -24,7 +24,7 @@ module.exports = {
 
     // remove only read notifications by default
     XHR.send({
-      url: `${config.app_url}/inbox${query}`,
+      url: `${App.config.api_url}/inbox${query}`,
       method: 'DELETE',
       headers: { Accept: 'application/json;charset=UTF-8' },
       done (response,xhr) {
@@ -40,7 +40,7 @@ module.exports = {
     if (notif.length === 0) return
 
     XHR.send({
-      url: `${config.app_url}/inbox/markallread`,
+      url: `${App.config.api_url}/inbox/markallread`,
       method: 'PATCH',
       headers: { Accept: 'application/json;charset=UTF-8' },
       jsonData: notif,
@@ -67,7 +67,7 @@ module.exports = {
 
     if (App.state.session.user.notifications.desktop === true) {
       // older than 5'
-      if (((new Date() - notification.createdAt) / 1000 / 60) > 3) {
+      if (((new Date() - notification.creation_date) / 1000 / 60) > 3) {
         return
       }
 

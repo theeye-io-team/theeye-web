@@ -4,7 +4,7 @@ import View from 'ampersand-view'
  * @module components/chat
  *
  */
-module.exports = {
+export default {
 
   ChatBoxBaloon : View.extend({
     autoRender: true,

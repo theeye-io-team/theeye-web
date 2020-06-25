@@ -1,11 +1,8 @@
-import search from 'lib/query-params'
 import App from 'ampersand-app'
 import after from 'lodash/after'
-import NavbarActions from 'actions/navbar'
-import WorkflowActions from 'actions/workflow'
-import OnHoldActions from 'actions/onHold'
+import search from 'lib/query-params'
 
-module.exports = {
+export default {
   setMonitorsGroupByProperty (prop) {
     const query = search.get()
     query.monitorsgroupby = { prop }
@@ -23,7 +20,7 @@ module.exports = {
   },
   loadNewRegisteredHostAgent (host) {
     App.state.loader.visible = false
-    NavbarActions.hideSettingsMenu()
+    App.actions.settingsMenu.hide('customer')
     const resourcesWasEmpty = Boolean(App.state.resources.length === 0)
     const step = after(2, function () {
       if (resourcesWasEmpty) {
@@ -36,8 +33,9 @@ module.exports = {
     App.state.hosts.fetch({ success: step, error: step })
   },
   fetchData (options) {
-    var resourcesToFetch = 9
-    var done = after(resourcesToFetch, () => {
+    let resourcesToFetch = 9
+
+    const done = after(resourcesToFetch, () => {
       App.state.loader.visible = false
     })
 
@@ -46,22 +44,39 @@ module.exports = {
       done()
     }
 
-    const nextStep = () => {
-      step()
-      App.state.tasks.fetch({
-        success: () => {
-          App.state.dashboard.groupTasks()
-          App.state.workflows.forEach(workflow => {
-            WorkflowActions.populate(workflow)
-          })
+		const nextStep = () => {
+			step()
+			App.state.tasks.fetch({
+				success: () => {
+					App.state.dashboard.groupTasks()
+					App.state.workflows.forEach(workflow => {
+						App.actions.workflow.populate(workflow)
+					})
 
-          OnHoldActions.check()
-          step()
-        },
-        error: step,
-        reset: true
-      })
-    }
+					App.actions.onHold.check()
+					step()
+				},
+				error: step,
+				reset: true
+			})
+		}
+
+    //const nextStep = () => {
+    //  step()
+    //  App.state.tasks.fetch({
+    //    success: () => {
+    //      App.state.dashboard.groupTasks()
+    //      App.state.workflows.forEach(workflow => {
+    //        App.actions.workflow.populate(workflow)
+    //      })
+
+    //      App.actions.onHold.check()
+    //      step()
+    //    },
+    //    error: step,
+    //    reset: true
+    //  })
+    //}
 
     App.state.workflows.fetch({ success: nextStep, error: nextStep })
     App.state.events.fetch({ success: step, error: step })

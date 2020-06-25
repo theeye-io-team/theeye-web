@@ -4,12 +4,12 @@ import AmpersandState from 'ampersand-state'
 import TaskEvents from './task-event'
 //import gconfig from 'config'
 
-const Resources = require('models/resource').Collection
-const Tasks = require('models/task').Collection
+import { Collection as Resources } from 'models/resource'
+import { Collection as Tasks } from 'models/task'
 import { Model as File, Collection as Files } from 'models/file'
 
 // representation of a host template
-module.exports = AmpersandState.extend({
+export default AmpersandState.extend({
   //session: {
   //  notConfigured: 'boolean'
   //},

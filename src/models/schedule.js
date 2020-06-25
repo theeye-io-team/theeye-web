@@ -1,6 +1,6 @@
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
-// const config = require('config')
+// import config from 'config'
 
 const Model = AppModel.extend({
   idAttribute: '_id',
@@ -24,5 +24,4 @@ const Collection = AppCollection.extend({
   model: Model
 })
 
-exports.Model = Model
-exports.Collection = Collection
+export { Model, Collection }

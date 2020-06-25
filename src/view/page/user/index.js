@@ -7,7 +7,7 @@ import MassDeleteButton from './buttons/mass-delete'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
 
-module.exports = List.extend({
+export default List.extend({
   initialize (options) {
     options = options || {}
     this.title = 'Users'

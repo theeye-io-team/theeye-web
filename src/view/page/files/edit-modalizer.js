@@ -1,7 +1,7 @@
 import Modalizer from 'components/modalizer'
 import FileForm from './form'
 
-module.exports = Modalizer.extend({
+export default Modalizer.extend({
   initialize () {
     Modalizer.prototype.initialize.apply(this,arguments)
 

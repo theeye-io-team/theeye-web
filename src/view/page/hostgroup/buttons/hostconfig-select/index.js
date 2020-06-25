@@ -5,7 +5,7 @@ import ConfigsView from '../../configs'
 import FileInputView from 'components/input-view/file'
 import bootbox from 'bootbox'
 
-module.exports = SelectView.extend({
+export default SelectView.extend({
   template: `
     <div class="form-group form-horizontal hostconfig-select">
       <label data-hook="label" class="col-sm-3 control-label"></label>

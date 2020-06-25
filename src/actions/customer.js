@@ -1,18 +1,19 @@
 import App from 'ampersand-app'
 import bootbox from 'bootbox'
-import { Model as Customer } from 'models/customer'
 import after from 'lodash/after'
-const config = require('config')
 import XHR from 'lib/xhr'
 import Acls from 'lib/acls'
 
-module.exports = {
+export default {
   remove (id) {
-    var customer = new Customer({ id: id })
+    var customer = new App.Models.Customer.Model({ id: id })
     customer.destroy({
       success: function(){
-        bootbox.alert('Customer Deleted',function(){ })
-        App.state.customers.remove( customer )
+        bootbox.alert('Customer Deleted')
+        App.state.admin.customers.remove( customer )
+      },
+      error: function (err) {
+        bootbox.alert('Error removing customer')
       }
     });
   },
@@ -37,7 +38,7 @@ module.exports = {
     customers.forEach(function(customer){
       customer.destroy({
         success () {
-          App.state.customers.remove(customer)
+          App.state.admin.customers.remove(customer)
           done()
         },
         error () {
@@ -48,7 +49,7 @@ module.exports = {
     })
   },
   update (id,data, modal) {
-    var customer = new Customer({ id: id })
+    var customer = new App.Models.Customer.Model({ id: id })
 
     data.config = {}
     if (data.elasticsearch_enabled) {
@@ -78,14 +79,16 @@ module.exports = {
 
     delete data.elasticsearch_enabled
     delete data.elasticsearch_url
-    delete data.kibana
+    delete data.kibana_enabled
+    delete data.kibana_url
 
     customer.set(data)
     customer.save({}, {
-      collection: App.state.customers,
+      collection: App.state.admin.customers,
       success: function () {
         bootbox.alert('Customer Updated')
-        App.state.customers.add(customer, {merge: true})
+        customer.set({ config: data.config })
+        App.state.admin.customers.add(customer, {merge: true})
       },
       error: function (err) {
         bootbox.alert('Error updating customer')
@@ -94,7 +97,7 @@ module.exports = {
     modal.hide()
   },
   create (data, modal) {
-    var customer = new Customer()
+    var customer = new App.Models.Customer.Model({})
 
     data.config = {}
     if (data.elasticsearch_enabled) {
@@ -117,6 +120,7 @@ module.exports = {
       bootbox.alert('Please provide a kibana url')
       return
     }
+
     data.config.kibana = {
       enabled: data.kibana_enabled,
       url: data.kibana_url
@@ -130,7 +134,7 @@ module.exports = {
     customer.save({}, {
       success: function () {
         bootbox.alert('Customer Created')
-        App.state.customers.add(customer)
+        App.state.admin.customers.add(customer)
       },
       error: function (err) {
         bootbox.alert('Error creating customer')
@@ -141,16 +145,16 @@ module.exports = {
   getAgentCredentials () {
     if (Acls.hasAccessLevel('admin')) {
       XHR.send({
-        url: `${config.app_url}/customer/agent`,
+        url: `${App.config.api_url}/bot/credentials`,
         method: 'get',
-        done: (response,xhr) => {
+        done: (response, xhr) => {
           if (xhr.status !== 200) {
             bootbox.alert({
               title: 'Error',
               message: 'Error fetching bot credentials, please try again later.'
             })
           } else {
-            App.state.navbar.settingsMenu.agent = response.user
+            App.state.settingsMenu.customer.agent = response
           }
         },
         fail: (err,xhr) => {

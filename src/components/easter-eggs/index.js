@@ -1,5 +1,5 @@
 
-module.exports = {
+export default {
   MarioWalk () {
     import(/* webpackChunkName: "mario-walk" */ './mario-walk')
       .then(mario => { mario() })

@@ -6,7 +6,7 @@ import HelpIconView from 'components/help-icon'
 /**
  * tasks rows
  */
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="taskRow">
       <div class="tasks-container panel panel-default">
@@ -175,7 +175,9 @@ module.exports = View.extend({
     }
   },
   events: {
-    'click .collapsed[data-hook=collapse-toggle]': 'onClickToggleCollapse'
+    'click .collapsed[data-hook=collapse-toggle]': function (event) {
+      this.onClickToggleCollapse(event)
+    }
   },
   // capture and handle open/un-collapse event
   onClickToggleCollapse (event) {

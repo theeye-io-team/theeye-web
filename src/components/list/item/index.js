@@ -3,9 +3,62 @@ import BaseView from 'view/base-view'
 // import CommonButton from 'components/common-button'
 // import extend from 'lodash/assign'
 
-module.exports = BaseView.extend({
+export default BaseView.extend({
   autoRender: false,
-  template: require('./template.hbs'),
+  template () {
+    let html = `
+      <div class="itemRow panel panel-default js-searchable-item"
+        data-item-id="${this.model.id}"
+        data-item-name="model.username"
+        data-tags="view.tags">
+        <div class="panel-heading" role="tab" id="heading_${this.model.id}">
+          <h4 class="panel-title">
+            <span class="collapsed" data-toggle="collapse"
+              data-parent="#new-accordion"
+              href="#collapse_${this.model.id}"
+              aria-expanded="false"
+              aria-controls="collapse_${this.model.id}">
+              <div class="panel-title-content">
+                <!-- model select button -->
+                <span data-hook="left-container">
+                  <button class="btn btn-primary rowSelector">
+                    <span data-hook="selectable" class="fa fa-square-o"></span>
+                  </button>
+                </span>
+                <span class="panel-item name">
+                  <span data-hook="item_badge"></span>
+                  <span data-hook="item_name"></span>
+                  <small> <span data-hook="item_description"></span> </small>
+                </span>
+                <div data-hook="dropdown-icons" class="panel-item icons dropdown">
+                  <button class="btn dropdown-toggle btn-primary"
+                    type="button"
+                    data-hook="buttons-container"
+                    data-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="true">
+                    <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                  </button>
+                  <ul class="dropdown-menu" data-hook="action-buttons">
+                  </ul>
+                </div>
+                <div data-hook="detached-icons" class="panel-item icons"></div>
+              </div>
+            </span>
+          </h4>
+        </div>
+        <!-- collapsible content -->
+        <div id="collapse_${this.model.id}"
+          class="panel-collapse collapse"
+          role="tabpanel"
+          aria-labelledby="heading_${this.model.id}">
+          <div data-hook="collapsed-content" class="panel-body"> </div>
+        </div>
+      </div>
+      `
+
+    return html
+  },
   events: {
     'click [data-hook=selectable]': function (event) {
       event.stopPropagation()
@@ -15,6 +68,7 @@ module.exports = BaseView.extend({
   props: {
     selectable: ['boolean', false, true],
     buttons: ['array', false, function () { return [] }],
+    showButtons:['boolean', false, true],
     show: ['boolean', false, true],
     selected: ['boolean', false, false]
   },
@@ -109,6 +163,10 @@ module.exports = BaseView.extend({
     }],
     show: {
       type: 'toggle'
+    },
+    showButtons: {
+      type: 'toggle',
+      hook: 'buttons-container'
     },
     tags: {
       type: 'attribute',

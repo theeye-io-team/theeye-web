@@ -9,7 +9,7 @@ import FileForm from '../form'
 
 import './buttons.less'
 
-module.exports = CommonButton.extend({
+export default CommonButton.extend({
   initialize (options) {
     this.title = 'Create New File'
     this.className = 'btn btn-primary'

@@ -1,29 +1,39 @@
 import App from 'ampersand-app'
 
-import Event from 'models/event'
-import Webhook from 'models/webhook'
-import Task from 'models/task'
-import Resource from 'models/resource'
-import Job from 'models/job'
-import User from 'models/user'
-import Token from 'models/token'
-import Indicator from 'models/indicator'
-import Customer from 'models/customer'
-import HostGroup from 'models/hostgroup'
+import * as Customer from 'models/customer'
+import * as Event from 'models/event'
+import * as File from 'models/file'
+import * as Host from 'models/host'
+import * as HostGroup from 'models/hostgroup'
+import * as Indicator from 'models/indicator'
+import * as Job from 'models/job'
+import * as Member from 'models/member'
+import * as Monitor from 'models/monitor'
+import * as Resource from 'models/resource'
+import * as Script from 'models/file/script'
+import * as Tag from 'models/tag'
+import * as Task from 'models/task'
+import * as Token from 'models/token'
+import * as User from 'models/user'
+import * as Webhook from 'models/webhook'
 
-module.exports = () => {
-  App.extend({
-    Models: {
-      Event,
-      Task,
-      Job,
-      Resource,
-      Webhook,
-      Indicator,
-      User,
-      Customer,
-      Token,
-      HostGroup
-    }
-  })
-}
+App.extend({
+  Models: {
+    Customer,
+    Event,
+    File,
+    Host,
+    HostGroup,
+    Indicator,
+    Job,
+    Member,
+    Monitor,
+    Resource,
+    Script,
+    Tag,
+    Task,
+    Token,
+    User,
+    Webhook
+  }
+})

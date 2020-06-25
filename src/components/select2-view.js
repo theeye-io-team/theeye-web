@@ -11,7 +11,7 @@ import $ from 'jquery'
 //  return matches.concat(Array.prototype.slice.call(el.querySelectorAll(selector)))
 //}
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div>
       <label data-hook="label" class="col-sm-3 control-label"></label>

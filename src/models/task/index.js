@@ -3,16 +3,18 @@ import State from 'ampersand-state'
 import AppCollection from 'lib/app-collection'
 import isURL from 'validator/lib/isURL'
 import isMongoId from 'validator/lib/isMongoId'
-import TaskConstants from 'constants/task'
-import LIFECYCLE from 'constants/lifecycle'
+import * as TaskConstants from 'constants/task'
+import * as LIFECYCLE from 'constants/lifecycle'
 import Schema from './schema'
 
 //import { Model as Host } from 'models/host'
 
-const Template = require('./template')
-const config = require('config')
+import * as Template from './template'
+import config from 'config'
 
-const urlRoot = `${config.api_url}/task`
+const urlRoot = function () {
+  return `${config.supervisor_api_url}/${App.state.session.customer.name}/task`
+}
 
 const formattedTags = () => {
   return {
@@ -37,7 +39,7 @@ const formattedTags = () => {
 
 // add host and template to both script and scraper tasks
 const Script = Template.Script.extend({
-  urlRoot: urlRoot,
+  urlRoot,
   props: {
     hostname: 'string',
     host_id: 'string',
@@ -66,9 +68,9 @@ const Script = Template.Script.extend({
       }
     },
     summary: {
-      deps: ['hostname','name'],
+      deps: ['hostname','name','tags'],
       fn () {
-        return `[${this.hostname}] script task ${this.name}`
+        return this.buildTaskSummary()
       }
     }
   },
@@ -85,7 +87,7 @@ const Script = Template.Script.extend({
 })
 
 const Scraper = Template.Scraper.extend({
-  urlRoot: urlRoot,
+  urlRoot,
   props: {
     hostname: 'string',
     host_id: 'string',
@@ -113,9 +115,9 @@ const Scraper = Template.Scraper.extend({
       }
     },
     summary: {
-      deps: ['hostname','name'],
+      deps: ['hostname','name','tags'],
       fn () {
-        return `[${this.hostname}] web request task ${this.name}`
+        return this.buildTaskSummary()
       }
     }
   },
@@ -150,9 +152,9 @@ const Approval = Template.Approval.extend({
       }
     },
     summary: {
-      deps: ['name'],
+      deps: ['name','tags'],
       fn () {
-        return `approval task ${this.name}`
+        return this.buildTaskSummary()
       }
     }
   },
@@ -186,9 +188,9 @@ const Dummy = Template.Dummy.extend({
       }
     },
     summary: {
-      deps: ['name'],
+      deps: ['name','tags'],
       fn () {
-        return `Input task ${this.name}`
+        return this.buildTaskSummary()
       }
     }
   },
@@ -222,9 +224,9 @@ const Notification = Template.Notification.extend({
       }
     },
     summary: {
-      deps: ['name'],
+      deps: ['name','tags'],
       fn () {
-        return `notification task ${this.name}`
+        return this.buildTaskSummary()
       }
     }
   },
@@ -300,7 +302,7 @@ const Collection = AppCollection.extend({
   }
 })
 
-exports.Task = Schema.extend({
+export const Task = Schema.extend({
   session: {
     _all: 'object' // keep properties returned by the server as is
   },
@@ -337,12 +339,4 @@ const Group = Schema.extend({
   }
 })
 
-
-exports.Scraper = Scraper
-exports.Script = Script
-exports.Approval = Approval
-exports.Dummy = Dummy
-exports.Notification = Notification
-exports.Collection = Collection
-exports.Factory = TaskFactory
-exports.Group = Group
+export { Scraper, Script, Approval, Dummy, Notification, Collection, TaskFactory as Factory, Group }

@@ -7,7 +7,7 @@ import GroupedTasksCollection from './grouped-tasks'
 import { GroupedResourceCollection, GroupedResource } from 'models/resource'
 import AmpersandState from 'ampersand-state'
 
-module.exports = AmpersandState.extend({
+export default AmpersandState.extend({
   initialize () {
     AmpersandState.prototype.initialize.apply(this, arguments)
 

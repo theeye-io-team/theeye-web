@@ -1,19 +1,18 @@
-/**
- *
- * Notification Structs core information
- *
- */
-exports.JOB_START_NOTIFICATION = {
+export const START_JOB_NOTIFICATION_FILTER = {
   topic: 'job-crud',
   data: {
     operation: 'create'
   }
 }
 
-exports.JOB_NOTIFICATION = {
+export const MONITOR_STATE_NOTIFICATION_FILTER = {
+  topic: 'monitor-state'
+}
+
+export const JOB_CRUD_NOTIFICATION_FILTER = {
   topic: 'job-crud'
 }
 
-exports.WEBHOOK_NOTIFICATION = {
+export const WEBHOOK_NOTIFICATION_FILTER = {
   topic: 'webhook-triggered'
 }

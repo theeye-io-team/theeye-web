@@ -1,6 +1,6 @@
 import App from 'ampersand-app'
 import BaseView from 'view/base-view'
-module.exports = BaseView.extend({
+export default BaseView.extend({
   template: `
     <section class="dashboard-panel">
       <div data-hook="panel">

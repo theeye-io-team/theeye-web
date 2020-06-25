@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   get () {
     const hashParams = {}
     let e

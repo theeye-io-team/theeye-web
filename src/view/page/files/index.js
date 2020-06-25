@@ -12,7 +12,7 @@ import ListItem from './list-item'
 import MassiveDeleteButton from './buttons/massive-delete'
 import CreateButton from './buttons/create'
 
-module.exports = List.extend({
+export default List.extend({
   autoRender: true,
   initialize (options) {
     options || (options = {})

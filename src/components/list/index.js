@@ -4,9 +4,8 @@ import View from 'ampersand-view'
 import ListItem from 'components/list/item'
 import ListHeader from 'components/list/header'
 import SearchboxActions from 'actions/searchbox'
-//const filterRows = require('lib/filter-rows')
 
-module.exports = View.extend({
+export default View.extend({
   autoRender: true,
   template: `
     <div class="admin-container">

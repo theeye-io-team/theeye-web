@@ -4,7 +4,9 @@ import AppCollection from 'lib/app-collection'
 import config from 'config'
 import merge from 'lodash/merge'
 
-const urlRoot = `${config.app_url}/customer`
+const urlRoot = function () {
+  return `${config.api_url}/admin/customer`
+}
 
 const defaultConfig = {
   kibana: {
@@ -24,7 +26,7 @@ const defaultConfig = {
 }
 
 const Model = AppModel.extend({
-  urlRoot: urlRoot,
+  urlRoot,
   props: {
     id: 'string',
     name: 'string',
@@ -75,5 +77,4 @@ const Collection = AppCollection.extend({
   comparator: 'name'
 })
 
-exports.Model = Model
-exports.Collection = Collection
+export { Model, Collection }

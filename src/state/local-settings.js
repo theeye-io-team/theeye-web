@@ -1,7 +1,7 @@
 import AmpersandState from 'ampersand-state'
 import localForage from 'localforage'
 
-module.exports = AmpersandState.extend({
+export default AmpersandState.extend({
   props: {
     monitorsGroupBy: ['object', true, () => ({prop: 'name'})],
     tasksGroupBy: ['object', true, () => ({prop: 'name'})]

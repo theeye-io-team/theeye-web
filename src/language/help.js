@@ -8,12 +8,23 @@ const triggers = 'Select a task, monitor or webhook event that will trigger this
 const grace_time = 'If you select to Trigger with an event, you can choose a grace time to delay the execution of this action and have some time to cancel it via email if necessary.'
 const tags = 'Using Tags will help you to find your resources quickly'
 const description = 'A description'
+const timeout = 'How much time to wait the server\'s response before giving up. Default is 5 seconds.'
+const method = 'The HTTP request Method.'
+const remote_url = 'The remote API URL you want to call. Sometimes it is required to endcode it.'
+const body = 'Here can add body parameters to the request. Only available for POST and PUT methods. Default is GET'
+const gzip = 'Include the request header \'Accept-Encoding: gzip\'. This will improve transfer speed and bandwidth usage. Default is true.'
+const json = 'Include the request header \'Content-type: application/json\'. Additionally, parses the response body as JSON. Default is false.'
+const status_code = 'The response status code to consider the request success. Regular Expressions can be used. e.g. \'2[0-9][0-9]\' to match the group of 2XX status codes. Default value is 200.'
+const pattern = 'Useful for matching a string or regular expression againts the HTTP response.'
+const path = 'A path is where a file is located. It is composed of a dirname (directory) and a basename (filename + extension). Usage of absolute paths is recomended.'
+const permissions = 'Permissions in octal format. Default is 0755'
+const script_runas = 'Script interpreter and custom command. Use special "keyword" \'%script%\', it will be replaced during execution with the script path. In Unix this can be used with "sudo".'
 
-module.exports = {
+export default {
   looptime: 'This is the check interval in minutes. The shorter the interval you choose, the more CPU and resource will consume.',
   description: 'We recomend to use a descriptions to improve teamwork and problem solving.',
   scripts: 'Select the script it has to execute.',
-  script_arguments: 'Put here a comma separated list of arguments.',
+  script_arguments: 'Put here the list of fixed arguments. Separate each with comma',
   host: 'Where will the file be hosted?',
   tags: tags,
   acls: acl,
@@ -38,8 +49,49 @@ module.exports = {
     copy: 'Use another monitor setup to copy',
     sfailure_everity: 'Set the severity to HIGH or CRITICAL to receive notifications',
     wizard: {
-      nested: 'Create a monitor to notify when all the monitors inside it needs attention',
-      others: 'Go to Monitors page'
+      nested: 'Notify when all the monitors inside the group needs attention',
+      health: 'Checks the BOT\'s host running status',
+      processes: 'Collects the BOT\'s host running processes',
+      script: 'Create a script based monitor',
+      scraper: 'Check the answer of a web request',
+      process: 'Verify if a process in the host machine is running',
+      file: 'Create a monitor for a file'
+    },
+    form: {
+      name: 'Give this monitor a name',
+      description: description,
+      host_id: 'A registered Bot',
+      hosts: 'One or more Bots can be selected',
+      script_id: 'Select a file',
+      tags: tags,
+      timeout: timeout,
+      method: method,
+      remote_url: remote_url,
+      path_input: 'Indicate the target directory to store the file. Check "Custom Filename" to create the file with the desired filename.',
+      dirname: 'The directory to store the file',
+      basename: 'The name of the file, usually with the extension.',
+      body: body,
+      gzip: gzip,
+      json: json,
+      status_code: status_code,
+      pattern: pattern,
+      acl: acl,
+      copy: 'Select the monitor you want to copy from',
+      looptime: 'Select the check interval in minutes. The shorter the interval, the more CPU and resource usage.',
+      path: path,
+      os_username: 'The system username for the file',
+      os_groupname: 'The system groupname for the file',
+      permissions: permissions,
+      is_regexp: 'Use a regular expression to match a process',
+      process: 'Process to search for',
+      failure_severity: 'You can set a severity to this monitor, which can be LOW, HIGH or CRITICAL',
+      cpu: 'An alert will be fired at this CPU usage percentage',
+      disk: 'An alert will be fired at this Disk usage percentage',
+      swap: 'An alert will be fired at this Cache memory usage percentage',
+      mem: 'An alert will be fired at this Memory usage percentage',
+      script_runas,
+      script_arguments: 'Put here a comma separated list of arguments',
+      monitors: 'Select the monitors you want to observe'
     },
     unmute_button: 'Unmute notifications',
     mute_button: 'Mute notifications'
@@ -57,23 +109,26 @@ module.exports = {
       description: 'A description',
       host_id: 'A registered Bot',
       hosts: 'One or more Bots can be selected',
-      tags: 'Adding Tags will help to search and group',
-      timeout: 'How much time to wait for the server\'s response before giving up. Default timeout is 5 seconds.',
-      method: 'The HTTP request Method.',
-      remote_url: 'The remote API URL you want to call. Sometimes it is required to endcode it.',
-      body: 'Here can add body parameters to the request. Only available for POST and PUT methods. Default is GET',
-      gzip: 'Include the request header \'Accept-Encoding: gzip\'. This will improve transfer speed and bandwidth usage. Default is true.',
-      json: 'Include the request header \'Content-type: application/json\'. Additionally, parses the response body as JSON. Default is false.',
-      status_code: 'The response status code to consider the request success. Regular Expressions can be used. e.g. \'2[0-9][0-9]\' to match the group of 2XX status codes. Default value is 200.',
-      pattern: 'Useful for matching a string or regular expression againts the HTTP response.',
+      script_id: 'Scripts are sets of instructions writen in a programming language to achive something automatically',
+      tags: tags,
+      timeout: timeout,
+      method: method,
+      remote_url: remote_url,
+      body: body,
+      gzip: gzip,
+      json: json,
+      status_code: status_code,
+      pattern: pattern,
       acl: acl,
+      dirname: 'The directory to store the file',
+      basename: 'The name of the file, usually with the extension.',
       triggers: triggers,
       grace_time: grace_time,
       task_arguments: 'Task arguments',
       copy_task: 'Select the task you want to copy from',
       script_id: 'Scripts are sets of instructions writen in a programming language to achive something automatically',
       script_timeout: 'Time to wait before the task is killed. Default timeout is 5 minutes.',
-      script_runas: 'Script interpreter. Use special "keyword" \'%script%\' to include the script inline. This "keyword" will be replaced during execution with the script path. In Unix can be used with "sudo".',
+      script_runas,
       env: 'Set environment variables during script execution. Use a JSON object key:value format',
       multitasking: 'Allowes Bots to run multiple instances of this Task in parallel',
       approval_task_arguments: 'Data submitted by the approval request (from previous task)',
@@ -84,10 +139,12 @@ module.exports = {
     cannot_trigger: 'A Task with dynamic arguments cannot be automatically triggered by Workflow',
   },
   file: {
-    path: 'The full path to put the file in',
+    path: path,
+    dirname: 'The directory to store the file',
+    basename: 'The name of the file, usually with the extension.',
     uid: 'The user id for the file',
     gid: 'The group id for the file',
-    permissions: 'Permissions in octal format. Default is 0755',
+    permissions: permissions,
     select: 'Select a file',
     state: "Error Handling. Print 'fail', 'failure' or 'error' for unsuccessful execution.",
     shebang: 'Keep in mind that the  shebang (#!) is required when writing a Linux/Unix script.'

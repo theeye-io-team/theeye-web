@@ -2,7 +2,7 @@ import View from 'ampersand-view'
 import JobExecButton from './job-exec-button'
 import moment from 'moment'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="job-container">
       <div class="panel-heading">

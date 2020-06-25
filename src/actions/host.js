@@ -1,7 +1,7 @@
 import App from 'ampersand-app'
-import LifecycleConstants from 'constants/lifecycle'
+import * as LifecycleConstants from 'constants/lifecycle'
 
-module.exports = {
+export default {
   stats (id) {
     // window.location = '/hoststats/' + id
     App.navigate('/admin/hoststats/' + id)

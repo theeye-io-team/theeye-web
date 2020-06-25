@@ -4,7 +4,7 @@
  *
  */
 
-var jquery = require('jquery');
+const jquery = require('jquery')
 
 
 function MarioWalk (options) {
@@ -49,4 +49,4 @@ function MarioWalk (options) {
   return this;
 }
 
-module.exports = MarioWalk
+export default MarioWalk

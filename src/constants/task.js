@@ -1,12 +1,12 @@
 
-exports.TYPE_SCRAPER = 'scraper'
-exports.TYPE_SCRIPT = 'script'
-exports.TYPE_APPROVAL = 'approval'
-exports.TYPE_DUMMY = 'dummy'
-exports.TYPE_NOTIFICATION = 'notification'
-exports.TYPE_GROUP = 'group'
+export const TYPE_SCRAPER = 'scraper'
+export const TYPE_SCRIPT = 'script'
+export const TYPE_APPROVAL = 'approval'
+export const TYPE_DUMMY = 'dummy'
+export const TYPE_NOTIFICATION = 'notification'
+export const TYPE_GROUP = 'group'
 
-exports.GRACE_TIME = Object.freeze([
+export const GRACE_TIME = Object.freeze([
   {
     secs: 0,
     mins: 0,

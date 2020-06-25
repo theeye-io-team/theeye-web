@@ -1,11 +1,11 @@
 import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
-const TagCollection = require('models/tag').Collection
+import { Collection as TagCollection } from 'models/tag'
 import graphlib from 'graphlib'
 
 import config from 'config'
-const urlRoot = `${config.api_v3_url}/workflows`
+const urlRoot = `${config.supervisor_api_url}/workflows`
 
 const formattedTags = () => {
   return {
@@ -31,7 +31,7 @@ const formattedTags = () => {
   }
 }
 
-export const Workflow = AppModel.extend({
+const Workflow = AppModel.extend({
   dataTypes: {
     'graphlib.Graph': {
       set (graph) {
@@ -65,7 +65,7 @@ export const Workflow = AppModel.extend({
       }
     }
   },
-  urlRoot: urlRoot,
+  urlRoot,
   props: {
     _type: 'string',
     id: 'string',
@@ -256,8 +256,10 @@ const groupJobs = (jobs) => {
   return wJobs
 }
 
-export const Workflows = AppCollection.extend({
+const Workflows = AppCollection.extend({
   indexes: ['name'],
   url: urlRoot,
   model: Workflow
 })
+
+export { Workflows, Workflow }

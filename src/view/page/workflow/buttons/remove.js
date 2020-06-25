@@ -3,7 +3,7 @@ import bootbox from 'bootbox'
 import PanelButton from 'components/list/item/panel-button'
 import $ from 'jquery'
 
-module.exports = PanelButton.extend({
+export default PanelButton.extend({
   initialize (options) {
     this.title = 'Remove workflow'
     this.iconClass = 'fa fa-trash dropdown-icon'

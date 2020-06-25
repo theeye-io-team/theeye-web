@@ -1,4 +1,3 @@
 
-const TYPE_WORKFLOW = 'Workflow'
-
-exports.TYPE_WORKFLOW = TYPE_WORKFLOW
+export const TYPE_GROUP = 'Group'
+export const TYPE_WORKFLOW = 'Workflow'

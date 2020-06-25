@@ -1,13 +1,12 @@
 import XHR from 'lib/xhr'
-import config from 'config'
 import bootbox from 'bootbox'
 import App from 'ampersand-app'
 
-module.exports = {
+export default {
   create (taskId, data) {
     const task = App.state.tasks.get(taskId)
     XHR.send({
-      url: `${config.api_url}/task/schedule`,
+      url: `${task.url()}/schedule`,
       method: 'POST',
       jsonData: data,
       headers: {
@@ -26,7 +25,7 @@ module.exports = {
   fetch (taskId) {
     const task = App.state.tasks.get(taskId)
     XHR.send({
-      url: `${config.api_url}/task/${task.id}/schedule`,
+      url: `${task.url()}/schedule`,
       method: 'GET',
       headers: {
         Accept: 'application/json;charset=UTF-8'
@@ -44,7 +43,7 @@ module.exports = {
     const schedule = task.schedules.get(scheduleId)
 
     XHR.send({
-      url: `${config.api_url}/task/${task.id}/schedule/${schedule._id}`,
+      url: `${task.url()}/schedule/${schedule._id}`,
       method: 'DELETE',
       headers: {
         Accept: 'application/json;charset=UTF-8'

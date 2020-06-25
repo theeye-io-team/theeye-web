@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import './styles.less'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div data-component="group-options" class="dropdown panel-item icons">
       <button class="dropdown-toggle btn btn-primary"

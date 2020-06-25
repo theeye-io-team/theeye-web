@@ -2,7 +2,7 @@ import BaseView from 'view/base-view'
 import extend from 'lodash/assign'
 import FormElement from 'lib/form-element'
 
-module.exports = BaseView.extend({
+export default BaseView.extend({
   template: `
     <form data-hook="form" class="form-horizontal">
       <div class="form-group">

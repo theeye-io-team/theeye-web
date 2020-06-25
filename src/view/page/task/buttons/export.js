@@ -1,6 +1,6 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-module.exports = View.extend({
+export default View.extend({
   template: `
     <li>
       <button class="btn btn-primary" title="Export this task recipe" data-hook="export-recipe">

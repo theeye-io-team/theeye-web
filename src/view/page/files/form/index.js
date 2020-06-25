@@ -2,17 +2,15 @@ import App from 'ampersand-app'
 import assign from 'lodash/assign'
 import FormView from 'ampersand-form-view'
 import View from 'ampersand-view'
-import ScriptActions from 'actions/script'
 import InputView from 'components/input-view'
 import TextareaView from 'components/input-view/textarea'
 import FormButtons from 'components/form/buttons'
-// const FileModeConst = require('constants/file-input-mode')
 import FileInputView from 'components/input-view/file'
 import CommonButton from 'components/common-button'
 import { EditorView } from './editor'
 import ScriptOnBoarding from '../scriptOnboarding'
 
-module.exports = FormView.extend({
+export default FormView.extend({
   initialize (options) {
     // needed for codemirror listener
     this.onEditorDrop = this.onEditorDrop.bind(this)
@@ -61,6 +59,7 @@ module.exports = FormView.extend({
     this.query('input').focus()
   },
   render () {
+    let self = this
     FormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
@@ -82,7 +81,9 @@ module.exports = FormView.extend({
     this.editorView.codemirror.on('drop', this.onEditorDrop)
 
     this.listenToAndRun(this.filenameInput,'change:extension',() => {
-      this.editorView.setEditorMode(this.filenameInput.extension)
+      let mimetype = this.editorView.setEditorMode(this.filenameInput.extension, function (err, mimetype) {
+        self.model.mimetype = mimetype
+      })
     })
 
     this.listenToAndRun(this.model,'change:data',() => {
@@ -120,7 +121,7 @@ module.exports = FormView.extend({
       event.stopPropagation()
       event.preventDefault()
     }
-    ScriptActions.getExampleScript(this.filenameInput.extension)
+    App.actions.script.getExampleScript(this.filenameInput.extension)
   },
   submitForm () {
     this.beforeSubmit()
@@ -131,8 +132,9 @@ module.exports = FormView.extend({
     let self = this
     let data = this.prepareData(obj)
     if (!this.model.isNew()) {
-      let file = App.actions.file.update(this.model.id, data)
-      this.trigger('submitted', file)
+      App.actions.file.update(this.model.id, data, function (err, file) {
+        self.trigger('submitted', file)
+      })
     } else {
       App.actions.file.create(data, function (err, file) {
         self.trigger('submitted', file)

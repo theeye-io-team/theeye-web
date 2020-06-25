@@ -14,7 +14,7 @@ const EmptyView = View.extend({
   template: `<div></div>`
 })
 
-module.exports = View.extend({
+export default View.extend({
   autoRender: true,
   props: {
     menu_switch: ['boolean', false, false],

@@ -3,7 +3,7 @@ import bootbox from 'bootbox'
 import UserActions from 'actions/user'
 import $ from 'jquery'
 
-module.exports = PanelButton.extend({
+export default PanelButton.extend({
   initialize: function (options) {
     this.title = 'Delete user'
     this.iconClass = 'fa fa-trash dropdown-icon'

@@ -4,7 +4,7 @@ import EmptyJobView from '../empty-job-view'
 import Acls from 'lib/acls'
 import './styles.less'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
   <div class="col-xs-12 jobs-list-component">
     <div data-hook="header-container" class="header-container">
@@ -20,7 +20,7 @@ module.exports = View.extend({
   `,
   props: {
     headerTitle: ['string', false, 'Execution history'],
-    rowView: 'function',
+    rowView: 'any',
     renderHeader: ['boolean', false, true ]
   },
   bindings: {

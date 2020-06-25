@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   'lifecycle:ready': 'Queued',
   'lifecycle:assigned': 'Task is being executed',
   'lifecycle:finished': 'Finished running',

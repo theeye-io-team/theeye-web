@@ -35,7 +35,7 @@ const TabButton = View.extend({
   }
 })
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="dashboard-tabs">
     </div>`,

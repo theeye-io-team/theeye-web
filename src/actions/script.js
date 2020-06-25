@@ -1,14 +1,14 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
-const config = require('config')
 import bootbox from 'bootbox'
 
-module.exports = {
+export default {
   getExampleScript(extension) {
     App.state.loader.visible = true
     XHR.send({
+      responseType: 'text',
       method: 'get',
-      url: `${config.app_url}/script/example/${extension}`,
+      url: `${App.config.app_url}/helper/script/example/${extension}`,
       done: (response) => {
         App.state.loader.visible = false
         if (!response) {
@@ -22,9 +22,9 @@ module.exports = {
         App.state.loader.visible = false
         App.state.editor.value = ''
         App.state.editor.trigger('change:value')
-        if(xhr.status==404)
+        if (xhr.status === 404) {
           bootbox.alert('Example not found. Please provide a valid filename extension.')
-        else {
+        } else {
           bootbox.alert('Example not found.')
         }
       }

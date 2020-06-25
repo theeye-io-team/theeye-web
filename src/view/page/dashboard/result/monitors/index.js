@@ -8,7 +8,7 @@ const EmptyResultView = View.extend({
   template: `<div class="no-result">No matches found</div>`
 })
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <section class="col-md-12 resources-panel events-panel">
       <h3 class="list-title" data-hook="monitors-panel-header">

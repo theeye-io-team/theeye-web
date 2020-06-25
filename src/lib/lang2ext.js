@@ -1,4 +1,4 @@
-exports.extFor = {
+export const extFor = {
   'powershell': 'ps1',
   'javascript': 'js',
   'batchfile': 'bat',
@@ -8,7 +8,7 @@ exports.extFor = {
   'php': 'php'
 }
 
-exports.langFor = {
+export const langFor = {
   'ps1': 'Powershell',
   'js': 'Javascript',
   'bat': 'Batch File',

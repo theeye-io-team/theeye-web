@@ -109,4 +109,4 @@ var FileReaderInputView = InputView.extend({
   }
 })
 
-module.exports = FileReaderInputView
+export default FileReaderInputView

@@ -3,7 +3,7 @@ import ListItem from 'components/list/item'
 
 import * as UserButtons from './buttons'
 
-module.exports = ListItem.extend({
+export default ListItem.extend({
   derived: {
     //tags: {
     //  deps: ['model.username', 'model.email', 'model.credential', 'model.customers'],
@@ -24,12 +24,6 @@ module.exports = ListItem.extend({
         return this.model.username
       }
     },
-    item_description: {
-      deps: ['model.credential'],
-      fn () {
-        return this.model.credential
-      }
-    }
   },
   render () {
     ListItem.prototype.render.apply(this,arguments)
@@ -53,29 +47,11 @@ const Collapsed = View.extend({
       <div class="col-sm-12">
         <h4>Email</h4>
         <span data-hook="email"></span>
-        <h4>Credential</h4>
-        <span data-hook="credential"></span>
-        <h4>Organizations</h4>
-        <span data-hook="customers"></span>
       </div>
   `,
-  derived: {
-    customers: {
-      deps: ['model.customers'],
-      fn () {
-        return this.model.customers.map(c => c.name).join(', ')
-      }
-    }
-  },
   bindings: {
     'model.email': {
       hook:'email'
-    },
-    'model.credential': {
-      hook:'credential'
-    },
-    customers: {
-      hook: 'customers'
     }
   }
 })

@@ -1,5 +1,5 @@
 
-exports.MONITORS = 'monitors'
-exports.WORKFLOWS = 'workflows'
-exports.INDICATORS = 'indicators'
-exports.NOTIFICATIONS = 'notifications'
+export const MONITORS = 'monitors'
+export const WORKFLOWS = 'workflows'
+export const INDICATORS = 'indicators'
+export const NOTIFICATIONS = 'notifications'

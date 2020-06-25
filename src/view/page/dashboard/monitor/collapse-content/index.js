@@ -1,11 +1,16 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import acls from 'lib/acls'
-import lang2ext from 'lib/lang2ext'
+import * as lang2ext from 'lib/lang2ext'
 import moment from 'moment'
+import bootbox from 'bootbox'
 
 import State from 'ampersand-state'
 import Collection from 'ampersand-collection'
+import * as MonitorConstants from 'constants/monitor'
+import MonitorEdit from 'view/page/monitor/edit'
+
+import './style.less'
 
 const GenericCollapsedContent = View.extend({
   template: `<div>no definition</div>`,
@@ -74,33 +79,31 @@ const ScraperCollapsedContent = GenericCollapsedContent.extend({
       </table>
     </div>
   `,
+  props: {
+    url: 'string',
+    method: 'string',
+    status_code: 'string',
+  },
   bindings: Object.assign({}, bindings, {
     url: { hook: 'url' },
     method: { hook: 'method' },
     status_code: { hook: 'status_code' },
     timeout: { hook: 'timeout' },
   }),
-  props: {
-    url: 'string',
-    method: 'string',
-    status_code: 'string',
-  },
   initialize () {
     GenericCollapsedContent.prototype.initialize.apply(this,arguments)
-    this.listenToAndRun(this.monitor,'change:config',this.updateState)
+    this.listenToAndRun(this.monitor, 'change', this.updateState)
   },
   updateState () {
-    if (!this.monitor.config) return
-    this.url = this.monitor.config.url
-    this.method = this.monitor.config.method
-    this.status_code = String(this.monitor.config.status_code)
+    this.url = this.monitor.remote_url
+    this.method = this.monitor.method
+    this.status_code = String(this.monitor.status_code)
   },
   derived: {
     timeout: {
-      deps: ['monitor.config'],
+      deps: ['monitor.timeout'],
       fn () {
-        if (!this.monitor.config) return
-        const time = this.monitor.config.timeout
+        const time = this.monitor.timeout
         return (time / 1000) + ' s'
       }
     }
@@ -125,6 +128,7 @@ const ProcessCollapsedContent = GenericCollapsedContent.extend({
           <tr>
             <td><span data-hook="is_regexp" class="fa"></span></td>
             <td><span data-hook="pattern"></span></td>
+            <td><span data-hook="psargs"></span></td>
           </tr>
         </tbody>
       </table>
@@ -137,21 +141,22 @@ const ProcessCollapsedContent = GenericCollapsedContent.extend({
       yes: 'fa-check-square-o',
       no: 'fa-square-o'
     },
-    pattern: { hook: 'pattern' }
+    pattern: { hook: 'pattern' },
+    psargs: { hook: 'psargs' }
   }),
   props: {
-    is_regexp: ['boolean',false,false],
-    pattern: ['string',false,'']
+    is_regexp: 'boolean',
+    pattern: 'string',
+    psargs: 'string'
   },
   initialize () {
     GenericCollapsedContent.prototype.initialize.apply(this,arguments)
-
-    this.listenToAndRun(this.monitor,'change:config',this.updateState)
+    this.listenToAndRun(this.monitor, 'change', this.updateState)
   },
   updateState () {
-    if (!this.monitor.config || !this.monitor.config.ps) return
-    this.is_regexp = this.monitor.config.ps.is_regexp
-    this.pattern = this.monitor.config.ps.pattern
+    this.is_regexp = this.monitor.is_regexp
+    this.pattern = this.monitor.pattern
+    this.psargs = this.monitor.psargs
   }
 })
 
@@ -198,8 +203,14 @@ const ScriptCollapsedContent = GenericCollapsedContent.extend({
   },
   initialize () {
     GenericCollapsedContent.prototype.initialize.apply(this,arguments)
-
-    this.listenToAndRun(this.monitor,'change:config',this.updateState)
+    this.listenToAndRun(this.monitor.script, 'change', this.updateState)
+  },
+  updateState () {
+    let script = this.monitor.script
+    this.script_id = script.id
+    this.extension = script.extension
+    this.filename = script.filename
+    this.description = script.description
   },
   props: {
     extension: 'string',
@@ -234,14 +245,6 @@ const ScriptCollapsedContent = GenericCollapsedContent.extend({
       invert: true
     }
   }),
-  updateState () {
-    if (!this.monitor.config || !this.monitor.config.script) return
-    const script = this.monitor.config.script
-    this.script_id = script.id
-    this.extension = script.extension
-    this.filename = script.filename
-    this.description = script.description
-  },
   render () {
     this.renderWithTemplate(this)
     if (acls.hasAccessLevel('admin')) {
@@ -302,16 +305,15 @@ const FileCollapsedContent = GenericCollapsedContent.extend({
   initialize () {
     GenericCollapsedContent.prototype.initialize.apply(this,arguments)
 
-    this.listenToAndRun(this.monitor,'change:config',this.updateState)
+    this.listenToAndRun(this.monitor, 'change', this.updateState)
   },
   updateState () {
-    if (!this.monitor.config) return
-    const config = this.monitor.config
-    this.file_id = config.file
-    this.dirname = config.dirname
-    this.basename = config.basename
-    this.os_username = config.os_username || 'not specified'
-    this.os_groupname = config.os_groupname || 'not specified'
+    let monitor = this.monitor
+    this.file_id = monitor.file
+    this.dirname = monitor.dirname
+    this.basename = monitor.basename
+    this.os_username = monitor.os_username || 'not specified'
+    this.os_groupname = monitor.os_groupname || 'not specified'
   },
   events: {
     'click button[data-hook=edit_file]': 'onClickEditFile'
@@ -336,46 +338,63 @@ const FileCollapsedContent = GenericCollapsedContent.extend({
 
 const HostCollapsedContent = GenericCollapsedContent.extend({
   template: `
-    <div>
+    <div data-component="monitor-collapsed-content" class="row">
       <p>This is <i data-hook="hostname"></i> keep alive.</p>
 
-      <h4>
-        <i class="fa theeye-robot-solid"></i>
-        Host monitor state: <i data-hook="host_state"></i>
-      </h4>
-      <h4 data-hook="psaux_state_section">
-        <i class="fa fa-cogs"></i>
-        Processes monitor state: <i data-hook="psaux_state"></i>
-      </h4>
-
-      <section data-hook="dstat_state_section">
+      <div class="host_state col-md-12">
         <h4>
-           <i class="fa fa-bar-chart"></i>
-          Health monitor state: <i data-hook="dstat_state"></i>
+          <i class="fa theeye-robot-solid"></i>
+          Host monitor state:
+          <a href="#" data-hook="host_edit"><i class="fa fa-edit"></i></a>
+          <i data-hook="host_state"></i>
         </h4>
+      </div>
 
-        <span>Host health values</span>
-        <table class="table table-stripped">
-          <thead>
-            <tr data-hook="title-cols">
-              <th></th>
-              <th>CPU %</th>
-              <th>Memory %</th>
-              <th>Disk %</th>
-              <th>Cache %</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td></td>
-              <td><span data-hook="cpu"></span></td>
-              <td><span data-hook="mem"></span></td>
-              <td><span data-hook="disk" style="white-space: pre-line"></span></td>
-              <td><span data-hook="cache"></span></td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+      <div class="psaux_state col-md-12">
+        <section data-hook="psaux_state_section">
+          <h4>
+            <i class="fa fa-cogs"></i>
+            Processes monitor state: 
+            <a href="#" data-hook="psaux_edit"><i class="fa fa-edit"></i></a>
+            <a href="#" data-hook="psaux_remove"><i class="fa fa-trash"></i></a>
+            <i data-hook="psaux_state"></i>
+          </h4>
+        </section>
+      </div>
+
+      <div class="dstat_state col-md-12">
+        <section data-hook="dstat_state_section">
+          <h4>
+            <i class="fa fa-bar-chart"></i>
+            Health monitor state:
+            <a href="#" data-hook="dstat_edit"><i class="fa fa-edit"></i></a>
+            <a href="#" data-hook="dstat_remove"><i class="fa fa-trash"></i></a>
+            <i data-hook="dstat_state"></i>
+          </h4>
+
+          <span>Host health values</span>
+          <table class="table table-stripped">
+            <thead>
+              <tr data-hook="title-cols">
+                <th></th>
+                <th>CPU %</th>
+                <th>Memory %</th>
+                <th>Disk %</th>
+                <th>Cache %</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td></td>
+                <td><span data-hook="cpu"></span></td>
+                <td><span data-hook="mem"></span></td>
+                <td><span data-hook="disk" style="white-space: pre-line"></span></td>
+                <td><span data-hook="cache"></span></td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </div>
     </div>
   `,
   bindings: Object.assign({}, bindings, {
@@ -418,20 +437,22 @@ const HostCollapsedContent = GenericCollapsedContent.extend({
   },
   initialize () {
     GenericCollapsedContent.prototype.initialize.apply(this,arguments)
-    this.listenToAndRun(this.monitor,'change:config',this.updateState)
+    this.listenToAndRun(this.monitor, 'change', this.updateState)
 
     if (this.dstat && this.dstat.monitor) {
-      this.listenToAndRun(this.dstat.monitor,'change:config',this.updateDstatState)
-      this.listenToAndRun(this.dstat,'change:last_event',this.updateDstatState)
+      this.listenToAndRun(this.dstat.monitor, 'change', this.updateDstatState)
+      this.listenToAndRun(this.dstat, 'change:last_event', this.updateDstatState)
     }
   },
   updateState () {
+		
     return
   },
   updateDstatState () {
-    const config = this.dstat.monitor.config
     const lastEvent = this.dstat.last_event
-    if (!config || !config.limit || !lastEvent || !lastEvent.data) return
+    if (!lastEvent || !lastEvent.data) {
+      return
+    }
 
     const data = lastEvent.data
     if (data.error) {
@@ -439,33 +460,65 @@ const HostCollapsedContent = GenericCollapsedContent.extend({
       return
     }
 
+    let monitor = this.dstat.monitor
+
     if (data.disk) {
       var disksValue = ''
-      data.disk.forEach(function(disk){
+      for (let disk of data.disk) {
         disksValue = [
           disksValue,
           disk.name,
           ': ',
           String(Math.floor(disk.value)),
           ' / ',
-          String(config.limit.disk),
+          String(monitor.disk_threshold),
           "\n"
         ].join('')
-      })
+      }
       this.dstat_disk = disksValue
     }
 
     if (data.cache || data.cache === 0) {
-      this.dstat_cache = String(Math.floor(data.cache)) + ' / ' + String(config.limit.cache)
+      this.dstat_cache = String(Math.floor(data.cache)) + ' / ' + String(monitor.cache_threshold)
     }
 
     if (data.cpu || data.cpu === 0) {
-      this.dstat_cpu = String(Math.floor(data.cpu)) + ' / ' + String(config.limit.cpu)
+      this.dstat_cpu = String(Math.floor(data.cpu)) + ' / ' + String(monitor.cpu_threshold)
     }
 
     if (data.mem || data.mem === 0) {
-      this.dstat_mem = String(Math.floor(data.mem)) + ' / ' + String(config.limit.mem)
+      this.dstat_mem = String(Math.floor(data.mem)) + ' / ' + String(monitor.mem_threshold)
     }
+  },
+  events: {
+    'click [data-hook=host_edit]':'editHostMonitor',
+    'click [data-hook=dstat_edit]':'editDstatMonitor',
+    'click [data-hook=psaux_edit]':'editPsauxMonitor',
+    'click [data-hook=dstat_remove]':'removeDstatMonitor',
+    'click [data-hook=psaux_remove]':'removePsauxMonitor'
+  },
+  editHostMonitor (event) {
+    new MonitorEdit(this.host)
+  },
+  editDstatMonitor (event) {
+    new MonitorEdit(this.dstat)
+  },
+  editPsauxMonitor (event) {
+    new MonitorEdit(this.psaux)
+  },
+	removeDstatMonitor (event) {
+		const msg = `${this.dstat.name} will be removed. Continue?`
+		bootbox.confirm(msg, (confirmed) => {
+			if (!confirmed) { return }
+			App.actions.resource.remove(this.dstat.id)
+		})
+	},
+  removePsauxMonitor (event) {
+    const msg = `${this.psaux.name} will be removed. Continue?`
+    bootbox.confirm(msg, (confirmed) => {
+      if (!confirmed) { return }
+      App.actions.resource.remove(this.psaux.id)
+    })
   }
 })
 
@@ -514,7 +567,8 @@ const NestedCollapsedContent = GenericCollapsedContent.extend({
   render () {
     this.renderWithTemplate(this)
 
-    let nestedMonitors = this.monitor.config.monitors
+    //let nestedMonitors = this.monitor.config.monitors
+    let nestedMonitors = this.monitor.monitors
     this.renderCollection(
       nestedMonitors,
       NestedMonitorRowView,
@@ -523,7 +577,15 @@ const NestedCollapsedContent = GenericCollapsedContent.extend({
   }
 })
 
-exports.Factory = (input) => {
+const CollapsedContentViewMap = []
+CollapsedContentViewMap[ MonitorConstants.TYPE_SCRAPER ] = ScraperCollapsedContent
+CollapsedContentViewMap[ MonitorConstants.TYPE_SCRIPT  ] = ScriptCollapsedContent
+CollapsedContentViewMap[ MonitorConstants.TYPE_PROCESS ] = ProcessCollapsedContent
+CollapsedContentViewMap[ MonitorConstants.TYPE_FILE    ] = FileCollapsedContent
+CollapsedContentViewMap[ MonitorConstants.TYPE_HOST    ] = HostCollapsedContent
+CollapsedContentViewMap[ MonitorConstants.TYPE_NESTED  ] = NestedCollapsedContent
+
+const Factory = (input) => {
   const type = input.model.type
 
   // re-assign to internal properties
@@ -532,13 +594,12 @@ exports.Factory = (input) => {
     monitor: input.model.monitor
   })
 
-  if (type==='scraper') return new ScraperCollapsedContent(options)
-  if (type==='script') return new ScriptCollapsedContent(options)
-  if (type==='process') return new ProcessCollapsedContent(options)
-  if (type==='file') return new FileCollapsedContent(options)
-  if (type==='host') return new HostCollapsedContent(options)
-  if (type==='nested') return new NestedCollapsedContent(options)
-  return new GenericCollapsedContent(options)
+  const CollapseView = CollapsedContentViewMap[type]
+  if (CollapseView !== undefined) {
+    return new CollapseView(options)
+  } else {
+    return new GenericCollapsedContent(options)
+  }
 }
 
-exports.HostContent = HostCollapsedContent
+export { HostCollapsedContent as HostContent, Factory }

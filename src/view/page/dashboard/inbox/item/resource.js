@@ -1,12 +1,12 @@
 import View from 'ampersand-view'
 import BaseItem from './base'
 import eventIcons from './event-icons'
-import StateConstants from 'constants/states'
+import * as StateConstants from 'constants/states'
 import meaning from './meaning'
 
-const severityToColorClass = sev => `severity-${sev.toLowerCase()}`
+const severityToColorClass = sev => sev && `severity-${sev.toLowerCase()}`
 
-module.exports = BaseItem.extend({
+export default BaseItem.extend({
   customizeItem () {
     let state = this.sanitizeState(this.model.data.model.state)
     let monitor_event = this.model.data.monitor_event

@@ -2,17 +2,16 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Collection from 'ampersand-collection'
 import FormView from 'ampersand-form-view'
-const HelpTexts = require('language/help')
+import HelpTexts from 'language/help'
 import Modalizer from 'components/modalizer'
 import SelectView from 'components/select2-view'
 import TaskSelectView from 'view/task-select'
 import FormButtons from 'view/buttons'
 import DisabledInputView from 'components/input-view/disabled'
 import bootbox from 'bootbox'
+import graphlib from 'graphlib'
 
-const graphlib = require('graphlib')
-
-module.exports = View.extend({
+export default View.extend({
   props: {
     workflow_id: 'string',
     name: ['string', false, 'workflow'],
@@ -79,7 +78,7 @@ module.exports = View.extend({
           </button>
         </div>
       </div>
-      <div class="workflow-preview col-sm-12" data-hook="graph-preview" style="height: 300px;"></div>
+      <div class="workflow-preview col-sm-12" data-hook="graph-preview"></div>
     </div>
   `,
   initialize (options) {
@@ -106,7 +105,7 @@ module.exports = View.extend({
   },
   renderWorkflowGraph () {
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
-      .then(WorkflowView => {
+      .then(({ default: WorkflowView }) => {
         const workflowGraph = new WorkflowView({
           graph: this.graph,
           mode: 'edit'

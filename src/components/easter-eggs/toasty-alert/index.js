@@ -3,7 +3,7 @@
  * @author Facugon
  *
  */
-var jquery = require('jquery');
+const jquery = require('jquery')
 
 function ToastyAlert (options) {
 
@@ -28,4 +28,4 @@ function ToastyAlert (options) {
   return this;
 }
 
-module.exports = ToastyAlert
+export default ToastyAlert

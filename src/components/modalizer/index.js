@@ -6,14 +6,15 @@
  * Ampersand View component for rendering Bootstrap Modals
  *
  */
-const View = require('ampersand-view')
+import View from 'ampersand-view'
+import './styles.less'
 
 // http://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal
 $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 
-module.exports = View.extend({
+const Modalizer = View.extend({
   template: `
-    <div class="modalizer">
+    <div data-component="modalizer" class="modalizer">
       <!-- MODALIZER CONTAINER -->
       <div data-hook="modalizer-class" class="">
         <div class="modal"
@@ -175,6 +176,12 @@ module.exports = View.extend({
     View.prototype.remove.apply(this, arguments)
   }
 })
+
+export default Modalizer
+
+//Modalizer.alert = (message) => {
+//  let modal = new Modalizer()
+//}
 
 const ButtonsView = View.extend({
   template: `

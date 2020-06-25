@@ -1,6 +1,6 @@
 import View from 'ampersand-view'
 import './buttons.less'
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="form-buttons" data-hook="buttons-container">
       <div class="row">

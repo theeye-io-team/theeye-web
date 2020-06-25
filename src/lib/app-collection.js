@@ -3,7 +3,7 @@ import AmpersandCollection from 'ampersand-rest-collection'
 import FilterMixin from './app-loopback-filter-mixin'
 import extend from 'lodash/assign'
 
-module.exports = AmpersandCollection.extend(FilterMixin, {
+export default AmpersandCollection.extend(FilterMixin, {
   mainIndex: 'id' ,
   ajaxConfig: function () {
     if (!App.state) return {}

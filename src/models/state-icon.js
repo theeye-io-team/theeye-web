@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   low: 'icon-severity-low',
   high: 'icon-severity-high',
   critical: 'icon-severity-critical',

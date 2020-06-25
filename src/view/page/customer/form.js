@@ -6,7 +6,7 @@ import isURL from 'validator/lib/isURL'
 
 import App from 'ampersand-app'
 
-module.exports = FormView.extend({
+export default FormView.extend({
   props: {
     showKibana: ['boolean', false, false],
     kibanaUrlInput: 'object'
@@ -23,7 +23,15 @@ module.exports = FormView.extend({
         required: true,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        readonly: !isNew
+        readonly: !isNew,
+        tests: [
+          function (value) {
+            let re = /^[a-zA-Z0-9._]+$/
+            if (!re.test(value)) {
+              return 'Please provide a valid customer name'
+            }
+          }
+        ]
       }),
       new InputView({
         name: 'description',

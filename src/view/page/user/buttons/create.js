@@ -6,7 +6,7 @@ import CommonButton from 'components/common-button'
 import UserActions from 'actions/user'
 import Modalizer from 'components/modalizer'
 
-module.exports = CommonButton.extend({
+export default CommonButton.extend({
   initialize (options) {
     this.title = 'New User'
     this.className = 'btn btn-primary createUser'

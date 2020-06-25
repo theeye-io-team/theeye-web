@@ -5,7 +5,7 @@ import { Model as HostGroup } from 'models/hostgroup'
 import HostGroupActions from 'actions/hostgroup'
 import bootbox from 'bootbox'
 
-module.exports = CommonButton.extend({
+export default CommonButton.extend({
   initialize (options) {
     this.title = 'New Bot template'
     this.className = 'btn btn-primary tooltiped'

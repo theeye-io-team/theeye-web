@@ -1,6 +1,6 @@
 import View from 'ampersand-view'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <button>
       <span data-hook="icon-span"></span>

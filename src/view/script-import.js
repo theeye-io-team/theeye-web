@@ -8,15 +8,7 @@ import TaskFormActions from 'actions/taskform'
 import InputView from 'components/input-view/index'
 import DisabledInputView from 'components/input-view/disabled'
 
-const ImportFileForm = FileForm.extend({
-  submitCallback (obj) {
-    let data = this.prepareData(obj)
-    TaskFormActions.setFile(data)
-    this.trigger('submitted', data)
-  }
-})
-
-module.exports = DisabledInputView.extend({
+export default DisabledInputView.extend({
   template: `
     <div>
       <label class="col-sm-3 control-label" data-hook="label"></label>
@@ -76,5 +68,13 @@ module.exports = DisabledInputView.extend({
 
     modal.show()
     return false
+  }
+})
+
+const ImportFileForm = FileForm.extend({
+  submitCallback (obj) {
+    let data = this.prepareData(obj)
+    TaskFormActions.setFile(data)
+    this.trigger('submitted', data)
   }
 })

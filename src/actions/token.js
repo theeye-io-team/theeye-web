@@ -1,27 +1,21 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
-import config from 'config'
 import Acls from 'lib/acls'
+import bootbox from 'bootbox'
 
-module.exports = {
+export default {
   /**
    * create new token
    */
   create (data) {
-    let customer = App.state.session.customer
-    XHR.send({
-      url: `${config.api_v3_url}/customer/${customer.id}/token`,
-      method: 'post',
-      //jsonData: data,
-      headers: {
-        Accept: 'application/json;charset=UTF-8'
+    let token = new App.Models.Token.Model({})
+    token.set(data)
+    token.save({}, {
+      success (response) {
+        App.state.session.customer.tokens.add(token)
       },
-      done (token, xhr) {
-        if (xhr.status == 200) {
-          App.state.session.customer.tokens.add(token)
-        }
-      },
-      fail (err, xhr) {
+      error (err) {
+        bootbox.alert('Error creating integration token.')
       }
     })
   },
@@ -29,23 +23,19 @@ module.exports = {
     if (Acls.hasAccessLevel('admin')) {
       App.state.session.customer.tokens.fetch()
     }
+  },
+  remove (id) {
+    let token = new App.Models.Token.Model({ id: id })
+    token.destroy({
+      success: function(){
+        bootbox.alert('Integration token removed.')
+        App.state.session.customer.tokens.remove( token )
+      },
+      error: function (err) {
+        bootbox.alert('Error removing integration token.')
+      }
+    })
   }
-  //remove (token) {
-  //  let customer = App.state.session.customer
-  //  XHR.send({
-  //    url: `${config.api_v3_url}/customer/${customer.id}/token/${token}`,
-  //    method: 'put',
-  //    headers: {
-  //      Accept: 'application/json;charset=UTF-8'
-  //    },
-  //    done (response, xhr) {
-  //      if (xhr.status == 200) {
-  //      }
-  //    },
-  //    fail (err, xhr) {
-  //    }
-  //  })
-  //},
   /**
    *
    * replace refresh access token
@@ -54,7 +44,7 @@ module.exports = {
   //update (token) {
   //  let customer = App.state.session.customer
   //  XHR.send({
-  //    url: `${config.api_v3_url}/customer/${customer.id}/token/${token}`,
+  //    url: `${App.config.api_v3_url}/customer/${customer.id}/token/${token}`,
   //    method: 'patch',
   //    headers: {
   //      Accept: 'application/json;charset=UTF-8'
@@ -70,7 +60,7 @@ module.exports = {
   //refresh (token) {
   //  let customer = App.state.session.customer
   //  XHR.send({
-  //    url: `${config.api_v3_url}/customer/${customer.id}/token/${token}/refresh`,
+  //    url: `${App.config.api_v3_url}/customer/${customer.id}/token/${token}/refresh`,
   //    method: 'put',
   //    headers: {
   //      Accept: 'application/json;charset=UTF-8'

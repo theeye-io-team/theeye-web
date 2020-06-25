@@ -2,7 +2,7 @@ import FormView from 'ampersand-form-view'
 import bootbox from 'bootbox'
 import './styles.less'
 
-module.exports = FormView.extend({
+export default FormView.extend({
   initialize: function (options) {
     FormView.prototype.initialize.apply(this, arguments)
 

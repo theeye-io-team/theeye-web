@@ -1,11 +1,13 @@
 import App from 'ampersand-app'
 import InputView from 'ampersand-input-view'
+import loggerModule from 'lib/logger';
+const logger = loggerModule('components:input:grecaptcha')
 
 let grecaptcha
 try {
   grecaptcha = require('grecaptcha')
 } catch (err) {
-  console.error(err)
+  logger.warn('grecaptcha disabled. component cannot load required dependency')
 }
 
 const RecaptchaInputView = InputView.extend({
@@ -38,6 +40,7 @@ const RecaptchaInputView = InputView.extend({
     InputView.prototype.render.apply(this, arguments)
     
     if (!grecaptcha) {
+      logger.warn('grecaptcha disabled. component cannot load required dependency')
       return
     }
 
@@ -59,4 +62,4 @@ const RecaptchaInputView = InputView.extend({
   }
 })
 
-module.exports = RecaptchaInputView
+export default RecaptchaInputView

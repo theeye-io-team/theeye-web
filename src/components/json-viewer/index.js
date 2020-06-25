@@ -82,7 +82,7 @@ function json2html (json) {
   return html;
 }
 
-module.exports = View.extend({
+export default View.extend({
   props: {
     json: ['any',true],
     collapsed: ['boolean',false,false]

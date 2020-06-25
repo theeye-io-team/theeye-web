@@ -13,4 +13,4 @@ class Scheduler extends Route {
   }
 }
 
-module.exports = Scheduler
+export default Scheduler

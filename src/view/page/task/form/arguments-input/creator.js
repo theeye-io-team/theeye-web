@@ -1,9 +1,9 @@
 import View from 'ampersand-view'
 import ArgumentForm from './form'
 import { DynamicArgument as TaskArgument } from 'models/task/dynamic-argument'
-import FIELD from 'constants/field'
+import * as FIELD from 'constants/field'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
   <div>
     <section>

@@ -2,7 +2,7 @@ import View from 'ampersand-view'
 import $ from 'jquery'
 import bootstrap from 'bootstrap'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div data-hook="alert-type" role="alert">
       <button type="button" class="close" data-dismiss="alert" aria-label="Close">

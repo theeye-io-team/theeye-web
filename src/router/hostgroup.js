@@ -18,4 +18,4 @@ class HostGroup extends Route {
   }
 }
 
-module.exports = HostGroup
+export default HostGroup

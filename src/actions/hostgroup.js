@@ -1,13 +1,8 @@
-'use strict'
-
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
-import config from 'config'
 import FileSaver from 'file-saver'
 import qs from 'qs'
-
-import { Collection as Hosts } from 'models/host'
 
 const Actions = {
   create (data, applyToSourceHost) {
@@ -26,7 +21,7 @@ const Actions = {
     })
 
     XHR.send({
-      url: `${config.api_url}/hostgroup`,
+      url: `${App.config.supervisor_api_url}/${App.state.session.customer.name}/hostgroup`,
       method: 'POST',
       jsonData: body,
       headers: {
@@ -47,7 +42,7 @@ const Actions = {
     })
 
     XHR.send({
-      url: `${config.api_url}/hostgroup/${id}`,
+      url: `${App.config.supervisor_api_url}/${App.state.session.customer.name}/hostgroup/${id}`,
       method: 'PUT',
       jsonData: body,
       headers: {
@@ -65,7 +60,7 @@ const Actions = {
   },
   remove (id, deleteInstances) {
     XHR.send({
-      url: `${config.api_url}/hostgroup/${id}?deleteInstances=${deleteInstances}`,
+      url: `${App.config.supervisor_api_url}/${App.state.session.customer.name}/hostgroup/${id}?deleteInstances=${deleteInstances}`,
       method: 'DELETE',
       headers: { Accept:'application/json;charset=UTF-8' },
       done (data,xhr) {
@@ -83,8 +78,8 @@ const Actions = {
   fetchHostConfig (id,next) {
     XHR.send({
       method: 'GET',
-      url: `${config.api_url}/host/${id}/config`,
-      done: (data,xhr) => {
+      url: `${App.config.supervisor_api_url}/recipe/host/${id}/config`,
+      done: (data, xhr) => {
         this.resetTemplatesConfig()
         App.state.hostGroupPage.setConfigs(data)
         //next(null,data)
@@ -134,7 +129,7 @@ const Actions = {
 
     XHR.send({
       method: 'GET',
-      url: `${config.api_v3_url}/recipe?${query}`,
+      url: `${App.config.supervisor_api_url}/recipe?${query}`,
       done: (data, xhr) => {
         if (data.length) {
           next(null, data[0].instructions)

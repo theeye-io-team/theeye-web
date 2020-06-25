@@ -4,7 +4,7 @@ import InputView from 'ampersand-input-view'
 import AuthActions from 'actions/auth'
 import NavbarActions from 'actions/navbar'
 import App from 'ampersand-app'
-import validator from 'validator'
+import isEmail from 'validator/lib/isEmail'
 import activationLang from 'language/activation'
 
 const ActivateForm = FormView.extend({
@@ -36,8 +36,8 @@ const ActivateForm = FormView.extend({
       requiredMessage: activationLang.getText('usernameMissing'),
       tests: [
         function (value) {
-          if (validator.isEmpty(value)) {
-            return activationLang.getText('usernameMissing')
+          if (!isEmail(value) && !isEmail(value + '@theeye.io')) {
+            return 'Please provide a valid username'
           }
         }
       ]
@@ -72,7 +72,7 @@ const ActivateForm = FormView.extend({
   }
 })
 
-module.exports = View.extend({
+export default View.extend({
   initialize () {
     View.prototype.initialize.apply(this,arguments)
     this.username = App.state.activate.username
@@ -80,11 +80,6 @@ module.exports = View.extend({
       <div class="activate-container">
         <div class="activate-header">
           <div class="container">
-            <div class="row">
-              <div class="col-xs-12">
-                <img class="logo" src="/images/logo.png" alt="TheEye">
-              </div>
-            </div>
             <div class="row">
               <div class="col-xs-12">
                 <h1>${activationLang.getText('headerTitle')}</h1>
@@ -115,7 +110,6 @@ module.exports = View.extend({
   },
   autoRender: true,
   props: {
-    token: ['string',false,''],
     username: ['string',false,'']
   },
   events: {
@@ -126,7 +120,9 @@ module.exports = View.extend({
       if (this.activateForm.valid) {
         var data = this.activateForm.data
         data.invitation_token = App.state.activate.invitation_token
-        AuthActions.activateStep(data, this.token)
+        data.email = App.state.activate.email
+
+        AuthActions.activate(data)
       }
     }
   },
@@ -135,6 +131,6 @@ module.exports = View.extend({
     this.activateForm = new ActivateForm()
     this.renderSubview(this.activateForm, this.queryByHook('activate-form'))
 
-    NavbarActions.setVisibility(false)
+    NavbarActions.setVisibility(true)
   }
 })

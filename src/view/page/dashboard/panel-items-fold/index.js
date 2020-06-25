@@ -12,8 +12,21 @@ const jquery = $ = require('jquery')
  * @param {Object} el dom element
  *
  */
-module.exports = View.extend({
-  template: require('./template.hbs'),
+export default View.extend({
+  template: () => {
+    let html = `
+      <section>
+        <div data-hook="hidden-items" class="hidden-container">
+          <div data-hook="hidden-items-container">
+          </div>
+        </div>
+        <div data-hook="toggle-hidden-items" style="padding:5px 0px 5px 0px; margin: auto; width:100%; color:#fff; text-align:center; cursor:pointer;">
+          <span class="btn btn-primary tooltiped fa fa-chevron-down" title="show/hide"></span>
+        </div>
+      </section>
+    `
+    return html
+  },
   props: {
     visible: ['boolean',false,false]
   },

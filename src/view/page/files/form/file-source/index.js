@@ -4,7 +4,7 @@ import View from 'ampersand-view'
 import Collection from 'ampersand-collection'
 import HelpIcon from 'components/help-icon'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
   	<div class="form-group">
 			<label class="col-sm-3 control-label" data-hook="label">File Source</label>

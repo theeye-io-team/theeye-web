@@ -1,5 +1,5 @@
 
-module.exports = function (html) {
+export default function (html) {
 
   const el = document.createElement('div')
 

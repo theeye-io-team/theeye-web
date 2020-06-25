@@ -1,7 +1,7 @@
 import View from 'ampersand-view'
 import './styles.less'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="advanced-section-toggle form-group">
       <div class="col-sm-12">
@@ -13,14 +13,16 @@ module.exports = View.extend({
   `,
   props: {
     onclick: 'any',
-    name: ['string',false,'advanced-toggler']
+    name: ['string',false,'advanced-toggler'],
+    folded: ['boolean', false, false]
   },
   session: {
     valid: ['boolean',false,true]
   },
   events: {
     'click': function (event) {
-      if (this.onclick) this.onclick(event)
+      this.toggle('folded')
+      this.onclick && this.onclick(event, this)
     }
   }
 })

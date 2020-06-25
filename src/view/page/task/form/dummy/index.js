@@ -7,14 +7,14 @@ import AdvancedToggle from 'view/advanced-toggle'
 import TextareaView from 'components/input-view/textarea'
 import TagsSelectView from 'view/tags-select'
 import EventsSelectView from 'view/events-select'
-import TaskConstants from 'constants/task'
+import * as TaskConstants from 'constants/task'
 import Buttons from 'view/buttons'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 import CopyTaskSelect from '../copy-task-select'
 import bootbox from 'bootbox'
 
-module.exports = TaskFormView.extend({
+export default TaskFormView.extend({
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew())
 

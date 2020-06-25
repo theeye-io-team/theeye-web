@@ -1,6 +1,6 @@
 import View from 'ampersand-view'
 
-module.exports = View.extend({
+export default View.extend({
   autoRender: true,
   template: `<div class="modal-backdrop fade in"></div>`,
   props: {

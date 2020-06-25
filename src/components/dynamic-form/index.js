@@ -1,4 +1,4 @@
-import FIELD from 'constants/field'
+import * as FIELD from 'constants/field'
 import DropableForm from 'components/dropable-form'
 import InputView from 'components/input-view'
 import SelectView from 'components/select2-view'
@@ -10,7 +10,7 @@ import isURL from 'validator/lib/isURL'
 import isEmail from 'validator/lib/isEmail'
 import config from 'config'
 
-module.exports = DropableForm.extend({
+export default DropableForm.extend({
   props: {
     fieldsDefinitions: 'array'
   },

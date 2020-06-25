@@ -5,7 +5,7 @@ import 'fullcalendar'
 import 'fullcalendar/dist/fullcalendar.css'
 import View from 'ampersand-view'
 
-module.exports = View.extend({
+export default View.extend({
   autoRender: true,
   template: '<div data-hook="calendar-container"></div>',
   props: {

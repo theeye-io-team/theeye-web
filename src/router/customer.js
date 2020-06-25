@@ -1,19 +1,20 @@
 import CustomerPage from 'view/page/customer'
 import App from 'ampersand-app'
 import Route from 'lib/router-route'
+import bootbox from 'bootbox'
 
 class Customer extends Route {
   indexRoute () {
-    App.state.customers.fetch({
+    App.state.admin.customers.fetch({
       error (err,xhr) {
         bootbox.alert('Something goes wrong. Please refresh')
       }
     })
     const page = new CustomerPage({
-      collection: App.state.customers
+      collection: App.state.admin.customers
     })
     return page
   }
 }
 
-module.exports = Customer
+export default Customer

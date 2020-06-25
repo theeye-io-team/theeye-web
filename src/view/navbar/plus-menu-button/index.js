@@ -9,7 +9,7 @@ import IndicatorCreationWizard from 'view/page/indicator/creation-wizard'
 
 import './style.less'
 
-module.exports = View.extend({
+export default View.extend({
   template: `
     <div class="plus-menu-button eyemenu-panel-launcher pull-left">
       <i data-hook="plus-menu-toggle" class="fa fa-plus-circle plus-icon"></i>

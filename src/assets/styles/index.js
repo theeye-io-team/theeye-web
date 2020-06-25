@@ -1,10 +1,11 @@
-require('./font-awesome-alfanum.css')
-require('./select2.min.css')
-require('./theeye-font.css')
-require('./site.css')
-require('./navbar.css')
-require('./text-block.css')
-require('./modal.css')
-require('./animations.less')
-require('./icons.css')
-require('./roboto.css')
+import './font-awesome-alfanum.css'
+import './select2.min.css'
+import './theeye-font.css'
+import './site.css'
+import './navbar.css'
+import './text-block.css'
+import './modal.less'
+import './animations.less'
+import './icons.css'
+import './roboto.css'
+import './tooltip.less'

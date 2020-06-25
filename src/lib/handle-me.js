@@ -1,8 +1,8 @@
 import localforage from 'localforage'
 import merge from 'lodash/merge'
-const uuidv5 = require('uuid/v5')
+import uuidv5 from 'uuid/v5'
 
-const logger = require('lib/logger')('lib:handle-me')
+import loggerModule from 'lib/logger'; const logger = loggerModule('lib:handle-me')
 
 export default class Handler {
 

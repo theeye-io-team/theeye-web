@@ -11,11 +11,11 @@ import Modalizer from 'components/modalizer'
 import InputView from 'components/input-view'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
-const HelpTexts = require('language/help')
+import HelpTexts from 'language/help'
 
 let currentGroup
 
-module.exports = FormView.extend({
+export default FormView.extend({
   initialize (options) {
     currentGroup = this.model
 

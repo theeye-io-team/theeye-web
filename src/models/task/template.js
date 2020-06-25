@@ -1,11 +1,11 @@
 import App from 'ampersand-app'
 import AppCollection from 'lib/app-collection'
-import FIELD from 'constants/field'
+import * as FIELD from 'constants/field'
 import Schema from './schema'
 
-const Script = require('models/file/script').Model
-const Events = require('models/event').Collection
-const config = require('config')
+import { Model as Script } from 'models/file/script'
+import { Collection as Events } from 'models/event'
+import config from 'config'
 
 /**
  * @param {Array} args
@@ -155,10 +155,4 @@ const Collection = AppCollection.extend({
   }
 })
 
-exports.Collection = Collection
-
-exports.Scraper = ScraperTask
-exports.Script = ScriptTask
-exports.Approval = ApprovalTask
-exports.Dummy = DummyTask
-exports.Notification = NotificationTask
+export { Collection, ScraperTask as Scraper, ScriptTask as Script, ApprovalTask as Approval, DummyTask as Dummy, NotificationTask as Notification }

@@ -1,9 +1,9 @@
 
-const View = require('ampersand-view')
+import View from 'ampersand-view'
 import SearchboxActions from 'actions/searchbox'
 import './styles.less'
 
-module.exports = View.extend({
+export default View.extend({
   template: `<span class="tag label label-default" data-hook="tag-name"></span>`,
   bindings: {
     'model.name': {

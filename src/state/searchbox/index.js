@@ -1,5 +1,5 @@
 import State from 'ampersand-state'
-import {filterRows, findMatches} from './filter-rows'
+import { filterRows, findMatches } from './filter-rows'
 import uriFragment from 'lib/uri-fragment'
 import AmpersandCollection from 'ampersand-collection'
 
@@ -34,4 +34,4 @@ const SearchBoxState = State.extend({
   }
 })
 
-module.exports = SearchBoxState
+export default SearchBoxState

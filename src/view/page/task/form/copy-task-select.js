@@ -4,7 +4,7 @@ import App from 'ampersand-app'
 import SelectView from 'components/select2-view'
 import SubCollection from 'ampersand-filtered-subcollection'
 
-module.exports = SelectView.extend({
+export default SelectView.extend({
   props: {
     type: 'string'
   },
@@ -21,7 +21,8 @@ module.exports = SelectView.extend({
     //this.unselectedText = 'select a script'
     this.idAttribute = 'id'
     this.textAttribute = 'name'
-    this.allowCreateTags = true
+    this.textAttribute = 'summary'
+    this.allowCreateTags = false
 
     SelectView.prototype.initialize.apply(this,arguments)
   }

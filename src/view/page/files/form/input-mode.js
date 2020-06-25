@@ -1,7 +1,7 @@
 import View from 'ampersand-view'
 import { EditorView } from './editor'
 
-const FileModeConst = require('constants/file-input-mode')
+import FileModeConst from 'constants/file-input-mode'
 
 
 const UploaderView = View.extend({
@@ -14,7 +14,7 @@ const UrlImportView = View.extend({
   focus () { }
 })
 
-exports.Factory = function (mode, options) {
+const Factory = function (mode, options) {
   let ModeView
   switch (mode) {
     case FileModeConst.EDITOR: 
@@ -29,3 +29,5 @@ exports.Factory = function (mode, options) {
   }
   return new ModeView(options)
 }
+
+export { Factory }

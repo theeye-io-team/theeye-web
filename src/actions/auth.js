@@ -1,38 +1,28 @@
-'use strict'
 
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
-import assign from 'lodash/assign'
-import config from 'config'
 import registerLang from 'language/register'
 import activationLang from 'language/activation'
+import search from 'lib/query-params'
 
-const xhr = $.ajax
-
-module.exports = {
+export default {
   login (data) {
     App.state.loader.visible = true
+
+    let credentials = btoa(`${data.username}:${data.password}`)
     XHR.send({
-      url: `${config.app_url}/auth/login`,
+      url: `${App.config.app_url}/api/auth/login`,
       method: 'post',
       jsonData: data,
       headers: {
-        Accept: 'application/json;charset=UTF-8'
+        Accept: 'application/json;charset=UTF-8',
+        Authorization: `Basic ${credentials}`
       },
-      done: (response,xhr) => {
+      done: (response, xhr) => {
         App.state.loader.visible = false
-        if (xhr.status == 200) {
+        if (xhr.status === 200) {
           App.state.session.access_token = response.access_token
-          //if (response.login_type) {
-          //  switch (response.login_type) {
-          //    case 'ldap':
-          //      App.state.session.accountPreferences.showAccountActions = false
-          //      App.state.session.accountPreferences.showMembersTab = false
-          //      break
-          //    default:
-          //  }
-          //}
         } else {
           bootbox.alert('Login error, please try again')
         }
@@ -42,7 +32,7 @@ module.exports = {
         var errorMsg = 'Login error, please try again'
         if (xhr.status == 400) {
           errorMsg = 'Login error, invalid credentials'
-          if(xhr.response && xhr.response.error == 'inactiveUser') {
+          if (xhr.response && xhr.response.error == 'inactiveUser') {
             errorMsg = 'The account you are trying to use is not verified yet. <br> We sent you a new account verification email. <br> Follow the instructions to complete this account registration.'
           }
         }
@@ -50,30 +40,164 @@ module.exports = {
       }
     })
   },
-  logout () {
+  register (data) {
+   App.state.loader.visible = true
+
+   let body = {}
+   body.email = data.email
+   body.username = data.email
+   body.name = data.name
+   body.grecaptcha = data.grecaptcha
+
+   XHR.send({
+     url: `${App.config.api_url}/registration/register`,
+     method: 'POST',
+     jsonData: body,
+     headers: {
+       Accept: 'application/json;charset=UTF-8'
+     },
+     done (response, xhr) {
+       App.state.loader.visible = false
+       App.state.register.result = true
+     },
+     fail (err, xhr) {
+       App.state.loader.visible = false
+       let msg = registerLang.getText(xhr.response.code) || registerLang.getText('defaultError')
+       bootbox.alert({
+         title: registerLang.getText('errorTitle'),
+         message: msg
+       })
+     }
+   })
+  },
+  checkUsername (username, token) {
     XHR.send({
-      url: `${config.app_url}/session/logout`,
+      url: `${App.config.api_url}/registration/checkusername?token=` + encodeURIComponent(token) + '&username=' + encodeURIComponent(username),
       method: 'get',
-      headers: {
-        Accept: 'application/json;charset=UTF-8'
-      },
       done: (response,xhr) => {
-        if (xhr.status == 200) {
+        if (xhr.status !== 200) {
+          bootbox.alert(activationLang.getText('defaultError'))
+          App.state.activate.finalStep = false
+        } else {
+          App.state.activate.username = username
+          App.state.activate.finalStep = true
         }
       },
       fail: (err,xhr) => {
-        //bootbox.alert('Something goes wrong.')
+        if (xhr.status == 409) {
+          bootbox.alert(activationLang.getText('usernameTaken'))
+          App.state.activate.finalStep = false
+        } else {
+          bootbox.alert(activationLang.getText('defaultError'))
+          App.state.activate.finalStep = false
+        }
       }
     })
-
-    App.state.reset() // reset all application states
-    App.state.session.clear() // force session destroy on client
-    App.state.alerts.success('Logged Out.','See you soon')
   },
-  resetMail (data) {
+  finishRegistration (data) {
+    App.state.loader.visible = true
+    delete data.confirmPassword
+
+    XHR.send({
+      url: `${App.config.api_url}/registration/finish`,
+      method: 'post',
+      jsonData: data,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (response,xhr) {
+        App.state.loader.visible = false
+        if (xhr.status == 200) {
+          bootbox.alert({
+            message: activationLang.getText('success'),
+            callback: () => {
+              App.state.session.access_token = response.access_token
+            }
+          })
+        } else {
+          bootbox.alert({
+            message: activationLang.getText('defaultError'),
+            callback: () => {
+            }
+          })
+        }
+      },
+      fail (err,xhr) {
+        App.state.loader.visible = false
+        if (xhr.status == 400) {
+          bootbox.alert({
+            message: activationLang.getText(xhr.response.message) ||
+            activationLang.getText('defaultError'),
+            callback: () => {
+            }
+          })
+        } else {
+          bootbox.alert({
+            message: activationLang.getText('defaultError'),
+            callback: () => {
+            }
+          })
+        }
+      }
+    })
+  },
+  activate (data) {
+    App.state.loader.visible = true
+    delete data.confirmPassword
+
+    XHR.send({
+      url: `${App.config.api_url}/registration/activate`,
+      method: 'post',
+      jsonData: data,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (response,xhr) {
+        App.state.loader.visible = false
+        if (xhr.status == 200) {
+          bootbox.alert({
+            message: activationLang.getText('success'),
+            callback: () => {
+              App.state.session.access_token = response.access_token
+            }
+          })
+        } else {
+          bootbox.alert({
+            message: activationLang.getText('defaultError'),
+            callback: () => {
+            }
+          })
+        }
+      },
+      fail (err,xhr) {
+        App.state.loader.visible = false
+        if (xhr.status == 400) {
+          bootbox.alert({
+            message: activationLang.getText(xhr.response.message) ||
+            activationLang.getText('defaultError'),
+            callback: () => {
+            }
+          })
+        } else {
+          bootbox.alert({
+            message: activationLang.getText('defaultError'),
+            callback: () => {
+            }
+          })
+        }
+      }
+    })
+  },
+  toggleLoginForm() {
+    App.state.login.toggle('showRecoverForm')
+  },
+  providerLogin(provider) {
+    window.location.replace('auth/'+provider)
+  },
+  recoverPassword (data) {
     App.state.loader.visible = true
     XHR.send({
-      url: `${config.app_url}/password/resetmail`,
+      url: `${App.config.api_url}/auth/password/recover`,
       method: 'post',
       jsonData: data,
       headers: {
@@ -99,120 +223,11 @@ module.exports = {
       }
     })
   },
-  register (data) {
-    App.state.loader.visible = true
-
-    var body = {}
-    body.email = data.email
-    body.username = data.email
-    body.name = data.name
-    body.grecaptcha = data.grecaptcha
-
-    const req = xhr({
-      url: `${config.app_url}/registeruser`,
-      type: 'POST',
-      data: JSON.stringify(body),
-      dataType: 'json',
-      contentType: 'application/json; charset=utf-8',
-    })
-
-    req.done(function (response) {
-      App.state.loader.visible = false
-      App.state.register.result = true
-    })
-    req.fail(function (jqXHR, textStatus, errorThrown) {
-      App.state.loader.visible = false
-      var msg = registerLang.getText(jqXHR.responseText) || registerLang.getText('defaultError')
-      bootbox.alert({
-        title: registerLang.getText('errorTitle'),
-        message: msg
-      })
-    })
-  },
-  checkUsernameActivation (username, token) {
-    XHR.send({
-      url: `${config.app_url}/checkusernameactivation?token=` + encodeURIComponent(token) + '&username=' + encodeURIComponent(username),
-      method: 'get',
-      done: (response,xhr) => {
-        if (xhr.status !== 201) {
-          bootbox.alert(activationLang.getText('defaultError'))
-          App.state.activate.finalStep = false
-        } else {
-          App.state.activate.username = username
-          App.state.activate.finalStep = true
-        }
-      },
-      fail: (err,xhr) => {
-        if (xhr.status == 400) {
-          bootbox.alert(activationLang.getText('usernameTaken'))
-          App.state.activate.finalStep = false
-        } else if (xhr.status !== 201) {
-          bootbox.alert(activationLang.getText('defaultError'))
-          App.state.activate.finalStep = false
-        }
-      }
-    })
-  },
-  activateStep (data, token) {
-    App.state.loader.visible = true
-    var token = encodeURIComponent(token);
-
-    XHR.send({
-      url: `${config.app_url}/auth/activateuser?token=${token}`,
-      method: 'post',
-      jsonData: data,
-      headers: {
-        Accept: 'application/json;charset=UTF-8'
-      },
-      done (response,xhr) {
-        App.state.loader.visible = false
-        if (xhr.status == 200) {
-          bootbox.alert({
-            // message: 'Registration is completed',
-            message: activationLang.getText('success'),
-            callback: () => {
-              App.state.session.access_token = response.access_token
-            }
-          })
-        } else {
-          bootbox.alert({
-            message: activationLang.getText('defaultError'),
-            callback: () => {
-            }
-          })
-        }
-      },
-      fail (err,xhr) {
-        App.state.loader.visible = false
-        if (xhr.status == 400) {
-          bootbox.alert({
-            message: activationLang.getText(xhr.response.body.errorCode) ||
-            xhr.response.body.error ||
-            activationLang.getText('defaultError'),
-            callback: () => {
-            }
-          })
-        } else {
-          bootbox.alert({
-            message: activationLang.getText('defaultError'),
-            callback: () => {
-            }
-          })
-        }
-      }
-    })
-  },
-  toggleLoginForm() {
-    App.state.login.toggle('showRecoverForm')
-  },
-  providerLogin(provider) {
-    window.location.replace('auth/'+provider)
-  },
   resetPassword(data) {
     App.state.loader.visible = true
 
     XHR.send({
-      url: `${config.app_url}/password/reset`,
+      url: `${App.config.app_url}/api/auth/password/reset`,
       method: 'put',
       jsonData: data,
       headers: {
@@ -229,7 +244,7 @@ module.exports = {
           })
         } else {
           bootbox.alert({
-            message: 'Error, password reset token expired, try again.',
+            message: 'Error, please try again.',
             callback: () => {
             }
           })
@@ -240,7 +255,7 @@ module.exports = {
         App.navigate('login')
         if (xhr.status == 400) {
           bootbox.alert({
-            message: xhr.response.body.error || 'Error, password reset token expired, try again.',
+            message: registerLang.getText(xhr.response.error) || 'Error, please try again',
             callback: () => {
             }
           })
@@ -260,7 +275,7 @@ module.exports = {
     App.state.loader.visible = true
 
     XHR.send({
-      url: `/auth/local/update`,
+      url: `${App.config.api_url}/auth/password/change`,
       method: 'post',
       jsonData: body,
       headers: {
@@ -293,6 +308,35 @@ module.exports = {
             message: 'Error changing password.'
           })
         }
+      }
+    })
+  },
+  verifyInvitationToken (callback) {
+    const query = search.get()
+
+    let invitation_token = query.invitation_token
+
+    if (!invitation_token) return App.navigate('login')
+
+    XHR.send({
+      url: `${App.config.api_url}/registration/verifyinvitationtoken?invitation_token=${encodeURIComponent(invitation_token)}`,
+      method: 'get',
+      responseType: 'json',
+      done (response,xhr) {
+        if (xhr.status == 200) {
+          App.state.activate.username = response.username
+          App.state.activate.email = response.email
+          App.state.activate.invitation_token = response.invitation_token
+
+          callback()
+        } else {
+          bootbox.alert("Invalid activation link")
+          App.navigate('login')
+        }
+      },
+      fail (err,xhr) {
+        bootbox.alert("Error activating user")
+        App.navigate('login')
       }
     })
   }

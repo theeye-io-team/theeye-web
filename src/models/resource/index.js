@@ -1,50 +1,29 @@
+import App from 'ampersand-app'
 import State from 'ampersand-state'
-import AppCollection from 'lib/app-collection'
 import moment from 'moment'
-import assign from 'lodash/assign'
-import MonitorConstants from 'constants/monitor'
 
-const MonitorSchema = require('./monitor-schema')
-const ResourceSchema = require('./resource-schema')
-const TagCollection = require('models/tag').Collection
-//const MonitorTemplate = require('./monitor-template')
-//const ResourceTemplate = require('./resource-template')
-const Host = require('models/host/index').Model
+import AppModel from 'lib/app-model'
+import AppCollection from 'lib/app-collection'
+import * as MonitorConstants from 'constants/monitor'
 
 import stateIcon from 'models/state-icon'
 import stateOrder from 'models/state-order'
 import stateMeaning from 'models/state-meaning'
 
-const config = require('config')
-const urlRoot = `${config.api_url}/resource`
+import config from 'config'
+const urlRoot = `${config.supervisor_api_url}/monitor`
+const nestedUrlRoot = `${config.supervisor_api_url}/monitor/nested`
 
-/**
- *
- * monitor resource submodel
- *
- */
-const MonitorBaseModel = MonitorSchema.extend({
-  props: {
-    resource_id: 'string',
-    enable: 'boolean',
-    creation_date: 'date',
-    last_update: 'date'
-  },
-  children: {
-    template: MonitorSchema
+function ResourceFactory (data, options={}) {
+  let resource
+  if (data.type == MonitorConstants.TYPE_NESTED) {
+    resource = new NestedResource(data, options)
+  } else {
+    resource = new Resource(data, options)
   }
-})
-
-const Monitor = MonitorBaseModel.extend({
-  props: {
-    host_id: 'string',
-    template_id: 'string',
-    config: ['object',false, () => { return {} }],
-  },
-  children: {
-    host: Host
-  },
-})
+  resource.monitor = App.Models.Monitor.Factory(data.monitor||data, options)
+  return resource
+}
 
 const _Collection = AppCollection.extend({
   model: ResourceFactory,
@@ -73,50 +52,78 @@ const ResourceCollection = _Collection.extend({
   },
   higherSeverityMonitor () {
     const submonitors = this.models
-    if (!submonitors||submonitors.length===0) return null
+    if (!submonitors||submonitors.length===0) {
+      return null
+    }
     return submonitors.reduce( (worstMonitor,monitor) => {
-      if (!worstMonitor) return monitor;
-      var m1 = monitor.stateOrder
-      var m2 = worstMonitor.stateOrder
-      return (m1>m2) ? monitor : worstMonitor;
+      if (!worstMonitor) { return monitor }
+      let m1 = monitor.stateOrder
+      let m2 = worstMonitor.stateOrder
+      return (m1>m2) ? monitor : worstMonitor
     }, null )
   }
 })
 
-const NestedMonitorConfig = State.extend({
-  collections: {
-    monitors: function () {
-      const Col = ResourceCollection
-      return new (Col.bind.apply(Col, arguments))([])
-    }
-  },
-  serialize () {
-    return { monitors: this.monitors.map(m => m.id) }
-  }
-})
-
-const NestedMonitor = MonitorBaseModel.extend({
+const ResourceSchema = AppModel.extend({
   props: {
-    looptime: ['number', false, 0], // is not required
+    id: 'string',
+    user_id: 'string', // owner/creator
+    customer_id: 'string',
+    customer_name: 'string',
+    description: 'string',
+    name: 'string',
+    type: 'string',
+    _type: 'string',
+    acl: 'array',
+    failure_severity: 'string',
+    alerts: 'boolean',
+    tags: ['array',false, () => { return [] }],
+    source_model_id: 'string', // temporal , is used to create templates
+    hostgroup_id: ['string', false, null] // only if belongs to
   },
   children: {
-    config: NestedMonitorConfig
+    customer: function (attrs, options) { // has one
+      return new App.Models.Customer.Model(attrs, options)
+    },
+    user: function (attrs, options) { // has one
+      return new App.Models.User.Model(attrs, options)
+    }
   },
-  initialize () {
-    MonitorBaseModel.prototype.initialize.apply(this, arguments)
-    this.type = MonitorConstants.TYPE_NESTED
-  },
-  serialize () {
-    const serialize = MonitorSchema.prototype.serialize
-    let data = Object.assign({}, serialize.apply(this))
-    data.monitors = data.config.monitors
-    delete data.config
-    return data
+  derived: {
+    summary: {
+      deps: ['hostname','name'],
+      fn () {
+        return `[${this.hostname}] ${this.type} monitor ${this.name}`
+      }
+    }
   }
 })
 
 const ResourceBaseModel = ResourceSchema.extend({
-  urlRoot: urlRoot,
+  initialize (options) {
+    //this.id = options._id || options.id
+    ResourceSchema.prototype.initialize.apply(this,arguments)
+
+    //this.tagsCollection = new App.Models.Tag.Collection([])
+
+    this.listenToAndRun(this, 'change:tags', () => {
+      if (Array.isArray(this.tags)) {
+        let tags = this.tags.map((tag, index) => {
+          return {_id: (index + 1).toString(), name: tag}
+        })
+        tags = tags.slice(0, 3)
+        this.tagsCollection.set(tags)
+      }
+    })
+  },
+  collections: {
+    tagsCollection: function (attrs, options) {
+      return new App.Models.Tag.Collection(attrs, options)
+    }
+  },
+  //session: {
+  //  tagsCollection: 'collection'
+  //},
   props: {
     monitor_id: 'string',
     hostname: 'string',
@@ -186,8 +193,7 @@ const ResourceBaseModel = ResourceSchema.extend({
   parse (attrs) {
     const monitor = (attrs.monitor || attrs.template_monitor)
     if (!monitor) { return attrs }
-
-    return assign({}, attrs, {
+    return Object.assign({}, attrs, {
       // monitor
       looptime: monitor.looptime,
       tags: monitor.tags
@@ -196,7 +202,7 @@ const ResourceBaseModel = ResourceSchema.extend({
   serialize () {
     const serialize = ResourceSchema.prototype.serialize
     const monitor = this.monitor.serialize()
-    let data = assign({}, serialize.apply(this), monitor)
+    let data = Object.assign({}, serialize.apply(this), monitor)
 
     data.id = this.id
 
@@ -209,68 +215,34 @@ const ResourceBaseModel = ResourceSchema.extend({
 })
 
 const Resource = ResourceBaseModel.extend({
+  urlRoot,
   props: {
     template_id: 'string',
     host_id: 'string',
   },
   children: {
-    monitor: Monitor, // has one
     template: ResourceSchema, // belongs to
-    host: Host, // belongs to
+    monitor: function (attrs, options) { // has one
+      return new App.Models.Monitor.Factory(attrs, options)
+    },
+    host: function (attrs, options) { // belongs to
+      return new App.Models.Host.Model(attrs, options)
+    }
   },
-  session: {
-    tagsCollection: 'collection'
-  },
-  initialize (options) {
-    //this.id = options._id || options.id
-    ResourceBaseModel.prototype.initialize.apply(this,arguments)
-
-    this.tagsCollection = new TagCollection([])
-
-    this.listenToAndRun(this, 'change:tags', () => {
-      if (Array.isArray(this.tags)) {
-        let tags = this.tags.map((tag, index) => {
-          return {_id: (index + 1).toString(), name: tag}
-        })
-        tags = tags.slice(0, 3)
-        this.tagsCollection.set(tags)
-      }
-    })
-  }
 })
 
 const NestedResource = ResourceBaseModel.extend({
-  urlRoot: `${config.api_v3_url}/resource/nested`,
+  urlRoot: nestedUrlRoot,
   children: {
-    monitor: NestedMonitor, // has one
+    monitor: function (attrs, options) { // has one
+      return new App.Models.Monitor.Factory(attrs, options)
+    },
   },
   initialize () {
     ResourceBaseModel.prototype.initialize.apply(this, arguments)
     this.type = MonitorConstants.TYPE_NESTED
   }
 })
-
-function MonitorFactory (data) {
-  if (data.type == MonitorConstants.TYPE_NESTED) {
-    return new NestedMonitor(data)
-  } else {
-    return new Monitor(data)
-  }
-}
-
-function ResourceFactory (data, options={}) {
-  let resource
-  let monitor = MonitorFactory(data.monitor || data)
-
-  if (data.type == MonitorConstants.TYPE_NESTED) {
-    resource = new NestedResource(data, options)
-  } else {
-    resource = new Resource(data, options)
-  }
-  resource.monitor = monitor
-
-  return resource
-}
 
 /**
  * Resource but with a subresources/submonitors collection
@@ -329,12 +301,8 @@ const GroupedResourceCollection = ResourceCollection.extend({
   }
 })
 
-exports.Model = Resource
-exports.Monitor = Monitor
-exports.Nested = NestedResource
-exports.GroupedResource = GroupedResource
-exports.Factory = ResourceFactory
-
-//exports.Template = ResourceTemplate
-exports.Collection = ResourceCollection
-exports.GroupedResourceCollection = GroupedResourceCollection
+export const Model = Resource
+export const Nested = NestedResource
+export const Factory = ResourceFactory
+export const Collection = ResourceCollection
+export { GroupedResourceCollection, GroupedResource }

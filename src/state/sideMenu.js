@@ -9,4 +9,4 @@ const SideMenuState = State.extend({
   }
 })
 
-module.exports = SideMenuState
+export default SideMenuState

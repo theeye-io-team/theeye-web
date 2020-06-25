@@ -5,6 +5,7 @@ import WebhookActions from 'actions/webhook'
 import Modalizer from 'components/modalizer'
 import merge from 'lodash/merge'
 import WebhookForm from './form'
+import Clipboard from 'clipboard'
 import $ from 'jquery'
 
 const WebhookButtons = BaseView.extend({
@@ -85,7 +86,58 @@ const WebhookButtons = BaseView.extend({
 })
 
 const CollapsedContent = BaseView.extend({
-  template: require('./collapsed.hbs'),
+  template () {
+    let model = this.model
+    let html = `
+      <div>
+        <div class="row">
+          <span class="col-xs-3">Name</span>
+          <span class="col-xs-9">${model.name}</span>
+        </div>
+        <div class="row">
+          <span class="col-xs-3">Hook Unique ID</span>
+          <span class="col-xs-9">${model.id}</span>
+        </div>
+        <div class="row">
+          <span class="col-xs-3">Trigger URL</span>
+          <span class="col-xs-9">
+            <div class="input-group">
+              <input data-hook="trigger-url" type="text" class="form-control" readonly value="${model.triggerUrl}" />
+              <span class="input-group-btn">
+                <button data-hook="clipboard-url" class="btn btn-primary clipboard-token-btn clip" type="button">
+                  <span class="fa fa-files-o" alt="copy to clipboard"></span>
+                </button>
+              </span>
+            </div>
+          </span>
+        </div>
+        <div class="row" style="padding:10px;"></div>
+        <div class="row">
+          <span class="col-xs-3">How to Trigger</span>
+          <span class="col-xs-9">
+            To Trigger push
+            <button data-hook="trigger" class="btn btn-primary">
+              This Button
+            </button> ! Also, you can trigger this hook running this command via CLI (you required curl)
+            <div class="input-group">
+              <input data-hook="trigger-curl" type="text" class="form-control" readonly value="curl -X POST '${model.triggerUrl}'" />
+              <span class="input-group-btn">
+                <button data-hook="clipboard-curl" class="btn btn-primary clipboard-token-btn clip" type="button">
+                  <span class="fa fa-files-o" alt="copy to clipboard"> </span>
+                </button>
+              </span>
+            </div>
+          </span>
+        </div>
+      </div>
+      `
+    return html
+  },
+  render () {
+    this.renderWithTemplate(this)
+    new Clipboard(this.queryByHook('clipboard-url'), { target: () => this.queryByHook('trigger-url') })
+    new Clipboard(this.queryByHook('clipboard-curl'), { target: () => this.queryByHook('trigger-curl') })
+  },
   events: {
     'click [data-hook=trigger]':'onClickTrigger',
   },
@@ -96,7 +148,7 @@ const CollapsedContent = BaseView.extend({
   },
 })
 
-module.exports = ListItem.extend({
+export default ListItem.extend({
   derived: {
     item_name: {
       deps: ['model.name'],
@@ -130,3 +182,6 @@ module.exports = ListItem.extend({
     )
   }
 })
+
+const collapseTemplate = (model) => {
+}
