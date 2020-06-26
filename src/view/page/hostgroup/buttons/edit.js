@@ -40,9 +40,9 @@ export default PanelButton.extend({
 
         if(self.hostsDeleted(form.data)) {
           const msg = [
-            'Do you want to also remove the template monitors and tasks from the removed Bots?',
-            '<b>NO:</b> Only remove the Bots form the template.',
-            '<b>YES:</b> Remove the Bots form the template and also delete the template monitors and tasks from the removed Bots.'
+            'The Bots will be detached from the Template. What do you want to do with the removed BOTS Linked Components (Task, Monitors, Files...)?<br/>',
+            '<b>Make Copies and Unlink:</b> ALL the Components of the Template will be copied the BOTS and will be unlinked. Future changes in the Template Components or in the BOTs Components will not affect each other.<br/>',
+            '<b>Remove Everything:</b> ALL the Components linked to Template will be removed. Only modified versions of the Components will be keep and of course everything not belonging to the Template'
           ].join('<br>')
 
           bootbox.dialog({
@@ -50,14 +50,14 @@ export default PanelButton.extend({
             message: msg,
             buttons: {
               no: {
-                label: 'NO',
+                label: 'Make Copies',
                 className: 'btn-default',
                 callback: function() {
                   HostGroupActions.update(self.model.id, form.data, false)
                 }
               },
               yes: {
-                label: 'YES',
+                label: 'Remove Everything',
                 className: 'btn-danger',
                 callback: function() {
                   HostGroupActions.update(self.model.id, form.data, true)

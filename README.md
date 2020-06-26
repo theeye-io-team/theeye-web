@@ -15,6 +15,18 @@ npm install
 For compiling the assets and create the js/css bundles, it is required to choose a configuration file that should be placed in the directory src/config/ 
 Use NODE_ENV to choose the required configuration env.
 
+NODE_ENV=production activate minification for production
+
+## Building using Dockerfile
+
+### Dockerfile
+
+production Dockerfile. requires NODE_ENV=production
+
+### Dockerfile.dev
+
+development Dockerfile , NODE_ENV= can be anythin.
+
 ### Development
 
 Hereunder we are assuming a file called src/config/dev.js exists and exports the config. See src/config/development.js for references.
