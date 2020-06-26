@@ -51,22 +51,15 @@ const actions = {
       })
     })
   },
-  //verifyCustomerChange (customerName) {
-  //  if (App.state.session.customer.name != customerName) {
-  //    let msg = 'Your session settings has changed. Click OK to refresh'
-  //    bootbox.alert(msg, () => {
-  //      App.state.loader.visible = true
-  //      const customer = App.state.session.user.customers.get(customerName, 'name')
-  //      if (!customer) { // error , customer not found in session. need refresh
-  //        window.location.reload()
-  //        return
-  //      }
-  //      if (customer.id != App.state.session.customer.id) {
-  //        App.customerChange(customer)
-  //      }
-  //    })
-  //  }
-  //},
+  verifyCustomerChange (customerName) {
+   if (App.state.session.customer.name != customerName) {
+     let msg = 'Your session settings has changed. Click OK to refresh'
+     bootbox.alert(msg, () => {
+       window.location.reload()
+       return
+     })
+   }
+  },
   applyStateUpdate (model, op) {
     console.log(event)
   },

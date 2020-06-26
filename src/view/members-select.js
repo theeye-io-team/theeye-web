@@ -30,7 +30,7 @@ export default SelectView.extend({
     this.styles = specs.styles || 'form-group'
     this.idAttribute = specs.idAttribute || 'email'
     this.textAttribute = specs.textAttribute || 'label'
-    
+
     SelectView.prototype.initialize.apply(this,arguments)
   }
 })

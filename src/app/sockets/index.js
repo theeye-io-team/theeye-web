@@ -90,7 +90,7 @@ const createWrapper = () => {
         console.log(event)
       },
       'session': (event) => {
-        console.warn('TODO. not implemented')
+        App.actions.session.verifyCustomerChange(event.organization)
         App.actions.session.applyStateUpdate(event.model, event.operation)
       },
     },

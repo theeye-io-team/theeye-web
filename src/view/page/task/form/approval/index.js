@@ -41,7 +41,7 @@ export default TaskFormView.extend({
         visible: true,
         name: 'approvers',
         label: 'Approver *',
-        idAttribute: 'id',
+        idAttribute: 'user_id',
         textAttribute: 'label',
         value: this.model.approvers,
         filterOptions: [
