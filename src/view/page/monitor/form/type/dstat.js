@@ -165,25 +165,14 @@ export default MonitorFormView.extend({
       view.query('label')
     )
   },
-  //submit (next) {
-  //  next||(next=()=>{})
-  //  this.beforeSubmit()
-  //  if (!this.valid) return next(null,false) // cancel submit
-  //  // id property is the required value, with "numeric" data type
-  //  let data = this.prepareData(this.data)
-  //  if (!this.model.isNew()) {
-  //    App.actions.resource.update(this.model.id, data)
-  //  } else {
-  //    App.actions.resource.createMany(data)
-  //  }
-  //  this.trigger('submitted')
-  //  next(null,true)
-  //},
   prepareData (data) {
     data.type = MonitorConstants.TYPE_DSTAT
     data.looptime = this._fieldViews.looptime.selected().id
     data.name = 'Bot Health'
-
+    data.cpu = Number(data.cpu)
+    data.mem = Number(data.mem)
+    data.disk = Number(data.disk)
+    data.cache = Number(data.cache)
     return data
   },
   setWithMonitor (resource) {

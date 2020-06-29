@@ -189,20 +189,20 @@ const HealthMonitor = HostedMonitor.extend({
     this._type = MonitorConstants.DISCRIMINATOR_TYPE_DSTAT
   },
   props: {
-    cache_threshold: ['number', false, 70],
-    mem_threshold: ['number', false, 70],
-    cpu_threshold: ['number', false, 70],
-    disk_threshold: ['number', false, 70]
+    cpu: ['number', false, 70],
+    mem: ['number', false, 70],
+    cache: ['number', false, 70],
+    disk: ['number', false, 70]
   },
   parse (args) {
     // backwards compatibility. will eventually change
     if (args.config && args.config.limit) {
       let config = args.config.limit
       args = Object.assign({}, args, {
-        cache_threshold: Number(config.cache),
-        mem_threshold: Number(config.mem),
-        cpu_threshold: Number(config.cpu),
-        disk_threshold: Number(config.disk) 
+        cache: Number(config.cache),
+        mem: Number(config.mem),
+        cpu: Number(config.cpu),
+        disk: Number(config.disk) 
       })
     }
     return args

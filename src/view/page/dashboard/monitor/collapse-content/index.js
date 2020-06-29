@@ -471,7 +471,7 @@ const HostCollapsedContent = GenericCollapsedContent.extend({
           ': ',
           String(Math.floor(disk.value)),
           ' / ',
-          String(monitor.disk_threshold),
+          String(monitor.disk),
           "\n"
         ].join('')
       }
@@ -479,15 +479,15 @@ const HostCollapsedContent = GenericCollapsedContent.extend({
     }
 
     if (data.cache || data.cache === 0) {
-      this.dstat_cache = String(Math.floor(data.cache)) + ' / ' + String(monitor.cache_threshold)
+      this.dstat_cache = String(Math.floor(data.cache)) + ' / ' + String(monitor.cache)
     }
 
     if (data.cpu || data.cpu === 0) {
-      this.dstat_cpu = String(Math.floor(data.cpu)) + ' / ' + String(monitor.cpu_threshold)
+      this.dstat_cpu = String(Math.floor(data.cpu)) + ' / ' + String(monitor.cpu)
     }
 
     if (data.mem || data.mem === 0) {
-      this.dstat_mem = String(Math.floor(data.mem)) + ' / ' + String(monitor.mem_threshold)
+      this.dstat_mem = String(Math.floor(data.mem)) + ' / ' + String(monitor.mem)
     }
   },
   events: {
