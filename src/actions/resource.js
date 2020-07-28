@@ -2,7 +2,6 @@ import App from 'ampersand-app'
 import loggerModule from 'lib/logger'; const logger = loggerModule('actions:resource')
 import after from 'lodash/after'
 import bootbox from 'bootbox'
-import assign from 'lodash/assign'
 import ResourceModels from 'models/resource'
 import XHR from 'lib/xhr'
 
@@ -77,7 +76,7 @@ export default {
     })
 
     hosts.forEach(host_id => {
-      let monitorData = assign({}, data, { host_id })
+      let monitorData = Object.assign({}, data, { host_id })
       create(monitorData, done)
     })
   },

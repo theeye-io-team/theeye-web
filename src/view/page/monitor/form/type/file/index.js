@@ -258,7 +258,8 @@ export default MonitorFormView.extend({
     data.looptime = this._fieldViews.looptime.selected().id
     //let file = App.state.files.get(data.file)
     data.path = data.dirname + '/' + data.basename
-    Object.assign(data, data.path_input)
+    data.is_manual_path = data.path_input.is_manual_path
+    //Object.assign(data, data.path_input)
     return data
   },
   setWithMonitor (resource) {

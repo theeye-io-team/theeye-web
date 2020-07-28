@@ -1,6 +1,5 @@
 import View from 'ampersand-view'
 import InputView from 'components/input-view'
-import extend from 'lodash/assign'
 import bootbox from 'bootbox'
 
 export default InputView.extend({
@@ -26,7 +25,7 @@ export default InputView.extend({
     'click [data-hook=remove]':'clearInput',
     'click [data-hook=preview-container]':'onClickPreview'
   },
-  bindings: extend({}, InputView.prototype.bindings, {
+  bindings: Object.assign({}, InputView.prototype.bindings, {
     'file.name': [
       { type:'text', hook:'name' },
       { type:'toggle', hook:'name' },

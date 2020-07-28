@@ -1,7 +1,4 @@
 import BaseItem from './base'
-import EventIcons from './event-icons'
-import * as StateConstants from 'constants/states'
-import messageFactory from 'models/notification/messageFactory'
 
 export default BaseItem.extend({
   props: {
@@ -16,8 +13,8 @@ export default BaseItem.extend({
   customizeItem () {
     let notification = this.model
     this.colorClass = notification.data.model._type
-    this.icon = EventIcons[notification.data.model._type]
-    this.message = messageFactory(notification)
+    this.icon = notification.event_icon
+    this.message = notification.message
     this.modelName = notification.data.model.name
     this.body = notification.data.notification.body
   }

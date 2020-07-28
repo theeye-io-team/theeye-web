@@ -76,27 +76,22 @@ export default View.extend({
       format = '[Today at] LT'
     }
 
-    const type = this.model.data.model._type
-
     this.time = moment(this.model.creation_date).format(format)
-
     this.modelName = this.model.data.model.name
-    this.modelType = resourceType[this.model.data.model_type]
+    this.modelType = resourceType[this.model.target_model_type]
     this.modelSubType = ''
     this.icon = ''
 
     this.customizeItem()
   },
-  sanitizeState (state) {
-    if (!state) { return '' }
-    return state.toLowerCase().replace(/ /g, '_')
-  },
   render () {
     this.renderWithTemplate(this)
-    this.setModelIcon(this.modelType, this.modelSubType)
+    this.setModelIcon()
   },
-  setModelIcon (modelType, modelSubType) {
-    var iconClass = 'circle fa '
+  setModelIcon () {
+    const { modelType, modelSubType } = this
+
+    let iconClass = 'circle fa'
     if (modelType === 'NotificationJob') {
       iconClass += ` ${iconByType['notification']} notification-color`
     } else if (modelType === 'Webhook') {

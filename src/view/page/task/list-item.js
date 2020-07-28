@@ -5,7 +5,6 @@ import View from 'ampersand-view'
 import EditButton from './buttons/edit'
 import CopyButton from './buttons/copy'
 import DeleteButton from './buttons/delete'
-import assign from 'lodash/assign'
 import ScheduleButton from './buttons/schedule'
 import ExportButton from './buttons/export'
 import bootbox from 'bootbox'
@@ -65,7 +64,7 @@ const Item = ListItem.extend({
       }
     }
   },
-  bindings: assign({},ListItem.prototype.bindings,{
+  bindings: Object.assign({}, ListItem.prototype.bindings, {
     badge: {
       hook: 'item_badge',
       type: 'attribute',

@@ -1,7 +1,6 @@
 import App from 'ampersand-app'
 import AmpersandCollection from 'ampersand-rest-collection'
 import FilterMixin from './app-loopback-filter-mixin'
-import extend from 'lodash/assign'
 
 export default AmpersandCollection.extend(FilterMixin, {
   mainIndex: 'id' ,

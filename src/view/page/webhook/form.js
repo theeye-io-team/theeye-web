@@ -1,5 +1,4 @@
 import BaseView from 'view/base-view'
-import extend from 'lodash/assign'
 import FormElement from 'lib/form-element'
 
 export default BaseView.extend({
@@ -28,7 +27,7 @@ export default BaseView.extend({
     BaseView.prototype.initialize.apply(this,arguments)
 
     const self = this
-    extend(this, options)
+    Object.assign(this, options)
 
     Object.defineProperty(this,'data',{
       get () {

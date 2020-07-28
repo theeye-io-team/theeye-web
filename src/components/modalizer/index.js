@@ -35,7 +35,7 @@ const Modalizer = View.extend({
                 <h4 data-hook="title" class="modal-title"></h4>
               </div>
               <div class="modal-body" data-hook="body"></div>
-              <div class="modal-footer" data-hook="buttons">
+              <div class="modal-footer" data-hook="footer">
                 <div data-hook="buttons-container"></div>
               </div>
             </div><!-- /.modal-content -->
@@ -71,7 +71,7 @@ const Modalizer = View.extend({
       type: 'text'
     },
     buttons: {
-      hook: 'buttons',
+      hook: 'footer',
       type: 'toggle'
     }
   },
@@ -172,7 +172,7 @@ const Modalizer = View.extend({
   },
   remove () {
     this.hide()
-    this.bodyView.remove()
+    if (this.bodyView) this.bodyView.remove()
     View.prototype.remove.apply(this, arguments)
   }
 })

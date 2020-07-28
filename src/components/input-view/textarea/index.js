@@ -1,4 +1,3 @@
-import assign from 'lodash/assign'
 import InputView from 'components/input-view'
 
 import './styles.less'
@@ -9,7 +8,7 @@ export default InputView.extend({
     maxlength: 'number',
     prettyJson: ['boolean', false, false]
   },
-  bindings: assign({}, InputView.prototype.bindings, {
+  bindings: Object.assign({}, InputView.prototype.bindings, {
     counter: { hook: 'counter' },
     maxlength: {
       selector: 'textarea',

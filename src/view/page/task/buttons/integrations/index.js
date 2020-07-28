@@ -49,7 +49,7 @@ const CredentialsView = View.extend({
   template: `
     <div data-component="task-credentials">
 			<div class="form-group">
-		  	<label>Integration ID</label>
+		  	<label>Integration ID (Task ID)</label>
         <div class="input-group">
       	  <input class="form-control form-input blurry-text" id="integrationId" readonly type="text" data-hook="id" value="">
           <span class="input-group-btn">

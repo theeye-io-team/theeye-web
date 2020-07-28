@@ -1,6 +1,5 @@
 import MediaInputView from 'components/input-view/media'
 import InputView from 'components/input-view'
-import extend from 'lodash/assign'
 
 export default MediaInputView.extend({
   template: `
@@ -32,7 +31,7 @@ export default MediaInputView.extend({
     InputView.prototype.initialize.apply(this, arguments)
     this.loadInputPreview = this.loadInputPreview.bind(this)
   },
-  events: extend({}, MediaInputView.prototype.events, {
+  events: Object.assign({}, MediaInputView.prototype.events, {
     'click [data-hook=preview]': function (event) {
       this.toggle('preview_visible')
     },
@@ -43,7 +42,7 @@ export default MediaInputView.extend({
   props: {
     preview_visible: ['boolean',false,false],
   },
-  bindings: extend({}, MediaInputView.prototype.bindings, {
+  bindings: Object.assign({}, MediaInputView.prototype.bindings, {
     preview_visible: {
       type: 'toggle',
       hook: 'preview-section'

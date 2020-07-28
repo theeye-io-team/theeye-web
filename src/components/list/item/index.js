@@ -1,7 +1,4 @@
 import BaseView from 'view/base-view'
-// import AmpersandCollection from 'ampersand-collection'
-// import CommonButton from 'components/common-button'
-// import extend from 'lodash/assign'
 
 export default BaseView.extend({
   autoRender: false,

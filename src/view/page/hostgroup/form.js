@@ -1,6 +1,4 @@
-'use strict'
 
-import assign from 'lodash/assign'
 import App from 'ampersand-app'
 import FormView from 'ampersand-form-view'
 import View from 'ampersand-view'
@@ -186,7 +184,7 @@ const RegexInputView = InputView.extend({
       }
     }
   },
-  bindings: assign({}, InputView.prototype.bindings, {
+  bindings: Object.assign({}, InputView.prototype.bindings, {
     searchable: {
       type: 'booleanAttribute',
       hook: 'search-by-regexp',

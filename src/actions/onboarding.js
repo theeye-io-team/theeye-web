@@ -2,7 +2,6 @@ import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import loggerModule from 'lib/logger'; const logger = loggerModule('actions:onboarding')
 import bootbox from 'bootbox'
-import assign from 'lodash/assign'
 
 export default {
   updateOnboarding (value) {

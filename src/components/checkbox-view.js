@@ -1,7 +1,5 @@
-'use strict'
 
 import CheckboxView from 'ampersand-checkbox-view'
-import assign from 'lodash/assign'
 
 export default CheckboxView.extend({
   template: `
@@ -19,7 +17,7 @@ export default CheckboxView.extend({
     visible: ['boolean',false,true],
     value: 'boolean'
   },
-  bindings: assign({}, CheckboxView.prototype.bindings, {
+  bindings: Object.assign({}, CheckboxView.prototype.bindings, {
     visible: { type: 'toggle' },
     name: [{
       type: 'attribute',

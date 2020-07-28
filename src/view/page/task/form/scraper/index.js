@@ -1,7 +1,6 @@
 'use strict'
 
 import App from 'ampersand-app'
-import assign from 'lodash/assign'
 import TaskFormView from '../form'
 import PatternInputView from './pattern-input'
 import SelectView from 'components/select2-view'
@@ -330,7 +329,7 @@ export default TaskFormView.extend({
     next(null,true)
   },
   prepareData (data) {
-    let f = assign({}, data)
+    let f = Object.assign({}, data)
     f.type = TaskConstants.TYPE_SCRAPER
     f.timeout = Number(data.timeout)
     f.grace_time = Number(data.grace_time)

@@ -1,5 +1,4 @@
 import App from 'ampersand-app'
-import assign from 'lodash/assign'
 import FormView from 'ampersand-form-view'
 import View from 'ampersand-view'
 import InputView from 'components/input-view'
@@ -142,8 +141,7 @@ export default FormView.extend({
     }
   },
   prepareData (args) {
-    let f = assign(
-      {},
+    let f = Object.assign({},
       // most of the data is being directly written to model
       this.model._values,
       args,

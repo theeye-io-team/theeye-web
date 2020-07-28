@@ -1,7 +1,6 @@
 import BaseView from 'view/base-view'
 import AmpersandCollection from 'ampersand-collection'
 import CommonButton from 'components/common-button'
-import extend from 'lodash/assign'
 
 export default BaseView.extend({
   template: () => {
@@ -89,7 +88,7 @@ const MassSelectorButton = CommonButton.extend({
     event.stopPropagation()
     this.toggle('checked')
   },
-  bindings: extend({}, CommonButton.prototype.bindings, {
+  bindings: Object.assign({}, CommonButton.prototype.bindings, {
     checked: {
       type: 'booleanClass',
       selector: 'span',

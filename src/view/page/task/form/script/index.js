@@ -12,7 +12,6 @@ import MembersSelectView from 'view/members-select'
 import EventsSelectView from 'view/events-select'
 import CheckboxView from 'components/checkbox-view'
 import AdvancedToggle from 'view/advanced-toggle'
-import assign from 'lodash/assign'
 import HelpTexts from 'language/help'
 import * as TaskConstants from 'constants/task'
 
@@ -387,7 +386,7 @@ export default TaskFormView.extend({
     this.trigger('submitted')
   },
   prepareData (data) {
-    let f = assign({}, data)
+    let f = Object.assign({}, data)
     f.type = TaskConstants.TYPE_SCRIPT
     f.grace_time = Number(data.grace_time)
     f.timeout = Number(data.timeout)

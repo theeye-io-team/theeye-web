@@ -1,4 +1,3 @@
-'use strict'
 
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
@@ -131,32 +130,32 @@ export default {
       }
     })
   },
+  //removeFinished (model) {
+  //  XHR.send({
+  //    method: 'delete',
+  //    url: `${model.url()}/job?lifecycle=finished`,
+  //    headers: {
+  //      Accept: 'application/json;charset=UTF-8'
+  //    },
+  //    done (data, xhr) {
+  //      let deletedJobs = []
+  //      model.jobs.forEach(job => {
+  //        if (!LifecycleConstants.inProgress(job.lifecycle)) {
+  //          deletedJobs.push(job.id)
+  //        }
+  //      })
+  //      deletedJobs.forEach(jobId => {
+  //        model.jobs.remove(jobId)
+  //      })
+  //    },
+  //    fail (err, xhr) {
+  //      bootbox.alert('Something goes wrong. Please try again later')
+  //    }
+  //  })
+  //},
   /**
    * model should be a workflow or a task
    */
-  removeFinished (model) {
-    XHR.send({
-      method: 'delete',
-      url: `${model.url()}/job?lifecycle=finished`,
-      headers: {
-        Accept: 'application/json;charset=UTF-8'
-      },
-      done (data, xhr) {
-        let deletedJobs = []
-        model.jobs.forEach(job => {
-          if (!LifecycleConstants.inProgress(job.lifecycle)) {
-            deletedJobs.push(job.id)
-          }
-        })
-        deletedJobs.forEach(jobId => {
-          model.jobs.remove(jobId)
-        })
-      },
-      fail (err, xhr) {
-        bootbox.alert('Something goes wrong. Please try again later')
-      }
-    })
-  },
   cleanQueue (model, query) {
     query || (query = {})
     XHR.send({
@@ -166,15 +165,18 @@ export default {
         Accept: 'application/json;charset=UTF-8'
       },
       done (data, xhr) {
-        let deletedJobs = []
-        model.jobs.forEach(job => {
-          if (!LifecycleConstants.inProgress(job.lifecycle)) {
-            deletedJobs.push(job.id)
+        let jobs = model.jobs.models
+        for (let index = jobs.length - 1; index >=0; index--) {
+          let job = jobs[index]
+          // not inProgress jobs are always removed from the queue.
+          // also check is job.lifecycle was also included in the query
+          if (
+            ! LifecycleConstants.inProgress(job.lifecycle) ||
+            ( query.lifecycle && query.lifecycle.indexOf(job.lifecycle) !== -1 )
+          ) {
+            model.jobs.remove(job.id)
           }
-        })
-        deletedJobs.forEach(jobId => {
-          model.jobs.remove(jobId)
-        })
+        }
       },
       fail (err, xhr) {
         bootbox.alert('Something goes wrong. Please try again later')

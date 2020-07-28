@@ -1,6 +1,5 @@
 import ListItem from 'components/list/item'
 import View from 'ampersand-view'
-import assign from 'lodash/assign'
 import EditButton from './buttons/edit'
 import DeleteButton from './buttons/delete'
 
@@ -39,7 +38,7 @@ export default ListItem.extend({
       }
     }
   },
-  bindings: assign({},ListItem.prototype.bindings,{
+  bindings: Object.assign({},ListItem.prototype.bindings,{
     badge: {
       hook: 'item_badge',
       type: 'attribute',

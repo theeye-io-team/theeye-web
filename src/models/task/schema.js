@@ -196,18 +196,17 @@ const Schema = AppModel.extend({
     })
   },
   buildTaskSummary () {
-    let tagsString
-    if (this.tags.length === 0) {
-      tagsString = ''
-    }
-    if (this.tags.length === 1) {
-      tagsString = `[${this.tags[0]}]`
-    }
-    if (this.tags.length === 2) {
-      tagsString = `[${this.tags[0]}] [${this.tags[1]}]`
-    }
-    if (this.tags.length >= 3) {
-      tagsString = `[${this.tags[0]}] [${this.tags[1]}] [${this.tags[2]}]`
+    let tagsString = ''
+    if (Array.isArray(this.tags)) {
+      if (this.tags.length === 1) {
+        tagsString = `[${this.tags[0]}]`
+      }
+      if (this.tags.length === 2) {
+        tagsString = `[${this.tags[0]}] [${this.tags[1]}]`
+      }
+      if (this.tags.length >= 3) {
+        tagsString = `[${this.tags[0]}] [${this.tags[1]}] [${this.tags[2]}]`
+      }
     }
 
     if (this.hostname) {

@@ -1,6 +1,4 @@
-'use strict'
 
-import extend from 'lodash/assign'
 import Backdrop from 'components/backdrop'
 import './style.css'
 import roboto from './roboto_loader.gif'
@@ -19,7 +17,7 @@ export default Backdrop.extend({
     progress: ['number',false,0],
     show_progress: ['boolean',false,false]
   },
-  bindings: extend({}, Backdrop.prototype.bindings, {
+  bindings: Object.assign({}, Backdrop.prototype.bindings, {
     message: {
       hook: 'message'
     }

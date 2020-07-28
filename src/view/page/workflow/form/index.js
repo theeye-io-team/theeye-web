@@ -12,7 +12,6 @@ import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
 //import WorkflowActions from 'actions/workflow'
 import WorkflowBuilder from './workflow-builder'
-import assign from 'lodash/assign'
 import EventsSelectView from 'view/events-select'
 import bootbox from 'bootbox'
 
@@ -156,7 +155,7 @@ export default FormView.extend({
     next(null,true)
   },
   prepareData (data) {
-    let f = assign({}, data)
+    let f = Object.assign({}, data)
     delete f['advanced-toggler']
     return f
   }

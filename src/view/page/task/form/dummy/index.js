@@ -1,5 +1,4 @@
 import App from 'ampersand-app'
-import assign from 'lodash/assign'
 import HelpTexts from 'language/help'
 import InputView from 'components/input-view'
 import MembersSelectView from 'view/members-select'
@@ -139,7 +138,7 @@ export default TaskFormView.extend({
     this.trigger('submitted')
   },
   prepareData (data) {
-    let f = assign({}, data)
+    let f = Object.assign({}, data)
     f.type = TaskConstants.TYPE_DUMMY
     return f
   },

@@ -1,12 +1,10 @@
 import BaseItem from './base'
-import eventIcons from './event-icons'
 import * as StateConstants from 'constants/states'
-import meaning from './meaning'
 
 export default BaseItem.extend({
   customizeItem () {
-    this.message = meaning['webhook']
-    this.icon = eventIcons['success']
+    this.message = this.model.message
+    this.icon = this.model.event_icon
     this.colorClass = StateConstants.SUCCESS
   }
 })

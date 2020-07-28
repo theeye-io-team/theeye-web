@@ -1,6 +1,5 @@
 import SelectView from 'components/select2-view'
 import HostGroupActions from 'actions/hostgroup'
-import extend from 'lodash/assign'
 import ConfigsView from '../../configs'
 import FileInputView from 'components/input-view/file'
 import bootbox from 'bootbox'
@@ -27,7 +26,7 @@ export default SelectView.extend({
       }
     }
   },
-  bindings: extend({}, SelectView.prototype.bindings, {
+  bindings: Object.assign({}, SelectView.prototype.bindings, {
     has_config: {
       type: 'toggle',
       hook: 'configs-container'

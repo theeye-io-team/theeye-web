@@ -1,7 +1,6 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import FilteredSubcollection from 'ampersand-filtered-subcollection'
-import assign from 'lodash/assign'
 import MonitorButtonsView from './buttons'
 import * as MonitorConstants from 'constants/monitor'
 import rowIconByType from '../row-icon-by-type'

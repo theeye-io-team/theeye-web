@@ -1,5 +1,4 @@
 import App from 'ampersand-app'
-import assign from 'lodash/assign'
 import InputView from 'components/input-view'
 import CheckboxView from 'components/checkbox-view'
 import MembersSelectView from 'view/members-select'
@@ -175,7 +174,7 @@ export default TaskFormView.extend({
     this.trigger('submitted')
   },
   prepareData (data) {
-    let f = assign({}, data)
+    let f = Object.assign({}, data)
     f.notificationTypes = {
       push: true,
       email: data.email,

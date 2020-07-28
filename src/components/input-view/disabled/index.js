@@ -1,6 +1,5 @@
 
 import InputView from '../index'
-import assign from 'lodash/assign'
 
 export default InputView.extend({
   template: `
@@ -18,7 +17,7 @@ export default InputView.extend({
   props: {
     displayValue: 'string'
   },
-  bindings: assign({}, InputView.prototype.bindings, {
+  bindings: Object.assign({}, InputView.prototype.bindings, {
     displayValue: {
       hook: 'value-container'
     }

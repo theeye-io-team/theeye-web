@@ -5,7 +5,6 @@ import bootbox from 'bootbox'
 import { Factory as TaskModelFactory } from 'models/task'
 import * as TaskConstants from 'constants/task'
 import TaskRouter from 'router/task'
-import assign from 'lodash/assign'
 import after from 'lodash/after'
 import TaskFormActions from 'actions/taskform'
 import FileSaver from 'file-saver'
@@ -83,7 +82,7 @@ export default {
       }
     })
     hosts.forEach(host => {
-      let taskData = assign({},data,{ host_id: host })
+      let taskData = Object.assign({},data,{ host_id: host })
       create(taskData,done)
     })
   },

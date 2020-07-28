@@ -1,4 +1,3 @@
-import merge from 'lodash/merge'
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
@@ -223,29 +222,10 @@ const FileItemView = ItemView.extend({
       }
     }
   },
-  bindings: merge({}, ItemView.prototype.bindings, {
+  bindings: Object.assign({}, ItemView.prototype.bindings, {
     'model.filename': { hook: 'filename' },
   })
 })
-
-/**
- *
- * the model data structure changes before creation
- *
- */
-//const ShowTriggerItemView = ItemView.extend({
-//  template: `
-//    <li>
-//      <b><span data-hook="task-name"></span></b>
-//      trigger on <span data-hook="type"></span>
-//      <span data-hook="name"></span>
-//    </li>`,
-//  bindings: merge({}, ItemView.prototype.bindings, {
-//    'model.event_name': { hook: 'name' },
-//    'model.event_type': { hook: 'type' },
-//    'model.task_template.name': { hook: 'task-name' }
-//  })
-//})
 
 const TriggerItemView = ItemView.extend({
   template: `
@@ -256,7 +236,7 @@ const TriggerItemView = ItemView.extend({
       <i class="fa fa-eye" title="More" data-hook="show" style="display:none"></i>
     </li>
   `,
-  bindings: merge({}, ItemView.prototype.bindings, {
+  bindings: Object.assign({}, ItemView.prototype.bindings, {
     'model.task.name': {
       type: 'text',
       hook: 'name'

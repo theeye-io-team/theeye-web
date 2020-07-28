@@ -16,8 +16,6 @@ import AdvancedToggle from 'view/advanced-toggle'
 import FormButtons from 'view/buttons'
 import MonitorFormView from '../monitor-form'
 
-import assign from 'lodash/assign'
-
 export default MonitorFormView.extend({
   initialize (options) {
     let resource = this.model

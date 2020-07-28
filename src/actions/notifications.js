@@ -3,8 +3,8 @@ import XHR from 'lib/xhr'
 import { Model as Notification } from 'models/notification'
 import DesktopNotification from 'lib/desktop-notification'
 import notificationIcon from 'assets/images/theeyeonly_medium.png'
-import messageFactory from 'models/notification/messageFactory'
-import titleFactory from 'models/notification/titleFactory'
+//import messageFactory from 'models/notification/messageFactory'
+//import titleFactory from 'models/notification/titleFactory'
 import * as LifecycleConstants from 'constants/lifecycle'
 import * as NotificationConstants from 'constants/notifications'
 import * as StateConstants from 'constants/states'
@@ -75,8 +75,10 @@ export default {
       if (notification.read) { return }
 
       DesktopNotification.create({
-        message: messageFactory(notification),
-        title: titleFactory(notification),
+        //message: messageFactory(notification),
+        //title: titleFactory(notification),
+        message: notification.message,
+        title: notification.title,
         icon: notificationIcon,
         tag: 'TheEyeNotification'
       })
