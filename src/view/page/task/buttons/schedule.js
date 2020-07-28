@@ -178,7 +178,7 @@ const ScheduleForm = FormView.extend({
     })
 
     let minMaxTable = {}
-    let now = moment().add(5, 'minutes')
+    let now = moment().add(2, 'minutes')
     minMaxTable[ now.format('YYYY-MM-DD') ] = {
       minTime: now.format('HH:mm'),
       maxTime: "23:59"
@@ -195,7 +195,7 @@ const ScheduleForm = FormView.extend({
       label: 'When shall I run first? *',
       name: 'datetime',
       dateFormat: 'F J, Y at H:i',
-      value: new Date( moment().add(5, 'minutes').format() ),
+      value: new Date( moment().add(2, 'minutes').format() ),
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label',
       placeholder: 'click to pick',
