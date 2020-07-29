@@ -24,19 +24,26 @@ export default {
         if (xhr.status === 200) {
           App.state.session.access_token = response.access_token
         } else {
-          bootbox.alert('Login error, please try again')
+          bootbox.alert('Login error, try again later.')
         }
       },
       fail: (err,xhr) => {
         App.state.loader.visible = false
         var errorMsg = 'Login error, please try again'
-        if (xhr.status == 400) {
-          errorMsg = 'Login error, invalid credentials'
+        if (xhr.status === 401) {
+          bootbox.alert('Invalid credentials.')
+        } else if (xhr.status === 403) {
+          bootbox.alert('The account is locked.')
+        } else if (xhr.status == 400) {
           if (xhr.response && xhr.response.error == 'inactiveUser') {
             errorMsg = 'The account you are trying to use is not verified yet. <br> We sent you a new account verification email. <br> Follow the instructions to complete this account registration.'
+          } else {
+            errorMsg = 'Login error, invalid credentials'
           }
+          bootbox.alert(errorMsg)
+        } else {
+          bootbox.alert('Login error, try again later.')
         }
-        bootbox.alert(errorMsg)
       }
     })
   },

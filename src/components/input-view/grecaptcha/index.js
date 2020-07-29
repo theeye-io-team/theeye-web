@@ -5,9 +5,12 @@ const logger = loggerModule('components:input:grecaptcha')
 
 let grecaptcha
 try {
+  if (App.config.grecaptcha.enabled === false) {
+    throw new Error('grecaptcha disabled by config.')
+  }
   grecaptcha = require('grecaptcha')
 } catch (err) {
-  logger.warn('grecaptcha disabled. component cannot load required dependency')
+  logger.warn('grecaptcha disabled. cannot load required dependency')
 }
 
 const RecaptchaInputView = InputView.extend({
@@ -32,6 +35,7 @@ const RecaptchaInputView = InputView.extend({
     valid: {
       deps: ['value'],
       fn () {
+        if (!grecaptcha) return true
         return (this.value !== undefined)
       }
     }

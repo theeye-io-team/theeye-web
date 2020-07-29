@@ -26,8 +26,8 @@ export default View.extend({
       }
     ]
   },
-  initialize () {
-    this.template = `
+  template: () => {
+    return `
       <div class="register-container container">
         <div class="register-header">
           <div class="row">
@@ -113,6 +113,8 @@ export default View.extend({
       </div>
 
     `
+  },
+  initialize () {
     this.formSwitch = App.state.register.result
     this.listenTo(App.state.register, 'change:result', () => {
       this.formSwitch = App.state.register.result

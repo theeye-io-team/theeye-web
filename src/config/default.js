@@ -1,5 +1,6 @@
 export default {
   grecaptcha: {
+    enabled: false,
     sitekey: '6LfaIrsUAAAAAKmZPeN5ZqmFDvJZLEdtK0dev2eV',
   },
   docs: 'https://documentation.theeye.io',

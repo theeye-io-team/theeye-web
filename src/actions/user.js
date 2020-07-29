@@ -31,11 +31,13 @@ export default {
         App.state.loader.visible = false
         let user = new App.Models.User.Model(response)
         App.state.admin.users.add(user)
-        bootbox.alert('User created')
+        App.state.alerts.info('success')
+        App.navigate('admin/member')
+        bootbox.alert('This is the Members Admin Page, the new user does not belong to any organization. Assign it NOW or it will not be able to login!')
       },
       fail: (err,xhr) => {
         App.state.loader.visible = false
-        bootbox.alert('Error creating user')
+        bootbox.alert(err.message)
       }
     })
   },
@@ -48,12 +50,12 @@ export default {
       collection: App.state.admin.user,
       success: function () {
         App.state.loader.visible = false
-        bootbox.alert('User Updated')
+        App.state.alerts.info('success')
         App.state.admin.users.add(user, {merge: true})
       },
-      error: function (err) {
+      error: (err) => {
         App.state.loader.visible = false
-        bootbox.alert('Error updating user')
+        bootbox.alert(err.message)
       }
     })
   },
@@ -65,12 +67,12 @@ export default {
     user.destroy({
       success: function () {
         App.state.loader.visible = false
-        bootbox.alert('User Deleted')
+        App.state.alerts.info('success')
         App.state.admin.users.remove(user)
       },
-      error: function (err) {
+      error: (err) => {
         App.state.loader.visible = false
-        bootbox.alert('Error removing user')
+        bootbox.alert(err.message)
       }
     })
   },
@@ -84,13 +86,13 @@ export default {
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
-      done: (response,xhr) => {
+      done: (response, xhr) => {
         App.state.loader.visible = false
         bootbox.alert('Invitation sent.')
       },
-      fail: (err,xhr) => {
+      fail: (err, xhr) => {
         App.state.loader.visible = false
-        bootbox.alert('Error sending invitation')
+        bootbox.alert(err.message)
       }
     })
   }
