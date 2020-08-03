@@ -90,6 +90,8 @@ export default {
      * job.output is an array of arguments
      *
      */
+    let popupContent
+    // search on output for backwards compatibility
     let output = job.output.map(arg => {
       try {
         return JSON.parse(arg)
@@ -101,7 +103,16 @@ export default {
 
     let popup = output.find(out => out.popup_component)
     if (popup) {
-      App.actions.popup.show(popup.popup_component, `Message from ${job.name}`)
+      popupContent = popup.popup_component
+    }
+
+    // search on result compoment
+    if (job.result.components && job.result.components.popup) {
+      popupContent = job.result.components.popup
+    }
+
+    if (popupContent) {
+      App.actions.popup.show(popupContent, `Message from ${job.name}`)
     }
   },
   toggleInboxOpen () {

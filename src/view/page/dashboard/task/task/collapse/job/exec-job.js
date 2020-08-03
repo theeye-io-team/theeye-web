@@ -4,9 +4,11 @@ import DynamicForm from 'view/dynamic-form'
 import Modalizer from 'components/modalizer'
 import { BaseExec } from '../../exec-task.js'
 import * as FIELD from 'constants/field'
+import * as ComponentConstants from 'constants/component'
 import moment from 'moment'
 import isURL from 'validator/lib/isURL'
 import * as JobConstants from 'constants/job'
+import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
 
 const ExecJob = BaseExec.extend({
   execute () {
@@ -44,7 +46,13 @@ const ExecOnHoldJob = BaseExec.extend({
     }
   },
   getDynamicArguments (next) {
-    const task = new App.Models.Task.Factory(this.model.task)
+    let taskModel = this.model.task.serialize()
+    delete taskModel.id
+    const task = new App.Models.Task.Factory(taskModel)
+    if (task.user_inputs) {
+      // check previous job result for components
+      this.checkComponents(task)
+    }
     const form = new DynamicForm({ fieldsDefinitions: task.task_arguments.models })
     const modal = new Modalizer({
       buttons: true,
@@ -192,8 +200,64 @@ const ExecOnHoldJob = BaseExec.extend({
         }
       }
     })
+  },
+  checkComponents (task) {
+    // get previous job
+    let workflowJob = App.state.jobs.get(this.model.workflow_job_id)
+    let previousJob = workflowJob.getPreviousJob()
+    // get previous job components
+    if (previousJob && previousJob.result && previousJob.result.components) {
+      let components = previousJob.result.components
+      for(let componentName in components) {
+        ComponentFactory(componentName, components[componentName], task)
+      }
+    }
   }
 })
+
+const ComponentsMap = {}
+ComponentsMap[ComponentConstants.INPUT_OPTIONS] = function (componentData, task) {
+  if (componentData && Array.isArray(componentData) && componentData.length > 0) {
+    componentData.forEach((optionsComponent) => {
+      if (optionsComponent.order && Array.isArray(optionsComponent.options)) {
+        let taskArgument = task.task_arguments.models[optionsComponent.order-1]
+        if (taskArgument && taskArgument.type === FIELD.TYPE_SELECT) {
+          // set options
+          taskArgument.options.set()
+          optionsComponent.options.forEach((option, i) => {
+            option.order = i + 1
+            let optionModel = new ArgumentValueOption(option)
+            taskArgument.options.add(optionModel)
+          })
+        }
+      }
+    })
+  }
+}
+
+ComponentsMap[ComponentConstants.INPUT_REMOTE_OPTIONS] = function (componentData, task) {
+  if (componentData && Array.isArray(componentData) && componentData.length > 0) {
+    componentData.forEach((remoteOptionsComponent) => {
+      if (remoteOptionsComponent.order) {
+        let taskArgument = task.task_arguments.models[remoteOptionsComponent.order-1]
+        if (taskArgument && taskArgument.type === FIELD.TYPE_REMOTE_OPTIONS) {
+          // set remote options
+          if (remoteOptionsComponent.endpointUrl) taskArgument.endpoint_url = remoteOptionsComponent.endpointUrl
+          if (remoteOptionsComponent.idAttribute) taskArgument.id_attribute = remoteOptionsComponent.idAttribute
+          if (remoteOptionsComponent.textAttribute) taskArgument.text_attribute = remoteOptionsComponent.textAttribute
+        }
+      }
+    })
+  }
+}
+
+const ComponentFactory = (name, options, task) => {
+  const ComponentHandler = ComponentsMap[name]
+  if (!ComponentHandler) {
+    return
+  }
+  ComponentHandler(options, task)
+}
 
 const buildApprovalMessage = (model) => {
   let params = model.task.task_arguments

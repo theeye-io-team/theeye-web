@@ -119,7 +119,8 @@ const ScriptJobResult = State.extend({
     stdout: ['string',false],
     stderr: ['string',false],
     log: ['string',false],
-    times: ['object',false,()=>{ return {} }]
+    times: ['object',false,()=>{ return {} }],
+    components: ['object',false,()=>{ return {} }]
   }
 })
 
@@ -381,6 +382,12 @@ const WorkflowJob = BaseJob.extend({
       return false
     }
     return (user.email.toLowerCase() === this.user.email.toLowerCase())
+  },
+  getPreviousJob () {
+    let previousJob = this.jobs.models[this.jobs.length-2]
+    if (previousJob) {
+      return previousJob
+    }
   }
 })
 
