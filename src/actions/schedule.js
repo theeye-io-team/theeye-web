@@ -3,12 +3,17 @@ import bootbox from 'bootbox'
 import App from 'ampersand-app'
 
 export default {
-  create (taskId, data) {
-    const task = App.state.tasks.get(taskId)
+  create (model, data) {
+    // switch (model.type) ... task / workflow
+    const task = App.state.tasks.get(model.id)
+
     XHR.send({
       url: `${task.url()}/schedule`,
       method: 'POST',
-      jsonData: data,
+      jsonData: {
+        runDate: new Date(data.datetime),
+        repeatEvery: data.frequency
+      },
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },

@@ -36,20 +36,7 @@ export default PanelButton.extend({
       event.stopPropagation()
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
-      // TODO: schedules for dynamically argumented
-      // tasks are not supported
-      if (this.model.hasDynamicArguments) {
-        let deniedMessage = [
-          'Scheduling tasks with dynamic arguments',
-          '(input/select) is not supported'
-        ].join(' ')
-        bootbox.alert(deniedMessage)
-        return
-      }
-
-      const form = new ScheduleForm({
-        model: this.model
-      })
+      const form = new ScheduleForm({ model: this.model })
 
       const modal = new Modalizer({
         buttons: false,
@@ -110,6 +97,7 @@ const DateEntry = View.extend({
     }
   }
 })
+
 const SchedulePreview = View.extend({
   props: {
     visible: ['boolean', true, false]
@@ -125,8 +113,9 @@ const SchedulePreview = View.extend({
         <h4>Next 5 run dates</h4>
         <ul data-hook="date-list"></ul>
       </div>
-    </div>`,
-  render: function () {
+    </div>
+  `,
+  render () {
     this.renderWithTemplate(this)
     this.renderCollection(
       this.collection,
@@ -139,6 +128,7 @@ const SchedulePreview = View.extend({
     })
   }
 })
+
 const ScheduleForm = FormView.extend({
   props: {
     isCron: ['boolean', true, false]
@@ -147,8 +137,8 @@ const ScheduleForm = FormView.extend({
     this.nextDates = new AmpersandCollection()
 
     const frequencyInput = new InputView({
-      label: 'Then repeat every',
       name: 'frequency',
+      label: 'Then repeat every',
       required: false,
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label',
@@ -185,6 +175,7 @@ const ScheduleForm = FormView.extend({
     }
 
     const initialDateInput = new Datepicker({
+      name: 'datetime',
       minDate: 'today',
       enableTime: true,
       plugins: [
@@ -193,7 +184,6 @@ const ScheduleForm = FormView.extend({
       required: true,
       altInput: false,
       label: 'When shall I run first? *',
-      name: 'datetime',
       dateFormat: 'F J, Y at H:i',
       value: new Date( moment().add(2, 'minutes').format() ),
       invalidClass: 'text-danger',
@@ -223,11 +213,12 @@ const ScheduleForm = FormView.extend({
       initialDateInput,
       frequencyInput
     ]
+
     FormView.prototype.initialize.apply(this, arguments)
     this.listenTo(frequencyInput, 'change:value', this.onFrequencyChange)
     this.listenTo(initialDateInput, 'change:value', this.onFrequencyChange)
   },
-  onFrequencyChange: function (inputView, inputValue) {
+  onFrequencyChange (inputView, inputValue) {
     // since this handle serves as listener for both
     // inputViews don't trust arguments,
     // get value from input view as a 'this' reference
@@ -280,24 +271,25 @@ const ScheduleForm = FormView.extend({
   },
   submit (event) {
     event.preventDefault()
-
+    event.stopPropagation()
     this.beforeSubmit()
-    if (!this.valid) return
+    if (!this.valid) { return }
 
     const data = this.prepareData(this.data)
-
-    App.actions.scheduler.create(this.model.id, data)
+    App.actions.scheduler.create(this.model, data)
     this.trigger('submitted')
   },
   computeFromInterval (initialDate, interval) {
     var lastRun = initialDate || new Date()
     var nextRunAt
     var timezone = moment.tz.guess()
-    function dateForTimezone (d) {
+
+    const dateForTimezone = (d) => {
       d = moment(d)
       if (timezone) d.tz(timezone)
       return d
     }
+
     this.isCron = false
 
     lastRun = dateForTimezone(lastRun)
@@ -312,13 +304,11 @@ const ScheduleForm = FormView.extend({
       nextRunAt = nextDate.valueOf()
     } catch (e) {
       // Nope, humanInterval then!
-      try {
-        if (!initialDate && humanInterval(interval)) {
-          nextRunAt = lastRun.valueOf()
-        } else {
-          nextRunAt = lastRun.valueOf() + humanInterval(interval)
-        }
-      } catch (e) {}
+      if (!initialDate && humanInterval(interval)) {
+        nextRunAt = lastRun.valueOf()
+      } else {
+        nextRunAt = lastRun.valueOf() + humanInterval(interval)
+      }
     } finally {
       if (isNaN(nextRunAt)) {
         nextRunAt = undefined
@@ -327,16 +317,9 @@ const ScheduleForm = FormView.extend({
     return nextRunAt
   },
   prepareData (data) {
-    return Object.assign(
-      {},
-      data,
-      {
-        task: this.model.id,
-        scheduleData: {
-          repeatEvery: data.frequency,
-          runDate: new Date(data.datetime)
-        }
-      }
-    )
+    return {
+      frequency: data.frequency,
+      datetime: data.datetime
+    }
   }
 })
