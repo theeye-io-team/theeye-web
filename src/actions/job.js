@@ -5,7 +5,7 @@ import bootbox from 'bootbox'
 import * as TaskConstants from 'constants/task'
 import * as LifecycleConstants from 'constants/lifecycle'
 import * as JobConstants from 'constants/job'
-import { ExecOnHoldJob } from 'view/page/dashboard/task/task/collapse/job/exec-job'
+import { ExecOnHoldJob } from 'view/page/dashboard/panel/workflow/element/task/collapse/job/exec-job'
 import { eachSeries, each } from 'async'
 import qs from 'qs'
 

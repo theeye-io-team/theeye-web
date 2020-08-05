@@ -9,7 +9,7 @@ import after from 'lodash/after'
 import TaskFormActions from 'actions/taskform'
 import FileSaver from 'file-saver'
 const emptyCallback = () => {}
-import { ExecTask, ExecTaskWithNoHost } from 'view/page/dashboard/task/task/exec-task.js'
+import { ExecTask, ExecTaskWithNoHost } from 'view/page/dashboard/panel/workflow/element/task/exec-task.js'
 import { Model as File } from 'models/file'
 
 import loggerModule from 'lib/logger'; const logger = loggerModule('actions:tasks')

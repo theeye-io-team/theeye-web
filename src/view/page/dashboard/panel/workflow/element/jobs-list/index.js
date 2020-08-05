@@ -1,5 +1,5 @@
 import View from 'ampersand-view'
-import DeleteJobsButton from 'view/page/dashboard/task/delete-jobs-button'
+import DeleteJobsButton from 'view/page/dashboard/panel/workflow/element/delete-jobs-button'
 import EmptyJobView from '../empty-job-view'
 import Acls from 'lib/acls'
 import './styles.less'

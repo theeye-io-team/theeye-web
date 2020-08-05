@@ -8,7 +8,7 @@ import TaskJobRow from '../task/collapse/job'
 import JobExecButton from '../task/collapse/job/job-exec-button'
 import EmptyJobView from '../empty-job-view'
 import moment from 'moment'
-import JobsList from 'view/page/dashboard/task/jobs-list'
+import JobsList from 'view/page/dashboard/panel/workflow/element/jobs-list'
 
 // menu buttons
 import RemoveWorkflowButton from 'view/page/workflow/buttons/remove'

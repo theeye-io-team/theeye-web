@@ -1,26 +1,22 @@
-'use strict'
 
 import App from 'ampersand-app'
 import config from 'config'
 import View from 'ampersand-view'
 import $ from 'jquery'
-import TaskRowView from './task'
 import MonitorRowView from './monitor'
 import IndicatorRowView from './indicator'
-import SearchboxActions from 'actions/searchbox'
+import WorkflowsPanelView from './panel/workflow'
 
 import loggerModule from 'lib/logger'; const logger = loggerModule('view:page:dashboard')
 import ItemsFolding from './panel-items-fold'
 
 import MonitorsOptions from './monitors-options'
-import TasksOptions from './tasks-options'
 import NotificationsOptions from './notifications-options'
 import MonitoringOboardingPanel from './monitoring-onboarding'
-import TasksOboardingPanel from './tasks-onboarding'
 import TabsView from './tabs'
 import * as TabsConstants from 'constants/tabs'
 import InboxView from './inbox'
-import ResultView from './result'
+import SearchResultView from './search-result'
 
 import onBoarding from './onboarding'
 import './styles.less'
@@ -139,7 +135,7 @@ export default View.extend({
   render () {
     this.renderWithTemplate()
 
-    SearchboxActions.emptyRowsViews()
+    App.actions.searchbox.emptyRowsViews()
 
     this.listenToAndRun(App.state.dashboard, 'change:indicatorsDataSynced', () => {
       if (App.state.dashboard.indicatorsDataSynced === true) {
@@ -158,33 +154,26 @@ export default View.extend({
 
     this.listenToAndRun(App.state.dashboard, 'change:tasksDataSynced', () => {
       if (App.state.dashboard.tasksDataSynced === true) {
-        this.renderTasksPanel()
+
+        this.renderPanel({
+          name: TabsConstants.WORKFLOWS,
+          container: this.queryByHook('workflows-tab'),
+          view: new WorkflowsPanelView({ collection: this.tasks })
+        })
+
         this.stopListening(App.state.dashboard, 'change:tasksDataSynced')
       }
     })
 
     this.onBoarding = new onBoarding()
 
-    this.renderSubview(
-      new TabsView(),
-      this.queryByHook('tabs-container')
-    )
-
-    // this.listenToAndRun(App.state.dashboard, 'change:dataSynced', () => {
-    //   if (App.state.dashboard.dataSynced) {
-    //
-    //     this.stopListening(App.state.dashboard, 'change:dataSynced')
-    //   }
-    // })
+    this.renderSubview(new TabsView(), this.queryByHook('tabs-container'))
 
     let indicatorsTabView = this.queryByHook('indicators-tabview')
     this.tabContentViews.push({name: TabsConstants.INDICATORS, view: indicatorsTabView})
 
     let monitorsTabView = this.queryByHook('monitors-tabview')
     this.tabContentViews.push({name: TabsConstants.MONITORS, view: monitorsTabView})
-
-    let workflowsTabView = this.queryByHook('workflows-tabview')
-    this.tabContentViews.push({name: TabsConstants.WORKFLOWS, view: workflowsTabView})
 
     let notificationsTabView = this.queryByHook('notifications-tabview')
     this.tabContentViews.push({name: TabsConstants.NOTIFICATIONS, view: notificationsTabView})
@@ -200,9 +189,13 @@ export default View.extend({
     })
 
     this.renderNotificationsPanel()
-    this.renderResultView()
+    this.renderSearchResultView()
 
     document.getElementsByClassName('navbar')[0].style.display = 'block'
+  },
+  renderPanel ({ name, container, view }) {
+    this.renderSubview(view, container)
+    this.tabContentViews.push({ name, view: view.el })
   },
   toggleUpAndRunningSign () {
     // upandrunning is disabled
@@ -314,7 +307,7 @@ export default View.extend({
       App.state.dashboard.groupResources()
     })
 
-    SearchboxActions.addRowsViews(this.monitorRows.views)
+    App.actions.searchbox.addRowsViews(this.monitorRows.views)
   },
   renderIndicatorsPanel () {
     this.indicatorsRows = this.renderCollection(
@@ -326,7 +319,7 @@ export default View.extend({
       }
     )
 
-    SearchboxActions.addRowsViews(this.indicatorsRows.views)
+    App.actions.searchbox.addRowsViews(this.indicatorsRows.views)
   },
   renderNotificationsPanel () {
     this.inbox = new InboxView({collection: this.notifications})
@@ -340,60 +333,8 @@ export default View.extend({
       this.queryByHook('notifications-panel-header')
     )
   },
-  renderResultView () {
-    this.resultView = new ResultView()
-    this.registerSubview(this.resultView)
-  },
-  /**
-   *
-   * should be converted into a Tasks Panel View
-   *
-   */
-  renderTasksPanel () {
-    this.renderSubview(
-      new TasksOptions(),
-      this.queryByHook('tasks-panel-header')
-    )
-
-    this.taskRows = this.renderCollection(
-      this.tasks,
-      TaskRowView,
-      this.queryByHook('tasks-container'),
-      {
-        emptyView: TasksOboardingPanel
-      }
-    )
-
-    const rowtooltips = this.query('[data-hook=tasks-container] .tooltiped')
-    $(rowtooltips).tooltip()
-
-    SearchboxActions.addRowsViews(this.taskRows.views)
-
-    //this.tasksFolding = this.renderSubview(
-    //  new ItemsFolding({}),
-    //  this.queryByHook('tasks-fold-container')
-    //)
-
-    //this.listenToAndRun(this.tasksFolding, 'change:visible', () => {
-    //  this.showTasksPanel = this.tasksFolding.visible
-    //})
-
-    //this.taskRows.views.forEach(row => {
-    //  let task = row.model
-    //  if (!task.canExecute) {
-    //    this.tasksFolding.append(row.el)
-    //  }
-    //})
-
-    //this.listenToAndRun(App.state.tasks, 'add sync reset', () => {
-    //  if (this.tasksFolding) {
-    //    if (App.state.tasks.length > 0) {
-    //      this.tasksFolding.showButton()
-    //    } else {
-    //      this.tasksFolding.hideButton()
-    //    }
-    //  }
-    //})
+  renderSearchResultView () {
+    this.renderSubview(new SearchResultView())
   }
 })
 
@@ -460,25 +401,9 @@ const pageTemplate = () => {
       </div>
       <!-- /MONITORS -->
 
-      <!-- TASKS -->
-      <div data-hook="workflows-tabview">
-        <div data-hook="tasks-panel">
-          <section class="col-md-12 tasks-panel events-panel">
-            <div class="section-header">
-              <div data-hook="tasks-panel-header" class="options-container">
-                <a data-hook="toggle-hidden-tasks" href="#" class="fa fa-chevron-right rotate section-toggle"></a>
-              </div>
-            </div>
-            <div class="section-container">
-              <div class="panel-group" id="task-accordion" role="tablist" aria-multiselectable="true">
-                <section data-hook="tasks-container"> </section>
-                <section data-hook="tasks-fold-container"> </section>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-      <!-- /TASKS -->
+      <!-- WORKFLOWS -->
+      <div data-hook="workflows-tab"> </div>
+      <!-- /WORKFLOWS -->
       <!-- NOTIFICATIONS -->
       <div data-hook="notifications-tabview">
         <div data-hook="notifications-panel">

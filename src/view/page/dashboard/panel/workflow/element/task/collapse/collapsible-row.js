@@ -7,12 +7,13 @@ import EditTaskButton from 'view/page/task/buttons/edit'
 import CopyTaskButton from 'view/page/task/buttons/copy'
 import DeleteTaskButton from 'view/page/task/buttons/delete'
 import ExportTaskButton from 'view/page/task/buttons/export'
-import CollapsibleRow from 'view/page/dashboard/task/collapsible-row'
 import Schedules from 'view/page/task/schedules'
 import Acls from 'lib/acls'
 import $ from 'jquery'
 import JobRow from './job'
-import JobsList from 'view/page/dashboard/task/jobs-list'
+
+import CollapsibleRow from '../../collapsible-row'
+import JobsList from '../../jobs-list'
 
 export default CollapsibleRow.extend({
   onClickToggleCollapse (event) {

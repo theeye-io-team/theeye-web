@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import $ from 'jquery'
 import FilteredCollection from 'ampersand-filtered-subcollection'
-import TaskRowView from '../../task'
+import PanelElementView from 'view/page/dashboard/panel/workflow/element'
 
 const EmptyResultView = View.extend({
   template: `<div class="no-result">No matches found</div>`
@@ -37,7 +37,7 @@ export default View.extend({
   renderWorkflowsPanel () {
     this.workflowsRows = this.renderCollection(
       this.workflows,
-      TaskRowView,
+      PanelElementView,
       this.queryByHook('tasks-container'),
       {
         emptyView: EmptyResultView
