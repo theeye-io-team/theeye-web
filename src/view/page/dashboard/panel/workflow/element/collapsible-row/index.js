@@ -1,12 +1,13 @@
 import View from 'ampersand-view'
-import TagView from 'components/tag'
+//import TagView from 'components/tag'
+//import HelpIconView from 'components/help-icon'
 import './styles.less'
-import HelpIconView from 'components/help-icon'
 
 /**
  * tasks rows
  */
 export default View.extend({
+  /**
   template: `
     <div class="taskRow">
       <div class="tasks-container panel panel-default">
@@ -64,6 +65,36 @@ export default View.extend({
           <div class="panel-body" data-hook="collapse-container-body"> </div>
         </div>
         <!-- } END Collapsed Container -->
+      </div>
+    </div>
+  `,
+  */
+  template: `
+    <div data-component="panel-element-component" class="grid-element">
+      <span data-hook="tags"></span>
+      <span data-hook="name" title=""></span>
+      <span data-hook="help"></span>
+      <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
+
+
+      <div class="dropdown">
+        <button class="btn dropdown-toggle btn-primary"
+          type="button"
+          data-toggle="dropdown"
+          aria-haspopup="true"
+          aria-expanded="true">
+          <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+        </button>
+        <ul data-hook="buttons-container" class="dropdown-menu"></ul>
+      </div>
+
+      <!-- RUN TASK BUTTON -->
+      <div data-hook="execute-button-container" class="panel-item icons run-task-icon">
+      </div>
+
+      <!-- HAS SCHEDULE -->
+      <div data-hook="has-schedule" class="schedule-icon-container" title="Scheduled">
+        <i class="fa fa-clock-o" aria-hidden="true"></i>
       </div>
     </div>
   `,
@@ -186,13 +217,13 @@ export default View.extend({
   render () {
     this.renderWithTemplate()
     this.renderButtons()
-    this.renderCollapsedContent()
-    this.renderTags()
-    this.renderHelp()
+    //this.renderCollapsedContent()
+    //this.renderTags()
+    //this.renderHelp()
 
-    let $el = $(this.query('.panel-collapse.collapse'))
-    $el.on('show.bs.collapse', () => { this.collapsed = false })
-    $el.on('hide.bs.collapse', () => { this.collapsed = true  })
+    //let $el = $(this.query('.panel-collapse.collapse'))
+    //$el.on('show.bs.collapse', () => { this.collapsed = false })
+    //$el.on('hide.bs.collapse', () => { this.collapsed = true  })
   },
   renderButtons () {
     return

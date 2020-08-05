@@ -1,30 +1,26 @@
 import App from 'ampersand-app'
 import TasksOptions from './tasks-options'
-import TaskRowView from './element'
+import PanelElementView from './element'
 import TasksOboardingPanel from './tasks-onboarding'
 import $ from 'jquery'
 import View from 'ampersand-view'
+import './styles.less'
 
 export default View.extend({
   template: `
-    <div data-hook="tasks-panel">
-      <section class="col-md-12 tasks-panel events-panel">
-        <div class="section-header">
-          <div data-hook="tasks-panel-header" class="options-container">
+    <div data-component="panel-component">
+      <section>
+        <div class="header">
+          <div data-hook="tasks-panel-header">
             <a data-hook="toggle-hidden-tasks" href="#" class="fa fa-chevron-right rotate section-toggle"></a>
           </div>
         </div>
-        <div class="section-container">
-          <div class="panel-group" id="task-accordion" role="tablist" aria-multiselectable="true">
-            <section data-hook="tasks-container"> </section>
-            <section data-hook="tasks-fold-container"> </section>
-          </div>
+        <div class="container">
+          <section class="grid" data-hook="panel-container"> </section>
         </div>
       </section>
     </div>
   `,
-  initialize () {
-  },
   render () {
     this.renderWithTemplate(this)
 
@@ -35,8 +31,8 @@ export default View.extend({
 
     this.taskRows = this.renderCollection(
       this.collection,
-      TaskRowView,
-      this.queryByHook('tasks-container'),
+      PanelElementView,
+      this.queryByHook('panel-container'),
       {
         emptyView: TasksOboardingPanel
       }

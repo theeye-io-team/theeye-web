@@ -1,0 +1,22 @@
+[data-component=panel-component] {
+  .container {
+    margin-top: 50px;
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      /* This is better for small screens, once min() is better supported */
+      /* grid-template-columns: repeat(auto-fill, minmax(min(200px, 100%), 1fr)); */
+      grid-gap: 1rem;
+      /* This is the standardized property now, but has slightly less support */
+      /* gap: 1rem */
+
+      .grid-element {
+        color: #000;
+        background: #EDE7F6;
+        padding: 1.5rem;
+        border-radius: 1rem;
+      }
+    }
+  }
+}

@@ -1,14 +1,50 @@
-.schedule-icon-container {
-  float: right;
-  padding: 5px 10px;
-  width: 36px;
-  height: 34px;
-  line-height: 22px;
-  color: #777;
-}
-
-@media (max-width:767px) {
+[data-component=panel-element-component] {
   .schedule-icon-container {
-    display: none;
+    float: right;
+    padding: 5px 10px;
+    width: 36px;
+    height: 34px;
+    line-height: 22px;
+    color: #777;
+  }
+
+  @media (max-width:767px) {
+    .schedule-icon-container {
+      display: none;
+    }
+  }
+
+  .dropdown {
+    button.dropdown-toggle {
+      margin-left:5px;
+    }
+
+    ul.dropdown-menu {
+      background-color:#304269;
+      //background:none;
+      left:inherit;
+      margin:0;
+      min-width:inherit;
+      padding:0;
+      right:0;
+      text-align:center;
+      //width: 160px;
+      width: 40px;
+      z-index: 1001;
+
+      .dropdown-icon {
+        padding-right: 5px;
+      }
+
+      li .btn {
+        text-align: left;
+        padding: 5px 10px;
+        width: 155px;
+        height: 34px;
+        border-radius: unset;
+
+        a { cursor: pointer; }
+      }
+    }
   }
 }
