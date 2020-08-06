@@ -1,8 +1,12 @@
 
 import App from 'ampersand-app'
 import Events from 'ampersand-events'
+import search from 'lib/query-params'
 
 class Route {
+  constructor () {
+    this.query = search.get()
+  }
   /**
    * @property {String} name
    * @param {Object} options

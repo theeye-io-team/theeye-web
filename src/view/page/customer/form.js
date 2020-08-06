@@ -3,6 +3,7 @@ import InputView from 'components/input-view'
 import CheckboxView from 'components/checkbox-view'
 import SelectView from 'components/select2-view'
 import isURL from 'validator/lib/isURL'
+import isEmail from 'validator/lib/isEmail'
 
 import App from 'ampersand-app'
 
@@ -25,9 +26,8 @@ export default FormView.extend({
         validityClassSelector: '.control-label',
         readonly: !isNew,
         tests: [
-          function (value) {
-            let re = /^[a-zA-Z0-9._]+$/
-            if (!re.test(value)) {
+          (value) => {
+            if (!isEmail(`${value}@theeye.io`)) {
               return 'Please provide a valid customer name'
             }
           }

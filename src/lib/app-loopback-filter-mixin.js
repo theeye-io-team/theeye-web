@@ -13,7 +13,7 @@ export default {
    *
    *
    */
-  initialize: function (values,options) {
+  initialize (values, options) {
     AmpersandCollection.prototype.initialize.apply(this,arguments)
 
     this.filters = {}
@@ -31,8 +31,9 @@ export default {
    * Everytime the collection is fetched the same filters will be applied
    *
    */
-  fetch: function (options) {
+  fetch (options) {
     var query = {}
+
     if (this.filters) {
       query = {
         data: {
@@ -41,6 +42,7 @@ export default {
         }
       }
     }
+
     return AmpersandCollection.prototype
       .fetch.call(this, Object.assign({}, query, options))
   },
