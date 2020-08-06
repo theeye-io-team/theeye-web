@@ -3,7 +3,7 @@ import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 
 export default {
-  getExampleScript(extension) {
+  loadBoilerplate (extension) {
     App.state.loader.visible = true
     XHR.send({
       responseType: 'text',

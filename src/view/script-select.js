@@ -89,7 +89,7 @@ export default SelectView.extend({
         // if edit/create script, the id should be set
         // then re-render select2 component
         this.renderSelect2Component(file.id)
-        if(App.state.onboarding.onboardingActive) {
+        if (App.state.onboarding.onboardingActive) {
           OnboardingActions.showTaskLastStep()
         }
 

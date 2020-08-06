@@ -1,6 +1,5 @@
 import App from 'ampersand-app'
 import FormView from 'ampersand-form-view'
-import View from 'ampersand-view'
 import InputView from 'components/input-view'
 import TextareaView from 'components/input-view/textarea'
 import FormButtons from 'components/form/buttons'
@@ -8,13 +7,15 @@ import FileInputView from 'components/input-view/file'
 import CommonButton from 'components/common-button'
 import { EditorView } from './editor'
 import ScriptOnBoarding from '../scriptOnboarding'
+import HelpIcon from 'components/help-icon'
+import HelpTexts from 'language/help'
+import RandomTipView from './random-tip'
 
 export default FormView.extend({
   initialize (options) {
     // needed for codemirror listener
     this.onEditorDrop = this.onEditorDrop.bind(this)
-    this.loadExample = this.loadExample.bind(this)
-
+    this.loadBoilerplate = this.loadBoilerplate.bind(this)
     this.filenameInput = new FilenameInputView({ value: this.model.filename })
 
     // force check
@@ -29,7 +30,9 @@ export default FormView.extend({
         value: this.model.description
       }),
       new FileInputView({
-        label: 'In case you\'re lazy...',
+        name: 'script',
+        label: 'Have a script file?',
+        buttonLabel: 'Click here to load it',
         callback: (file) => {
           // data has it's own listener
           this.model.data = file.contents
@@ -46,7 +49,7 @@ export default FormView.extend({
     keypress: 'onKeyEvent'
   },
   onKeyEvent (event) {
-    if(event.target.nodeName.toUpperCase()=='INPUT') {
+    if (event.target.nodeName.toUpperCase() == 'INPUT') {
       if (event.keyCode == 13) {
         event.preventDefault()
         event.stopPropagation()
@@ -58,56 +61,85 @@ export default FormView.extend({
     this.query('input').focus()
   },
   render () {
-    let self = this
     FormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
-    // new editor and modal behavior info, added 1/12/17
-    // remove when everybody knows how to use it?
-    let intro = new IntroView()
-    intro.render()
-    this.el.prepend(intro.el)
+    // render order mathers
+    this.renderHelp()
+    this.renderTips()
+    
+    this.renderSubview(
+      new BoilerplateButtonView({ onClickButton: this.loadBoilerplate })
+    )
 
-    this.exampleBtnView = new ExampleBtn({onClickButton: this.loadExample})
-    this.renderSubview(this.exampleBtnView)
+    this.renderEditor()
 
-    this.editorView = new EditorView({
-      data: this.model.data,
-      extension: this.filenameInput.extension
-    })
-
-    this.renderSubview(this.editorView)
-    this.editorView.codemirror.on('drop', this.onEditorDrop)
-
-    this.listenToAndRun(this.filenameInput,'change:extension',() => {
-      let mimetype = this.editorView.setEditorMode(this.filenameInput.extension, function (err, mimetype) {
-        self.model.mimetype = mimetype
-      })
-    })
-
-    this.listenToAndRun(this.model,'change:data',() => {
-      this.editorView.setEditorContent(this.model.data)
-    })
-
-    this.listenTo(App.state.editor,'change:value',() => {
-      if(App.state.editor.value && App.state.editor.value.length)
-        this.editorView.setEditorContent(App.state.editor.value)
-      else {
-        this.editorView.clearEditorContent()
-      }
-    })
-
-    const buttons = this.buttons = new FormButtons()
+    const buttons = new FormButtons()
     this.renderSubview(buttons)
     buttons.on('click:confirm', () => { this.submitForm() })
 
+    // onboarding
     if (!this.model.filename) {
-      if(App.state.onboarding.onboardingActive) {
-        var scriptOnBoarding = new ScriptOnBoarding({parent: this})
+      if (App.state.onboarding.onboardingActive) {
+        var scriptOnBoarding = new ScriptOnBoarding({ parent: this })
         this.registerSubview(scriptOnBoarding)
         scriptOnBoarding.step3()
       }
     }
+  },
+  renderEditor () {
+    const editorView = new EditorView({
+      data: this.model.data,
+      extension: this.filenameInput.extension
+    })
+
+    this.renderSubview(editorView)
+    editorView.codemirror.on('drop', this.onEditorDrop)
+
+    this.listenToAndRun(this.filenameInput, 'change:extension', () => {
+      let mimetype = editorView.setEditorMode(this.filenameInput.extension, (err, mimetype) => {
+        this.model.mimetype = mimetype
+      })
+    })
+
+    this.listenToAndRun(this.model, 'change:data', () => {
+      editorView.setEditorContent(this.model.data)
+    })
+
+    this.listenTo(App.state.editor, 'change:value', () => {
+      if (App.state.editor.value && App.state.editor.value.length) {
+        editorView.setEditorContent(App.state.editor.value)
+      } else {
+        editorView.clearEditorContent()
+      }
+    })
+
+    this.editorView = editorView
+  },
+  renderTips () {
+    let tip = new RandomTipView()
+    tip.render()
+    this.el.prepend(tip.el)
+  },
+  renderHelp () {
+    this.addHelpIcon('filename')
+    this.addHelpIcon('description')
+    this.addHelpIcon('script')
+
+    var textnode = document.createTextNode(' or you can also drop it into the Editor')
+    this._fieldViews['script']
+      .el.querySelector('.upload-btn-wrapper')
+      .appendChild(textnode)
+  },
+  addHelpIcon (field) {
+    const view = this._fieldViews[field]
+    if (!view) { return }
+    view.renderSubview(
+      new HelpIcon({
+        text: HelpTexts.file.form[field]
+      }),
+      view.query('label')
+    )
   },
   onEditorDrop (instance, event) {
     const dt = event.dataTransfer
@@ -115,12 +147,13 @@ export default FormView.extend({
       this.filenameInput.setValue(dt.files[0].name)
     }
   },
-  loadExample(event) {
-    if(event){
+  loadBoilerplate (event) {
+    if (event) {
       event.stopPropagation()
       event.preventDefault()
     }
-    App.actions.script.getExampleScript(this.filenameInput.extension)
+
+    App.actions.script.loadBoilerplate(this.filenameInput.extension)
   },
   submitForm () {
     this.beforeSubmit()
@@ -194,18 +227,10 @@ const FilenameInputView = InputView.extend({
   }
 })
 
-const IntroView = View.extend({
-  template: `<p class="bg-info" style="padding: 8px;">
-    <span class="label label-success">New</span>&nbsp;
-    Use the editor to type/paste your script, or just drag n'drop a file
-    <strong>into</strong> the editor. Code highlighting
-    is set when you name your script with extension.
-  </p>`
-})
-
-const ExampleBtn = CommonButton.extend({
+const BoilerplateButtonView = CommonButton.extend({
   initialize (options) {
-    this.title = 'Load Example'
+    CommonButton.prototype.initialize.apply(this, arguments)
+    this.title = 'Load Boilerplate'
     this.className = 'btn btn-primary example-btn'
     this.onClickButton = options.onClickButton
   }

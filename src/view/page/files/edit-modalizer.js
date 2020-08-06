@@ -7,7 +7,6 @@ export default Modalizer.extend({
 
     this.buttons = false
     this.title = 'Edit File'
-
     this.form = new FileForm({ model: this.model })
     this.bodyView = this.form
   },

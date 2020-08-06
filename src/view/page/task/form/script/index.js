@@ -12,7 +12,6 @@ import MembersSelectView from 'view/members-select'
 import EventsSelectView from 'view/events-select'
 import CheckboxView from 'components/checkbox-view'
 import AdvancedToggle from 'view/advanced-toggle'
-import HelpTexts from 'language/help'
 import * as TaskConstants from 'constants/task'
 
 import TaskFormView from '../form'

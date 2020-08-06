@@ -1,18 +1,17 @@
 import InputView from 'components/input-view'
 import './style.css'
 
-// //////////////////////////////////////////////////////////////////////////////
-
-var FileReaderInputView = InputView.extend({
+export default InputView.extend({
   template: `
     <div>
       <label class="col-sm-3 control-label" data-hook="label"></label>
       <div class="col-sm-9">
         <div class="upload-btn-wrapper">
-          <button for="file-upload" data-hook="button-label" class="btn btn-primary">
-            <i class="fa fa-folder-open"></i> Open File
+          <button data-hook="file-input-button" class="btn btn-primary">
+            <i class="fa fa-folder-open"></i>
+            <span data-hook="file-input-button-label"></span>
           </button>
-          <input id="file-upload" class="" type="file">
+          <input type="file">
         </div>
         <div data-hook="message-container" class="message message-below message-error">
           <p data-hook="message-text"></p>
@@ -22,6 +21,7 @@ var FileReaderInputView = InputView.extend({
   `,
   props: {
     label: [ 'string', true, 'File' ],
+    buttonLabel: ['string', true, 'Open File'],
     name: [ 'string', true, 'file' ],
     placeholder: [ 'string', true, 'file' ],
     type: [ 'string', true, 'file' ],
@@ -33,11 +33,8 @@ var FileReaderInputView = InputView.extend({
     unselectedText: 'any', // these are any so a function returning a string can be passed
     value: 'any'  //
   },
-  initialize: function (opts) {
+  initialize (opts) {
     this.callback = opts.callback || function () {}
-
-    //
-    // this.requiredMet = this.fieldsValid = true;
 
     InputView.prototype.initialize.call(this)
   },
@@ -53,28 +50,32 @@ var FileReaderInputView = InputView.extend({
       {
         type: 'attribute',
         name: 'for',
-        hook: 'button-label'
+        hook: 'file-input-button'
       },
       {
         type: 'attribute',
         name: 'id',
         selector: 'input'
       }
-    ]
+    ],
+    buttonLabel: {
+      hook: 'file-input-button-label'
+    }
   }),
-  beforeSubmit: function () {
+  beforeSubmit () {
     this.shouldValidate = true
-    if (!this.valid) { // && !this.requiredMet) {
+    if (!this.valid) {
       this.message = this.requiredMessage
     }
   },
-  reset: function () {
+  reset () {
     this.query('input').value = ''
   },
-  disable: function () {
-    var disabledClass = 'input-disabled'
-    function hasClass (element, className) {
-      var regex = new RegExp('(\\s|^)' + className + '(\\s|$)')
+  disable () {
+    let disabledClass = 'input-disabled'
+
+    const hasClass = (element, className) => {
+      let regex = new RegExp('(\\s|^)' + className + '(\\s|$)')
       return !!element.className.match(regex)
     }
 
@@ -83,13 +84,13 @@ var FileReaderInputView = InputView.extend({
       this.query('input').disabled = true
     }
   },
-  enable: function () {
+  enable () {
     var regex = new RegExp('(\\s|^)' + 'input-disabled' + '(\\s|$)')
 
     this.el.className = this.el.className.replace(regex, '')
     this.query('input').disabled = false
   },
-  render: function () {
+  render () {
     var self = this
 
     InputView.prototype.render.call(this)
@@ -108,5 +109,3 @@ var FileReaderInputView = InputView.extend({
     })
   }
 })
-
-export default FileReaderInputView

@@ -139,15 +139,18 @@ export default {
     cannot_trigger: 'A Task with dynamic arguments cannot be automatically triggered by Workflow',
   },
   file: {
-    path: path,
+    path,
+    permissions,
     dirname: 'The directory to store the file',
     basename: 'The name of the file, usually with the extension.',
     uid: 'The user id for the file',
     gid: 'The group id for the file',
-    permissions: permissions,
     select: 'Select a file',
-    state: "Error Handling. Print 'fail', 'failure' or 'error' for unsuccessful execution.",
-    shebang: 'Keep in mind that the  shebang (#!) is required when writing a Linux/Unix script.'
+    form: {
+      filename: 'Filename with extension. Extension is used to determine editor interpreter',
+      description: 'more information about your script',
+      script: 'Load your scripts. You can also drop it in this window.'
+    }
   },
   titles:{
     user_page: 'Users CRUD operations',

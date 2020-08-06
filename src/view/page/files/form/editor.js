@@ -1,6 +1,4 @@
 import View from 'ampersand-view'
-//import HelpIcon from 'components/help-icon'
-import HelpTexts from 'language/help'
 import Modalizer from 'components/modalizer'
 
 import CodeMirror from 'codemirror/lib/codemirror'
@@ -56,16 +54,6 @@ export const EditorView = View.extend({
         this.refresh()
       }
     })
-
-    //this.renderSubview(
-    //  new HelpIcon({
-    //    text: HelpTexts.file.editor
-    //  }),
-    //  this.queryByHook('editor-container')
-    //)
-
-    let hook = this.queryByHook(container)
-    this.renderSubview(new HintsWindow(), hook)
   },
   setEditorContent (data) {
     if (data) {
@@ -100,35 +88,6 @@ export const EditorView = View.extend({
   refresh () {
     setTimeout(() => { this.codemirror.refresh() }, 500)
   }
-})
-
-const HintsWindow = View.extend({
-  template: `<a href="#">&nbsp;<span class="fa fa-question-circle"></span></a>`,
-  events: {
-    'click': (event) => {
-      let help = new Help()
-      let modal = new Modalizer({
-        buttons: false,
-        title: 'Help',
-        bodyView: help
-      })
-      let el = modal.query('.modal-dialog')
-      el.style.width = '50%'
-      el.style.top = '10%'
-
-      modal.show()
-    }
-  }
-})
-
-const Help = View.extend({
-  template: `
-    <div>
-      <p>${HelpTexts.file.shebang}</p>
-      <p>${HelpTexts.file.state}</p>
-      <p>${HelpTexts.file.env}</p>
-    </div>
-  `
 })
 
 /**
