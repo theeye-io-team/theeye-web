@@ -78,7 +78,7 @@ export default View.extend({
     'click [data-hook=google-login]': function (event) {
       event.preventDefault()
       event.stopPropagation()
-      App.actions.auth.providerLogin('google')
+      App.actions.auth.loginProvider('google')
     },
     'click button[data-hook=start-login]': function (event) {
       event.preventDefault()

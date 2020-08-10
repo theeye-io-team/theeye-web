@@ -33,7 +33,7 @@ class Auth extends Route {
     })
   }
 
-  socialLoginRoute() {
+  socialLoginRoute () {
     const query = search.get()
     if (query.error) {
       App.navigate('login')
@@ -45,7 +45,7 @@ class Auth extends Route {
     App.state.session.access_token = access_token
   }
 
-  socialConnectRoute() {
+  socialConnectRoute () {
     const query = search.get()
     App.navigate('dashboard')
     App.state.settingsMenu.user.visible = true

@@ -3,16 +3,16 @@ import App from 'ampersand-app'
 import Modalizer from 'components/modalizer'
 import ChangePasswordFormView from './password-form'
 import AuthActions from 'actions/auth'
+import './styles.less'
 
 export default View.extend({
   template: () => {
     let html = `
-      <div>
+      <div data-component=user-accounts>
         <h3 class="blue bold">CREDENTIALS</h3>
         <div class="row border">
           <div class="col-xs-12">
             <h4 class="blue"><i class="fa fa-user"></i> User Profile</h4>
-      
             <div class="row">
               <strong class="col-sm-3">name</strong>
               <span data-hook="account-name" class="col-sm-9"></span>
@@ -28,10 +28,11 @@ export default View.extend({
             <a class="blue btn btn-default btn-lg pull-right" data-hook="change-password">Change password</a>
           </div>
         </div>
-        <div class="row border" data-hook="connect-section">
+        <!-- SOCIAL PROVIDER AUTHENTICATION -->
+        <div class="social-providers row border" data-hook="connect-section">
           <div class="col-xs-12">
             <h4 class="blue"><i class="fa fa-link"></i> Connect with:</h4>
-            <div data-hook="google-connection-container"></div>
+            <div data-hook="connection-container"></div>
           </div>
         </div>
       </div>
@@ -112,8 +113,8 @@ export default View.extend({
     this.renderWithTemplate(this)
 
     this.renderSubview(
-      new SocialConnection({ name: 'Google +' }),
-      this.queryByHook('google-connection-container')
+      new SocialConnection({ name: 'Google +', provider: 'google' }),
+      this.queryByHook('connection-container')
     )
   }
 })
@@ -130,24 +131,25 @@ const SocialConnection = View.extend({
       <div class="col-xs-6">
         <div data-hook="social-connection-status-connected">
           <span class="gray">CONNECTED</span>
-          <a href="/disconnect/google" class="blue pull-right">DISCONNECT</a>
+          <a data-hook="disconnect-button" class="blue pull-right">DISCONNECT</a>
         </div>
         <div data-hook="social-connection-status-disconnected">
+          <a data-hook="connect-button" class="blue pull-right">CONNECT</a>
           <span class="gray">DISCONNECTED</span>
-          <a href="/connect/google" class="blue pull-right">CONNECT</a>
         </div>
       </div>
     </div>`,
   props: {
-    name: ['string', false, ''],
-    passports: ['object', false, () => { return {} }]
+    name: ['string', true, ''],
+    provider: ['string', true, ''],
+    passport: ['object', false, () => { return {} }]
   },
   bindings: {
-    'name': {
+    name: {
       type: 'text',
       hook: 'social-connection-name'
     },
-    'status': [
+    status: [
       {
         type: 'toggle',
         hook: 'social-connection-status-connected'
@@ -159,13 +161,11 @@ const SocialConnection = View.extend({
     ]
   },
   derived: {
+    /** @type boolean */
     status: {
-      deps: ['passports'],
-      fn: function () {
-        if (this.passports && this.passports.oauth2) {
-          return true
-        }
-        return false
+      deps: ['passport'],
+      fn () {
+        return this.passport.hasOwnProperty('provider')
       }
     }
   },
@@ -175,6 +175,30 @@ const SocialConnection = View.extend({
     })
   },
   updateState (state) {
-    this.passports = state.passports
-  }
+    let passports = state.passports
+    if (!Array.isArray(passports) || passports.length === 0) { // reset
+      this.passport = {}
+    } else {
+      let passport = passports.find(p => p.provider === this.provider)
+      if (passport) {
+        this.passport = passport
+      }
+    }
+  },
+  events: {
+    'click a[data-hook=disconnect-button]':'onClickDisconnect',
+    'click a[data-hook=connect-button]':'onClickConnect'
+  },
+  onClickConnect (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    App.actions.auth.connectProvider(this.provider)
+  },
+  onClickDisconnect (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    App.actions.auth.disconnectProvider(this.passport)
+  },
 })

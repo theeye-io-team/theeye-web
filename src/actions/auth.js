@@ -198,9 +198,6 @@ export default {
   toggleLoginForm() {
     App.state.login.toggle('showRecoverForm')
   },
-  providerLogin(provider) {
-    window.location.replace('auth/'+provider)
-  },
   recoverPassword (data) {
     App.state.loader.visible = true
     XHR.send({
@@ -344,6 +341,32 @@ export default {
       fail (err,xhr) {
         bootbox.alert("Error activating user")
         App.navigate('login')
+      }
+    })
+  },
+  /**
+   * @param {String} provider
+   */
+  loginProvider (provider) {
+    window.location.replace(`${App.config.api_url}/auth/social/${provider}`)
+  },
+  /**
+   * @param {String} provider
+   */
+  connectProvider (provider) {
+    window.location.replace(`${App.config.api_url}/auth/social/${provider}`)
+  },
+  /**
+   * @param {Object} Passport
+   */
+  disconnectProvider ({ provider, id }) {
+    XHR.send({
+      url: `${App.config.api_url}/auth/social/${provider}/disconnect/${id}`,
+      method: 'delete',
+      responseType: 'json',
+      done () {
+        // re-fetch passports
+        App.actions.session.getPassports()
       }
     })
   }

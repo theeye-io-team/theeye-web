@@ -140,11 +140,11 @@ const actions = {
       }
     })
   },
-  getPassports() {
+  getPassports () {
     XHR.send({
       url: `${App.config.api_url}/session/passports`,
       method: 'get',
-      done: (response,xhr) => {
+      done: (response, xhr) => {
         if (xhr.status !== 200) {
           bootbox.alert({
             title: 'Error',
