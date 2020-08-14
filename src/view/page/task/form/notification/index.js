@@ -185,15 +185,10 @@ export default TaskFormView.extend({
     return f
   },
   setWithTask (task) {
-    this.setValues({
-      name: task.name,
-      description: task.description,
-      tags: task.tags,
-      triggers: task.trigger || [],
-      subject: task.subject,
-      body: task.body,
-      notificationTypes: task.notificationTypes,
-      recipients: task.recipients
-    })
+    TaskFormView.prototype.setWithTask.apply(this, arguments)
+
+    let notify = task.notificationTypes
+    this._fieldViews['email'].setValue(notify.email)
+    this._fieldViews['desktop'].setValue(notify.desktop)
   }
 })

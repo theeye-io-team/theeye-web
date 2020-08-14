@@ -84,13 +84,10 @@ export default FormView.extend({
     }
   },
   fillForm (data) {
-    let self = this
-    Object.keys(data).forEach(function (key) {
-      if (self._fieldViews[key]) {
-        self._fieldViews[key].setValue(data[key])
-      }
-    })
-  },
-  focus () {
+    Object
+      .keys(this._fieldViews)
+      .forEach(prop => {
+        this._fieldViews[prop].setValue(data[prop])
+      })
   }
 })

@@ -337,26 +337,26 @@ export default TaskFormView.extend({
     f.parser = this._fieldViews.pattern.use_parser // selected parser
     return f
   },
-  setWithTask (task) {
-    this.setValues({
-      name: task.name,
-      remote_url: task.remote_url,
-      description: task.description,
-      tags: task.tags,
-      method: task.method,
-      json: task.json,
-      body: task.body,
-      gzip: task.json,
-      timeout: task.timeout,
-      grace_time: task.grace_time,
-      status_code: task.status_code,
-      pattern: task.pattern,
-    })
-  },
-  fillForm (data) {
-    if (data.task && data.task.url) {
-      data.task.remote_url = data.task.url
-    }
-    TaskFormView.prototype.fillForm.apply(this, arguments)
-  }
+  //setWithTask (task) {
+  //  this.setValues({
+  //    name: task.name,
+  //    remote_url: task.remote_url,
+  //    description: task.description,
+  //    tags: task.tags,
+  //    method: task.method,
+  //    json: task.json,
+  //    body: task.body,
+  //    gzip: task.json,
+  //    timeout: task.timeout,
+  //    grace_time: task.grace_time,
+  //    status_code: task.status_code,
+  //    pattern: task.pattern,
+  //  })
+  //},
+  //fillForm (data) {
+  //  if (data.task && data.task.url) {
+  //    data.task.remote_url = data.task.url
+  //  }
+  //  TaskFormView.prototype.fillForm.apply(this, arguments)
+  //}
 })

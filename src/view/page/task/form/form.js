@@ -51,5 +51,15 @@ export default DropableForm.extend({
     if (data.task) {
       this.setWithTask(data.task)
     }
+  },
+  /**
+   * @param {Object|Model} task
+   */
+  setWithTask (task) {
+    Object
+      .keys(this._fieldViews)
+      .forEach(prop => {
+        this._fieldViews[prop].setValue(task[prop])
+      })
   }
 })

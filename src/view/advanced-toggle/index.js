@@ -24,5 +24,9 @@ export default View.extend({
       this.toggle('folded')
       this.onclick && this.onclick(event, this)
     }
+  },
+  setValue (value) {
+    // required InputView interface
+    return
   }
 })

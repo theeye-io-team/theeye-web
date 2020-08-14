@@ -142,13 +142,13 @@ export default TaskFormView.extend({
     f.type = TaskConstants.TYPE_DUMMY
     return f
   },
-  setWithTask (task) {
-    this.setValues({
-      name: task.name,
-      description: task.description,
-      tags: task.tags,
-      triggers: task.trigger || [],
-      task_arguments: task.task_arguments || []
-    })
-  }
+  //setWithTask (task) {
+  //  this.setValues({
+  //    name: task.name,
+  //    description: task.description,
+  //    tags: task.tags,
+  //    triggers: task.trigger || [],
+  //    task_arguments: task.task_arguments || []
+  //  })
+  //}
 })

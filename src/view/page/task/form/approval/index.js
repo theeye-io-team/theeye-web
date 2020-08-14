@@ -104,7 +104,7 @@ export default TaskFormView.extend({
         type: TaskConstants.TYPE_APPROVAL,
         visible: false
       })
-      this.fields.splice(4, 0, copySelect)
+      this.fields.splice(5, 0, copySelect)
       this.listenTo(copySelect,'change',() => {
         if (copySelect.value) {
           let task = App.state.tasks.get(copySelect.value)
@@ -179,14 +179,14 @@ export default TaskFormView.extend({
     f.type = TaskConstants.TYPE_APPROVAL
     return f
   },
-  setWithTask (task) {
-    this.setValues({
-      approvers: task.approvers,
-      name: task.name,
-      description: task.description,
-      tags: task.tags,
-      triggers: task.trigger || [],
-      task_arguments: task.task_arguments || []
-    })
-  }
+  //setWithTask (task) {
+  //  this.setValues({
+  //    approvers: task.approvers,
+  //    name: task.name,
+  //    description: task.description,
+  //    tags: task.tags,
+  //    triggers: task.trigger || [],
+  //    task_arguments: task.task_arguments || []
+  //  })
+  //}
 })

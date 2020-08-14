@@ -397,16 +397,21 @@ export default TaskFormView.extend({
 
     return f
   },
+  /**
+   * @param {Object|Model} task can be a Task Model or an Object of props
+   */
   setWithTask (task) {
-    this.setValues({
-      script_id: task.script_id,
-      name: task.name,
-      script_runas: task.script_runas,
-      description: task.description,
-      tags: task.tags,
-      grace_time: task.grace_time,
-      task_arguments: task.task_arguments,
-      timeout: task.timeout
-    })
+    TaskFormView.prototype.setWithTask.apply(this, arguments)
+
+    //Object
+    //  .keys(this._fieldViews)
+    //  .forEach(prop => {
+    //    if (prop === 'env') {
+    //      this._fieldViews[prop].setValue(JSON.stringify(task[prop]))
+    //    } else {
+    //      this._fieldViews[prop].setValue(task[prop])
+    //    }
+    //  })
+    this._fieldViews['env'].setValue(JSON.stringify(task['env']))
   }
 })
