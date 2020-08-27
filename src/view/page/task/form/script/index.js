@@ -53,8 +53,11 @@ export default TaskFormView.extend({
             hosts.push( App.state.hosts.get(hostId) )
           })
 
-          let os = hosts.map(host => host.os_name)
-          if (os.length > 1) {
+          let oss = hosts.filter((host, index, self) => {
+            return self.indexOf(host.os_name) === index;
+          })
+
+          if (oss.length > 1) {
             bootbox.alert('BOT\'s with different OS versions has been selected.')
           }
         }

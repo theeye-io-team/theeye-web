@@ -66,30 +66,33 @@ export default {
    * @param {Object} data
    * @param {Function} next
    */
-  createMany (hosts,data) {
-    const done = after(hosts.length,() => {
-      App.state.alerts.success('Success', 'Tasks created.')
-      App.state.events.fetch()
-      App.state.tags.fetch()
-      if (App.state.onboarding.onboardingActive) {
-        bootbox.alert({
-          message: 'Congratulations!, Your first task has been created Successfully!',
-          callback: function () {
-            bootbox.alert(`<p style='text-align: left;'>We're building our marketplace. Find further documentation at <a href='${App.config.docs}' target='_blank'>${App.config.docs}</a></p><p>If you need help please email us at <a href='mailto:support@theeye.io'>support@theeye.io.</a></p>`)
-          }
+  createMany (hosts, data) {
+    if (hosts.length === 1) {
+      let taskData = Object.assign({}, data, { host_id: hosts[0] })
+      create(taskData)
+        .then(task => {
+          // handle to display a custome message
+          App.state.alerts.success('Success', `Task ${task.name} created.`)
+          successCreated([task])
         })
-        App.actions.onboarding.onboardingCompleted(true)
+        .catch(errResponse => {})
+    } else {
+      let promises = []
+      for (let host_id of hosts) {
+        let taskData = Object.assign({}, data, { host_id })
+        promises.push( create(taskData) )
       }
-    })
-    hosts.forEach(host => {
-      let taskData = Object.assign({},data,{ host_id: host })
-      create(taskData,done)
-    })
+
+      Promise.all(promises).then(tasks => {
+        App.state.alerts.success('Success', 'All Tasks created.')
+        successCreated(tasks)
+      }).catch(err => {})
+    }
   },
   create (data) {
-    create(data, function () {
-      App.state.events.fetch()
-    })
+    create(data)
+      .then(task => successCreated([ task ]))
+      .catch(err => {})
   },
   remove (id) {
     const task = App.state.tasks.get(id)
@@ -218,25 +221,43 @@ export default {
 
 /**
  * @param {Object} data
- * @param {Function} next
+ * @return {Promise}
  */
-const create = function (data, next) {
-  next || (next = emptyCallback)
-  const task = TaskModelFactory(data)
-  XHR.send({
-    url: task.url(),
-    method: 'POST',
-    jsonData: task.serialize(),
-    headers: {
-      Accept: 'application/json;charset=UTF-8'
-    },
-    done (response, xhr) {
-      task.set(response)
-      App.state.tasks.add(task, { merge: true })
-      next(null, task)
-    },
-    error (response, xhr) {
-      next(new Error())
-    }
+const create = (data) => {
+  return new Promise((resolve, reject) => {
+    const task = TaskModelFactory(data)
+    XHR.send({
+      url: task.url(),
+      jsonData: task.serialize(),
+      method: 'POST',
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (response, xhr) {
+        task.set(response)
+        App.state.tasks.add(task, { merge: true })
+        resolve(task)
+      },
+      error (response, xhr) {
+        reject(response)
+      }
+    })
   })
+}
+
+const successCreated = () => {
+  App.state.events.fetch()
+  App.state.tags.fetch()
+
+  if (App.state.onboarding.onboardingActive) {
+    bootbox.alert({
+      message: 'Congratulations! Your first task has been created Successfully!',
+      callback: function () {
+        let text = `<p style='text-align: left;'>We're building our marketplace. Find further documentation at <a href='${App.config.docs}' target='_blank'>${App.config.docs}</a></p><p>If you need help please email us at <a href='mailto:support@theeye.io'>support@theeye.io.</a></p>`
+        bootbox.alert(text)
+      }
+    })
+
+    App.actions.onboarding.onboardingCompleted(true)
+  }
 }
