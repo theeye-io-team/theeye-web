@@ -9,20 +9,17 @@ import { Collection as TagCollection } from 'models/tag'
 import config from 'config'
 
 const urlRoot = `${config.supervisor_api_url}/indicator`
+import baseProperties from '../baseProperties'
 
 const BaseSchema = AppModel.extend({
   idAttribute: 'id',
-  props: {
+  props: Object.assign({}, {
     id: 'string',
     customer_id: 'string',
     customer_name: 'string',
     user_id: 'string', // owner/creator
     description: 'string',
     alerts: 'boolean',
-    _type: 'string',
-    type: 'string',
-    creation_date: 'date',
-    last_update: 'date',
     secret: 'string',
     title: ['string'],
     tags: ['array',false, () => { return [] }],
@@ -32,17 +29,11 @@ const BaseSchema = AppModel.extend({
     enable: ['boolean',false,true],
     sticky: ['boolean',false,false],
     read_only: ['boolean',false,false]
-  },
+  }, baseProperties),
   session: {
     tagsCollection: 'collection'
   },
   derived: {
-    order: {
-      //deps: [],
-      fn () {
-        return this.name
-      }
-    },
     formatted_tags: {
       deps: ['title','_type','type','state','severity','tags','acl','read_only'],
       fn () {
@@ -189,13 +180,11 @@ function IndicatorFactory (attrs, options={}) {
 }
 
 export const Collection = AppCollection.extend({
-  //comparator: 'creation_date',
-  comparator (m1,m2) {
-    // sort by state order
+  comparator (m1, m2) {
     if (m1.order > m2.order) {
-      return -1
-    } else if (m1.order < m2.order) {
       return 1
+    } else if (m1.order < m2.order) {
+      return -1
     } else {
       // if equal state order, sort by name
       let name1 = m1.name ? m1.name.toLowerCase() : 0
