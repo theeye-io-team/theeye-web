@@ -11,6 +11,8 @@ import DisabledInputView from 'components/input-view/disabled'
 import bootbox from 'bootbox'
 import graphlib from 'graphlib'
 
+import ExportDialog from 'view/page/task/buttons/export/dialog'
+
 export default View.extend({
   props: {
     workflow_id: 'string',
@@ -386,7 +388,7 @@ const Menu = View.extend({
       <ul class="dropdown-menu" style="display: block;">
         <li><a data-hook="edit" href="#">Edit</a></li>
         <li><a data-hook="remove" href="#">Remove</a></li>
-        <li><a data-hook="export" href="#">Export Recipe</a></li>
+        <li><a data-hook="export" href="#">Export</a></li>
       </ul>
     </div>
   `,
@@ -411,7 +413,11 @@ const Menu = View.extend({
   onClickExport (event) {
     event.preventDefault()
     event.stopPropagation()
-    App.actions.task.exportRecipe(this.model.id)
+
+    const dialog = new ExportDialog({ model: this.model })
+    dialog.show()
+
+    //App.actions.task.exportRecipe(this.model.id)
     this.remove()
   },
 })

@@ -18,8 +18,7 @@ export default {
   nodeWorkflow (node) {
     App.navigate('/admin/workflow/' + node)
   },
-  getCredentials (id, next) {
-    next || (next=()=>{})
+  getCredentials (id, next = emptyCallback) {
     const task = App.state.tasks.get(id)
 
     XHR.send({
@@ -64,7 +63,6 @@ export default {
   /**
    * @param {MongoID[]} hosts
    * @param {Object} data
-   * @param {Function} next
    */
   createMany (hosts, data) {
     if (hosts.length === 1) {
@@ -152,11 +150,12 @@ export default {
    *
    * @summary export task recipe
    * @param {String} id task id
+   * @param {Object} options default {}
    *
    */
-  exportRecipe (id) {
+  exportRecipe (id, options = {}) {
     let task = App.state.tasks.get(id)
-    this.fetchRecipe(id, (err, recipe) => {
+    this.fetchRecipe(id, options, (err, recipe) => {
       if (!err) {
         var jsonContent = JSON.stringify(recipe)
         var blob = new Blob([jsonContent], { type: 'application/json' })
@@ -165,12 +164,11 @@ export default {
       }
     })
   },
-  fetchRecipe (id, next) {
-    next || (next = emptyCallback)
+  fetchRecipe (id, { backup }, next = emptyCallback) {
     const task = App.state.tasks.get(id)
     XHR.send({
       method: 'GET',
-      url: `${task.url()}/recipe`,
+      url: `${task.url()}/recipe?backup=${backup||false}`,
       done (recipe) {
         next(null, recipe)
       },

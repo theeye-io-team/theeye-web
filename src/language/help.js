@@ -137,6 +137,8 @@ export default {
     },
     cannot_schedule: 'A Scheduled Task cannot have dynamic input/select arguments',
     cannot_trigger: 'A Task with dynamic arguments cannot be automatically triggered by Workflow',
+    export_backup: '<b>Backup</b>: Export the template of the task, including fixed arguments and environment variables.<br/><b>Keep this recipe safe, to avoid private data leaks and keys exposure</b>'</b>',
+    export_recipe: '<b>Recipe</b>: Create the template of the task. Values for fixed arguments and environment variables will be empty.'
   },
   file: {
     path,
