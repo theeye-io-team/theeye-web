@@ -1,6 +1,7 @@
 import ListItem from 'components/list/item'
 import View from 'ampersand-view'
 import EditButton from './buttons/edit'
+import LinksButton from './buttons/links'
 import DeleteButton from './buttons/delete'
 
 export default ListItem.extend({
@@ -8,7 +9,7 @@ export default ListItem.extend({
     item_name: {
       deps: ['model.filename'],
       fn () {
-        return this.model.filename
+        return this.model.summary
       }
     },
     item_description: {
@@ -59,8 +60,8 @@ export default ListItem.extend({
     )
 
     this.addButtons([
-      //{ view: EditButton, params: { model: this.model } },
       { view: DeleteButton, params: { model: this.model } },
+      { view: LinksButton, params: { model: this.model } }
     ])
 
     this.renderSubview(

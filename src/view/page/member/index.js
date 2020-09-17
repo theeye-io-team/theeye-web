@@ -5,11 +5,34 @@ import HelpIconView from 'components/help-icon'
 import { Model as MemberModel } from 'models/member'
 
 import Modalizer from 'components/modalizer'
-import CommonButton from 'components/common-button'
+import PanelButton from 'components/list/item/panel-button.js'
 import CreateForm from './create-form'
 import CustomerRow from './list-item'
 
-const CreateButton = CommonButton.extend({
+export default List.extend({
+  autoRender: true,
+  initialize (options) {
+    options = options || {}
+    this.title = 'Members'
+  },
+  render () {
+    List.prototype.render.apply(this,arguments)
+
+    this.header.addMainButton(new CreateButton())
+    this.renderList(CustomerRow,{})
+
+    this.renderSubview(
+      new HelpIconView({
+        color: [255,255,255],
+        category: 'title_help',
+        text: HelpTexts.titles.customer_page
+      }),
+      this.queryByHook('title-help')
+    )
+  }
+})
+
+const CreateButton = PanelButton.extend({
   initialize () {
     this.title = 'New Member'
     this.className = 'btn btn-primary tooltiped'
@@ -43,29 +66,5 @@ const CreateButton = CommonButton.extend({
       modal.hide()
     })
     modal.show()
-  }
-})
-
-
-export default List.extend({
-  autoRender: true,
-  initialize (options) {
-    options = options || {}
-    this.title = 'Members'
-  },
-  render () {
-    List.prototype.render.apply(this,arguments)
-
-    this.header.addMainButton(new CreateButton())
-    this.renderList(CustomerRow,{})
-
-    this.renderSubview(
-      new HelpIconView({
-        color: [255,255,255],
-        category: 'title_help',
-        text: HelpTexts.titles.customer_page
-      }),
-      this.queryByHook('title-help')
-    )
   }
 })

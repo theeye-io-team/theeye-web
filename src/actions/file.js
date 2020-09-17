@@ -141,19 +141,23 @@ export default {
   },
   syncLinkedModels (id, next) {
     const file = App.state.files.get(id)
+    file.is_loading = true
+
     XHR.send({
       url: `${App.config.supervisor_api_url}/${App.state.session.customer.name}/file/${id}/linkedmodels`,
       method: 'get',
       responseType: 'json',
       done: (models, xhr) => {
+    file.is_loading = false
         if (xhr.status === 200 && Array.isArray(models)) {
-          file.linked_models = models
+          file.linked_models.reset(models)
           next(null, file)
         } else {
           next( new Error('invalid server response') )
         }
       },
       fail: (err, xhr) => {
+    file.is_loading = false
         next( new Error('invalid server response') )
       }
     })

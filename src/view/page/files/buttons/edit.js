@@ -1,11 +1,9 @@
 import App from 'ampersand-app'
-//import PanelButton from 'components/list/item/panel-button'
 import CommonButton from 'components/common-button'
-import $ from 'jquery'
 
 export default CommonButton.extend({
   initialize (options) {
-    this.title = 'Edit file'
+    this.title = 'Edit'
     this.iconClass = 'fa fa-edit'
     this.className = 'btn btn-primary'
   },

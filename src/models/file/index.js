@@ -15,7 +15,7 @@ export const Model = Schema.extend({
 })
 
 export const Collection = AppCollection.extend({
-  comparator: 'filename',
+  comparator: 'summary',
   model: Model,
   url: urlRoot,
 })

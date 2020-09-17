@@ -5,7 +5,7 @@ import $ from 'jquery'
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = 'Delete file'
+    this.title = 'Delete'
     this.iconClass = 'fa fa-trash dropdown-icon'
     this.className = 'btn btn-primary'
   },
@@ -14,7 +14,7 @@ export default PanelButton.extend({
       event.stopPropagation()
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
-      const msg = 'The File will be removed and the information on it will be lost forever. Do you want to continue?'
+      const msg = 'The File will be removed and all the information on it will be lost forever. Do you want to continue?'
       bootbox.confirm(msg, (confirmed) => {
         if (!confirmed) { return }
         App.actions.file.remove(this.model.id)

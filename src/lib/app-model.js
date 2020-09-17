@@ -3,6 +3,9 @@ import AmpersandModel from 'ampersand-model'
 import XHR from 'lib/xhr'
 
 export default AmpersandModel.extend({
+  props: {
+    is_loading: ['boolean', false, false]
+  },
   dataTypes: {
     collection: {
       set: function (newVal) {

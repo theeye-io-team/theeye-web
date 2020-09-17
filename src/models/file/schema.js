@@ -2,6 +2,20 @@ import AppModel from 'lib/app-model'
 import App from 'ampersand-app'
 import moment from 'moment'
 
+import Collection from 'ampersand-collection'
+import State from 'ampersand-state'
+
+// require to render collections and bind events to properties of elements in the collection
+const LinkedModels = Collection.extend({
+  model: State.extend({
+    props: {
+      id: 'string',
+      name: 'string',
+      _type: 'string'
+    }
+  })
+})
+
 export default AppModel.extend({
   props: {
     id: 'string',
@@ -20,12 +34,15 @@ export default AppModel.extend({
     //_type: { type: 'string', default: 'File' },
     template_id: 'string',
     source_model_id: 'string', // temporal , is used to create templates
+    creation_date: { type: 'date', default: () => { return new Date() } },
     last_update: { type: 'date', default: () => { return new Date() } },
     data: { type: 'string' }
 	},
   session: {
     is_script: { type: 'boolean', default: false },
-    linked_models: { type: 'array', default: () => { return [] } }
+  },
+  collections: {
+    linked_models: LinkedModels
   },
   parse (args) {
     args.is_script = (args._type == 'Script')
@@ -33,9 +50,9 @@ export default AppModel.extend({
   },
   derived: {
     summary: {
-      deps: ['filename','last_update','tags'],
+      deps: ['filename','creation_date'],
       fn () {
-        let date = moment(this.last_update).format('YYYY/MM/DD HH:mm A')
+        let date = moment(this.creation_date).format('YYYY/MM/DD HH:mm A')
         return `${this.filename} - ${date}`
       }
     },
