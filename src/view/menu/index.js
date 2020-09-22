@@ -70,6 +70,8 @@ export default View.extend({
       event.stopPropagation()
       SideMenuActions.clearCustomerSearch()
       this.toggle('customers_switch')
+
+      this.queryByHook('customers-input').focus()
       return false
     },
     'input [data-hook=customers-input]': 'onSearchInput',

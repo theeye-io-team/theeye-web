@@ -7,6 +7,7 @@ import './style.less'
 import 'highlight.js/styles/github.css'
 import Clipboard from 'clipboard'
 import config from 'config'
+import Titles from 'language/titles'
 
 import hljs from 'highlight.js/lib/highlight'
 import bash from 'highlight.js/lib/languages/bash'
@@ -16,7 +17,7 @@ const docsLink = 'integrations/api/api_resources_task/#2-using-the-task-secret-k
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = 'Integration'
+    this.title = Titles.task.buttons.integrations
     this.iconClass = 'fa fa-chain dropdown-icon'
     this.className = 'btn btn-primary'
   },
@@ -75,13 +76,17 @@ const CredentialsView = View.extend({
       </div>
       <div class="hidden-data form-group" data-hook="toggle-target">
         <label>curl sample using unix shell</label>
-        <pre data-hook="sample-code"><code class="bash">task="<span data-hook="task_id"></span>"
+        <pre data-hook="sample-code">
+          <code class="bash">
+task="<span data-hook="task_id"></span>"
 secret="<span data-hook="task_secret"></span>"
 customer="<span data-hook="task_customer"></span>"
 
-curl -i -sS -X POST "${config.supervisor_api_url}/job/secret/\$\{secret\}" \\
+curl -i -sS -X POST "${config.supervisor_api_url}/\$\{customer\}/task/\$\{task\}/secret/\$\{secret\}/job" \\
   --header 'Content-Type: application/json' \\
-  --data '{"customer":"'\$\{customer\}'","task":"'\$\{task\}'","task_arguments":[<span data-hook="task_args"></span>]}'</code></pre>
+  --data '{"task_arguments":[<span data-hook="task_args"></span>]}'
+          </code>
+        </pre>
         <a href="${config.docs}/${docsLink}" target="_blank">Find more info in the docs</a>
       </div>
     </div>

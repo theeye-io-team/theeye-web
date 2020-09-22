@@ -1,8 +1,14 @@
+import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
-// import config from 'config'
+import config from 'config'
+
+const urlRoot = function () {
+  return `${config.supervisor_api_url}/${App.state.session.customer.name}/scheduler`
+}
 
 const Model = AppModel.extend({
+  urlRoot,
   idAttribute: '_id',
   props: {
     //id: 'string', //// should use 'id' instead . need to migrate/improve backend to include the 'id' attribute in the reponse data
@@ -19,7 +25,7 @@ const Model = AppModel.extend({
 })
 
 const Collection = AppCollection.extend({
-  // url: `${config.api_url}/schedule`,
+  url: urlRoot,
   mainIndex: '_id',
   model: Model
 })

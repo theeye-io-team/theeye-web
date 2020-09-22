@@ -50,9 +50,10 @@ const ExecOnHoldJob = BaseExec.extend({
     delete taskModel.id
     const task = new App.Models.Task.Factory(taskModel)
     if (task.user_inputs) {
-      // check previous job result for components
+      // check previous job result for components. only workflow
       this.checkComponents(task)
     }
+
     const form = new DynamicForm({ fieldsDefinitions: task.task_arguments.models })
     const modal = new Modalizer({
       buttons: true,
@@ -202,8 +203,12 @@ const ExecOnHoldJob = BaseExec.extend({
     })
   },
   checkComponents (task) {
+    if (!this.model.workflow_job_id) { return } // task is not in workflow
+
     // get previous job
     let workflowJob = App.state.jobs.get(this.model.workflow_job_id)
+    if (!workflowJob) { return } // workflow is not populated.
+
     let previousJob = workflowJob.getPreviousJob()
     // get previous job components
     if (previousJob && previousJob.result && previousJob.result.components) {

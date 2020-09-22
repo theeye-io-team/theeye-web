@@ -103,6 +103,8 @@ export default {
     })
   },
   populate (task) {
+    if (task.isNew()) return
+
     if (task.type === TaskConstants.TYPE_SCRIPT) {
       const script = task.script
       if (script !== undefined && !script.id) {
@@ -200,6 +202,11 @@ export default {
   execute (task) {
     var execTask
     if (!App.state.session.licenseExpired) {
+      if (!task.canExecute) {
+        bootbox.alert('This task cannot be executed')
+        return
+      }
+
       if (task.hasHost()) {
         execTask = new ExecTask({ model: task })
       } else {

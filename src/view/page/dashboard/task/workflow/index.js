@@ -1,7 +1,6 @@
 import App from 'ampersand-app'
 import Acls from 'lib/acls'
 import View from 'ampersand-view'
-import WorkflowActions from 'actions/workflow'
 import CollapsibleRow from '../collapsible-row'
 import ExecButton from '../exec-button'
 import TaskJobRow from '../task/collapse/job'
@@ -15,6 +14,8 @@ import RemoveWorkflowButton from 'view/page/workflow/buttons/remove'
 import EditWorkflowButton from 'view/page/workflow/buttons/edit'
 import ViewWorkflowButton from 'view/page/workflow/buttons/view'
 import IntegrationsWorkflowButton from 'view/page/workflow/buttons/integrations'
+import ScheduleButton from 'view/buttons/schedule'
+import SchedulesView from 'view/page/task/schedules'
 
 import './styles.less'
 
@@ -34,9 +35,14 @@ export default CollapsibleRow.extend({
     }
   },
   onClickToggleCollapse (event) {
-    WorkflowActions.populate(this.model)
+    App.actions.workflow.populate(this.model)
   },
   renderCollapsedContent () {
+    this.renderSubview(
+      new SchedulesView({ model: this.model }),
+      this.queryByHook('collapse-container-body'),
+    )
+
     this.renderSubview(
       new WorkflowJobsListView({ model: this.model }),
       this.queryByHook('collapse-container-body')
@@ -177,36 +183,26 @@ const ExecWorkflowButton = ExecButton.extend({
   onClick (event) {
     event.stopPropagation()
     event.preventDefault()
-    WorkflowActions.triggerExecution(this.model)
+    App.actions.workflow.triggerExecution(this.model)
     return false
   }
 })
 
 const WorkflowButtonsView = View.extend({
-  template: `
-    <div>
-      <span data-hook="view-button"></span>
-      <span data-hook="edit-button"></span>
-      <span data-hook="integrations-button"></span>
-      <span data-hook="remove-button"></span>
-    </div>`,
+  template: `<div data-hook="buttons"></div>`,
   render () {
     this.renderWithTemplate(this)
+    const buttons = this.queryByHook('buttons')
+
+    this.renderSubview(new ViewWorkflowButton({ model: this.model }), buttons)
 
     // edit comes before view
     if (Acls.hasAccessLevel('admin')) {
-      let editButton = new EditWorkflowButton({ model: this.model })
-      this.renderSubview(editButton, this.queryByHook('edit-button'))
-
-      let integrationsButton = new IntegrationsWorkflowButton({ model: this.model })
-      this.renderSubview(integrationsButton, this.queryByHook('integrations-button'))
-
-      let removeButton = new RemoveWorkflowButton({ model: this.model })
-      this.renderSubview(removeButton, this.queryByHook('remote-button'))
+      this.renderSubview(new EditWorkflowButton({ model: this.model }), buttons)
+      this.renderSubview(new IntegrationsWorkflowButton({ model: this.model }), buttons)
+      this.renderSubview(new RemoveWorkflowButton({ model: this.model }), buttons)
+      this.renderSubview(new ScheduleButton({ model: this.model }), buttons)
     }
-
-    let viewButton = new ViewWorkflowButton({ model: this.model })
-    this.renderSubview(viewButton, this.queryByHook('view-button'))
   }
 })
 

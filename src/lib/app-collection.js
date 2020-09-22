@@ -1,10 +1,10 @@
 import App from 'ampersand-app'
 import AmpersandCollection from 'ampersand-rest-collection'
-import FilterMixin from './app-loopback-filter-mixin'
+import FilterMixin from './app-filter-mixin'
 
 export default AmpersandCollection.extend(FilterMixin, {
   mainIndex: 'id' ,
-  ajaxConfig: function () {
+  ajaxConfig () {
     if (!App.state) return {}
     if (!App.state.session) return {}
     if (!App.state.session.authorization) return {}

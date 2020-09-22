@@ -84,13 +84,13 @@ export default Router.extend({
           route.route('index')
         })
     },
-    // 'admin/task': () => {
-    //   return import(/* webpackChunkName: "router-task" */ './task')
-    //     .then(({ default: TasksRoute }) => {
-    //       const route = new TasksRoute()
-    //       route.route('index')
-    //     })
-    // },
+    'admin/task': () => {
+      return import(/* webpackChunkName: "router-task" */ './task')
+        .then(({ default: TasksRoute }) => {
+          const route = new TasksRoute()
+          route.route('index')
+        })
+    },
     'admin/file': () => {
       return import(/* webpackChunkName: "router-files" */ './files')
         .then(({ default: FilesRoute }) => {

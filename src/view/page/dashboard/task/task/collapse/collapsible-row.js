@@ -8,7 +8,7 @@ import CopyTaskButton from 'view/page/task/buttons/copy'
 import DeleteTaskButton from 'view/page/task/buttons/delete'
 import ExportTaskButton from 'view/page/task/buttons/export'
 import CollapsibleRow from 'view/page/dashboard/task/collapsible-row'
-import Schedules from 'view/page/task/schedules'
+import SchedulesView from 'view/page/task/schedules'
 import Acls from 'lib/acls'
 import $ from 'jquery'
 import JobRow from './job'
@@ -34,7 +34,7 @@ export default CollapsibleRow.extend({
   },
   renderCollapsedContent () {
     this.renderSubview(
-      new Schedules({model: this.model}),
+      new SchedulesView({ model: this.model }),
       this.queryByHook('collapse-container-body'),
     )
 

@@ -85,9 +85,13 @@ const Schema = AppModel.extend({
       }
     })
 
-    this.listenToAndRun(this.schedules, 'reset sync remove add', () => {
-      this.hasSchedules = this.schedules.length > 0
-    })
+    this.listenToAndRun(
+      this.schedules,
+      'reset sync remove add',
+      () => {
+        this.hasSchedules = this.schedules.length > 0
+      }
+    )
 
     this.listenToAndRun(
       this.jobs,
@@ -158,11 +162,7 @@ const Schema = AppModel.extend({
   },
   hasHost () {
     let host = this.hostResource()
-    if (host) {
-      return true
-    } else {
-      return false
-    }
+    return Boolean(host)
   },
   hostIsReporting () {
     let host = this.hostResource()

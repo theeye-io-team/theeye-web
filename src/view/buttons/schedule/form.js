@@ -1,145 +1,20 @@
 import App from 'ampersand-app'
-import View from 'ampersand-view'
-import PanelButton from 'components/list/item/panel-button'
-import Modalizer from 'components/modalizer'
 import FormView from 'ampersand-form-view'
-import HelpIcon from 'components/help-icon'
+import AmpersandModel from 'ampersand-model'
+import AmpersandCollection from 'ampersand-collection'
 import InputView from 'components/input-view'
 import Datepicker from 'components/input-view/datepicker'
-import AmpersandCollection from 'ampersand-collection'
-import AmpersandModel from 'ampersand-model'
+import HelpIcon from 'components/help-icon'
+import View from 'ampersand-view'
 import MinMaxTimePlugin from 'flatpickr/dist/plugins/minMaxTimePlugin'
 import bootbox from 'bootbox'
 import $ from 'jquery'
-
 import HelpTexts from 'language/help'
 import humanInterval from 'lib/human-interval'
 import { CronTime } from 'cron'
 import moment from 'moment-timezone'
 
-export default PanelButton.extend({
-  initialize (options) {
-    this.title = 'Schedule Task'
-    this.iconClass = 'fa fa-clock-o dropdown-icon'
-    this.className = 'btn btn-primary'
-  },
-  bindings: Object.assign({}, PanelButton.prototype.bindings, {
-    'model.hasSchedules': {
-      type: 'booleanClass',
-      yes: 'hilite',
-      no: '',
-      selector: 'button'
-    }
-  }),
-  events: {
-    click (event) {
-      event.stopPropagation()
-      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
-
-      // TODO: schedules for dynamically argumented
-      // tasks are not supported
-      if (this.model.hasDynamicArguments) {
-        let deniedMessage = [
-          'Scheduling tasks with dynamic arguments',
-          '(input/select) is not supported'
-        ].join(' ')
-        bootbox.alert(deniedMessage)
-        return
-      }
-
-      const form = new ScheduleForm({
-        model: this.model
-      })
-
-      const modal = new Modalizer({
-        buttons: false,
-        title: this.title,
-        bodyView: form
-      })
-
-      this.listenTo(modal, 'hidden', () => {
-        form.remove()
-        modal.remove()
-      })
-
-      this.listenTo(form, 'submitted', modal.hide.bind(modal))
-
-      modal.show()
-    }
-  }
-})
-
-const ModalButtons = View.extend({
-  template: `
-    <div id="schedule-form-buttons" data-hook="buttons-container">
-      <div>
-        <button
-          type="button"
-          class="btn btn-default btn-block btn-lg"
-          data-dismiss="modal">Cancel</button>
-        <button
-          type="button"
-          class="btn btn-primary btn-block btn-lg"
-          data-hook="action"></button>
-      </div>
-    </div>`,
-  props: {
-    actionText: ['string', true, 'Save'],
-    action: ['any', true, event => { event && event.preventDefault() }]
-  },
-  bindings: {
-    actionText: {hook: 'action'}
-  },
-  render () {
-    this.renderWithTemplate(this)
-    this.queryByHook('action').onclick = this.action
-  }
-})
-
-const DateEntryModel = AmpersandModel.extend({
-  props: {
-    date: 'date'
-  }
-})
-const DateEntry = View.extend({
-  template: '<li></li>',
-  bindings: {
-    'model.date': {
-      type: 'text',
-      selector: ''
-    }
-  }
-})
-const SchedulePreview = View.extend({
-  props: {
-    visible: ['boolean', true, false]
-  },
-  bindings: {
-    visible: {
-      type: 'toggle'
-    }
-  },
-  template: `
-    <div class="schedule-preview row">
-      <div class="col-xs-12">
-        <h4>Next 5 run dates</h4>
-        <ul data-hook="date-list"></ul>
-      </div>
-    </div>`,
-  render: function () {
-    this.renderWithTemplate(this)
-    this.renderCollection(
-      this.collection,
-      DateEntry,
-      this.queryByHook('date-list')
-    )
-
-    this.listenToAndRun(this.collection, 'reset', () => {
-      this.visible = Boolean(this.collection.length)
-    })
-  }
-})
-const ScheduleForm = FormView.extend({
+export default FormView.extend({
   props: {
     isCron: ['boolean', true, false]
   },
@@ -147,8 +22,8 @@ const ScheduleForm = FormView.extend({
     this.nextDates = new AmpersandCollection()
 
     const frequencyInput = new InputView({
-      label: 'Then repeat every',
       name: 'frequency',
+      label: 'Then repeat every',
       required: false,
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label',
@@ -185,6 +60,7 @@ const ScheduleForm = FormView.extend({
     }
 
     const initialDateInput = new Datepicker({
+      name: 'datetime',
       minDate: 'today',
       enableTime: true,
       plugins: [
@@ -193,7 +69,6 @@ const ScheduleForm = FormView.extend({
       required: true,
       altInput: false,
       label: 'When shall I run first? *',
-      name: 'datetime',
       dateFormat: 'F J, Y at H:i',
       value: new Date( moment().add(2, 'minutes').format() ),
       invalidClass: 'text-danger',
@@ -223,11 +98,12 @@ const ScheduleForm = FormView.extend({
       initialDateInput,
       frequencyInput
     ]
+
     FormView.prototype.initialize.apply(this, arguments)
     this.listenTo(frequencyInput, 'change:value', this.onFrequencyChange)
     this.listenTo(initialDateInput, 'change:value', this.onFrequencyChange)
   },
-  onFrequencyChange: function (inputView, inputValue) {
+  onFrequencyChange (inputView, inputValue) {
     // since this handle serves as listener for both
     // inputViews don't trust arguments,
     // get value from input view as a 'this' reference
@@ -280,24 +156,25 @@ const ScheduleForm = FormView.extend({
   },
   submit (event) {
     event.preventDefault()
-
+    event.stopPropagation()
     this.beforeSubmit()
-    if (!this.valid) return
+    if (!this.valid) { return }
 
     const data = this.prepareData(this.data)
-
-    App.actions.scheduler.create(this.model.id, data)
+    App.actions.scheduler.create(this.model, data)
     this.trigger('submitted')
   },
   computeFromInterval (initialDate, interval) {
     var lastRun = initialDate || new Date()
     var nextRunAt
     var timezone = moment.tz.guess()
-    function dateForTimezone (d) {
+
+    const dateForTimezone = (d) => {
       d = moment(d)
       if (timezone) d.tz(timezone)
       return d
     }
+
     this.isCron = false
 
     lastRun = dateForTimezone(lastRun)
@@ -312,13 +189,11 @@ const ScheduleForm = FormView.extend({
       nextRunAt = nextDate.valueOf()
     } catch (e) {
       // Nope, humanInterval then!
-      try {
-        if (!initialDate && humanInterval(interval)) {
-          nextRunAt = lastRun.valueOf()
-        } else {
-          nextRunAt = lastRun.valueOf() + humanInterval(interval)
-        }
-      } catch (e) {}
+      if (!initialDate && humanInterval(interval)) {
+        nextRunAt = lastRun.valueOf()
+      } else {
+        nextRunAt = lastRun.valueOf() + humanInterval(interval)
+      }
     } finally {
       if (isNaN(nextRunAt)) {
         nextRunAt = undefined
@@ -327,16 +202,83 @@ const ScheduleForm = FormView.extend({
     return nextRunAt
   },
   prepareData (data) {
-    return Object.assign(
-      {},
-      data,
-      {
-        task: this.model.id,
-        scheduleData: {
-          repeatEvery: data.frequency,
-          runDate: new Date(data.datetime)
-        }
-      }
+    return {
+      frequency: data.frequency,
+      datetime: data.datetime[0]
+    }
+  }
+})
+
+const ModalButtons = View.extend({
+  template: `
+    <div id="schedule-form-buttons" data-hook="buttons-container">
+      <div>
+        <button
+          type="button"
+          class="btn btn-default btn-block btn-lg"
+          data-dismiss="modal">Cancel</button>
+        <button
+          type="button"
+          class="btn btn-primary btn-block btn-lg"
+          data-hook="action"></button>
+      </div>
+    </div>`,
+  props: {
+    actionText: ['string', true, 'Save'],
+    action: ['any', true, event => { event && event.preventDefault() }]
+  },
+  bindings: {
+    actionText: {hook: 'action'}
+  },
+  render () {
+    this.renderWithTemplate(this)
+    this.queryByHook('action').onclick = this.action
+  }
+})
+
+const DateEntryModel = AmpersandModel.extend({
+  props: {
+    date: 'date'
+  }
+})
+
+const SchedulePreview = View.extend({
+  props: {
+    visible: ['boolean', true, false]
+  },
+  bindings: {
+    visible: {
+      type: 'toggle'
+    }
+  },
+  template: `
+    <div class="schedule-preview row">
+      <div class="col-xs-12">
+        <h4>Next 5 run dates</h4>
+        <ul data-hook="date-list"></ul>
+      </div>
+    </div>
+  `,
+  render () {
+    this.renderWithTemplate(this)
+    this.renderCollection(
+      this.collection,
+      DateEntry,
+      this.queryByHook('date-list')
     )
+
+    this.listenToAndRun(this.collection, 'reset', () => {
+      this.visible = Boolean(this.collection.length)
+    })
+  }
+})
+
+const DateEntry = View.extend({
+  template: '<li></li>',
+  bindings: {
+    'model.date': {
+      type: 'text',
+      selector: ''
+    }
   }
 })

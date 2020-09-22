@@ -21,6 +21,7 @@ export default {
     if (options.childUrlPath) {
       this.url += '/' + options.childUrlPath
     }
+
     if (options.filters) {
       this.filters = options.filters
     }
@@ -38,7 +39,7 @@ export default {
       query = {
         data: {
           // filter is how strongloop admit query
-          filter: this.filters
+          where: this.filters
         }
       }
     }

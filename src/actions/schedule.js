@@ -3,17 +3,20 @@ import bootbox from 'bootbox'
 import App from 'ampersand-app'
 
 export default {
-  create (taskId, data) {
-    const task = App.state.tasks.get(taskId)
+  create (model, data) {
+    // (model.type) ... task / workflow
     XHR.send({
-      url: `${task.url()}/schedule`,
+      url: `${model.url()}/schedule`,
       method: 'POST',
-      jsonData: data,
+      jsonData: {
+        runDate: data.datetime,
+        repeatEvery: data.frequency
+      },
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
       done: (response, xhr) => {
-        task.schedules.add(response)
+        model.schedules.add(response)
         bootbox.alert('Schedule created')
       },
       error: (response, xhr) => {
@@ -22,38 +25,34 @@ export default {
       }
     })
   },
-  fetch (taskId) {
-    const task = App.state.tasks.get(taskId)
+  fetch (model) {
+    //const task = App.state.tasks.get(taskId)
     XHR.send({
-      url: `${task.url()}/schedule`,
+      url: `${model.url()}/schedule`,
       method: 'GET',
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
       done: (response, xhr) => {
-        task.schedules.reset(response || [])
+        model.schedules.reset(response || [])
       },
       error: (response, xhr) => {
         console.warn(response)
       }
     })
   },
-  cancel (taskId, scheduleId) {
-    const task = App.state.tasks.get(taskId)
-    const schedule = task.schedules.get(scheduleId)
-
-    XHR.send({
-      url: `${task.url()}/schedule/${schedule._id}`,
-      method: 'DELETE',
-      headers: {
-        Accept: 'application/json;charset=UTF-8'
+  /**
+   * @param {Task|Workflow} scheduledModel
+   * @param {Schedule} schedule
+   */
+  cancel (scheduledModel, schedule) {
+    schedule.destroy({
+      success () {
+        scheduledModel.schedules.remove(schedule)
       },
-      done: (response, xhr) => {
-        task.schedules.remove(schedule)
-      },
-      error: (response, xhr) => {
+      error (err) {
         bootbox.alert('There was an error canceling the schedule')
-        console.warn(response)
+        console.warn(err)
       }
     })
   },

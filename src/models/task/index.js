@@ -1,5 +1,4 @@
 import App from 'ampersand-app'
-import State from 'ampersand-state'
 import AppCollection from 'lib/app-collection'
 import isURL from 'validator/lib/isURL'
 import isMongoId from 'validator/lib/isMongoId'
@@ -24,6 +23,9 @@ const formattedTags = () => {
       'hasSchedules','inProgressJobs','hasTemplate',
       'canExecute'
     ],
+    /**
+     * @return {Array}
+     */
     fn () {
       return [
         this.name,

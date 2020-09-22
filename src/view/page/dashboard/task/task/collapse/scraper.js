@@ -1,6 +1,6 @@
 import TaskCollapsibleRow from './collapsible-row'
 import * as TaskConstants from 'constants/task'
-import ScheduleTaskButton from 'view/page/task/buttons/schedule'
+import ScheduleButton from 'view/buttons/schedule'
 
 export default TaskCollapsibleRow.extend({
   derived: {
@@ -24,7 +24,7 @@ export default TaskCollapsibleRow.extend({
     TaskCollapsibleRow.prototype.renderButtons.apply(this, arguments)
 
     this.renderSubview(
-      new ScheduleTaskButton({ model: this.model }),
+      new ScheduleButton({ model: this.model }),
       this.query('ul.dropdown-menu[data-hook=buttons-container]')
     )
   }

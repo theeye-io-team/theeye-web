@@ -7,6 +7,7 @@ import './style.less'
 import 'highlight.js/styles/github.css'
 import Clipboard from 'clipboard'
 import config from 'config'
+import Titles from 'language/titles'
 
 import hljs from 'highlight.js/lib/highlight'
 import bash from 'highlight.js/lib/languages/bash'
@@ -16,7 +17,7 @@ const docsLink = 'integrations/api/api_resources_task/#2-using-the-task-secret-k
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = 'Integration'
+    this.title = Titles.workflow.buttons.integrations
     this.iconClass = 'fa fa-chain dropdown-icon'
     this.className = 'btn btn-primary'
   },

@@ -7,7 +7,7 @@ import './style.less'
 export const Schedules = View.extend({
   template: `
     <div data-component="schedules-list" class="col-xs-12">
-      <h4>Schedules for this task</h4>
+      <h4>Schedules list</h4>
       <div data-hook="schedule-list"></div>
     </div>
   `,
@@ -25,7 +25,7 @@ export const Schedules = View.extend({
       this.queryByHook('schedule-list'),
       {
         viewOptions: {
-          task: this.model
+          scheduledModel: this.model
         }
       }
     )
@@ -36,7 +36,7 @@ export default Schedules
 
 const ScheduleRow = View.extend({
   props: {
-    task: ['state', true]
+    scheduledModel: ['state', true]
   },
   template: `
     <div class="scheduleItem row">
@@ -62,7 +62,7 @@ const ScheduleRow = View.extend({
     bootbox.confirm({
       buttons: {
         confirm: {
-          label: 'Delete scheduled Task.',
+          label: 'Delete schedule',
           className: 'btn-danger'
         }
       },
@@ -70,7 +70,7 @@ const ScheduleRow = View.extend({
       backdrop: true,
       callback: (confirmed) => {
         if (confirmed) {
-          App.actions.scheduler.cancel(this.task.id, this.model._id)
+          App.actions.scheduler.cancel(this.scheduledModel, this.model)
         }
       }
     })

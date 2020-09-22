@@ -1,6 +1,7 @@
 import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
+import { Collection as ScheduleCollection } from 'models/schedule'
 import { Collection as TagCollection } from 'models/tag'
 import graphlib from 'graphlib'
 
@@ -9,7 +10,10 @@ const urlRoot = `${config.supervisor_api_url}/workflows`
 
 const formattedTags = () => {
   return {
-    deps: ['name','hostname','tags','graph'],
+    deps: ['name','hostname','tags','graph','hasSchedules'],
+    /**
+     * @return {Array}
+     */
     fn () {
       let graph = this.graph
       let tasksNames = []
@@ -24,6 +28,7 @@ const formattedTags = () => {
         })
       }
       return [
+        (this.hasSchedules ? 'scheduled' : undefined),
         'name=' + this.name,
         'hostname=' + this.hostname
       ].concat(this.tags).concat(tasksNames)
@@ -84,6 +89,7 @@ const Workflow = AppModel.extend({
     graph: ['graphlib.Graph', true]
   },
   collections: {
+    schedules: ScheduleCollection,
     tasks: function (models, options) {
       return new App.Models.Task.Collection(models, options)
     },
@@ -96,7 +102,8 @@ const Workflow = AppModel.extend({
     inProgressJobs: 'number',
     last_execution: 'date',
     tagsCollection: 'collection',
-    credentials: ['object', false, null]
+    credentials: ['object', false, null],
+    hasSchedules: ['boolean', true, false]
   },
   derived: {
     type: {
@@ -113,7 +120,10 @@ const Workflow = AppModel.extend({
       cache: false,
       deps: ['start_task_id'],
       fn () {
-        if (!this.start_task_id) return
+        if (!this.start_task_id) {
+          return
+        }
+
         return App.state.tasks.get(this.start_task_id)
       }
     },
@@ -121,7 +131,9 @@ const Workflow = AppModel.extend({
       cache: false,
       deps: ['end_task_id'],
       fn () {
-        if (!this.end_task_id) return
+        if (!this.end_task_id) {
+          return
+        }
         return App.state.tasks.get(this.end_task_id)
       }
     },
@@ -129,8 +141,21 @@ const Workflow = AppModel.extend({
       cache: false,
       deps: ['current_task_id'],
       fn () {
-        if (!this.current_task_id) return this.start_task
+        if (!this.current_task_id) {
+          return this.start_task
+        }
         return App.state.tasks.get(this.current_task_id)
+      }
+    },
+    hasDynamicArguments: {
+      cache: false,
+      deps: ['start_task'],
+      fn () {
+        if (!this.alreadyPopulated) {
+          console.error('cannot determine dynamic arguments. workflow information missing')
+        }
+
+        return this.start_task.hasDynamicArguments
       }
     }
   },
@@ -169,6 +194,14 @@ const Workflow = AppModel.extend({
         if (this.jobs.length===0) { return }
         let dates = this.jobs.map(e => e.creation_date)
         this.last_execution = Math.max.apply(null, dates)
+      }
+    )
+
+    this.listenToAndRun(
+      this.schedules,
+      'reset sync remove add',
+      () => {
+        this.hasSchedules = this.schedules.length > 0
       }
     )
   },

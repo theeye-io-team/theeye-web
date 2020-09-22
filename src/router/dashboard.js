@@ -1,5 +1,3 @@
-'use strict'
-
 import PageView from 'view/page/dashboard'
 import App from 'ampersand-app'
 import search from 'lib/query-params'

@@ -201,7 +201,7 @@ const createSingleTaskJob = (task, args, next) => {
     done (data, xhr) {
       logger.debug('job created. updating task')
       if (task.grace_time > 0) {
-        App.actions.scheduler.fetch(task.id)
+        App.actions.scheduler.fetch(task)
       } else {
         let job = task.jobs.add(data, { merge: true })
       }
@@ -287,7 +287,7 @@ const addTaskJobToState = (data, task) => {
     task.hasOnHoldExecution &&
     data.lifecycle === LifecycleConstants.READY
   ) {
-    App.actions.scheduler.fetch(task.id)
+    App.actions.scheduler.fetch(task)
   }
 
   return taskJob

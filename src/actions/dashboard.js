@@ -44,43 +44,27 @@ export default {
       done()
     }
 
-		const nextStep = () => {
-			step()
-			App.state.tasks.fetch({
-				success: () => {
-					App.state.dashboard.groupTasks()
-					App.state.workflows.forEach(workflow => {
-						App.actions.workflow.populate(workflow)
-					})
+    const nextStep = () => {
+      step()
 
-					App.actions.onHold.check()
-					step()
-				},
-				error: step,
-				reset: true
-			})
-		}
+      App.state.tasks.fetch({
+        data: { unassigned: true },
+        success: () => {
+          App.state.dashboard.groupTasks()
+          App.state.workflows.forEach(workflow => {
+            App.actions.workflow.populate(workflow)
+          })
 
-    //const nextStep = () => {
-    //  step()
-    //  App.state.tasks.fetch({
-    //    success: () => {
-    //      App.state.dashboard.groupTasks()
-    //      App.state.workflows.forEach(workflow => {
-    //        App.actions.workflow.populate(workflow)
-    //      })
-
-    //      App.actions.onHold.check()
-    //      step()
-    //    },
-    //    error: step,
-    //    reset: true
-    //  })
-    //}
+          App.actions.onHold.check()
+          step()
+        },
+        error: step,
+        reset: true
+      })
+    }
 
     App.state.workflows.fetch({ success: nextStep, error: nextStep })
     App.state.events.fetch({ success: step, error: step })
-    // App.state.scripts.fetch({ success: step, error: step })
     App.state.files.fetch({ success: step, error: step })
     App.state.hosts.fetch({ success: step, error: step })
     App.state.tags.fetch({ success: step, error: step })

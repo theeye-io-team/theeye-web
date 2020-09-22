@@ -135,10 +135,11 @@ const BaseExec = State.extend({
 
 const ExecTask = BaseExec.extend({
   execute () {
-    if (!this.model.canExecute) return
-
     let reporting = this.model.hostIsReporting()
-    if (reporting === null) return  // cannot find the resource for this task
+    if (reporting === null) {
+      return  // cannot find the resource for this task
+    }
+
     if (reporting === false) {
       bootbox.confirm({
         message: `
@@ -147,10 +148,14 @@ const ExecTask = BaseExec.extend({
         `,
         backdrop: true,
         callback: (confirmed) => {
-          if (confirmed) this.checkInProgress()
+          if (confirmed) {
+            this.checkInProgress()
+          }
         }
       })
-    } else this.checkInProgress()
+    } else {
+      this.checkInProgress()
+    }
   }
 })
 

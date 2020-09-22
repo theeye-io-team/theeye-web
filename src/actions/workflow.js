@@ -72,29 +72,35 @@ export default {
     })
   },
   populate (workflow) {
-    if (workflow.alreadyPopulated) { return }
-    if (workflow.tasks.models.length!==0) { return }
+    if (workflow.isNew()) return
 
-    let nodes = workflow.graph.nodes()
-    var tasks = []
-    nodes.forEach(id => {
-      var node = workflow.graph.node(id)
-      if (node && !/Event/.test(node._type)) {
-        let task = App.state.tasks.get(id)
-        if (!task) { return }
-        tasks.push(task)
-      }
-    })
-    workflow.tasks.add(tasks)
+    if (
+      ! workflow.alreadyPopulated &&
+      workflow.tasks.models.length === 0
+    ) {
+      let nodes = workflow.graph.nodes()
+      var tasks = []
+      nodes.forEach(id => {
+        var node = workflow.graph.node(id)
+        if (node && !/Event/.test(node._type)) {
+          let task = App.state.tasks.get(id)
+          if (!task) { return }
+          tasks.push(task)
+        }
+      })
+      workflow.tasks.add(tasks)
 
-    tasks.forEach(task => {
-      if (!task.workflow_id) {
-        task.workflow_id = workflow.id
-      }
-    })
+      tasks.forEach(task => {
+        if (!task.workflow_id) {
+          task.workflow_id = workflow.id
+        }
+      })
 
-    workflow.alreadyPopulated = true
-    workflow.fetchJobs()
+      workflow.alreadyPopulated = true
+      workflow.fetchJobs()
+    }
+
+    App.actions.scheduler.fetch(workflow)
   },
   triggerExecution (workflow) {
     this.populate(workflow)

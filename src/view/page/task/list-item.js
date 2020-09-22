@@ -5,7 +5,7 @@ import View from 'ampersand-view'
 import EditButton from './buttons/edit'
 import CopyButton from './buttons/copy'
 import DeleteButton from './buttons/delete'
-import ScheduleButton from './buttons/schedule'
+import ScheduleButton from 'view/buttons/schedule'
 import ExportButton from './buttons/export'
 import bootbox from 'bootbox'
 import * as TaskConstants from 'constants/task'
@@ -94,7 +94,7 @@ const Item = ListItem.extend({
 
     const collapse = this.query('.itemRow > .collapse')
     $(collapse).on('show.bs.collapse', (event) => {
-      App.actions.scheduler.fetch(this.model.id)
+      App.actions.scheduler.fetch(this.model)
     })
   }
 })
