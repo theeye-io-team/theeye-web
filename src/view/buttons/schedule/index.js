@@ -23,10 +23,10 @@ export default PanelButton.extend({
       event.stopPropagation()
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
-			if (this.model.hasDynamicArguments) {
-				bootbox.alert(`This ${this.model._type} requires user inputs and cannot be scheduled.`)
-				return
-			}
+      if (this.model.hasDynamicArguments) {
+        bootbox.alert(`This ${this.model._type} requires user inputs and cannot be scheduled.`)
+        return
+      }
 
       const form = new ScheduleForm({ model: this.model })
 
