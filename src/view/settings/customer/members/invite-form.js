@@ -8,7 +8,7 @@ export default FormView.extend({
   initialize: function (options) {
 
     const credentials = App.state.credentials.filter(e => {
-      let notIn = ['owner','root']
+      const notIn = ['root']
       if (App.state.session.user.credential === 'manager') {
         notIn.push('admin')
       }
