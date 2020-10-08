@@ -11,8 +11,7 @@ const BaseMonitor = Schema.extend({
     resource_id: 'string',
     enable: 'boolean',
     creation_date: 'date',
-    last_update: 'date',
-    //config: ['object', false, () => { return {} }]
+    last_update: 'date'
   },
   children: {
     template: Schema
@@ -57,18 +56,6 @@ const HostedMonitor = BaseMonitor.extend({
   }
 })
 
-//const NestedMonitorConfig = State.extend({
-//  collections: {
-//    monitors: function () {
-//      const Col = App.Models.Resource.Collection
-//      return new (Col.bind.apply(Col, arguments))([])
-//    }
-//  },
-//  serialize () {
-//    return { monitors: this.monitors.map(m => m.id) }
-//  }
-//})
-
 const NestedMonitor = BaseMonitor.extend({
   initialize () {
     BaseMonitor.prototype.initialize.apply(this, arguments)
@@ -78,18 +65,7 @@ const NestedMonitor = BaseMonitor.extend({
   props: {
     looptime: ['number', false, 0], // is not required
   },
-  //children: {
-  //  config: NestedMonitorConfig
-  //},
   collections: {
-    //monitors: function () {
-    //  const Col = Collection
-    //  return new (Col.bind.apply(Col, arguments))([])
-    //}
-    //monitors: function (models, options) {
-    //  const Col = App.Models.Resource.Collection
-    //  return new (Col.bind.apply(Col, arguments))([])
-    //}
     monitors: function (models, options) {
       return new Collection(models, options)
     }
@@ -97,7 +73,6 @@ const NestedMonitor = BaseMonitor.extend({
   serialize () {
     const serialize = Schema.prototype.serialize
     let data = Object.assign({}, serialize.apply(this))
-    //data.monitors = data.config.monitors
     data.monitors = data.monitors.map(m => m.id)
     delete data.config
     return data
@@ -117,8 +92,6 @@ const ScriptMonitor = HostedMonitor.extend({
   },
   children: {
     script: function (attrs, options) {
-      // module required on-demand
-      //return new StateFactory(attrs, options)
       return new App.Models.Script.Model(attrs, options)
     }
   },
@@ -126,6 +99,14 @@ const ScriptMonitor = HostedMonitor.extend({
     script_runas: 'string',
     script_id: 'string',
     script_arguments: ['array', false, () => { return [] }]
+  }
+})
+
+const HostMonitor = HostedMonitor.extend({
+  initialize () {
+    HostedMonitor.prototype.initialize.apply(this, arguments)
+    this.type = MonitorConstants.TYPE_HOST
+    this._type = MonitorConstants.DISCRIMINATOR_TYPE_HOST
   }
 })
 
@@ -236,6 +217,7 @@ const FileMonitor = HostedMonitor.extend({
 })
 
 const ModelsMapper = []
+ModelsMapper[ MonitorConstants.TYPE_HOST    ] = HostMonitor
 ModelsMapper[ MonitorConstants.TYPE_NESTED  ] = NestedMonitor
 ModelsMapper[ MonitorConstants.TYPE_SCRIPT  ] = ScriptMonitor
 ModelsMapper[ MonitorConstants.TYPE_SCRAPER ] = ScraperMonitor
@@ -262,6 +244,7 @@ export const Collection = AppCollection.extend({
   isModel (model) {
     let isModel = (
       model instanceof BaseMonitor ||
+      model instanceof HostMonitor ||
       model instanceof NestedMonitor ||
       model instanceof ScriptMonitor ||
       model instanceof ScraperMonitor ||

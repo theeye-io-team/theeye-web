@@ -166,9 +166,28 @@ export const HostStats = View.extend({
     event.preventDefault()
     $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
-    // esto no es un action, deberia ser un navigate nomas
-    // HostActions.stats(this.model.host_id)
     App.navigate('/admin/hoststats/' + this.model.host_id)
+    return false
+  }
+})
+
+export const BotReconfigure = View.extend({
+  template: `
+    <button class="btn btn-primary" title="Reconfigure" data-hook="reconfigure">
+      <i class="fa fa-recycle dropdown-icon" aria-hidden="true"></i>
+      <span>Reconfigure</span>
+    </button>
+  `,
+  events: {
+    'click button':'onClickButton',
+  },
+  onClickButton (event) {
+    event.stopPropagation()
+    event.preventDefault()
+
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+
+    App.actions.host.reconfigure(this.model.host_id)
     return false
   }
 })

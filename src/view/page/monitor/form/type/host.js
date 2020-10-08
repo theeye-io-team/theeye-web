@@ -8,7 +8,7 @@ import TextareaView from 'components/input-view/textarea'
 import InputView from 'components/input-view'
 
 import MembersSelectView from 'view/members-select'
-import LooptimeSelectView from 'view/looptime-select'
+//import LooptimeSelectView from 'view/looptime-select'
 import SeveritySelectView from 'view/severity-select'
 import FormButtons from 'view/buttons'
 import AdvancedToggle from 'view/advanced-toggle'
@@ -19,8 +19,7 @@ export default MonitorFormView.extend({
     let resource = this.model
     let monitor = resource.monitor
 
-    const isNewMonitor = Boolean(resource.isNew())
-
+    //const isNewMonitor = Boolean(resource.isNew())
     //this.advancedFields = [
     //  'description','tags','failure_severity','acl'
     //]
@@ -36,9 +35,18 @@ export default MonitorFormView.extend({
         readonly: true
       }),
       //new LooptimeSelectView({
+      //  label: 'Jobs pulling frequency (seconds)',
+      //  looptimes: [
+      //    { id: 1000, text: '1' },
+      //    { id: 5000, text: '5' },
+      //    { id: 10000, text: '10' },
+      //    { id: 30000, text: '30' },
+      //    { id: 60000, text: '60' }
+      //  ],
+      //  unselectedText: 'choose the frequency in seconds',
       //  invalidClass: 'text-danger',
       //  required: true,
-      //  value: this.model.looptime
+      //  value: monitor.looptime
       //}),
       // advanced fields starts visible = false
       //new AdvancedToggle({
@@ -84,7 +92,7 @@ export default MonitorFormView.extend({
 
     this.addHelpIcon('name')
     this.addHelpIcon('description')
-    //this.addHelpIcon('looptime')
+    this//.addHelpIcon('looptime')
     this.addHelpIcon('failure_severity')
     this.addHelpIcon('acl')
     this.addHelpIcon('tags')

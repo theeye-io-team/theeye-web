@@ -24,18 +24,26 @@ export default {
   // remote server update
   update (id, data) {
     const resource = App.state.resources.get(id)
+
     // monitor and resource share almost the same properties.
     // should be unified into a single model
     resource.set(data)
     resource.monitor.set(data)
     resource.save({},{
       success: () => {
-        bootbox.alert('Monitor Updated')
+        App.state.alerts.success('Success', `Monitor ${resource.name} updated`)
       },
       error: () => {
         bootbox.alert('Something goes wrong updating the Monitor')
       }
     })
+
+    if (resource.type === 'host') {
+      // dashboard model. host is grouped
+      const groupedHost = App.state.dashboard.groupedResources.get(id)
+      groupedHost.set(data)
+      groupedHost.monitor.set(data)
+    }
   },
   remove (id) {
     const resource = App.state.resources.get(id)

@@ -21,11 +21,11 @@ FormMapper[ MonitorConstants.TYPE_PSAUX ] = PsauxMonitorForm
 
 export default function (options) {
   const monitor = options.model
-  let formClass = FormMapper[monitor.type]
+  const FormClass = FormMapper[monitor.type]
 
-  if (!formClass) {
+  if (!FormClass) {
     throw new Error(`unrecognized monitor type ${monitor.type}`)
   }
 
-  return new formClass(options)
+  return new FormClass(options)
 }

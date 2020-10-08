@@ -20,7 +20,7 @@ export default View.extend({
 
     switch (type) {
       case MonitorConstants.TYPE_HOST:
-        buttons = [ Buttons.Workflow, Buttons.Search, Buttons.Mute ]
+        buttons = [ Buttons.Workflow, Buttons.Search, Buttons.Mute, Buttons.BotReconfigure ]
         const submonitors = this.model.submonitors.models
         let showHostStats = submonitors.some((submonitor) => {
           return submonitor.type === 'dstat'
