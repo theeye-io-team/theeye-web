@@ -27,9 +27,9 @@ export default TaskFormView.extend({
     // multiple only if new, allows to create multiple tasks at once
     let hostsSelection = new SelectView({
       label: 'Bots *',
-      name: (isNewTask?'hosts':'host_id'),
-      multiple: isNewTask,
-      tags: isNewTask,
+      name: ((isNewTask||this.isImport) ? 'hosts' : 'host_id'),
+      multiple: (isNewTask||this.isImport),
+      tags: (isNewTask||this.isImport),
       options: App.state.hosts,
       value: this.model.host_id,
       required: true,
@@ -275,12 +275,16 @@ export default TaskFormView.extend({
     TaskFormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
-    if (this.model.isNew()) {
+    if (this.model.isNew()||this.isImport) {
       this.addHelpIcon('hosts')
-      this.addHelpIcon('copy_task')
     } else {
       this.addHelpIcon('host_id')
     }
+
+    if (this.model.isNew()) {
+      this.addHelpIcon('copy_task')
+    }
+
     this.addHelpIcon('name')
     this.addHelpIcon('description')
     this.addHelpIcon('tags')
