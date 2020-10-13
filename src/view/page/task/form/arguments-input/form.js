@@ -9,6 +9,7 @@ import CheckboxView from 'components/checkbox-view'
 import * as FIELD from 'constants/field'
 import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
 import isURL from 'validator/lib/isURL'
+import bootbox from 'bootbox'
 
 export default FormView.extend({
   initialize (options) {
@@ -146,14 +147,14 @@ export default FormView.extend({
               validityClassSelector: '.control-label',
               value: this.model.endpoint_url,
               tests: [
-                function (value) {
-                  if (!isURL(value, {
-                    protocols: ['http', 'https'],
-                    require_protocol: true
-                  })) {
-                    return 'Must be a valid URL (include protocol)'
-                  }
-                }
+                // function (value) {
+                //   if (!isURL(value, {
+                //     protocols: ['http', 'https'],
+                //     require_protocol: true
+                //   })) {
+                //     return 'Must be a valid URL (include protocol)'
+                //   }
+                // }
               ]
             }),
             new InputView({
@@ -197,10 +198,29 @@ export default FormView.extend({
     this.query('form').classList.add('form-horizontal')
   },
   submit (next) {
+    const done = () => {
+      if (!this.valid) return
+      if (next) next(true)
+      this.trigger('submitted')
+    }
+
     this.beforeSubmit()
-    if (!this.valid) return
-    if (next) next(true)
-    this.trigger('submitted')
+
+    if (this.model.type !== FIELD.TYPE_REMOTE_OPTIONS) {
+      done()
+      return
+    }
+
+    if (isURL(this._fieldViews['endpoint_url'].value)) {
+      done()
+      return
+    }
+
+    bootbox.confirm('The Endpoint URL is not a valid IP or domain, continue anyway?', (confirmed) => {
+      if (!confirmed) { return }
+      done()
+      return
+    })
   }
 })
 

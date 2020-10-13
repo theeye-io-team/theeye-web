@@ -245,12 +245,12 @@ export default DropableForm.extend({
       textAttribute: spec.text_attribute
     }
 
-    if (isURL(spec.endpoint_url, {
-      protocols: ['http', 'https'],
-      require_protocol: true
-    })) {
+    // if (isURL(spec.endpoint_url, {
+    //   protocols: ['http', 'https'],
+    //   require_protocol: true
+    // })) {
       options.ajaxUrl = spec.endpoint_url
-    }
+    // }
 
     return new SelectView(options)
   }
