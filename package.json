@@ -1,7 +1,7 @@
 {
   "name": "theeye-web",
   "private": true,
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "TheEye WebApp/SPA Interface",
   "keywords": [],
   "main": "src/main.js",
@@ -87,6 +87,6 @@
     "validator": "8.1.0",
     "webpack": "~4.43.0",
     "webpack-bundle-analyzer": "~3.7.0",
-    "webpack-cli": "~3.3.11"
+    "webpack-cli": "~3.3.12"
   }
 }
