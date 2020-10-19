@@ -93,12 +93,10 @@ const WorkflowJobRowView = CollapsibleRow.extend({
               href="#unbinded"
               aria-expanded="false"
               aria-controls="unbinded">
-              <div class="panel-title-content">
+              <div class="panel-title-content" data-hook="panel-container">
                 <span class="panel-item name">
                   <span data-hook="name" title=""></span>
                 </span>
-                <div data-hook="job-status-container" class="panel-item icons">
-                </div>
               </div>
             </span>
           </h4>
@@ -149,7 +147,7 @@ const WorkflowJobRowView = CollapsibleRow.extend({
   renderButtons () {
     this.renderSubview(
       new WorkflowJobStatus({ model: this.model }),
-      this.queryByHook('job-status-container')
+      this.queryByHook('panel-container')
     )
   },
   renderCollapsedContent () {
@@ -208,9 +206,11 @@ const WorkflowButtonsView = View.extend({
 
 const WorkflowJobStatus = JobExecButton.extend({
   template: `
-    <div data-component="job-exec-button" class="status-icons">
-      <i data-hook="execution_lifecycle_icon"></i>
-      <i data-hook="execution_progress_icon"></i>
+    <div data-component="job-exec-button" class="panel-item icons">
+      <li class="static-icons">
+        <i data-hook="execution_lifecycle_icon"></i>
+        <i data-hook="execution_progress_icon"></i>
+      </li>
     </div>
   `
 })

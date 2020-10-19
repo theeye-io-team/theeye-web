@@ -36,7 +36,7 @@ export default View.extend({
     row_title: { type: 'text', hook: 'title' }
   },
   render () {
-    this.renderWithTemplate()
+    this.renderWithTemplate(this)
     this.renderButtons()
   },
   renderButtons () {

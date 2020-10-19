@@ -140,6 +140,12 @@ export default {
     export_backup: '<b>Backup</b>: Export the template of the task, including fixed arguments and environment variables.<br/><b>Keep this recipe safe, to avoid private data leaks and keys exposure</b>',
     export_recipe: '<b>Recipe</b>: Create the template of the task. Values for fixed arguments and environment variables will be empty.'
   },
+  job: {
+    repeat: 'Repeat this job',
+    repeat_edit: 'Repeat this job, but allow me to edit the arguments',
+    restart: 'Restart this job',
+    restart_edit: 'Restart this job, but allow me to edit the arguments'
+  },
   file: {
     path,
     permissions,

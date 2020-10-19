@@ -2,36 +2,63 @@ import App from 'ampersand-app'
 import bootbox from 'bootbox'
 import DynamicForm from 'view/dynamic-form'
 import Modalizer from 'components/modalizer'
-import { BaseExec } from '../../exec-task.js'
+import { ExecTask, BaseExec } from '../../exec-task.js'
 import * as FIELD from 'constants/field'
 import * as ComponentConstants from 'constants/component'
 import moment from 'moment'
 import isURL from 'validator/lib/isURL'
 import * as JobConstants from 'constants/job'
+import * as LifecycleConstants from 'constants/lifecycle'
 import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
 
-const ExecJob = BaseExec.extend({
+export const RepeatCompletedJob = BaseExec.extend({
   execute () {
-    if (this.model.inProgress) {
-      const message = `Cancel <b>${this.model.name}</b> the execution of this task?
-        <a target="_blank" href="https://github.com/theeye-io/theeye-docs/blob/master/tasks/cancellation">Why this happens?</a>`
+    const task = this.model.task
+    const args = []
+    for (let arg of task.task_arguments.models) {
+      if (arg.type !== 'fixed') {
+        args.push({
+          value: this.model.task_arguments_values[ arg.order ],
+          order: parseInt(arg.order),
+          label: arg.label,
+          type: arg.type,
+          masked: arg.masked
+        })
+      }
+    }
 
-      bootbox.confirm({
-        message: message,
-        backdrop: true,
-        callback: (confirmed) => {
-          if (confirmed) {
-            App.actions.job.cancel(this.model)
-          }
+    const action = new ExecTask({ model: task })
+    action._confirmExecution(args)
+  }
+})
+
+export const RestartCompletedJob = BaseExec.extend({
+  execute () {
+    if (this.model.isCompleted) {
+      const task = this.model.task
+      const args = []
+
+      for (let arg of task.task_arguments.models) {
+        if (arg.type !== 'fixed') {
+          args.push({
+            value: this.model.task_arguments_values[ arg.order ],
+            order: parseInt(arg.order),
+            label: arg.label,
+            type: arg.type,
+            masked: arg.masked
+          })
         }
-      })
+      }
+
+      const action = new ExecTask({ model: this.model })
+      action._restartExecution(args)
     }
   }
 })
 
-const ExecOnHoldJob = BaseExec.extend({
+export const ExecOnHoldJob = BaseExec.extend({
   execute (isPendingCheck, done) {
-    if (this.model.inProgress) {
+    if (this.model.lifecycle === LifecycleConstants.ONHOLD) {
       if (this.model._type === JobConstants.APPROVAL_TYPE) {
         if (this.model.isApprover(App.state.session.user)) {
           this.requestApproval(isPendingCheck, done)
@@ -303,5 +330,3 @@ const buildApprovalMessage = (model) => {
 
   return message
 }
-
-export { ExecJob, ExecOnHoldJob }

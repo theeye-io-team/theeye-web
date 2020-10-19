@@ -130,29 +130,25 @@ export default {
       }
     })
   },
-  //removeFinished (model) {
-  //  XHR.send({
-  //    method: 'delete',
-  //    url: `${model.url()}/job?lifecycle=finished`,
-  //    headers: {
-  //      Accept: 'application/json;charset=UTF-8'
-  //    },
-  //    done (data, xhr) {
-  //      let deletedJobs = []
-  //      model.jobs.forEach(job => {
-  //        if (!LifecycleConstants.inProgress(job.lifecycle)) {
-  //          deletedJobs.push(job.id)
-  //        }
-  //      })
-  //      deletedJobs.forEach(jobId => {
-  //        model.jobs.remove(jobId)
-  //      })
-  //    },
-  //    fail (err, xhr) {
-  //      bootbox.alert('Something goes wrong. Please try again later')
-  //    }
-  //  })
-  //},
+  restart (job, args) {
+    args || (args = [])
+    //job.set('lifecycle', LifecycleConstants.FINISHED)
+    XHR.send({
+      method: 'put',
+      url: `${job.url()}/restart`,
+      jsonData: { task_arguments: args },
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (data, xhr) {
+        logger.debug('job inputs submited')
+      },
+      fail (err, xhr) {
+        bootbox.alert('something goes wrong')
+        console.log(arguments)
+      }
+    })
+  },
   /**
    * model should be a workflow or a task
    */
@@ -216,7 +212,7 @@ const createSingleTaskJob = (task, args, next) => {
 }
 
 const createWorkflowJob = (workflow, args, next) => {
-  let body = {
+  const body = {
     task: workflow.start_task_id,
     task_arguments: args
   }
@@ -262,17 +258,18 @@ const addTaskJobToState = (data, task) => {
     // get the workflow
     let workflow = App.state.workflows.get(task.workflow_id)
     if (!workflow) { // error
-      let err = new Error(msg)
+      let err = new Error('workflow job not found')
       err.data = data
       throw err
     }
 
     // get the workflow job
     let workflowJob = workflow.jobs.get(taskJob.workflow_job_id)
-    if (!workflowJob) { // async error?
+    if (!workflowJob) { // async error ?
       if (!taskJob.workflow_job_id) {
         throw new Error('task definition error. workflow id is missing')
       }
+
       // add temp models to the collection
       let attrs = {
         id: taskJob.workflow_job_id,
@@ -280,6 +277,7 @@ const addTaskJobToState = (data, task) => {
       }
       workflowJob = workflow.jobs.add(attrs, { merge: true })
     }
+
     workflowJob.jobs.add(taskJob, { merge: true })
   }
 

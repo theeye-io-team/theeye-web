@@ -1,28 +1,14 @@
+import App from 'ampersand-app'
 import View from 'ampersand-view'
+import bootbox from 'bootbox'
 import * as LifecycleConstants from 'constants/lifecycle'
 import * as StateConstants from 'constants/states'
-import { ExecJob, ExecOnHoldJob } from './exec-job.js'
 import JobResult from 'view/page/dashboard/job-result'
+import { ExecOnHoldJob } from './exec-job'
+import OptionsDialog from './options-dialog'
 import './styles.less'
 
 export default View.extend({
-  /*
-  template: `
-    <div data-component="job-exec-button">
-      <li class="button-container">
-        <button class="btn btn-primary tooltiped" data-hook="execution_button">
-          <i data-hook="execution_button_icon" aria-hidden="true" class="fa fa-file-text-o"></i>
-        </button>
-      </li>
-      <li class="button-container">
-        <button class="btn btn-primary tooltiped" data-hook="action_button">
-          <i data-hook="execution_icon" aria-hidden="true"></i>
-          <i data-hook="job_lifecycle" style="top:-6px;position:relative;right:4px;font-size:12px"></i>
-        </button>
-      </li>
-    </div>
-  `,
-  */
   template: `
     <div data-component="job-exec-button">
       <li class="button-container">
@@ -36,11 +22,17 @@ export default View.extend({
           <i data-hook="execution_progress_icon" style="top:-6px;position:relative;right:4px;font-size:12px"></i>
         </button>
       </li>
+      <li class="button-container panel-item icons dropdown">
+        <button class="btn dropdown-toggle btn-primary" data-hook="job-options-button">
+          <i class="fa fa-cogs" aria-hidden="true"></i>
+        </button>
+      </li>
     </div>
   `,
   events: {
     'click button[data-hook=action_button]': 'onClickActionButton',
-    'click button[data-hook=execution_button]': 'onClickExecutionButton'
+    'click button[data-hook=execution_button]': 'onClickExecutionButton',
+    'click button[data-hook=job-options-button]': 'onClickJobOptionsButton',
   },
   bindings: {
     execution_progress_icon: {
@@ -89,8 +81,12 @@ export default View.extend({
 
         if (LifecycleConstants.isCompleted(lifecycle)) {
           if (state === StateConstants.TIMEOUT) { return 'fa fa-clock-o remark-alert' }
-          if (state === StateConstants.CANCELED) { return 'fa fa-exclamation remark-alert' }
-          if (state === StateConstants.FAILURE) { return 'fa fa-exclamation remark-alert' }
+          if (
+            state === StateConstants.FAILURE ||
+            state === StateConstants.CANCELED
+          ) {
+            return 'fa fa-exclamation remark-alert'
+          }
           if (state === StateConstants.ERROR) { return 'fa fa-question remark-warning' }
           return 'fa fa-check remark-success'
         }
@@ -133,54 +129,83 @@ export default View.extend({
         }
       }
     },
-    show_execution_output: {
-      deps: ['model.lifecycle'],
-      fn () {
-        const lifecycle = this.model.lifecycle
-        switch (lifecycle) {
-          case LifecycleConstants.FINISHED:
-          case LifecycleConstants.TERMINATED:
-          case LifecycleConstants.COMPLETED:
-          case LifecycleConstants.EXPIRED:
-          case LifecycleConstants.CANCELED:
-            return true
-            break
-          default:
-            return false
-            break
-        }
-      }
-    }
+    //show_execution_output: {
+    //  deps: ['model.lifecycle'],
+    //  fn () {
+    //    const lifecycle = this.model.lifecycle
+    //    switch (lifecycle) {
+    //      case LifecycleConstants.FINISHED:
+    //      case LifecycleConstants.TERMINATED:
+    //      case LifecycleConstants.COMPLETED:
+    //      case LifecycleConstants.EXPIRED:
+    //      case LifecycleConstants.CANCELED:
+    //        return true
+    //        break
+    //      default:
+    //        return false
+    //        break
+    //    }
+    //  }
+    //}
   },
   onClickActionButton (event) {
     event.stopPropagation()
     event.preventDefault()
-    if (!this.show_execution_output) {
-      this.execute()
+
+    let lifecycleAction
+    if (this.model.lifecycle === LifecycleConstants.ONHOLD) {
+      lifecycleAction = new ExecOnHoldJob({ model: this.model })
+    } else if (LifecycleConstants.inProgress(this.model.lifecycle)) {
+      lifecycleAction = new StopInProgressJob({ model: this.model })
+    } else {
+      return
     }
+
+    lifecycleAction.execute()
     return false
   },
   onClickExecutionButton (event) {
     event.stopPropagation()
     event.preventDefault()
-    this.showExecutionOutput()
-    return false
-  },
-  showExecutionOutput () {
+
     const view = new JobResult({ job: this.model })
     view.show()
-    return view
+
+    return false
   },
-  execute () {
-    var execJob
-    if (this.model.lifecycle === LifecycleConstants.ONHOLD) {
-      execJob = new ExecOnHoldJob({ model: this.model })
-    } else {
-      execJob = new ExecJob({ model: this.model })
-    }
-    execJob.execute()
-  },
-  render () {
-    View.prototype.render.apply(this, arguments)
+  onClickJobOptionsButton (event) {
+    event.stopPropagation()
+    event.preventDefault()
+
+    const dialog = new OptionsDialog({ model: this.model })
+    dialog.show()
+    this.registerSubview( dialog )
+
+    return false
   }
 })
+
+class StopInProgressJob {
+  constructor (options) {
+    this.model = options.model
+  }
+
+  execute () {
+    if (!this.model.inProgress) {
+      return
+    }
+
+    const message = `Cancel the execution of <b>${this.model.name}</b>?
+      <a target="_blank" href="https://github.com/theeye-io/theeye-docs/blob/master/tasks/cancellation">Why this happens?</a>`
+
+    bootbox.confirm({
+      message: message,
+      backdrop: true,
+      callback: (confirmed) => {
+        if (confirmed) {
+          App.actions.job.cancel(this.model)
+        }
+      }
+    })
+  }
+}

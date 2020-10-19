@@ -24,11 +24,11 @@ export const inProgress = (lifecycle) => {
 }
 
 export const isCompleted = (lifecycle) => {
-  let completed = [
+  const completed = [
     CANCELED,
     COMPLETED,
     FINISHED,
-    EXPIRED, // take to much time to complete
+    EXPIRED, // it takes to much to complete
     TERMINATED // abruptly
   ].indexOf(lifecycle) !== -1
 
@@ -52,7 +52,8 @@ export const isValidNewLifecycle = (currentVal, newVal) => {
     case CANCELED:
     case EXPIRED:
     case COMPLETED:
-      valid = false
+      // restart
+      valid = (newVal === READY)
       break
     default:
       valid = false

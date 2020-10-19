@@ -8,6 +8,10 @@ import * as TaskConstants from 'constants/task'
 import { Model as User } from 'models/user'
 import * as FIELD from 'constants/field'
 
+import loggerModule from 'lib/logger';
+const logger = loggerModule('model:job')
+
+
 import config from 'config'
 
 const urlRoot = function () {
@@ -15,23 +19,27 @@ const urlRoot = function () {
 }
 
 const BaseJob = AppModel.extend({
-  dataTypes: {
-    lifecycle: {
-      set: function (newVal) {
-        return {
-          val: newVal,
-          type: 'lifecycle'
-        }
-      },
-      compare: function (currentVal, newVal) {
-        if (currentVal === newVal) {
-          return true
-        } else {
-          return !LifecycleConstants.isValidNewLifecycle(currentVal, newVal)
-        }
-      }
-    }
-  },
+  //dataTypes: {
+  //  lifecycle: {
+  //    set: function (newVal) {
+  //      return {
+  //        val: newVal,
+  //        type: 'lifecycle'
+  //      }
+  //    },
+  //    compare: function (currentVal, newVal) {
+  //      if (currentVal === newVal) {
+  //        return true
+  //      } else {
+  //        const valid = LifecycleConstants.isValidNewLifecycle(currentVal, newVal)
+  //        if (!valid) {
+  //          logger.warn('invalid lifecycle transition')
+  //        }
+  //        return valid
+  //      }
+  //    }
+  //  }
+  //},
   urlRoot,
   props: {
     id: 'string',
@@ -49,7 +57,8 @@ const BaseJob = AppModel.extend({
     name: 'string',
     notify: 'boolean',
     state: 'string',
-    lifecycle: 'lifecycle',
+    //lifecycle: 'lifecycle',
+    lifecycle: 'string',
     //result: ['state',false,null],
     creation_date: 'date',
     last_update: 'date',
@@ -97,6 +106,12 @@ const BaseJob = AppModel.extend({
         return LifecycleConstants.inProgress(this.lifecycle)
       }
     },
+    isCompleted: {
+      deps: ['lifecycle'],
+      fn () {
+        return LifecycleConstants.isCompleted(this.lifecycle)
+      }
+    },
     taskModel: {
       deps: ['task'],
       fn () {
@@ -105,6 +120,13 @@ const BaseJob = AppModel.extend({
         //  return {}
         //}
         //return new App.Models.Task.Factory(this.task, {})
+      }
+    },
+    workflow_job: {
+      deps: ['workflow_job_id'],
+      cache: false,
+      fn () {
+        return App.state.jobs.get(this.workflow_job_id)
       }
     }
   }
@@ -361,7 +383,7 @@ const WorkflowJob = BaseJob.extend({
       'add change sync reset remove',
       function () {
         if (this.jobs.length) {
-          let currentJob = this.jobs.at(this.jobs.length - 1)
+          let currentJob = this.jobs.at(this.jobs.length - 1) // last
           this.lifecycle = currentJob.lifecycle
           this.state = currentJob.state
         } else {
@@ -388,6 +410,9 @@ const WorkflowJob = BaseJob.extend({
     if (previousJob) {
       return previousJob
     }
+  },
+  currentJob () {
+    return this.jobs.at(this.jobs.length - 1)
   }
 })
 
