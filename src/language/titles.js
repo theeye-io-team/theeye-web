@@ -7,7 +7,8 @@ export default {
   },
   indicator: {
     buttons: {
-      integrations: 'Integration Api'
+      integrations: 'Integration Api',
+      edit: 'Edit Indicator',
     }
   },
   task: {

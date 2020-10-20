@@ -1,11 +1,8 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import ProgressBar from 'components/progress-bars'
-import BaseView from 'view/base-view'
-import Clipboard from 'clipboard'
-import DismissIndicatorButton from './button/dismiss'
 import TagView from 'components/tag'
-//import EditIndicatorButton from './button/edit'
+import ButtonsMenu from './buttons-menu'
 
 import './styles.less'
 
@@ -14,58 +11,28 @@ export default function (options) {
 }
 
 const IndicatorRowView = View.extend({
-  initialize () {
-    this.iconHook = this.iconHook || 'state-icon'
-
-    this.template = `
-      <div class="panel-row-container indicator-container">
-        <div class="row-container panel panel-default">
-          <div class="panel-heading" role="tab" data="panel-heading"> <!-- Collapse Heading Container { -->
-            <h4 class="panel-title-icon">
-              <i data-hook="row-icon"></i>
-            </h4>
-            <h4 class="panel-title">
-              <span class="collapsed"
-                href="#unbinded"
-                data-hook="collapse-toggle"
-                data-toggle="collapse"
-                data-parent="#monitor-accordion"
-                aria-expanded="false"
-                aria-controls="unbinded">
-                <div class="panel-title-content">
-
-                  <div class="panel-item-left">
-                    <span class="panel-item name">
-                      <span data-hook="tags"></span>
-                      <span data-hook="name" title=""></span>
-                      <small><i data-hook="type"></i></small>
-                    </span>
-
-                    <section data-hook="gauge-container" class="gauge-container"></section>
-                  </div>
-
-                  <section data-hook="buttons-block"></section>
-
-                  <!-- state_severity is a model object derived property, not an attribute -->
-                  <div class="panel-item tooltiped state-icon state-container">
-                    <span data-hook="${this.iconHook}"></span>
-                  </div>
-
-                </div>
-              </span>
-            </h4>
-          </div> <!-- } END Collapse Heading Container -->
-          <div class="panel-collapse collapse"
-            data-hook="collapse-container"
-            id="unbinded"
-            role="tabpanel"
-            aria-labelledby="unbinded">
-            <div class="panel-body" data-hook="collapse-container-body"> </div>
-          </div> <!-- Collapsed Content Container -->
+  template: `
+    <div data-component="indicators-page" class="panel-row-container indicator-container">
+      <div class="row-container panel panel-default">
+        <div class="panel-heading" role="tab" data="panel-heading">
+          <h4 class="panel-title-icon">
+            <i data-hook="row-icon"></i>
+          </h4>
+          <h4 class="panel-title">
+            <section class="indicator-buttons" data-hook="buttons-block"></section>
+            <div class="panel-title-content">
+              <section class="indicator-title">
+                <span data-hook="tags"></span>
+                <span data-hook="name" title=""></span>
+                <small><i data-hook="type"></i></small>
+              </section>
+              <section class="indicator-data" data-hook="data-container"></section>
+            </div>
+          </h4>
         </div>
       </div>
-    `
-  },
+    </div>
+  `,
   props: {
     show: ['boolean', false, true],
     hash: ['string', false, () => { return (new Date()).getTime() } ]
@@ -124,15 +91,6 @@ const IndicatorRowView = View.extend({
     ],
     'model.hostname': { hook: 'hostname' },
     'model.type': { hook: 'type' },
-    'model.stateIcon': {
-      type: 'class',
-      hook: 'state-icon'
-    },
-    'model.state': {
-      type: 'attribute',
-      name: 'title',
-      hook: 'state-icon'
-    },
     show: {
       type: 'toggle'
     }
@@ -141,8 +99,8 @@ const IndicatorRowView = View.extend({
     this.renderWithTemplate()
     this.renderButtons()
     this.setRowIcon()
-    this.renderGauges()
-    this.renderCollapsedContent()
+    this.renderVisuals()
+    //this.renderCollapsedContent()
     this.renderTags()
   },
   renderTags () {
@@ -154,42 +112,28 @@ const IndicatorRowView = View.extend({
       )
     }
   },
-  renderGauges () {
+  renderVisuals () {
     this.renderSubview(
-      new GaugesFactoryView({ model: this.model }),
-      this.queryByHook('gauge-container')
+      new VisualsFactoryView({ model: this.model }),
+      this.queryByHook('data-container')
     )
   },
-  renderCollapsedContent () {
-    this.renderSubview(
-      new CollapsedContent({ model: this.model }),
-      this.queryByHook('collapse-container-body')
-    )
-  },
+  //renderCollapsedContent () {
+  //  this.renderSubview(
+  //    new CollapsedContent({ model: this.model }),
+  //    this.queryByHook('collapse-container-body')
+  //  )
+  //},
   renderButtons () {
-    // there is only one button.
-    if (this.model.read_only===false) {
-      let tpl = `
-        <div class="panel-item icons dropdown">
-          <button class="btn dropdown-toggle btn-primary"
-            type="button"
-            data-toggle="dropdown"
-            aria-haspopup="true"
-            aria-expanded="true">
-            <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-          </button>
-          <ul data-hook="buttons-container" class="dropdown-menu"></ul>
-        </div>
-      `
+    this.renderSubview(
+      new ButtonsMenu({ model: this.model }),
+      this.queryByHook('buttons-block')
+    )
 
-      let block = this.queryByHook('buttons-block')
-      block.innerHTML = tpl
-
-      this.renderSubview(
-        new DismissIndicatorButton({ model: this.model }),
-        block.querySelector('ul')
-      )
-    }
+    this.renderSubview(
+      new StateIconView({ model: this.model }),
+      this.queryByHook('buttons-block')
+    )
   },
   setRowIcon () {
     const iconEl = this.queryByHook('row-icon')
@@ -198,41 +142,30 @@ const IndicatorRowView = View.extend({
   }
 })
 
-const GaugesFactoryView = function (options) {
+const VisualsFactoryView = function (options) {
   const model = options.model
-  let gauge
+  let visual
   switch (model.type) {
     case 'text':
     case 'counter':
-      gauge = new TextIndicatorView(options)
+      visual = new TextIndicatorView(options)
       break
     case 'progress':
-      gauge = new ProgressIndicatorView(options)
+      visual = new ProgressIndicatorView(options)
       break
     default:
-      gauge = new IndicatorView(options)
+      visual = new IndicatorView(options)
       break
   }
-  return gauge
+  return visual
 }
 
-const ProgressIndicatorView = View.extend({
-  template: `
-    <div data-hook="progress-bar"></div>
-  `,
-  render () {
-    this.renderWithTemplate()
+const ProgressIndicatorView = ProgressBar.extend({
+  initialize () {
+    ProgressBar.prototype.initialize.apply(this, arguments)
 
-    this.renderProgressBar()
-  },
-  renderProgressBar () {
-    this.bars = this.renderSubview(
-      new ProgressBar({ percent: this.model.value }),
-      this.queryByHook('progress-bar')
-    )
-
-    this.model.on('change:value', () => {
-      this.bars.percent = this.model.value
+    this.listenToAndRun(this.model, 'change:value', () => {
+      this.percent = this.model.value
     })
   }
 })
@@ -243,7 +176,7 @@ const TextIndicatorView = View.extend({
   `,
   bindings: {
     'model.value': {
-      type: 'text',
+      type: 'innerHTML',
       hook: 'value'
     }
   }
@@ -261,109 +194,21 @@ const IndicatorView = View.extend({
   }
 })
 
-const CollapsedContent = BaseView.extend({
+const StateIconView = View.extend({
   template: `
-    <div class="indicator-details">
-      <div class="row indicator-curl">
-        <div class="col-xs-2">
-          <label>Update CURL</label>
-        </div>
-        <div class="col-xs-10">
-          <div class="">
-            <button class="curl-copy btn btn-primary clip" type="button" data-hook="update-copy">
-              <span class="fa fa-files-o" alt="copy to clipboard"></span>
-            </button>
-            <div class="curl-container" data-hook="update-curl"></div>
-          </div>
-        </div>
-      </div>
-      <div class="row indicator-curl" style="padding-top:10px;">
-        <div class="col-xs-2">
-          <label>Delete CURL</label>
-        </div>
-        <div class="col-xs-10">
-          <div class="">
-            <button class="curl-copy btn btn-primary clip" type="button" data-hook="delete-copy">
-              <span class="fa fa-files-o" alt="copy to clipboard"></span>
-            </button>
-            <div class="curl-container" data-hook="delete-curl"></div>
-          </div>
-        </div>
-      </div>
+    <div class="panel-item tooltiped state-icon state-container">
+      <span data-hook="state-icon"></span>
     </div>
   `,
   bindings: {
-    //'updateCurl': {
-    //  type: 'attribute',
-    //  name: 'value',
-    //  hook: 'update-curl'
-    //},
-    //'deleteCurl': {
-    //  type: 'attribute',
-    //  name: 'value',
-    //  hook: 'delete-curl'
-    //}
-    'updateCurl': {
-      hook: 'update-curl',
-      type: 'innerHTML'
+    'model.stateIcon': {
+      type: 'class',
+      hook: 'state-icon'
     },
-    'deleteCurl': {
-      hook: 'delete-curl',
-      type: 'innerHTML'
+    'model.state': {
+      type: 'attribute',
+      name: 'title',
+      hook: 'state-icon'
     }
-  },
-  derived: {
-    indicatorUrl: {
-      deps: ['model.id'],
-      fn () {
-        const indicatorsURL = App.config.supervisor_api_url + '/indicator'
-        let url = [
-          "'",
-          indicatorsURL,
-          `/${this.model.id}`,
-          '?access_token={access_token_here}&customer=',
-          App.state.session.customer.name,
-          "'"
-        ]
-        return url.join('')
-      }
-    },
-    updateCurl: {
-      deps: ['indicatorUrl','model.state'],
-      fn () {
-        let state = this.model.state==='normal'?'failure':'normal'
-        let url = this.indicatorUrl
-        let curl = [
-          `curl -X PATCH ${url}`,
-          ` --header 'Content-Type: application/json'`,
-          ` --data '{"state":"${state}"}'`
-        ]
-        return curl.join('')
-      }
-    },
-    deleteCurl: {
-      deps: ['indicatorUrl'],
-      fn () {
-        let url = this.indicatorUrl
-        return `curl -X DELETE ${url}`
-      }
-    }
-  },
-  render () {
-    this.renderWithTemplate(this)
-
-    new Clipboard(
-      this.queryByHook('update-copy'),
-      {
-        text: () => this.updateCurl
-      }
-    )
-
-    new Clipboard(
-      this.queryByHook('delete-copy'),
-      {
-        text: () => this.deleteCurl
-      }
-    )
   }
 })

@@ -3,7 +3,7 @@ import './styles.less'
 
 export default View.extend({
   template: `
-    <div class="meter">
+    <div data-component="progress-bar" class="meter">
       <div class="percent-visual">
         <span data-hook="percent-visual"></span>
       </div>

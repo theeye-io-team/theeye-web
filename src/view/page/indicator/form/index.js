@@ -17,8 +17,7 @@ import * as IndicatorConstants from 'constants/indicator'
 
 export default DropableForm.extend({
   initialize (options) {
-    //const isNewTask = Boolean(this.model.isNew())
-
+    const isNew = Boolean(this.model.isNew())
 
     this.advancedFields = ['acl','tags','description','read_only','value']
 
@@ -26,6 +25,7 @@ export default DropableForm.extend({
       new InputView({
         label: 'Title *',
         required: true,
+        disabled: !isNew,
         name: 'title',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
@@ -33,6 +33,7 @@ export default DropableForm.extend({
       }),
       new SelectView({
         label: 'Type *',
+        enabled: isNew,
         required: true,
         name: '_type',
         invalidClass: 'text-danger',
@@ -41,6 +42,20 @@ export default DropableForm.extend({
         tags: false,
         options: App.state.indicatorTypes,
         value: this.model._type
+      }),
+      new SelectView({
+        label: 'State',
+        required: false,
+        name: 'state',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        multiple: false,
+        tags: false,
+        options: [
+          {id: 'normal', text: 'normal'},
+          {id: 'failure', text: 'failure'}
+        ],
+        value: this.model.state
       }),
       // advanced fields starts visible = false
       new AdvancedToggle({
@@ -98,6 +113,7 @@ export default DropableForm.extend({
     this.query('form').classList.add('form-horizontal')
     this.addHelpIcon('title')
     this.addHelpIcon('_type')
+    this.addHelpIcon('state')
     this.addHelpIcon('value')
     this.addHelpIcon('tags')
     this.addHelpIcon('acl')
@@ -116,7 +132,7 @@ export default DropableForm.extend({
 
     let data = this.prepareData(this.data)
     if (!this.model.isNew()) {
-      App.actions.indicator.update(this.model.id, data)
+      App.actions.indicator.patch(this.model.id, data)
     } else {
       App.actions.indicator.create(data)
     }

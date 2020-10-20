@@ -1,70 +1,50 @@
-.admin-container.dashboard .indicator-container .panel-heading .panel-item.name {
-  width: 70%;
-  padding-right: 5px;
-}
+[data-component=indicators-page] {
 
-.panel-item-left {
-  width: 80%;
-  float: left;
-}
+  h4 > .indicator-buttons {
+    padding: 10px;
+  }
 
-.panel-item.value {
-  padding:2px 10px 2px 10px;
-  line-height: 28px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+  .panel-title-icon {
+    padding: 10px;
+  }
 
-.gauge-container {
-  position: relative;
-  width: 30%;
-  float: right;
-}
+  .panel-title-content {
+    padding-left: 0;
+    padding-right: 0;
+    margin-right: 84px;
+  }
 
-.panel-item {
-  .bars-component {
-    .progress.progress-bar-vertical {
-      height:32px;
-      min-height: 0px;
-      margin-bottom: 0px;
+  .indicator-title {
+    .bars-component {
+      .progress.progress-bar-vertical {
+        height:32px;
+        min-height: 0px;
+        margin-bottom: 0px;
+      }
     }
   }
-}
 
-.indicator-details {
-  .indicator-curl {
-    font-weight: 300;
+  .indicator-title {
+    font-weight: bold;
+    padding-bottom: 10px;
+  }
 
-    label {
-      margin: 0px;
-      line-height: 30px;
-      font-weight: 300;
+  .indicator-title, .indicator-data {
+    padding: 3px 10px 5px 12px;
+  }
+
+  .indicator-buttons {
+    float: right;
+
+    .state-icon {
+      display: inline;
+      width: 30px;
+      padding: 5px;
+      font-size: 20px;
     }
   }
-}
 
-.curl-container {
-  overflow: hidden;
-  overflow-x: scroll;
-  white-space: nowrap;
-  position: relative;
-  margin-right: 68px;
-}
-
-.curl-copy {
-  float:right;
-}
-
-@media (max-width: 767px) {
-  .admin-container.dashboard .indicator-container .panel-heading .panel-item.name {
-    width: 65%;
-  }
-  .gauge-container {
-    width: 35%;
-  }
-
-  .panel-item-left {
-    width: 75%;
+  [data-component=buttons-menu] {
+    display: inline;
   }
 }

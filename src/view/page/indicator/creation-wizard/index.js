@@ -3,8 +3,8 @@ import FormView from '../form'
 import Modalizer from 'components/modalizer'
 
 export default function () {
-  let model = new App.Models.Indicator.Indicator()
-  let form = new FormView({ model })
+  const model = new App.Models.Indicator.Indicator()
+  const form = new FormView({ model })
 
   const modal = new Modalizer({
     buttons: false,

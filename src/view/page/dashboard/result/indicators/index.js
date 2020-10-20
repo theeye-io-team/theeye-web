@@ -3,10 +3,6 @@ import View from 'ampersand-view'
 import FilteredCollection from 'ampersand-filtered-subcollection'
 import IndicatorRowView from '../../indicator'
 
-const EmptyResultView = View.extend({
-  template: `<div class="no-result">No matches found</div>`
-})
-
 export default View.extend({
   template: `
     <section class="col-md-12 indicators-panel events-panel">
@@ -42,4 +38,8 @@ export default View.extend({
       }
     )
   }
+})
+
+const EmptyResultView = View.extend({
+  template: `<div class="no-result">No matches found</div>`
 })

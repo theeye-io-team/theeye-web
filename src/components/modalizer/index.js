@@ -125,7 +125,10 @@ const Modalizer = View.extend({
     if (this.visible) this.show()
   },
   renderBody () {
-    if (!this.bodyView) return
+    if (!this.bodyView) {
+      return
+    }
+
     const modalBody = this.queryByHook('body')
     if (modalBody.childNodes.length === 0) {
       if ( ! (this.bodyView.el instanceof HTMLElement) || !this.bodyView.rendered ) {
@@ -172,7 +175,9 @@ const Modalizer = View.extend({
   },
   remove () {
     this.hide()
-    if (this.bodyView) this.bodyView.remove()
+    if (this.bodyView && this.bodyView.rendered === true) {
+      this.bodyView.remove()
+    }
     View.prototype.remove.apply(this, arguments)
   }
 })

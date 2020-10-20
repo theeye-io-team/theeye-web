@@ -34,11 +34,17 @@ export default {
     let indicator = App.state.indicators.get(id)
     if (!indicator) { return }
     indicator.set(data)
-    indicator.save()
+    indicator.save({}, { success () {
+      App.state.alerts.success('Success', 'Indicator Updated')
+    }})
   },
   remove (id) {
     let indicator = App.state.indicators.get(id)
     if (!indicator) { return }
-    indicator.destroy()
+    indicator.destroy({
+      success () {
+        App.state.alerts.success('Success', 'Indicator Removed.')
+      }
+    })
   }
 }

@@ -26,7 +26,7 @@ export default View.extend({
     }
   },
   setValue (value) {
-    // required InputView interface
+    // this is required to behave as InputView (interface)
     return
   }
 })
