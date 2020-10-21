@@ -112,21 +112,30 @@ export const Indicator = BaseSchema.extend({
 const ProgressIndicator = Indicator.extend({
   props: {
     value: ['number', false, 0],
-    type: ['string', false, 'progress']
+    type: ['string', false, IndicatorConstants.PROGRESS_TYPE_SHORT]
+  }
+})
+
+const ChartIndicator = Indicator.extend({
+  props: {
+    value: ['object', false, () => {
+      return {}
+    }],
+    type: ['string', false, IndicatorConstants.CHART_TYPE_SHORT]
   }
 })
 
 const CounterIndicator = Indicator.extend({
   props: {
     value: ['number', false, 0],
-    type: ['string', false, 'counter']
+    type: ['string', false, IndicatorConstants.COUNTER_TYPE_SHORT]
   }
 })
 
 const TextIndicator = Indicator.extend({
   props: {
     value: ['string', false, ''],
-    type: ['string', false, 'text']
+    type: ['string', false, IndicatorConstants.TEXT_TYPE_SHORT]
   }
 })
 
@@ -149,6 +158,9 @@ function IndicatorFactory (attrs, options={}) {
     let type = attrs._type
     let model
     switch (type) {
+      case IndicatorConstants.CHART_TYPE:
+        model = new ChartIndicator(attrs, options)
+        break
       case IndicatorConstants.TEXT_TYPE:
         model = new TextIndicator(attrs, options)
         break
@@ -198,6 +210,7 @@ export const Collection = AppCollection.extend({
   model: IndicatorFactory,
   isModel (model) {
     let isModel = (
+      model instanceof ChartIndicator ||
       model instanceof TextIndicator ||
       model instanceof ProgressIndicator ||
       model instanceof CounterIndicator ||
@@ -210,4 +223,5 @@ export const Collection = AppCollection.extend({
 export const Counter = CounterIndicator
 export const Progress = ProgressIndicator
 export const Text = TextIndicator
+export const Chart = ChartIndicator
 export const Factory = IndicatorFactory

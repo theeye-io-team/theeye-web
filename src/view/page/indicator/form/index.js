@@ -21,6 +21,26 @@ export default DropableForm.extend({
 
     this.advancedFields = ['acl','tags','description','read_only','value']
 
+    const typeSelect = new SelectView({
+      label: 'Type *',
+      enabled: isNew,
+      required: true,
+      name: '_type',
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      multiple: false,
+      tags: false,
+      options: App.state.indicatorTypes,
+      value: this.model._type
+    })
+
+    let modelValue
+    if (this.model.type === IndicatorConstants.CHART_TYPE_SHORT) {
+      modelValue = JSON.stringify(this.model.value)
+    } else {
+      modelValue = this.model.value
+    }
+
     this.fields = [
       new InputView({
         label: 'Title *',
@@ -31,18 +51,7 @@ export default DropableForm.extend({
         validityClassSelector: '.control-label',
         value: this.model.title,
       }),
-      new SelectView({
-        label: 'Type *',
-        enabled: isNew,
-        required: true,
-        name: '_type',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        multiple: false,
-        tags: false,
-        options: App.state.indicatorTypes,
-        value: this.model._type
-      }),
+      typeSelect,
       new SelectView({
         label: 'State',
         required: false,
@@ -72,7 +81,33 @@ export default DropableForm.extend({
         name: 'value',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        value: this.model.value,
+        value: modelValue,
+        tests: [
+          (value) => {
+            const type = typeSelect.value
+            if (
+              type === IndicatorConstants.PROGRESS_TYPE ||
+              type === IndicatorConstants.COUNTER_TYPE
+            ) {
+              if (isNaN(Number(value))) {
+                return 'Valid number requiered'
+              }
+            }
+
+            if (type === IndicatorConstants.CHART_TYPE) {
+              if (value === '') { return }
+              try {
+                JSON.parse(value)
+                return
+              } catch (e) {
+                return 'Invalid format'
+              }
+            }
+
+            if (type === IndicatorConstants.TEXT_TYPE) {
+            }
+          }
+        ]
       }),
       new TagsSelectView({
         label: 'Tags',
@@ -141,7 +176,7 @@ export default DropableForm.extend({
     this.trigger('submitted')
   },
   prepareData (data) {
-    let f = Object.assign({}, data)
+    const f = Object.assign({}, data)
     f.type = f._type.replace('Indicator','').toLowerCase()
 
     if (
@@ -149,14 +184,15 @@ export default DropableForm.extend({
       f._type === IndicatorConstants.COUNTER_TYPE
     ) {
       f.value = Number(f.value)
+    } else if (f._type === IndicatorConstants.CHART_TYPE) {
+      const value = f.value || "{}"
+      f.value = JSON.parse(value)
     }
 
     return f
   },
   setWithData (data) {
-    this.setValues({
-      title: data.title
-    })
+    this.setValues(data)
   },
   addHelpIcon (field) {
     const view = this._fieldViews[field]

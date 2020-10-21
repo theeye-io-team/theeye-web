@@ -3,6 +3,7 @@ import View from 'ampersand-view'
 import ProgressBar from 'components/progress-bars'
 import TagView from 'components/tag'
 import ButtonsMenu from './buttons-menu'
+import * as IndicatorConstants from 'constants/indicator'
 
 import './styles.less'
 
@@ -146,12 +147,15 @@ const VisualsFactoryView = function (options) {
   const model = options.model
   let visual
   switch (model.type) {
-    case 'text':
-    case 'counter':
+    case IndicatorConstants.TEXT_TYPE_SHORT:
+    case IndicatorConstants.COUNTER_TYPE_SHORT:
       visual = new TextIndicatorView(options)
       break
-    case 'progress':
+    case IndicatorConstants.PROGRESS_TYPE_SHORT:
       visual = new ProgressIndicatorView(options)
+      break
+    case IndicatorConstants.CHART_TYPE_SHORT:
+      visual = new ChartIndicatorView(options)
       break
     default:
       visual = new IndicatorView(options)
@@ -167,6 +171,26 @@ const ProgressIndicatorView = ProgressBar.extend({
     this.listenToAndRun(this.model, 'change:value', () => {
       this.percent = this.model.value
     })
+  }
+})
+
+const ChartIndicatorView = View.extend({
+  template: `
+    <div class="panel-item value" data-hook="value"></div>
+  `,
+  derived: {
+    json: {
+      deps: ['model.value'],
+      fn () {
+        return JSON.stringify(this.model.value)
+      }
+    }
+  },
+  bindings: {
+    'json': {
+      type: 'innerHTML',
+      hook: 'value'
+    }
   }
 })
 
