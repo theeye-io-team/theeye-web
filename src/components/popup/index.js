@@ -58,6 +58,7 @@ const PopupContentView = View.extend({
       })
       html += `</ul>`
     } else {
+      // turns into text
       html = linkify(sanitizeValue(content))
     }
 
@@ -66,7 +67,7 @@ const PopupContentView = View.extend({
 })
 
 const sanitizeValue = (value) => {
-  var escaper = document.createElement('textarea')
+  const escaper = document.createElement('textarea')
   escaper.textContent = value
   let html = escaper.innerHTML
   //escaper.remove()

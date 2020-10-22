@@ -4,6 +4,7 @@ import ProgressBar from 'components/progress-bars'
 import TagView from 'components/tag'
 import ButtonsMenu from './buttons-menu'
 import * as IndicatorConstants from 'constants/indicator'
+import DOMPurify from 'dompurify'
 
 import './styles.less'
 
@@ -198,8 +199,16 @@ const TextIndicatorView = View.extend({
   template: `
     <div class="panel-item value" data-hook="value"></div>
   `,
+  derived: {
+    html: {
+      deps: ['model.value'],
+      fn () {
+        return DOMPurify.sanitize(this.model.value)
+      }
+    }
+  },
   bindings: {
-    'model.value': {
+    html: {
       type: 'innerHTML',
       hook: 'value'
     }
