@@ -30,6 +30,12 @@ export default {
   acls: acl,
   triggers: triggers,
   severity: 'You can set a severity to this monitor, which can be LOW, HIGH or CRITICAL.',
+  integrations: {
+    logger: {
+      enabled: 'Enable/Disable this integration',
+      url: '<p>Remote API URL to submit the generated information in real time<br><br>The URL querystring admits two option extra parameters that will be replaced during the Remote invocation. <ul><li>%topic%</li><li>%date%</li></ul><br>Example usage: "https://yourremote.io/%topic%/%date%"</p>'
+    }
+  },
   indicator: {
     description,
     acl,

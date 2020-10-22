@@ -1,7 +1,7 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
-import Form from './form'
+import IntegrationForm from './form'
 
 export default View.extend({
   template: `
@@ -47,7 +47,7 @@ export default View.extend({
   onClickEdit (event) {
     event.stopPropagation()
 
-    const form = new Form({ model: this })
+    const form = new IntegrationForm({ model: this })
 
     const modal = new Modalizer({
       confirmButton: 'Save',

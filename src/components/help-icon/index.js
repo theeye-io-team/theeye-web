@@ -10,7 +10,7 @@ export default View.extend({
     </span>
   `,
   props: {
-    placement: ['string', false, 'top'],
+    placement: ['string', false, 'bottom'],
     text: 'string',
     color: ['array', false, () => { return [48, 66, 105] }],
     link: 'string'
@@ -35,12 +35,7 @@ export default View.extend({
     },
     mouseout: function (e) {
       this.el.style.color = 'rgba(' + this.colorRGB + ', 0.2)'
-    },
-    //click: function (e) {
-    //  $(this.el).tooltip('toggle')
-    //  //if (!this.link) { return }
-    //  //window.open(this.link, '_blank')
-    //}
+    }
   },
   render () {
     this.renderWithTemplate(this)
