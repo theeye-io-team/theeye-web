@@ -15,5 +15,17 @@ export default {
     buttons: {
       integrations: 'Integration Api'
     }
+  },
+  login: {
+    form: {
+      domain: {
+        username_placeholder: 'Domain User',
+        password_placeholder: 'Password'
+      },
+      local: {
+        username_placeholder: 'User or Email',
+        password_placeholder: 'Password'
+      }
+    }
   }
 }

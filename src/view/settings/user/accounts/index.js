@@ -14,16 +14,20 @@ export default View.extend({
           <div class="col-xs-12">
             <h4 class="blue"><i class="fa fa-user"></i> User Profile</h4>
             <div class="row">
+              <strong class="col-sm-3">credential</strong>
+              <span data-hook="credential" class="col-sm-9"></span>
+            </div>
+            <div class="row">
               <strong class="col-sm-3">name</strong>
-              <span data-hook="account-name" class="col-sm-9"></span>
+              <span data-hook="name" class="col-sm-9"></span>
             </div>
             <div class="row">
               <strong class="col-sm-3">username</strong>
-              <span data-hook="account-username" class="col-sm-9"></span>
+              <span data-hook="username" class="col-sm-9"></span>
             </div>
             <div class="row">
               <strong class="col-sm-3">email</strong>
-              <span data-hook="account-email" class="col-sm-9"></span>
+              <span data-hook="email" class="col-sm-9"></span>
             </div>
             <a class="blue btn btn-default btn-lg pull-right" data-hook="change-password">Change password</a>
           </div>
@@ -43,21 +47,14 @@ export default View.extend({
     email: ['string', false, ''],
     username: ['string', false, ''],
     name: ['string', false, ''],
+    credential: ['string', false, ''],
     show_account_actions: ['boolean', false, true]
   },
   bindings: {
-    'email': {
-      type: 'text',
-      hook: 'account-email'
-    },
-    'username': {
-      type: 'text',
-      hook: 'account-username'
-    },
-    'name': {
-      type: 'text',
-      hook: 'account-name'
-    },
+    'email': { hook: 'email' },
+    'username': { hook: 'username' },
+    'name': { hook: 'name' },
+    'credential': { hook: 'credential' },
     'show_account_actions': [
       {
         type: 'toggle',
@@ -75,6 +72,7 @@ export default View.extend({
     })
   },
   updateState (session) {
+    this.credential = session.user.credential
     this.email = session.user.email
     this.username = session.user.username
     this.name = session.user.name

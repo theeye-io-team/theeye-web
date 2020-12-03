@@ -121,6 +121,47 @@ export default TaskFormView.extend({
       userInputsMembers.enabled = (elem.value === true)
     })
 
+    const triggeredBy = new EventsSelectView({
+      label: 'Triggered by',
+      name: 'triggers',
+      filterOptions: [
+        item => {
+          return item.emitter_id !== this.model.id
+        }
+      ],
+      visible: false,
+      value: this.model.triggers,
+    })
+
+    const triggerOnHold = new SelectView({
+      sort: false,
+      visible: false,
+      label: 'Trigger on-hold time',
+      name: 'grace_time',
+      multiple: false,
+      tags: false,
+      options: TaskConstants.GRACE_TIME.map(gt => {
+        return {
+          id: gt.secs,
+          text: gt.text
+        }
+      }),
+      value: this.model.grace_time,
+      required: false,
+      unselectedText: 'Select the Trigger on-hold time',
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label'
+    })
+
+    triggerOnHold.listenTo(triggeredBy, 'change:value', () => {
+      if (triggeredBy.value.length > 0) {
+        triggerOnHold.enabled = true
+      } else {
+        triggerOnHold.enabled = false
+        triggerOnHold.clear()
+      }
+    })
+
     this.fields = [
       new InputView({
         label: 'Name *',
@@ -193,36 +234,8 @@ export default TaskFormView.extend({
         label: 'ACL\'s',
         value: this.model.acl
       }),
-      new EventsSelectView({
-        label: 'Triggered by',
-        name: 'triggers',
-        filterOptions: [
-          item => {
-            return item.emitter_id !== this.model.id
-          }
-        ],
-        visible: false,
-        value: this.model.triggers,
-      }),
-      new SelectView({
-        sort: false,
-        visible: false,
-        label: 'Trigger on-hold time',
-        name: 'grace_time',
-        multiple: false,
-        tags: false,
-        options: TaskConstants.GRACE_TIME.map(gt => {
-          return {
-            id: gt.secs,
-            text: gt.text
-          }
-        }),
-        value: this.model.grace_time,
-        required: false,
-        unselectedText: 'Select the Trigger on-hold time',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
-      }),
+      triggeredBy,
+      triggerOnHold,
       new SelectView({
         sort: false,
         label: 'Execution Timeout',

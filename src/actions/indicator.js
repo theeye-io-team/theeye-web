@@ -35,7 +35,7 @@ export default {
     if (!indicator) { return }
     indicator.set(data)
     indicator.save({}, { success () {
-      App.state.alerts.success('Success', 'Indicator Updated')
+      App.state.alerts.success('Great!', 'Indicator Updated')
     }})
   },
   remove (id) {
@@ -43,7 +43,7 @@ export default {
     if (!indicator) { return }
     indicator.destroy({
       success () {
-        App.state.alerts.success('Success', 'Indicator Removed.')
+        App.state.alerts.success('Good Bye', 'Indicator Removed.')
       }
     })
   }

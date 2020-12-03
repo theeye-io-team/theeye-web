@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import AmpersandState from 'ampersand-state'
 import XHR from 'lib/xhr'
 import localforage from 'localforage'
-import checkLicense from 'app/license'
+import { checkLicense } from 'app/license'
 import jwtDecode from 'jwt-decode'
 
 export default AmpersandState.extend({

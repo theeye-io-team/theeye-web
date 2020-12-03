@@ -5,6 +5,7 @@ import RegisterPageView from 'view/page/register'
 import ActivatePageView from 'view/page/activate'
 import FinishRegistrationPageView from 'view/page/activate-owner'
 import PasswordResetView from 'view/page/password-reset'
+import EnterprisePageView from 'view/page/enterprise'
 import App from 'ampersand-app'
 import Route from 'lib/router-route'
 import search from 'lib/query-params'
@@ -80,6 +81,10 @@ class Auth extends Route {
         return false
       }
     })
+  }
+
+  enterpriseRoute () {
+    return new EnterprisePageView()
   }
 }
 

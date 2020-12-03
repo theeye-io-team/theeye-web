@@ -19,15 +19,24 @@ import hopscotch from 'hopscotch'
 import config from 'config'
 
 export default Router.extend({
+  publicRoutes: [
+    'login',
+    'sociallogin',
+    'register',
+    'activate',
+    'passwordreset',
+    'finishregistration',
+    'enterprise'
+  ],
   execute (callback, args) {
     if (callback) {
       if (hopscotch.getCurrTour()) {
         hopscotch.endTour(true)
       }
 
-      let publicRoutes = ['login', 'sociallogin', 'register', 'activate', 'passwordreset', 'finishregistration']
+      //let publicRoutes = 
 
-      let isPublicRoute = publicRoutes.find(route => {
+      let isPublicRoute = this.publicRoutes.find(route => {
         let routeRegex = new RegExp(route)
         return (routeRegex.test(window.location.pathname)||routeRegex.test(window.location.hash))
       })
@@ -127,18 +136,6 @@ export default Router.extend({
     'logout': () => {
       SessionActions.logout()
     },
-    'register': () => {
-      const route = new AuthRoute()
-      route.route('register')
-    },
-    'activate': () => {
-      const route = new AuthRoute()
-      route.activateRoute()
-    },
-    'finishregistration': () => {
-      const route = new AuthRoute()
-      route.finishregistrationRoute()
-    },
     'sociallogin': () => {
       const route = new AuthRoute()
       route.socialLoginRoute()
@@ -147,9 +144,50 @@ export default Router.extend({
       const route = new AuthRoute()
       route.socialConnectRoute()
     },
+    'register': () => {
+
+      if (App.config.components.login.registration.enabled !== true) {
+        return App.Router.redirectTo('login',{replace: true})
+      }
+
+      const route = new AuthRoute()
+      route.route('register')
+    },
+    'activate': () => {
+
+      if (App.config.components.login.registration.enabled !== true) {
+        return App.Router.redirectTo('login',{replace: true})
+      }
+
+      const route = new AuthRoute()
+      route.activateRoute()
+    },
+    'finishregistration': () => {
+
+      if (App.config.components.login.registration.enabled !== true) {
+        return App.Router.redirectTo('login',{replace: true})
+      }
+
+      const route = new AuthRoute()
+      route.finishregistrationRoute()
+    },
     'passwordreset': () => {
+
+      if (App.config.components.login.password_reset.enabled !== true) {
+        return App.Router.redirectTo('login',{replace: true})
+      }
+
       const route = new AuthRoute()
       route.passwordResetRoute()
+    },
+    'enterprise': () => {
+
+      if (App.config.components.login.enterprise.enabled !== true) {
+        return App.Router.redirectTo('login',{replace: true})
+      }
+
+      const route = new AuthRoute()
+      route.route('enterprise')
     },
     '(*path)': function () {
       App.navigate('dashboard')

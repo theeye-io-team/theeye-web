@@ -1,52 +1,28 @@
 import View from 'ampersand-view'
 import FormView from 'ampersand-form-view'
 import InputView from 'ampersand-input-view'
-import NavbarActions from 'actions/navbar'
 import App from 'ampersand-app'
+import Labels from 'language/titles'
+
+import './styles.less'
 
 export default View.extend({
   template: () => {
     let html = `
-      <div class="login-container">
+      <div data-component="login" class="login-container">
         <div class="container">
-          <div class="login-main">
+          <div class="login-main" data-hook="login-options-container">
             <div data-hook="login-form-container">
-              <div class="row">
-                <div class="col-xs-12">
-                  <h1>Sign In to TheEye App</h1>
-                  <a href="" class="sign google" data-hook="google-login"><i class="fa fa-google-plus"></i>Google+</a>
-                  <h2 class="or"> - or - </h2>
-                </div>
-              </div>
+              <h1>Sign In to TheEye App</h1>
+              <div data-hook="social-login-container" class="row"> </div>
               <div class="row">
                 <div class="col-xs-12">
                   <div class="form-wrapper">
                     <div data-hook="login-form" class="form-container"></div>
                     <button data-hook="start-login">Sign in</button>
-                    <h2 class="login-toggle" data-hook="form-toggle">Forgot password?</h2>
                   </div>
                 </div>
               </div>
-            </div>
-            <div data-hook="forgot-form-container">
-              <div class="row">
-                <div class="col-xs-12">
-                  <h1>Password reset</h1>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-xs-12">
-                  <h2>Please enter your account email</h2>
-                  <div class="form-wrapper">
-                    <div data-hook="forgot-form" class="form-container"></div>
-                    <button data-hook="start-forgot">Send email</button>
-                    <h2 class="login-toggle" data-hook="form-toggle">Back</h2>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div>
-              <a href="/register"><h2 class="register-link">Don't have an account? Register here</h2></a>
             </div>
           </div>
         </div>
@@ -54,7 +30,6 @@ export default View.extend({
     `
     return html
   },
-  //autoRender: true,
   props: {
     formSwitch: ['boolean', false, false]
   },
@@ -67,33 +42,24 @@ export default View.extend({
       },
       {
         type: 'toggle',
-        hook: 'forgot-form-container'
+        hook: 'password-view-toggle',
+        invert: true
+      },
+      {
+        type: 'toggle',
+        hook: 'password-view-container'
       }
     ]
   },
   events: {
-    'click [data-hook=form-toggle]': function (event) {
-      App.actions.auth.toggleLoginForm()
-    },
-    'click [data-hook=google-login]': function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-      App.actions.auth.loginProvider('google')
+    'click [data-hook=password-view-toggle]': function (event) {
+      App.actions.auth.togglePasswordLoginForm()
     },
     'click button[data-hook=start-login]': function (event) {
       event.preventDefault()
       event.stopPropagation()
       this.submitLogin()
     },
-    'click button[data-hook=start-forgot]': function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-      this.forgotForm.beforeSubmit()
-      if (this.forgotForm.valid) {
-        var data = this.forgotForm.data
-        App.actions.auth.recoverPassword(data)
-      }
-    }
   },
   submitLogin () {
     this.loginForm.beforeSubmit()
@@ -111,26 +77,89 @@ export default View.extend({
   render() {
     this.renderWithTemplate(this)
 
-    this.loginForm = new LoginForm({})
-    this.forgotForm = new ForgotForm({})
-
-    this.listenTo(this.loginForm, 'submit', () => { this.submitLogin() })
-
-    this.renderSubview(this.loginForm, this.queryByHook('login-form'))
-    this.renderSubview(this.forgotForm, this.queryByHook('forgot-form'))
     App.state.loader.visible = false
 
+    this.renderLoginForm()
+
+    const container = this.queryByHook('login-options-container')
+    const loginConfig = App.config.components.login
+
+    if (loginConfig.password_reset.enabled === true) {
+      this.renderForgotPasswordView(container)
+    }
+
+    if (loginConfig.registration.enabled === true) {
+      this.renderRegiterButton(container)
+    }
+
+    if (loginConfig.enterprise.enabled === true) {
+      this.renderEnterpriseButton(container)
+    }
+
+    if (loginConfig.google.enabled === true) {
+      this.renderGoogleLogin()
+    }
+
     document.getElementsByTagName('body')[0].style.backgroundColor = '#304269'
-    NavbarActions.setVisibility(true)
+    App.actions.navbar.setVisibility(true)
+  },
+  renderGoogleLogin () {
+    const view = new GoogleLogin()
+    view.render()
+    this.renderSubview(view, this.queryByHook('social-login-container'))
+  },
+  renderLoginForm () {
+    this.loginForm = new LoginForm({})
+    this.listenTo(this.loginForm, 'submit', () => { this.submitLogin() })
+    this.renderSubview(this.loginForm, this.queryByHook('login-form'))
+  },
+  renderForgotPasswordView (container) {
+    const template = `
+      <div data-component="password-reset-link">
+        <h2>
+          <a class="login-toggle" data-hook="password-view-toggle">Forgot password?</a>
+        </h2>
+        <div style="display:none;" data-hook="password-view-container"></div>
+      </div>
+    `
+
+    const el = document.createElement('div')
+    el.innerHTML = template
+    container.appendChild(el)
+
+    const passwordView = new ForgotPasswordView()
+    passwordView.render()
+    this.registerSubview(passwordView)
+
+    el.querySelector('[data-hook=password-view-container]').appendChild(passwordView.el)
+  },
+  renderEnterpriseButton (container) {
+    const template = '<a href="/enterprise"><h2 class="login-link">Enterprise? Access here</h2></a>'
+    const el = document.createElement('div')
+    el.innerHTML = template
+    container.appendChild(el)
+  },
+  renderRegiterButton (container) {
+    const template = '<a href="/register"><h2 class="register-link">Don\'t have an account? Register here</h2></a>'
+    const el = document.createElement('div')
+    el.innerHTML = template
+    container.appendChild(el)
   }
 })
 
 const LoginForm = FormView.extend({
   autoRender: true,
   initialize() {
+    let labels
+    if (App.config.components.login.domain.enabled === true) {
+      labels = Labels.login.form.domain
+    } else {
+      labels = Labels.login.form.local
+    }
+
     this.fields = [
       new InputView({
-        placeholder: 'User or email',
+        placeholder: labels.username_placeholder,
         name: 'username',
         required: true,
         invalidClass: 'text-danger',
@@ -138,14 +167,15 @@ const LoginForm = FormView.extend({
         autofocus: true
       }),
       new InputView({
+        placeholder: labels.password_placeholder,
         type: 'password',
-        placeholder: 'Password',
         name: 'password',
         required: true,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       })
     ]
+
     FormView.prototype.initialize.apply(this, arguments)
   },
   events: {
@@ -158,6 +188,49 @@ const LoginForm = FormView.extend({
   },
   submit () {
     this.trigger('submit')
+  }
+})
+
+const ForgotPasswordView = View.extend({
+  template: `
+    <div data-component="forgot-password">
+      <div class="row">
+        <div class="col-xs-12">
+          <h1>Password reset</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <h2>Please enter your account email</h2>
+          <div class="form-wrapper">
+            <div data-hook="form-container" class="form-container"></div>
+            <button data-hook="start-forgot">Send Email</button>
+            <h2>
+              <a class="login-toggle" data-hook="login-form-toggle">Back</a>
+            </h2>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
+  render () {
+    this.renderWithTemplate(this)
+    this.forgotForm = new ForgotForm({})
+    this.renderSubview(this.forgotForm, this.queryByHook('form-container'))
+  },
+  events: {
+    'click button[data-hook=start-forgot]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      this.forgotForm.beforeSubmit()
+      if (this.forgotForm.valid) {
+        const data = this.forgotForm.data
+        App.actions.auth.recoverPassword(data)
+      }
+    },
+    'click [data-hook=login-form-toggle]': function (event) {
+      App.actions.auth.togglePasswordLoginForm()
+    },
   }
 })
 
@@ -175,5 +248,21 @@ const ForgotForm = FormView.extend({
       })
     ]
     FormView.prototype.initialize.apply(this, arguments)
+  }
+})
+
+const GoogleLogin = View.extend({
+  template: `
+    <div class="col-xs-12">
+      <a href="" class="sign google" data-hook="google-login"><i class="fa fa-google-plus"></i>Google+</a>
+      <h2 class="or"> - or - </h2>
+    </div>
+  `,
+  events: {
+    'click [data-hook=google-login]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      App.actions.auth.loginProvider('google')
+    },
   }
 })

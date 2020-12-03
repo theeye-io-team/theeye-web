@@ -180,8 +180,7 @@ export default FormView.extend({
     }
 
     const button = new ArgumentButton({
-      buttonLabel: (isNewArgument ? 'Add' : 'Update'),
-      //icon: 'fa-plus'
+      buttonLabel: (isNewArgument ? 'Add' : 'Update')
     })
 
     this.fields.push(button)

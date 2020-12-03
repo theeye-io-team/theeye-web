@@ -2,14 +2,6 @@ import View from 'ampersand-view'
 import dom from 'ampersand-dom'
 import 'select2'
 import $ from 'jquery'
-//import matchesSelector from 'matches-selector'
-
-//function getMatches (el, selector) {
-//  if (selector === '') return [el]
-//  var matches = []
-//  if (matchesSelector(el, selector)) matches.push(el)
-//  return matches.concat(Array.prototype.slice.call(el.querySelectorAll(selector)))
-//}
 
 export default View.extend({
   template: `
@@ -78,7 +70,6 @@ export default View.extend({
     startingValue: 'any',
     options: 'any', // should be any object with array functions interface
     idAttribute: ['string',false,'id'],
-    //textAttribute: ['string',false,'text'],
     textAttribute: ['any',false,'text'],
     type: ['string', true, 'text'],
     unselectedText: ['string', true, ''],
@@ -90,7 +81,6 @@ export default View.extend({
     requiredMessage: ['string', true, 'This field is required.'],
     validClass: ['string', true, 'input-valid'],
     invalidClass: ['string', true, 'input-invalid'],
-    //validityClassSelector: ['string', true, 'label, select'],
     tabindex: ['number', true, 0],
     allowCreateTags: ['boolean',false,false],
     allowClear: ['boolean',false,false],
@@ -104,7 +94,7 @@ export default View.extend({
       }
     }],
     removeEmptyValues: ['boolean', false, false],
-    ajaxUrl: ['string', false, ''],
+    ajax: ['object', false, null],
     enabled: 'boolean'
   },
   derived: {
@@ -182,8 +172,6 @@ export default View.extend({
     this.renderSelect2Component(this.startingValue)
   },
   renderSelect2Component (value=null) {
-    var self = this
-
     this.$select
       .select2({})
       .select2('destroy')
@@ -197,10 +185,10 @@ export default View.extend({
       tokenSeparator: this.tokenSeparator,
       createTag: (()=>{
         // https://select2.github.io/options.html#can-i-control-when-tags-are-created
-        if (!this.allowCreateTags) {
-          return function(){return null} // disable tag creation
-        } else {
+        if (this.allowCreateTags === true) {
           return this.createTags
+        } else {
+          return function(){return null} // disable tag creation
         }
       })()
     }
@@ -221,9 +209,9 @@ export default View.extend({
       })
     }
 
-    if (this.ajaxUrl !== '') {
-      select2setup.ajax = {
-        url: this.ajaxUrl,
+    if (this.ajax !== null) {
+      const self = this
+      select2setup.ajax = Object.assign({
         dataType: 'json',
         processResults: function (data) {
           return {
@@ -235,8 +223,9 @@ export default View.extend({
             })
           }
         }
-      }
+      }, this.ajax)
     }
+   
 
     // select2 instantiate
     this.$select.select2(select2setup)
@@ -341,16 +330,12 @@ export default View.extend({
 
     let label = this.queryByHook('label')
     dom.switchClass(label, oldClass, newClass)
-
-    //getMatches(this.el, this.validityClassSelector).forEach(function (match) {
-    //  dom.switchClass(match, oldClass, newClass)
-    //})
   },
   reportToParent: function () {
     if (this.parent) this.parent.update(this)
   },
   clear: function () {
-    this.$select.val([]).trigger('change')
+    this.$select && this.$select.val([]).trigger('change')
   },
   getErrorMessage: function () {
     var message = ''
@@ -361,12 +346,15 @@ export default View.extend({
       if (Array.isArray(this.value) && this.value.length === 0) {
         return this.requiredMessage
       }
-    } else {
-      (this.tests || []).some(function (test) {
+    }
+
+    if (Array.isArray(this.tests) && this.tests.length > 0) {
+      this.tests.find(test => {
         message = test.call(this, this.value) || ''
         return message
       }, this)
     }
+
     return message
   },
   handleChange: function () {

@@ -136,7 +136,8 @@ const AppState = State.extend({
     workflowVisualizer: ['state', false, () => new WorkflowVisualizerState()],
     onHold: ['state', false, () => new OnHoldState()],
     taskForm: ['state', false, () => new TaskFormState()],
-    tabs: ['state', false, () => new TabsState()]
+    tabs: ['state', false, () => new TabsState()],
+    enterprise: ['state', false, () => { return new EnterpriseState() }],
   },
   initialize () {
     State.prototype.initialize.apply(this,arguments)
@@ -265,6 +266,12 @@ const PopupState = State.extend({
     visible: ['boolean', false, false],
     content: ['any', false, ''],
     title: ['string', false, 'TheEye Says:']
+  }
+})
+
+const EnterpriseState = State.extend({
+  props: {
+    showEnterpriseForm: ['boolean',false,true]
   }
 })
 

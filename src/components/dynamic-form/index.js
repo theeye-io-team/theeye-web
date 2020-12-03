@@ -1,3 +1,5 @@
+import App from 'ampersand-app'
+
 import * as FIELD from 'constants/field'
 import DropableForm from 'components/dropable-form'
 import InputView from 'components/input-view'
@@ -8,7 +10,6 @@ import OneLineMediaInputView from 'components/input-view/media/oneline'
 import MediaFileModel from './media-file'
 import isURL from 'validator/lib/isURL'
 import isEmail from 'validator/lib/isEmail'
-import config from 'config'
 
 export default DropableForm.extend({
   props: {
@@ -209,7 +210,7 @@ export default DropableForm.extend({
       name: spec.order.toString(),
       value: new MediaFileModel(),
       required: spec.required,
-      maxFileSize: config.files.max_upload_size
+      maxFileSize: App.config.files.max_upload_size
     })
   },
   buildOptionsField (spec) {
@@ -231,7 +232,7 @@ export default DropableForm.extend({
     })
   },
   buildRemoteOptionsField (spec) {
-    var options = {
+    const options = {
       label: spec.label,
       name: spec.order.toString(),
       multiple: false,
@@ -242,15 +243,23 @@ export default DropableForm.extend({
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label',
       idAttribute: spec.id_attribute,
-      textAttribute: spec.text_attribute
+      textAttribute: spec.text_attribute,
+      ajax: {
+        url: spec.endpoint_url,
+      }
     }
 
-    // if (isURL(spec.endpoint_url, {
-    //   protocols: ['http', 'https'],
-    //   require_protocol: true
-    // })) {
-      options.ajaxUrl = spec.endpoint_url
-    // }
+    //options.ajax.data = function (params) {
+    //  let query
+    //  if (params._type && params._type === 'query') {
+    //    query = {
+    //      q: params.term,
+    //      limit: App.config.components.dynamic_form.remote.query_limit
+    //    }
+    //    //query.where[spec.text_attribute] = params.term
+    //  }
+    //  return query
+    //}
 
     return new SelectView(options)
   }

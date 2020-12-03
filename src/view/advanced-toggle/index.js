@@ -14,7 +14,7 @@ export default View.extend({
   props: {
     onclick: 'any',
     name: ['string',false,'advanced-toggler'],
-    folded: ['boolean', false, false]
+    folded: ['boolean', false, true]
   },
   session: {
     valid: ['boolean',false,true]

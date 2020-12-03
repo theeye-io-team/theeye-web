@@ -5,7 +5,6 @@ import Modalizer from 'components/modalizer'
 import EditUserFormView from 'view/page/member/edit-form'
 
 export default View.extend({
-  autoRender: true,
   template: `
     <div class="row border social">
       <div class="col-xs-6">
@@ -27,7 +26,8 @@ export default View.extend({
           <span><i class="fa fa-user-times blue" data-hook="remove-user"></i></span>
         </div>
       </div>
-    </div>`,
+    </div>
+  `,
   bindings: {
     'model.user.username': {
       hook:'username'
@@ -98,11 +98,11 @@ export default View.extend({
   render () {
     this.renderWithTemplate(this)
 
-    if ( this.model.user.id == App.state.session.user.id || ['root','owner'].includes(this.model.credential) ) {
+    if ( this.model.user.id == App.state.session.user.id || ['root'].includes(this.model.credential) ) {
       this.queryByHook('member-icons').remove()
     }
 
-    if (App.state.session.user.credential==='manager') {
+    if (App.state.session.user.credential === 'manager') {
       if (this.model.user.credential === 'admin') {
         this.queryByHook('member-icons').remove()
       }

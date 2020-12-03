@@ -9,19 +9,19 @@ import './style.less'
 const UserProfile = View.extend({
   template: `
     <div class="profile-data">
-      <h4 data-hook="username"></h4>
+      <h4>
+        <span data-hook="username"></span>
+        <span class="small" data-hook="credential"></span>
+      </h4>
+      <span data-hook="name" href="#"></span>
       <span data-hook="email" href="#"></span>
     </div>
   `,
   bindings: {
-    'model.username': {
-      type: 'text',
-      hook: 'username'
-    },
-    'model.email': {
-      type: 'text',
-      hook: 'email'
-    }
+    'model.credential': { hook: 'credential' },
+    'model.username': { hook: 'username' },
+    'model.name': { hook: 'name' },
+    'model.email': { hook: 'email' }
   }
 })
 

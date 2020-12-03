@@ -1,4 +1,3 @@
-import bootbox from 'bootbox'
 import App from 'ampersand-app'
 import $ from 'jquery'
 import XHR from 'lib/xhr'
@@ -33,11 +32,11 @@ export default {
         App.state.admin.users.add(user)
         App.state.alerts.info('success')
         App.navigate('admin/member')
-        bootbox.alert('This is the Members Admin Page, the new user does not belong to any organization. Assign it NOW or it will not be able to login!')
+        alert('This is the Members Admin Page! The new user you have created does not belong to any organization, yet. Assign it NOW or it will not be able to login!')
       },
       fail: (err,xhr) => {
         App.state.loader.visible = false
-        bootbox.alert(err.message)
+        App.state.alerts.danger('sorry', 'failed to do that')
       }
     })
   },
@@ -55,7 +54,7 @@ export default {
       },
       error: (err) => {
         App.state.loader.visible = false
-        bootbox.alert(err.message)
+        App.state.alerts.danger('sorry', 'failed to do that')
       }
     })
   },
@@ -72,7 +71,7 @@ export default {
       },
       error: (err) => {
         App.state.loader.visible = false
-        bootbox.alert(err.message)
+        App.state.alerts.danger('sorry', 'failed to do that')
       }
     })
   },
@@ -88,11 +87,11 @@ export default {
       },
       done: (response, xhr) => {
         App.state.loader.visible = false
-        bootbox.alert('Invitation sent.')
+        App.state.alerts.info('success')
       },
       fail: (err, xhr) => {
         App.state.loader.visible = false
-        bootbox.alert(err.message)
+        App.state.alerts.danger('sorry', 'failed to do that')
       }
     })
   }

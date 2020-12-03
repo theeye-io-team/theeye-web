@@ -33,7 +33,7 @@ export default {
         if (xhr.status === 401) {
           bootbox.alert('Invalid credentials.')
         } else if (xhr.status === 403) {
-          bootbox.alert('The account is locked.')
+          bootbox.alert(xhr.response || 'The account is locked.')
         } else if (xhr.status == 400) {
           if (xhr.response && xhr.response.error == 'inactiveUser') {
             errorMsg = 'The account you are trying to use is not verified yet. <br> We sent you a new account verification email. <br> Follow the instructions to complete this account registration.'
@@ -195,7 +195,7 @@ export default {
       }
     })
   },
-  toggleLoginForm() {
+  togglePasswordLoginForm() {
     App.state.login.toggle('showRecoverForm')
   },
   recoverPassword (data) {
@@ -317,10 +317,10 @@ export default {
   },
   verifyInvitationToken (callback) {
     const query = search.get()
-
-    let invitation_token = query.invitation_token
-
-    if (!invitation_token) return App.navigate('login')
+    const invitation_token = query.token
+    if (!invitation_token) {
+      return App.navigate('login')
+    }
 
     XHR.send({
       url: `${App.config.api_url}/registration/verifyinvitationtoken?invitation_token=${encodeURIComponent(invitation_token)}`,

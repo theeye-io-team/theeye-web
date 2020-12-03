@@ -5,12 +5,10 @@ import config from 'config'
 export default () => {
   let refreshInterval
 
-  let publics = ['login', 'sociallogin', 'register', 'activate', 'passwordreset']
-
   const refreshIntervalMs = config.session.refresh_interval
 
   const isPublicRoute = (pathname) => {
-    return publics.some(route => {
+    return App.Router.publicRoutes.some(route => {
       let routeRegex = new RegExp(route)
       return routeRegex.test(pathname)
     })

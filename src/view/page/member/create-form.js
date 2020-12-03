@@ -5,8 +5,7 @@ import isEmail from 'validator/lib/isEmail'
 import SelectView from 'components/select2-view'
 
 export default FormView.extend({
-  initialize: function (options) {
-    const isNew = this.model.isNew()
+  initialize (options) {
 
     const credentials = App.state.credentials.filter(e => {
       let notIn = ['root']
@@ -17,39 +16,68 @@ export default FormView.extend({
       return (notIn.indexOf(e.name) === -1)
     })
 
-    this.fields = [
-      new InputView({
-        name: 'name',
-        label: 'Name',
-        value: this.model.name,
-        required: true,
-        readonly: !isNew,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
-      }),
-      new InputView({
-        name: 'email',
-        label: 'Email',
-        value: this.model.email,
-        readonly: !isNew,
-        tests: [
-          function (value) {
-            if (!isEmail(value)) {
-              return 'Please provide a valid email'
-            }
+    //const email = new InputView({
+    const email = new SelectView({
+      options: App.state.admin.users,
+      name: 'email',
+      label: 'Email',
+      tags: true,
+      allowCreateTags: true,
+      tests: [
+        value => {
+          if (!isEmail(value)) {
+            return 'Please provide a valid email'
           }
-        ],
-        required: true,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
-      }),
+        }
+      ],
+      idAttribute: 'email',
+      textAttribute: 'email',
+      required: true,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label'
+    })
+
+      //new SelectView({
+      //  options: credentials,
+      //  styles: 'form-group',
+      //  name: 'credential',
+      //  required: true,
+      //  label: 'Credential',
+      //  unselectedText: 'credential',
+      //  idAttribute: 'name',
+      //  textAttribute: 'name',
+      //  invalidClass: 'text-danger',
+      //  validityClassSelector: '.control-label'
+      //}),
+
+    const name = new InputView({
+      name: 'name',
+      label: 'Name',
+      required: true,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label'
+    })
+
+    email.on('change', () => {
+      if (email.valid === true) {
+        let user = App.state.admin.users.find(u => u.email == email.value)
+        if (!user) {
+          name.setValue()
+        } else {
+          name.setValue(user.username)
+        }
+      }
+    })
+
+    this.fields = [
+      email,
+      name,
       new SelectView({
         options: credentials,
         styles: 'form-group',
         name: 'credential',
         required: true,
         label: 'Credential',
-        value: this.model.credential,
         unselectedText: 'credential',
         idAttribute: 'name',
         textAttribute: 'name',
@@ -60,7 +88,6 @@ export default FormView.extend({
         options: App.state.admin.customers,
         styles: 'form-group',
         name: 'customer_id',
-        value: this.model.customer_id,
         required: true,
         label: 'Customer',
         unselectedText: 'customer',

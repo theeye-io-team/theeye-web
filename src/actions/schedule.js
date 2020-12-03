@@ -1,6 +1,6 @@
 import XHR from 'lib/xhr'
-import bootbox from 'bootbox'
 import App from 'ampersand-app'
+import * as OperationsConstants from 'constants/operations'
 
 export default {
   create (model, data) {
@@ -17,10 +17,10 @@ export default {
       },
       done: (response, xhr) => {
         model.schedules.add(response)
-        bootbox.alert('Schedule created')
+        App.state.alerts.success('Great!', 'Schedule created')
       },
       error: (response, xhr) => {
-        bootbox.alert('Something goes wrong')
+        App.state.alerts.danger('Oops!..', 'Schedule cannot be created')
         console.warn(response)
       }
     })
@@ -51,14 +51,27 @@ export default {
         scheduledModel.schedules.remove(schedule)
       },
       error (err) {
-        bootbox.alert('There was an error canceling the schedule')
+        App.state.alerts.danger('Oops!..', 'There was an error canceling the schedule')
         console.warn(err)
       }
     })
   },
-  applyStateUpdate (schedule) {
-    let taskId = schedule.data.task_id
-    const task = App.state.tasks.get(taskId)
-    task.schedules.add(schedule)
+  applyStateUpdate (schedule, operation) {
+    if (schedule.data.task_id) {
+      const taskId = schedule.data.task_id
+      const task = App.state.tasks.get(taskId)
+
+      if (
+        operation === OperationsConstants.UPDATE ||
+        operation === OperationsConstants.CREATE ||
+        operation === OperationsConstants.REPLACE
+      ) {
+        task.schedules.add(schedule)
+      } else {
+        if (operation === OperationsConstants.DELETE) {
+          task.schedules.remove(schedule)
+        }
+      }
+    }
   }
 }

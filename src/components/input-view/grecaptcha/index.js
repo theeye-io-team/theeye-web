@@ -5,7 +5,7 @@ const logger = loggerModule('components:input:grecaptcha')
 
 let grecaptcha
 try {
-  if (App.config.grecaptcha.enabled === false) {
+  if (App.config.grecaptcha.enabled === false || App.config.grecaptcha.disabled === true) {
     throw new Error('grecaptcha disabled by config.')
   }
   grecaptcha = require('grecaptcha')
