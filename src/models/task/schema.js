@@ -188,7 +188,7 @@ const Schema = AppModel.extend({
       },
       success: () => {
         this.alreadyFetched = true
-        callback()
+        callback( null, this.jobs )
       },
       error: (arg1) => {
         callback( new Error(arg1) )

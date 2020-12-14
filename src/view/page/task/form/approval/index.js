@@ -22,7 +22,11 @@ export default TaskFormView.extend({
       'description',
       'acl',
       'triggers',
-      'copy_task'
+      'copy_task',
+      'success_label',
+      'failure_label',
+      'cancel_label',
+      'ignore_label',
     ]
 
     this.fields = [
@@ -39,7 +43,7 @@ export default TaskFormView.extend({
         required: true,
         visible: true,
         name: 'approvers',
-        label: 'Approver *',
+        label: 'Approvers *',
         idAttribute: 'user_id',
         textAttribute: 'label',
         value: this.model.approvers,
@@ -69,6 +73,42 @@ export default TaskFormView.extend({
             field.toggle('visible')
           })
         }
+      }),
+      new InputView({
+        label: 'Success Label',
+        visible: false,
+        name: 'success_label',
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.success_label
+      }),
+      new InputView({
+        label: 'Failure Label',
+        visible: false,
+        name: 'failure_label',
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.failure_label
+      }),
+      new InputView({
+        label: 'Cancel Label',
+        visible: false,
+        name: 'cancel_label',
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.cancel_label
+      }),
+      new InputView({
+        label: 'Ignore Label',
+        visible: false,
+        name: 'ignore_label',
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.ignore_label
       }),
       new TextareaView({
         visible: false,
@@ -128,6 +168,10 @@ export default TaskFormView.extend({
     this.addHelpIcon('tags')
     this.addHelpIcon('acl')
     this.addHelpIcon('triggers')
+    this.addHelpIcon('success_label')
+    this.addHelpIcon('failure_label')
+    this.addHelpIcon('ignore_label')
+    this.addHelpIcon('cancel_label')
 
     const taskArgumentsView = this._fieldViews['task_arguments']
     taskArgumentsView.renderSubview(
@@ -178,15 +222,5 @@ export default TaskFormView.extend({
     let f = Object.assign({}, data)
     f.type = TaskConstants.TYPE_APPROVAL
     return f
-  },
-  //setWithTask (task) {
-  //  this.setValues({
-  //    approvers: task.approvers,
-  //    name: task.name,
-  //    description: task.description,
-  //    tags: task.tags,
-  //    triggers: task.trigger || [],
-  //    task_arguments: task.task_arguments || []
-  //  })
-  //}
+  }
 })

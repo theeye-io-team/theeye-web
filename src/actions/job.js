@@ -1,12 +1,9 @@
 
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
-import bootbox from 'bootbox'
 import * as TaskConstants from 'constants/task'
 import * as LifecycleConstants from 'constants/lifecycle'
 import * as JobConstants from 'constants/job'
-import { ExecOnHoldJob } from 'view/page/dashboard/task/task/collapse/job/exec-job'
-import { eachSeries, each } from 'async'
 import qs from 'qs'
 
 import loggerModule from 'lib/logger'
@@ -35,8 +32,15 @@ export default {
         return
       }
 
-      const taskJob = addTaskJobToState(data, task)
-      isOnHoldUpdate(taskJob)
+      const job = addTaskJobToState(data, task)
+
+      /**
+       * @summary check if job is on hold and requires intervention of the current user
+       */
+      const user = App.state.session.user
+      if (job.requiresUserInteraction(user)) {
+        App.actions.onHold.check(job)
+      }
     } catch (e) {
       console.error(e)
     }
@@ -68,7 +72,7 @@ export default {
         logger.debug('job canceled')
       },
       fail (err,xhr) {
-        bootbox.alert('something goes wrong')
+        App.state.alert.danger('something goes wrong')
         console.log(arguments)
       }
     })
@@ -87,7 +91,7 @@ export default {
         logger.debug('job approved')
       },
       fail (err,xhr) {
-        bootbox.alert('something goes wrong')
+        App.state.alert.danger('something goes wrong')
         console.log(arguments)
       }
     })
@@ -106,7 +110,7 @@ export default {
         logger.debug('job rejected')
       },
       fail (err,xhr) {
-        bootbox.alert('something goes wrong')
+        App.state.alert.danger('something goes wrong')
         console.log(arguments)
       }
     })
@@ -125,7 +129,7 @@ export default {
         logger.debug('job inputs submited')
       },
       fail (err, xhr) {
-        bootbox.alert('something goes wrong')
+        App.state.alert.danger('something goes wrong')
         console.log(arguments)
       }
     })
@@ -144,7 +148,7 @@ export default {
         logger.debug('job inputs submited')
       },
       fail (err, xhr) {
-        bootbox.alert('something goes wrong')
+        App.state.alert.danger('something goes wrong')
         console.log(arguments)
       }
     })
@@ -175,7 +179,7 @@ export default {
         }
       },
       fail (err, xhr) {
-        bootbox.alert('Something goes wrong. Please try again later')
+        App.state.alert.danger('Something goes wrong. Please try again later')
       }
     })
   }
@@ -204,7 +208,7 @@ const createSingleTaskJob = (task, args, next) => {
       next(null, data)
     },
     fail (err,xhr) {
-      bootbox.alert('Job creation failed')
+      App.state.alert.danger('Job creation failed')
       console.log(arguments)
       next(err)
     }
@@ -231,7 +235,7 @@ const createWorkflowJob = (workflow, args, next) => {
       next(null, data)
     },
     fail (err,xhr) {
-      bootbox.alert('Job creation failed')
+      App.state.alert.danger('Job creation failed')
       console.log(arguments)
       next(err)
     }
@@ -289,29 +293,4 @@ const addTaskJobToState = (data, task) => {
   }
 
   return taskJob
-}
-
-/**
- *
- * @summary check if job is on hold and requires intervention from user
- *
- * @param {Object} job object model properties
- *
- */
-const isOnHoldUpdate = (job) => {
-  if (job.lifecycle !== LifecycleConstants.ONHOLD) {
-    return
-  }
-
-  const user = App.state.session.user
-
-  if (job._type === JobConstants.APPROVAL_TYPE) {
-    if (job.isApprover(user)) {
-      App.actions.onHold.check(job)
-    }
-  } else {
-    if (job.requireUserInteraction(user)) {
-      App.actions.onHold.check(job)
-    }
-  }
 }

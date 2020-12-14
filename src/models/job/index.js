@@ -73,15 +73,18 @@ const BaseJob = AppModel.extend({
   children: {
     user: User
   },
-  requireUserInteraction (user) {
-    let task = this.task
+  requiresUserInteraction (user) {
+    if (this.lifecycle !== LifecycleConstants.ONHOLD) { return }
+
+    const task = this.task
     let interact = false
     if (task.user_inputs === true) {
-      let members = task.user_inputs_members
+      const members = task.user_inputs_members
       if (Array.isArray(members) && members.length > 0) {
         interact = (members.indexOf(user.id) !== -1)
       }
     }
+
     return interact || this.isOwner(user)
   },
   isOwner (user) {
@@ -234,15 +237,33 @@ const ScraperJob = BaseJob.extend({
 })
 
 const ApprovalJob = BaseJob.extend({
+  props: {
+    approvers: ['array', false, () => { return [] }],
+    success_label: ['string', true, 'Reject'],
+    failure_label: ['string', true, 'Approve'],
+    cancel_label: ['string', true, 'Cancel'],
+    ignore_label: ['string', true, 'Ignore'],
+  },
   children: {
     result: ApprovalJobResult,
     task: TaskTypeInitializer(TaskConstants.TYPE_APPROVAL)
   },
   isApprover (user) {
-    return this.task.isApprover(user)
+    let userid = user.id
+    if (
+      ! this.approvers ||
+      ( Array.isArray(this.approvers) && this.approvers.length === 0 )
+    ) {
+      return false
+    }
+    return (this.approvers.indexOf(userid) !== -1)
   },
   session: {
     skip: ['boolean', false, false]
+  },
+  requiresUserInteraction (user) {
+    if (this.lifecycle !== LifecycleConstants.ONHOLD) { return }
+    return this.isApprover(user)
   }
 })
 

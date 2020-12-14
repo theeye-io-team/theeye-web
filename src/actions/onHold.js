@@ -31,65 +31,58 @@ const checkOnHold = (job) => {
     executeOnHoldJobs([job])
   } else {
     // search for approval task to check
-    const userTasksToCheck = App.state.tasks.models.filter(task => {
+    const tasksToCheck = App.state.tasks.models.filter(task => {
       let check = (
-        task.type === TaskConstants.TYPE_APPROVAL &&
-        task.isApprover(App.state.session.user)
-      ) || (
-        task.type === TaskConstants.TYPE_SCRIPT &&
-        task.user_inputs === true
+        task.type === TaskConstants.TYPE_APPROVAL || (
+          task.type === TaskConstants.TYPE_SCRIPT &&
+          task.user_inputs === true
+        )
       )
       return check
     })
 
-    if (userTasksToCheck.length === 0) {
-      App.actions.onHold.release()
-      return
+    if (tasksToCheck.length === 0) {
+      return App.actions.onHold.release()
     }
 
-    checkUserTasks(userTasksToCheck, err => {
-      App.actions.onHold.release()
-    })
+    checkTasks(tasksToCheck)
   }
 }
 
-const checkUserTasks = (userTasksToCheck, callback) => {
-  let onHoldJobs = []
-  each(userTasksToCheck, (task, done) => {
+const checkTasks = (tasks) => {
+  each(tasks, (task, done) => {
     task.fetchJobs({
       forceFetch: true,
       query: { lifecycle: LifecycleConstants.ONHOLD }
     }, done)
-  }, err => {
+  }, (err) => {
     if (err) {
-      return callback(err)
+      logger.error(err)
+      App.actions.onHold.release()
     }
-    userTasksToCheck.forEach(task => {
-      task.jobs.models.forEach(job => {
-        //job.task.set(
-        if (job.lifecycle === LifecycleConstants.ONHOLD && ! job.skip) {
-          if (job._type === JobConstants.APPROVAL_TYPE) {
-            onHoldJobs.push(job)
-          } else if (job._type === JobConstants.SCRIPT_TYPE) {
-            if (job.requireUserInteraction(App.state.session.user)) {
-              onHoldJobs.push(job)
-            }
-          }
+
+    let onHoldJobs = []
+    tasks.forEach(task => {
+      const jobs = task.jobs.models
+      jobs.forEach(job => {
+        const user = App.state.session.user
+        if (!job.skip && job.requiresUserInteraction(user)) {
+          onHoldJobs.push(job)
         }
       })
     })
 
     if (onHoldJobs.length === 0) {
-      return callback()
+      App.actions.onHold.release()
     } else {
       executeOnHoldJobs(onHoldJobs)
     }
   })
 }
 
-const executeOnHoldJobs = (onHoldJobs) => {
+const executeOnHoldJobs = (jobs) => {
   App.state.onHold.underExecution = true
-  eachSeries(onHoldJobs, function (job, done) {
+  eachSeries(jobs, function (job, done) {
     job.fetch({
       success: () => {
         var execOnHoldJob = new ExecOnHoldJob({model: job})

@@ -175,26 +175,34 @@ export const ExecOnHoldJob = BaseExec.extend({
 
     var buttons = {
       reject: {
-        label: 'Reject',
+        label: this.model.task.failure_label ||'Reject',
         className: 'btn btn-danger',
         callback: () => {
           App.actions.job.reject(this.model, jobArgs)
-          if (done) done()
+          done && done()
         }
       },
       approve: {
-        label: 'Approve',
+        label: this.model.task.success_label || 'Approve',
         className: 'btn btn-primary',
         callback: () => {
           App.actions.job.approve(this.model, jobArgs)
-          if (done) done()
+          done && done()
+        }
+      },
+      cancel: {
+        label: this.model.task.cancel_label || 'Cancel',
+        className: 'btn btn-default',
+        callback: () => {
+          App.actions.job.cancel(this.model)
+          done && done()
         }
       }
     }
 
     if (isPendingCheck) {
       buttons.skip = {
-        label: 'Skip',
+        label: this.model.task.ignore_label || 'Ignore',
         className: 'btn btn-default',
         callback: () => {
           App.actions.onHold.skip(this.model)
