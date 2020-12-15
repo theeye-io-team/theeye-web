@@ -182,6 +182,15 @@ export default {
         App.state.alert.danger('Something goes wrong. Please try again later')
       }
     })
+  },
+  fillUser (job) {
+    const userId = job.user_id
+    if (userId) {
+      const member = App.state.members.models.find(m => m.user.id === userId)
+      if (member) {
+        job.user.set( member.user._values )
+      }
+    }
   }
 }
 

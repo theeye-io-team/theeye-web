@@ -2,7 +2,6 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import bootbox from 'bootbox'
 import * as LifecycleConstants from 'constants/lifecycle'
-import * as StateConstants from 'constants/states'
 import JobResult from 'view/page/dashboard/job-result'
 import { ExecOnHoldJob } from './exec-job'
 import OptionsDialog from './options-dialog'
@@ -18,8 +17,8 @@ export default View.extend({
       </li>
       <li class="button-container">
         <button class="btn btn-primary tooltiped" data-hook="action_button">
-          <i data-hook="execution_lifecycle_icon" aria-hidden="true"></i>
-          <i data-hook="execution_progress_icon" style="top:-6px;position:relative;right:4px;font-size:12px"></i>
+          <i data-hook="lifecycle_icon" aria-hidden="true"></i>
+          <i data-hook="progress_icon" style="top:-6px;position:relative;right:4px;font-size:12px"></i>
         </button>
       </li>
       <li class="button-container panel-item icons dropdown">
@@ -35,13 +34,13 @@ export default View.extend({
     'click button[data-hook=job-options-button]': 'onClickJobOptionsButton',
   },
   bindings: {
-    execution_progress_icon: {
-      hook: 'execution_progress_icon',
+    'model.progress_icon': {
+      hook: 'progress_icon',
       type: 'attribute',
       name: 'class'
     },
-    execution_lifecycle_icon: {
-      hook: 'execution_lifecycle_icon',
+    'model.lifecycle_icon': {
+      hook: 'lifecycle_icon',
       type: 'attribute',
       name: 'class'
     },
@@ -52,58 +51,6 @@ export default View.extend({
     }
   },
   derived: {
-    execution_progress_icon: {
-      deps: ['model.lifecycle','model.state'],
-      fn () {
-        const lifecycle = this.model.lifecycle
-
-        if (lifecycle === LifecycleConstants.READY) {
-          return 'fa fa-spin fa-refresh'
-        }
-
-        if (lifecycle === LifecycleConstants.ASSIGNED) {
-          return 'fa fa-spin fa-refresh remark-success'
-        }
-
-        //if (lifecycle === LifecycleConstants.ONHOLD) {
-        //  return 'fa fa-clock-o remark-warning'
-        //  return 'fa fa-exclamation remark-warning'
-        //}
-
-        return ''
-      }
-    },
-    execution_lifecycle_icon: {
-      deps: ['model.lifecycle','model.state'],
-      fn () {
-        const lifecycle = this.model.lifecycle
-        const state = this.model.state
-
-        if (LifecycleConstants.isCompleted(lifecycle)) {
-          if (state === StateConstants.TIMEOUT) { return 'fa fa-clock-o remark-alert' }
-          if (
-            state === StateConstants.FAILURE ||
-            state === StateConstants.CANCELED
-          ) {
-            return 'fa fa-exclamation remark-alert'
-          }
-          if (state === StateConstants.ERROR) { return 'fa fa-question remark-warning' }
-          return 'fa fa-check remark-success'
-        }
-        if (lifecycle === LifecycleConstants.ONHOLD) {
-          //return 'fa fa-exclamation remark-warning'
-          return 'fa fa-clock-o remark-warning'
-        }
-        if (
-          lifecycle === LifecycleConstants.READY ||
-          lifecycle === LifecycleConstants.ASSIGNED
-        ) {
-          return 'fa fa-stop remark-alert'
-        }
-        //return 'fa fa-question remark-alert'
-        return 'fa fa-play'
-      }
-    },
     action_button_title: {
       deps: ['model.lifecycle'],
       fn () {
@@ -129,24 +76,6 @@ export default View.extend({
         }
       }
     },
-    //show_execution_output: {
-    //  deps: ['model.lifecycle'],
-    //  fn () {
-    //    const lifecycle = this.model.lifecycle
-    //    switch (lifecycle) {
-    //      case LifecycleConstants.FINISHED:
-    //      case LifecycleConstants.TERMINATED:
-    //      case LifecycleConstants.COMPLETED:
-    //      case LifecycleConstants.EXPIRED:
-    //      case LifecycleConstants.CANCELED:
-    //        return true
-    //        break
-    //      default:
-    //        return false
-    //        break
-    //    }
-    //  }
-    //}
   },
   onClickActionButton (event) {
     event.stopPropagation()
@@ -170,6 +99,8 @@ export default View.extend({
 
     const view = new JobResult({ job: this.model })
     view.show()
+
+    App.actions.job.fillUser(this.model)
 
     return false
   },

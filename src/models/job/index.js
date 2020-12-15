@@ -3,6 +3,7 @@ import State from 'ampersand-state'
 import AppCollection from 'lib/app-collection'
 import AppModel from 'lib/app-model'
 import * as LifecycleConstants from 'constants/lifecycle'
+import * as StateConstants from 'constants/states'
 import * as JobConstants from 'constants/job'
 import * as TaskConstants from 'constants/task'
 import { Model as User } from 'models/user'
@@ -57,7 +58,6 @@ const BaseJob = AppModel.extend({
     name: 'string',
     notify: 'boolean',
     state: 'string',
-    //lifecycle: 'lifecycle',
     lifecycle: 'string',
     //result: ['state',false,null],
     creation_date: 'date',
@@ -131,6 +131,61 @@ const BaseJob = AppModel.extend({
       fn () {
         return App.state.jobs.get(this.workflow_job_id)
       }
+    },
+    progress_icon: {
+      deps: ['lifecycle'],
+      fn () {
+        const lifecycle = this.lifecycle
+
+        if (lifecycle === LifecycleConstants.READY) {
+          return 'fa fa-spin fa-refresh'
+        }
+
+        if (lifecycle === LifecycleConstants.ASSIGNED) {
+          return 'fa fa-spin fa-refresh remark-success'
+        }
+
+        return ''
+      }
+    },
+    lifecycle_icon: {
+      deps: ['lifecycle','state'],
+      fn () {
+        const lifecycle = this.lifecycle
+        const state = this.state
+
+        if (LifecycleConstants.isCompleted(lifecycle)) {
+          if (state === StateConstants.TIMEOUT) {
+            return 'fa fa-clock-o remark-alert'
+          }
+
+          if (
+            state === StateConstants.FAILURE ||
+            state === StateConstants.CANCELED
+          ) {
+            return 'fa fa-exclamation remark-alert'
+          }
+
+          if (state === StateConstants.ERROR) {
+            return 'fa fa-question remark-warning'
+          }
+
+          return 'fa fa-check remark-success'
+        }
+
+        if (lifecycle === LifecycleConstants.ONHOLD) {
+          return 'fa fa-clock-o remark-warning'
+        }
+
+        if (
+          lifecycle === LifecycleConstants.READY ||
+          lifecycle === LifecycleConstants.ASSIGNED
+        ) {
+          return 'fa fa-stop remark-alert'
+        }
+
+        return 'fa fa-play'
+      }
     }
   }
 })
@@ -144,8 +199,9 @@ const ScriptJobResult = State.extend({
     stdout: ['string',false],
     stderr: ['string',false],
     log: ['string',false],
-    times: ['object',false,()=>{ return {} }],
-    components: ['object',false,()=>{ return {} }]
+    times: ['object', false, () => { return {} }],
+    components: ['object', false, () => { return {} }],
+    next: ['object', false, () => { return {} }]
   }
 })
 
@@ -248,6 +304,25 @@ const ApprovalJob = BaseJob.extend({
     result: ApprovalJobResult,
     task: TaskTypeInitializer(TaskConstants.TYPE_APPROVAL)
   },
+  session: {
+    skip: ['boolean', false, false]
+  },
+  derived: {
+    approversUsers: {
+      cache: false,
+      deps: ['approvers'],
+      fn () {
+        return this.approvers.map(userId => {
+          const member = App.state.members.find(mem => mem.user.id === userId)
+          if (member && member.user) {
+            return `${member.user.name} <${member.user.email}>`
+          } else {
+            return 'Information cannot be displayed'
+          }
+        })
+      }
+    }
+  },
   isApprover (user) {
     let userid = user.id
     if (
@@ -257,9 +332,6 @@ const ApprovalJob = BaseJob.extend({
       return false
     }
     return (this.approvers.indexOf(userid) !== -1)
-  },
-  session: {
-    skip: ['boolean', false, false]
   },
   requiresUserInteraction (user) {
     if (this.lifecycle !== LifecycleConstants.ONHOLD) { return }

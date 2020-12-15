@@ -2,6 +2,45 @@ import View from 'ampersand-view'
 import isURL from 'validator/lib/isURL'
 import './styles.less'
 
+export default View.extend({
+  props: {
+    json: ['any',true]
+  },
+  template: `
+    <div class="json-viewer-component" data-hook="container"></div>
+  `,
+  renderJson () {
+    const container = this.queryByHook('container')
+    const json = this.json
+
+    var html = json2html(json)
+    if (isCollapsable(json)) {
+      html = '<a href="#" data-hook="json-toggle" class="json-toggle"></a>' + html
+    }
+
+    container.innerHTML = html
+  },
+  events: {
+    'click a[data-hook=json-toggle]': (event) => {
+      event.preventDefault()
+      event.stopPropagation()
+
+      let classList = event.target.nextElementSibling.classList
+      if (classList.contains('hidden') === true) {
+        event.target.nextElementSibling.classList.remove('hidden')
+      } else {
+        event.target.nextElementSibling.classList.add('hidden')
+      }
+
+      return false
+    }
+  },
+  render () {
+    this.renderWithTemplate()
+    this.renderJson()
+  }
+})
+
 /**
  * Check if arg is either an array with at least 1 element, or a dict with at least 1 key
  * @return boolean
@@ -81,43 +120,3 @@ function json2html (json) {
   }
   return html;
 }
-
-export default View.extend({
-  props: {
-    json: ['any',true],
-    collapsed: ['boolean',false,false]
-  },
-  template: `
-    <div class="json-viewer-component" data-hook="container"></div>
-  `,
-  renderJson () {
-    const container = this.queryByHook('container')
-    const json = this.json
-
-    var html = json2html(json)
-    if (isCollapsable(json)) {
-      html = '<a href="#" data-hook="json-toggle" class="json-toggle"></a>' + html
-    }
-
-    container.innerHTML = html
-  },
-  events: {
-    'click a[data-hook=json-toggle]': (event) => {
-      event.preventDefault()
-      event.stopPropagation()
-
-      let classList = event.target.nextElementSibling.classList
-      if (classList.contains('hidden') === true) {
-        event.target.nextElementSibling.classList.remove('hidden')
-      } else {
-        event.target.nextElementSibling.classList.add('hidden')
-      }
-
-      return false
-    }
-  },
-  render () {
-    this.renderWithTemplate()
-    this.renderJson()
-  }
-})

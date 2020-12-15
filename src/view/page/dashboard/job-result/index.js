@@ -1,18 +1,17 @@
-'use strict'
 
+import moment from 'moment'
+import ansi2html from 'ansi-to-html'
 import View from 'ampersand-view'
 import State from 'ampersand-state'
 import Collection from 'ampersand-collection'
 import Modalizer from 'components/modalizer'
-import moment from 'moment'
-import ansi2html from 'ansi-to-html'
 import JsonViewer from 'components/json-viewer'
 
 import './styles.less'
 
 /**
  *
- * @summary modal to display jobs output
+ * @summary modal to display jobs execution summary
  *
  */
 export default Modalizer.extend({
@@ -24,9 +23,14 @@ export default Modalizer.extend({
 
     this.backdrop = true
     this.title = 'Execution Result'
-    this.bodyView = new JobView({ job: this.job })
 
-    this.listenTo(this,'hidden',() => {
+    const type = this.job._type
+    if (!SummaryJobsMap.hasOwnProperty(type)) {
+      return console.error('error job type')
+    }
+    this.bodyView = new SummaryJobsMap[type]({ job: this.job })
+
+    this.listenTo(this, 'hidden', () => {
       this.bodyView.remove()
       delete this.bodyView
     })
@@ -97,11 +101,11 @@ const ScriptJobResult = View.extend({
   bindings: {
     'result.code': { hook:'code' },
     'result.lastline': { hook: 'lastline' },
+    killed: { hook: 'killed' },
     html_log: {
-      type:'innerHTML',
-      hook:'log'
-    },
-    killed: { hook:'killed' }
+      type: 'innerHTML',
+      hook: 'log'
+    }
   },
   derived: {
     killed: {
@@ -128,25 +132,6 @@ const ScriptJobResult = View.extend({
         return converter.toHtml(this.result.lastline)
       }
     }
-  }
-})
-
-const Header = State.extend({
-  props: {
-    value: 'string',
-    name: 'string'
-  }
-})
-
-const HeaderView = View.extend({
-  template: `
-    <div>
-      <b data-hook="name"></b>: <i data-hook="value"></i>
-    </div>
-  `,
-  bindings: {
-    'model.name': { hook: 'name' },
-    'model.value': { hook: 'value' }
   }
 })
 
@@ -205,39 +190,79 @@ const ScraperJobResult = View.extend({
   }
 })
 
-const JobView = View.extend({
+const Header = State.extend({
+  props: {
+    value: 'string',
+    name: 'string'
+  }
+})
+
+const HeaderView = View.extend({
+  template: `
+    <div>
+      <b data-hook="name"></b>: <i data-hook="value"></i>
+    </div>
+  `,
+  bindings: {
+    'model.name': { hook: 'name' },
+    'model.value': { hook: 'value' }
+  }
+})
+
+const BaseJobView = View.extend({
   props: {
     job: 'state',
     moreinfo_toggle: ['boolean', false, false]
   },
-  template: `
-    <div class="job-result-component">
-      <h4>Job execution <b data-hook="lifecycle"></b></h4>
-      <h4>Result <b data-hook="state"></b></h4>
-      <p><i class="fa fa-user"></i> <span data-hook="user-name"></span></p>
-      <p><i class="fa fa-envelope-o"></i> <span data-hook="user-email"></span></p>
-      <p>
-        <i class="fa fa-hourglass-start"></i>
-        <span data-hook="creationdate"></span>
-      </p>
-      <p>
-        <i class="fa fa-hourglass-end"></i>
-        <span data-hook="lastupdate"></span>
-      </p>
-      <p>
-        <i class="fa fa-sign-in"></i> Input
-        <div data-hook="input"></div>
-      </p>
-      <p>
-        <i class="fa fa-sign-out"></i> Output
-        <div data-hook="output"></div>
-      </p>
-
-      <a class="moreinfo" data-hook="moreinfo-toggle" href="#">More Info</a>
-      <div class="text-block text-block-default" data-hook="moreinfo-container"></div>
-    </div>
-  `,
+  template () {
+    const html = `
+      <div class="job-result-component">
+        <div data-hook="summary-container">
+          <h4>State <i data-hook="lifecycle_icon" aria-hidden="true" style="color:#304269;"></i></h4>
+          <h4>Lifecycle <b data-hook="lifecycle"></b></h4>
+          <p><i class="fa fa-user"></i> <span data-hook="user-name"></span></p>
+          <p><i class="fa fa-envelope-o"></i> <span data-hook="user-email"></span></p>
+          <p>
+            <i class="fa fa-hourglass-start"></i>
+            <span data-hook="creationdate"></span>
+          </p>
+          <p>
+            <i class="fa fa-hourglass-end"></i>
+            <span data-hook="lastupdate"></span>
+          </p>
+          <div>
+            <i class="fa fa-sign-in"></i> Input
+            <div data-hook="input"></div>
+          </div>
+          <div>
+            <i class="fa fa-sign-out"></i> Output
+            <div data-hook="output"></div>
+          </div>
+          <div>
+            <i class="fa fa-cubes"></i> Components
+            <div data-hook="components"></div>
+          </div>
+          <div>
+            <i class="fa fa-flask"></i> Customize Next
+            <div data-hook="next"></div>
+          </div>
+        </div>
+        <div class="moreinfo-container" data-hook="log-container">
+          <a class="moreinfo" data-hook="moreinfo-toggle">
+            <i class="fa fa-search"></i> More Info
+          </a>
+          <div class="text-block text-block-default" data-hook="moreinfo-container"></div>
+        </div>
+      </div>
+    `
+    return html
+  },
   bindings: {
+    'job.lifecycle_icon': {
+      hook: 'lifecycle_icon',
+      type: 'attribute',
+      name: 'class'
+    },
     'job.lifecycle': { hook:'lifecycle' },
     'job.state': { hook:'state' },
     'job.user.username': { hook:'user-name' },
@@ -247,9 +272,7 @@ const JobView = View.extend({
     moreinfo_toggle: {
       hook: 'moreinfo-container',
       type: 'toggle'
-    },
-    //input: { hook: 'input' },
-    //output: { hook: 'output' },
+    }
   },
   derived: {
     output: {
@@ -270,6 +293,18 @@ const JobView = View.extend({
         } else {
           return output
         }
+      }
+    },
+    components: {
+      deps: ['job.components'],
+      fn () {
+        return this.job.result.components || ''
+      }
+    },
+    next: {
+      deps: ['job.next'],
+      fn () {
+        return this.job.result.next || ''
       }
     },
     input: {
@@ -319,28 +354,23 @@ const JobView = View.extend({
       return // this task was never executed?
     }
 
-    this.renderJsonView({
-      json: this.output,
-      el: this.queryByHook('output')
-    })
-    this.renderJsonView({
-      json: this.input,
-      el: this.queryByHook('input')
-    })
-
+    this.renderResultView()
+    this.renderJsonView({ json: this.output, el: this.queryByHook('output') })
+    this.renderJsonView({ json: this.input, el: this.queryByHook('input') })
+    this.renderJsonView({ json: this.components, el: this.queryByHook('components') })
+    this.renderJsonView({ json: this.next, el: this.queryByHook('next') })
+  },
+  renderResultView () {
     const type = this.job._type
     if (!JobResultClassMap.hasOwnProperty(type)) {
       return console.error('error job type')
-    } else {
-      this.result = new JobResultClassMap[type]({
-        result: this.job.result
-      })
-
-      this.renderSubview(
-        this.result,
-        this.queryByHook('moreinfo-container')
-      )
     }
+
+    this.result = new JobResultClassMap[type]({ result: this.job.result })
+    this.renderSubview(
+      this.result,
+      this.queryByHook('moreinfo-container')
+    )
   },
   renderJsonView (opts) {
     let { json, el } = opts
@@ -356,17 +386,46 @@ JobResultClassMap['ApprovalJob'] = ApprovalJobResult
 JobResultClassMap['DummyJob'] = DummyJobResult
 JobResultClassMap['NotificationJob'] = NotificationJobResult
 
-function stripHtml (html) {
-  if (DOMParser) {
-    var doc = new DOMParser().parseFromString(html, 'text/html')
-    return doc.body.textContent || ""
-  } else {
-    return escapeHtml(html)
+const ScriptJobSummary = BaseJobView.extend({})
+const ScraperJobSummary = BaseJobView.extend({})
+const NotificationJobSummary = BaseJobView.extend({})
+const DummyJobSummary = BaseJobView.extend({})
+const ApprovalJobSummary = BaseJobView.extend({
+  render () {
+    BaseJobView.prototype.render.apply(this, arguments)
+    this.renderApprovers()
+  },
+  renderApprovers () {
+    const el = this.queryByHook('summary-container')
+    const users = this.job.approversUsers
+    const approvers = document.createElement('div')
+    approvers.innerHTML = `
+      <i class="fa fa-users"></i>
+      <b>Approvers</b>
+      <div style="padding: 10px; padding-left: 25px;">${escapeHtml(users.toString())}</div>
+    `
+    el.appendChild(approvers)
   }
-}
+})
 
-function escapeHtml (html) {
-  var map = {
+const SummaryJobsMap = {}
+SummaryJobsMap['ScriptJob'] = ScriptJobSummary
+SummaryJobsMap['ScraperJob'] = ScraperJobSummary
+SummaryJobsMap['DummyJob'] = DummyJobSummary
+SummaryJobsMap['NotificationJob'] = NotificationJobSummary
+SummaryJobsMap['ApprovalJob'] = ApprovalJobSummary
+
+//function stripHtml (html) {
+//  if (DOMParser) {
+//    var doc = new DOMParser().parseFromString(html, 'text/html')
+//    return doc.body.textContent || ""
+//  } else {
+//    return escapeHtml(html)
+//  }
+//}
+
+const escapeHtml = (html) => {
+  const map = {
     '&': '&amp;',
     '<': '&lt;',
     '>': '&gt;',
