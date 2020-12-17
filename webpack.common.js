@@ -9,6 +9,8 @@ const NODE_ENV = process.env['NODE_ENV'] || 'default'
 const PUBLIC_PATH = typeof process.env['PUBLIC_PATH'] === 'string' ? process.env['PUBLIC_PATH'] : '/'
 const TARGET_PATH = 'bundles/'
 
+const execSync = require('child_process').execSync
+
 module.exports = {
   //stats: 'verbose',
   entry: `${__dirname}/src/main.js`,
@@ -30,16 +32,19 @@ module.exports = {
     ]
   },
   plugins: [
-    new MiniCssExtractPlugin({
-      filename: TARGET_PATH + `styles/[name].[contenthash].bundle.css`,
-      chunkFilename: TARGET_PATH + `styles/[id].[contenthash].bundle.css`,
+    new webpack.DefinePlugin({
+      __VERSION__: JSON.stringify(execSync('git describe').toString().trim())
     }),
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify(NODE_ENV),
         'RECAPTCHA_DISABLED': JSON.stringify(process.env.RECAPTCHA_DISABLED),
-        'ANALYTICS_ENABLED': JSON.stringify(process.env.ANALYTICS_ENABLED)
+        'ANALYTICS_DISABLED': JSON.stringify(process.env.ANALYTICS_DISABLED),
       }
+    }),
+    new MiniCssExtractPlugin({
+      filename: TARGET_PATH + `styles/[name].[contenthash].bundle.css`,
+      chunkFilename: TARGET_PATH + `styles/[id].[contenthash].bundle.css`,
     }),
     new webpack.ProvidePlugin({
       '$': 'jquery',
