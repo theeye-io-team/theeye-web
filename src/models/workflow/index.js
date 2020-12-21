@@ -8,34 +8,6 @@ import graphlib from 'graphlib'
 import config from 'config'
 const urlRoot = `${config.supervisor_api_url}/workflows`
 
-const formattedTags = () => {
-  return {
-    deps: ['name','hostname','tags','graph','hasSchedules'],
-    /**
-     * @return {Array}
-     */
-    fn () {
-      let graph = this.graph
-      let tasksNames = []
-      if (graph) {
-        graph.nodes().forEach(node => {
-          var data = graph.node(node)
-          if (!/Event/.test(data._type)) {
-            var task = App.state.tasks.get(data.id)
-            if (!task) return
-            tasksNames.push(task._values.name)
-          }
-        })
-      }
-      return [
-        (this.hasSchedules ? 'scheduled' : undefined),
-        'name=' + this.name,
-        'hostname=' + this.hostname
-      ].concat(this.tags).concat(tasksNames)
-    }
-  }
-}
-
 const Workflow = AppModel.extend({
   dataTypes: {
     'graphlib.Graph': {
@@ -80,6 +52,7 @@ const Workflow = AppModel.extend({
     description: 'string',
     tags: ['array',false, () => { return [] }],
     acl: 'array',
+    table_view: ['boolean',false,false],
     lifecycle: 'string',
     state: 'string',
     triggers: ['array', false, () => { return [] }],
@@ -109,7 +82,7 @@ const Workflow = AppModel.extend({
     type: {
       fn: () => 'workflow'
     },
-    formatted_tags: formattedTags(),
+    formatted_tags: () => { formattedTags() },
     canExecute: {
       deps: [],
       fn () {
@@ -254,6 +227,34 @@ const Workflow = AppModel.extend({
   //  return attrs
   //}
 })
+
+const formattedTags = () => {
+  return {
+    deps: ['name','hostname','tags','graph','hasSchedules'],
+    /**
+     * @return {Array}
+     */
+    fn () {
+      let graph = this.graph
+      let tasksNames = []
+      if (graph) {
+        graph.nodes().forEach(node => {
+          var data = graph.node(node)
+          if (!/Event/.test(data._type)) {
+            var task = App.state.tasks.get(data.id)
+            if (!task) return
+            tasksNames.push(task._values.name)
+          }
+        })
+      }
+      return [
+        (this.hasSchedules ? 'scheduled' : undefined),
+        'name=' + this.name,
+        'hostname=' + this.hostname
+      ].concat(this.tags).concat(tasksNames)
+    }
+  }
+}
 
 const groupJobs = (jobs) => {
   let wJobs = []

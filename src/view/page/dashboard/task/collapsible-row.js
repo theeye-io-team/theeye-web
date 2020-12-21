@@ -24,12 +24,12 @@ export default View.extend({
               aria-controls="unbinded">
               <div class="panel-title-content">
 
-                <span class="panel-item name">
+                <div class="panel-item name">
                   <span data-hook="tags"></span>
                   <span data-hook="name" title=""></span>
                   <span data-hook="help"></span>
                   <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
-                </span>
+                </div>
 
                 <div class="panel-item icons dropdown">
                   <button class="btn dropdown-toggle btn-primary"

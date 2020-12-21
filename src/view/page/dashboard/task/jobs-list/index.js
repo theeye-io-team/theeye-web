@@ -6,7 +6,7 @@ import './styles.less'
 
 export default View.extend({
   template: `
-  <div class="col-xs-12 jobs-list-component">
+  <div class="jobs-list-component">
     <div data-hook="header-container" class="header-container">
       <h3>
         <span data-hook="header-title"></span>

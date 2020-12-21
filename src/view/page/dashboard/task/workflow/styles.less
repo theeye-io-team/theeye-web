@@ -10,12 +10,12 @@
     padding-right: 10px;
     text-align: center;
 
-    i[data-hook="execution_lifecycle_icon"] {
+    i[data-hook="lifecycle_icon"] {
       font-size: 16px;
       line-height: 28px;
     }
 
-    i[data-hook="execution_progress_icon"] {
+    i[data-hook="progress_icon"] {
       top:-6px;
       position:relative;
       right:4px;
@@ -23,7 +23,19 @@
     }
   }
 
-  .static-icons {
-    padding: 9px;
+  [data-component=workflow-job-exec-button] {
+    padding: 17px;
+    float: right;
+  }
+
+  [data-component=inputs-row] {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+    //grid-row-gap: 20px;
+    align-items: center;
+
+    div {
+      padding: 8px;
+    }
   }
 }

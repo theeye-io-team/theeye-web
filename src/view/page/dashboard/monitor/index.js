@@ -8,6 +8,8 @@ import TagView from 'components/tag'
 import HelpIconView from 'components/help-icon'
 import { Factory as CollapseContentFactory } from './collapse-content'
 
+import './styles.less'
+
 export default function (options) {
   const model = options.model
   if ( /group/.test(model.type) ) {
@@ -23,6 +25,66 @@ export default function (options) {
  *
  */
 const MonitorView = View.extend({
+  initialize () {
+    this.iconHook = this.iconHook || 'state-icon'
+
+    this.template = `
+      <div data-component="monitor-row" class="monitorRow">
+        <div class="row-container panel panel-default">
+          <div class="panel-heading" role="tab" data="panel-heading"> <!-- Collapse Heading Container { -->
+            <h4 class="panel-title-icon">
+              <i data-hook="row-icon"></i>
+            </h4>
+            <h4 class="panel-title">
+              <span class="collapsed"
+                href="#unbinded"
+                data-hook="collapse-toggle"
+                data-toggle="collapse"
+                data-parent="#monitor-accordion"
+                aria-expanded="false"
+                aria-controls="unbinded">
+                <div class="panel-title-content">
+
+                  <div class="panel-item name">
+                    <span data-hook="tags"></span>
+                    <span data-hook="name"></span>
+                    <span data-hook="help"></span>
+                    <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
+                  </div>
+
+                  <section data-hook="buttons-block" style="float:right;">
+                    <div class="panel-item icons dropdown">
+                      <button class="btn dropdown-toggle btn-primary"
+                        type="button"
+                        data-toggle="dropdown"
+                        aria-haspopup="true"
+                        aria-expanded="true">
+                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
+                      </button>
+                      <ul data-hook="buttons-container" class="dropdown-menu"> </ul>
+                    </div>
+                  </section>
+
+                  <!-- state_severity is a model object derived property, not an attribute -->
+                  <div class="panel-item tooltiped state-icon state-container">
+                    <span data-hook="${this.iconHook}"></span>
+                  </div>
+
+                </div>
+              </span>
+            </h4>
+          </div> <!-- } END Collapse Heading Container -->
+          <div class="panel-collapse collapse"
+            data-hook="collapse-container"
+            id="unbinded"
+            role="tabpanel"
+            aria-labelledby="unbinded">
+            <div class="panel-body" data-hook="collapse-container-body"> </div>
+          </div> <!-- Collapsed Content Container -->
+        </div>
+      </div>
+    `
+  },
   props: {
     show: ['boolean', false, true],
     hash: ['string', false, () => { return (new Date()).getTime() } ]
@@ -101,66 +163,6 @@ const MonitorView = View.extend({
     show: {
       type: 'toggle'
     }
-  },
-  initialize () {
-    this.iconHook = this.iconHook || 'state-icon'
-
-    this.template = `
-      <div class="monitorRow">
-        <div class="row-container panel panel-default">
-          <div class="panel-heading" role="tab" data="panel-heading"> <!-- Collapse Heading Container { -->
-            <h4 class="panel-title-icon">
-              <i data-hook="row-icon"></i>
-            </h4>
-            <h4 class="panel-title">
-              <span class="collapsed"
-                href="#unbinded"
-                data-hook="collapse-toggle"
-                data-toggle="collapse"
-                data-parent="#monitor-accordion"
-                aria-expanded="false"
-                aria-controls="unbinded">
-                <div class="panel-title-content">
-
-                  <span class="panel-item name">
-                    <span data-hook="tags"></span>
-                    <span data-hook="name"></span>
-                    <span data-hook="help"></span>
-                    <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
-                  </span>
-
-                  <section data-hook="buttons-block" style="float:right;">
-                    <div class="panel-item icons dropdown">
-                      <button class="btn dropdown-toggle btn-primary"
-                        type="button"
-                        data-toggle="dropdown"
-                        aria-haspopup="true"
-                        aria-expanded="true">
-                        <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
-                      </button>
-                      <ul data-hook="buttons-container" class="dropdown-menu"> </ul>
-                    </div>
-                  </section>
-
-                  <!-- state_severity is a model object derived property, not an attribute -->
-                  <div class="panel-item tooltiped state-icon state-container">
-                    <span data-hook="${this.iconHook}"></span>
-                  </div>
-
-                </div>
-              </span>
-            </h4>
-          </div> <!-- } END Collapse Heading Container -->
-          <div class="panel-collapse collapse"
-            data-hook="collapse-container"
-            id="unbinded"
-            role="tabpanel"
-            aria-labelledby="unbinded">
-            <div class="panel-body" data-hook="collapse-container-body"> </div>
-          </div> <!-- Collapsed Content Container -->
-        </div>
-      </div>
-    `
   },
   render () {
     this.renderWithTemplate()
@@ -254,10 +256,14 @@ const MonitorsGroupView = MonitorView.extend({
     this.renderWithTemplate()
     this.queryByHook('buttons-block').remove()
 
+    const container = this.queryByHook('collapse-container-body')
+
+    container.classList.add('row-group')
+
     this.renderCollection(
       this.model.submonitors,
       MonitorViewFactory,
-      this.queryByHook('collapse-container-body')
+      container
     )
 
     this.setRowIcon()

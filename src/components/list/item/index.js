@@ -22,11 +22,11 @@ export default BaseView.extend({
                     <span data-hook="selectable" class="fa fa-square-o"></span>
                   </button>
                 </span>
-                <span class="panel-item name">
+                <div class="panel-item name">
                   <span data-hook="item_badge"></span>
                   <span data-hook="item_name"></span>
                   <small> <span data-hook="item_description"></span> </small>
-                </span>
+                </div>
                 <div data-hook="dropdown-icons" class="panel-item icons dropdown">
                   <button class="btn dropdown-toggle btn-primary"
                     type="button"

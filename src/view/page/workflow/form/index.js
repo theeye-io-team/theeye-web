@@ -4,6 +4,7 @@ import FormView from 'ampersand-form-view'
 import FormButtons from 'view/buttons'
 import SelectView from 'components/select2-view'
 import InputView from 'components/input-view'
+import CheckboxView from 'components/checkbox-view'
 import TextareaView from 'components/input-view/textarea'
 import TagsSelectView from 'view/tags-select'
 import MembersSelectView from 'view/members-select'
@@ -23,7 +24,8 @@ export default FormView.extend({
       'acl',
       'tags',
       'description',
-      'triggers'
+      'triggers',
+      'table_view'
     ]
 
     App.actions.workflow.populate(this.model)
@@ -95,6 +97,13 @@ export default FormView.extend({
         name: 'acl',
         label: 'ACL\'s',
         value: this.model.acl
+      }),
+      new CheckboxView({
+        required: false,
+        visible: false,
+        label: 'Table View',
+        name: 'table_view',
+        value: this.model.table_view
       })
     ]
 
@@ -115,6 +124,7 @@ export default FormView.extend({
     this.addHelpIcon('description')
     this.addHelpIcon('tags')
     this.addHelpIcon('acl')
+    this.addHelpIcon('table_view')
 
     const buttons = new FormButtons()
     this.renderSubview(buttons)

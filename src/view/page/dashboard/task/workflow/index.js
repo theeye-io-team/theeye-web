@@ -43,10 +43,16 @@ export default CollapsibleRow.extend({
       this.queryByHook('collapse-container-body'),
     )
 
-    this.renderSubview(
-      new WorkflowJobsListView({ model: this.model }),
-      this.queryByHook('collapse-container-body')
-    )
+    this.listenToAndRun(this.model, 'change:table_view', () => {
+      if (this.jobsList) {
+        this.jobsList.remove()
+      }
+
+      this.jobsList = this.renderSubview(
+        new WorkflowJobsListView({ model: this.model }),
+        this.queryByHook('collapse-container-body')
+      )
+    })
   },
   renderButtons () {
     this.renderSubview(
@@ -65,9 +71,9 @@ export default CollapsibleRow.extend({
 
 const WorkflowJobsListView = JobsList.extend({
   renderJobs () {
-    this.renderCollection(
+    this.jobsCollectionView = this.renderCollection(
       this.model.jobs,
-      WorkflowJobRowView,
+      this.model.table_view ? WorkflowJobInputsView : WorkflowJobDateView,
       this.queryByHook('jobs-list'),
       {
         reverse: true,
@@ -83,26 +89,27 @@ const WorkflowJobRowView = CollapsibleRow.extend({
       <div class="panel panel-default">
         <div class="panel-heading"
           role="tab"
-          data-hook="panel-heading"> <!-- Collapse Heading Container { -->
+          data-hook="panel-heading">
+  
+      <!-- Collapse Heading Container { -->
           <h4 class="panel-title-icon"><i data-hook="header-icon"></i></h4>
           <h4 class="panel-title">
-            <span class="collapsed"
+            <div class="collapsed"
               data-hook="collapse-toggle"
               data-toggle="collapse"
               data-parent="#task-accordion"
               href="#unbinded"
               aria-expanded="false"
               aria-controls="unbinded">
-              <div class="panel-title-content" data-hook="panel-container">
-                <span class="panel-item name">
-                  <span data-hook="name" title=""></span>
-                </span>
-              </div>
-            </span>
-          </h4>
-        </div> <!-- } END Collapse Heading Container -->
 
-        <!-- Collapsed Container { -->
+              <section data-hook="icons-container"></section>
+              <section class="panel-title-content" data-hook="row-container"> </section>
+            </div>
+          </h4>
+        </div>
+      <!-- } END Collapse Heading Container -->
+
+      <!-- Collapsed Container { -->
         <div data-hook="collapse-container"
           id="unbinded"
           class="panel-collapse collapse"
@@ -110,7 +117,7 @@ const WorkflowJobRowView = CollapsibleRow.extend({
           role="tabpanel">
           <div class="panel-body" data-hook="collapse-container-body"> </div>
         </div>
-        <!-- } END Collapsed Container -->
+      <!-- } END Collapsed Container -->
       </div>
     </div>
   `,
@@ -118,21 +125,12 @@ const WorkflowJobRowView = CollapsibleRow.extend({
     row_text: {
       deps: ['model.creation_date'],
       fn () {
-        if (!this.model.user) { return '' }
-
-        let mdate = moment(this.model.creation_date)
-        let uname = this.model.user.username
-
-        let text = [
-          uname,
-          ' ran on ',
-          mdate.format('D-MMM-YY, HH:mm:ss'),
-        ].join('')
-        return text
+        return ''
+        //let mdate = moment(this.model.creation_date)
+        //let text = mdate.format('D-MMM-YY, HH:mm:ss')
+        //return text
       }
     },
-    //type_icon: {
-    //},
     header_type_icon: {
       deps: ['collapsed'],
       fn () {
@@ -147,7 +145,7 @@ const WorkflowJobRowView = CollapsibleRow.extend({
   renderButtons () {
     this.renderSubview(
       new WorkflowJobStatus({ model: this.model }),
-      this.queryByHook('panel-container')
+      this.queryByHook('icons-container')
     )
   },
   renderCollapsedContent () {
@@ -164,6 +162,28 @@ const WorkflowJobRowView = CollapsibleRow.extend({
     // no help required
     return
   }
+})
+
+const WorkflowJobDateView = WorkflowJobRowView.extend({
+  render () {
+    WorkflowJobRowView.prototype.render.apply(this, arguments)
+
+    let header = new DateView({ model: this.model })
+    const container = this.queryByHook('row-container')
+    this.renderSubview(header, container)
+  },
+})
+
+const WorkflowJobInputsView = WorkflowJobRowView.extend({
+  render () {
+    WorkflowJobRowView.prototype.render.apply(this, arguments)
+
+    let header = new InputsView({
+      model: this.model.getFirstJob()
+    })
+    const container = this.queryByHook('row-container')
+    this.renderSubview(header, container)
+  },
 })
 
 const TaskJobDescriptiveRow = TaskJobRow.extend({
@@ -206,11 +226,63 @@ const WorkflowButtonsView = View.extend({
 
 const WorkflowJobStatus = JobExecButton.extend({
   template: `
-    <div data-component="job-exec-button" class="panel-item icons">
-      <li class="static-icons">
-        <i data-hook="execution_lifecycle_icon"></i>
-        <i data-hook="execution_progress_icon"></i>
-      </li>
+    <div data-component="workflow-job-exec-button">
+      <i data-hook="lifecycle_icon"></i>
+      <i data-hook="progress_icon"></i>
     </div>
   `
 })
+
+const InputsView = View.extend({
+  props: { 
+    data: 'object'
+  },
+  template: `<div data-component="inputs-row"></div>`,
+  render () {
+    this.renderWithTemplate(this)
+
+    const job = this.model
+    const argsdefs = job.task.task_arguments.models
+    const inputs = job.task_arguments_values
+    //const data = []
+
+    this.el.appendChild( dateElem(this.model.creation_date) )
+
+    if (argsdefs.length > 0) {
+      for (let index = 0; index < argsdefs.length; index++) {
+        const def = argsdefs[index]
+        //const value = {}
+        //value[ def.label ] = inputs[ index ]
+        //data.push(value)
+
+        let col = document.createElement('div')
+        col.innerHTML = inputs[ index ]
+        this.el.appendChild( col )
+      }
+    }
+
+    // round 2 decimal
+    const cols = Math.round( 100 / (argsdefs.length + 1) * 1e1 ) / 1e1
+    const colStyle = `grid-template-columns: repeat(auto-fill, minmax(${cols}%, 1fr))`
+    this.el.setAttribute('style', colStyle)
+  }
+})
+
+const DateView = View.extend({
+  template: `<div data-component="inputs-row"></div>`,
+  render () {
+    this.renderWithTemplate(this)
+    this.el.appendChild( dateElem(this.model.creation_date) )
+  }
+})
+
+/**
+ * @param {Date/String}
+ * @return {DOMElem}
+ */
+const dateElem = (date) => {
+  date = moment(date)
+  let col = document.createElement('div')
+  col.innerHTML = date.format('DD-MM-YYYY HH:mm:ss')
+  return col
+}

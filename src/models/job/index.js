@@ -498,14 +498,14 @@ const WorkflowJob = BaseJob.extend({
     }
     return (user.email.toLowerCase() === this.user.email.toLowerCase())
   },
+  getFirstJob () {
+    return this.jobs.at(0)
+  },
   getPreviousJob () {
-    let previousJob = this.jobs.models[this.jobs.length-2]
-    if (previousJob) {
-      return previousJob
-    }
+    return this.jobs.models[ this.jobs.length - 2 ]
   },
   currentJob () {
-    return this.jobs.at(this.jobs.length - 1)
+    return this.jobs.at( this.jobs.length - 1 )
   }
 })
 

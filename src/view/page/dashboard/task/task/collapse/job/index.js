@@ -8,9 +8,9 @@ export default View.extend({
       <div class="panel-heading">
         <h4 class="panel-title">
           <div class="panel-title-content">
-            <span class="panel-item name">
+            <div class="panel-item name">
               <span class="title" data-hook="title"></span>
-            </span>
+            </div>
             <div data-hook="job-status-container" class="panel-item icons">
             </div>
           </div>

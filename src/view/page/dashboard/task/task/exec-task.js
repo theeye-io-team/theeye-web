@@ -152,6 +152,8 @@ export const BaseExec = State.extend({
     })
 
     modal.show()
+    
+    //App.actions.job.restart(this.model, taskArgs)
   },
 })
 
