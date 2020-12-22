@@ -178,9 +178,7 @@ const WorkflowJobInputsView = WorkflowJobRowView.extend({
   render () {
     WorkflowJobRowView.prototype.render.apply(this, arguments)
 
-    let header = new InputsView({
-      model: this.model.getFirstJob()
-    })
+    let header = new InputsView({ model: this.model })
     const container = this.queryByHook('row-container')
     this.renderSubview(header, container)
   },
@@ -241,30 +239,36 @@ const InputsView = View.extend({
   render () {
     this.renderWithTemplate(this)
 
-    const job = this.model
-    const argsdefs = job.task.task_arguments.models
-    const inputs = job.task_arguments_values
-    //const data = []
+    this.listenToAndRun(this.model, 'change:first_job', () => {
+      const job = this.model.first_job
+      if (!job) return
 
-    this.el.appendChild( dateElem(this.model.creation_date) )
+      if (job.task) {
+        const argsdefs = job.task.task_arguments.models
+        const inputs = job.task_arguments_values
+        //const data = []
 
-    if (argsdefs.length > 0) {
-      for (let index = 0; index < argsdefs.length; index++) {
-        const def = argsdefs[index]
-        //const value = {}
-        //value[ def.label ] = inputs[ index ]
-        //data.push(value)
+        this.el.appendChild( dateElem(this.model.creation_date) )
 
-        let col = document.createElement('div')
-        col.innerHTML = inputs[ index ]
-        this.el.appendChild( col )
+        if (argsdefs.length > 0) {
+          for (let index = 0; index < argsdefs.length; index++) {
+            const def = argsdefs[index]
+            //const value = {}
+            //value[ def.label ] = inputs[ index ]
+            //data.push(value)
+
+            let col = document.createElement('div')
+            col.innerHTML = inputs[ index ]
+            this.el.appendChild( col )
+          }
+        }
+
+        // round 2 decimal
+        const cols = Math.round( 100 / (argsdefs.length + 1) * 1e1 ) / 1e1
+        const colStyle = `grid-template-columns: repeat(auto-fill, minmax(${cols}%, 1fr))`
+        this.el.setAttribute('style', colStyle)
       }
-    }
-
-    // round 2 decimal
-    const cols = Math.round( 100 / (argsdefs.length + 1) * 1e1 ) / 1e1
-    const colStyle = `grid-template-columns: repeat(auto-fill, minmax(${cols}%, 1fr))`
-    this.el.setAttribute('style', colStyle)
+    })
   }
 })
 

@@ -466,25 +466,23 @@ const WorkflowJob = BaseJob.extend({
     jobs: Collection
   },
   session: {
+    jobs_ready: 'boolean',
     lifecycle: 'string'
   },
   initialize () {
     BaseJob.prototype.initialize.apply(this, arguments)
 
-    this.listenToAndRun(
-      this.jobs,
-      'add change sync reset remove',
-      function () {
-        if (this.jobs.length) {
-          let currentJob = this.jobs.at(this.jobs.length - 1) // last
-          this.lifecycle = currentJob.lifecycle
-          this.state = currentJob.state
-        } else {
-          this.lifecycle = undefined
-          this.state = undefined
-        }
+    this.listenToAndRun(this.jobs, 'add change sync reset remove', function () {
+      if (this.jobs.length) {
+        this.jobs_ready = true
+        let currentJob = this.jobs.at(this.jobs.length - 1) // last
+        this.lifecycle = currentJob.lifecycle
+        this.state = currentJob.state
+      } else {
+        this.lifecycle = undefined
+        this.state = undefined
       }
-    )
+    })
   },
   /**
    * workflow is owned by the user who execute it first
@@ -498,15 +496,32 @@ const WorkflowJob = BaseJob.extend({
     }
     return (user.email.toLowerCase() === this.user.email.toLowerCase())
   },
-  getFirstJob () {
-    return this.jobs.at(0)
+  derived: {
+    first_job: {
+      deps: ['jobs_ready'],
+      fn () {
+        return this.jobs.at(0)
+      }
+    },
+    previous_job: {
+      deps: ['jobs_ready'],
+      fn () {
+        if ( (this.jobs.length - 2) < 0 ) {
+        }
+
+        return this.jobs.models[ this.jobs.length - 2 ]
+      }
+    },
+    current_job: { // the last
+      deps: ['jobs_ready'],
+      fn () {
+        return this.jobs.at( this.jobs.length - 1 )
+      }
+    }
   },
-  getPreviousJob () {
-    return this.jobs.models[ this.jobs.length - 2 ]
-  },
-  currentJob () {
-    return this.jobs.at( this.jobs.length - 1 )
-  }
+  //getPreviousJob () {
+  //  return this.jobs.models[ this.jobs.length - 2 ]
+  //}
 })
 
 export const Approval = ApprovalJob

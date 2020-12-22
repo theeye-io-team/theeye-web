@@ -244,7 +244,7 @@ export const ExecOnHoldJob = BaseExec.extend({
     let workflowJob = App.state.jobs.get(this.model.workflow_job_id)
     if (!workflowJob) { return } // workflow is not populated.
 
-    let previousJob = workflowJob.getPreviousJob()
+    let previousJob = workflowJob.previous_job
     // get previous job components
     if (previousJob && previousJob.result && previousJob.result.components) {
       let components = previousJob.result.components

@@ -6,7 +6,7 @@ import './style.less'
 
 export const Schedules = View.extend({
   template: `
-    <div data-component="schedules-list" class="col-xs-12">
+    <div data-component="schedules-list">
       <h4>Schedules list</h4>
       <div data-hook="schedule-list"></div>
     </div>
