@@ -6,6 +6,10 @@ ARG NODE_ENV
 ENV NODE_ENV $NODE_ENV
 ENV destDir /app
 
+ARG APP_VERSION
+ENV APP_VERSION $APP_VERSION
+ENV destDir /app
+
 WORKDIR ${destDir}
 COPY . ${destDir}
 
