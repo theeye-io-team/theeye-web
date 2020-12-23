@@ -9,8 +9,6 @@ const NODE_ENV = process.env['NODE_ENV'] || 'default'
 const PUBLIC_PATH = typeof process.env['PUBLIC_PATH'] === 'string' ? process.env['PUBLIC_PATH'] : '/'
 const TARGET_PATH = 'bundles/'
 
-const execSync = require('child_process').execSync
-
 module.exports = {
   //stats: 'verbose',
   entry: `${__dirname}/src/main.js`,
@@ -33,7 +31,7 @@ module.exports = {
   },
   plugins: [
     //new webpack.DefinePlugin({
-    //  __VERSION__: JSON.stringify(execSync('git describe').toString().trim())
+    //  __VERSION__: JSON.stringify(process.env.APP_VERSION)
     //}),
     new webpack.DefinePlugin({
       'process.env': {
