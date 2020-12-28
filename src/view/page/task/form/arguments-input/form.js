@@ -194,7 +194,8 @@ export default FormView.extend({
   },
   render () {
     FormView.prototype.render.apply(this, arguments)
-    this.query('form').classList.add('form-horizontal')
+    const form = this.query('form')
+    form.classList.add('form-horizontal')
   },
   submit (next) {
     const done = () => {

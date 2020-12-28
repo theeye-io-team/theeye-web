@@ -6,13 +6,13 @@ import './styles.less'
 
 export default View.extend({
   template: `
-  <div class="jobs-list-component">
+  <div data-component="jobs-list-component">
     <div data-hook="header-container" class="header-container">
       <h3>
-        <span data-hook="header-title"></span>
         <div class="buttons-container">
           <span class="delete-jobs-button" data-hook="delete-jobs-button"> </span>
         </div>
+        <div class="header-title" data-hook="header-title"></div>
       </h3>
     </div>
     <div data-hook="jobs-list"></div>
@@ -56,9 +56,10 @@ export default View.extend({
     }
 
     this.renderJobs()
+    this.renderJobsSearchBox()
   },
   renderJobs () {
-    this.renderCollection(
+    this.jobsCollectionView = this.renderCollection(
       this.model.jobs,
       this.rowView,
       this.queryByHook('jobs-list'),
@@ -67,5 +68,9 @@ export default View.extend({
         emptyView: EmptyJobView
       }
     )
+  },
+  renderJobsSearchBox () {
+    // not implemented for tasks
   }
 })
+

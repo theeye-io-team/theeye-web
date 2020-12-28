@@ -34,19 +34,19 @@ export default DropableForm.extend({
       )
     })
   },
-  events: {
-    keydown: 'onKeyEvent',
-    keypress: 'onKeyEvent'
-  },
-  onKeyEvent (event) {
-    if(event.target.nodeName.toUpperCase()=='INPUT') {
-      if (event.keyCode == 13) {
-        event.preventDefault()
-        event.stopPropagation()
-        return false
-      }
-    }
-  },
+  //events: {
+  //  keydown: 'onKeyEvent',
+  //  keypress: 'onKeyEvent'
+  //},
+  //onKeyEvent (event) {
+  //  if(event.target.nodeName.toUpperCase()=='INPUT') {
+  //    if (event.keyCode == 13) {
+  //      event.preventDefault()
+  //      event.stopPropagation()
+  //      return false
+  //    }
+  //  }
+  //},
   fillForm (data) {
     if (data.task) {
       this.setWithTask(data.task)

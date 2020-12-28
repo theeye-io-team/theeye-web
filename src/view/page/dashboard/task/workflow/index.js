@@ -8,6 +8,7 @@ import JobExecButton from '../task/collapse/job/job-exec-button'
 import EmptyJobView from '../empty-job-view'
 import moment from 'moment'
 import JobsList from 'view/page/dashboard/task/jobs-list'
+import SearchBox from 'components/searchbox'
 
 // menu buttons
 import RemoveWorkflowButton from 'view/page/workflow/buttons/remove'
@@ -80,6 +81,37 @@ const WorkflowJobsListView = JobsList.extend({
         emptyView: EmptyJobView
       }
     )
+  },
+  renderJobsSearchBox () {
+    const search = new SearchBox()
+    this.renderSubview(search, this.queryByHook('header-title'))
+    this.listenTo(search, 'change:input_value', () => {
+      const collectionView = this.jobsCollectionView
+      const value = search.input_value
+      if (!value) {
+        collectionView.views.forEach(view => view.el.style.display = 'block')
+      } else {
+        collectionView.views.forEach(view => {
+          const workflowJob = view.model
+          const jobs = workflowJob.jobs
+
+          const matchedJobs = jobs.filter(job => {
+            const matchedArgs = job.task_arguments_values.filter(arg => {
+              const pattern = new RegExp(value,'i')
+              return pattern.test(arg)
+            })
+
+            return ( matchedArgs.length > 0 )
+          })
+
+          if (matchedJobs.length === 0) {
+            view.el.style.display = 'none'
+          } else {
+            // highligth matched element
+          }
+        })
+      }
+    })
   }
 })
 
@@ -152,7 +184,7 @@ const WorkflowJobRowView = CollapsibleRow.extend({
     this.renderSubview(
       new JobsList({
         model: this.model,
-        rowView: TaskJobDescriptiveRow,
+        rowView: TaskJobInputsRow,
         renderHeader: false
       }),
       this.queryByHook('collapse-container-body'),
@@ -161,7 +193,7 @@ const WorkflowJobRowView = CollapsibleRow.extend({
   renderHelp () {
     // no help required
     return
-  }
+  },
 })
 
 const WorkflowJobDateView = WorkflowJobRowView.extend({
@@ -184,12 +216,26 @@ const WorkflowJobInputsView = WorkflowJobRowView.extend({
   },
 })
 
-const TaskJobDescriptiveRow = TaskJobRow.extend({
+const TaskJobInputsRow = TaskJobRow.extend({
   derived: {
     row_title: {
       deps: ['model.name'],
       fn () {
-        return this.model.name
+        const job = this.model
+        return job.name
+        //if (job.task) {
+        //  const dateFormatted = moment(job.creation_date).format('DD-MM-YYYY HH:mm:ss')
+        //  let text = `${dateFormatted} ${job.name} `
+        //  const inputs = job.task_arguments_values
+        //  if (inputs.length > 0) {
+        //    for (let index = 0; index < inputs.length; index++) {
+        //      text += ` ${inputs[ index ]}`
+        //    }
+        //  }
+        //  return  text
+        //} else {
+        //  return job.name
+        //}
       }
     }
   }
@@ -242,33 +288,32 @@ const InputsView = View.extend({
     this.listenToAndRun(this.model, 'change:first_job', () => {
       const job = this.model.first_job
       if (!job) return
-
-      if (job.task) {
-        const argsdefs = job.task.task_arguments.models
-        const inputs = job.task_arguments_values
-        //const data = []
-
-        this.el.appendChild( dateElem(this.model.creation_date) )
-
-        if (argsdefs.length > 0) {
-          for (let index = 0; index < argsdefs.length; index++) {
-            const def = argsdefs[index]
-            //const value = {}
-            //value[ def.label ] = inputs[ index ]
-            //data.push(value)
-
-            let col = document.createElement('div')
-            col.innerHTML = inputs[ index ]
-            this.el.appendChild( col )
-          }
-        }
-
-        // round 2 decimal
-        const cols = Math.round( 100 / (argsdefs.length + 1) * 1e1 ) / 1e1
-        const colStyle = `grid-template-columns: repeat(auto-fill, minmax(${cols}%, 1fr))`
-        this.el.setAttribute('style', colStyle)
-      }
+      this.renderJobArguments(job)
     })
+  },
+  renderJobArguments (job) {
+    const wfJob = this.model
+    if (job.task) {
+      const argsdefs = job.task.task_arguments.models
+      const inputs = job.task_arguments_values
+      //const data = []
+
+      this.el.appendChild( dateElem(wfJob.creation_date) )
+
+      if (argsdefs.length > 0) {
+        for (let index = 0; index < argsdefs.length; index++) {
+          //const def = argsdefs[index]
+          let col = document.createElement('div')
+          col.innerHTML = inputs[ index ]
+          this.el.appendChild( col )
+        }
+      }
+
+      // round 2 decimal
+      const cols = Math.round( 100 / (argsdefs.length + 1) * 1e1 ) / 1e1
+      const colStyle = `grid-template-columns: repeat(auto-fill, minmax(${cols}%, 1fr))`
+      this.el.setAttribute('style', colStyle)
+    }
   }
 })
 
@@ -285,8 +330,7 @@ const DateView = View.extend({
  * @return {DOMElem}
  */
 const dateElem = (date) => {
-  date = moment(date)
   let col = document.createElement('div')
-  col.innerHTML = date.format('DD-MM-YYYY HH:mm:ss')
+  col.innerHTML = moment(date).format('DD-MM-YYYY HH:mm:ss')
   return col
 }

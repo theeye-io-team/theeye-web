@@ -83,18 +83,18 @@ export default View.extend({
     'click [data-hook=date]':'onClickDate',
     'click [data-hook=file]':'onClickFile',
     'click [data-hook=remote-options]':'onClickRemoteOptions',
-    keydown: 'onKeyEvent',
-    keypress: 'onKeyEvent'
+    //keydown: 'onKeyEvent',
+    //keypress: 'onKeyEvent'
   },
-  onKeyEvent (event) {
-    if (event.target.nodeName.toUpperCase() == 'INPUT') {
-      if (event.keyCode == 13) {
-        event.preventDefault()
-        event.stopPropagation()
-        return false
-      }
-    }
-  },
+  //onKeyEvent (event) {
+  //  if (event.target.nodeName.toUpperCase() == 'INPUT') {
+  //    if (event.keyCode == 13) {
+  //      event.preventDefault()
+  //      event.stopPropagation()
+  //      return false
+  //    }
+  //  }
+  //},
   onClickRegexp (event) {
     event.preventDefault()
     event.stopPropagation()
