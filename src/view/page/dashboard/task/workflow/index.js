@@ -117,7 +117,7 @@ const WorkflowJobsListView = JobsList.extend({
 
 const WorkflowJobRowView = CollapsibleRow.extend({
   template: `
-    <div data-component="workflow-collapsible-row" class="workflow-job-row">
+    <div title="" data-hook="root" data-component="workflow-collapsible-row" class="workflow-job-row">
       <div class="panel panel-default">
         <div class="panel-heading"
           role="tab"
@@ -194,6 +194,13 @@ const WorkflowJobRowView = CollapsibleRow.extend({
     // no help required
     return
   },
+  bindings: Object.assign({}, CollapsibleRow.prototype.bindings, {
+    'model.id': {
+      hook: 'root',
+      type: 'attribute',
+      name: 'title'
+    }
+  })
 })
 
 const WorkflowJobDateView = WorkflowJobRowView.extend({

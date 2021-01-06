@@ -72,7 +72,7 @@ export default {
         logger.debug('job canceled')
       },
       fail (err,xhr) {
-        App.state.alert.danger('something goes wrong')
+        App.state.alerts.danger('something goes wrong')
         console.log(arguments)
       }
     })
@@ -91,7 +91,7 @@ export default {
         logger.debug('job approved')
       },
       fail (err,xhr) {
-        App.state.alert.danger('something goes wrong')
+        App.state.alerts.danger('something goes wrong')
         console.log(arguments)
       }
     })
@@ -110,7 +110,7 @@ export default {
         logger.debug('job rejected')
       },
       fail (err,xhr) {
-        App.state.alert.danger('something goes wrong')
+        App.state.alerts.danger('something goes wrong')
         console.log(arguments)
       }
     })
@@ -129,7 +129,7 @@ export default {
         logger.debug('job inputs submited')
       },
       fail (err, xhr) {
-        App.state.alert.danger('something goes wrong')
+        App.state.alerts.danger('something goes wrong')
         console.log(arguments)
       }
     })
@@ -148,7 +148,7 @@ export default {
         logger.debug('job inputs submited')
       },
       fail (err, xhr) {
-        App.state.alert.danger('something goes wrong')
+        App.state.alerts.danger('something goes wrong')
         console.log(arguments)
       }
     })
@@ -179,7 +179,7 @@ export default {
         }
       },
       fail (err, xhr) {
-        App.state.alert.danger('Something goes wrong. Please try again later')
+        App.state.alerts.danger('Something goes wrong. Please try again later')
       }
     })
   },
@@ -217,7 +217,7 @@ const createSingleTaskJob = (task, args, next) => {
       next(null, data)
     },
     fail (err,xhr) {
-      App.state.alert.danger('Job creation failed')
+      App.state.alerts.danger('Job creation failed')
       console.log(arguments)
       next(err)
     }
@@ -244,7 +244,7 @@ const createWorkflowJob = (workflow, args, next) => {
       next(null, data)
     },
     fail (err,xhr) {
-      App.state.alert.danger('Job creation failed')
+      App.state.alerts.danger('Job creation failed')
       console.log(arguments)
       next(err)
     }

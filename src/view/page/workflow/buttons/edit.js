@@ -5,7 +5,7 @@ import $ from 'jquery'
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = 'Edit workflow'
+    this.title = 'Edit Workflow'
     this.iconClass = 'fa fa-edit dropdown-icon'
     this.className = 'btn btn-primary'
   },
@@ -19,7 +19,7 @@ export default PanelButton.extend({
       })
       const modal = new Modalizer({
         buttons: false,
-        title: this.title,
+        title: `Edit # ${this.model.id}`,
         bodyView: form
       })
 

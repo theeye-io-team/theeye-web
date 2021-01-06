@@ -10,7 +10,7 @@ export default View.extend({
       <a href="" data-hook="search-button">
         <i class="fa fa-search"></i>
       </a>
-      <input name="search">
+      <input name="search" placeholder="search">
     </span>
   `,
   events: {

@@ -302,7 +302,7 @@ const ComponentFactory = (name, options, task) => {
 const buildApprovalMessage = (model) => {
   let params = model.task.task_arguments
   let values = model.task_arguments_values
-  let message = `<p>Task <b>${model.name}</b> needs your approval to continue.</p>`
+  let message = `<p>Task <b>${model.name}</b> needs your action to continue.</p>`
 
   if (params.length) {
     message += '<br><p><b>Please verify this information: </b></p><br>'

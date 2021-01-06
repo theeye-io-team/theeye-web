@@ -25,7 +25,8 @@ export default FormView.extend({
       'tags',
       'description',
       'triggers',
-      'table_view'
+      'table_view',
+      'acl_dynamic'
     ]
 
     App.actions.workflow.populate(this.model)
@@ -104,6 +105,13 @@ export default FormView.extend({
         label: 'Table View',
         name: 'table_view',
         value: this.model.table_view
+      }),
+      new CheckboxView({
+        required: false,
+        visible: false,
+        label: 'Dynamic ACL',
+        name: 'acl_dynamic',
+        value: this.model.acl_dynamic
       })
     ]
 
@@ -125,6 +133,7 @@ export default FormView.extend({
     this.addHelpIcon('tags')
     this.addHelpIcon('acl')
     this.addHelpIcon('table_view')
+    this.addHelpIcon('acl_dynamic')
 
     const buttons = new FormButtons()
     this.renderSubview(buttons)

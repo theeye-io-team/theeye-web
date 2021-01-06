@@ -48,6 +48,8 @@ const BaseJob = AppModel.extend({
     task_id: 'string',
     host_id: 'string',
     script_id: 'string',
+    acl: ['array',false, () => []],
+    acl_dynamic: ['boolean',false, false],
     //script_arguments: 'array',
     task_arguments: 'array',
     customer_id: 'string',

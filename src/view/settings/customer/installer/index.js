@@ -211,6 +211,7 @@ export default View.extend({
 })
 
 const template = (state) => {
+  const accessToken = App.state.session.access_token
   let html = `
     <div>
       <div data-hook="agent-set">
@@ -331,7 +332,7 @@ const template = (state) => {
               <p> <a download="theeye-agent64.tar.gz" target="_blank" href="https://s3.amazonaws.com/theeye.agent/linux/theeye-agent64.tar.gz"> Linux 64bit Binary </a> </p>
               <p> <a data-hook="agent-binary-download agent-binary-html" target="_blank"></a> </p>
               <p>
-                <a download="credentials.json" target="_blank" href="/api/agent/credentials">
+                <a download="credentials.json" target="_blank" href="/api/bot/credentials?access_token=${accessToken}">
                   <span data-hook="customer-name"></span>
                   Bot Credentials
                 </a>

@@ -22,7 +22,7 @@ export default Modalizer.extend({
     Modalizer.prototype.initialize.apply(this, arguments)
 
     this.backdrop = true
-    this.title = 'Execution Result'
+    this.title = `${this.job.name} # ${this.job.id}`
 
     const type = this.job._type
     if (!SummaryJobsMap.hasOwnProperty(type)) {
