@@ -224,25 +224,17 @@ const WorkflowJobInputsView = WorkflowJobRowView.extend({
 })
 
 const TaskJobInputsRow = TaskJobRow.extend({
+  bindings: {
+    row_title: { type: 'innerHTML', hook: 'title' }
+  },
   derived: {
     row_title: {
-      deps: ['model.name'],
+      deps: ['model.creation_date','model.name'],
       fn () {
         const job = this.model
-        return job.name
-        //if (job.task) {
-        //  const dateFormatted = moment(job.creation_date).format('DD-MM-YYYY HH:mm:ss')
-        //  let text = `${dateFormatted} ${job.name} `
-        //  const inputs = job.task_arguments_values
-        //  if (inputs.length > 0) {
-        //    for (let index = 0; index < inputs.length; index++) {
-        //      text += ` ${inputs[ index ]}`
-        //    }
-        //  }
-        //  return  text
-        //} else {
-        //  return job.name
-        //}
+        const date = moment(job.creation_date).format('DD-MM-YY HH:mm:ss')
+        const name = job.name
+        return `<span>${date}</span> | ${name}`
       }
     }
   }

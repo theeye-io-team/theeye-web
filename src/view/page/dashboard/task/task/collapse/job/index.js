@@ -20,15 +20,9 @@ export default View.extend({
   `,
   derived: {
     row_title: {
-      deps: ['model.user', 'model.creation_date'],
+      deps: ['model.creation_date'],
       fn () {
-        let title = ''
-        let date = moment(this.model.creation_date).format('D-MMM-YY, HH:mm:ss')
-        if (this.model.user.username) {
-          title += this.model.user.username
-        }
-
-        return title + ` ran on ${date}`
+        return moment(this.model.creation_date).format('DD-MM-YY HH:mm:ss')
       }
     }
   },

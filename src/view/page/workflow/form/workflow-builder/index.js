@@ -386,7 +386,8 @@ const Menu = View.extend({
   template: `
     <div class="dropdown">
       <ul class="dropdown-menu" style="display: block;">
-        <li><a data-hook="edit" href="#">Edit</a></li>
+        <li><a data-hook="edit" href="#">Edit Task</a></li>
+        <li><a data-hook="edit-script" href="#">Edit Script</a></li>
         <li><a data-hook="remove" href="#">Remove</a></li>
         <li><a data-hook="export" href="#">Export</a></li>
       </ul>
@@ -394,6 +395,7 @@ const Menu = View.extend({
   `,
   events: {
     'click [data-hook=edit]': 'onClickEdit',
+    'click [data-hook=edit-script]': 'onClickEditScript',
     'click [data-hook=export]': 'onClickExport',
     'click [data-hook=remove]': 'onClickRemove'
   },
@@ -401,6 +403,13 @@ const Menu = View.extend({
     event.preventDefault()
     event.stopPropagation()
     App.actions.task.edit(this.model.id)
+    this.trigger('click:edit')
+    this.remove()
+  },
+  onClickEditScript (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    App.actions.file.edit(this.model.script_id)
     this.trigger('click:edit')
     this.remove()
   },
