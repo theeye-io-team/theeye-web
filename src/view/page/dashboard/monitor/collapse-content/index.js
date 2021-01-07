@@ -338,7 +338,7 @@ const FileCollapsedContent = GenericCollapsedContent.extend({
 
 const HostCollapsedContent = GenericCollapsedContent.extend({
   template: `
-    <div data-component="monitor-collapsed-content" class="row">
+    <div data-component="monitor-collapsed-content">
       <p>This is <i data-hook="hostname"></i> keep alive.</p>
 
       <div class="host_state col-md-12">

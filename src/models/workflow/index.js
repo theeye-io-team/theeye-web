@@ -167,7 +167,10 @@ const Workflow = AppModel.extend({
       function () {
         if (this.jobs.length===0) { return }
         let dates = this.jobs.map(e => e.creation_date).filter(e => e)
-        this.last_execution = Math.max.apply(null, dates)
+        const last = Math.max.apply(null, dates)
+        if (typeof last === 'date') {
+          this.last_execution = last
+        }
       }
     )
 
