@@ -32,7 +32,7 @@ export default {
         return
       }
 
-      const job = addTaskJobToState(data, task)
+      const job = addJobToState(data, task)
 
       /**
        * @summary check if job is on hold and requires intervention of the current user
@@ -262,7 +262,7 @@ const addWorkflowJobToState = (data) => {
   workflow.jobs.add(data, { merge: true })
 }
 
-const addTaskJobToState = (data, task) => {
+const addJobToState = (data, task) => {
   let taskJob = new App.Models.Job.Factory(data, {})
 
   if (!task.workflow_id) {
@@ -286,7 +286,7 @@ const addTaskJobToState = (data, task) => {
       // add temp models to the collection
       let attrs = {
         id: taskJob.workflow_job_id,
-        type: JobConstants.WORKFLOW_TYPE
+        _type: JobConstants.WORKFLOW_TYPE
       }
       workflowJob = workflow.jobs.add(attrs, { merge: true })
     }

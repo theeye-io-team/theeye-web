@@ -166,7 +166,7 @@ const Workflow = AppModel.extend({
       'add change sync reset remove',
       function () {
         if (this.jobs.length===0) { return }
-        let dates = this.jobs.map(e => e.creation_date)
+        let dates = this.jobs.map(e => e.creation_date).filter(e => e)
         this.last_execution = Math.max.apply(null, dates)
       }
     )
