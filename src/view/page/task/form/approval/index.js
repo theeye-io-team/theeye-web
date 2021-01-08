@@ -47,11 +47,11 @@ export default TaskFormView.extend({
         idAttribute: 'user_id',
         textAttribute: 'label',
         value: this.model.approvers,
-        filterOptions: [
-          item => {
-            return item.credential !== 'viewer'
-          }
-        ],
+        //filterOptions: [
+        //  item => {
+        //    return item.credential !== 'viewer'
+        //  }
+        //]
       }),
       new TagsSelectView({
         required: false,
