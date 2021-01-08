@@ -3,6 +3,7 @@ import App from 'ampersand-app'
 import * as FIELD from 'constants/field'
 import DropableForm from 'components/dropable-form'
 import InputView from 'components/input-view'
+import TextareaView from 'components/input-view/textarea'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
 import Datepicker from 'components/input-view/datepicker'
@@ -72,6 +73,9 @@ export default DropableForm.extend({
       case FIELD.TYPE_INPUT:
         field = this.buildTextField(spec)
         break
+      case FIELD.TYPE_JSON:
+        field = this.buildJsonField(spec)
+        break
       case FIELD.TYPE_SELECT:
         field = this.buildOptionsField(spec)
         break
@@ -87,15 +91,36 @@ export default DropableForm.extend({
     }
     return field
   },
+  buildJsonField (spec) {
+    return new TextareaView({
+      prettyJson: true,
+      label: spec.label,
+      name: spec.order.toString(),
+      required: spec.required,
+      value: spec.value,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      tests: [
+        value => {
+          if (value === '') { return }
+          try {
+            JSON.parse(value)
+          } catch (e) {
+            return 'Invalid JSON string'
+          }
+        }
+      ]
+    })
+  },
   buildTextField (spec) {
     return new InputView({
       label: spec.label,
       name: spec.order.toString(),
       required: spec.required,
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label',
       value: spec.value,
       type: spec.masked ? 'password' : 'text',
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
       tests: [
         value => {
           const { pattern, charset, charsmin, charsmax } = spec

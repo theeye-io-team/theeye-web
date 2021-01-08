@@ -36,7 +36,8 @@ const Schema = AppModel.extend({
     _type: 'string', // discriminator
     show_result: 'boolean',
     user_inputs: 'boolean',
-    user_inputs_members: 'array'
+    user_inputs_members: 'array',
+    arguments_type: ['string',false,'legacy'],
   },
   derived: {
     hasWorkflow: {

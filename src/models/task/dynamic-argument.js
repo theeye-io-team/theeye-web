@@ -23,7 +23,7 @@ const DynamicArgument = Model.extend({
     order: ['number',true],
     type: ['string',true],
     label: ['string',true],
-    value: ['string',false],
+    value: ['string',false,''], // default empty string
     help: ['string',true],
     readonly: ['boolean',false,false],
     //options: ['array',false,() => { return [] }],
@@ -35,7 +35,8 @@ const DynamicArgument = Model.extend({
     charsmin: ['number',false],
     charsmax: ['number',false],
     charset: ['string',false],
-    pattern: ['string',false]
+    pattern: ['string',false],
+    version: ['string',false,'legacy'] // legacy arguments version
   },
   collections: {
     options: OptionsCollection

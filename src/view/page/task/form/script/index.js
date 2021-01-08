@@ -89,7 +89,8 @@ export default TaskFormView.extend({
       'env',
       'user_inputs',
       'user_inputs_members',
-      'show_result'
+      'show_result',
+      'arguments_type'
     ]
 
     const requireUserInputs = new CheckboxView({
@@ -194,15 +195,6 @@ export default TaskFormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       }),
-      //new InputView({
-      //  label: 'Run As',
-      //  name: 'script_runas',
-      //  placeholder: 'sudo -u the_user %script%',
-      //  required: true,
-      //  invalidClass: 'text-danger',
-      //  validityClassSelector: '.control-label',
-      //  value: this.model.script_runas
-      //}),
       new ArgumentsView({
         name: 'task_arguments',
         value: this.model.task_arguments
@@ -313,6 +305,22 @@ export default TaskFormView.extend({
             }
           }
         ]
+      }),
+      new SelectView({
+        label: 'Arguments Type (experimental)',
+        name: 'arguments_type',
+        visible: false,
+        required: false,
+        options: [
+          { id: 'legacy', value: 'Legacy' },
+          { id: 'json', value: 'Json' }
+        ],
+        value: (this.model.arguments_type || 'legacy'),
+        unselectedText: '',
+        idAttribute: 'id',
+        textAttribute: 'value',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
       })
     ]
 
@@ -359,6 +367,7 @@ export default TaskFormView.extend({
     this.addHelpIcon('user_inputs')
     this.addHelpIcon('user_inputs_members')
     this.addHelpIcon('show_result')
+    this.addHelpIcon('arguments_type')
 
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)

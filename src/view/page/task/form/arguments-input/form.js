@@ -69,6 +69,9 @@ export default FormView.extend({
       }))
 
       switch (this.model.type) {
+
+        case FIELD.TYPE_JSON:
+          break
         case FIELD.TYPE_INPUT:
 
           this.fields.push(
@@ -177,6 +180,14 @@ export default FormView.extend({
 
           break
       }
+
+      this.fields.push(
+        new CheckboxView({
+          label: 'Required (beta)',
+          name: 'required',
+          value: this.model.required,
+        })
+      )
     }
 
     const button = new ArgumentButton({

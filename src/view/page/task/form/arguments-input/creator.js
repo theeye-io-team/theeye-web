@@ -22,6 +22,12 @@ export default View.extend({
           <h2>Text Input <span data-hook="webhook-help"></span></h2>
         </div>
         <div class="col-xs-2">
+          <button data-hook="json" class="btn btn-default">
+            <b class="">{ }</b>
+          </button>
+          <h2>JSON Input <span data-hook="webhook-help"></span></h2>
+        </div>
+        <div class="col-xs-2">
           <button data-hook="select" class="btn btn-default">
             <i class="fa fa-list-ol"></i>
           </button>
@@ -78,6 +84,7 @@ export default View.extend({
     'click [data-hook=regexp]':'onClickRegexp',
     'click [data-hook=email]':'onClickEmail',
     'click [data-hook=fixed]':'onClickFixed',
+    'click [data-hook=json]':'onClickJson',
     'click [data-hook=input]':'onClickInput',
     'click [data-hook=select]':'onClickSelect',
     'click [data-hook=date]':'onClickDate',
@@ -114,6 +121,11 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
     this.renderArgumentForm(FIELD.TYPE_INPUT)
+  },
+  onClickJson (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.renderArgumentForm(FIELD.TYPE_JSON)
   },
   onClickSelect (event) {
     event.preventDefault()

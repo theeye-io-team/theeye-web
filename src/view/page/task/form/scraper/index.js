@@ -1,5 +1,3 @@
-'use strict'
-
 import App from 'ampersand-app'
 import TaskFormView from '../form'
 import PatternInputView from './pattern-input'

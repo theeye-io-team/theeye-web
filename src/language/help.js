@@ -137,6 +137,7 @@ export default {
       script_runas,
       env: 'Set environment variables during script execution. Use a JSON object key:value format',
       multitasking: 'Allowes Bots to run multiple instances of this Task in parallel',
+      arguments_type: 'Choose Json formatting to standarize the data received from the UI',
       approval_task_arguments: 'Data submitted by the approval request (from previous task)',
       show_result: 'Show job result popup on finish.',
       user_inputs: 'Demands a user to fill the input arguments. Cannot be automatilly executed and always required manual intervention.'

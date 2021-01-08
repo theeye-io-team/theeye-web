@@ -51,6 +51,19 @@ export default {
    *
    */
   createFromTask (task, args) {
+    if (task.arguments_type === 'json' && args.length > 0) {
+      for (let index = 0; index < args.length; index++) {
+        let arg = args[index]
+        try {
+          // submit json values instead of strings
+          args[index] = JSON.parse(arg.value)
+        } catch (err) {
+          logger.warn(`cannot json.parse ${arg.value}`)
+          // ok
+        }
+      }
+    }
+
     if (!task.workflow_id) {
       logger.log('creating new job with task %o', task)
       createSingleTaskJob(task, args, (err, job) => { })
