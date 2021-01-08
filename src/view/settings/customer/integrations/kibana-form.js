@@ -2,7 +2,7 @@ import FormView from 'ampersand-form-view'
 import IframeParserInputView from './IframeParserInputView'
 import CheckboxView from 'components/checkbox-view'
 
-import isURL from 'validator/lib/isURL'
+//import isURL from 'validator/lib/isURL'
 
 export default FormView.extend({
   initialize: function (options) {
@@ -14,18 +14,18 @@ export default FormView.extend({
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label',
       required: false,
-      tests: [
-        function (value) {
-          if (value.length > 0) {
-            if (!isURL(value, {
-              protocols: ['http', 'https'],
-              require_protocol: true
-            })) {
-              return 'Must be a valid URL (include protocol)'
-            }
-          }
-        }
-      ]
+      //tests: [
+      //  function (value) {
+      //    if (value.length > 0) {
+      //      if (!isURL(value, {
+      //        protocols: ['http', 'https'],
+      //        require_protocol: true
+      //      })) {
+      //        return 'Must be a valid URL (include protocol)'
+      //      }
+      //    }
+      //  }
+      //]
     })
 
     this.fields = [

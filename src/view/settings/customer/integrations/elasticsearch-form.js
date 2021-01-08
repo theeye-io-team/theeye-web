@@ -1,7 +1,7 @@
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import CheckboxView from 'components/checkbox-view'
-import isURL from 'validator/lib/isURL'
+//import isURL from 'validator/lib/isURL'
 
 export default FormView.extend({
   initialize: function (options) {
@@ -19,16 +19,16 @@ export default FormView.extend({
         validityClassSelector: '.control-label',
         required: true,
         value: this.model.config.elasticsearch.url,
-        tests: [
-          function (value) {
-            if(!isURL(value,{
-              protocols: ['http','https'],
-              require_protocol: true
-            })) {
-              return "Must be a valid URL (include protocol)"
-            }
-          }
-        ]
+        //tests: [
+        //  function (value) {
+        //    if(!isURL(value,{
+        //      protocols: ['http','https'],
+        //      require_protocol: true
+        //    })) {
+        //      return "Must be a valid URL (include protocol)"
+        //    }
+        //  }
+        //]
       })
     ]
     FormView.prototype.initialize.apply(this, arguments)
