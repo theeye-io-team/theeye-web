@@ -65,8 +65,7 @@ const checkTasks = (tasks) => {
     tasks.forEach(task => {
       const jobs = task.jobs.models
       jobs.forEach(job => {
-        const user = App.state.session.user
-        if (!job.skip && job.requiresUserInteraction(user)) {
+        if (!job.skip && job.requiresInteraction()) {
           onHoldJobs.push(job)
         }
       })

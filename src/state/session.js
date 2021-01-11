@@ -13,6 +13,7 @@ export default AmpersandState.extend({
     //showMembersTab: true
   },
   session: {
+    member_id: 'string',
     storage: 'object',
     user: ['state', false, () => {
       return new App.Models.User.Model()

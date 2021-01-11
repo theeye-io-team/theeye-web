@@ -69,25 +69,28 @@ const BaseJob = AppModel.extend({
     _type: 'string',
     task_arguments_values: 'array',
     output: 'any',
+    user_inputs: 'boolean',
+    user_inputs_members: 'array',
     workflow_id: 'string',
     workflow_job_id: 'string'
   },
   children: {
     user: User
   },
-  requiresUserInteraction (user) {
+  requiresInteraction () {
+    const session = App.state.session
     if (this.lifecycle !== LifecycleConstants.ONHOLD) { return }
 
     const task = this.task
     let interact = false
-    if (task.user_inputs === true) {
-      const members = task.user_inputs_members
+    if (this.user_inputs === true) {
+      const members = this.user_inputs_members
       if (Array.isArray(members) && members.length > 0) {
-        interact = (members.indexOf(user.id) !== -1)
+        interact = (members.indexOf(session.member_id) !== -1)
       }
     }
 
-    return interact || this.isOwner(user)
+    return interact || this.isOwner(session.user)
   },
   isOwner (user) {
     if (!user.email) { return false }
@@ -335,9 +338,11 @@ const ApprovalJob = BaseJob.extend({
     }
     return (this.approvers.indexOf(userid) !== -1)
   },
-  requiresUserInteraction (user) {
+  requiresInteraction () {
+    const session = App.state.session
     if (this.lifecycle !== LifecycleConstants.ONHOLD) { return }
-    return this.isApprover(user)
+
+    return this.isApprover(session.user)
   }
 })
 

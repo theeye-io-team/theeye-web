@@ -72,94 +72,6 @@ export const ExecOnHoldJob = BaseExec.extend({
       }
     }
   },
-  getDynamicArguments (next) {
-    let taskModel = this.model.task.serialize()
-    delete taskModel.id
-    const task = new App.Models.Task.Factory(taskModel)
-    if (task.user_inputs) {
-      // check previous job result for components. only workflow
-      this.checkComponents(task)
-    }
-
-    const form = new DynamicForm({ fieldsDefinitions: task.task_arguments.models })
-    const modal = new Modalizer({
-      buttons: true,
-      confirmButton: 'Run',
-      title: `Run task: ${task.name}`,
-      bodyView: form
-    })
-
-
-    this.listenTo(modal, 'hidden', () => {
-      form.remove()
-      modal.remove()
-    })
-
-    this.listenTo(modal, 'cancel', () => {
-      modal.hide()
-      next(null, true)
-    })
-
-    this.listenTo(modal, 'confirm', () => {
-      /**
-      * @param {Object} args a {key0: value0, key1: value1, ...} object with each task argument
-      */
-      form.submit((err, args) => {
-        const orders = Object.keys(args)
-        const taskArgs = []
-        orders.forEach(order => {
-          taskArgs.push({
-            order: parseInt(order),
-            label: task.task_arguments.get(parseInt(order), 'order').label,
-            value: args[order],
-            type: task.task_arguments.get(parseInt(order), 'order').type,
-            masked: task.task_arguments.get(parseInt(order), 'order').masked
-          })
-        })
-
-        modal.hide()
-        next(this.parseArgs(taskArgs))
-      })
-    })
-
-    modal.show()
-    return modal
-  },
-  requestInput (isPendingCheck, done) {
-    done || (done=()=>{})
-    this.getDynamicArguments((jobArgs, canceled) => {
-      if (canceled) {
-        if (isPendingCheck) {
-          App.actions.onHold.skip(this.model)
-          return done()
-        } else {
-          // ask confirmation
-          bootbox.confirm({
-            message: 'Do you want to cancel the execution?',
-            backdrop: true,
-            buttons: {
-              cancel: {
-                label: 'No'
-              },
-              confirm: {
-                label: 'Yes',
-                className: 'btn-danger'
-              }
-            },
-            callback: (confirmed) => {
-              if (confirmed) {
-                App.actions.job.cancel(this.model)
-                return done()
-              }
-            }
-          })
-        }
-      } else {
-        App.actions.job.submitInputs(this.model, jobArgs)
-        return done()
-      }
-    })
-  },
   requestApproval (isPendingCheck, done) {
     let message = buildApprovalMessage(this.model)
     let args = this.model.task_arguments_values
@@ -236,6 +148,94 @@ export const ExecOnHoldJob = BaseExec.extend({
         }
       }
     })
+  },
+  requestInput (isPendingCheck, done) {
+    done || (done=()=>{})
+    this.getDynamicArguments((jobArgs, canceled) => {
+      if (canceled) {
+        if (isPendingCheck) {
+          App.actions.onHold.skip(this.model)
+          return done()
+        } else {
+          // ask confirmation
+          bootbox.confirm({
+            message: 'Do you want to cancel the execution?',
+            backdrop: true,
+            buttons: {
+              cancel: {
+                label: 'No'
+              },
+              confirm: {
+                label: 'Yes',
+                className: 'btn-danger'
+              }
+            },
+            callback: (confirmed) => {
+              if (confirmed) {
+                App.actions.job.cancel(this.model)
+                return done()
+              }
+            }
+          })
+        }
+      } else {
+        App.actions.job.submitInputs(this.model, jobArgs)
+        return done()
+      }
+    })
+  },
+  getDynamicArguments (next) {
+    let taskModel = this.model.task.serialize()
+    delete taskModel.id
+    const task = new App.Models.Task.Factory(taskModel)
+    if (this.model.user_inputs) {
+      // check previous job result for components. only workflow
+      this.checkComponents(task)
+    }
+
+    const form = new DynamicForm({ fieldsDefinitions: task.task_arguments.models })
+    const modal = new Modalizer({
+      buttons: true,
+      confirmButton: 'Run',
+      title: `Run task: ${task.name}`,
+      bodyView: form
+    })
+
+
+    this.listenTo(modal, 'hidden', () => {
+      form.remove()
+      modal.remove()
+    })
+
+    this.listenTo(modal, 'cancel', () => {
+      modal.hide()
+      next(null, true)
+    })
+
+    this.listenTo(modal, 'confirm', () => {
+      /**
+      * @param {Object} args a {key0: value0, key1: value1, ...} object with each task argument
+      */
+      form.submit((err, args) => {
+        const orders = Object.keys(args)
+        const taskArgs = []
+        orders.forEach(order => {
+          taskArgs.push({
+            order: parseInt(order),
+            label: task.task_arguments.get(parseInt(order), 'order').label,
+            value: args[order],
+            type: task.task_arguments.get(parseInt(order), 'order').type,
+            masked: task.task_arguments.get(parseInt(order), 'order').masked
+          })
+        })
+
+        modal.hide()
+        next(this.parseArgs(taskArgs))
+      })
+    })
+
+    modal.show()
+    return modal
   },
   checkComponents (task) {
     if (!this.model.workflow_job_id) { return } // task is not in workflow

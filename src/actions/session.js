@@ -94,6 +94,7 @@ const actions = {
       let customer = new App.Models.Customer.Model(profile.current_customer, { parse: true })
       sessionState.customer.set( customer.serialize() )
       sessionState.user.set(profile)
+      sessionState.member_id = profile.member_id
       const customers = profile.customers
       if (customers) {
         sessionState.user.customers.reset()

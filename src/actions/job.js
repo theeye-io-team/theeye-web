@@ -37,8 +37,7 @@ export default {
       /**
        * @summary check if job is on hold and requires intervention of the current user
        */
-      const user = App.state.session.user
-      if (job.requiresUserInteraction(user)) {
+      if (job.requiresInteraction()) {
         App.actions.onHold.check(job)
       }
     } catch (e) {
