@@ -82,15 +82,14 @@ const BaseJob = AppModel.extend({
     if (this.lifecycle !== LifecycleConstants.ONHOLD) { return }
 
     const task = this.task
-    let interact = false
-    if (this.user_inputs === true) {
+    if (this.user_inputs === true && this.user_inputs_members.length > 0) {
       const members = this.user_inputs_members
       if (Array.isArray(members) && members.length > 0) {
-        interact = (members.indexOf(session.member_id) !== -1)
+        return (members.indexOf(session.member_id) !== -1)
       }
     }
 
-    return interact || this.isOwner(session.user)
+    return this.isOwner(session.user)
   },
   isOwner (user) {
     if (!user.email) { return false }
