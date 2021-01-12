@@ -6,10 +6,13 @@ import HelpTexts from 'language/help'
 import Modalizer from 'components/modalizer'
 import SelectView from 'components/select2-view'
 import TaskSelectView from 'view/task-select'
-import FormButtons from 'view/buttons'
 import DisabledInputView from 'components/input-view/disabled'
 import bootbox from 'bootbox'
 import graphlib from 'graphlib'
+
+import FormButtons from 'view/buttons'
+import CopyTaskButton from 'view/page/task/buttons/copy'
+import CreateTaskButton from 'view/page/task/buttons/create'
 
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 
@@ -74,7 +77,7 @@ export default View.extend({
     <div class="workflow-builder-component form-group">
       <label class="col-sm-3 control-label" data-hook="label"> Workflow Events </label>
       <div class="col-sm-9">
-        <div style="padding-bottom: 15px;">
+        <div style="padding-bottom: 15px;" data-hook="buttons">
           <button data-hook="build" title="build the workflow" class="btn btn-default">
             Add event <i class="fa fa-wrench"></i>
           </button>
@@ -99,11 +102,14 @@ export default View.extend({
     this.on('change:valid change:value', this.reportToParent, this)
   },
   events: {
-    'click [data-hook=build]':'onClickAddEvent',
+    'click [data-hook=build]':'onClickAddEvent'
   },
   render () {
     this.renderWithTemplate(this)
     this.renderWorkflowGraph()
+
+    const button = new CreateTaskButton()
+    this.renderSubview(button, this.queryByHook('buttons'))
   },
   renderWorkflowGraph () {
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
@@ -253,6 +259,8 @@ export default View.extend({
 
     return false
   },
+  onClickCreateTask () {
+  },
   onEventAdded (data) {
     const w = this.graph
     w.setNode(data.emitter.id, data.emitter)
@@ -385,7 +393,7 @@ const WorkflowBuilderView = FormView.extend({
 const Menu = View.extend({
   template: `
     <div class="dropdown">
-      <ul class="dropdown-menu" style="display: block;">
+      <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons">
         <li><a data-hook="edit" href="#">Edit Task</a></li>
         <li><a data-hook="edit-script" href="#">Edit Script</a></li>
         <li><a data-hook="remove" href="#">Remove</a></li>
@@ -393,13 +401,27 @@ const Menu = View.extend({
       </ul>
     </div>
   `,
+  render () {
+    this.renderWithTemplate(this)
+
+    const copyButton = new CopyTaskButton({ model: this.model, elem: 'a' })
+    this.renderSubview(copyButton, this.queryByHook("menu-buttons"))
+  },
   events: {
     'click [data-hook=edit]': 'onClickEdit',
+    'click [data-hook=copy]': 'onClickCopy',
     'click [data-hook=edit-script]': 'onClickEditScript',
     'click [data-hook=export]': 'onClickExport',
     'click [data-hook=remove]': 'onClickRemove'
   },
   onClickEdit (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    App.actions.task.edit(this.model.id)
+    this.trigger('click:edit')
+    this.remove()
+  },
+  onClickCopy (event) {
     event.preventDefault()
     event.stopPropagation()
     App.actions.task.edit(this.model.id)
