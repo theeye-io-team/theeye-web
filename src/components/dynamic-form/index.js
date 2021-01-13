@@ -36,7 +36,11 @@ export default DropableForm.extend({
     if (this.valid) {
       for (var key in this.data) {
         if (this._fieldViews[key]._values.type === 'file') {
-          this.data[key].dataUrl = this._fieldViews[key]._values.file.dataUrl
+          const file = this._fieldViews[key]._values.file
+          const dataUrl = file.dataUrl
+          if (dataUrl) {
+            this.data[key].dataUrl = dataUrl
+          }
         }
       }
       next(null, this.data)
@@ -179,6 +183,7 @@ export default DropableForm.extend({
       type: 'email',
       tests: [
         value => {
+          if (!value&&!spec.required) { return }
           if (!isEmail(value)) {
             return 'Enter a valid email'
           }
@@ -221,6 +226,7 @@ export default DropableForm.extend({
       tests: [
         items => {
           if (items.length === 0) {
+            if (!spec.required) { return }
             return 'Please provide a value.'
           }
           return
