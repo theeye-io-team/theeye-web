@@ -55,7 +55,7 @@ export default {
             App.actions.workflow.populate(workflow)
           })
 
-          App.actions.onHold.check()
+          //App.actions.onHold.check()
           step()
         },
         error: step,

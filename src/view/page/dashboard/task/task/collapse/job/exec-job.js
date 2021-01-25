@@ -106,14 +106,28 @@ export const ExecOnHoldJob = BaseExec.extend({
         label: this.model.task.cancel_label || 'Cancel',
         className: 'btn btn-default',
         callback: () => {
-          App.actions.job.cancel(this.model)
-          done && done()
+          bootbox.confirm({
+            message: 'Cancel approval request?',
+            backdrop: true,
+            buttons: {
+              cancel: {
+                label: 'No'
+              },
+              confirm: {
+                label: 'Yes, please',
+                className: 'btn-danger'
+              }
+            },
+            callback: (confirmed) => {
+              if (confirmed) {
+                App.actions.job.cancel(this.model)
+              }
+              return done()
+            }
+          })
         }
-      }
-    }
-
-    if (isPendingCheck) {
-      buttons.skip = {
+      },
+      skip: {
         label: this.model.task.ignore_label || 'Ignore',
         className: 'btn btn-default',
         callback: () => {
@@ -122,6 +136,17 @@ export const ExecOnHoldJob = BaseExec.extend({
         }
       }
     }
+
+    //if (isPendingCheck) {
+    //  buttons.skip = {
+    //    label: this.model.task.ignore_label || 'Ignore',
+    //    className: 'btn btn-default',
+    //    callback: () => {
+    //      App.actions.onHold.skip(this.model)
+    //      if (done) done()
+    //    }
+    //  }
+    //}
 
     bootbox.dialog({
       message: message,
