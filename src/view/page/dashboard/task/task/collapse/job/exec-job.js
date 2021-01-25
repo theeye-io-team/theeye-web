@@ -73,6 +73,8 @@ export const ExecOnHoldJob = BaseExec.extend({
     }
   },
   requestApproval (isPendingCheck, done) {
+    done || (done = () => {})
+
     let message = buildApprovalMessage(this.model)
     let args = this.model.task_arguments_values
     const orders = Object.keys(args)
@@ -91,7 +93,7 @@ export const ExecOnHoldJob = BaseExec.extend({
         className: 'btn btn-danger',
         callback: () => {
           App.actions.job.reject(this.model, jobArgs)
-          done && done()
+          done()
         }
       },
       approve: {
@@ -99,7 +101,7 @@ export const ExecOnHoldJob = BaseExec.extend({
         className: 'btn btn-primary',
         callback: () => {
           App.actions.job.approve(this.model, jobArgs)
-          done && done()
+          done()
         }
       },
       cancel: {
@@ -122,7 +124,7 @@ export const ExecOnHoldJob = BaseExec.extend({
               if (confirmed) {
                 App.actions.job.cancel(this.model)
               }
-              return done()
+              done()
             }
           })
         }
@@ -132,7 +134,7 @@ export const ExecOnHoldJob = BaseExec.extend({
         className: 'btn btn-default',
         callback: () => {
           App.actions.onHold.skip(this.model)
-          if (done) done()
+          done()
         }
       }
     }
@@ -143,7 +145,7 @@ export const ExecOnHoldJob = BaseExec.extend({
     //    className: 'btn btn-default',
     //    callback: () => {
     //      App.actions.onHold.skip(this.model)
-    //      if (done) done()
+    //      done()
     //    }
     //  }
     //}
