@@ -30,6 +30,33 @@ export default () => {
       App.sockets.disconnect()
     }
   })
+
+  let numAttempts = 0
+  let startTime
+  App.sockets.on('disconnected', () => {
+    startTime = new Date().getTime()
+  })
+
+  App.sockets.on('reconnecting', (attempt) => {
+    numAttempts++
+    App.state.alerts.danger(`sockets disconnected, reconnecting #attemp ${numAttempts}...`)
+  })
+
+  App.sockets.on('reconnect', () => {
+    numAttempts = 0
+    let timeUnit = 'seconds'
+    let endSecs = (new Date().getTime() - startTime) / 1000
+    if (endSecs > 60) {
+      endSecs = endSecs / 60
+      timeUnit = 'minutes'
+    }
+    if (endSecs > 60) {
+      endSecs = endSecs / 60
+      timeUnit = 'hours'
+    }
+
+    App.state.alerts.success(`sockets reconnected! you were offline ${endSecs} ${timeUnit}`)
+  })
 }
 
 const createWrapper = () => {

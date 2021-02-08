@@ -48,12 +48,14 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
     let socket = this.socket
 
     // get a socket and wait connected event
-    this.once('connected', () => { this.autosubscribe({}) })
+    this.on('connected', () => {
+      this.autosubscribe({})
+    })
 
     if (!socket) {
       logger.log('connecting socket client')
 
-      _connect()({
+      _connect({
         url: this.config.url,
         access_token: payload.access_token
       }, (err, socket) => {
@@ -72,10 +74,10 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
   },
 
   disconnect (done) {
+    this.off() // shutdown all event listeners
     let socket = this.socket
     if (!socket) { return }
     if (socket.connected) {
-      socket.once
       this.once('disconnected', done)
       this.unsubscribe({}, () => {
         socket.disconnect()
@@ -174,45 +176,41 @@ const bindEvents = (socket, emitter, events) => {
     emitter.trigger('disconnected')
   })
 
+  socket.on('reconnecting', () => {
+    emitter.trigger('reconnecting')
+  })
+
+  socket.on('reconnect', () => {
+    emitter.trigger('reconnect')
+  })
+
   return
 }
 
-const _connect = () => {
-  return (config, next) => {
-    let { url, access_token } = config
+const _connect = (config, next) => {
+  let { url, access_token } = config
 
-    // Ensure URL has no trailing slash
-    url = url ? url.replace(/(\/)$/, '') : undefined
+  // Ensure URL has no trailing slash
+  url = url ? url.replace(/(\/)$/, '') : undefined
 
-    // Initiate a socket connection
-    const socket = io(url, { query: { access_token } })
+  // Initiate a socket connection
+  const socket = io(url, { query: { access_token } })
 
-    /**
-     * 'connect' event is triggered when the socket establishes a connection
-     *  successfully.
-     */
-    socket.on('connect', () => {
+  /**
+   * 'connect' event is triggered when the socket establishes a connection
+   *  successfully.
+   */
+  socket.on('connect', () => {
+  })
 
-      socket.on('reconnect', function(transport, numAttempts) {
-        var numSecsOffline = socket.msSinceConnectionLost / 1000
-        console.log(
-          'socket reconnected successfully after being offline ' +
-          'for ' + numSecsOffline + ' seconds.')
-      })
+  socket.on('reconnect', function(transport) {
+  })
 
-      socket.on('connect_error', function (err) {
-        console.error('Connection Error:', err)
-      })
+  socket.on('connect_error', function (err) {
+  })
 
-      socket.on('reconnecting', function(msSinceConnectionLost, numAttempts) {
-        socket.msSinceConnectionLost = msSinceConnectionLost
-        console.log(
-          'socket is trying to reconnect...' +
-          'attempt #' + numAttempts
-        )
-      })
-    })
+  socket.on('reconnecting', function(attempt) {
+  })
 
-    if (next) { next(null, socket) } // use callback to ensure socket is defined
-  }
+  if (next) { next(null, socket) } // use callback to ensure socket is defined
 }
