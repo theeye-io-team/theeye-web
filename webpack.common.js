@@ -32,9 +32,9 @@ module.exports = {
     ]
   },
   plugins: [
-    new webpack.DefinePlugin({
-      __VERSION__: JSON.stringify(execSync('git describe').toString().trim())
-    }),
+    //new webpack.DefinePlugin({
+    //  __VERSION__: JSON.stringify(execSync('git describe').toString().trim())
+    //}),
     new webpack.DefinePlugin({
       'process.env': {
         'NODE_ENV': JSON.stringify(NODE_ENV),
