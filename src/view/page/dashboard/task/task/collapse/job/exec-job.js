@@ -87,7 +87,7 @@ export const ExecOnHoldJob = BaseExec.extend({
       }
     })
 
-    var buttons = {
+    const buttons = {
       reject: {
         label: this.model.task.failure_label ||'Reject',
         className: 'btn btn-danger',
@@ -103,8 +103,10 @@ export const ExecOnHoldJob = BaseExec.extend({
           App.actions.job.approve(this.model, jobArgs)
           done()
         }
-      },
-      cancel: {
+      }
+    }
+    if (this.model.task.cancel_enabled === true && this.model.task.cancel_label !== '') {
+      buttons.cancel = {
         label: this.model.task.cancel_label || 'Cancel',
         className: 'btn btn-default',
         callback: () => {
@@ -128,8 +130,11 @@ export const ExecOnHoldJob = BaseExec.extend({
             }
           })
         }
-      },
-      skip: {
+      }
+    }
+
+    if (this.model.task.ignore_enabled === true && this.model.task.ignore_label !== '') {
+      buttons.skip = {
         label: this.model.task.ignore_label || 'Ignore',
         className: 'btn btn-default',
         callback: () => {
@@ -139,22 +144,11 @@ export const ExecOnHoldJob = BaseExec.extend({
       }
     }
 
-    //if (isPendingCheck) {
-    //  buttons.skip = {
-    //    label: this.model.task.ignore_label || 'Ignore',
-    //    className: 'btn btn-default',
-    //    callback: () => {
-    //      App.actions.onHold.skip(this.model)
-    //      done()
-    //    }
-    //  }
-    //}
-
     bootbox.dialog({
       message: message,
       backdrop: true,
       closeButton: (App.state.session.user.credential==='root'),
-      buttons: buttons
+      buttons
     })
   },
   updateApprovalRequest (done) {

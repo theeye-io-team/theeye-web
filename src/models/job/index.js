@@ -7,11 +7,6 @@ import * as StateConstants from 'constants/states'
 import * as JobConstants from 'constants/job'
 import * as TaskConstants from 'constants/task'
 import { Model as User } from 'models/user'
-import * as FIELD from 'constants/field'
-
-import loggerModule from 'lib/logger';
-const logger = loggerModule('model:job')
-
 
 import config from 'config'
 
@@ -20,7 +15,7 @@ const urlRoot = function () {
 }
 
 const BaseJob = AppModel.extend({
-  //dataTypes: {
+  // dataTypes: {
   //  lifecycle: {
   //    set: function (newVal) {
   //      return {
@@ -40,7 +35,7 @@ const BaseJob = AppModel.extend({
   //      }
   //    }
   //  }
-  //},
+  // },
   urlRoot,
   props: {
     id: 'string',
@@ -48,20 +43,20 @@ const BaseJob = AppModel.extend({
     task_id: 'string',
     host_id: 'string',
     script_id: 'string',
-    acl: ['array',false, () => []],
-    acl_dynamic: ['boolean',false, false],
-    //script_arguments: 'array',
+    acl: ['array', false, () => []],
+    acl_dynamic: ['boolean', false, false],
+    // script_arguments: 'array',
     task_arguments: 'array',
     customer_id: 'string',
     customer_name: 'string',
-    //script: 'object', // embedded
-    //task: 'object', // embedded
-    //host: 'object',
+    // script: 'object', // embedded
+    // task: 'object', // embedded
+    // host: 'object',
     name: 'string',
     notify: 'boolean',
     state: 'string',
     lifecycle: 'string',
-    //result: ['state',false,null],
+    // result: ['state',false,null],
     creation_date: 'date',
     last_update: 'date',
     event: 'any',
@@ -81,7 +76,6 @@ const BaseJob = AppModel.extend({
     const session = App.state.session
     if (this.lifecycle !== LifecycleConstants.ONHOLD) { return }
 
-    const task = this.task
     if (this.user_inputs === true && this.user_inputs_members.length > 0) {
       const members = this.user_inputs_members
       if (Array.isArray(members) && members.length > 0) {
@@ -123,10 +117,10 @@ const BaseJob = AppModel.extend({
       deps: ['task'],
       fn () {
         return this.task
-        //if (!this.task) {
+        // if (!this.task) {
         //  return {}
-        //}
-        //return new App.Models.Task.Factory(this.task, {})
+        // }
+        // return new App.Models.Task.Factory(this.task, {})
       }
     },
     workflow_job: {
@@ -153,7 +147,7 @@ const BaseJob = AppModel.extend({
       }
     },
     lifecycle_icon: {
-      deps: ['lifecycle','state'],
+      deps: ['lifecycle', 'state'],
       fn () {
         const lifecycle = this.lifecycle
         const state = this.state
@@ -198,11 +192,11 @@ const ScriptJobResult = State.extend({
   props: {
     code: 'any',
     signal: 'any',
-    killed: ['boolean',false,false],
-    lastline: ['string',false],
-    stdout: ['string',false],
-    stderr: ['string',false],
-    log: ['string',false],
+    killed: ['boolean', false, false],
+    lastline: ['string', false],
+    stdout: ['string', false],
+    stderr: ['string', false],
+    log: ['string', false],
     times: ['object', false, () => { return {} }],
     components: ['object', false, () => { return {} }],
     next: ['object', false, () => { return {} }]
@@ -212,19 +206,18 @@ const ScriptJobResult = State.extend({
 const ScraperJobResult = State.extend({
   props: {
     message: 'string',
-    response: ['object',false,() => { return {} }]
+    response: ['object', false, () => { return {} }]
   },
   derived: {
     headers: {
       deps: ['response'],
       fn () {
         const headers = this.response.headers
-        if (!headers || Object.prototype.toString.call(headers) !== '[object Object]')
-          return []
+        if (!headers || Object.prototype.toString.call(headers) !== '[object Object]') { return [] }
 
         return Object.keys(headers).map(key => {
-          let value = headers[key]
-          let fvalue = typeof value === 'string' ? value : JSON.stringify(value)
+          const value = headers[key]
+          const fvalue = typeof value === 'string' ? value : JSON.stringify(value)
           return { name: key, value: fvalue }
         })
       }
@@ -258,11 +251,11 @@ const NotificationJobResult = State.extend({ })
 
 const NgrokIntegrationResult = State.extend({
   props: {
-    url:  ['string',false,''],
+    url: ['string', false, ''],
     status_code: ['number', false, 0],
     error_code: ['number', false, 0],
     message: ['string', false, ''],
-    details: ['object',false, () => { return {} }]
+    details: ['object', false, () => { return {} }]
   }
 })
 
@@ -299,10 +292,14 @@ const ScraperJob = BaseJob.extend({
 const ApprovalJob = BaseJob.extend({
   props: {
     approvers: ['array', false, () => { return [] }],
+    success_enabled: ['boolean', true, true],
+    failure_enabled: ['boolean', true, true],
+    cancel_enabled: ['boolean', true, true],
+    ignore_enabled: ['boolean', true, true],
     success_label: ['string', true, 'Reject'],
     failure_label: ['string', true, 'Approve'],
     cancel_label: ['string', true, 'Cancel'],
-    ignore_label: ['string', true, 'Ignore'],
+    ignore_label: ['string', true, 'Ignore']
   },
   children: {
     result: ApprovalJobResult,
@@ -328,10 +325,10 @@ const ApprovalJob = BaseJob.extend({
     }
   },
   isApprover (user) {
-    let userid = user.id
+    const userid = user.id
     if (
-      ! this.approvers ||
-      ( Array.isArray(this.approvers) && this.approvers.length === 0 )
+      !this.approvers ||
+      (Array.isArray(this.approvers) && this.approvers.length === 0)
     ) {
       return false
     }
@@ -363,7 +360,7 @@ const NgrokIntegrationJob = BaseJob.extend({
   props: {
     address: 'string',
     protocol: 'string',
-    //authtoken: 'string', // private
+    // authtoken: 'string', // private
     operation: 'string'
   },
   children: {
@@ -371,7 +368,7 @@ const NgrokIntegrationJob = BaseJob.extend({
   }
 })
 
-const JobFactory = function (attrs, options={}) {
+const JobFactory = function (attrs, options = {}) {
   if (attrs.isCollection) { return attrs }
   if (attrs.isState) { return attrs } // already constructed
 
@@ -392,48 +389,36 @@ const JobFactory = function (attrs, options={}) {
   }
 
   const createModel = () => {
-    let type = attrs._type
+    const type = attrs._type
     let model
     switch (type) {
       case JobConstants.SCRIPT_TYPE:
         model = new ScriptJob(attrs, options)
-        break;
+        break
       case JobConstants.SCRAPER_TYPE:
         model = new ScraperJob(attrs, options)
-        break;
+        break
       case JobConstants.APPROVAL_TYPE:
         model = new ApprovalJob(attrs, options)
-        break;
+        break
       case JobConstants.DUMMY_TYPE:
         model = new DummyJob(attrs, options)
-        break;
+        break
       case JobConstants.NOTIFICATION_TYPE:
         model = new NotificationJob(attrs, options)
-        break;
+        break
       case JobConstants.WORKFLOW_TYPE:
         model = new WorkflowJob(attrs, options)
-        break;
+        break
       default:
-        let err = new Error(`unrecognized type ${type}`)
-        throw err
-        break;
+        throw new Error(`unrecognized type ${type}`)
     }
     return model
   }
 
-  // this model is being added to a task.collection
-  //if (
-  //  options.collection &&
-  //  options.collection.parent &&
-  //  !options.collection.parent.isCollection &&
-  //  /Task/.test(options.collection.parent._type) === true
-  //) {
-  //  attrs.task = options.collection.parent
-  //}
-
   model = createModel()
   if (options.collection !== App.state.jobs) {
-    App.state.jobs.add(model, {merge:true})
+    App.state.jobs.add(model, { merge: true })
   }
   return model
 }
@@ -442,15 +427,15 @@ export const Collection = AppCollection.extend({
   comparator: 'creation_date',
   url: urlRoot,
   model: (attrs, options) => {
-    let model = new JobFactory(attrs, options)
+    const model = new JobFactory(attrs, options)
     if (options.collection.child_of) {
-      let task = options.collection.child_of
+      const task = options.collection.child_of
       model.task.set(task.serialize())
     }
     return model
   },
   isModel (model) {
-    let isModel = (
+    const isModel = (
       model instanceof ScraperJob ||
       model instanceof ScriptJob ||
       model instanceof ApprovalJob ||
@@ -481,7 +466,7 @@ const WorkflowJob = BaseJob.extend({
     this.listenToAndRun(this.jobs, 'add change sync reset remove', function () {
       if (this.jobs.length) {
         this.jobs_ready = true
-        let currentJob = this.jobs.at(this.jobs.length - 1) // last
+        const currentJob = this.jobs.at(this.jobs.length - 1) // last
         this.lifecycle = currentJob.lifecycle
         this.state = currentJob.state
       } else {
@@ -512,22 +497,22 @@ const WorkflowJob = BaseJob.extend({
     previous_job: {
       deps: ['jobs_ready'],
       fn () {
-        if ( (this.jobs.length - 2) < 0 ) {
+        if ((this.jobs.length - 2) < 0) {
         }
 
-        return this.jobs.models[ this.jobs.length - 2 ]
+        return this.jobs.models[this.jobs.length - 2]
       }
     },
     current_job: { // the last
       deps: ['jobs_ready'],
       fn () {
-        return this.jobs.at( this.jobs.length - 1 )
+        return this.jobs.at(this.jobs.length - 1)
       }
     }
-  },
-  //getPreviousJob () {
+  }
+  // getPreviousJob () {
   //  return this.jobs.models[ this.jobs.length - 2 ]
-  //}
+  // }
 })
 
 export const Approval = ApprovalJob

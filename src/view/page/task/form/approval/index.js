@@ -1,6 +1,7 @@
 import App from 'ampersand-app'
 import HelpTexts from 'language/help'
 import InputView from 'components/input-view'
+import ActivatableInputView from 'components/input-view/activatable'
 import MembersSelectView from 'view/members-select'
 import AdvancedToggle from 'view/advanced-toggle'
 import TextareaView from 'components/input-view/textarea'
@@ -74,7 +75,7 @@ export default TaskFormView.extend({
           })
         }
       }),
-      new InputView({
+      new ActivatableInputView({
         label: 'Success Label',
         visible: false,
         name: 'success_label',
@@ -83,7 +84,7 @@ export default TaskFormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.success_label
       }),
-      new InputView({
+      new ActivatableInputView({
         label: 'Failure Label',
         visible: false,
         name: 'failure_label',
@@ -92,20 +93,20 @@ export default TaskFormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.failure_label
       }),
-      new InputView({
+      new ActivatableInputView({
         label: 'Cancel Label',
         visible: false,
         name: 'cancel_label',
-        required: true,
+        required: false,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         value: this.model.cancel_label
       }),
-      new InputView({
+      new ActivatableInputView({
         label: 'Ignore Label',
         visible: false,
         name: 'ignore_label',
-        required: true,
+        required: false,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         value: this.model.ignore_label
@@ -221,6 +222,19 @@ export default TaskFormView.extend({
   prepareData (data) {
     let f = Object.assign({}, data)
     f.type = TaskConstants.TYPE_APPROVAL
+
+    if (data.cancel_label === '') {
+      data.cancel_enabled = false
+    }
+    if (data.success_label === '') {
+      data.success_enabled = false
+    }
+    if (data.failure_label === '') {
+      data.failure_enabled = false
+    }
+    if (data.ignore_label === '') {
+      data.ignore_enabled = false
+    }
     return f
   }
 })
