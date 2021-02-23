@@ -198,8 +198,9 @@ export default TaskFormView.extend({
           acl.setValue(acl.value.concat(approver.email))
         }
       })
+
       if (userSelected && this.model.workflow_id) {
-        bootbox.alert('Make sure the approvers have the required ACL to the Workflow')
+        bootbox.alert('Make sure the approvers are in the ACL of the Workflow')
       }
     })
   },

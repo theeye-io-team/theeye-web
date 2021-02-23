@@ -1,4 +1,5 @@
 import App from 'ampersand-app'
+import Acl from 'lib/acls'
 import bootbox from 'bootbox'
 import DynamicForm from 'view/dynamic-form'
 import Modalizer from 'components/modalizer'
@@ -62,7 +63,7 @@ export const ExecOnHoldJob = BaseExec.extend({
       if (this.model._type === JobConstants.APPROVAL_TYPE) {
         if (this.model.isApprover(App.state.session.user)) {
           this.requestApproval(isPendingCheck, done)
-        } else {
+        } else if (Acl.hasAccessLevel('admin')) {
           if (!isPendingCheck) {
             this.updateApprovalRequest(done)
           }
@@ -152,7 +153,7 @@ export const ExecOnHoldJob = BaseExec.extend({
     })
   },
   updateApprovalRequest (done) {
-    const message = `The Approval request is pending. Cancel approval request?`
+    const message = `Cancel the approval request?`
 
     bootbox.dialog({
       message: message,
