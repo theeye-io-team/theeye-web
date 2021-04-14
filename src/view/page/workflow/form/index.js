@@ -171,7 +171,7 @@ export default FormView.extend({
     }
 
     this.trigger('submitted')
-    next(null,true)
+    next(null, true)
   },
   prepareData (data) {
     let f = Object.assign({}, data)

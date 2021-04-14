@@ -130,7 +130,7 @@ const ResourceCreationWizard = View.extend({
     const form = new MonitorFormView({ model: resource })
     this.renderSubview(form, this.queryByHook('form-container'))
     this.form = form
-    this.listenTo(form, 'submitted', () => { this.trigger('submitted') })
+    form.on('submitted', () => { this.trigger('submitted') })
   },
   remove () {
     if (this.form) {

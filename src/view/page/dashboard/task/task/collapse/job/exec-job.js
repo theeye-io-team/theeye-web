@@ -326,8 +326,10 @@ const buildApprovalMessage = (model) => {
   let values = model.task_arguments_values
   let message = `<p>Task <b>${model.name}</b> needs your action to continue.</p>`
 
+
+  let msg = model.task.approval_message || 'Please verify the following information:'
   if (params.length) {
-    message += '<br><p><b>Please verify this information: </b></p><br>'
+    message += `<br><p><b>${msg}</b></p><br>`
   }
 
   params.forEach(function (param, index) {
@@ -336,7 +338,7 @@ const buildApprovalMessage = (model) => {
     switch (param.type) {
       case FIELD.TYPE_FIXED:
       case FIELD.TYPE_INPUT:
-        if (value && isURL(value)) {
+        if (value && typeof value === 'string' && isURL(value)) {
           line += `<a href='${value}' download='file${index + 1}' target='_blank'>Download</a>`
         } else {
           line += value

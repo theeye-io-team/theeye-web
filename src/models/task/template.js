@@ -107,6 +107,7 @@ const ApprovalTask = Schema.extend({
   },
   props: {
     approvers: ['array', false, () => { return [] }],
+    approval_message: ['string', false, ''],
     success_enabled: ['boolean', true, true],
     failure_enabled: ['boolean', true, true],
     cancel_enabled: ['boolean', true, true],

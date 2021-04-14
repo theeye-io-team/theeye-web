@@ -21,6 +21,7 @@ import config from 'config'
 export default Router.extend({
   publicRoutes: [
     'login',
+    'tokenLogin',
     'sociallogin',
     'register',
     'activate',
@@ -133,19 +134,22 @@ export default Router.extend({
       const route = new AuthRoute()
       route.route('login')
     },
-    'logout': () => {
-      SessionActions.logout()
+    'tokenlogin': () => {
+      const route = new AuthRoute()
+      route.tokenLoginRoute()
     },
     'sociallogin': () => {
       const route = new AuthRoute()
-      route.socialLoginRoute()
+      route.tokenLoginRoute()
+    },
+    'logout': () => {
+      SessionActions.logout()
     },
     'socialconnect': () => {
       const route = new AuthRoute()
       route.socialConnectRoute()
     },
     'register': () => {
-
       if (App.config.components.login.registration.enabled !== true) {
         return App.Router.redirectTo('login',{replace: true})
       }
@@ -154,7 +158,6 @@ export default Router.extend({
       route.route('register')
     },
     'activate': () => {
-
       if (App.config.components.login.registration.enabled !== true) {
         return App.Router.redirectTo('login',{replace: true})
       }
@@ -163,7 +166,6 @@ export default Router.extend({
       route.activateRoute()
     },
     'finishregistration': () => {
-
       if (App.config.components.login.registration.enabled !== true) {
         return App.Router.redirectTo('login',{replace: true})
       }
@@ -172,7 +174,6 @@ export default Router.extend({
       route.finishregistrationRoute()
     },
     'passwordreset': () => {
-
       if (App.config.components.login.password_reset.enabled !== true) {
         return App.Router.redirectTo('login',{replace: true})
       }
@@ -181,7 +182,6 @@ export default Router.extend({
       route.passwordResetRoute()
     },
     'enterprise': () => {
-
       if (App.config.components.login.enterprise.enabled !== true) {
         return App.Router.redirectTo('login',{replace: true})
       }

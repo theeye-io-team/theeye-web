@@ -32,7 +32,7 @@ export default CommonButton.extend({
         form.remove()
         modal.remove()
       })
-      this.listenTo(form,'submitted',() => { modal.hide() })
+      form.on('submitted', () => modal.hide())
       modal.show()
     }
   }

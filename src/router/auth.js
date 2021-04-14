@@ -34,7 +34,7 @@ class Auth extends Route {
     })
   }
 
-  socialLoginRoute () {
+  tokenLoginRoute () {
     const query = search.get()
     if (query.error) {
       App.navigate('login')

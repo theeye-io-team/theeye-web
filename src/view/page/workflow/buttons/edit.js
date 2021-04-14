@@ -30,9 +30,7 @@ export default PanelButton.extend({
         modal.remove()
       })
 
-      this.listenTo(form,'submitted',() => {
-        modal.hide()
-      })
+      form.on('submitted', () => { modal.hide() })
 
       modal.show()
     }

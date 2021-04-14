@@ -54,10 +54,13 @@ const WorkflowCreationWizard = View.extend({
     const form = new WorkflowFormView({ model: workflow })
     this.renderSubview(form, this.queryByHook('form-container'))
     this.form = form
-    this.listenTo(form, 'submitted', () => { this.trigger('submitted') })
+    form.on('submitted', () => { this.trigger('submitted') })
   },
   remove () {
-    if (this.form) this.form.remove()
+    if (this.form) {
+      this.form.remove()
+    }
+
     View.prototype.remove.apply(this,arguments)
   }
 })
