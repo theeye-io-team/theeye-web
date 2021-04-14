@@ -10,13 +10,13 @@ const actions = {
       method: 'get',
       headers: {
         Accept: 'application/json;charset=UTF-8'
-      },
-      done: (response,xhr) => {
-        if (xhr.status == 200) {
-        }
-      },
-      fail: (err,xhr) => {
-        //bootbox.alert('Something goes wrong.')
+      //},
+      //done: (response,xhr) => {
+      //  if (xhr.status == 200) {
+      //  }
+      //},
+      //fail: (err,xhr) => {
+      //  bootbox.alert('Something goes wrong.')
       }
     })
 
@@ -61,6 +61,7 @@ const actions = {
    }
   },
   applyStateUpdate (model, op) {
+    console.log(model, op)
     console.log(event)
   },
   refreshAccessToken () {

@@ -42,7 +42,7 @@ export default {
           }
           bootbox.alert(errorMsg)
         } else {
-          bootbox.alert('Login error, try again later.')
+          bootbox.alert(err.message || errorMsg)
         }
       }
     })

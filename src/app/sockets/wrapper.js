@@ -79,9 +79,8 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
     if (!socket) { return }
     if (socket.connected) {
       this.once('disconnected', done)
-      this.unsubscribe({}, () => {
-        socket.disconnect()
-      })
+      //this.unsubscribe({}, socket.disconnect)
+      socket.disconnect()
     }
   },
 
