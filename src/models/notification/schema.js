@@ -40,7 +40,7 @@ export default AppModel.extend({
           return this.target_model.type
         }
         if (/Job/.test(this.target_model_type) === true) {
-          return this.target_model.task.type
+          return this.target_model.type
         }
         return ''
       }
@@ -92,7 +92,7 @@ export default AppModel.extend({
     const type = this.target_model_type
 
     if (type === 'NotificationJob') {
-      return model.task.name
+      return model.name
     } else if (type === 'Resource') {
       return 'Resource ' + model.name
     } else if (/WorkflowJob/.test(type) === true) {

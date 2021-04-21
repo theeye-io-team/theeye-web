@@ -18,6 +18,11 @@ export default {
    */
   applyStateUpdate (data) {
     try {
+      if (window.localStorage.JOB_EVENTS_MODEL_DUMP === "enabled") {
+        console.log('window.localStorage.JOB_EVENTS_MODEL_DUMP === "enabled"')
+        console.log(JSON.stringify(data))
+      }
+
       let workflow
       if (data._type === 'WorkflowJob') {
         // update state
