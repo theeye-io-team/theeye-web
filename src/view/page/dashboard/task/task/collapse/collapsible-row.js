@@ -38,10 +38,17 @@ export default CollapsibleRow.extend({
       this.queryByHook('collapse-container-body'),
     )
 
-    this.renderSubview(
-      new JobsList({ model: this.model, rowView: JobRow }),
-      this.queryByHook('collapse-container-body'),
-    )
+    let $collapse = $(this.queryByHook('collapse-container'))
+
+    // render on click collapse
+    $collapse.on('show.bs.collapse', () => {
+      this.jobsList = new JobsList({ model: this.model, rowView: JobRow })
+      this.renderSubview(this.jobsList, this.queryByHook('collapse-container-body'))
+    })
+
+    $collapse.on('hidden.bs.collapse', () => {
+      this.jobsList.remove()
+    })
   }
 })
 

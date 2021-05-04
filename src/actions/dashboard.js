@@ -46,7 +46,6 @@ export default {
 
     const nextStep = () => {
       step()
-
       App.state.tasks.fetch({
         data: { unassigned: true },
         success: () => {
@@ -54,7 +53,6 @@ export default {
           App.state.workflows.forEach(workflow => {
             App.actions.workflow.populate(workflow)
           })
-
           //App.actions.onHold.check()
           step()
         },

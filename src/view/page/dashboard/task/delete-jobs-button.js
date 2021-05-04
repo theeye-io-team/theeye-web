@@ -17,11 +17,13 @@ export default CommonButton.extend({
       const modal = new DeleteMessageModalizer()
 
       modal.on('delete-finished', () => {
+        this.trigger('clicked')
         App.actions.job.cleanQueue(this.model)
         modal.hide()
       })
 
       modal.on('delete-all', () => {
+        this.trigger('clicked')
         App.actions.job.cleanQueue(this.model, { lifecycle: ['ready'] })
         modal.hide()
       })
@@ -65,7 +67,7 @@ const DeleteMessageModalizer = Modalizer.extend({
                 </span>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-hook="finished">Delete Completed Jobs</button>
+                <button type="button" class="btn btn-primary" data-hook="finished">Delete Finished Jobs</button>
                 <button type="button" class="btn btn-danger" data-hook="all">Delete Everything</button>
                 <button type="button" class="btn btn-default" data-hook="cancel">Cancel</button>
               </div>

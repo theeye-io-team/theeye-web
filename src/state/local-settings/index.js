@@ -4,7 +4,8 @@ import localForage from 'localforage'
 export default AmpersandState.extend({
   props: {
     monitorsGroupBy: ['object', true, () => ({prop: 'name'})],
-    tasksGroupBy: ['object', true, () => ({prop: 'name'})]
+    tasksGroupBy: ['object', true, () => ({prop: 'name'})],
+    jobsListLength: ['number', false, 50]
   },
   session: {
     storage: 'object'

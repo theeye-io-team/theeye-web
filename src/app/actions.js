@@ -25,6 +25,7 @@ import TokenActions from 'actions/token'
 import WorkflowActions from 'actions/workflow'
 import UserActions from 'actions/user'
 import OnboardingActions from 'actions/onboarding'
+import LocalSettingsActions from 'actions/local-settings'
 
 export default {
   actions: {
@@ -52,6 +53,7 @@ export default {
     token: TokenActions,
     workflow: WorkflowActions,
     user: UserActions,
-    onboarding: OnboardingActions
+    onboarding: OnboardingActions,
+    localSettings: LocalSettingsActions
   }
 }

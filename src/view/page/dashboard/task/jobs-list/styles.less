@@ -1,8 +1,5 @@
 
 [data-component=jobs-list-component] {
-  //padding-top: 10px;
-  //padding-bottom: 10px;
-
   .header-container {
     background-color: #23324C;
     min-height: 40px;
@@ -29,6 +26,56 @@
           }
         }
       }
+    }
+  }
+
+  [data-component=paginator] {
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    padding: 5px;
+    margin: auto;
+    text-align: center;
+    font-size: 14px;
+
+		select {
+			// A reset of styles, including removing the default dropdown arrow
+			//appearance: none;
+			// Additional resets for further consistency
+			background-color: transparent;
+			border: none;
+			padding: 0 1em 0 0;
+			margin: 0;
+			width: 100%;
+			font-family: inherit;
+			font-size: inherit;
+			cursor: inherit;
+			line-height: inherit;
+      outline: none;
+		}
+
+    select::-ms-expand {
+      display: none;
+    }
+
+    .select {
+      width: auto;
+      border: 1px solid var(--select-border);
+      border-radius: 0.25em;
+      border-color: #fff;
+      padding: 0.25em 0.5em;
+      cursor: pointer;
+      line-height: 1.1;
+      background-color: #304269;
+      background-image: none;
+    }
+    .right {
+      width: auto;
+      position: absolute;
+      right: 20px;
     }
   }
 }

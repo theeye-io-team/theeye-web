@@ -332,7 +332,9 @@ export default View.extend({
     dom.switchClass(label, oldClass, newClass)
   },
   reportToParent: function () {
-    if (this.parent) this.parent.update(this)
+    if (this.parent && this.parent.update) {
+      this.parent.update(this)
+    }
   },
   clear: function () {
     this.$select && this.$select.val([]).trigger('change')

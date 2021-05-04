@@ -191,7 +191,7 @@ export default {
         }
       },
       fail (err, xhr) {
-        App.state.alerts.danger('Something goes wrong. Please try again later')
+        App.state.alerts.danger('Something goes wrong. Please reload the App')
       }
     })
   },
