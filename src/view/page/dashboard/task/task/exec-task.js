@@ -41,7 +41,7 @@ export const BaseExec = State.extend({
 
       const modal = new Modalizer({
         buttons: true,
-        confirmButton: 'Run',
+        confirmButton: 'Continue',
         title: `Run task: ${this.model.name}`,
         bodyView: form
       })
@@ -111,7 +111,7 @@ export const BaseExec = State.extend({
 
     const modal = new Modalizer({
       buttons: true,
-      confirmButton: 'Run',
+      confirmButton: 'Confirm',
       title: `Run task: ${this.model.name}`,
       bodyView: confirmView
     })

@@ -5,7 +5,10 @@ const logger = loggerModule('components:input:grecaptcha')
 
 let grecaptcha
 try {
-  if (App.config.grecaptcha.enabled === false || App.config.grecaptcha.disabled === true) {
+  if (
+    App.config.components.grecaptcha.enabled === false ||
+    App.config.components.grecaptcha.disabled === true
+  ) {
     throw new Error('grecaptcha disabled by config.')
   }
   grecaptcha = require('grecaptcha')
@@ -51,7 +54,7 @@ const RecaptchaInputView = InputView.extend({
     let widget_id = grecaptcha.render(
       this.query('[data-hook=input-container]'),
       {
-        sitekey: App.config.grecaptcha.sitekey,
+        sitekey: App.config.gcomponents.recaptcha.sitekey,
         callback: () => {
           this.value = grecaptcha.getResponse(widget_id)
         },

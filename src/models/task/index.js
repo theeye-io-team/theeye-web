@@ -322,6 +322,7 @@ const Group = Schema.extend({
   initialize (attrs) {
     Schema.prototype.initialize.apply(this,arguments)
     this.type = 'group'
+    this._type = 'TaskGroup'
 
     this.listenToAndRun(this.submodels, 'change:inProgressJobs', () => {
       this.inProgressJobs = this.submodels.models

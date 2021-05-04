@@ -4,10 +4,6 @@ import $ from 'jquery'
 import FilteredCollection from 'ampersand-filtered-subcollection'
 import TaskRowView from '../../task'
 
-const EmptyResultView = View.extend({
-  template: `<div class="no-result">No matches found</div>`
-})
-
 export default View.extend({
   template: `
     <section class="col-md-12 tasks-panel events-panel">
@@ -32,9 +28,7 @@ export default View.extend({
   },
   render () {
     View.prototype.render.apply(this,arguments)
-    this.renderWorkflowsPanel()
-  },
-  renderWorkflowsPanel () {
+
     this.workflowsRows = this.renderCollection(
       this.workflows,
       TaskRowView,
@@ -47,4 +41,8 @@ export default View.extend({
     const rowtooltips = this.query('[data-hook=tasks-container] .tooltiped')
     $(rowtooltips).tooltip()
   }
+})
+
+const EmptyResultView = View.extend({
+  template: `<div class="no-result">No matches found</div>`
 })

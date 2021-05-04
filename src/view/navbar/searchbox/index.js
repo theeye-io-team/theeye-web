@@ -1,5 +1,4 @@
 import View from 'ampersand-view'
-import SearchActions from 'actions/searchbox'
 import App from 'ampersand-app'
 
 import './styles.less'
@@ -65,15 +64,15 @@ export default View.extend({
     if (event.target.value.length === 0) {
       this.endsearch()
     } else {
-      SearchActions.clear()
-      SearchActions.findMatches(event.target.value)
+      App.actions.searchbox.clear()
+      App.actions.searchbox.findMatches(event.target.value)
     }
   },
   onkeypress (event) {
-    if (event.keyCode === 13) {
-      SearchActions.search(event.target.value)
+    if (event.keyCode === 13) { // ENTER KEY
+      App.actions.searchbox.search(event.target.value)
       this.closeAutocompleteLists()
-      SearchActions.clearMatches()
+      App.actions.searchbox.clearMatches()
       return
     }
   },
@@ -109,12 +108,12 @@ export default View.extend({
 
     document.addEventListener('click', function (e) {
       self.closeAutocompleteLists()
-      SearchActions.clearMatches()
+      App.actions.searchbox.clearMatches()
     })
   },
   endsearch () {
     this.queryAll('input').forEach(input => (input.value = ''))
-    SearchActions.clear()
+    App.actions.searchbox.clear()
   },
   // listen to app state changes and update inputValue
   updateState () {
@@ -145,7 +144,7 @@ export default View.extend({
         b.innerHTML += '<input type="hidden" value="' + App.state.searchbox.matches[i] + '">'
         b.addEventListener('click', function (e) {
           searchInput.value = b.getElementsByTagName('input')[0].value
-          SearchActions.search(searchInput.value)
+          App.actions.searchbox.search(searchInput.value)
           self.closeAutocompleteLists()
         })
         a.appendChild(b)

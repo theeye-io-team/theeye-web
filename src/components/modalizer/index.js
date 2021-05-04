@@ -103,12 +103,7 @@ const Modalizer = View.extend({
       show: false
     })
 
-    if (this.buttons) {
-      this.renderSubview(
-        new ButtonsView({ confirmButton: this.confirmButton }),
-        this.queryByHook('buttons-container')
-      )
-    }
+    this.renderButtons()
 
     this.$modal.on('hide.bs.modal',this._onBeingHide)
     this.$modal.on('show.bs.modal',this._triggerShown)
@@ -123,6 +118,14 @@ const Modalizer = View.extend({
     }
 
     if (this.visible) this.show()
+  },
+  renderButtons () {
+    if (this.buttons) {
+      this.renderSubview(
+        new ButtonsView({ confirmButton: this.confirmButton }),
+        this.queryByHook('buttons-container')
+      )
+    }
   },
   renderBody () {
     if (!this.bodyView) {

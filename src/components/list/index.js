@@ -1,6 +1,5 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-//import View from 'view/base-view'
 import ListItem from 'components/list/item'
 import ListHeader from 'components/list/header'
 import SearchboxActions from 'actions/searchbox'
@@ -39,7 +38,7 @@ export default View.extend({
   },
   /**
    *
-   * Convenience method to render the page header
+   * Convenient method to render the page header.
    * If you need a different header, just override
    *
    * @author Facugon
@@ -77,17 +76,10 @@ export default View.extend({
       }
     })
 
-    //this.listenToAndRun(App.state.searchbox, 'change:search', this.search)
-    //this.listenTo(App.state.searchbox, 'change:rowsViews', this.search)
-
-    // set row views when fetch is complete
     this.listenToAndRun(this.collection, 'sync', function () {
       SearchboxActions.resetRowsViews(this.list.views)
     })
   },
-  //search () {
-  //  filterRows()
-  //},
   selectAllRows () {
     this.list.views.forEach(row => {
       if (row.show && row.selectable) {

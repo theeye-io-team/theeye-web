@@ -46,7 +46,6 @@ export default {
       }
     },
     grecaptcha: {
-      disabled: true,
       sitekey: '6LfaIrsUAAAAAKmZPeN5ZqmFDvJZLEdtK0dev2eV',
     }
   }

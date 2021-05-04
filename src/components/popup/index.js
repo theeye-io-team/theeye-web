@@ -11,6 +11,7 @@ export default Modalizer.extend({
     this.title = 'Theeye says:'
     this.class = 'popup'
     this.bodyView = new PopupContentView({})
+    this.buttons = true
 
     this.listenTo(App.state.popup, 'change', this.updateState)
     this.on('hidden', () => App.actions.popup.hide())
@@ -24,6 +25,13 @@ export default Modalizer.extend({
     } else {
       this.hide()
     }
+  },
+  renderButtons () {
+    const button = new ButtonView({})
+    this.listenTo(button, 'click', () => {
+      this.hide()
+    })
+    this.renderSubview(button, this.queryByHook('buttons-container'))
   }
 })
 
@@ -63,6 +71,28 @@ const PopupContentView = View.extend({
     }
 
     this.content = html
+  }
+})
+
+const ButtonView = View.extend({
+  template: `
+    <div>
+      <div class="fright col-xs-4">
+        <button type="button" class="btn btn-primary" data-hook="label">
+        </button>
+      </div>
+    </div>
+  `,
+  props: {
+    label: ['string',false,'close']
+  },
+  bindings: {
+    label: {
+      hook: 'label'
+    }
+  },
+  events: {
+    'click button': function (event) { this.trigger('click') }
   }
 })
 
