@@ -70,8 +70,8 @@ export default Settings.extend({
       }
     })
 
-    this.listenToAndRun(App.state.session.customer,'change:name', () => {
-      this.queryByHook('customer-name').innerHTML = App.state.session.customer.name
+    this.listenToAndRun(App.state.session.customer, 'change:view_name', () => {
+      this.queryByHook('customer-view_name').innerHTML = App.state.session.customer.view_name
     })
   },
   events: Object.assign({}, Settings.prototype.events, {
@@ -125,7 +125,7 @@ const Content = View.extend({
     let html = `
       <div class="settings-page">
         <div class="header text-center">
-          <span>Your preferences for <span data-hook="customer-name"></span></span>
+          <span>Your preferences for <span data-hook="customer-view_name"></span></span>
           <span data-hook="close-button" class="close-button fa fa-remove" style=""></span>
         </div>
         <div class="col-xs-3 panel-left">

@@ -217,14 +217,14 @@ const CustomerItemList = View.extend({
     <li data-hook="active" class="eyemenu-client">
       <a href="#">
         <i class="fa fa-user-circle" aria-hidden="true"></i>
-        <span data-hook="name">Client Name 1</span>
+        <span data-hook="view_name"></span>
       </a>
     </li>
   `,
   bindings: {
-    'model.name': {
+    'model.view_name': {
       type: 'text',
-      hook: 'name'
+      hook: 'view_name'
     },
     active: {
       type: 'booleanClass',
@@ -265,13 +265,13 @@ const CurrentCustomerItem = View.extend({
   template: `
     <div class="eyemenu-secondary-users">
       <i data-hook="active" class="fa fa-user-circle active" aria-hidden="true"></i>
-      <p data-hook="name" class="customer-name"></p>
+      <p data-hook="view_name" class="customer-name"></p>
     </div>
   `,
   bindings: {
-    'model.name': {
+    'model.view_name': {
       type: 'text',
-      hook: 'name'
+      hook: 'view_name'
     }
   }
 })

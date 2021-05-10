@@ -30,6 +30,7 @@ const Model = AppModel.extend({
   props: {
     id: 'string',
     name: 'string',
+    display_name: 'string',
     description: 'string',
     config: ['object', true, () => {
       return Object.assign({}, defaultConfig)
@@ -49,6 +50,12 @@ const Model = AppModel.extend({
         return [
           'name=' + this.name
         ]
+      }
+    },
+    view_name: {
+      deps: ['name','display_name'],
+      fn () {
+        return (this.display_name || this.name)
       }
     }
   },

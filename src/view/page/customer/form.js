@@ -34,13 +34,21 @@ export default FormView.extend({
         ]
       }),
       new InputView({
+        name: 'display_name',
+        label: 'Display Name',
+        value: this.model.display_name,
+        required: false,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        autofocus: true
+      }),
+      new InputView({
         name: 'description',
         label: 'Description',
         value: this.model.description,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
         required: false,
-        autofocus: true
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
       }),
       new CheckboxView({
         name: 'kibana_enabled',

@@ -44,14 +44,52 @@ export default ListItem.extend({
 
 const Collapsed = View.extend({
   template: `
+    <div class="row">
       <div class="col-sm-12">
         <h4>Email</h4>
         <span data-hook="email"></span>
       </div>
+      <div class="col-sm-12">
+        <h4>Username</h4>
+        <span data-hook="username"></span>
+      </div>
+      <div class="col-sm-12">
+        <h4>Creation Date</h4>
+        <span data-hook="creation_date"></span>
+      </div>
+      <div class="col-sm-12">
+        <h4>Activated</h4>
+        <span data-hook="enabled"></span>
+      </div>
+      <div class="col-sm-12">
+        <h4>Invitation Token</h4>
+        <span data-hook="invitation_token"></span>
+      </div>
+    </div>
   `,
+  derived: {
+    invitation_token: {
+      deps: ['model.invitation_token'],
+      fn () {
+        return this.model.invitation_token || 'Not Set'
+      }
+    }
+  },
   bindings: {
     'model.email': {
-      hook:'email'
+      hook: 'email'
+    },
+    'model.username': {
+      hook: 'username'
+    },
+    'model.creation_date': {
+      hook: 'creation_date'
+    },
+    'model.enabled': {
+      hook: 'enabled'
+    },
+    invitation_token: {
+      hook: 'invitation_token',
     }
   }
 })
