@@ -1,6 +1,5 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-import SessionActions from 'actions/session'
 import SideMenuActions from 'actions/sideMenu'
 import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
@@ -182,29 +181,24 @@ export default View.extend({
     })
   },
   filterViews (search) {
-    const views = this.customersListViews
-    search = search.toLowerCase()
-
     if (search.length < 3) {
       this.showAllViews()
       return
     }
 
-    views.forEach((view) => {
-      const name = view.model.name.toLowerCase()
-      const hit = RegExp(search).test(name) === true
-      if (hit) {
-        view.show = true
-      } else {
-        view.show = false
-      }
+    const searchPattern = new RegExp(search,'i')
+
+    this.customersListViews.forEach(view => {
+      const model = view.model
+
+      view.show = (
+        searchPattern.test(model.name) === true ||
+        searchPattern.test(model.display_name) === true
+      )
     })
   },
   showAllViews () {
-    const views = this.customersListViews
-    views.forEach((view) => {
-      view.show = true
-    })
+    this.customersListViews.forEach(view => view.show = true)
   },
 })
 
@@ -242,7 +236,7 @@ const CustomerItemList = View.extend({
     event.preventDefault()
     // event.stopPropagation()
     SideMenuActions.clearCustomerSearch()
-    SessionActions.changeCustomer(this.model.id)
+    App.actions.session.changeCustomer(this.model.id)
   },
   initialize () {
     View.prototype.initialize.apply(this, arguments)
