@@ -52,5 +52,10 @@ export default View.extend({
         }
       }
     }
+  },
+  render () {
+    this.renderWithTemplate(this)
+
+    this.el.querySelector('select').value = this.listLength
   }
 })
