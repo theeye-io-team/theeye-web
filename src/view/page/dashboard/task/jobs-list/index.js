@@ -5,8 +5,7 @@ import EmptyJobView from '../empty-job-view'
 import Acls from 'lib/acls'
 import './styles.less'
 import Collection from 'ampersand-collection'
-
-const LIMIT_COUNTER = 20
+import { LIMIT_COUNTER } from 'constants/paginator'
 
 export default View.extend({
   template: `
@@ -20,7 +19,6 @@ export default View.extend({
         </h3>
       </div>
       <div data-hook="jobs-list"></div>
-      <div data-hook="jobs-paginator"></div>
     </div>
   `,
   bindings: {
@@ -114,7 +112,6 @@ export default View.extend({
       })
     }
 
-    this.renderJobsPagination()
     this.renderJobs()
     this.renderJobsSearchBox()
   },
@@ -136,63 +133,4 @@ export default View.extend({
   renderJobsSearchBox () {
     // not implemented for tasks
   },
-  renderJobsPagination () {
-    this.renderSubview(
-      new PaginatorView({ model: this.model }),
-      this.queryByHook('jobs-paginator')
-    )
-  }
-})
-
-const PaginatorView = View.extend({
-  props: {
-    listLength: ['number', false, LIMIT_COUNTER],
-    jobsLength: ['number', false, 0],
-  },
-  template: `
-    <div data-component="paginator">
-      <div>
-        <span data-hook="jobs-count"></span>
-        <select class="select right">
-          <option value="10">10</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
-      </div>
-    </div>
-  `,
-  bindings: {
-    count: {
-      hook:'jobs-count'
-    }
-  },
-  events: {
-    'change select':'onSelectChange'
-  },
-  onSelectChange (event) {
-    const el = this.query('select')
-    App.actions.localSettings.update('jobsListLength', Number(el.value))
-  },
-  initialize () {
-    this.listenToAndRun(App.state.localSettings, 'change:jobsListLength', () => {
-      this.listLength = App.state.localSettings.jobsListLength || LIMIT_COUNTER
-    })
-
-    // update collection length
-    this.listenToAndRun(this.model.jobs, 'add remove sync reset', () => {
-      this.jobsLength = this.model.jobs.length
-    })
-  },
-  derived: {
-    count: {
-      deps: ['jobsLength','listLength'],
-      fn () {
-        if (this.jobsLength >= this.listLength) {
-          return `${this.listLength}/${this.jobsLength}`
-        } else {
-          return this.jobsLength
-        }
-      }
-    }
-  }
 })

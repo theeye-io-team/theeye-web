@@ -13,6 +13,7 @@ import Acls from 'lib/acls'
 import $ from 'jquery'
 import JobRow from './job'
 import JobsList from 'view/page/dashboard/task/jobs-list'
+import JobsPaginator from 'view/page/paginator/footer'
 
 export default CollapsibleRow.extend({
   onClickToggleCollapse (event) {
@@ -44,10 +45,14 @@ export default CollapsibleRow.extend({
     $collapse.on('show.bs.collapse', () => {
       this.jobsList = new JobsList({ model: this.model, rowView: JobRow })
       this.renderSubview(this.jobsList, this.queryByHook('collapse-container-body'))
+
+      this.jobsPaginator = new JobsPaginator({ model: this.model })
+      this.renderSubview(this.jobsPaginator, this.queryByHook('collapse-container-body'))
     })
 
     $collapse.on('hidden.bs.collapse', () => {
       this.jobsList.remove()
+      this.jobsPaginator.remove()
     })
   }
 })

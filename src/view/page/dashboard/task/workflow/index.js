@@ -1,3 +1,4 @@
+import moment from 'moment'
 import App from 'ampersand-app'
 import Acls from 'lib/acls'
 import View from 'ampersand-view'
@@ -6,9 +7,9 @@ import ExecButton from '../exec-button'
 import TaskJobRow from '../task/collapse/job'
 import JobExecButton from '../task/collapse/job/job-exec-button'
 import EmptyJobView from '../empty-job-view'
-import moment from 'moment'
-import JobsList from 'view/page/dashboard/task/jobs-list'
 import SearchBox from 'components/searchbox'
+import JobsList from 'view/page/dashboard/task/jobs-list'
+import JobsPaginator from 'view/page/paginator/footer'
 
 // menu buttons
 import RemoveWorkflowButton from 'view/page/workflow/buttons/remove'
@@ -54,6 +55,11 @@ export default CollapsibleRow.extend({
         this.queryByHook('collapse-container-body')
       )
     })
+
+    this.jobsPaginator = this.renderSubview(
+      new JobsPaginator({ model: this.model }),
+      this.queryByHook('collapse-container-body')
+    )
   },
   renderButtons () {
     this.renderSubview(
@@ -72,8 +78,10 @@ export default CollapsibleRow.extend({
 
 const WorkflowJobsListView = JobsList.extend({
   renderJobs () {
+    (this.jobsCollectionView && this.jobsCollectionView.remove())
+
     this.jobsCollectionView = this.renderCollection(
-      this.model.jobs,
+      this.jobs,
       this.model.table_view ? WorkflowJobInputsView : WorkflowJobDateView,
       this.queryByHook('jobs-list'),
       {
