@@ -76,17 +76,25 @@ const BaseJob = AppModel.extend({
     const session = App.state.session
     if (this.lifecycle !== LifecycleConstants.ONHOLD) { return }
 
-    if (this.user_inputs === true && this.user_inputs_members.length > 0) {
+    if (this.user_inputs !== true) { return }
+
+    if (Array.isArray(this.user_inputs_members) && this.user_inputs_members.length > 0) {
       const members = this.user_inputs_members
       if (Array.isArray(members) && members.length > 0) {
         return (members.indexOf(session.member_id) !== -1)
       }
+    } else {
+      return this.isOwner(session.user)
     }
-
-    return this.isOwner(session.user)
   },
+  /**
+   *
+   * job is owned by the user who started it manually or by triggers it owns.
+   *
+   * The owner can also be set programatically
+   *
+   */
   isOwner (user) {
-    if (!user.email) { return false }
     // this job belongs to a workflow
     if (this.workflow_job_id) {
       // get the workflow
@@ -94,11 +102,20 @@ const BaseJob = AppModel.extend({
       // workflow job is present only if user has visibility of it
       // just in case of error
       if (!workflowJob) { return false }
-      if (workflowJob.isOwner(user)) { return true }
+      return workflowJob.verifyOwnerUser(user)
     } else {
-      if (!this.user || !this.user.email) { return false }
+      return this.verifyOwnerUser(user)
+    }
+  },
+  verifyOwnerUser (user) {
+    if (this.user && this.user.email && user.email) {
       return (user.email.toLowerCase() === this.user.email.toLowerCase())
     }
+    if (this.user_id && (user._id || user.id)) {
+      let uid = (user._id || user.id)
+      return this.user_id === uid
+    }
+    return false
   },
   derived: {
     inProgress: {
@@ -457,7 +474,7 @@ const WorkflowJob = BaseJob.extend({
     jobs: Collection
   },
   session: {
-    jobs_ready: 'boolean',
+    jobs_length: 'number',
     lifecycle: 'string'
   },
   initialize () {
@@ -465,7 +482,7 @@ const WorkflowJob = BaseJob.extend({
 
     this.listenToAndRun(this.jobs, 'add change sync reset remove', function () {
       if (this.jobs.length) {
-        this.jobs_ready = true
+        this.jobs_length = this.jobs.length
         const currentJob = this.jobs.at(this.jobs.length - 1) // last
         this.lifecycle = currentJob.lifecycle
         this.state = currentJob.state
@@ -475,37 +492,32 @@ const WorkflowJob = BaseJob.extend({
       }
     })
   },
-  /**
-   * workflow is owned by the user who execute it first
-   */
   isOwner (user) {
-    if (!user.email) {
-      return false
-    }
-    if (!this.user || !this.user.email) {
-      return false
-    }
-    return (user.email.toLowerCase() === this.user.email.toLowerCase())
+    return this.verifyOwnerUser(user)
   },
   derived: {
     first_job: {
-      deps: ['jobs_ready'],
+      deps: ['jobs_length'],
       fn () {
+        if (this.jobs.length === 0) { return null }
         return this.jobs.at(0)
       }
     },
     previous_job: {
-      deps: ['jobs_ready'],
+      deps: ['jobs_length'],
       fn () {
-        if ((this.jobs.length - 2) < 0) {
-        }
+        if (this.jobs.length === 0) { return null }
+        if ((this.jobs.length - 2) < 0) { return null }
 
         return this.jobs.models[this.jobs.length - 2]
       }
     },
     current_job: { // the last
-      deps: ['jobs_ready'],
+      deps: ['jobs_length'],
       fn () {
+        if (this.jobs.length === 0) { return null }
+        if ((this.jobs.length - 1) < 0) { return null }
+
         return this.jobs.at(this.jobs.length - 1)
       }
     }
