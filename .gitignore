@@ -39,3 +39,5 @@ npm-debug.log.*
 *.xml
 webpack-stats.json
 config
+
+versions

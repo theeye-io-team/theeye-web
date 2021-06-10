@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <% if (process.env.__VERSION__) { %><meta name="__VERSION__" content="<%= process.env.__VERSION__ %>" data-version="<%= process.env.__VERSION__ %>"><% } %>
 
     <title>TheEye</title>
     <link rel="shortcut icon" href="/images/favicon/favicon.ico?v=PYeqpXdEXr">
