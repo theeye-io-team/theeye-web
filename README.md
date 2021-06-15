@@ -1,7 +1,10 @@
 # TheEye-Web
 
-## Requirements
-Tested under node 10.17.0 - npm 6.11.3
+## PRE-Reqs
+
+node 14
+
+npm 6
 
 ## Installation
 
@@ -15,7 +18,7 @@ npm install
 For compiling the assets and create the js/css bundles, it is required to choose a configuration file that should be placed in the directory src/config/ 
 Use NODE_ENV to choose the required configuration env.
 
-NODE_ENV=production activate minification for production
+Use `NODE_ENV=production` to activate minification for production
 
 ## Building using Dockerfile
 
@@ -23,9 +26,30 @@ NODE_ENV=production activate minification for production
 
 production Dockerfile. requires NODE_ENV=production
 
+```
+
+NODE_ENV=production docker build -t theeye-web:$(git describe) .
+
+
+```
+
 ### Dockerfile.dev
 
-development Dockerfile , NODE_ENV= can be anythin.
+development Dockerfile , NODE_ENV= can be anything, configuration file must exists in src/config directory
+
+```
+
+NODE_ENV=alpha docker build -f Dockerfile.dev -t theeye-web:$(git describe) .
+
+```
+
+
+### Using image build-in webserver built in
+
+```
+docker run --name theeye-webserver --expose 6082 --publish 127.0.0.1:6082:6082 theeye-web:$(git describe) npm run webserver
+```
+
 
 ### Development
 
