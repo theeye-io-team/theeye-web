@@ -2,7 +2,6 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import ListItem from 'components/list/item'
 import ListHeader from 'components/list/header'
-import SearchboxActions from 'actions/searchbox'
 
 export default View.extend({
   autoRender: true,
@@ -77,7 +76,7 @@ export default View.extend({
     })
 
     this.listenToAndRun(this.collection, 'sync', function () {
-      SearchboxActions.resetRowsViews(this.list.views)
+      App.actions.searchbox.resetRowsViews(this.list.views)
     })
   },
   selectAllRows () {

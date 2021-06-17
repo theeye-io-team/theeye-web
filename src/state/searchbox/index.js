@@ -31,10 +31,22 @@ export default State.extend({
       this.filterRows()
     })
   },
-  filterRows () {
-    const rows = this.rowsViews
-    const search = this.search
+  findTermsOverElements (terms, elements, onEach) {
+    for (let elem of elements) {
+      // collection of views. can be updated over time
+      if (elem.views) {
+        // search recursive
+        this.findTermsOverElements(terms, elem.views, onEach)
+      } else {
+        let row = elem
+        let matches = findTermsOverElem(terms, row)
 
+        onEach(row, matches)
+      }
+    }
+  },
+  filterRows () {
+    const search = this.search
     if (!search || typeof search !== 'string') {
       return this.endSearch()
     }
@@ -42,37 +54,13 @@ export default State.extend({
     const terms = parseTerms(search)
 
     this.results.set([])
-
-    for (let row of rows) {
-      if (!row.model.formatted_tags) {
-        logger.error('no formatted_tags property available in model')
-        return
-      }
-
-      if (!(row.model.formatted_tags.length > 0)) {
-        logger.error('empty tags')
-        return
-      }
-
-      let tags = row.model.formatted_tags
-      let matches = searchTermsOverTags(terms, tags)
-
-      if (row.model.submonitors || row.model.submodels) {
-        const models = (row.model.submonitors || row.model.submodels).models
-        for (let model of models) {
-          tags = model.formatted_tags
-          matches = matches.concat(searchTermsOverTags(terms, tags))
-        }
-      }
-
+    this.findTermsOverElements(terms, this.rowsViews, (row, matches) => {
       const hit = Boolean(matches.length > 0)
       if (hit) {
         this.results.add(row.model)
       }
       this.trigger('onrow', { row, hit })
-    }
-
-    return
+    })
   },
   findMatches (search) {
     if (search === this.search) { return }
@@ -83,39 +71,15 @@ export default State.extend({
       return
     }
 
-    const rows = App.state.searchbox.rowsViews
-    const terms = parseTerms(search)
-
     let totalMatches = []
-    this.results.set([])
+    //this.results.set([])
 
-    for (let row of rows) {
-      if (!row.model.formatted_tags) {
-        logger.error('no formatted_tags property available in model')
-        return
-      }
-
-      if (!(row.model.formatted_tags.length > 0)) {
-        logger.error('empty tags')
-        return
-      }
-
-      let tags = row.model.formatted_tags
-      let matches = searchTermsOverTags(terms, tags)
-
-      if (row.model.submonitors || row.model.submodels) {
-        const models = (row.model.submonitors || row.model.submodels).models
-        for (let model of models) {
-          tags = model.formatted_tags
-          matches = matches.concat(searchTermsOverTags(terms, tags))
-        }
-      }
-
+    const terms = parseTerms(search)
+    this.findTermsOverElements(terms, this.rowsViews, (row, matches) => {
       totalMatches = totalMatches.concat(matches)
-    }
+    })
 
     this.set('matches', parseMatches(totalMatches))
-    return
   },
   clearMatches () {
     this.set('matches', [])
@@ -174,3 +138,29 @@ const searchTermsOverTags = (terms,tags) => {
   }
   return matches
 }
+
+const findTermsOverElem = (terms, row) => {
+  if (!row.model.formatted_tags) {
+    logger.error('no formatted_tags property available in model')
+    return
+  }
+
+  if (!(row.model.formatted_tags.length > 0)) {
+    logger.error('empty tags')
+    return
+  }
+
+  let tags = row.model.formatted_tags
+  let matches = searchTermsOverTags(terms, tags)
+
+  if (row.model.submonitors || row.model.submodels) {
+    const models = (row.model.submonitors || row.model.submodels).models
+    for (let model of models) {
+      tags = model.formatted_tags
+      matches = matches.concat(searchTermsOverTags(terms, tags))
+    }
+  }
+
+  return matches
+}
+

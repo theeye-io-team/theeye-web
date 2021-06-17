@@ -203,6 +203,26 @@ export default {
         job.user.set( member.user._values )
       }
     }
+  },
+  getParticipants (jobId) {
+    const job = App.state.jobs.get(jobId)
+
+    XHR.send({
+      method: 'get',
+      url: `${job.urlV2()}/participants`,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (data,xhr) {
+        job.owner = data.owner
+        job.assignee = data.assignee
+        job.observers = data.observers
+      },
+      fail (err,xhr) {
+        App.state.alerts.danger('something goes wrong')
+        console.log(arguments)
+      }
+    })
   }
 }
 

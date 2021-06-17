@@ -79,7 +79,7 @@ export default {
       workflow.tasks.models.length === 0
     ) {
       let nodes = workflow.graph.nodes()
-      var tasks = []
+      let tasks = []
       nodes.forEach(id => {
         var node = workflow.graph.node(id)
         if (node && !/Event/.test(node._type)) {

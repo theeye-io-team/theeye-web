@@ -26,7 +26,8 @@ export default FormView.extend({
       'description',
       'triggers',
       'table_view',
-      'acl_dynamic'
+      'empty_viewers',
+      'allows_dynamic_settings'
     ]
 
     App.actions.workflow.populate(this.model)
@@ -109,9 +110,16 @@ export default FormView.extend({
       new CheckboxView({
         required: false,
         visible: false,
-        label: 'Dynamic ACL',
-        name: 'acl_dynamic',
-        value: this.model.acl_dynamic
+        label: 'Only visible to assigned users',
+        name: 'empty_viewers',
+        value: this.model.empty_viewers
+      }),
+      new CheckboxView({
+        required: false,
+        visible: false,
+        label: 'Allows to programatically changes the behaviour of the Workflow',
+        name: 'allows_dynamic_settings',
+        value: this.model.allows_dynamic_settings || false
       })
     ]
 
@@ -133,7 +141,7 @@ export default FormView.extend({
     this.addHelpIcon('tags')
     this.addHelpIcon('acl')
     this.addHelpIcon('table_view')
-    this.addHelpIcon('acl_dynamic')
+    this.addHelpIcon('empty_viewers')
 
     const buttons = new FormButtons()
     this.renderSubview(buttons)

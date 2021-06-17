@@ -1,4 +1,5 @@
 import App from 'ampersand-app'
+import config from 'config'
 import InputView from 'ampersand-input-view'
 import loggerModule from 'lib/logger';
 const logger = loggerModule('components:input:grecaptcha')
@@ -6,8 +7,8 @@ const logger = loggerModule('components:input:grecaptcha')
 let grecaptcha
 try {
   if (
-    App.config.components.grecaptcha.enabled === false ||
-    App.config.components.grecaptcha.disabled === true
+    config.components.grecaptcha.enabled === false ||
+    config.components.grecaptcha.disabled === true
   ) {
     throw new Error('grecaptcha disabled by config.')
   }
@@ -54,7 +55,7 @@ const RecaptchaInputView = InputView.extend({
     let widget_id = grecaptcha.render(
       this.query('[data-hook=input-container]'),
       {
-        sitekey: App.config.gcomponents.recaptcha.sitekey,
+        sitekey: App.config.components.grecaptcha.sitekey,
         callback: () => {
           this.value = grecaptcha.getResponse(widget_id)
         },

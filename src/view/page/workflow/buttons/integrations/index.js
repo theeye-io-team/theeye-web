@@ -76,13 +76,17 @@ const CredentialsView = View.extend({
       </div>
       <div class="hidden-data form-group" data-hook="toggle-target">
         <label>curl sample using unix shell</label>
-        <pre data-hook="sample-code"><code class="bash">workflow="<span data-hook="workflow_id"></span>"
+        <pre data-hook="sample-code">
+          <code class="bash">
+workflow="<span data-hook="workflow_id"></span>"
 secret="<span data-hook="workflow_secret"></span>"
-customer="<span data-hook="workflow_customer"></span>"
+<span data-hook="args-vars"></span>
 
 curl -i -sS -X POST "${config.supervisor_api_url}/workflows/\$\{workflow\}/secret/\$\{secret\}/job" \\
   --header 'Content-Type: application/json' \\
-  --data '{"customer":"'\$\{customer\}'","task_arguments":[<span data-hook="task_args"></span>]}'</code></pre>
+  --data '{"task_arguments":[<span data-hook="task_args"></span>]}'
+          </code>
+        </pre>
         <a href="${config.docs}/${docsLink}" target="_blank">Find more info in the docs</a>
       </div>
     </div>
@@ -91,7 +95,8 @@ curl -i -sS -X POST "${config.supervisor_api_url}/workflows/\$\{workflow\}/secre
     id: 'string',
     secret: 'string',
     customer: 'string',
-    args: 'string'
+    args: 'string',
+    argsVar: 'string'
   },
   initialize () {
     View.prototype.initialize.apply(this, arguments)
@@ -100,6 +105,7 @@ curl -i -sS -X POST "${config.supervisor_api_url}/workflows/\$\{workflow\}/secre
     this.id = ''
     this.secret = ''
     this.args = ''
+    this.argsVars = ''
 
     this.listenToAndRun(
       this.model,
@@ -139,8 +145,14 @@ curl -i -sS -X POST "${config.supervisor_api_url}/workflows/\$\{workflow\}/secre
       this.args = this.model
         .start_task
         .task_arguments
-        .models.map(arg => `\"'\$\{${arg.label}\}'\"`)
+        .models.map(arg => `\"'\$\{${arg.label.replace(/ /g,'_')}\}'\"`)
         .join(',')
+
+      this.argsVars = this.model
+        .start_task
+        .task_arguments
+        .models.map(arg => `${arg.label.replace(/ /g,'_')}=""`)
+        .join('\n')
     }
   },
   bindings: {
@@ -163,6 +175,9 @@ curl -i -sS -X POST "${config.supervisor_api_url}/workflows/\$\{workflow\}/secre
     },
     args: {
       hook: 'task_args'
+    },
+    argsVars: {
+      hook: 'args-vars'
     }
   },
   remove () {

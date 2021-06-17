@@ -1,6 +1,7 @@
 import App from 'ampersand-app'
 import after from 'lodash/after'
 import search from 'lib/query-params'
+import loggerModule from 'lib/logger'; const logger = loggerModule('actions:dashboard')
 
 export default {
   setMonitorsGroupByProperty (prop) {
@@ -32,10 +33,39 @@ export default {
     App.state.resources.fetch({ success: step, error: step })
     App.state.hosts.fetch({ success: step, error: step })
   },
-  fetchData (options) {
-    let resourcesToFetch = 9
+  /**
+   *
+   * Initialize, prepare and fetch dashboard Tabs data before rendering
+   *
+   */
+  fetchData () {
 
-    const done = after(resourcesToFetch, () => {
+    App.state.dashboard.indicatorsDataSynced = false
+    App.state.indicators.once('sync', () => {
+      logger.log('indicators synced')
+      App.state.dashboard.indicatorsDataSynced = true
+    })
+
+    App.state.dashboard.resourcesDataSynced = false
+    App.state.dashboard.groupedResources.once('reset', () => {
+      logger.log('resources synced and grouped resources prepared')
+      App.state.dashboard.resourcesDataSynced = true
+    })
+
+    App.state.dashboard.tasksDataSynced = false
+    App.state.tasks.once('sync', () => {
+      logger.log('tasks synced')
+      App.state.dashboard.tasksDataSynced = true
+    })
+
+    App.state.listenToAndRun(App.state.dashboard, 'change:indicatorsDataSynced change:resourcesDataSynced change:tasksDataSynced', () => {
+      if (App.state.dashboard.indicatorsDataSynced && App.state.dashboard.resourcesDataSynced && App.state.dashboard.tasksDataSynced) {
+        App.state.dashboard.dataSynced = true
+      }
+    })
+
+    let apisToFetch = 9
+    const done = after(apisToFetch, () => {
       App.state.loader.visible = false
     })
 

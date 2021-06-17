@@ -17,8 +17,11 @@ export default AmpersandState.extend({
   },
   props: {
     indicatorsDataSynced: ['boolean',false,false],
+    indicatorsLength: ['number',false,0],
     resourcesDataSynced: ['boolean',false,false],
+    resourcesLength: ['number',false,0],
     tasksDataSynced: ['boolean',false,false],
+    tasksLength: ['number',false,0],
     dataSynced: ['boolean',false,false],
     monitorsGroupBy: ['object',false, () => {
       return { prop: 'name' }

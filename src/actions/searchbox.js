@@ -19,19 +19,17 @@ export default {
   },
   clearMatches () {
     App.state.searchbox.clearMatches()
-    //App.state.searchbox.matches = []
   },
-  addRowsViews (views) {
-    App.state.searchbox.rowsViews = App.state.searchbox.rowsViews.concat(views)
+  addRowsViews (elements) {
+    App.state.searchbox.rowsViews = App.state.searchbox.rowsViews.concat(elements)
   },
-  resetRowsViews (views) {
-    App.state.searchbox.rowsViews = views
+  resetRowsViews (elements) {
+    App.state.searchbox.rowsViews = elements
   },
   emptyRowsViews () {
     App.state.searchbox.rowsViews = []
   },
   endSearch () {
-    //App.state.searchbox.rowsViews.forEach(row => row.show = true)
     App.state.searchbox.endSearch()
     App.state.searchbox.clearMatches()
   },

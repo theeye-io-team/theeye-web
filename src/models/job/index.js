@@ -10,8 +10,12 @@ import { Model as User } from 'models/user'
 
 import config from 'config'
 
-const urlRoot = function () {
-  return `${config.supervisor_api_url}/${App.state.session.customer.name}/job`
+const urlRoot = function (version) {
+  if (version === 'v2') {
+    return `${config.supervisor_api_url}/job`
+  } else {
+    return `${config.supervisor_api_url}/${App.state.session.customer.name}/job`
+  }
 }
 
 const BaseJob = AppModel.extend({
@@ -37,6 +41,9 @@ const BaseJob = AppModel.extend({
   //  }
   // },
   urlRoot,
+  urlV2 () {
+    return `${urlRoot('v2')}/${this.id}`
+  },
   props: {
     id: 'string',
     user_id: 'string',
@@ -44,7 +51,7 @@ const BaseJob = AppModel.extend({
     host_id: 'string',
     script_id: 'string',
     acl: ['array', false, () => []],
-    acl_dynamic: ['boolean', false, false],
+    empty_viewers: ['boolean', false, false],
     // script_arguments: 'array',
     task_arguments: 'array',
     customer_id: 'string',
@@ -67,10 +74,16 @@ const BaseJob = AppModel.extend({
     user_inputs: 'boolean',
     user_inputs_members: 'array',
     workflow_id: 'string',
-    workflow_job_id: 'string'
+    workflow_job_id: 'string',
+    assigned_users: ['array', false, () => { return [] }]
   },
   children: {
     user: User
+  },
+  session: {
+    owner: 'object',
+    assignee: ['array',false, ()=>{ return [] }],
+    observers: ['array',false, ()=>{ return [] }]
   },
   requiresInteraction () {
     const session = App.state.session
@@ -474,7 +487,7 @@ const WorkflowJob = BaseJob.extend({
     jobs: Collection
   },
   session: {
-    jobs_length: 'number',
+    jobsLength: 'number',
     lifecycle: 'string'
   },
   initialize () {
@@ -482,7 +495,7 @@ const WorkflowJob = BaseJob.extend({
 
     this.listenToAndRun(this.jobs, 'add change sync reset remove', function () {
       if (this.jobs.length) {
-        this.jobs_length = this.jobs.length
+        this.jobsLength = this.jobs.length
         const currentJob = this.jobs.at(this.jobs.length - 1) // last
         this.lifecycle = currentJob.lifecycle
         this.state = currentJob.state
@@ -497,14 +510,14 @@ const WorkflowJob = BaseJob.extend({
   },
   derived: {
     first_job: {
-      deps: ['jobs_length'],
+      deps: ['jobsLength'],
       fn () {
         if (this.jobs.length === 0) { return null }
         return this.jobs.at(0)
       }
     },
     previous_job: {
-      deps: ['jobs_length'],
+      deps: ['jobsLength'],
       fn () {
         if (this.jobs.length === 0) { return null }
         if ((this.jobs.length - 2) < 0) { return null }
@@ -513,7 +526,7 @@ const WorkflowJob = BaseJob.extend({
       }
     },
     current_job: { // the last
-      deps: ['jobs_length'],
+      deps: ['jobsLength'],
       fn () {
         if (this.jobs.length === 0) { return null }
         if ((this.jobs.length - 1) < 0) { return null }

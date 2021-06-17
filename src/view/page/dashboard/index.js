@@ -7,7 +7,6 @@ import $ from 'jquery'
 import TaskRowView from './task'
 import MonitorRowView from './monitor'
 import IndicatorRowView from './indicator'
-import SearchboxActions from 'actions/searchbox'
 
 import loggerModule from 'lib/logger'; const logger = loggerModule('view:page:dashboard')
 import ItemsFolding from './panel-items-fold'
@@ -35,7 +34,24 @@ import './styles.less'
  *
  */
 export default View.extend({
-  autoRender: true,
+  initialize () {
+    View.prototype.initialize.apply(this, arguments)
+
+    this.tabContentViews = []
+    this.updateState()
+  },
+  updateState () {
+    // references to the state
+    this.indicators = App.state.indicators
+    this.monitors = App.state.resources
+    this.tasks = App.state.dashboard.groupedTasks
+    this.groupedResources = App.state.dashboard.groupedResources
+    this.notifications = App.state.inbox.filteredNotifications
+
+    this.listenTo(this.monitors, 'sync change:state', () => {
+      this.updateFailingMonitors()
+    })
+  },
   template () {
     return pageTemplate()
   },
@@ -110,15 +126,6 @@ export default View.extend({
     event.preventDefault()
   //  this.tasksFolding.toggleVisibility()
   },
-  initialize () {
-    View.prototype.initialize.apply(this, arguments)
-
-    this.listenTo(this.monitors, 'sync change:state', () => {
-      this.updateFailingMonitors()
-    })
-
-    this.tabContentViews = []
-  },
   updateFailingMonitors () {
     this.failingMonitors = this.monitors.filter(monitor => {
       let group = this.groupedResources.find(monitor)
@@ -139,55 +146,26 @@ export default View.extend({
   render () {
     this.renderWithTemplate()
 
-    SearchboxActions.emptyRowsViews()
+    App.actions.searchbox.emptyRowsViews()
 
-    this.listenToAndRun(App.state.dashboard, 'change:indicatorsDataSynced', () => {
-      if (App.state.dashboard.indicatorsDataSynced === true) {
-        this.renderIndicatorsPanel()
-        this.stopListening(App.state.dashboard, 'change:indicatorsDataSynced')
-      }
-    })
-
-    this.listenToAndRun(App.state.dashboard, 'change:resourcesDataSynced', () => {
-      if (App.state.dashboard.resourcesDataSynced === true) {
-        this.updateFailingMonitors()
-        this.renderMonitorsPanel()
-        this.stopListening(App.state.dashboard, 'change:resourcesDataSynced')
-      }
-    })
-
-    this.listenToAndRun(App.state.dashboard, 'change:tasksDataSynced', () => {
-      if (App.state.dashboard.tasksDataSynced === true) {
-        this.renderTasksPanel()
-        this.stopListening(App.state.dashboard, 'change:tasksDataSynced')
-      }
-    })
+    this.renderIndicatorsPanel()
+    this.renderMonitorsPanel()
+    this.renderTasksPanel()
 
     this.onBoarding = new onBoarding()
-
-    this.renderSubview(
-      new TabsView(),
-      this.queryByHook('tabs-container')
-    )
-
-    // this.listenToAndRun(App.state.dashboard, 'change:dataSynced', () => {
-    //   if (App.state.dashboard.dataSynced) {
-    //
-    //     this.stopListening(App.state.dashboard, 'change:dataSynced')
-    //   }
-    // })
+    this.renderSubview(new TabsView(), this.queryByHook('tabs-container'))
 
     let indicatorsTabView = this.queryByHook('indicators-tabview')
-    this.tabContentViews.push({name: TabsConstants.INDICATORS, view: indicatorsTabView})
+    this.tabContentViews.push({ name: TabsConstants.INDICATORS, view: indicatorsTabView })
 
     let monitorsTabView = this.queryByHook('monitors-tabview')
-    this.tabContentViews.push({name: TabsConstants.MONITORS, view: monitorsTabView})
+    this.tabContentViews.push({ name: TabsConstants.MONITORS, view: monitorsTabView })
 
     let workflowsTabView = this.queryByHook('workflows-tabview')
-    this.tabContentViews.push({name: TabsConstants.WORKFLOWS, view: workflowsTabView})
+    this.tabContentViews.push({ name: TabsConstants.WORKFLOWS, view: workflowsTabView })
 
     let notificationsTabView = this.queryByHook('notifications-tabview')
-    this.tabContentViews.push({name: TabsConstants.NOTIFICATIONS, view: notificationsTabView})
+    this.tabContentViews.push({ name: TabsConstants.NOTIFICATIONS, view: notificationsTabView })
 
     this.listenToAndRun(App.state.tabs, 'change:currentTab', () => {
       for (const contentView of this.tabContentViews) {
@@ -253,80 +231,93 @@ export default View.extend({
    *
    */
   renderMonitorsPanel () {
-    this.$upAndRunningSignEl = $(this.queryByHook('hide-up-and-running'))
-    this.$monitorsPanel = $(this.queryByHook('monitors-container'))
+    this.listenToAndRun(App.state.dashboard, 'change:resourcesDataSynced', () => {
+      if (App.state.dashboard.resourcesDataSynced === true) {
+        this.updateFailingMonitors()
+        this.stopListening(App.state.dashboard, 'change:resourcesDataSynced')
 
-    this.renderSubview(
-      new MonitorsOptions(),
-      this.queryByHook('monitors-panel-header')
-    )
+        this.$upAndRunningSignEl = $(this.queryByHook('hide-up-and-running'))
+        this.$monitorsPanel = $(this.queryByHook('monitors-container'))
 
-    this.monitorRows = this.renderCollection(
-      this.groupedResources,
-      MonitorRowView,
-      this.queryByHook('monitors-container'),
-      {
-        emptyView: MonitoringOboardingPanel
+        this.renderSubview(
+          new MonitorsOptions(),
+          this.queryByHook('monitors-panel-header')
+        )
+
+        this.monitorRows = this.renderCollection(
+          this.groupedResources,
+          MonitorRowView,
+          this.queryByHook('monitors-container'),
+          {
+            emptyView: MonitoringOboardingPanel
+          }
+        )
+
+        const rowtooltips = this.query('[data-hook=monitors-container] .tooltiped')
+        $(rowtooltips).tooltip()
+
+        this.monitorsFolding = this.renderSubview(
+          new ItemsFolding({}),
+          this.queryByHook('monitors-fold-container')
+        )
+
+        this.listenToOnce(App.state.onboarding, 'first-host-registered', () => {
+          App.actions.tabs.setCurrentTab(TabsConstants.WORKFLOWS)
+          this.onBoarding.onboardingStart()
+        })
+
+        this.listenToAndRun(App.state.dashboard.groupedResources, 'add change sync reset', () => {
+          var monitorOptionsElem = this.queryByHook('monitor-options')
+          if (App.state.dashboard.groupedResources.length > 0) {
+            if (monitorOptionsElem) {
+              monitorOptionsElem.style.visibility = ''
+            }
+            if (this.monitorsFolding) {
+              this.monitorsFolding.showButton()
+            }
+          } else {
+            if (monitorOptionsElem) {
+              monitorOptionsElem.style.visibility = 'hidden'
+            }
+            if (this.monitorsFolding) {
+              this.monitorsFolding.hideButton()
+            }
+          }
+          this.sortGroupedResouces()
+        })
+
+        this.listenTo(
+          this,
+          'change:failingMonitors',
+          this.toggleUpAndRunningSign
+        )
+
+        this.listenTo(this.monitors, 'add', () => {
+          this.monitorsFolding.unfold()
+          App.state.dashboard.groupResources()
+        })
+
+        App.actions.searchbox.addRowsViews(this.monitorRows)
       }
-    )
-
-    const rowtooltips = this.query('[data-hook=monitors-container] .tooltiped')
-    $(rowtooltips).tooltip()
-
-    this.monitorsFolding = this.renderSubview(
-      new ItemsFolding({}),
-      this.queryByHook('monitors-fold-container')
-    )
-
-    this.listenToOnce(App.state.onboarding, 'first-host-registered', () => {
-      App.actions.tabs.setCurrentTab(TabsConstants.WORKFLOWS)
-      this.onBoarding.onboardingStart()
     })
-
-    this.listenToAndRun(App.state.dashboard.groupedResources, 'add change sync reset', () => {
-      var monitorOptionsElem = this.queryByHook('monitor-options')
-      if (App.state.dashboard.groupedResources.length > 0) {
-        if (monitorOptionsElem) {
-          monitorOptionsElem.style.visibility = ''
-        }
-        if (this.monitorsFolding) {
-          this.monitorsFolding.showButton()
-        }
-      } else {
-        if (monitorOptionsElem) {
-          monitorOptionsElem.style.visibility = 'hidden'
-        }
-        if (this.monitorsFolding) {
-          this.monitorsFolding.hideButton()
-        }
-      }
-      this.sortGroupedResouces()
-    })
-
-    this.listenTo(
-      this,
-      'change:failingMonitors',
-      this.toggleUpAndRunningSign
-    )
-
-    this.listenTo(this.monitors, 'add', () => {
-      this.monitorsFolding.unfold()
-      App.state.dashboard.groupResources()
-    })
-
-    SearchboxActions.addRowsViews(this.monitorRows.views)
   },
   renderIndicatorsPanel () {
-    this.indicatorsRows = this.renderCollection(
-      this.indicators,
-      IndicatorRowView,
-      this.queryByHook('indicators-container'),
-      {
-        emptyView: EmptyIndicatorsView
-      }
-    )
+    this.listenToAndRun(App.state.dashboard, 'change:indicatorsDataSynced', () => {
+      if (App.state.dashboard.indicatorsDataSynced === true) {
+        this.stopListening(App.state.dashboard, 'change:indicatorsDataSynced')
 
-    SearchboxActions.addRowsViews(this.indicatorsRows.views)
+        this.indicatorsRows = this.renderCollection(
+          this.indicators,
+          IndicatorRowView,
+          this.queryByHook('indicators-container'),
+          {
+            emptyView: EmptyIndicatorsView
+          }
+        )
+
+        App.actions.searchbox.addRowsViews(this.indicatorsRows)
+      }
+    })
   },
   renderNotificationsPanel () {
     this.inbox = new InboxView({collection: this.notifications})
@@ -350,50 +341,27 @@ export default View.extend({
    *
    */
   renderTasksPanel () {
-    this.renderSubview(
-      new TasksOptions(),
-      this.queryByHook('tasks-panel-header')
-    )
+    this.listenToAndRun(App.state.dashboard, 'change:tasksDataSynced', () => {
+      if (App.state.dashboard.tasksDataSynced === true) {
+        this.stopListening(App.state.dashboard, 'change:tasksDataSynced')
 
-    this.taskRows = this.renderCollection(
-      this.tasks,
-      TaskRowView,
-      this.queryByHook('tasks-container'),
-      {
-        emptyView: TasksOboardingPanel
+        this.renderSubview(new TasksOptions(), this.queryByHook('tasks-panel-header'))
+
+        this.taskRows = this.renderCollection(
+          this.tasks,
+          TaskRowView,
+          this.queryByHook('tasks-container'),
+          {
+            emptyView: TasksOboardingPanel
+          }
+        )
+
+        const rowtooltips = this.query('[data-hook=tasks-container] .tooltiped')
+        $(rowtooltips).tooltip()
+
+        App.actions.searchbox.addRowsViews(this.taskRows)
       }
-    )
-
-    const rowtooltips = this.query('[data-hook=tasks-container] .tooltiped')
-    $(rowtooltips).tooltip()
-
-    SearchboxActions.addRowsViews(this.taskRows.views)
-
-    //this.tasksFolding = this.renderSubview(
-    //  new ItemsFolding({}),
-    //  this.queryByHook('tasks-fold-container')
-    //)
-
-    //this.listenToAndRun(this.tasksFolding, 'change:visible', () => {
-    //  this.showTasksPanel = this.tasksFolding.visible
-    //})
-
-    //this.taskRows.views.forEach(row => {
-    //  let task = row.model
-    //  if (!task.canExecute) {
-    //    this.tasksFolding.append(row.el)
-    //  }
-    //})
-
-    //this.listenToAndRun(App.state.tasks, 'add sync reset', () => {
-    //  if (this.tasksFolding) {
-    //    if (App.state.tasks.length > 0) {
-    //      this.tasksFolding.showButton()
-    //    } else {
-    //      this.tasksFolding.hideButton()
-    //    }
-    //  }
-    //})
+    })
   }
 })
 

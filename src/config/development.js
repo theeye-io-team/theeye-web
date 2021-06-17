@@ -7,4 +7,9 @@ export default Object.assign({}, defaultConfigs, {
   api_url: 'https://development.theeye.io/api',
   api_v3_url: 'https://development.theeye.io/api',
   supervisor_api_url: 'https://supervisor.development.theeye.io',
+  components: {
+    grecaptcha: {
+      enabled: true
+    }
+  }
 })

@@ -1,4 +1,5 @@
 
+import App from 'ampersand-app'
 import moment from 'moment'
 import ansi2html from 'ansi-to-html'
 import View from 'ampersand-view'
@@ -210,9 +211,34 @@ const HeaderView = View.extend({
 })
 
 const BaseJobView = View.extend({
+  initialize () {
+    View.prototype.initialize.apply(this, arguments)
+
+    // refetch
+    App.actions.job.getParticipants(this.job.id)
+
+    this.listenToAndRun(this.job, 'change:assignee change:observers change:owner', () => {
+      this.updateState()
+    })
+  },
+  updateState () {
+    const job = this.job
+    if (job.assignee.length > 0) {
+      this.assignee = job.assignee.map(user => `${user.username} <${user.email}>`).join(',')
+    }
+    if (job.observers.length > 0) {
+      this.observers = job.observers.map(user => `${user.username} <${user.email}>`).join(',')
+    }
+    if (job.owner) {
+      this.owner = `${job.owner.username} <${job.owner.email}>`
+    }
+  },
   props: {
     job: 'state',
-    moreinfo_toggle: ['boolean', false, false]
+    moreinfo_toggle: ['boolean', false, false],
+    owner: 'string',
+    assignee: 'string',
+    observers: 'string'
   },
   template () {
     const html = `
@@ -220,8 +246,12 @@ const BaseJobView = View.extend({
         <div data-hook="summary-container">
           <h4>State <i data-hook="lifecycle_icon" aria-hidden="true" style="color:#304269;"></i></h4>
           <h4>Lifecycle <b data-hook="lifecycle"></b></h4>
-          <p><i class="fa fa-user"></i> <span data-hook="user-name"></span></p>
-          <p><i class="fa fa-envelope-o"></i> <span data-hook="user-email"></span></p>
+          <p>
+            <i>Owner</i>
+            <span data-hook="owner"></span>
+          </p>
+          <p><i>Assignee</i> <span data-hook="assignee"></span></p>
+          <p><i>Observers</i> <span data-hook="observers"></span></p>
           <p>
             <i class="fa fa-hourglass-start"></i>
             <span data-hook="creationdate"></span>
@@ -265,14 +295,15 @@ const BaseJobView = View.extend({
     },
     'job.lifecycle': { hook:'lifecycle' },
     'job.state': { hook:'state' },
-    'job.user.username': { hook:'user-name' },
-    'job.user.email': { hook:'user-email' },
     lastupdate: { hook:'lastupdate' },
     creationdate: { hook:'creationdate' },
     moreinfo_toggle: {
       hook: 'moreinfo-container',
       type: 'toggle'
-    }
+    },
+    owner: { hook:'owner' },
+    assignee: { hook: 'assignee' },
+    observers: { hook: 'observers' }
   },
   derived: {
     output: {

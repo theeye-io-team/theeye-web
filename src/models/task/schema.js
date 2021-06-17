@@ -38,6 +38,8 @@ const Schema = AppModel.extend({
     user_inputs: 'boolean',
     user_inputs_members: 'array',
     arguments_type: ['string',false,'legacy'],
+    allows_dynamic_settings: ['boolean',false,false],
+    assigned_users: ['array', false, () => { return [] }]
   },
   derived: {
     hasWorkflow: {

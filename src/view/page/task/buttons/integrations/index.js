@@ -80,9 +80,9 @@ const CredentialsView = View.extend({
           <code class="bash">
 task="<span data-hook="task_id"></span>"
 secret="<span data-hook="task_secret"></span>"
-customer="<span data-hook="task_customer"></span>"
+<span data-hook="args-vars"></span>
 
-curl -i -sS -X POST "${config.supervisor_api_url}/\$\{customer\}/task/\$\{task\}/secret/\$\{secret\}/job" \\
+curl -i -sS -X POST "${config.supervisor_api_url}/task/\$\{task\}/secret/\$\{secret\}/job" \\
   --header 'Content-Type: application/json' \\
   --data '{"task_arguments":[<span data-hook="task_args"></span>]}'
           </code>
@@ -95,7 +95,8 @@ curl -i -sS -X POST "${config.supervisor_api_url}/\$\{customer\}/task/\$\{task\}
     id: 'string',
     secret: 'string',
     customer: 'string',
-    args: 'string'
+    args: 'string',
+    argsVar: 'string'
   },
   initialize () {
     View.prototype.initialize.apply(this, arguments)
@@ -104,6 +105,7 @@ curl -i -sS -X POST "${config.supervisor_api_url}/\$\{customer\}/task/\$\{task\}
     this.id = ''
     this.secret = ''
     this.args = ''
+    this.argsVars = ''
 
     this.listenToAndRun(
       this.model,
@@ -142,8 +144,13 @@ curl -i -sS -X POST "${config.supervisor_api_url}/\$\{customer\}/task/\$\{task\}
     if (this.model.task_arguments.models.length > 0) {
       this.args = this.model
         .task_arguments
-        .models.map(arg => `\"'\$\{${arg.label}\}'\"`)
+        .models.map(arg => `\"'\$\{${arg.label.replace(/ /g,'_')}\}'\"`)
         .join(',')
+
+      this.argsVars = this.model
+        .task_arguments
+        .models.map(arg => `${arg.label.replace(/ /g,'_')}=""`)
+        .join('\n')
     }
   },
   bindings: {
@@ -166,6 +173,9 @@ curl -i -sS -X POST "${config.supervisor_api_url}/\$\{customer\}/task/\$\{task\}
     },
     args: {
       hook: 'task_args'
+    },
+    argsVars: {
+      hook: 'args-vars'
     }
   },
   remove () {

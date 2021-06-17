@@ -2,18 +2,21 @@ import App from 'ampersand-app'
 import HelpTexts from 'language/help'
 import InputView from 'components/input-view'
 import ActivatableInputView from 'components/input-view/activatable'
-import MembersSelectView from 'view/members-select'
 import AdvancedToggle from 'view/advanced-toggle'
 import TextareaView from 'components/input-view/textarea'
-import TagsSelectView from 'view/tags-select'
-import EventsSelectView from 'view/events-select'
 import * as TaskConstants from 'constants/task'
 import Buttons from 'view/buttons'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
-import CopyTaskSelect from '../copy-task-select'
 import bootbox from 'bootbox'
 import HelpIcon from 'components/help-icon'
+import CheckboxView from 'components/checkbox-view'
+
+import CopyTaskSelect from '../copy-task-select'
+import MembersSelectView from 'view/members-select'
+import TagsSelectView from 'view/tags-select'
+import EventsSelectView from 'view/events-select'
+import SelectView from 'components/select2-view'
 
 export default TaskFormView.extend({
   initialize (options) {
@@ -28,7 +31,47 @@ export default TaskFormView.extend({
       'failure_label',
       'cancel_label',
       'ignore_label',
+      'allows_dynamic_settings'
     ]
+
+    const approvalTargetSelectionView = new SelectView({
+      required: true,
+      visible: true,
+      name: 'approvals_target',
+      label: 'Who will approve?',
+      options: [
+        { id: 'initiator', text: 'Workflow Initiatior' },
+        { id: 'assignees', text: 'Workflow Assignee (Must be assigned programatically when the Process is initiated via API or by a Bot)' },
+        { id: 'fixed'    , text: 'Specific Approvers (Choose below)' }
+      ],
+      value: (this.model.approvals_target || 'fixed'),
+    })
+
+    const membersSelectView = new MembersSelectView({
+      required: (this.model.approvals_target === 'fixed'),
+      visible: true,
+      name: 'approvers',
+      label: 'Choose the Approvers',
+      idAttribute: 'user_id',
+      textAttribute: 'label',
+      value: this.model.approvers
+    })
+
+    membersSelectView.listenTo(
+      approvalTargetSelectionView,
+      'change:value',
+      () => {
+        if (approvalTargetSelectionView.value === 'fixed') {
+          membersSelectView.enabled = true
+          membersSelectView.required = true
+          membersSelectView.visible = true
+        } else {
+          membersSelectView.enabled = false
+          membersSelectView.required = false
+          membersSelectView.visible = false
+        }
+      }
+    )
 
     this.fields = [
       new InputView({
@@ -39,21 +82,8 @@ export default TaskFormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.name,
       }),
-      new MembersSelectView({
-        //multiple: true,
-        required: true,
-        visible: true,
-        name: 'approvers',
-        label: 'Approvers *',
-        idAttribute: 'user_id',
-        textAttribute: 'label',
-        value: this.model.approvers,
-        //filterOptions: [
-        //  item => {
-        //    return item.credential !== 'viewer'
-        //  }
-        //]
-      }),
+      approvalTargetSelectionView,
+      membersSelectView,
       new TagsSelectView({
         required: false,
         name: 'tags',
@@ -137,6 +167,13 @@ export default TaskFormView.extend({
         ],
         visible: false,
         value: this.model.triggers
+      }),
+      new CheckboxView({
+        required: false,
+        visible: false,
+        label: 'Allows to programatically changes the behaviour of the Workflow',
+        name: 'allows_dynamic_settings',
+        value: this.model.allows_dynamic_settings || false
       })
     ]
 

@@ -80,7 +80,7 @@ const Workflow = AppModel.extend({
     description: 'string',
     tags: ['array',false, () => { return [] }],
     acl: ['array',false, () => []],
-    acl_dynamic: ['boolean',false, false],
+    empty_viewers: ['boolean',false, false],
     table_view: ['boolean',false,false],
     lifecycle: 'string',
     state: 'string',
@@ -88,7 +88,8 @@ const Workflow = AppModel.extend({
     start_task_id: ['string',true],
     end_task_id: ['string'],
     current_task_id: 'string',
-    graph: ['graphlib.Graph', true]
+    graph: ['graphlib.Graph', true],
+    allows_dynamic_settings: ['boolean',false,false]
   },
   collections: {
     schedules: ScheduleCollection,
