@@ -6,6 +6,12 @@ export const TYPE_DUMMY = 'dummy'
 export const TYPE_NOTIFICATION = 'notification'
 export const TYPE_GROUP = 'group'
 
+export const APPROVALS_TARGET_FIXED = 'fixed'
+export const APPROVALS_TARGET_ASSIGNEES = 'assignees'
+export const APPROVALS_TARGET_DYNAMIC = 'dynamic'
+export const APPROVALS_TARGET_INITIATOR = 'initiator'
+
+
 export const GRACE_TIME = Object.freeze([
   {
     secs: 0,

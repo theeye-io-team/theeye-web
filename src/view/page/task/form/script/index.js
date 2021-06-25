@@ -90,7 +90,8 @@ export default TaskFormView.extend({
       'user_inputs',
       'user_inputs_members',
       'show_result',
-      'arguments_type'
+      'arguments_type',
+      'allows_dynamic_settings'
     ]
 
     const requireUserInputs = new CheckboxView({
@@ -321,6 +322,13 @@ export default TaskFormView.extend({
         textAttribute: 'value',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
+      }),
+      new CheckboxView({
+        required: false,
+        visible: false,
+        label: 'Allows to programatically changes the behaviour of the Workflow',
+        name: 'allows_dynamic_settings',
+        value: (this.model.allows_dynamic_settings !== false)
       })
     ]
 

@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import HelpTexts from 'language/help'
+import LanguajeLabels from 'language/labels'
 import InputView from 'components/input-view'
 import ActivatableInputView from 'components/input-view/activatable'
 import AdvancedToggle from 'view/advanced-toggle'
@@ -34,15 +35,29 @@ export default TaskFormView.extend({
       'allows_dynamic_settings'
     ]
 
+    const labels = LanguajeLabels.page.task.form.approval
     const approvalTargetSelectionView = new SelectView({
       required: true,
       visible: true,
       name: 'approvals_target',
       label: 'Who will approve?',
       options: [
-        { id: 'initiator', text: 'Workflow Initiatior' },
-        { id: 'assignees', text: 'Workflow Assignee (Must be assigned programatically when the Process is initiated via API or by a Bot)' },
-        { id: 'fixed'    , text: 'Specific Approvers (Choose below)' }
+        {
+          id: TaskConstants.APPROVALS_TARGET_INITIATOR,
+          text: labels.target_initiator
+        },
+        {
+          id: TaskConstants.APPROVALS_TARGET_ASSIGNEES,
+          text: labels.target_assignees
+        },
+        {
+          id: TaskConstants.APPROVALS_TARGET_DYNAMIC,
+          text: labels.target_dynamic
+        },
+        {
+          id: TaskConstants.APPROVALS_TARGET_FIXED,
+          text: labels.target_fixed
+        }
       ],
       value: (this.model.approvals_target || 'fixed'),
     })
@@ -173,7 +188,7 @@ export default TaskFormView.extend({
         visible: false,
         label: 'Allows to programatically changes the behaviour of the Workflow',
         name: 'allows_dynamic_settings',
-        value: this.model.allows_dynamic_settings || false
+        value: (this.model.allows_dynamic_settings !== false)
       })
     ]
 
