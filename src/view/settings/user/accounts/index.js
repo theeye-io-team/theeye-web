@@ -111,7 +111,7 @@ export default View.extend({
     this.renderWithTemplate(this)
 
     this.renderSubview(
-      new SocialConnection({ name: 'Google +', provider: 'google' }),
+      new SocialConnection({ name: 'Google', provider: 'google' }),
       this.queryByHook('connection-container')
     )
   }

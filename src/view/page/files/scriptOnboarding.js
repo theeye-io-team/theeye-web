@@ -45,7 +45,7 @@ class ScriptOnBoarding {
           }
         },
         {
-          target: this.parent.exampleBtnView.el,
+          target: this.parent.boilerplateBtnView.el,
           title: "Script Tutorial",
           content: "Click here to load an example for the current filename extension.",
           placement: "right",

@@ -67,10 +67,10 @@ export default FormView.extend({
     // render order mathers
     this.renderHelp()
     this.renderTips()
-    
-    this.renderSubview(
-      new BoilerplateButtonView({ onClickButton: this.loadBoilerplate })
-    )
+    this.boilerplateBtnView = new BoilerplateButtonView({
+      onClickButton: this.loadBoilerplate
+    })
+    this.renderSubview( this.boilerplateBtnView )
 
     this.renderEditor()
 
@@ -97,9 +97,11 @@ export default FormView.extend({
     editorView.codemirror.on('drop', this.onEditorDrop)
 
     this.listenToAndRun(this.filenameInput, 'change:extension', () => {
-      let mimetype = editorView.setEditorMode(this.filenameInput.extension, (err, mimetype) => {
-        this.model.mimetype = mimetype
-      })
+      let mimetype = editorView.setEditorMode(
+        this.filenameInput.extension, (err, mimetype) => {
+          this.model.mimetype = mimetype
+        }
+      )
     })
 
     this.listenToAndRun(this.model, 'change:data', () => {
