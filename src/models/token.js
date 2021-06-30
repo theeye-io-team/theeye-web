@@ -12,7 +12,8 @@ const Model = AppModel.extend({
   props: {
     id: 'string', // TOKEN ID: id of the member model for this integration
     token: 'string',
-    username: 'string'
+    username: 'string',
+    name: 'string'
   }
 })
 

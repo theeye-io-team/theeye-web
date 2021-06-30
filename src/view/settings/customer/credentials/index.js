@@ -203,7 +203,7 @@ const TokensView = View.extend({
   template: `
     <div class="row">
       <div class="col-xs-3">
-        <label data-hook="username"style="overflow:hidden;text-overflow:ellipsis;"></label>
+        <label data-hook="name"style="overflow:hidden;text-overflow:ellipsis;"></label>
       </div>
       <div class="input-group col-xs-8" style="float:left">
         <input readonly type="text" data-hook="token" class="form-control blurry-input cursor-pointer blurry-text">
@@ -222,7 +222,7 @@ const TokensView = View.extend({
     </div>
   `,
   bindings: {
-    'model.username': { hook: 'username' },
+    'model.name': { hook: 'name' },
     'model.token': {
       type: 'attribute',
       name: 'value',
@@ -250,7 +250,7 @@ const TokensView = View.extend({
   removeToken (event) {
     event.preventDefault()
     event.stopPropagation()
-    bootbox.confirm(`Delete integration token: ${this.model.username}`,
+    bootbox.confirm(`Delete integration token: ${this.model.name}`,
       (confirmed) => {
         if (!confirmed) { return }
         TokenActions.remove(this.model.id)

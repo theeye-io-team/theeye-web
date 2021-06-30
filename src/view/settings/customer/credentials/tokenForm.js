@@ -6,11 +6,11 @@ export default FormView.extend({
     this.fields = [
       new InputView({
         label: 'Token name *',
-        name: 'username',
+        name: 'name',
         required: true,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        value: this.model.username
+        value: this.model.name
       }),
     ]
     FormView.prototype.initialize.apply(this, arguments)
@@ -20,6 +20,6 @@ export default FormView.extend({
     this.query('form').classList.add('form-horizontal')
   },
   focus () {
-    this.query('input[name=username]').focus()
+    this.query('input[name=name]').focus()
   }
 })
