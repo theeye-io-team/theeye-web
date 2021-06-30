@@ -18,7 +18,7 @@ export default {
         })
         App.state.members.remove( member )
       },
-      error: function(err) {
+      error (member, response) {
         App.state.loader.visible = false
         bootbox.alert({
           title: 'Error',
@@ -42,7 +42,7 @@ export default {
         })
         App.state.members.add(response, {merge: true})
       },
-      error: function(err) {
+      error (member, response) {
         App.state.loader.visible = false
         bootbox.alert({
           title: 'Error',
@@ -71,10 +71,10 @@ export default {
         App.state.members.add(member)
         bootbox.alert({ title: 'Success', message })
       },
-      error: (err, response) => {
+      error (member, response) {
         App.state.loader.visible = false
         var message = 'Error sending user invitation.'
-        if (err.code === 'AlreadyActiveMember') {
+        if (response[0].body.code === 'AlreadyActiveMember') {
           message = 'The user is already a member of the organization.'
         }
         bootbox.alert({ title: 'Error', message })
