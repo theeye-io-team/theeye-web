@@ -4,6 +4,8 @@ import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
 import './styles.less'
 
+import DOMPurify from 'dompurify'
+
 export default PanelButton.extend({
   initialize (options) {
     this.title = 'View workflow'
@@ -65,7 +67,7 @@ const WorkflowViewContainer = View.extend({
       <div class="row" style="margin-bottom:10px;">
         <div class="col-sm-12">
           <span style="font-weight:400;"> Description: </span>
-          <span data-hook="description"> </span>
+          <span data-hook="saneDescription"> </span>
         </div>
       </div>
       <div class="row">
@@ -75,12 +77,23 @@ const WorkflowViewContainer = View.extend({
   `,
   bindings: {
     'name': { hook:'name' },
-    'description': { hook:'description' }
+    'saneDescription': {
+      type: 'innerHTML',
+      hook: 'saneDescription'
+    }
   },
   props: {
     name: 'string',
     description: 'string',
     graph: 'state'
+  },
+  derived: {
+    saneDescription: {
+      deps: ['description'],
+      fn () {
+        return DOMPurify.sanitize(this.description)
+      }
+    }
   },
   render () {
     View.prototype.render.apply(this, arguments)
