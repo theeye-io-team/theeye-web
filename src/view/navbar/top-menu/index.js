@@ -9,10 +9,10 @@ import './style.less'
 const UserProfile = View.extend({
   template: `
     <div class="profile-data">
-      <h4>
-        <span data-hook="username"></span>
+      <div class="user-cred">
+        <span class="username" data-hook="username"></span>
         <span class="small" data-hook="credential"></span>
-      </h4>
+      </div>
       <span data-hook="name" href="#"></span>
       <span data-hook="email" href="#"></span>
     </div>
