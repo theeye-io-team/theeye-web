@@ -89,7 +89,7 @@ const Workflow = AppModel.extend({
     end_task_id: ['string'],
     current_task_id: 'string',
     graph: ['graphlib.Graph', true],
-    allows_dynamic_settings: ['boolean',false,false]
+    allows_dynamic_settings: ['boolean',false]
   },
   collections: {
     schedules: ScheduleCollection,

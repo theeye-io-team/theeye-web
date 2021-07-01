@@ -51,6 +51,16 @@ export default FormView.extend({
       }
     })
 
+    // backward compatibility.
+    // new task will be forbidden.
+    // old tasks will only be false if it is explicitly false
+    let allowsDynamicSettings
+    if (isNew) {
+      allowsDynamicSettings = false
+    } else {
+      allowsDynamicSettings = (this.model.allows_dynamic_settings !== false)
+    }
+
     this.fields = [
       new InputView({
         label: 'Name *',
@@ -119,7 +129,7 @@ export default FormView.extend({
         visible: false,
         label: 'Allows to programatically changes the behaviour of the Workflow',
         name: 'allows_dynamic_settings',
-        value: this.model.allows_dynamic_settings || false
+        value: allowsDynamicSettings
       })
     ]
 
