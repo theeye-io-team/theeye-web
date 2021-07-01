@@ -26,7 +26,23 @@ const actions = {
   },
   changeCustomer (id) {
     const customer = App.state.session.user.customers.get(id)
-    if (customer.id === App.state.session.customer.id) { return }
+    if (customer.id === App.state.session.customer.id) {
+      return
+    }
+
+    /**
+     * @summary replace current session customer
+     */
+    const sessionReload = (access_token) => {
+      const session = App.state.session
+      session.access_token = access_token
+      session.customer.clear()
+      actions.fetchProfile(() => {
+        App.state.reset()
+        App.Router.reload()
+        App.sockets.connect({ access_token: session.access_token })
+      })
+    }
 
     App.sockets.disconnect(() => {
       App.state.loader.visible = true
@@ -39,8 +55,7 @@ const actions = {
         done: (response, xhr) => {
           App.state.loader.visible = false
           if (xhr.status === 200) {
-            App.state.session.access_token = response.access_token
-            sessionReload()
+            sessionReload(response.access_token)
           }
         },
         fail: (err, xhr) => {
@@ -74,74 +89,64 @@ const actions = {
         headers: {
           Accept: 'application/json;charset=UTF-8'
         },
-        done: (data, xhr) => {
-          App.state.session.access_token = data.access_token
+        done (data, xhr) {
+          const session = App.state.session
+          session.access_token = data.access_token
+
+          // reconnection
+          App.sockets.once('disconnected', () => {
+            setTimeout(() => {
+              App.sockets.connect({ access_token: session.access_token })
+            }, 500)
+          })
+          App.sockets.disconnect()
+
           resolve()
         },
-        fail: (err,xhr) => {
+        fail (err, xhr) {
           logger.log('session refresh failure')
-          App.state.session.access_token = null
-          App.state.session.logged_in = false
+          sessionEnd()
           reject(err)
         }
       })
     })
   },
   fetchProfile (next) {
-    const sessionState = App.state.session
-
-    const setSession = (profile) => {
-      logger.log('updating profile')
-      let customer = new App.Models.Customer.Model(profile.current_customer, { parse: true })
-      sessionState.customer.set( customer.serialize() )
-      sessionState.user.set(profile)
-      sessionState.member_id = profile.member_id
-      const customers = profile.customers
-      if (customers) {
-        sessionState.user.customers.reset()
-        sessionState.user.customers.set(customers)
-      }
-      sessionState.logged_in = true
-      sessionState.protocol = profile.protocol
-    }
-
     XHR.send({
       method: 'get',
       url: `${App.config.api_url}/session/profile`,
       done: (profile) => {
         logger.log('user profile data fetch success')
-        setSession(profile)
+        sessionReset(profile)
         next()
       },
       fail: (err, xhr) => {
         logger.log('user profile data fetch failure')
-        sessionState.access_token = null
-        sessionState.logged_in = false
+        sessionEnd()
         next(err)
       }
     })
   },
-  reFetchProfile (next) {
-    const sessionState = App.state.session
-    XHR.send({
-      method: 'get',
-      url: `${App.config.api_url}/session/profile`,
-      done: (profile) => {
-        logger.log('profile data fetch success')
-        logger.log('updating profile')
-        const customer = new App.Models.Customer.Model(profile.current_customer, { parse: true })
-        sessionState.customer.set( customer.serialize() )
-        sessionState.user.set(profile)
-        next()
-      },
-      fail: (err,xhr) => {
-        logger.log('user data fetch failure')
-        sessionState.access_token = null
-        sessionState.logged_in = false
-        next(err)
-      }
-    })
-  },
+  //reFetchProfile (next) {
+  //  const sessionState = App.state.session
+  //  XHR.send({
+  //    method: 'get',
+  //    url: `${App.config.api_url}/session/profile`,
+  //    done: (profile) => {
+  //      logger.log('profile data fetch success')
+  //      sessionReset(profile)
+  //      //const customer = new App.Models.Customer.Model(profile.current_customer, { parse: true })
+  //      //sessionState.customer.set( customer.serialize() )
+  //      //sessionState.user.set(profile)
+  //      next()
+  //    },
+  //    fail: (err,xhr) => {
+  //      logger.log('user data fetch failure')
+  //      sessionEnd()
+  //      next(err)
+  //    }
+  //  })
+  //},
   getPassports () {
     XHR.send({
       url: `${App.config.api_url}/session/passports`,
@@ -247,18 +252,29 @@ const actions = {
 
 export default actions
 
-/**
- * @summary replace current session customer
- */
-const sessionReload = () => {
-  const session = App.state.session
-  session.customer.clear()
-  actions.reFetchProfile(() => {
-    App.state.reset()
-    App.Router.reload()
-    // reconnect sockets using the new access token
-    App.sockets.connect({ access_token: session.access_token })
-  })
+const sessionReset = (profile) => {
+  logger.log('updating session')
+  const sessionState = App.state.session
+
+  const customer = new App.Models.Customer.Model(profile.current_customer, { parse: true })
+  sessionState.customer.set( customer.serialize() ) // update current customer
+  sessionState.user.set(profile) // update user profile
+  sessionState.member_id = profile.member_id
+  sessionState.logged_in = true
+  sessionState.protocol = profile.protocol
+
+  // udpate customers list
+  const customers = profile.customers
+  if (customers) {
+    sessionState.user.customers.reset()
+    sessionState.user.customers.set(customers)
+  }
+}
+
+const sessionEnd = () => {
+  const sessionState = App.state.session
+  sessionState.access_token = null
+  sessionState.logged_in = false
 }
 
 const buildExcludeMap = (exclude) => {

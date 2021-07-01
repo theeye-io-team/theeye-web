@@ -8,8 +8,7 @@ import * as TopicConstants from 'constants/topic'
 import loggerModule from 'lib/logger'; const logger = loggerModule('app:sockets')
 
 export default () => {
-  // initialize sails sockets
-  let session = App.state.session
+  const session = App.state.session
 
   App.sockets = createWrapper()
 
@@ -17,19 +16,21 @@ export default () => {
     const logged_in = session.logged_in
     if (logged_in === undefined) { return }
     if (logged_in === true) {
-      App.sockets.connect({ access_token: session.access_token }, err => { })
+      App.sockets.connect({ access_token: session.access_token })
     } else {
       App.sockets.disconnect()
     }
   })
 
   let numAttempts = 0
-  let startTime
+  let disconnectTime
   App.sockets.on('disconnected', () => {
-    startTime = new Date().getTime()
+    logger.log('socket disconnected')
+    disconnectTime = new Date().getTime()
   })
 
   App.sockets.on('reconnecting', (attempt) => {
+    logger.log('reconnecting')
     numAttempts++
     App.state.alerts.danger(`sockets disconnected, reconnecting #attemp ${numAttempts}...`)
   })
@@ -37,7 +38,7 @@ export default () => {
   App.sockets.on('reconnect', () => {
     numAttempts = 0
     let timeUnit = 'seconds'
-    let endSecs = (new Date().getTime() - startTime) / 1000
+    let endSecs = (new Date().getTime() - disconnectTime) / 1000
     if (endSecs > 60) {
       endSecs = endSecs / 60
       timeUnit = 'minutes'

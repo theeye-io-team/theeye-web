@@ -24,7 +24,6 @@
  *
  */
 import io from 'socket.io-client'
-import App from 'ampersand-app'
 import Events from 'ampersand-events'
 import loggerModule from 'lib/logger'; const logger = loggerModule('eye::sockets')
 
@@ -38,50 +37,58 @@ function SocketsWrapper (options) {
   this.config = options.config
 
   Object.assign(this, Events)
+
+  // get a socket and wait connected event
+  this.on('connected', () => {
+    this.autosubscribe({})
+  })
+
   return this
 }
 
 export default SocketsWrapper
 
 SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
-  connect (payload, done) {
-    let socket = this.socket
-
-    // get a socket and wait connected event
-    this.on('connected', () => {
-      this.autosubscribe({})
-    })
-
-    if (!socket) {
+  connect ({ access_token }) {
+    if (!this.socket) {
       logger.log('connecting socket client')
+      let url = this.config.url
 
-      _connect({
-        url: this.config.url,
-        access_token: payload.access_token
-      }, (err, socket) => {
-        this.socket = socket
-        bindEvents(socket, this, this.events)
-        done && done(null, socket)
-      })
+      // Ensure URL has no trailing slash
+      url = url ? url.replace(/(\/)$/, '') : undefined
+
+      // Initiate a socket connection
+      let socket = io(url, { query: { access_token } })
+
+      bindEvents(socket, this, this.events)
+      this.socket = socket
     } else {
-      if (!socket.connected) { // probably a re-login
+      const socket = this.socket
+      if (!socket.connected) {
         logger.log('reconnecting socket')
-        socket.io.opts.query.access_token = payload.access_token
+        socket.io.opts.query.access_token = access_token
         socket.connect()
-        done && done(null, socket)
       }
     }
   },
 
   disconnect (done) {
-    this.off() // shutdown all event listeners
-    let socket = this.socket
-    if (!socket) { return }
-    if (socket.connected) {
-      this.once('disconnected', done)
-      //this.unsubscribe({}, socket.disconnect)
-      socket.disconnect()
+    const socket = this.socket
+    //this.off() // shutdown all event listeners
+
+    this.once('disconnected', done)
+
+    if (!socket) {
+      this.trigger('disconnected')
+      return
     }
+    if (!socket.connected) {
+      this.trigger('disconnected')
+      return
+    }
+
+    //this.unsubscribe({}, socket.disconnect)
+    socket.disconnect()
   },
 
   connected () {
@@ -167,6 +174,10 @@ const bindEvents = (socket, emitter, events) => {
   //  emitter.trigger(arguments[0], arguments[1])
   //}
 
+  /**
+   * 'connect' event is triggered when the socket establishes a connection
+   *  successfully.
+   */
   socket.on('connect', function () {
     emitter.trigger('connected')
   })
@@ -186,30 +197,5 @@ const bindEvents = (socket, emitter, events) => {
   return
 }
 
-const _connect = (config, next) => {
-  let { url, access_token } = config
-
-  // Ensure URL has no trailing slash
-  url = url ? url.replace(/(\/)$/, '') : undefined
-
-  // Initiate a socket connection
-  const socket = io(url, { query: { access_token } })
-
-  /**
-   * 'connect' event is triggered when the socket establishes a connection
-   *  successfully.
-   */
-  socket.on('connect', () => {
-  })
-
-  socket.on('reconnect', function(transport) {
-  })
-
-  socket.on('connect_error', function (err) {
-  })
-
-  socket.on('reconnecting', function(attempt) {
-  })
-
-  if (next) { next(null, socket) } // use callback to ensure socket is defined
+const _connect = (config) => {
 }
