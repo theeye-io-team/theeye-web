@@ -169,12 +169,10 @@ export default View.extend({
 
     // in sync with the session
     this.customersList = this.renderCollection(
-      App.state.session.user.customers,
+      App.state.session.customers,
       CustomerItemList,
       this.queryByHook('customers-container')
     )
-
-    this.customersListViews = this.customersList.views
 
     this.listenToAndRun(App.state.sideMenu, 'change:customerSearch', function () {
       this.filterViews(App.state.sideMenu.customerSearch)
@@ -188,7 +186,7 @@ export default View.extend({
 
     const searchPattern = new RegExp(search,'i')
 
-    this.customersListViews.forEach(view => {
+    this.customersList.views.forEach(view => {
       const model = view.model
 
       view.show = (
@@ -198,7 +196,7 @@ export default View.extend({
     })
   },
   showAllViews () {
-    this.customersListViews.forEach(view => view.show = true)
+    this.customersList.views.forEach(view => view.show = true)
   },
 })
 

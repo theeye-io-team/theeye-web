@@ -25,7 +25,7 @@ const actions = {
     App.state.alerts.success('Logged Out.','See you soon')
   },
   changeCustomer (id) {
-    const customer = App.state.session.user.customers.get(id)
+    const customer = App.state.session.customers.get(id)
     if (customer.id === App.state.session.customer.id) {
       return
     }
@@ -266,8 +266,8 @@ const sessionReset = (profile) => {
   // udpate customers list
   const customers = profile.customers
   if (customers) {
-    sessionState.user.customers.reset()
-    sessionState.user.customers.set(customers)
+    sessionState.customers.reset(customers)
+    //sessionState.customers.set()
   }
 }
 

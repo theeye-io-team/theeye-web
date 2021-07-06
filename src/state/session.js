@@ -28,6 +28,11 @@ export default AmpersandState.extend({
  // why this prop name is camelcase when all other properties are underscore separated? why?, why ?!!
     licenseExpired: ['boolean', true, false]
   },
+  collections: {
+    customers: function (models, options) {
+      return new App.Models.Customer.Collection(models, options)
+    }
+  },
   derived: {
     show_account_actions: {
       deps: ['protocol'],
@@ -95,7 +100,7 @@ export default AmpersandState.extend({
     this.unset('show_account_actions') // @TODO: is this required here?
 
     // mantein user & customer references
-    this.user.customers.reset()
+    this.customers.reset()
     this.user.clear()
     this.customer.clear()
   },

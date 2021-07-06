@@ -60,11 +60,11 @@ const Model = AppModel.extend({
     show: ['boolean', false, true],
     selected: ['boolean', false, false]
   },
-  collections: {
-    customers: function (models, options) {
-      return new App.Models.Customer.Collection(models, options)
-    }
-  }
+  //collections: {
+  //  customers: function (models, options) {
+  //    return new App.Models.Customer.Collection(models, options)
+  //  }
+  //}
 })
 
 const Collection = AppCollection.extend({

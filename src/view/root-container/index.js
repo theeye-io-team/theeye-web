@@ -82,9 +82,9 @@ export default View.extend({
       new Navbar({ el: this.query('nav') })
     )
 
-    this.registerSubview(
-      new Menu({ el: this.queryByHook('menu-container') })
-    )
+    //this.registerSubview(
+    //  new Menu({ el: this.queryByHook('menu-container') })
+    //)
 
     this.renderSubview(
       new PopupView({}), this.queryByHook('popup')
@@ -102,6 +102,7 @@ export default View.extend({
     this.listenToAndRun(App.state.session, 'change:logged_in', () => {
       this.updateLoggedInComponents(App.state.session)
     })
+
     this.listenToAndRun(App.state.navbar, 'change:menuSwitch', () => {
       this.menu_switch = App.state.navbar.menuSwitch
     })
@@ -121,10 +122,14 @@ export default View.extend({
       this.menu,
       this.queryByHook('menu-container')
     )
+
     this.queryByHook('page-container').classList.remove('page-container-nomenu')
   },
   destroyLoggedInComponents () {
-    if (this.menu) this.menu.remove()
+    if (this.menu) {
+      this.menu.remove()
+    }
+
     this.queryByHook('page-container').classList.add('page-container-nomenu')
   }
 })

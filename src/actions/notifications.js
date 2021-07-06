@@ -101,7 +101,7 @@ export default {
       }
     })
 
-    let popup = output.find(out => out.popup_component)
+    let popup = output.find(out => out && out.popup_component)
     if (popup) {
       popupContent = popup.popup_component
     }
