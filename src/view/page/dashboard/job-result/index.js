@@ -225,12 +225,20 @@ const BaseJobView = View.extend({
     const job = this.job
     if (job.assignee.length > 0) {
       this.assignee = job.assignee.map(user => `${user.username} <${user.email}>`).join(',')
+    } else {
+      this.assignee = 'Not assigned'
     }
+
     if (job.observers.length > 0) {
       this.observers = job.observers.map(user => `${user.username} <${user.email}>`).join(',')
+    } else {
+      this.observers = 'Not assigned'
     }
+
     if (job.owner) {
       this.owner = `${job.owner.username} <${job.owner.email}>`
+    } else {
+      this.owner = 'Not assigned'
     }
   },
   props: {
@@ -246,12 +254,9 @@ const BaseJobView = View.extend({
         <div data-hook="summary-container">
           <h4>State <i data-hook="lifecycle_icon" aria-hidden="true" style="color:#304269;"></i></h4>
           <h4>Lifecycle <b data-hook="lifecycle"></b></h4>
-          <p>
-            <i>Owner</i>
-            <span data-hook="owner"></span>
-          </p>
-          <p><i>Assignee</i> <span data-hook="assignee"></span></p>
-          <p><i>Observers</i> <span data-hook="observers"></span></p>
+          <p><i style="font-weight:bold">Owner</i> <span data-hook="owner"></span></p>
+          <p><i style="font-weight:bold">Assignee</i> <span data-hook="assignee"></span></p>
+          <p><i style="font-weight:bold">Observers</i> <span data-hook="observers"></span></p>
           <p>
             <i class="fa fa-hourglass-start"></i>
             <span data-hook="creationdate"></span>
