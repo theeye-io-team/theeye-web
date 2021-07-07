@@ -256,7 +256,7 @@ const BaseJobView = View.extend({
           <h4>Lifecycle <b data-hook="lifecycle"></b></h4>
           <p><i style="font-weight:bold">Owner</i> <span data-hook="owner"></span></p>
           <p><i style="font-weight:bold">Assignee</i> <span data-hook="assignee"></span></p>
-          <p><i style="font-weight:bold">Observers</i> <span data-hook="observers"></span></p>
+          <p><i style="font-weight:bold">Observers (ACL)</i> <span data-hook="observers"></span></p>
           <p>
             <i class="fa fa-hourglass-start"></i>
             <span data-hook="creationdate"></span>
