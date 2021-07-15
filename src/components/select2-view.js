@@ -342,7 +342,7 @@ export default View.extend({
   getErrorMessage: function () {
     var message = ''
     if (this.required) {
-      if (!this.value||Number(this.value)===0) {
+      if (this.value === null) {
         return this.requiredMessage
       }
       if (Array.isArray(this.value) && this.value.length === 0) {
