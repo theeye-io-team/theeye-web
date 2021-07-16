@@ -451,15 +451,6 @@ SummaryJobsMap['DummyJob'] = DummyJobSummary
 SummaryJobsMap['NotificationJob'] = NotificationJobSummary
 SummaryJobsMap['ApprovalJob'] = ApprovalJobSummary
 
-//function stripHtml (html) {
-//  if (DOMParser) {
-//    var doc = new DOMParser().parseFromString(html, 'text/html')
-//    return doc.body.textContent || ""
-//  } else {
-//    return escapeHtml(html)
-//  }
-//}
-
 const escapeHtml = (html) => {
   const map = {
     '&': '&amp;',

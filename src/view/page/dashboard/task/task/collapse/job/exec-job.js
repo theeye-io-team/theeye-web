@@ -106,7 +106,12 @@ export const ExecOnHoldJob = BaseExec.extend({
         }
       }
     }
-    if (this.model.task.cancel_enabled === true && this.model.task.cancel_label !== '') {
+
+    if (
+      this.model.task.cancellable !== false &&
+      this.model.task.cancel_enabled === true &&
+      this.model.task.cancel_label !== ''
+    ) {
       buttons.cancel = {
         label: this.model.task.cancel_label || 'Cancel',
         className: 'btn btn-default',
@@ -153,23 +158,28 @@ export const ExecOnHoldJob = BaseExec.extend({
     })
   },
   updateApprovalRequest (done) {
-    const message = `Cancel the approval request?`
-
-    bootbox.dialog({
-      message: message,
-      backdrop: true,
-      //closeButton: (App.state.session.user.credential==='root'),
-      buttons: {
-        cancel: {
-          label: 'Cancel request',
-          className: 'btn btn-danger',
-          callback: () => {
-            App.actions.job.cancel(this.model)
-            if (done) done()
+    if (this.model.task.cancellable !== false) {
+      bootbox.dialog({
+        message: 'Cancel the approval request?',
+        backdrop: true,
+        //closeButton: (App.state.session.user.credential==='root'),
+        buttons: {
+          cancel: {
+            label: 'Cancel request',
+            className: 'btn btn-danger',
+            callback: () => {
+              App.actions.job.cancel(this.model)
+              done && done()
+            }
           }
         }
-      }
-    })
+      })
+    } else {
+      bootbox.alert({
+        message: `Waiting approvals <br/><br/>${escapeHtml(this.model.approversUsers.toString())}`,
+        backdrop: true
+      })
+    }
   },
   requestInput (isPendingCheck, done) {
     done || (done=()=>{})
@@ -179,26 +189,28 @@ export const ExecOnHoldJob = BaseExec.extend({
           App.actions.onHold.skip(this.model)
           return done()
         } else {
-          // ask confirmation
-          bootbox.confirm({
-            message: 'Do you want to cancel the execution?',
-            backdrop: true,
-            buttons: {
-              cancel: {
-                label: 'No'
+          if(this.model.task.cancellable !== false) {
+            // ask confirmation
+            bootbox.confirm({
+              message: 'Do you want to cancel the execution?',
+              backdrop: true,
+              buttons: {
+                cancel: {
+                  label: 'No'
+                },
+                confirm: {
+                  label: 'Yes',
+                  className: 'btn-danger'
+                }
               },
-              confirm: {
-                label: 'Yes',
-                className: 'btn-danger'
+              callback: (confirmed) => {
+                if (confirmed) {
+                  App.actions.job.cancel(this.model)
+                  return done()
+                }
               }
-            },
-            callback: (confirmed) => {
-              if (confirmed) {
-                App.actions.job.cancel(this.model)
-                return done()
-              }
-            }
-          })
+            })
+          }
         }
       } else {
         App.actions.job.submitInputs(this.model, jobArgs)
@@ -219,6 +231,7 @@ export const ExecOnHoldJob = BaseExec.extend({
     const modal = new Modalizer({
       buttons: true,
       confirmButton: 'Run',
+      cancelButton: this.model.task.cancellable === false ? "Close" : "Cancel",
       title: `Run task: ${task.name}`,
       bodyView: form
     })
@@ -361,4 +374,16 @@ const buildApprovalMessage = (model) => {
   })
 
   return message
+}
+
+const escapeHtml = (html) => {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+
+  return html.replace(/[&<>"']/g, function(m) { return map[m]; });
 }

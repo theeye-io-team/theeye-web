@@ -86,6 +86,7 @@ export default TaskFormView.extend({
       'copy_task',
       'timeout',
       'multitasking',
+      'cancellable',
       'env',
       'user_inputs',
       'user_inputs_members',
@@ -281,6 +282,13 @@ export default TaskFormView.extend({
         label: 'Multitasking',
         name: 'multitasking',
         value: this.model.multitasking
+      }),
+      new CheckboxView({
+        required: false,
+        visible: false,
+        label: 'Is cancellable',
+        name: 'cancellable',
+        value: this.model.cancellable
       }),
       requireUserInputs,
       userInputsMembers,

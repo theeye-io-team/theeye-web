@@ -20,7 +20,7 @@ import EventsSelectView from 'view/events-select'
 import SelectView from 'components/select2-view'
 
 export default TaskFormView.extend({
-  initialize (options) {
+  initialize(options) {
     const isNewTask = Boolean(this.model.isNew())
 
     this.advancedFields = [
@@ -30,12 +30,13 @@ export default TaskFormView.extend({
       'copy_task',
       'success_label',
       'failure_label',
+      'cancellable',
       'cancel_label',
       'ignore_label',
       'allows_dynamic_settings'
     ]
 
-    const labels = LanguajeLabels.page.task.form.approval
+    const approval_labels = LanguajeLabels.page.task.form.approval
     const approvalTargetSelectionView = new SelectView({
       required: true,
       visible: true,
@@ -44,25 +45,25 @@ export default TaskFormView.extend({
       options: [
         {
           id: TaskConstants.APPROVALS_TARGET_INITIATOR,
-          text: labels.target_initiator
+          text: approval_labels.target_initiator
         },
         {
           id: TaskConstants.APPROVALS_TARGET_ASSIGNEES,
-          text: labels.target_assignees
+          text: approval_labels.target_assignees
         },
         {
           id: TaskConstants.APPROVALS_TARGET_DYNAMIC,
-          text: labels.target_dynamic
+          text: approval_labels.target_dynamic
         },
         {
           id: TaskConstants.APPROVALS_TARGET_FIXED,
-          text: labels.target_fixed
+          text: approval_labels.target_fixed
         }
       ],
       value: (this.model.approvals_target || 'fixed'),
     })
 
-    const membersSelectView = new MembersSelectView({
+    const approverSelectView = new MembersSelectView({
       required: (this.model.approvals_target === 'fixed'),
       visible: true,
       name: 'approvers',
@@ -72,21 +73,50 @@ export default TaskFormView.extend({
       value: this.model.approvers
     })
 
-    membersSelectView.listenTo(
+    approverSelectView.listenTo(
       approvalTargetSelectionView,
       'change:value',
       () => {
         if (approvalTargetSelectionView.value === 'fixed') {
-          membersSelectView.enabled = true
-          membersSelectView.required = true
-          membersSelectView.visible = true
+          approverSelectView.enabled = true
+          approverSelectView.required = true
+          approverSelectView.visible = true
         } else {
-          membersSelectView.enabled = false
-          membersSelectView.required = false
-          membersSelectView.visible = false
+          approverSelectView.enabled = false
+          approverSelectView.required = false
+          approverSelectView.visible = false
         }
       }
     )
+
+    const cancelCheckbox = new CheckboxView({
+      required: false,
+      visible: false,
+      label: 'Is cancellable by user',
+      name: 'cancellable',
+      value: this.model.cancellable
+    })
+
+    const cancelLabel = new ActivatableInputView({
+      defaultText: 'Cancel',
+      label: 'Cancel Buton Label',
+      name: 'cancel_label',
+      required: false,
+      visible: false,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      value: this.model.cancel_label,
+      disabled: !this.model.cancellable
+    })
+
+    cancelLabel.listenTo(cancelCheckbox, 'change:value', () => {
+      if (cancelCheckbox.value === true) {
+        cancelLabel.disabled = false
+      } else {
+        cancelLabel.setValue("") 
+        cancelLabel.disabled = true
+      }
+    })
 
     // backward compatibility.
     // new task will be forbidden.
@@ -109,7 +139,7 @@ export default TaskFormView.extend({
         value: this.model.name,
       }),
       approvalTargetSelectionView,
-      membersSelectView,
+      approverSelectView,
       new TagsSelectView({
         required: false,
         name: 'tags',
@@ -132,7 +162,8 @@ export default TaskFormView.extend({
         }
       }),
       new ActivatableInputView({
-        label: 'Success Label',
+        defaultText: 'Approve',
+        label: 'Success Button Label',
         visible: false,
         name: 'success_label',
         required: true,
@@ -141,7 +172,8 @@ export default TaskFormView.extend({
         value: this.model.success_label
       }),
       new ActivatableInputView({
-        label: 'Failure Label',
+        defaultText: 'Reject',
+        label: 'Failure Button Label',
         visible: false,
         name: 'failure_label',
         required: true,
@@ -149,17 +181,11 @@ export default TaskFormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.failure_label
       }),
+      cancelCheckbox,
+      cancelLabel,
       new ActivatableInputView({
-        label: 'Cancel Label',
-        visible: false,
-        name: 'cancel_label',
-        required: false,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        value: this.model.cancel_label
-      }),
-      new ActivatableInputView({
-        label: 'Ignore Label',
+        defaultText: 'Ignore',
+        label: 'Ignore Button Label',
         visible: false,
         name: 'ignore_label',
         required: false,
@@ -209,7 +235,7 @@ export default TaskFormView.extend({
         visible: false
       })
       this.fields.splice(5, 0, copySelect)
-      this.listenTo(copySelect,'change',() => {
+      this.listenTo(copySelect, 'change', () => {
         if (copySelect.value) {
           let task = App.state.tasks.get(copySelect.value)
           this.setWithTask(task)
@@ -219,7 +245,7 @@ export default TaskFormView.extend({
 
     TaskFormView.prototype.initialize.apply(this, arguments)
   },
-  render () {
+  render() {
     TaskFormView.prototype.render.apply(this, arguments)
 
     this.query('form').classList.add('form-horizontal')
@@ -227,6 +253,8 @@ export default TaskFormView.extend({
     if (this.model.isNew()) {
       this.addHelpIcon('copy_task')
     }
+    this.addHelpIcon('cancellable')
+    this.addHelpIcon('allows_dynamic_settings')
     this.addHelpIcon('name')
     this.addHelpIcon('description')
     this.addHelpIcon('tags')
@@ -268,7 +296,7 @@ export default TaskFormView.extend({
     })
   },
   submit (next) {
-    next||(next=()=>{})
+    next || (next = () => { })
 
     this.beforeSubmit()
     if (!this.valid) { return next(null, false) }
@@ -280,25 +308,17 @@ export default TaskFormView.extend({
       App.actions.task.create(data)
     }
 
-    next(null,true)
+    next(null, true)
     this.trigger('submitted')
   },
   prepareData (data) {
-    let f = Object.assign({}, data)
+    const f = Object.assign({}, data)
     f.type = TaskConstants.TYPE_APPROVAL
 
-    if (data.cancel_label === '') {
-      data.cancel_enabled = false
-    }
-    if (data.success_label === '') {
-      data.success_enabled = false
-    }
-    if (data.failure_label === '') {
-      data.failure_enabled = false
-    }
-    if (data.ignore_label === '') {
-      data.ignore_enabled = false
-    }
+    f.cancel_enabled = (data.cancel_label !== '' && data.cancellable !== false)
+    f.success_enabled = (data.success_label !== '')
+    f.failure_enabled = (data.failure_label !== '')
+    f.ignore_enabled = (data.ignore_label !== '')
     return f
   }
 })

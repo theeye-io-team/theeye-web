@@ -52,7 +52,8 @@ const Modalizer = View.extend({
     class: 'string',
     bodyView: 'object',
     title: ['string',false,'MODAL TITLE'],
-    confirmButton: ['string',false,'CONFIRM'],
+    confirmButton: ['string',false,'Confirm'],
+    cancelButton: ['string',false,'Cancel'],
     visible: ['boolean',false,false],
     backdrop: ['boolean',false,true]
   },
@@ -122,7 +123,7 @@ const Modalizer = View.extend({
   renderButtons () {
     if (this.buttons) {
       this.renderSubview(
-        new ButtonsView({ confirmButton: this.confirmButton }),
+        new ButtonsView({ confirmButton: this.confirmButton, cancelButton: this.cancelButton }),
         this.queryByHook('buttons-container')
       )
     }
@@ -199,7 +200,7 @@ const ButtonsView = View.extend({
           class="btn btn-default"
           data-hook="cancel"
           data-dismiss="modal">
-          Cancel
+          
         </button>
       </div>
       <div class="col-xs-12 col-md-6">
@@ -213,12 +214,20 @@ const ButtonsView = View.extend({
   props: {
     confirmButton: {
       type: 'string',
-      default: 'CONFIRM'
+      default: 'Confirm'
+    },
+    cancelButton: {
+      type: 'string',
+      default: 'Cancel'
     }
   },
   bindings: {
     confirmButton: {
       hook: 'confirm',
+      type: 'text'
+    },
+    cancelButton: {
+      hook: 'cancel',
       type: 'text'
     }
   }

@@ -1,6 +1,6 @@
 
 import View from 'ampersand-view'
-import Input from 'ampersand-input-view'
+import InputView from 'ampersand-input-view'
 
 export default View.extend({
   template: `
@@ -37,6 +37,7 @@ export default View.extend({
     }
   },
   props: {
+    defaultText: ['string', false, ''],
     placeholder: ['string', true, 'Leave it empty to disable'],
     visible: ['boolean',false,true],
     label: 'string',
@@ -45,7 +46,8 @@ export default View.extend({
     activated: ['boolean',false,false],
     message: 'string',
     showMessage: 'string',
-    required: ['boolean', false, true]
+    required: ['boolean', false, true],
+    disabled: ['boolean', false, false]
   },
   derived: {
     value: {
@@ -83,6 +85,9 @@ export default View.extend({
         if (!this.checkbox.checked) {
           this.checkbox.checked = true
         }
+        if (this.defaultText) {
+          this.input.setValue( this.defaultText )
+        }
       } else {
         if (this.input.value) {
           this.input.setValue('')
@@ -119,6 +124,11 @@ export default View.extend({
     this.checkbox.checked = this.activated
     this.input = this.renderInputView()
     this.input.on('change:valid change:value', this.reportToParent, this);
+
+    this.listenToAndRun(this, 'change:disabled', () => {
+      this.checkbox.disabled = this.disabled
+      this.input.disabled = this.disabled
+    })
   },
   renderInputView () {
     const input = new InputValue({
@@ -173,6 +183,20 @@ export default View.extend({
   }
 })
 
-const InputValue = Input.extend({
+const InputValue = InputView.extend({
+  props: {
+    disabled: ['boolean',false,false]
+  },
+  bindings: Object.assign({}, InputView.prototype.bindings, {
+    disabled: [{
+      selector: 'input',
+      type: 'booleanAttribute',
+      name: 'disabled'
+    }, {
+      selector: 'input',
+      type: 'booleanClass',
+      yes: 'disabled-appearance'
+    }]
+  }),
   template: `<input data-hook="input-value" class="form-control">`
 })
