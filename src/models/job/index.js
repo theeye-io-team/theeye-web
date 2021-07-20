@@ -83,13 +83,14 @@ const BaseJob = AppModel.extend({
   session: {
     owner: 'object',
     assignee: ['array',false, ()=>{ return [] }],
-    observers: ['array',false, ()=>{ return [] }]
+    observers: ['array',false, ()=>{ return [] }],
+    skipInputs: ['boolean', false, false]
   },
   requiresInteraction () {
     const session = App.state.session
-    if (this.lifecycle !== LifecycleConstants.ONHOLD) { return }
+    if (this.lifecycle !== LifecycleConstants.ONHOLD) { return false }
 
-    if (this.user_inputs !== true) { return }
+    if (this.user_inputs !== true) { return false }
 
     if (Array.isArray(this.user_inputs_members) && this.user_inputs_members.length > 0) {
       const members = this.user_inputs_members
@@ -335,9 +336,6 @@ const ApprovalJob = BaseJob.extend({
     result: ApprovalJobResult,
     task: TaskTypeInitializer(TaskConstants.TYPE_APPROVAL)
   },
-  session: {
-    skip: ['boolean', false, false]
-  },
   derived: {
     approversUsers: {
       cache: false,
@@ -366,7 +364,7 @@ const ApprovalJob = BaseJob.extend({
   },
   requiresInteraction () {
     const session = App.state.session
-    if (this.lifecycle !== LifecycleConstants.ONHOLD) { return }
+    if (this.lifecycle !== LifecycleConstants.ONHOLD) { return false }
 
     return this.isApprover(session.user)
   }
@@ -507,6 +505,9 @@ const WorkflowJob = BaseJob.extend({
   },
   isOwner (user) {
     return this.verifyOwnerUser(user)
+  },
+  requiresInteraction() {
+    return this.current_job.requiresInteraction() 
   },
   derived: {
     first_job: {

@@ -153,7 +153,7 @@ export const ExecOnHoldJob = BaseExec.extend({
     bootbox.dialog({
       message: message,
       backdrop: true,
-      closeButton: (App.state.session.user.credential==='root'),
+      closeButton: false,
       buttons
     })
   },
@@ -162,7 +162,6 @@ export const ExecOnHoldJob = BaseExec.extend({
       bootbox.dialog({
         message: 'Cancel the approval request?',
         backdrop: true,
-        //closeButton: (App.state.session.user.credential==='root'),
         buttons: {
           cancel: {
             label: 'Cancel request',
@@ -189,7 +188,7 @@ export const ExecOnHoldJob = BaseExec.extend({
           App.actions.onHold.skip(this.model)
           return done()
         } else {
-          if(this.model.task.cancellable !== false) {
+          if (this.model.task.cancellable !== false) {
             // ask confirmation
             bootbox.confirm({
               message: 'Do you want to cancel the execution?',
@@ -229,10 +228,11 @@ export const ExecOnHoldJob = BaseExec.extend({
 
     const form = new DynamicForm({ fieldsDefinitions: task.task_arguments.models })
     const modal = new Modalizer({
+      //closeButton: false,
       buttons: true,
-      confirmButton: 'Run',
-      cancelButton: this.model.task.cancellable === false ? "Close" : "Cancel",
-      title: `Run task: ${task.name}`,
+      confirmButton: 'Continue',
+      cancelButton: (this.model.task.cancellable === false ? "Close" : "Cancel"),
+      title: `${task.name}`,
       bodyView: form
     })
 

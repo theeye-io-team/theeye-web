@@ -14,6 +14,7 @@ import JobsPaginator from 'view/page/paginator/footer'
 // menu buttons
 import RemoveWorkflowButton from 'view/page/workflow/buttons/remove'
 import EditWorkflowButton from 'view/page/workflow/buttons/edit'
+import ReviewPendingWorkflowsButton from 'view/page/workflow/buttons/refresh'
 import ViewWorkflowButton from 'view/page/workflow/buttons/view'
 import IntegrationsWorkflowButton from 'view/page/workflow/buttons/integrations'
 import ScheduleButton from 'view/buttons/schedule'
@@ -272,6 +273,7 @@ const WorkflowButtonsView = View.extend({
       this.renderSubview(new RemoveWorkflowButton({ model: this.model }), buttons)
       this.renderSubview(new ScheduleButton({ model: this.model }), buttons)
     }
+    this.renderSubview(new ReviewPendingWorkflowsButton({ model: this.model }), buttons)
   }
 })
 

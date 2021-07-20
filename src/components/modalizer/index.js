@@ -27,6 +27,7 @@ const Modalizer = View.extend({
             <div class="modal-content">
               <div class="modal-header">
                 <button type="button"
+                  data-hook="close"
                   class="close"
                   data-dismiss="modal"
                   aria-label="Close">
@@ -46,6 +47,7 @@ const Modalizer = View.extend({
   `,
   autoRender: true,
   props: {
+    closeButton: ['boolean',false,true],
     fade: ['boolean',false,true],
     removeOnHide: ['boolean',false,false],
     buttons: ['boolean',false,false],
@@ -58,6 +60,10 @@ const Modalizer = View.extend({
     backdrop: ['boolean',false,true]
   },
   bindings: {
+    closeButton: {
+      type: 'toggle',
+      hook: 'close'
+    },
     fade: {
       type: 'booleanClass',
       selector: '[data-hook=modalizer-class]>.modal'
@@ -79,6 +85,7 @@ const Modalizer = View.extend({
   events: {
     'click button[data-hook=confirm]':'onClickConfirm',
     'click button[data-hook=cancel]':'onClickCancel',
+    'click button[data-hook=close]':'onClickCancel',
   },
   onClickConfirm () {
     this.trigger('confirm')
@@ -200,7 +207,6 @@ const ButtonsView = View.extend({
           class="btn btn-default"
           data-hook="cancel"
           data-dismiss="modal">
-          
         </button>
       </div>
       <div class="col-xs-12 col-md-6">
