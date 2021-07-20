@@ -10,9 +10,13 @@ export default View.extend({
   },
   template: `
     <div data-component="paginator-footer">
-    <div class="btn btn-primary" data-hook="back-btn">B</div>
-    <span data-hook="jobs-count"></span>
-    <div class="btn btn-primary" data-hook="fwd-btn">F</div>
+    <div class="btn btn-primary" data-hook="back-btn">
+      <i class="fa fa-chevron-left"></i>
+    </div>
+    <span class="jobs-count" data-hook="jobs-count"></span>
+    <div class="btn btn-primary" data-hook="fwd-btn">
+      <i class="fa fa-chevron-right"></i>
+    </div>
       <select class="select right">
         <option value="10">10</option>
         <option value="20">20</option>
