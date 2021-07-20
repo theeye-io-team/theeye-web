@@ -10,6 +10,7 @@ import ScriptOnBoarding from '../scriptOnboarding'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
 import RandomTipView from './random-tip'
+import bootbox from 'bootbox'
 
 export default FormView.extend({
   initialize (options) {
@@ -160,7 +161,42 @@ export default FormView.extend({
   submitForm () {
     this.beforeSubmit()
     if (!this.valid) return
-    this.submitCallback(this.data)
+    
+    App.state.loader.visible = false
+    this.model.linked_models.once('reset', () => {
+      if (this.model.linked_models.models.length > 1) {
+        App.state.loader.visible = false
+        const names = this.model.linked_models.models.map(task => task.name)
+        const message = `
+          <p>This script is referenced by the following tasks:</p>
+          <ul><li>${names.join("</li><li>")}</li></ul>
+          <p>Are you sure you want to save it?</p>`
+        bootbox.confirm({
+          title: 'Save script',
+          message: message,
+          backdrop: true,
+          buttons: {
+            confirm: {
+              label: 'Yes, please',
+              className: 'btn-primary'
+            },
+            cancel: {
+              label: 'I\'m not sure',
+              className: 'btn-default'
+            }
+          },
+          callback: (confirmed) => {
+            if (confirmed===true) {
+              this.submitCallback(this.data)
+            }
+          }
+        })
+      }
+      else this.submitCallback(this.data)
+    })
+    
+    App.state.loader.visible = true
+    App.actions.file.syncLinkedModels(this.model.id, () => {})
   },
   submitCallback (obj) {
     let self = this

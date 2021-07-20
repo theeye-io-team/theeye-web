@@ -148,7 +148,7 @@ export default {
       method: 'get',
       responseType: 'json',
       done: (models, xhr) => {
-    file.is_loading = false
+        file.is_loading = false
         if (xhr.status === 200 && Array.isArray(models)) {
           file.linked_models.reset(models)
           next(null, file)
