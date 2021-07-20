@@ -82,6 +82,7 @@ export default View.extend({
     // update collection length
     this.listenToAndRun(this.model.jobs, 'add remove sync reset', () => {
       this.jobsLength = this.model.jobs.length
+
       if(this.lastPage) {
         debugger
         if (this.model.paginator_first + this.model.paginator_length > this.jobsLength - 1) {
@@ -91,6 +92,11 @@ export default View.extend({
         else {
           this.lastPage = false
         }
+      }
+
+      while(this.jobsLength < this.model.paginator_first) {
+        this.model.paginator_last = this.model.paginator_first
+        this.model.paginator_first = this.model.paginator_first - this.model.paginator_length
       }
     })
   },
