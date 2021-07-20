@@ -3,8 +3,9 @@ import SelectView from 'components/select2-view'
 
 export default SelectView.extend({
   initialize (options) {
+    this.sort = false
     this.options = (options.looptimes || App.state.looptimes)
-    this.label = (options.label || 'Check Interval (mins) *')
+    this.label = (options.label || 'Check Interval*')
     this.unselectedText = (options.unselectedText || 'select the check interval')
     this.multiple = false
     this.tags = false

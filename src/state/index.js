@@ -75,15 +75,15 @@ const CredentialsCollection = ClearCollection.extend({
 const LooptimesCollection = ClearCollection.extend({
   initialize () {
     this.initialState = [
-      { id: 10000, text: '10 seconds' },
-      { id: 15000, text: '0.25' },
-      { id: 30000, text: '0.5' },
-      { id: 60000, text: '1' },
-      { id: 90000, text: '1.5' },
-      { id: 300000, text: '5' },
-      { id: 900000, text: '15' },
-      { id: 1800000, text: '30' },
-      { id: 3600000, text: '60' }
+      { pos:1, id: 10000, text: '10 seconds' },
+      { pos:2, id: 15000, text: '15 seconds' },
+      { pos:3, id: 30000, text: '30 seconds' },
+      { pos:4, id: 60000, text: '60 seconds' },
+      { pos:5, id: 90000, text: '90 seconds' },
+      { pos:6, id: 300000, text: '5 minutes' },
+      { pos:7, id: 900000, text: '15 minutes' },
+      { pos:8, id: 1800000, text: '30 minutes' },
+      { pos:9, id: 3600000, text: '60 minutes' }
     ]
     ClearCollection.prototype.initialize.apply(this, arguments)
   }
