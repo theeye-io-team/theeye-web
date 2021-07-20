@@ -7,6 +7,7 @@ import EditTaskButton from 'view/page/task/buttons/edit'
 import CopyTaskButton from 'view/page/task/buttons/copy'
 import DeleteTaskButton from 'view/page/task/buttons/delete'
 import ExportTaskButton from 'view/page/task/buttons/export'
+import ReviewPendingTaskButton from 'view/page/task/buttons/refresh'
 import CollapsibleRow from 'view/page/dashboard/task/collapsible-row'
 import SchedulesView from 'view/page/task/schedules'
 import Acls from 'lib/acls'
@@ -78,6 +79,7 @@ const TaskButtonsView = View.extend({
         </button>
       </li>
       <span data-hook="integration-button"> </span>
+      <span data-hook="refresh-button"> </span>
     </div>
   `,
   events: {
@@ -122,6 +124,9 @@ const TaskButtonsView = View.extend({
       var deleteButton = new DeleteTaskButton({ model: this.model })
       this.renderSubview(deleteButton, this.queryByHook('delete-button'))
     }
+
+    this.renderSubview(new ReviewPendingTaskButton({ model: this.model }), this.queryByHook('refresh-button'))
+
   }
 })
 

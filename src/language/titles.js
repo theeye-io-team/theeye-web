@@ -2,7 +2,8 @@
 export default {
   workflow: {
     buttons: {
-      integrations: 'Integration Api'
+      integrations: 'Integration Api',
+      refresh: 'Mi pending actions'
     }
   },
   indicator: {
@@ -13,7 +14,8 @@ export default {
   },
   task: {
     buttons: {
-      integrations: 'Integration Api'
+      integrations: 'Integration Api',
+      refresh: 'Mi pending actions'
     }
   },
   login: {
