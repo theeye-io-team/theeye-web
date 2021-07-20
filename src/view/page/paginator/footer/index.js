@@ -10,9 +10,12 @@ export default View.extend({
   },
   template: `
     <div data-component="paginator-footer">
-      <span data-hook="jobs-count"></span>
+    <div class="btn btn-primary" data-hook="back-btn">B</div>
+    <span data-hook="jobs-count"></span>
+    <div class="btn btn-primary" data-hook="fwd-btn">F</div>
       <select class="select right">
         <option value="10">10</option>
+        <option value="20">20</option>
         <option value="50">50</option>
         <option value="100">100</option>
         <option value="500">500</option>
@@ -25,15 +28,50 @@ export default View.extend({
     }
   },
   events: {
-    'change select':'onSelectChange'
+    'change select':'onSelectChange',
+    'click [data-hook=back-btn]': 'navigationChange',
+    'click [data-hook=fwd-btn]': 'navigationChange'
   },
   onSelectChange (event) {
     const el = this.query('select')
-    App.actions.localSettings.update('jobsListLength', Number(el.value))
+    this.model.paginator_length = Number(el.value)
+    this.model.paginator_last = this.model.paginator_first + this.model.paginator_length - 1
+    console.log(this.model)
+    // TODO: Make back and forward button invisible if user can't scroll
+    // App.actions.localSettings.update('jobsListLength', Number(el.value))
+  },
+  navigationChange(event) {
+    switch (event.target.attributes[1].nodeValue) {
+      case 'fwd-btn':
+        if (this.model.paginator_last != this.jobsLength - 1)
+        {
+          this.model.paginator_first = this.model.paginator_last + 1
+          if (this.model.paginator_last + this.model.paginator_length > this.jobsLength - 1)
+            this.model.paginator_last = this.jobsLength - 1
+          else
+            this.model.paginator_last += this.model.paginator_length
+        }
+        break;
+
+      case 'back-btn':
+        if (this.model.paginator_first != 0) {
+          this.model.paginator_last = this.model.paginator_first - 1
+          if (this.model.paginator_first - this.model.paginator_length < 0) 
+            this.model.paginator_first = 0
+          else
+            this.model.paginator_first -= this.model.paginator_length
+        }
+        break;
+        
+      default:
+        break;
+    }
   },
   initialize () {
-    this.listenToAndRun(App.state.localSettings, 'change:jobsListLength', () => {
-      this.listLength = App.state.localSettings.jobsListLength || LIMIT_COUNTER
+    this.listenToAndRun(this.model, 'change:paginator_length', () => {
+      // this.listLength = App.state.localSettings.jobsListLength || LIMIT_COUNTER
+      this.listLength = this.model.paginator_length
+      this.model.paginator_last = this.model.paginator_first + this.model.paginator_length - 1
     })
 
     // update collection length
@@ -43,10 +81,10 @@ export default View.extend({
   },
   derived: {
     count: {
-      deps: ['jobsLength','listLength'],
+      deps: ['jobsLength', 'model.paginator_first', 'model.paginator_last'],
       fn () {
-        if (this.jobsLength >= this.listLength) {
-          return `${this.listLength}/${this.jobsLength}`
+        if (this.jobsLength > this.model.paginator_length) {
+          return `showing jobs ${this.model.paginator_first + 1} - ${this.model.paginator_last + 1} out of ${this.jobsLength}`
         } else {
           return this.jobsLength
         }

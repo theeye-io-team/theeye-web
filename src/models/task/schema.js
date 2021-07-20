@@ -4,6 +4,7 @@ import AmpersandCollection from 'ampersand-collection'
 import { DynamicArgument } from './dynamic-argument'
 import { Collection as ScheduleCollection } from 'models/schedule'
 import { Collection as TagCollection } from 'models/tag'
+import { LIMIT_COUNTER } from 'constants/paginator'
 
 import * as FIELD from 'constants/field'
 
@@ -63,7 +64,10 @@ const Schema = AppModel.extend({
     inProgressJobs: 'number',
     last_execution: 'date',
     tagsCollection: 'collection',
-    hasSchedules: ['boolean', true, false]
+    hasSchedules: ['boolean', true, false],
+    paginator_length: ['number', true, LIMIT_COUNTER],
+    paginator_first: ['number', true, 0],
+    paginator_last: ['number', true, LIMIT_COUNTER - 1]
   },
   collections: {
     //triggers: Events,
