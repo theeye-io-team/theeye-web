@@ -7,6 +7,7 @@ export default View.extend({
   props: {
     listLength: ['number', false, LIMIT_COUNTER],
     jobsLength: ['number', false, 0],
+    lastPage: 'boolean'
   },
   template: `
     <div data-component="paginator-footer">
@@ -46,10 +47,14 @@ export default View.extend({
         if (this.model.paginator_last != this.jobsLength - 1)
         {
           this.model.paginator_first = this.model.paginator_last + 1
-          if (this.model.paginator_last + this.model.paginator_length > this.jobsLength - 1)
+          if (this.model.paginator_last + this.model.paginator_length > this.jobsLength - 1) {
             this.model.paginator_last = this.jobsLength - 1
-          else
+            this.lastPage = true
+          }
+          else {
             this.model.paginator_last += this.model.paginator_length
+            this.lastPage = false
+          }
         }
         break;
 
@@ -77,6 +82,16 @@ export default View.extend({
     // update collection length
     this.listenToAndRun(this.model.jobs, 'add remove sync reset', () => {
       this.jobsLength = this.model.jobs.length
+      if(this.lastPage) {
+        debugger
+        if (this.model.paginator_first + this.model.paginator_length > this.jobsLength - 1) {
+          this.model.paginator_last = this.jobsLength - 1
+          this.lastPage = true
+        }
+        else {
+          this.lastPage = false
+        }
+      }
     })
   },
   derived: {
