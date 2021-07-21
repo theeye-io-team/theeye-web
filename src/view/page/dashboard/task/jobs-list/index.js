@@ -92,7 +92,6 @@ export default View.extend({
         this.renderedLenght = 0
         if (availableJobs.length >= this.listLength) {
           const source = availableJobs.models.slice().reverse()
-          console.log(source)
           for (let index = this.model.paginator_last; index >= this.model.paginator_first; index--) {
             const job = source[index]
             this.jobs.add(job)
