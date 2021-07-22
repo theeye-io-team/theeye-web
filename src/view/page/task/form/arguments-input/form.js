@@ -24,7 +24,6 @@ export default FormView.extend({
         remove () { this.el.remove() }
       },
     ]
-
     if (this.model.type === FIELD.TYPE_FIXED) {
       this.fields.push(
         new InputView({
@@ -137,6 +136,14 @@ export default FormView.extend({
             value: this.model.options
           }))
 
+          this.fields.push(
+            new CheckboxView({
+              label: 'Allow multiple selections (beta)',
+              name: 'multiple',
+              value: this.model.multiple,
+            })
+          )
+
           break
 
         case FIELD.TYPE_REMOTE_OPTIONS:
@@ -175,6 +182,13 @@ export default FormView.extend({
               invalidClass: 'text-danger',
               validityClassSelector: '.control-label',
               value: this.model.text_attribute
+            })
+          )
+          this.fields.push(
+            new CheckboxView({
+              label: 'Allow multiple selections (beta)',
+              name: 'multiple',
+              value: this.model.multiple,
             })
           )
 
