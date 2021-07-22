@@ -140,6 +140,8 @@ export default {
     })
   },
   syncLinkedModels (id, next) {
+
+    next || (next = () => {})
     const file = App.state.files.get(id)
     file.is_loading = true
 
@@ -157,7 +159,7 @@ export default {
         }
       },
       fail: (err, xhr) => {
-    file.is_loading = false
+        file.is_loading = false
         next( new Error('invalid server response') )
       }
     })
