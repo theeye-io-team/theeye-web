@@ -28,6 +28,9 @@ export default View.extend({
       </div>
     </div>
   `,
+  props: {
+    visible: ['boolean', true, true]
+  },
   bindings: {
     'model.user.username': {
       hook:'username'
@@ -40,6 +43,9 @@ export default View.extend({
     },
     'model.credential': {
       hook:'credential'
+    },
+    'visible': {
+      type: 'toggle'
     }
   },
   derived: {
