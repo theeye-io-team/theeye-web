@@ -36,6 +36,7 @@ export default View.extend({
   },
   template: function () {
     let url = App.config.landing_page_url
+    const year = new Date().getFullYear()
     let str = `
       <div class="main-container">
         <nav></nav>
@@ -43,7 +44,7 @@ export default View.extend({
         <div data-hook="menu-container" class="menu-container"></div>
         <div data-hook="page-container" class="page-container">
         <footer>
-          <a target="_blank" href="https://theeye.io">theeye.io</a> | Copyright © 2019
+          <a target="_blank" href="https://theeye.io">theeye.io</a> | Copyright © ${year}
         </footer>
         </div>
       </div>

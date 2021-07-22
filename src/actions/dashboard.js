@@ -80,9 +80,11 @@ export default {
         data: { unassigned: true },
         success: () => {
           App.state.dashboard.groupTasks()
+          // Check workflows upon loading
+          /*
           App.state.workflows.forEach(workflow => {
             App.actions.workflow.populate(workflow)
-          })
+          }) */
           //App.actions.onHold.check()
           step()
         },
