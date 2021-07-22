@@ -13,10 +13,12 @@ export default View.extend({
       <div data-hook="menu" class="eyemenu-panel eyemenu-panel-left">
         <!-- PROFILE MENU HEADER { -->
         <div data-hook="profile-container" class="eyemenu-top-panel">
-          <div data-hook="session-customer"></div>
-
-          <div data-hook="customers-toggle" class="eyemenu-switch-panels">
-            <i class="fa fa-angle-down" aria-hidden="true"></i>
+          <div data-hook="customers-toggle" class="pointer">
+            <div data-hook="session-customer"></div>
+            
+            <div class="eyemenu-switch-panels">
+              <i class="fa fa-angle-down" aria-hidden="true"></i>
+            </div>
           </div>
         </div>
         <!-- } END PROFILE MENU HEADER -->
