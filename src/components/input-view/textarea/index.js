@@ -8,6 +8,25 @@ export default InputView.extend({
     maxlength: 'number',
     prettyJson: ['boolean', false, false]
   },
+  derived: {
+    value: {
+      // in you want it re-calculated
+      // when the user changes input
+      // make it dependent on `inputValue`
+      deps: ['inputValue'],
+      fn: function () {
+        if (this.prettyJson === true) {
+          try {
+            return JSON.stringify(JSON.parse(this.inputValue))
+          } catch (err) {
+            return this.inputValue
+          }
+        } else {
+          return this.inputValue
+        }
+      }
+    }
+  },
   bindings: Object.assign({}, InputView.prototype.bindings, {
     counter: { hook: 'counter' },
     maxlength: {

@@ -200,7 +200,7 @@ export default {
     return task
   },
   execute (task) {
-    var execTask
+    let execTask
     if (!App.state.session.licenseExpired) {
       if (!task.canExecute) {
         bootbox.alert('This task cannot be executed')

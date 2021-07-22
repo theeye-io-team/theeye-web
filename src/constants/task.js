@@ -11,6 +11,10 @@ export const APPROVALS_TARGET_ASSIGNEES = 'assignees'
 export const APPROVALS_TARGET_DYNAMIC = 'dynamic'
 export const APPROVALS_TARGET_INITIATOR = 'initiator'
 
+export const ARGUMENT_TYPE_LEGACY = 'legacy'
+export const ARGUMENT_TYPE_JSON = 'json'
+export const ARGUMENT_TYPE_TEXT = 'text'
+
 
 export const GRACE_TIME = Object.freeze([
   {
