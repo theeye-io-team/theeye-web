@@ -72,8 +72,8 @@ export default DisabledInputView.extend({
 })
 
 const ImportFileForm = FileForm.extend({
-  submitCallback (obj) {
-    let data = this.prepareData(obj)
+  submitCallback () {
+    let data = this.prepareData(this.data)
     TaskFormActions.setFile(data)
     this.trigger('submitted', data)
   }

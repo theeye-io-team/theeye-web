@@ -77,7 +77,9 @@ export default FormView.extend({
 
     const buttons = new FormButtons()
     this.renderSubview(buttons)
-    buttons.on('click:confirm', () => { this.submitForm() })
+    buttons.on('click:confirm', () => {
+      this.submitForm()
+    })
 
     // onboarding
     if (!this.model.filename) {
@@ -160,17 +162,23 @@ export default FormView.extend({
   },
   submitForm () {
     this.beforeSubmit()
-    if (!this.valid) return
-    
-    App.state.loader.visible = false
-    this.model.linked_models.once('reset', () => {
-      if (this.model.linked_models.models.length > 1) {
-        App.state.loader.visible = false
-        const names = this.model.linked_models.models.map(task => task.name)
+    if (!this.valid) { return }
+    this.submitCallback()
+  },
+  verifyLinkedModels (submit) {
+    const linkedCollection = this.model.linked_models
+
+    App.state.loader.visible = true
+    linkedCollection.once('reset', () => {
+      App.state.loader.visible = false
+      if (linkedCollection.length > 1) {
+        const names = linkedCollection.models.map(task => task.name)
         const message = `
           <p>This script is referenced by the following tasks:</p>
           <ul><li>${names.join("</li><li>")}</li></ul>
-          <p>Are you sure you want to save it?</p>`
+          <p>Are you sure you want to save it?</p>
+          `
+
         bootbox.confirm({
           title: 'Save script',
           message: message,
@@ -187,27 +195,30 @@ export default FormView.extend({
           },
           callback: (confirmed) => {
             if (confirmed===true) {
-              this.submitCallback(this.data)
+              submit()
             }
           }
         })
+      } else {
+        submit()
       }
-      else this.submitCallback(this.data)
     })
-    
-    App.state.loader.visible = true
-    App.actions.file.syncLinkedModels(this.model.id, () => {})
+
+    App.actions.file.syncLinkedModels(this.model.id)
   },
-  submitCallback (obj) {
-    let self = this
-    let data = this.prepareData(obj)
-    if (!this.model.isNew()) {
-      App.actions.file.update(this.model.id, data, function (err, file) {
+  submitCallback () {
+    const self = this
+    const data = this.prepareData(this.data)
+
+    if (this.model.isNew()) {
+      App.actions.file.create(data, function (err, file) {
         self.trigger('submitted', file)
       })
     } else {
-      App.actions.file.create(data, function (err, file) {
-        self.trigger('submitted', file)
+      this.verifyLinkedModels(() => {
+        App.actions.file.update(this.model.id, data, function (err, file) {
+          self.trigger('submitted', file)
+        })
       })
     }
   },
