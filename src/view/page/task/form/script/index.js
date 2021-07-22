@@ -169,10 +169,13 @@ export default TaskFormView.extend({
     // new task will be forbidden.
     // old tasks will only be false if it is explicitly false
     let allowsDynamicSettings
+    let argumentsType
     if (isNewTask) {
       allowsDynamicSettings = false
+      argumentsType = TaskConstants.ARGUMENT_TYPE_TEXT
     } else {
       allowsDynamicSettings = (this.model.allows_dynamic_settings !== false)
+      argumentsType = (this.model.arguments_type || TaskConstants.ARGUMENT_TYPE_LEGACY)
     }
 
     this.fields = [
@@ -331,10 +334,11 @@ export default TaskFormView.extend({
         visible: false,
         required: false,
         options: [
-          { id: 'legacy', value: 'Legacy' },
-          { id: 'json', value: 'Json' }
+          { id: TaskConstants.ARGUMENT_TYPE_LEGACY, value: `${TaskConstants.ARGUMENT_TYPE_LEGACY} (Deprecated)` },
+          { id: TaskConstants.ARGUMENT_TYPE_TEXT, value: `${TaskConstants.ARGUMENT_TYPE_TEXT} (Default)` },
+          { id: TaskConstants.ARGUMENT_TYPE_JSON, value: `${TaskConstants.ARGUMENT_TYPE_JSON} (SDK Default)` }
         ],
-        value: (this.model.arguments_type || 'legacy'),
+        value: argumentsType,
         unselectedText: '',
         idAttribute: 'id',
         textAttribute: 'value',
