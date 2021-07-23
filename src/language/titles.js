@@ -2,20 +2,20 @@
 export default {
   workflow: {
     buttons: {
-      integrations: 'Integration Api',
-      refresh: 'Mi pending actions'
+      integrations: 'Integration API',
+      refresh: 'My pending actions'
     }
   },
   indicator: {
     buttons: {
-      integrations: 'Integration Api',
+      integrations: 'Integration API',
       edit: 'Edit Indicator',
     }
   },
   task: {
     buttons: {
-      integrations: 'Integration Api',
-      refresh: 'Mi pending actions'
+      integrations: 'Integration API',
+      refresh: 'My pending actions'
     }
   },
   login: {
