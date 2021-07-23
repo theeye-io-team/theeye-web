@@ -6,6 +6,7 @@ import { Collection as ScheduleCollection } from 'models/schedule'
 import { Collection as TagCollection } from 'models/tag'
 
 import * as FIELD from 'constants/field'
+import * as TaskConstants from 'constants/task'
 
 const TaskArguments = AmpersandCollection.extend({
   mainIndex: 'id',
@@ -37,7 +38,7 @@ const Schema = AppModel.extend({
     show_result: 'boolean',
     user_inputs: 'boolean',
     user_inputs_members: 'array',
-    arguments_type: ['string',false,'legacy'],
+    arguments_type: ['string',false],
     allows_dynamic_settings: ['boolean', false],
     assigned_users: ['array', false, () => { return [] }],
     cancellable: ['boolean', false, true]

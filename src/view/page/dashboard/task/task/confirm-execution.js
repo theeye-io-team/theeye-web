@@ -86,6 +86,10 @@ export default View.extend({
     this.renderWithTemplate(this)
 
     this.taskArgs.forEach(function (arg) {
+      if (typeof(arg.renderValue) == "object") {
+        arg.renderValue = JSON.stringify(arg.renderValue)
+      }
+
       let argRowView = new ArgRow(arg)
       self.renderSubview(argRowView, self.queryByHook('args-rows-container'))
     })

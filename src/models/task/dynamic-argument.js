@@ -2,6 +2,8 @@ import State from 'ampersand-state'
 import Model from 'ampersand-model'
 import Collection from 'ampersand-collection'
 
+import * as TaskConstants from 'constants/task'
+
 const ValueOption = State.extend({
   props: {
     id: 'string',
@@ -28,6 +30,7 @@ const DynamicArgument = Model.extend({
     readonly: ['boolean',false,false],
     //options: ['array',false,() => { return [] }],
     required: ['boolean',false,true],
+    multiple: ['boolean',false,false],
     endpoint_url: ['string',false],
     id_attribute: ['string',false],
     text_attribute: ['string',false],
@@ -36,7 +39,7 @@ const DynamicArgument = Model.extend({
     charsmax: ['number',false],
     charset: ['string',false],
     pattern: ['string',false],
-    version: ['string',false,'legacy'] // legacy arguments version
+    version: ['string',false]
   },
   collections: {
     options: OptionsCollection

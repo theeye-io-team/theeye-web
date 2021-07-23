@@ -80,6 +80,7 @@ export default {
         data: { unassigned: true },
         success: () => {
           App.state.dashboard.groupTasks()
+
           App.state.workflows.forEach(workflow => {
             App.actions.workflow.populate(workflow)
           })

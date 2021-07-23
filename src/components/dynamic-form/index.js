@@ -248,7 +248,7 @@ export default DropableForm.extend({
     return new SelectView({
       label: spec.label,
       name: spec.order.toString(),
-      multiple: false,
+      multiple: spec.multiple,
       tags: false,
       options: spec.options,
       value: spec.value,
@@ -266,7 +266,7 @@ export default DropableForm.extend({
     const options = {
       label: spec.label,
       name: spec.order.toString(),
-      multiple: false,
+      multiple: spec.multiple,
       tags: false,
       required: spec.required,
       unselectedText: `Select a ${spec.label}`,

@@ -50,26 +50,16 @@ export default {
    *
    */
   createFromTask (task, args) {
-    if (task.arguments_type === 'json' && args.length > 0) {
-      for (let index = 0; index < args.length; index++) {
-        let arg = args[index]
-        try {
-          // submit json values instead of strings
-          args[index] = JSON.parse(arg.value)
-        } catch (err) {
-          logger.warn(`cannot json.parse ${arg.value}`)
-          // ok
-        }
-      }
-    }
+
+    const values = parseArgumentsValues(task, args)
 
     if (!task.workflow_id) {
       logger.log('creating new job with task %o', task)
-      createSingleTaskJob(task, args, (err, job) => { })
+      createSingleTaskJob(task, values, (err, job) => { })
     } else {
       let workflow = App.state.workflows.get(task.workflow_id)
       logger.log('creating new job with workflow %o', workflow)
-      createWorkflowJob(workflow, args, (err, job) => { })
+      createWorkflowJob(workflow, values, (err, job) => { })
     }
   },
   cancel (job) {
@@ -227,8 +217,8 @@ export default {
 }
 
 const createSingleTaskJob = (task, args, next) => {
-  let body = {
-    task: task.id,
+  const body = {
+    //task: task.id,
     task_arguments: args
   }
 
@@ -258,7 +248,7 @@ const createSingleTaskJob = (task, args, next) => {
 
 const createWorkflowJob = (workflow, args, next) => {
   const body = {
-    task: workflow.start_task_id,
+    //task: workflow.start_task_id,
     task_arguments: args
   }
 
@@ -334,4 +324,27 @@ const addJobToState = (data, task) => {
   }
 
   return taskJob
+}
+
+const parseArgumentsValues = (task, args) => {
+  const values = args.map(arg => {
+    if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_JSON) {
+      // form input output is string
+      if (arg.type === 'json') {
+        try {
+          return JSON.parse(arg.value)
+        } catch (err) {
+          return (arg.value || null)
+        }
+      } else {
+        return (arg.value || null)
+      }
+    } else if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_TEXT) {
+      return JSON.stringify(arg.value || null)
+    } else {
+      return (arg.value || null)
+    }
+  })
+
+  return values
 }
