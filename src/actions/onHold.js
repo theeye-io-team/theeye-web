@@ -105,7 +105,7 @@ const checkWorkflow = (workflow) => {
 
   for (let wfIndex = 0; wfIndex < workflowJobs.length; wfIndex++) {
     const workflowJob = workflowJobs[wfIndex]
-    if (workflowJob.requiresInteraction() || workflowJob.lifecycle == "onhold") {
+    if (workflowJob.requiresInteraction()) {
       // if workflow job requires interaction, we only need to know the active job
       const currentJob = workflowJob.current_job
       //if (!currentJob.skipInputs) {
