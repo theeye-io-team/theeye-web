@@ -5,7 +5,7 @@ import $ from 'jquery'
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = 'Edit Workflow'
+    this.title = 'Edit workflow'
     this.iconClass = 'fa fa-edit dropdown-icon'
     this.className = 'btn btn-primary'
   },
