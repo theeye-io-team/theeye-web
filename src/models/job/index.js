@@ -124,7 +124,7 @@ const BaseJob = AppModel.extend({
   verifyOwnerUser (user) {
     // FIXME: this.user generates with undefined email, name, username, id
     //        and credential. I believe it's because this job was generated
-    //        with curl, therefore it has no assigned user. Further tested
+    //        with curl, therefore it has no assigned user. Further testing
     //        is needed. 
     if (this.user && this.user.email && user.email) {
       return (user.email.toLowerCase() === this.user.email.toLowerCase())
