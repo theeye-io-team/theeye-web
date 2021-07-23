@@ -108,9 +108,9 @@ const checkWorkflow = (workflow) => {
     if (workflowJob.requiresInteraction()) {
       // if workflow job requires interaction, we only need to know the active job
       const currentJob = workflowJob.current_job
-      if (!currentJob.skipInputs) {
+      //if (!currentJob.skipInputs) {
         jobs.push(currentJob)
-      }
+      //}
     }
   }
 
@@ -122,7 +122,8 @@ const checkWorkflow = (workflow) => {
 }
 
 const checkTask = (task) => {
-  const jobs = task.jobs.models.filter(job => !job.skipInputs && job.requiresInteraction())
+  //const jobs = task.jobs.models.filter(job => !job.skipInputs && job.requiresInteraction())
+  const jobs = task.jobs.models.filter(job => job.requiresInteraction())
   if (jobs.length === 0) {
     nothingToDo()
   } else {
