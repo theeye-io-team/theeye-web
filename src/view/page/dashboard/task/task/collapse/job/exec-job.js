@@ -61,16 +61,24 @@ export const ExecOnHoldJob = BaseExec.extend({
   execute (isPendingCheck, done) {
     if (this.model.lifecycle === LifecycleConstants.ONHOLD) {
       if (this.model._type === JobConstants.APPROVAL_TYPE) {
-        if (this.model.isApprover(App.state.session.user)) {
-          this.requestApproval(isPendingCheck, done)
-        } else if (Acl.hasAccessLevel('admin')) {
-          if (!isPendingCheck) {
-            this.updateApprovalRequest(done)
-          }
-        }
+        this.controlApprovalRequest(isPendingCheck, done)
       } else {
         this.requestInput(isPendingCheck, done)
       }
+    }
+  },
+  controlApprovalRequest (isPendingCheck, done) {
+    if (this.model.isApprover(App.state.session.user)) {
+      this.requestApproval(isPendingCheck, done)
+    } else if (Acl.hasAccessLevel('admin')) {
+      if (!isPendingCheck) {
+        this.changeApprovalRequest(done)
+      }
+    } else {
+      bootbox.alert({
+        message: `Waiting approvals <br/><br/>${escapeHtml(this.model.approversUsers.toString())}`,
+        backdrop: true
+      })
     }
   },
   requestApproval (isPendingCheck, done) {
@@ -157,28 +165,21 @@ export const ExecOnHoldJob = BaseExec.extend({
       buttons
     })
   },
-  updateApprovalRequest (done) {
-    if (this.model.task.cancellable !== false) {
-      bootbox.dialog({
-        message: 'Cancel the approval request?',
-        backdrop: true,
-        buttons: {
-          cancel: {
-            label: 'Cancel request',
-            className: 'btn btn-danger',
-            callback: () => {
-              App.actions.job.cancel(this.model)
-              done && done()
-            }
+  changeApprovalRequest (done) {
+    bootbox.dialog({
+      message: 'Cancel the approval request?',
+      backdrop: true,
+      buttons: {
+        cancel: {
+          label: 'Cancel request',
+          className: 'btn btn-danger',
+          callback: () => {
+            App.actions.job.cancel(this.model)
+            done && done()
           }
         }
-      })
-    } else {
-      bootbox.alert({
-        message: `Waiting approvals <br/><br/>${escapeHtml(this.model.approversUsers.toString())}`,
-        backdrop: true
-      })
-    }
+      }
+    })
   },
   requestInput (isPendingCheck, done) {
     done || (done=()=>{})
@@ -188,7 +189,7 @@ export const ExecOnHoldJob = BaseExec.extend({
           App.actions.onHold.skip(this.model)
           return done()
         } else {
-          if (this.model.task.cancellable !== false) {
+          if (this.model.task.cancellable !== false || Acl.hasAccessLevel('admin')) {
             // ask confirmation
             bootbox.confirm({
               message: 'Do you want to cancel the execution?',
@@ -212,7 +213,9 @@ export const ExecOnHoldJob = BaseExec.extend({
           }
         }
       } else {
-        App.actions.job.submitInputs(this.model, jobArgs)
+        if (jobArgs !== null) {
+          App.actions.job.submitInputs(this.model, jobArgs)
+        }
         return done()
       }
     })
@@ -245,6 +248,11 @@ export const ExecOnHoldJob = BaseExec.extend({
     this.listenTo(modal, 'cancel', () => {
       modal.hide()
       next(null, true)
+    })
+
+    this.listenTo(modal, 'close', () => {
+      modal.hide()
+      next(null)
     })
 
     this.listenTo(modal, 'confirm', () => {

@@ -2,6 +2,7 @@ import App from 'ampersand-app'
 import bootbox from 'bootbox'
 import View from 'ampersand-view'
 import InputView from 'components/input-view'
+import LanguajeLabels from 'language/labels'
 import TextareaView from 'components/input-view/textarea'
 import SelectView from 'components/select2-view'
 import Buttons from 'view/buttons'
@@ -348,7 +349,7 @@ export default TaskFormView.extend({
       new CheckboxView({
         required: false,
         visible: false,
-        label: 'Allows to programatically changes the behaviour of the Workflow',
+        label: LanguajeLabels.page.task.form.allows_behaviour_change,
         name: 'allows_dynamic_settings',
         value: allowsDynamicSettings
       })

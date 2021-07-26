@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import AdvancedToggle from 'view/advanced-toggle'
+import LanguajeLabels from 'language/labels'
 import FormView from 'ampersand-form-view'
 import FormButtons from 'view/buttons'
 import SelectView from 'components/select2-view'
@@ -127,7 +128,7 @@ export default FormView.extend({
       new CheckboxView({
         required: false,
         visible: false,
-        label: 'Allows to programatically changes the behaviour of the Workflow',
+        label: LanguajeLabels.page.task.form.allows_behaviour_change,
         name: 'allows_dynamic_settings',
         value: allowsDynamicSettings
       })

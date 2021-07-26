@@ -85,13 +85,16 @@ const Modalizer = View.extend({
   events: {
     'click button[data-hook=confirm]':'onClickConfirm',
     'click button[data-hook=cancel]':'onClickCancel',
-    'click button[data-hook=close]':'onClickCancel',
+    'click button[data-hook=close]':'onClickClose',
   },
   onClickConfirm () {
     this.trigger('confirm')
   },
   onClickCancel () {
     this.trigger('cancel')
+  },
+  onClickClose () {
+    this.trigger('close')
   },
   initialize (options) {
     this._triggerShown = this._triggerShown.bind(this)
