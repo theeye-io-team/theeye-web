@@ -32,8 +32,8 @@ export default View.extend({
                 <div class="col-xs-12">
                   <div class="title-wrapper">
                     <h1>Enterprise Sign In</h1>
-                    <a href="" class="sign google desktop" data-hook="google-login"><i class="fa fa-google-plus"></i>Google+</a>
-                    <a href="" class="sign google mobile" style="display:none;" data-hook="google-login-mobile"><i class="fa fa-google-plus"></i>Google+</a>
+                    <a href="" class="sign google desktop" data-hook="google-login"><i class="fa"></i>Google</a>
+                    <a href="" class="sign google mobile" style="display:none;" data-hook="google-login-mobile"><i class="fa"></i>Google</a>
                     <h2 class="or"> - or - </h2>
                   </div>
                 </div>

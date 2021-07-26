@@ -254,7 +254,7 @@ const ForgotForm = FormView.extend({
 const GoogleLogin = View.extend({
   template: `
     <div class="col-xs-12">
-      <a href="" class="sign google" data-hook="google-login"><i class="fa fa-google-plus"></i>Google+</a>
+      <a href="" class="sign google" data-hook="google-login"><i class="fa"></i>Google</a>
       <h2 class="or"> - or - </h2>
     </div>
   `,
