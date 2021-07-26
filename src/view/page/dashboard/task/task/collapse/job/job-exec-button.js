@@ -1,4 +1,5 @@
 import App from 'ampersand-app'
+import Acls from 'lib/acls'
 import View from 'ampersand-view'
 import bootbox from 'bootbox'
 import * as LifecycleConstants from 'constants/lifecycle'
@@ -126,17 +127,24 @@ class StopInProgressJob {
       return
     }
 
-    const message = `Cancel the execution of <b>${this.model.name}</b>?
-      <a target="_blank" href="https://github.com/theeye-io/theeye-docs/blob/master/tasks/cancellation">Why this happens?</a>`
+    if (this.model.cancellable !== false || Acls.hasAccessLevel('admin')) {
+      const message = `
+        <a target="_blank"
+          href="https://github.com/theeye-io/theeye-docs/blob/master/tasks/cancellation">
+        Cancel the execution </a> of <b>${this.model.name}</b>?
+      `
 
-    bootbox.confirm({
-      message: message,
-      backdrop: true,
-      callback: (confirmed) => {
-        if (confirmed) {
-          App.actions.job.cancel(this.model)
+      bootbox.confirm({
+        message: message,
+        backdrop: true,
+        callback: (confirmed) => {
+          if (confirmed) {
+            App.actions.job.cancel(this.model)
+          }
         }
-      }
-    })
+      })
+    } else {
+      bootbox.alert({ message: 'Only an administrator can cancel this execution.', backdrop: true })
+    }
   }
 }

@@ -223,7 +223,7 @@ export default TaskFormView.extend({
       new CheckboxView({
         required: false,
         visible: false,
-        label: 'Allows to programatically changes the behaviour of the Workflow',
+        label: LanguajeLabels.page.task.form.allows_behaviour_change,
         name: 'allows_dynamic_settings',
         value: allowsDynamicSettings
       })
