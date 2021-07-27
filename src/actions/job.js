@@ -44,24 +44,6 @@ export default {
       console.error(e)
     }
   },
-  /**
-   *
-   *
-   *
-   */
-  createFromTask (task, args) {
-
-    const values = parseArgumentsValues(task, args)
-
-    if (!task.workflow_id) {
-      logger.log('creating new job with task %o', task)
-      createSingleTaskJob(task, values, (err, job) => { })
-    } else {
-      let workflow = App.state.workflows.get(task.workflow_id)
-      logger.log('creating new job with workflow %o', workflow)
-      createWorkflowJob(workflow, values, (err, job) => { })
-    }
-  },
   cancel (job) {
     job.set('lifecycle', LifecycleConstants.CANCELED)
     XHR.send({
@@ -117,41 +99,50 @@ export default {
       }
     })
   },
-  submitInputs (job, args) {
-    args || (args = [])
-    //job.set('lifecycle', LifecycleConstants.FINISHED)
+  /**
+   *
+   *
+   *
+   */
+  createFromTask (task, args) {
+    const values = parseArgumentsValues(task, args)
+
+    if (!task.workflow_id) {
+      logger.log('creating new job with task %o', task)
+      createSingleTaskJob(task, values, (err, job) => { })
+    } else {
+      let workflow = App.state.workflows.get(task.workflow_id)
+      logger.log('creating new job with workflow %o', workflow)
+      createWorkflowJob(workflow, values, (err, job) => { })
+    }
+  },
+  submitInputs (job, args = null) {
+    const values = parseArgumentsValues(job.task, args)
+
     XHR.send({
       method: 'put',
       url: `${job.url()}/input`,
-      jsonData: { args },
+      jsonData: { args: values },
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
-      done (data, xhr) {
-        logger.debug('job inputs submited')
-      },
       fail (err, xhr) {
         App.state.alerts.danger('something goes wrong')
-        console.log(arguments)
       }
     })
   },
-  restart (job, args) {
-    args || (args = [])
-    //job.set('lifecycle', LifecycleConstants.FINISHED)
+  restart (job, args = null) {
+    const values = parseArgumentsValues(job.task, args)
+
     XHR.send({
       method: 'put',
       url: `${job.url()}/restart`,
-      jsonData: { task_arguments: args },
+      jsonData: { task_arguments: values },
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
-      done (data, xhr) {
-        logger.debug('job inputs submited')
-      },
       fail (err, xhr) {
         App.state.alerts.danger('something goes wrong')
-        console.log(arguments)
       }
     })
   },
@@ -217,10 +208,7 @@ export default {
 }
 
 const createSingleTaskJob = (task, args, next) => {
-  const body = {
-    //task: task.id,
-    task_arguments: args
-  }
+  const body = { task_arguments: args }
 
   XHR.send({
     method: 'POST',
@@ -240,17 +228,13 @@ const createSingleTaskJob = (task, args, next) => {
     },
     fail (err,xhr) {
       App.state.alerts.danger('Job creation failed')
-      console.log(arguments)
       next(err)
     }
   })
 }
 
 const createWorkflowJob = (workflow, args, next) => {
-  const body = {
-    //task: workflow.start_task_id,
-    task_arguments: args
-  }
+  const body = { task_arguments: args }
 
   XHR.send({
     method: 'POST',
@@ -267,7 +251,6 @@ const createWorkflowJob = (workflow, args, next) => {
     },
     fail (err,xhr) {
       App.state.alerts.danger('Job creation failed')
-      console.log(arguments)
       next(err)
     }
   })
@@ -327,6 +310,8 @@ const addJobToState = (data, task) => {
 }
 
 const parseArgumentsValues = (task, args) => {
+  if (!args) { return [] }
+
   const values = args.map(arg => {
     if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_JSON) {
       // form input output is string
