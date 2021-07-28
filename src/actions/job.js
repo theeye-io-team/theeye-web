@@ -310,6 +310,10 @@ const addJobToState = (data, task) => {
 }
 
 const parseArgumentsValues = (task, args) => {
+  if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_LEGACY) {
+    return args
+  }
+
   if (!args) { return [] }
 
   const values = args.map(arg => {
