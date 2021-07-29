@@ -31,10 +31,10 @@ export default View.extend({
           </ul>
           <!-- LINKS CONTAINER { -->
           <ul data-hook="links-container" class="eyemenu-links eyemenu-actions">
-            <li><a href="/dashboard" class="eyemenu-icon eyemenu-dashboard"> Home </a></li>
+            <li><a href="/dashboard" class="eyeicon eyemenu-icon eyeicon-dashboard"> Home </a></li>
             <span class="charts-link"></span>
             <span class="default-links"></span>
-            <li><a href="/help" class="eyemenu-icon eyemenu-help"> Help </a></li>
+            <li><a href="/help" class="eyeicon eyemenu-icon eyeicon-help"> Help </a></li>
           </ul>
           <!-- } END LINKS CONTAINER -->
         </div>
@@ -141,21 +141,21 @@ export default View.extend({
 
     if (App.state.session.user.credential) {
       if (Acls.hasAccessLevel('admin')) {
-        container.appendChild(html2dom(`<li><a href="/admin/file" class="eyemenu-icon eyemenu-scripts"> Files & Scripts </a></li>`))
-        container.appendChild(html2dom(`<li><a href="/admin/webhook" class="eyemenu-icon eyemenu-webhooks"> Webhooks </a></li>`))
-        container.appendChild(html2dom(`<li><a href="/admin/hostgroup" class="eyemenu-icon eyemenu-templates"> Templates </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/file" class="eyeicon eyemenu-icon eyeicon-scripts"> Files & Scripts </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/webhook" class="eyeicon eyemenu-icon eyeicon-webhooks"> Webhooks </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/hostgroup" class="eyeicon eyemenu-icon eyeicon-templates"> Templates </a></li>`))
       }
 
       if (Acls.hasAccessLevel('manager')) {
-        let link = html2dom(`<li><a href="" data-hook="settings-menu" class="eyemenu-icon eyemenu-settings"> Settings </a></li>`)
+        let link = html2dom(`<li><a href="" data-hook="settings-menu" class="eyeicon eyemenu-icon eyeicon-settings"> Settings </a></li>`)
         link.onclick = () => App.actions.settingsMenu.show('customer')
         container.appendChild(link)
       }
 
       if (Acls.hasAccessLevel('root')) {
-        container.appendChild(html2dom(`<li><a href="/admin/user" class="eyemenu-icon eyemenu-users"> Users </a></li>`))
-        container.appendChild(html2dom(`<li><a href="/admin/customer" class="eyemenu-icon eyemenu-organizations"> Organizations </a></li>`))
-        container.appendChild(html2dom(`<li><a href="/admin/member" class="eyemenu-icon eyemenu-users"> Members </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/user" class="eyeicon eyemenu-icon eyeicon-users"> Users </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/customer" class="eyeicon eyemenu-icon eyeicon-organizations"> Organizations </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/member" class="eyeicon eyemenu-icon eyeicon-users"> Members </a></li>`))
       }
     }
   },
