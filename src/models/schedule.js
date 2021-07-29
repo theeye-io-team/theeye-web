@@ -4,7 +4,7 @@ import AppCollection from 'lib/app-collection'
 import config from 'config'
 
 const urlRoot = function () {
-  return `${config.supervisor_api_url}/${App.state.session.customer.name}/scheduler`
+  return `${config.supervisor_api_url}/scheduler`
 }
 
 const Model = AppModel.extend({
@@ -19,8 +19,9 @@ const Model = AppModel.extend({
     priority: 'number',
     nextRunAt: 'string',
     lastFinishedAt: 'string',
-    lastRunAt: 'string'
+    lastRunAt: 'string',
     // lastModifiedBy: '' // ???
+    disabled: ['boolean', true, false]
   }
 })
 

@@ -56,6 +56,19 @@ export default {
       }
     })
   },
+  disabledToggle (schedule) {
+    const action = (schedule.disabled === true) ? 'start' : 'stop'
+    XHR.send({
+      url: `${schedule.url()}/${action}`,
+      method: 'put',
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (resp) {
+        schedule.toggle('disabled') 
+      }
+    })
+  },
   applyStateUpdate (schedule, operation) {
     if (schedule.data.task_id) {
       const taskId = schedule.data.task_id

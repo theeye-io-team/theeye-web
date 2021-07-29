@@ -106,7 +106,8 @@ const Workflow = AppModel.extend({
     last_execution: 'date',
     tagsCollection: 'collection',
     credentials: ['object', false, null],
-    hasSchedules: ['boolean', true, false]
+    hasSchedules: ['boolean', true, false],
+    hasDisabledSchedules: ['boolean', true, false]
   },
   derived: {
     type: {
@@ -203,13 +204,14 @@ const Workflow = AppModel.extend({
       }
     )
 
-    this.listenToAndRun(
-      this.schedules,
-      'reset sync remove add',
-      () => {
-        this.hasSchedules = this.schedules.length > 0
+    this.listenToAndRun(this.schedules, 'change reset sync remove add', () => {
+      this.hasSchedules = (this.schedules.length > 0)
+      if (this.hasSchedules) {
+        this.hasDisabledSchedules = (
+          this.schedules.find(sch => sch.disabled === true) !== undefined
+        )
       }
-    )
+    })
   },
   serialize () {
     let attrs = AppModel.prototype.serialize.apply(this,arguments)

@@ -64,7 +64,8 @@ const Schema = AppModel.extend({
     inProgressJobs: 'number',
     last_execution: 'date',
     tagsCollection: 'collection',
-    hasSchedules: ['boolean', true, false]
+    hasSchedules: ['boolean', true, false],
+    hasDisabledSchedules: ['boolean', true, false],
   },
   collections: {
     //triggers: Events,
@@ -90,39 +91,32 @@ const Schema = AppModel.extend({
       }
     })
 
-    this.listenToAndRun(
-      this.schedules,
-      'reset sync remove add',
-      () => {
-        this.hasSchedules = this.schedules.length > 0
+    this.listenToAndRun(this.schedules, 'change reset sync remove add', () => {
+      this.hasSchedules = (this.schedules.length > 0)
+      if (this.hasSchedules) {
+        this.hasDisabledSchedules = (
+          this.schedules.find(sch => sch.disabled === true) !== undefined
+        )
       }
-    )
+    })
 
-    this.listenToAndRun(
-      this.jobs,
-      'add change sync reset remove',
-      function () {
-        let inProgressJobs = this.jobs.filter(job => job.inProgress)
-        if (inProgressJobs.length > 0) {
-          this.inProgressJobs = inProgressJobs.length
-        } else {
-          this.inProgressJobs = 0
-        }
+    this.listenToAndRun(this.jobs, 'add change sync reset remove', () => {
+      let inProgressJobs = this.jobs.filter(job => job.inProgress)
+      if (inProgressJobs.length > 0) {
+        this.inProgressJobs = inProgressJobs.length
+      } else {
+        this.inProgressJobs = 0
       }
-    )
+    })
 
-    this.listenToAndRun(
-      this.jobs,
-      'add change sync reset remove',
-      function () {
-        if (this.jobs.length===0) { return }
-        let dates = this.jobs.map(e => e.creation_date)
-        const last = Math.max.apply(null, dates)
-        if (typeof last === 'date') {
-          this.last_execution = last
-        }
+    this.listenToAndRun( this.jobs, 'add change sync reset remove', () => {
+      if (this.jobs.length===0) { return }
+      let dates = this.jobs.map(e => e.creation_date)
+      const last = Math.max.apply(null, dates)
+      if (typeof last === 'date') {
+        this.last_execution = last
       }
-    )
+    })
 
     this.listenToAndRun(this.task_arguments, 'add remove change reset sync', () => {
       this.hasDynamicArguments = Boolean(

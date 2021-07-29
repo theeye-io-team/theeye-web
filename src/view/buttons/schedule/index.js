@@ -24,7 +24,8 @@ export default PanelButton.extend({
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
       if (this.model.hasDynamicArguments) {
-        bootbox.alert(`This ${this.model._type} requires user inputs and cannot be scheduled.`)
+        bootbox.alert(`This ${this.model._type} requires user inputs,
+          therefore cannot be scheduled.`)
         return
       }
 
