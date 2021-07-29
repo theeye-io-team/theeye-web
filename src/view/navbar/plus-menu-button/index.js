@@ -6,6 +6,8 @@ import TaskCreationWizard from 'view/page/task/creation-wizard'
 import MonitorCreationWizard from 'view/page/monitor/creation-wizard'
 import WorkflowCreationWizard from 'view/page/workflow/creation-wizard'
 import IndicatorCreationWizard from 'view/page/indicator/creation-wizard'
+import WebhookCreationWizard from  'view/page/webhook/creation-wizard'
+import FileCreationWizard from  'view/page/files/creation-wizard'
 
 import './style.less'
 
@@ -19,6 +21,8 @@ export default View.extend({
           <li><a data-hook="create-monitor" href="#" class="plus-menu-icon fa-desktop">Monitor</a></li>
           <li><a data-hook="create-workflow" href="#" class="plus-menu-icon fa-sitemap">Workflow</a></li>
           <li><a data-hook="create-indicator" href="#" class="plus-menu-icon fa-lightbulb-o">Indicator</a></li>
+          <li><a data-hook="create-webhook" href="#" class="plus-menu-icon eyeicon eyeicon-webhooks">Webhook</a></li>
+          <li><a data-hook="create-file" href="#" class="plus-menu-icon eyeicon eyeicon-scripts">File</a></li>
         </ul>
       </div>
     </div>`,
@@ -64,6 +68,20 @@ export default View.extend({
       event.stopPropagation()
       NavbarActions.togglePlusMenu()
       let wizard = new IndicatorCreationWizard()
+      return false
+    },
+    'click a[data-hook=create-webhook]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      NavbarActions.togglePlusMenu()
+      let wizard = new WebhookCreationWizard()
+      return false
+    },
+    'click a[data-hook=create-file]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      NavbarActions.togglePlusMenu()
+      let wizard = new FileCreationWizard()
       return false
     }
   },
