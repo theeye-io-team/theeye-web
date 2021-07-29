@@ -1,4 +1,3 @@
-
 import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
@@ -7,6 +6,8 @@ import { DynamicArgument as TaskArgument } from 'models/task/dynamic-argument'
 import * as FieldConstants from 'constants/field'
 import HelpIcon from 'components/help-icon'
 import TaskSelection from 'view/task-select'
+import bootbox from 'bootbox'
+
 
 // component dependencies
 import ArgumentsCreator from './creator'
@@ -17,7 +18,7 @@ export default View.extend({
 	  <div class="form-group">
       <label class="col-sm-3 control-label" data-hook="label">Input Arguments</label>
       <div class="col-sm-9">
-        <div style="padding-bottom: 15px;">
+        <div class="button-container" style="padding-bottom: 15px;">
           <button data-hook="add-argument"
             title="add new argument"
             class="btn btn-default"> Add new argument <i class="fa fa-plus"></i>
@@ -27,6 +28,10 @@ export default View.extend({
             title="copy arguments"
             class="btn btn-default"> Copy arguments from another task <i class="fa fa-copy"></i>
           </button>
+          <input type="file" name="file" id="file" style="display:none;" data-hook="import-arguments">
+          <label for="file" title="import arguments" class="btn btn-default"> 
+            Copy arguments from another task <i class="fa fa-copy"></i>
+          </label>
         </div>
   			<ul class="list-group">
           <li class="list-group-item">
@@ -124,6 +129,24 @@ export default View.extend({
 
     return false
   },
+  onImportScriptArgument (file) {
+    if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
+      try {
+        let recipe = JSON.parse(file.contents)
+        console.log(recipe)
+        let task = App.actions.task.parseRecipe(recipe)
+        let taskArray = task.serialize()
+        taskArray.task_arguments.forEach(arg => {
+          this.onArgumentAdded(arg)
+        })
+      } catch (e) {
+        console.log(e)
+        bootbox.alert('Invalid JSON file.')
+      }
+    } else {
+      bootbox.alert('File not supported, please select a JSON file.')
+    }
+  },
   render () {
     this.renderWithTemplate(this)
 
@@ -142,6 +165,18 @@ export default View.extend({
       }),
       this.queryByHook('order-row-header')
     )
+    const input = this.queryByHook('import-arguments')
+    input.addEventListener('change', (e) => {
+      var reader = new window.FileReader()
+      var file = e.target.files[0] // file input in single mode, read only 1st item in files array
+
+      reader.onloadend = event => {
+        file.contents = event.target.result
+        this.onImportScriptArgument(file)
+        input.value = '' // reset will allow to re import the same file again
+      }
+      reader.readAsText(file)
+    })
   },
   onArgumentRemoved (argument) {
     this.taskArguments.models.forEach((arg,index) => {
