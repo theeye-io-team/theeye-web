@@ -111,7 +111,7 @@ const ScriptItem = Item.extend({
           description += `${this.model.hostname} `
         }
         if (this.model.script) {
-          description += `> ${this.model.script.filename}`
+          description += `> ${this.model.script_name}`
         }
 
         return description

@@ -8,13 +8,12 @@ import { GroupedResourceCollection, GroupedResource } from 'models/resource'
 import AmpersandState from 'ampersand-state'
 
 export default AmpersandState.extend({
-  initialize () {
-    AmpersandState.prototype.initialize.apply(this, arguments)
-
-    this.listenToAndRun(this.groupedTasks, 'change:inProgressJobs', () => {
-      this.groupedTasks.sort()
-    })
-  },
+  //initialize () {
+  //  AmpersandState.prototype.initialize.apply(this, arguments)
+  //  this.listenToAndRun(this.groupedTasks, 'change:inProgressJobs', () => {
+  //    this.groupedTasks.sort()
+  //  })
+  //},
   props: {
     indicatorsDataSynced: ['boolean',false,false],
     indicatorsLength: ['number',false,0],

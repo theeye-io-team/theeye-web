@@ -204,6 +204,31 @@ export default {
         console.log(arguments)
       }
     })
+  },
+  getRunningJobs () {
+    XHR.send({
+      method: 'get',
+      url: `${App.Models.Job.Collection.prototype.url('v2')}/running_count`,
+      withCredentials: true,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (jobsAccum, xhr) {
+        for (let accum of jobsAccum) {
+          if (accum.workflow_id) {
+            const workflow = App.state.workflows.get(accum.workflow_id)
+            if (workflow) {
+              workflow.inProgressJobs = accum.count
+            }
+          } else if (accum.task_id) {
+            const task = App.state.tasks.get(accum.task_id)
+            if (task) {
+              task.inProgressJobs = accum.count
+            }
+          }
+        }
+      }
+    })
   }
 }
 
