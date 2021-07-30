@@ -151,7 +151,8 @@ export default {
     repeat: 'Repeat this job',
     repeat_edit: 'Repeat this job, but allow me to edit the arguments',
     restart: 'Restart this job',
-    restart_edit: 'Restart this job, but allow me to edit the arguments'
+    restart_edit: 'Restart this job, but allow me to edit the arguments',
+    change_assignee: 'Change this job\'s assignees'
   },
   file: {
     path,
