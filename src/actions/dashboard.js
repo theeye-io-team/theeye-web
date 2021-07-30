@@ -82,8 +82,10 @@ export default {
           App.state.dashboard.groupTasks()
 
           App.state.workflows.forEach(workflow => {
-            App.actions.workflow.populate(workflow)
+            //App.actions.workflow.populate(workflow)
           })
+          App.actions.job.getRunningJobs()
+
           //App.actions.onHold.check()
           step()
         },

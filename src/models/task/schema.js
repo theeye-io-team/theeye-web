@@ -61,7 +61,7 @@ const Schema = AppModel.extend({
     credentials: ['object', false, null],
     hasDynamicArguments: 'boolean',
     alreadyFetched: ['boolean', false, false],
-    inProgressJobs: 'number',
+    inProgressJobs: ['number',false,0],
     last_execution: 'date',
     tagsCollection: 'collection',
     hasSchedules: ['boolean', true, false],
