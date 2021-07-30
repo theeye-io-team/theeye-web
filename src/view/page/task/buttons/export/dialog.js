@@ -74,9 +74,9 @@ export default Modalizer.extend({
     </div>
   `,
   events: Object.assign({}, Modalizer.prototype.events, {
-    'click [data-hook=backup]':'clickBackupExportButton',
-    'click [data-hook=recipe]':'clickRecipeExportButton',
-    'click [data-hook=cancel]':'clickCancelButton'
+    'click [data-hook=backup]': 'clickBackupExportButton',
+    'click [data-hook=recipe]': 'clickRecipeExportButton',
+    'click [data-hook=cancel]': 'clickCancelButton'
   }),
   clickBackupExportButton (event) {
     event.preventDefault()
