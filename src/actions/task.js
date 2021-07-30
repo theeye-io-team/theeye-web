@@ -8,11 +8,12 @@ import TaskRouter from 'router/task'
 import after from 'lodash/after'
 import TaskFormActions from 'actions/taskform'
 import FileSaver from 'file-saver'
-const emptyCallback = () => {}
 import { ExecTask, ExecTaskWithNoHost } from 'view/page/dashboard/task/task/exec-task.js'
 import { Model as File } from 'models/file'
+import loggerModule from 'lib/logger'
 
-import loggerModule from 'lib/logger'; const logger = loggerModule('actions:tasks')
+const emptyCallback = () => {}
+const logger = loggerModule('actions:tasks')
 
 export default {
   nodeWorkflow (node) {
@@ -165,6 +166,26 @@ export default {
         FileSaver.saveAs(blob, `${fname}.json`)
       }
     })
+  },
+  exportArguments (id, options = {}) {
+    const task = App.state.tasks.get(id).serialize()
+    if (task) {
+      let warn = false
+      let content = task.task_arguments
+      content.forEach(arg => {
+        if (arg.type === 'fixed') {
+          arg.value = undefined
+          warn = true
+        }
+      })
+      if (warn) {
+        bootbox.alert('For security reasons, "Fixed value" arguments are exported with an undefined value')
+      }
+      const jsonContent = JSON.stringify(content)
+      const blob = new Blob([jsonContent], { type: 'application/json' })
+      const fileName = task.name.replace(/ /g,'_')
+      FileSaver.saveAs(blob, `${fileName}_arguments.json`)
+    }
   },
   fetchRecipe (id, { backup }, next = emptyCallback) {
     const task = App.state.tasks.get(id)

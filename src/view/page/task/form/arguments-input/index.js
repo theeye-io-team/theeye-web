@@ -8,14 +8,13 @@ import HelpIcon from 'components/help-icon'
 import TaskSelection from 'view/task-select'
 import bootbox from 'bootbox'
 
-
 // component dependencies
 import ArgumentsCreator from './creator'
 import ArgumentView from './argument'
 
 export default View.extend({
   template: `
-	  <div class="form-group">
+    <div class="form-group">
       <label class="col-sm-3 control-label" data-hook="label">Input Arguments</label>
       <div class="col-sm-9">
         <div class="button-container" style="padding-bottom: 15px;">
@@ -30,10 +29,10 @@ export default View.extend({
           </button>
           <input type="file" name="file" id="file" style="display:none;" data-hook="import-arguments">
           <label for="file" title="import arguments" class="btn btn-default"> 
-            Copy arguments from another task <i class="fa fa-copy"></i>
+            Import arguments from file <i class="fa fa-copy"></i>
           </label>
         </div>
-  			<ul class="list-group">
+        <ul class="list-group">
           <li class="list-group-item">
             <div class="row" style="line-height: 30px;">
               <span data-hook="order-row-header" class="col-xs-1">#</span>
@@ -44,6 +43,10 @@ export default View.extend({
             </div>
           </li>
         </ul>
+        <button data-hook="export-arguments"
+          title="export arguments"
+          class="btn btn-default"> Export arguments to file <i class="fa fa-file-code-o"></i>
+        </button>
       </div>
     </div>
   `,
@@ -54,10 +57,10 @@ export default View.extend({
     label: { hook: 'label' }
   },
   props: {
-    visible: ['boolean',false,true],
+    visible: ['boolean', false, true],
     taskArguments: 'collection',
-    name: ['string',false,'taskArguments'],
-    label: ['string',false,'Task Arguments']
+    name: ['string', false, 'taskArguments'],
+    label: ['string', false, 'Task Arguments']
   },
   initialize (options) {
     // copy collection
@@ -66,11 +69,12 @@ export default View.extend({
       model: TaskArgument,
       comparator: 'order'
     })
-    View.prototype.initialize.apply(this,arguments)
+    View.prototype.initialize.apply(this, arguments)
   },
   events: {
     'click [data-hook=add-argument]':'onClickAddTaskArgument',
     'click [data-hook=copy-arguments]':'onClickCopyTaskArguments',
+    'click [data-hook=export-arguments]': 'exportArgumentsToArgumentsRecipe'
   },
   onClickAddTaskArgument (event) {
     event.preventDefault()
@@ -84,12 +88,12 @@ export default View.extend({
       bodyView: creator
     })
 
-    this.listenTo(modal,'hidden',() => {
+    this.listenTo(modal, 'hidden', () => {
       creator.remove()
       modal.remove()
     })
 
-    this.listenTo(creator,'added', arg => {
+    this.listenTo(creator, 'added', arg => {
       creator.remove()
       modal.remove()
       this.onArgumentAdded(arg)
@@ -130,12 +134,13 @@ export default View.extend({
     return false
   },
   onImportScriptArgument (file) {
+    // This is not used anymore weeeeeeeeee
     if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
       try {
-        let recipe = JSON.parse(file.contents)
+        const recipe = JSON.parse(file.contents)
         console.log(recipe)
-        let task = App.actions.task.parseRecipe(recipe)
-        let taskArray = task.serialize()
+        const task = App.actions.task.parseRecipe(recipe)
+        const taskArray = task.serialize()
         taskArray.task_arguments.forEach(arg => {
           this.onArgumentAdded(arg)
         })
@@ -147,6 +152,23 @@ export default View.extend({
       bootbox.alert('File not supported, please select a JSON file.')
     }
   },
+  importArgumentsFromArgumentsRecipe (file) {
+    let warn = false
+    if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
+      JSON.parse(file.contents).forEach(arg => {
+        if (arg.type === 'fixed') {
+          warn = true
+        }
+        this.onArgumentAdded(arg)
+      })
+      if (warn) {
+        bootbox.alert('Remember to manually set values for any "Fixed value" arguments')
+      }
+    }
+  },
+  exportArgumentsToArgumentsRecipe () {
+    App.actions.task.exportArguments(this.parent.model.id)
+  },
   render () {
     this.renderWithTemplate(this)
 
@@ -157,7 +179,7 @@ export default View.extend({
     )
 
     // when model removed change all arguments order to its new index
-    this.listenTo(this.taskArguments,'remove',this.onArgumentRemoved)
+    this.listenTo(this.taskArguments, 'remove', this.onArgumentRemoved)
 
     this.renderSubview(
       new HelpIcon({
@@ -172,7 +194,7 @@ export default View.extend({
 
       reader.onloadend = event => {
         file.contents = event.target.result
-        this.onImportScriptArgument(file)
+        this.importArgumentsFromArgumentsRecipe(file)
         input.value = '' // reset will allow to re import the same file again
       }
       reader.readAsText(file)
