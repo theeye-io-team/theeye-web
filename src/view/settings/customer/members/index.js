@@ -79,7 +79,9 @@ export default View.extend({
   onSearchInput (event) {
     this._subviews[0].views.forEach(
       view => {
-        view.visible = (view.model.username.includes(event.target.value))
+        view.visible = (
+          view.model.label.toLowerCase().includes(event.target.value.toLowerCase())
+        )
       }
     )
   },
