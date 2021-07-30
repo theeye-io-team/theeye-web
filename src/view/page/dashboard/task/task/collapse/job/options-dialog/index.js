@@ -3,6 +3,7 @@ import Modalizer from 'components/modalizer'
 import Help from 'language/help'
 import { RepeatCompletedJob, RestartCompletedJob } from '../exec-job'
 import './styles.less'
+import ChangeAssignee from '../change-assignee'
 
 export default Modalizer.extend({
   initialize () {
@@ -58,6 +59,16 @@ export default Modalizer.extend({
                   </div>
 
                   <!-- row 3 -->
+                  <div class="grid-col-button" data-hook="change-assignee-toggle">
+                    <button type="button" class="btn btn-default" data-hook="change-assignee">
+                      <i class="fa fa-arrow-right"></i>
+                    </button>
+                  </div>
+                  <div class="grid-col-message" data-hook="change-assignee-toggle">
+                    <span>${Help.job.change_assignee}</span>
+                  </div>
+
+                  <!-- row 4 -->
                   <div class="grid-col-button">
                     <button type="button" class="btn btn-default" data-hook="cancel">
                       <i class="fa fa-arrow-right"></i>
@@ -74,10 +85,6 @@ export default Modalizer.extend({
       </div><!-- /MODALIZER CONTAINER -->
     </div>
   `,
-  render () {
-    Modalizer.prototype.render.apply(this, arguments)
-    const model = this.model
-  },
   events: {
     'click [data-hook=cancel]':function (event) {
       event.preventDefault()
@@ -104,6 +111,13 @@ export default Modalizer.extend({
       const action = new RestartCompletedJob({ model: this.model })
       action.execute()
       this.hide()
+    },
+    'click button[data-hook=change-assignee]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      this.hide()
+      const action = new ChangeAssignee({model: this.model})
+      action.show()
     }
   },
   derived: {
@@ -145,6 +159,16 @@ export default Modalizer.extend({
     },{
       type: 'toggle',
       hook: 'repeat-label'
-    }]
+    }],
+    'model.lifecycle': {
+      hook: 'change-assignee-toggle',
+      type: function (el, value) {
+        if (process.env.NODE_ENV === 'production') {
+          el.style.display = 'none'
+        } else {
+          el.style.display = (value === 'onhold') ? 'block': 'none'
+        }
+      }
+    }
   })
 })

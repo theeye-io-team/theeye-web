@@ -5,6 +5,7 @@ import * as TaskConstants from 'constants/task'
 import * as LifecycleConstants from 'constants/lifecycle'
 import * as JobConstants from 'constants/job'
 import qs from 'qs'
+import bootbox from 'bootbox'
 
 import loggerModule from 'lib/logger'
 const logger = loggerModule('actions:jobs')
@@ -229,6 +230,28 @@ export default {
         }
       }
     })
+  },
+  changeAssignee (jobId, assignee) {
+    const job = App.state.jobs.get(jobId)
+    if (!job) {
+      bootbox.alert('Failed to find job, please reload the page')
+    } else {
+      XHR.send({
+        method: 'put',
+        url: `${job.urlV2()}/assignee`,
+        jsonData: assignee,
+        headers: {
+          Accept: 'application/json;charset=UTF-8'
+        },
+        done (data, xhr) {
+          job.assignee = data.assignee
+          App.state.alerts.info('Changed assignee')
+        },
+        fail (err, xhr) {
+          App.state.alerts.danger('Failed to change assignee')
+        }
+      })
+    }
   }
 }
 
