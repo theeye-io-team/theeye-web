@@ -173,7 +173,8 @@ export default TaskFormView.extend({
     let argumentsType
     if (isNewTask) {
       allowsDynamicSettings = false
-      argumentsType = TaskConstants.ARGUMENT_TYPE_TEXT
+      //argumentsType = TaskConstants.ARGUMENT_TYPE_TEXT
+      argumentsType = TaskConstants.ARGUMENT_TYPE_LEGACY
     } else {
       allowsDynamicSettings = (this.model.allows_dynamic_settings !== false)
       argumentsType = (this.model.arguments_type || TaskConstants.ARGUMENT_TYPE_LEGACY)
