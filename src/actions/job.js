@@ -329,6 +329,20 @@ const parseArgumentsValues = (task, args) => {
         return (arg.value || null)
       }
     } else if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_TEXT) {
+      if (!arg.value) {
+        return null
+      }
+
+      if (Array.isArray(arg.value)) {
+        return JSON.stringify(arg.value)
+      }
+
+      const value = arg.value.toString()
+
+      if (typeof value === 'string') {
+        return value
+      }
+
       return JSON.stringify(arg.value || null)
     } else {
       return (arg.value || null)
