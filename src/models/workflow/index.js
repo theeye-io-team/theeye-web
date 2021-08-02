@@ -178,14 +178,14 @@ const Workflow = AppModel.extend({
       }
     })
 
-    this.listenToAndRun(this.jobs, 'add change sync reset remove', function () {
-      let inProgressJobs = this.jobs.filter(job => job.inProgress)
-      if (inProgressJobs.length > 0) {
-        this.inProgressJobs = inProgressJobs.length
-      } else {
-        this.inProgressJobs = 0
-      }
-    })
+    //this.listenToAndRun(this.jobs, 'add change sync reset remove', function () {
+    //  let inProgressJobs = this.jobs.filter(job => job.inProgress)
+    //  if (inProgressJobs.length > 0) {
+    //    this.inProgressJobs = inProgressJobs.length
+    //  } else {
+    //    this.inProgressJobs = 0
+    //  }
+    //})
 
     this.listenToAndRun(
       this.jobs,

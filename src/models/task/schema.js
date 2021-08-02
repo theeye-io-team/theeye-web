@@ -100,16 +100,16 @@ const Schema = AppModel.extend({
       }
     })
 
-    this.listenToAndRun(this.jobs, 'add change sync reset remove', () => {
-      let inProgressJobs = this.jobs.filter(job => job.inProgress)
-      if (inProgressJobs.length > 0) {
-        this.inProgressJobs = inProgressJobs.length
-      } else {
-        this.inProgressJobs = 0
-      }
-    })
+    //this.listenToAndRun(this.jobs, 'add change sync reset remove', () => {
+    //  let inProgressJobs = this.jobs.filter(job => job.inProgress)
+    //  if (inProgressJobs.length > 0) {
+    //    this.inProgressJobs = inProgressJobs.length
+    //  } else {
+    //    this.inProgressJobs = 0
+    //  }
+    //})
 
-    this.listenToAndRun( this.jobs, 'add change sync reset remove', () => {
+    this.listenToAndRun(this.jobs, 'add change sync reset remove', () => {
       if (this.jobs.length===0) { return }
       let dates = this.jobs.map(e => e.creation_date)
       const last = Math.max.apply(null, dates)

@@ -324,11 +324,11 @@ const Group = Schema.extend({
     this.type = 'group'
     this._type = 'TaskGroup'
 
-    this.listenToAndRun(this.submodels, 'change:inProgressJobs', () => {
-      this.inProgressJobs = this.submodels.models
-        .map(model => model.inProgressJobs)
-        .reduce((count, curr) => count + curr, 0)
-    })
+    //this.listenToAndRun(this.submodels, 'change:inProgressJobs', () => {
+    //  this.inProgressJobs = this.submodels.models
+    //    .map(model => model.inProgressJobs)
+    //    .reduce((count, curr) => count + curr, 0)
+    //})
   },
   collections: {
     submodels: Collection

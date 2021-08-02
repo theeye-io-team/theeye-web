@@ -1,6 +1,7 @@
 
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
+import * as OperationsConstants from 'constants/operations'
 import * as TaskConstants from 'constants/task'
 import * as LifecycleConstants from 'constants/lifecycle'
 import * as JobConstants from 'constants/job'
@@ -14,32 +15,16 @@ export default {
   /**
    *
    * @summary this is being updated via socket event
-   * @param {Object} data job model properties
+   * @param {Object} props job model properties
    *
    */
-  applyStateUpdate (data) {
+  applyStateUpdate (props, operation) {
     try {
-      let workflow
-      if (data._type === 'WorkflowJob') {
+      if (props._type === 'WorkflowJob') {
         // update state
-        return addWorkflowJobToState(data)
-      }
-
-      // task definition not in state
-      const task = App.state.tasks.get(data.task_id)
-      if (!task) {
-        logger.error('task not found in state')
-        logger.error('%o', data)
-        return
-      }
-
-      const job = addJobToState(data, task)
-
-      /**
-       * @summary check if job is on hold and requires intervention of the current user
-       */
-      if (job.requiresInteraction()) {
-        App.actions.onHold.check(job)
+        addWorkflowJobToState(props)
+      } else {
+        addTaskJobToState(props, operation)
       }
     } catch (e) {
       console.error(e)
@@ -109,11 +94,11 @@ export default {
     const values = parseArgumentsValues(task, args)
 
     if (!task.workflow_id) {
-      logger.log('creating new job with task %o', task)
+      logger.debug('creating new job with task %o', task)
       createSingleTaskJob(task, values, (err, job) => { })
     } else {
       let workflow = App.state.workflows.get(task.workflow_id)
-      logger.log('creating new job with workflow %o', workflow)
+      logger.debug('creating new job with workflow %o', workflow)
       createWorkflowJob(workflow, values, (err, job) => { })
     }
   },
@@ -169,6 +154,7 @@ export default {
             ( query.lifecycle && query.lifecycle.indexOf(job.lifecycle) !== -1 )
           ) {
             model.jobs.remove(job.id)
+            updateInprogressCounter(job, model, OperationsConstants.DELETE)
           }
         }
       },
@@ -315,17 +301,32 @@ const addWorkflowJobToState = (data) => {
   workflow.jobs.add(data, { merge: true })
 }
 
-const addJobToState = (data, task) => {
-  let taskJob = new App.Models.Job.Factory(data, {})
+const addTaskJobToState = (props, operation) => {
+  // task definition not in state
+  const task = App.state.tasks.get(props.task_id)
+  if (!task) {
+    logger.error('task not found in state')
+    logger.error('%o', props)
+    return
+  }
+
+  const taskJob = new App.Models.Job.Factory(props, {})
 
   if (!task.workflow_id) {
+    //
+    // single task job. not workflow
+    //
     task.jobs.add(taskJob, { merge: true })
+    updateInprogressCounter(taskJob, task, operation)
   } else {
+    // 
+    // Job belong to a workflow
+    // 
     // get the workflow
-    let workflow = App.state.workflows.get(task.workflow_id)
+    const workflow = App.state.workflows.get(task.workflow_id)
     if (!workflow) { // error
-      let err = new Error('workflow job not found')
-      err.data = data
+      const err = new Error('workflow job not found')
+      err.props = props 
       throw err
     }
 
@@ -345,16 +346,22 @@ const addJobToState = (data, task) => {
     }
 
     workflowJob.jobs.add(taskJob, { merge: true })
+    updateInprogressCounter(taskJob, workflow, operation)
   }
 
   if (
     task.hasOnHoldExecution &&
-    data.lifecycle === LifecycleConstants.READY
+    taskJob.lifecycle === LifecycleConstants.READY
   ) {
     App.actions.scheduler.fetch(task)
   }
 
-  return taskJob
+  /**
+   * @summary check if job is on hold and requires intervention of the current user
+   */
+  if (taskJob.requiresInteraction()) {
+    App.actions.onHold.check(taskJob)
+  }
 }
 
 const parseArgumentsValues = (task, args) => {
@@ -398,4 +405,24 @@ const parseArgumentsValues = (task, args) => {
   })
 
   return values
+}
+
+const updateInprogressCounter = (job, parent, operation) => {
+  if (!operation) {
+    return
+  }
+
+  logger.debug(`${operation}: [${parent._type}] ${parent.name} > ${job.name} ${job.lifecycle}`)
+
+  if (operation === OperationsConstants.CREATE) {
+    parent.inProgressJobs++
+  } else if (operation === OperationsConstants.DELETE) {
+    if (LifecycleConstants.inProgress(job.lifecycle)) {
+      parent.inProgressJobs--
+    }
+  } else {
+    if (LifecycleConstants.isCompleted(job.lifecycle)) {
+      parent.inProgressJobs--
+    }
+  }
 }
