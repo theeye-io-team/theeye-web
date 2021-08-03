@@ -4,6 +4,7 @@ import Modalizer from 'components/modalizer'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
 import { Model as FileModel } from 'models/file'
+import CreationWizard from '../creation-wizard'
 
 import FileForm from '../form'
 
@@ -20,20 +21,7 @@ export default CommonButton.extend({
       event.preventDefault()
       event.stopPropagation()
 
-      const form = new FileForm({ model: new FileModel () })
-      const modal = new Modalizer({
-        buttons: false,
-        title: this.title,
-        bodyView: form
-      })
-
-      //this.listenTo(modal,'shown',() => { select.focus() })
-      this.listenTo(modal,'hidden',() => {
-        form.remove()
-        modal.remove()
-      })
-      form.on('submitted', () => modal.hide())
-      modal.show()
+      new CreationWizard()
     }
   }
 })
