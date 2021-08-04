@@ -178,27 +178,23 @@ const Workflow = AppModel.extend({
       }
     })
 
-    //this.listenToAndRun(this.jobs, 'add change sync reset remove', function () {
-    //  let inProgressJobs = this.jobs.filter(job => job.inProgress)
-    //  if (inProgressJobs.length > 0) {
-    //    this.inProgressJobs = inProgressJobs.length
-    //  } else {
-    //    this.inProgressJobs = 0
-    //  }
-    //})
-
-    this.listenToAndRun(
-      this.jobs,
-      'add change sync reset remove',
-      function () {
-        if (this.jobs.length===0) { return }
-        let dates = this.jobs.map(e => e.creation_date).filter(e => e)
-        const last = Math.max.apply(null, dates)
-        if (typeof last === 'date') {
-          this.last_execution = last
-        }
+    this.listenToAndRun(this.jobs, 'add change sync reset remove', function () {
+      let inProgressJobs = this.jobs.filter(job => job.inProgress)
+      if (inProgressJobs.length > 0) {
+        this.inProgressJobs = inProgressJobs.length
+      } else {
+        this.inProgressJobs = 0
       }
-    )
+    })
+
+    this.listenToAndRun(this.jobs, 'add change sync reset remove', function () {
+      if (this.jobs.length===0) { return }
+      let dates = this.jobs.map(e => e.creation_date).filter(e => e)
+      const last = Math.max.apply(null, dates)
+      if (typeof last === 'date') {
+        this.last_execution = last
+      }
+    })
 
     this.listenToAndRun(this.schedules, 'change reset sync remove add', () => {
       this.hasSchedules = (this.schedules.length > 0)

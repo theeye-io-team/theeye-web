@@ -18,13 +18,13 @@ export default {
    * @param {Object} props job model properties
    *
    */
-  applyStateUpdate (props, operation) {
+  applyStateUpdate (props) {
     try {
       if (props._type === 'WorkflowJob') {
         // update state
         addWorkflowJobToState(props)
       } else {
-        addTaskJobToState(props, operation)
+        addTaskJobToState(props)
       }
     } catch (e) {
       console.error(e)
@@ -154,7 +154,7 @@ export default {
             ( query.lifecycle && query.lifecycle.indexOf(job.lifecycle) !== -1 )
           ) {
             model.jobs.remove(job.id)
-            updateInprogressCounter(job, model, OperationsConstants.DELETE)
+            //updateInprogressCounter(job, model, OperationsConstants.DELETE)
           }
         }
       },
@@ -195,28 +195,43 @@ export default {
   getRunningJobs () {
     XHR.send({
       method: 'get',
-      url: `${App.Models.Job.Collection.prototype.url('v2')}/running_count`,
+      url: `${App.Models.Job.Collection.prototype.url('v2')}/running`,
       withCredentials: true,
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
-      done (jobsAccum, xhr) {
-        for (let accum of jobsAccum) {
-          if (accum.workflow_id) {
-            const workflow = App.state.workflows.get(accum.workflow_id)
-            if (workflow) {
-              workflow.inProgressJobs = accum.count
-            }
-          } else if (accum.task_id) {
-            const task = App.state.tasks.get(accum.task_id)
-            if (task) {
-              task.inProgressJobs = accum.count
-            }
-          }
+      done (jobs, xhr) {
+        for (let job of jobs) {
+          App.actions.job.applyStateUpdate(job)
         }
       }
     })
   },
+  //getRunningJobsCounter () {
+  //  XHR.send({
+  //    method: 'get',
+  //    url: `${App.Models.Job.Collection.prototype.url('v2')}/running_count`,
+  //    withCredentials: true,
+  //    headers: {
+  //      Accept: 'application/json;charset=UTF-8'
+  //    },
+  //    done (jobsAccum, xhr) {
+  //      for (let accum of jobsAccum) {
+  //        if (accum.workflow_id) {
+  //          const workflow = App.state.workflows.get(accum.workflow_id)
+  //          if (workflow) {
+  //            workflow.inProgressJobs = accum.count
+  //          }
+  //        } else if (accum.task_id) {
+  //          const task = App.state.tasks.get(accum.task_id)
+  //          if (task) {
+  //            task.inProgressJobs = accum.count
+  //          }
+  //        }
+  //      }
+  //    }
+  //  })
+  //},
   changeAssignee (jobId, assignee) {
     const job = App.state.jobs.get(jobId)
     if (!job) {
@@ -301,7 +316,7 @@ const addWorkflowJobToState = (data) => {
   workflow.jobs.add(data, { merge: true })
 }
 
-const addTaskJobToState = (props, operation) => {
+const addTaskJobToState = (props) => {
   // task definition not in state
   const task = App.state.tasks.get(props.task_id)
   if (!task) {
@@ -317,7 +332,7 @@ const addTaskJobToState = (props, operation) => {
     // single task job. not workflow
     //
     task.jobs.add(taskJob, { merge: true })
-    updateInprogressCounter(taskJob, task, operation)
+    //updateInprogressCounter(taskJob, task, operation)
   } else {
     // 
     // Job belong to a workflow
@@ -346,7 +361,7 @@ const addTaskJobToState = (props, operation) => {
     }
 
     workflowJob.jobs.add(taskJob, { merge: true })
-    updateInprogressCounter(taskJob, workflow, operation)
+    //updateInprogressCounter(taskJob, workflow, operation)
   }
 
   if (
@@ -407,22 +422,22 @@ const parseArgumentsValues = (task, args) => {
   return values
 }
 
-const updateInprogressCounter = (job, parent, operation) => {
-  if (!operation) {
-    return
-  }
-
-  logger.debug(`${operation}: [${parent._type}] ${parent.name} > ${job.name} ${job.lifecycle}`)
-
-  if (operation === OperationsConstants.CREATE) {
-    parent.inProgressJobs++
-  } else if (operation === OperationsConstants.DELETE) {
-    if (LifecycleConstants.inProgress(job.lifecycle)) {
-      parent.inProgressJobs--
-    }
-  } else {
-    if (LifecycleConstants.isCompleted(job.lifecycle)) {
-      parent.inProgressJobs--
-    }
-  }
-}
+//const updateInprogressCounter = (job, parent, operation) => {
+//  if (!operation) {
+//    return
+//  }
+//
+//  logger.debug(`${operation}: [${parent._type}] ${parent.name} > ${job.name} ${job.lifecycle}`)
+//
+//  if (operation === OperationsConstants.CREATE) {
+//    parent.inProgressJobs++
+//  } else if (operation === OperationsConstants.DELETE) {
+//    if (LifecycleConstants.inProgress(job.lifecycle)) {
+//      parent.inProgressJobs--
+//    }
+//  } else {
+//    if (LifecycleConstants.isCompleted(job.lifecycle)) {
+//      parent.inProgressJobs--
+//    }
+//  }
+//}
