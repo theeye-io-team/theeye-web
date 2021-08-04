@@ -5,7 +5,7 @@ import WebhookActions from 'actions/webhook'
 import Modalizer from 'components/modalizer'
 
 export default View.extend({
-  initialize() {
+  initialize () {
     const form = new WebhookForm()
     const modal = new Modalizer({
       confirmButton: 'Save',

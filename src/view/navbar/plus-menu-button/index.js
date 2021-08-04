@@ -6,8 +6,8 @@ import TaskCreationWizard from 'view/page/task/creation-wizard'
 import MonitorCreationWizard from 'view/page/monitor/creation-wizard'
 import WorkflowCreationWizard from 'view/page/workflow/creation-wizard'
 import IndicatorCreationWizard from 'view/page/indicator/creation-wizard'
-import WebhookCreationWizard from  'view/page/webhook/creation-wizard'
-import FileCreationWizard from  'view/page/files/creation-wizard'
+import WebhookCreationWizard from 'view/page/webhook/creation-wizard'
+import FileCreationWizard from 'view/page/files/creation-wizard'
 
 import './style.less'
 

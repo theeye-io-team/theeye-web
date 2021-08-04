@@ -5,7 +5,7 @@ import { Model as FileModel } from 'models/file'
 import Modalizer from 'components/modalizer'
 
 export default View.extend({
-  initialize() {
+  initialize () {
     const form = new FileForm({ model: new FileModel() })
     const modal = new Modalizer({
       buttons: false,
