@@ -337,6 +337,7 @@ const Group = Schema.extend({
     formatted_tags: formattedTags()
   },
   props: {
+    //inProgressJobs: ['number', false, 0],
     groupby: ['string'],
     canExecute: ['boolean', false, true]
   }
