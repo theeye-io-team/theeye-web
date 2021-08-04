@@ -10,11 +10,10 @@ import WebhookActions from 'actions/webhook'
 import List from 'components/list'
 import HelpIconView from 'components/help-icon'
 import Loader from 'components/loader'
-import Modalizer from 'components/modalizer'
 import CommonButton from 'components/common-button'
 import MassiveDeleteButton from 'components/list/header/buttons/massive-delete'
-import WebhookForm from './form'
 import WebhookRow from './list-item'
+import WebhookCreationWizard from 'view/page/webhook/creation-wizard'
 
 const CreateButton = CommonButton.extend({
   initialize (options) {
@@ -29,26 +28,7 @@ const CreateButton = CommonButton.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    const form = new WebhookForm()
-    const modal = new Modalizer({
-      confirmButton: 'Save',
-      buttons: true,
-      title: 'Create new Incoming Webhook',
-      bodyView: form
-    })
-
-    this.listenTo(modal,'shown',function(){
-      form.focus()
-    })
-    this.listenTo(modal,'hidden',function(){
-      form.remove()
-      modal.remove()
-    })
-    this.listenTo(modal,'confirm',function(){
-      WebhookActions.create(form.data)
-      modal.hide()
-    })
-    modal.show()
+    let wizard = new WebhookCreationWizard()
   }
 })
 
