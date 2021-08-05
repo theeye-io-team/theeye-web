@@ -8,7 +8,7 @@ import HelpIconView from 'components/help-icon'
  */
 export default View.extend({
   template: `
-    <div class="taskRow">
+    <div data-component="task-collapsible-row" class="taskRow">
       <div class="tasks-container panel panel-default">
         <div class="panel-heading"
           role="tab"
@@ -48,7 +48,9 @@ export default View.extend({
 
                 <!-- HAS SCHEDULE -->
                 <div data-hook="has-schedule" class="schedule-icon-container" title="Scheduled">
-                  <i class="fa fa-clock-o" aria-hidden="true"></i>
+                  <i class="fa fa-clock-o" aria-hidden="true">
+                    <i class="fa fa-exclamation" aria-hidden="true"></i>
+                  </i>
                 </div>
               </div>
             </span>
@@ -172,6 +174,12 @@ export default View.extend({
     'model.hasSchedules': {
       type: 'toggle',
       hook: 'has-schedule'
+    },
+    'model.hasDisabledSchedules': {
+      type: 'booleanClass',
+      hook: 'has-schedule',
+      yes: 'red',
+      no: ''
     }
   },
   events: {

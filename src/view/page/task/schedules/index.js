@@ -51,29 +51,33 @@ const ScheduleRow = View.extend({
             <a href="#" data-hook="delete" class="btn-primary btn delete-schedule">
               <span class="fa fa-trash"></span>
             </a>
+            <span data-hook="pauseToggle" class="btn btn-primary"></span>
           </div>
         </h4>
       </div>
-    </div>`,
+    </div>
+  `,
   events: {
-    'click [data-hook=delete]': 'onClickDelete'
-  },
-  onClickDelete: function (event) {
-    bootbox.confirm({
-      buttons: {
-        confirm: {
-          label: 'Delete schedule',
-          className: 'btn-danger'
+    'click [data-hook=delete]': function (event) {
+      bootbox.confirm({
+        buttons: {
+          confirm: {
+            label: 'Delete schedule',
+            className: 'btn-danger'
+          }
+        },
+        message: 'The schedule will be deleted. Want to continue?',
+        backdrop: true,
+        callback: (confirmed) => {
+          if (confirmed) {
+            App.actions.scheduler.cancel(this.scheduledModel, this.model)
+          }
         }
-      },
-      message: 'The schedule will be deleted. Want to continue?',
-      backdrop: true,
-      callback: (confirmed) => {
-        if (confirmed) {
-          App.actions.scheduler.cancel(this.scheduledModel, this.model)
-        }
-      }
-    })
+      })
+    },
+    'click [data-hook=pauseToggle]': function (event) {
+      App.actions.scheduler.disabledToggle(this.model)
+    }
   },
   bindings: {
     'model.data.scheduleData.repeatEvery': {
@@ -90,6 +94,16 @@ const ScheduleRow = View.extend({
       hook: 'nextDate',
       type: function (el, value, previousValue) {
         el.innerHTML = moment(value).format('dddd, MMMM Do YYYY, h:mm:ss a')
+      }
+    },
+    'model.disabled': {
+      hook: 'pauseToggle',
+      type: function (el, disabled, previousValue) {
+        if (disabled) {
+          el.innerHTML = `<span class="fa fa-play"></span> Execute and Resume schedule`
+        } else {
+          el.innerHTML = `<span class="fa fa-pause"></span> Pause schedule`
+        }
       }
     }
   }

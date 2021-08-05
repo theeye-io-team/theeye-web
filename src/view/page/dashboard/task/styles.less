@@ -1,14 +1,34 @@
-.schedule-icon-container {
-  float: right;
-  padding: 5px 10px;
-  width: 36px;
-  height: 34px;
-  line-height: 22px;
-  color: #777;
-}
+[data-component=task-collapsible-row] {
 
-@media (max-width:767px) {
   .schedule-icon-container {
-    display: none;
+    float: right;
+    padding: 5px 10px;
+    width: 36px;
+    height: 34px;
+    line-height: 22px;
+    color: #777;
+
+    i.fa-exclamation {
+      position: relative;
+      top: -20px;
+      right: -15px;
+      font-size: 10px;
+      display: none;
+    }
   }
+
+  .schedule-icon-container.red {
+    color: #e88840;
+
+    i.fa-exclamation {
+      display: block;
+    }
+  }
+
+  @media (max-width:767px) {
+    .schedule-icon-container {
+      display: none;
+    }
+  }
+
 }
