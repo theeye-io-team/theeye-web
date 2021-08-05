@@ -103,7 +103,7 @@ export default {
     })
   },
   populate (task) {
-    if (task.isNew()) return
+    if (task.isNew()) { return }
 
     if (task.type === TaskConstants.TYPE_SCRIPT) {
       const script = task.script
@@ -113,7 +113,7 @@ export default {
       }
     }
 
-    task.fetchJobs(function () { return })
+    task.fetchJobs(() => {})
     App.actions.scheduler.fetch(task)
   },
   massiveDelete (tasks) {

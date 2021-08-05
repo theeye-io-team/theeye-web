@@ -102,6 +102,7 @@ const Workflow = AppModel.extend({
   },
   session: {
     alreadyPopulated: ['boolean', false, false],
+    jobsAlreadyFetched: ['boolean', false, false],
     inProgressJobs: 'number',
     last_execution: 'date',
     tagsCollection: 'collection',
@@ -230,6 +231,9 @@ const Workflow = AppModel.extend({
    */
   fetchJobs (callback) {
     callback || (callback = () => {})
+
+    if (this.jobsAlreadyFetched === true) { return callback() }
+
     this.jobs.fetch({
       set: false,
       data: {
@@ -238,21 +242,15 @@ const Workflow = AppModel.extend({
         }
       },
       success: (collection, jobs, options) => {
+        this.jobsAlreadyFetched = true
         this.jobs.reset(groupJobs(jobs))
-        //this.reset(models, options)
-        //this.trigger('sync', this, models, options)
-        // group jobs by workflow_job
         callback()
       },
-      error: (arg1) => {
+      error (arg1) {
         callback( new Error(arg1) )
       }
     })
   }
-  //parse (attrs) {
-  //  attrs.graph = graphlib.json.read(attrs.graph)
-  //  return attrs
-  //}
 })
 
 const groupJobs = (jobs) => {
