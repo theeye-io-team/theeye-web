@@ -44,14 +44,12 @@ export default View.extend({
   navigationChange(event) {
     switch (event.target.attributes[1].nodeValue) {
       case 'fwd-btn':
-        if (this.model.paginator_last != this.jobsLength - 1)
-        {
+        if (this.model.paginator_last != this.jobsLength - 1) {
           this.model.paginator_first = this.model.paginator_last + 1
           if (this.model.paginator_last + this.model.paginator_length > this.jobsLength - 1) {
             this.model.paginator_last = this.jobsLength - 1
             this.lastPage = true
-          }
-          else {
+          } else {
             this.model.paginator_last += this.model.paginator_length
             this.lastPage = false
           }
@@ -66,10 +64,10 @@ export default View.extend({
           else
             this.model.paginator_first -= this.model.paginator_length
         }
-        break;
+        break
         
-      default:
-        break;
+      default
+        break
     }
   },
   initialize () {
