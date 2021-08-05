@@ -4,6 +4,7 @@ import AppCollection from 'lib/app-collection'
 import { Collection as ScheduleCollection } from 'models/schedule'
 import { Collection as TagCollection } from 'models/tag'
 import graphlib from 'graphlib'
+import * as JobConstants from 'constants/job'
 
 import config from 'config'
 const urlRoot = `${config.supervisor_api_url}/workflows`
@@ -243,7 +244,8 @@ const Workflow = AppModel.extend({
       },
       success: (collection, jobs, options) => {
         this.jobsAlreadyFetched = true
-        this.jobs.reset(groupJobs(jobs))
+        const groups = groupJobs(jobs)
+        this.jobs.reset(groups)
         callback()
       },
       error (arg1) {
@@ -267,21 +269,28 @@ const groupJobs = (jobs) => {
       }
     })
 
-    if (wJobs.length > 0) {
-      // assign each task job to its own workflow job instance
-      if (tJobs.length > 0) {
-        tJobs.forEach(tJob => {
-          // seach the matching workflow job
-          let wJob = wJobs.find(wJob => {
-            return wJob.id === tJob.workflow_job_id
-          })
-
-          if (wJob) {
-            if (!wJob.jobs) { wJob.jobs = [] }
-            wJob.jobs.push(tJob)
-          }
+    // assign each task job to its own workflow job instance
+    if (tJobs.length > 0) {
+      tJobs.forEach(tJob => {
+        // seach the matching workflow job
+        let wJob = wJobs.find(wJob => {
+          return wJob.id === tJob.workflow_job_id
         })
-      }
+
+        if (!wJob) {
+          // orphan? how?
+          wJob = {
+            id: tJob.workflow_job_id,
+            _type: JobConstants.WORKFLOW_TYPE,
+            jobs: []
+          }
+
+          wJobs.push(wJob)
+        }
+
+        if (!wJob.jobs) { wJob.jobs = [] }
+        wJob.jobs.push(tJob)
+      })
     }
   }
   return wJobs

@@ -80,9 +80,10 @@ export default {
         data: { unassigned: true },
         success: () => {
           App.state.dashboard.groupTasks()
-          //App.state.workflows.forEach(workflow => {
-          //  App.actions.workflow.populate(workflow)
-          //})
+          App.state.workflows.forEach(workflow => {
+            App.actions.workflow.populate(workflow)
+            App.actions.scheduler.fetch(workflow)
+          })
           App.actions.job.getRunningJobs()
           //App.actions.onHold.check()
           step()

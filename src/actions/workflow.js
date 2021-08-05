@@ -34,11 +34,24 @@ export default {
     model.save({},{
       success: () => {
         App.state.alerts.success('Success', 'Workflow updated')
+
+        // reset workflow state
         const workflow = App.state.workflows.get(id)
         workflow.set(model.serialize())
+
         workflow.alreadyPopulated = false // reset to repopulate
-        this.populate(workflow)
-        workflow.tasks.fetch()
+        App.actions.workflow.populate(workflow)
+        workflow.tasks.fetch({
+          data: {
+            where: {
+              workflow_id: workflow.id
+            }
+          }
+        })
+
+        workflow.jobsAlreadyFetched = false // reset to repopulate
+        workflow.fetchJobs()
+        App.actions.scheduler.fetch(workflow)
       },
       error: (err) => {
         logger.error(err)
@@ -53,7 +66,13 @@ export default {
         App.state.alerts.success('Success', 'Workflow created')
         App.state.workflows.add(workflow)
         this.populate(workflow)
-        workflow.tasks.fetch()
+        workflow.tasks.fetch({
+          data: {
+            where: {
+              workflow_id: workflow.id
+            }
+          }
+        })
       },
       error: (err) => {
         logger.error(err)
@@ -75,7 +94,7 @@ export default {
     if (workflow.isNew()) return
 
     if (
-      ! workflow.alreadyPopulated &&
+      workflow.alreadyPopulated === false ||
       workflow.tasks.models.length === 0
     ) {
       let nodes = workflow.graph.nodes()
@@ -97,10 +116,8 @@ export default {
       })
 
       workflow.alreadyPopulated = true
-      workflow.fetchJobs()
+      //workflow.fetchJobs()
     }
-
-    App.actions.scheduler.fetch(workflow)
   },
   triggerExecution (workflow) {
     this.populate(workflow)
