@@ -22,18 +22,22 @@ export default {
     }
   },
   checkWorkflow (workflow) {
-    if (App.state.onHold.underExecution === true) {
-      App.state.onHold.newArrived = true
-    } else {
-      checkWorkflow(workflow)
-    }
+    workflow.fetchJobs(() => {
+      if (App.state.onHold.underExecution === true) {
+        App.state.onHold.newArrived = true
+      } else {
+        checkWorkflow(workflow)
+      }
+    })
   },
   checkTask (task) {
-    if (App.state.onHold.underExecution === true) {
-      App.state.onHold.newArrived = true
-    } else {
-      checkTask(task)
-    }
+    task.fetchJobs(() => {
+      if (App.state.onHold.underExecution === true) {
+        App.state.onHold.newArrived = true
+      } else {
+        checkTask(task)
+      }
+    })
   },
   release () {
     App.state.onHold.newArrived = false
