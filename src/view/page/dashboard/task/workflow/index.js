@@ -9,7 +9,7 @@ import JobExecButton from '../task/collapse/job/job-exec-button'
 import EmptyJobView from '../empty-job-view'
 import SearchBox from 'components/searchbox'
 import JobsList from 'view/page/dashboard/task/jobs-list'
-import JobsPaginator from 'view/page/paginator/footer'
+import { JobsPaginator } from 'view/page/paginator/footer'
 
 // menu buttons
 import RemoveWorkflowButton from 'view/page/workflow/buttons/remove'

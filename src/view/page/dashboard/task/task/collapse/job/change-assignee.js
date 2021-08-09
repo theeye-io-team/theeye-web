@@ -22,7 +22,6 @@ export default Modalizer.extend({
 
     this.listenToAndRun(this.model, 'change:observers', () => {
       this.bodyView.options = (() => { 
-        debugger
         let a = []
         this.model.observers.forEach(observer => {
           let b = {}
