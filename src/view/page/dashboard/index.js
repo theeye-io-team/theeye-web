@@ -434,7 +434,7 @@ const pageTemplate = () => {
           <section class="col-md-12 tasks-panel events-panel">
             <div class="section-header">
               <div data-hook="tasks-panel-header" class="options-container">
-                <a data-hook="toggle-hidden-tasks" href="#" class="fa fa-chevron-right rotate section-toggle"></a>
+                <!-- <a data-hook="toggle-hidden-tasks" href="#" class="fa fa-chevron-right rotate section-toggle"></a> -->
               </div>
             </div>
             <div class="section-container">

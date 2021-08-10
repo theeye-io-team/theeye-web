@@ -57,6 +57,8 @@ export default {
    *
    */
   handleNotification (data) {
+    if (data.topic === 'schedule-crud') return
+
     let notification = new Notification(data)
     if (App.state.inbox.isOpen) {
       notification.read = true
