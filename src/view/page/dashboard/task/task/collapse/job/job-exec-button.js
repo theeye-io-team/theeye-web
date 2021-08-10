@@ -82,16 +82,16 @@ export default View.extend({
     event.stopPropagation()
     event.preventDefault()
 
-    let lifecycleAction
     if (this.model.lifecycle === LifecycleConstants.ONHOLD) {
-      lifecycleAction = new ExecOnHoldJob({ model: this.model })
+      //lifecycleAction = new ExecOnHoldJob({ model: this.model })
+      App.actions.onHold.check(this.model, true)
     } else if (LifecycleConstants.inProgress(this.model.lifecycle)) {
-      lifecycleAction = new StopInProgressJob({ model: this.model })
+      const lifecycleAction = new StopInProgressJob({ model: this.model })
+      lifecycleAction.execute()
     } else {
       return
     }
 
-    lifecycleAction.execute()
     return false
   },
   onClickExecutionButton (event) {

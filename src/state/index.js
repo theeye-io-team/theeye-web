@@ -251,7 +251,8 @@ const EditorState = State.extend({
 const OnHoldState = State.extend({
   props: {
     underExecution: ['boolean', false, false],
-    newArrived: ['boolean', false, false]
+    newArrived: ['boolean', false, false],
+    newJobs: ['array', false, ()=>{return[]}]
   }
 })
 

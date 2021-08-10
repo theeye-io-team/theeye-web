@@ -371,12 +371,7 @@ const addTaskJobToState = (props) => {
     App.actions.scheduler.fetch(task)
   }
 
-  /**
-   * @summary check if job is on hold and requires intervention of the current user
-   */
-  if (taskJob.requiresInteraction()) {
-    App.actions.onHold.check(taskJob)
-  }
+  App.actions.onHold.check(taskJob)
 }
 
 const parseArgumentsValues = (task, args) => {

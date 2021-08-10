@@ -58,22 +58,20 @@ export const RestartCompletedJob = BaseExec.extend({
 })
 
 export const ExecOnHoldJob = BaseExec.extend({
-  execute (isPendingCheck, done) {
+  execute (done) {
     if (this.model.lifecycle === LifecycleConstants.ONHOLD) {
       if (this.model._type === JobConstants.APPROVAL_TYPE) {
-        this.controlApprovalRequest(isPendingCheck, done)
+        this.controlApprovalRequest(done)
       } else {
-        this.requestInput(isPendingCheck, done)
+        this.requestInput(done)
       }
     }
   },
-  controlApprovalRequest (isPendingCheck, done) {
+  controlApprovalRequest (done) {
     if (this.model.isApprover(App.state.session.user)) {
-      this.requestApproval(isPendingCheck, done)
+      this.requestApproval(done)
     } else if (Acl.hasAccessLevel('admin')) {
-      if (!isPendingCheck) {
-        this.changeApprovalRequest(done)
-      }
+      this.changeApprovalRequest(done)
     } else {
       bootbox.alert({
         message: `Waiting approvals <br/><br/>${escapeHtml(this.model.approversUsers.toString())}`,
@@ -81,7 +79,7 @@ export const ExecOnHoldJob = BaseExec.extend({
       })
     }
   },
-  requestApproval (isPendingCheck, done) {
+  requestApproval (done) {
     done || (done = () => {})
 
     let message = buildApprovalMessage(this.model)
@@ -152,7 +150,7 @@ export const ExecOnHoldJob = BaseExec.extend({
         label: this.model.task.ignore_label || 'Ignore',
         className: 'btn btn-default',
         callback: () => {
-          App.actions.onHold.skip(this.model)
+          //App.actions.onHold.skip(this.model)
           done()
         }
       }
@@ -181,36 +179,31 @@ export const ExecOnHoldJob = BaseExec.extend({
       }
     })
   },
-  requestInput (isPendingCheck, done) {
+  requestInput (done) {
     done || (done=()=>{})
     this.getDynamicArguments((jobArgs, canceled) => {
       if (canceled) {
-        if (isPendingCheck) {
-          App.actions.onHold.skip(this.model)
-          return done()
-        } else {
-          if (this.model.task.cancellable !== false || Acl.hasAccessLevel('admin')) {
-            // ask confirmation
-            bootbox.confirm({
-              message: 'Do you want to cancel the execution?',
-              backdrop: true,
-              buttons: {
-                cancel: {
-                  label: 'No'
-                },
-                confirm: {
-                  label: 'Yes',
-                  className: 'btn-danger'
-                }
+        if (this.model.task.cancellable !== false || Acl.hasAccessLevel('admin')) {
+          // ask confirmation
+          bootbox.confirm({
+            message: 'Do you want to cancel the execution?',
+            backdrop: true,
+            buttons: {
+              cancel: {
+                label: 'No'
               },
-              callback: (confirmed) => {
-                if (confirmed) {
-                  App.actions.job.cancel(this.model)
-                  return done()
-                }
+              confirm: {
+                label: 'Yes',
+                className: 'btn-danger'
               }
-            })
-          }
+            },
+            callback: (confirmed) => {
+              if (confirmed) {
+                App.actions.job.cancel(this.model)
+              }
+              done()
+            }
+          })
         }
       } else {
         if (jobArgs !== null) {
