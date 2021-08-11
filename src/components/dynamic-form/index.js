@@ -129,6 +129,8 @@ export default DropableForm.extend({
         value => {
           const { pattern, charset, charsmin, charsmax } = spec
 
+          if (!spec.required && !value) return
+
           if (charset) {
             switch (charset) {
               case 'alnum':
