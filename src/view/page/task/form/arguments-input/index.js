@@ -31,6 +31,10 @@ export default View.extend({
           <label for="file" title="import arguments" class="btn btn-default"> 
             Import arguments from file <i class="fa fa-copy"></i>
           </label>
+          <button data-hook="export-arguments"
+            title="export arguments"
+            class="btn btn-default"> Export arguments to file <i class="fa fa-file-code-o"></i>
+          </button>
         </div>
         <ul class="list-group">
           <li class="list-group-item">
@@ -43,10 +47,6 @@ export default View.extend({
             </div>
           </li>
         </ul>
-        <button data-hook="export-arguments"
-          title="export arguments"
-          class="btn btn-default"> Export arguments to file <i class="fa fa-file-code-o"></i>
-        </button>
       </div>
     </div>
   `,
