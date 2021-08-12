@@ -38,8 +38,7 @@ export default CollapsibleRow.extend({
     }
   },
   onClickToggleCollapse (event) {
-    //App.actions.workflow.populate(this.model)
-    this.model.fetchJobs()
+    App.actions.workflow.fetchJobs(this.model)
   },
   renderCollapsedContent () {
     this.renderSubview(

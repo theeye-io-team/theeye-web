@@ -39,8 +39,7 @@ export default {
         const workflow = App.state.workflows.get(id)
         workflow.set(model.serialize())
 
-        workflow.alreadyPopulated = false // reset to repopulate
-        App.actions.workflow.populate(workflow)
+        App.actions.workflow.populate(workflow, true)
         workflow.tasks.fetch({
           data: {
             where: {
@@ -49,8 +48,7 @@ export default {
           }
         })
 
-        workflow.jobsAlreadyFetched = false // reset to repopulate
-        workflow.fetchJobs()
+        workflow.fetchJobs(true)
         App.actions.scheduler.fetch(workflow)
       },
       error: (err) => {
@@ -59,6 +57,9 @@ export default {
       }
     })
   },
+  fetchJobs (workflow) {
+    workflow.fetchJobs()
+  },
   create (data) {
     let workflow = new Workflow(data)
     workflow.save({},{
@@ -66,6 +67,7 @@ export default {
         App.state.alerts.success('Success', 'Workflow created')
         App.state.workflows.add(workflow)
         this.populate(workflow)
+        // update workflow tasks state from api
         workflow.tasks.fetch({
           data: {
             where: {
@@ -90,11 +92,12 @@ export default {
       }
     })
   },
-  populate (workflow) {
+  populate (workflow, force = false) {
     if (workflow.isNew()) return
 
     if (
       workflow.alreadyPopulated === false ||
+      force === true ||
       workflow.tasks.models.length === 0
     ) {
       let nodes = workflow.graph.nodes()

@@ -16,8 +16,7 @@ export default {
     if (job) {
       if (job.requiresInteraction() || forced===true) {
         if (App.state.onHold.underExecution === true) {
-          App.state.onHold.newArrived = true
-          App.state.onHold.newJobs.push(job)
+          holdJob(job)
         } else {
           // execute on a single job
           controlPendingJobsIteration([job])
@@ -30,28 +29,35 @@ export default {
     }
   },
   checkWorkflow (workflow) {
-    workflow.fetchJobs(() => {
-      if (App.state.onHold.underExecution === true) {
-        App.state.onHold.newArrived = true
-      } else {
-        checkWorkflow(workflow)
-      }
-    })
+    if (App.state.onHold.underExecution !== true) {
+      workflow
+        .fetchJobs()
+        .then(() => {
+          checkWorkflow(workflow)
+        })
+    } else {
+      console.error('bussy checking')
+    }
   },
   checkTask (task) {
-    task.fetchJobs(() => {
-      if (App.state.onHold.underExecution === true) {
-        App.state.onHold.newArrived = true
-      } else {
+    if (App.state.onHold.underExecution !== true) {
+      task.fetchJobs(() => {
         checkTask(task)
-      }
-    })
+      })
+    } else {
+      console.error('bussy checking')
+    }
   },
   release () {
     App.state.onHold.newArrived = false
     App.state.onHold.underExecution = false
     App.state.onHold.newJobs = []
   }
+}
+
+const holdJob = (job) => {
+  App.state.onHold.newArrived = true
+  App.state.onHold.newJobs.push(job)
 }
 
 const checkWorkflow = (workflow) => {

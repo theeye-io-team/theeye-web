@@ -204,6 +204,8 @@ export const ExecOnHoldJob = BaseExec.extend({
               done()
             }
           })
+        } else {
+          return done()
         }
       } else {
         if (jobArgs !== null) {

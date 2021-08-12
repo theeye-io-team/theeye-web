@@ -230,27 +230,30 @@ const Workflow = AppModel.extend({
    * @summary fetch workflow instances organized by task. will populate workflow jobs
    *
    */
-  fetchJobs (callback) {
-    callback || (callback = () => {})
+  fetchJobs (force = false) {
+    return new Promise((resolve, reject) => {
 
-    if (this.jobsAlreadyFetched === true) { return callback() }
-
-    this.jobs.fetch({
-      set: false,
-      data: {
-        where: {
-          workflow_id: this.id
-        }
-      },
-      success: (collection, jobs, options) => {
-        this.jobsAlreadyFetched = true
-        const groups = groupJobs(jobs)
-        this.jobs.reset(groups)
-        callback()
-      },
-      error (arg1) {
-        callback( new Error(arg1) )
+      if (this.jobsAlreadyFetched === true && force === false) {
+        return resolve()
       }
+
+      this.jobs.fetch({
+        set: false,
+        data: {
+          where: {
+            workflow_id: this.id
+          }
+        },
+        success: (collection, jobs, options) => {
+          this.jobsAlreadyFetched = true
+          const groups = groupJobs(jobs)
+          this.jobs.reset(groups)
+          resolve()
+        },
+        error (arg1) {
+          reject( new Error(arg1) )
+        }
+      })
     })
   }
 })

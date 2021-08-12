@@ -20,11 +20,15 @@ export default {
    */
   applyStateUpdate (props) {
     try {
-      if (props._type === 'WorkflowJob') {
-        // update state
-        addWorkflowJobToState(props)
-      } else {
-        addTaskJobToState(props)
+      const job = addJobToState(props)
+
+      /**
+       * @summary check if job is on hold and requires intervention of the current user
+       */
+      if (job._type !== 'WorkflowJob') {
+        if (job.requiresInteraction()) {
+          App.actions.onHold.check(job)
+        }
       }
     } catch (e) {
       console.error(e)
@@ -202,7 +206,8 @@ export default {
       },
       done (jobs, xhr) {
         for (let job of jobs) {
-          App.actions.job.applyStateUpdate(job)
+          // add job to state
+          addJobToState(job)
         }
       }
     })
@@ -305,6 +310,14 @@ const createWorkflowJob = (workflow, args, next) => {
   })
 }
 
+const addJobToState = (data) => {
+  if (data._type === 'WorkflowJob') {
+    return addWorkflowJobToState(data)
+  } else {
+    return addTaskJobToState(data)
+  }
+}
+
 const addWorkflowJobToState = (data) => {
   let workflow = App.state.workflows.get(data.workflow_id)
   if (!workflow) {
@@ -313,7 +326,7 @@ const addWorkflowJobToState = (data) => {
     return
   }
   // workflow job created
-  workflow.jobs.add(data, { merge: true })
+  return workflow.jobs.add(data, { merge: true })
 }
 
 const addTaskJobToState = (props) => {
@@ -371,7 +384,7 @@ const addTaskJobToState = (props) => {
     App.actions.scheduler.fetch(task)
   }
 
-  App.actions.onHold.check(taskJob)
+  return taskJob
 }
 
 const parseArgumentsValues = (task, args) => {
