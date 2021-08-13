@@ -164,18 +164,24 @@ export const ExecOnHoldJob = BaseExec.extend({
     })
   },
   changeApprovalRequest (done) {
-    bootbox.dialog({
+    bootbox.confirm({
       message: 'Cancel the approval request?',
       backdrop: true,
+      closeButton: false,
       buttons: {
+        confirm: {
+          label: 'Yes, please',
+          className: 'btn-danger'
+        },
         cancel: {
-          label: 'Cancel request',
-          className: 'btn btn-danger',
-          callback: () => {
-            App.actions.job.cancel(this.model)
-            done && done()
-          }
+          label: 'No'
         }
+      },
+      callback: cancel => {
+        if (cancel === true) {
+          App.actions.job.cancel(this.model)
+        }
+        done && done()
       }
     })
   },
@@ -226,7 +232,7 @@ export const ExecOnHoldJob = BaseExec.extend({
 
     const form = new DynamicForm({ fieldsDefinitions: task.task_arguments.models })
     const modal = new Modalizer({
-      //closeButton: false,
+      closeButton: false,
       buttons: true,
       confirmButton: 'Continue',
       cancelButton: (this.model.task.cancellable === false ? "Close" : "Cancel"),
