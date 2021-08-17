@@ -1,6 +1,7 @@
 import TaskCollapsibleRow from './collapsible-row'
 import * as TaskConstants from 'constants/task'
 import ScheduleButton from 'view/buttons/schedule'
+import acls from 'lib/acls'
 
 export default TaskCollapsibleRow.extend({
   derived: {
@@ -23,9 +24,11 @@ export default TaskCollapsibleRow.extend({
   renderButtons () {
     TaskCollapsibleRow.prototype.renderButtons.apply(this, arguments)
 
-    this.renderSubview(
-      new ScheduleButton({ model: this.model }),
-      this.query('ul.dropdown-menu[data-hook=buttons-container]')
-    )
+    if (acls.hasAccessLevel('admin')) {
+      this.renderSubview(
+        new ScheduleButton({ model: this.model }),
+        this.query('ul.dropdown-menu[data-hook=buttons-container]')
+      )
+    }
   }
 })

@@ -10,6 +10,7 @@ import ExportButton from './buttons/export'
 import bootbox from 'bootbox'
 import * as TaskConstants from 'constants/task'
 import Schedules from './schedules'
+import Acls from 'lib/acls'
 
 function Factory (options) {
   const model = options.model
@@ -74,17 +75,21 @@ const Item = ListItem.extend({
       hook: 'item_badge',
       type: 'attribute',
       name: 'title'
-    },
+    }
   }),
   render () {
-    ListItem.prototype.render.apply(this,arguments)
+    ListItem.prototype.render.apply(this, arguments)
 
+    if (Acls.hasAccessLevel('admin')) {
+      this.addButtons([
+        { view: ScheduleButton, params: { model: this.model } }
+      ])
+    }
     this.addButtons([
-      { view: ScheduleButton, params: { model: this.model } },
       { view: CopyButton, params: { model: this.model } },
       { view: EditButton, params: { model: this.model } },
       { view: DeleteButton, params: { model: this.model } },
-      { view: ExportButton, params: { model: this.model } },
+      { view: ExportButton, params: { model: this.model } }
     ])
 
     this.renderSubview(

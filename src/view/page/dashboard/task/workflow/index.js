@@ -67,8 +67,10 @@ const WorkflowCollapsedContent = View.extend({
   render() {
     this.renderWithTemplate(this)
 
-    this.jobsScheduler = new SchedulesView({ model: this.model })
-    this.renderSubview(this.jobsScheduler, this.el)
+    if (Acls.hasAccessLevel('admin')) {
+      this.jobsScheduler = new SchedulesView({ model: this.model })
+      this.renderSubview(this.jobsScheduler, this.el)
+    }
 
     this.jobsList = new WorkflowJobsListView({ model: this.model })
     this.renderSubview(this.jobsList, this.el)
