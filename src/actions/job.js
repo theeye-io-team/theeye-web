@@ -25,9 +25,11 @@ export default {
       /**
        * @summary check if job is on hold and requires intervention of the current user
        */
-      if (job._type !== 'WorkflowJob') {
-        if (job.requiresInteraction()) {
-          App.actions.onHold.check(job)
+      if (job) {
+        if (job._type !== 'WorkflowJob') {
+          if (job.requiresInteraction()) {
+            App.actions.onHold.check(job)
+          }
         }
       }
     } catch (e) {

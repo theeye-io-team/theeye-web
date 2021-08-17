@@ -71,7 +71,7 @@ export default View.extend({
   `,
   props: {
     collapsed: ['boolean', false, true],
-    show: ['boolean',false,true],
+    show: ['boolean', false, true],
     hash: ['string', false, () => { return (new Date()).getTime() } ]
   },
   derived: {
@@ -137,7 +137,7 @@ export default View.extend({
       hook: 'panel-heading',
       type: 'attribute',
       name: 'id'
-    },{
+    }, {
       hook: 'collapse-container',
       type: 'attribute',
       name: 'aria-labelledby'
@@ -146,14 +146,14 @@ export default View.extend({
       hook: 'collapse-toggle',
       type: 'attribute',
       name: 'aria-controls'
-    },{
+    }, {
       hook: 'collapse-container',
       type: 'attribute',
       name: 'id'
     }],
     row_text: [{
       hook: 'name'
-    },{
+    }, {
       hook: 'name',
       type: 'attribute',
       name: 'title'
@@ -192,21 +192,41 @@ export default View.extend({
     return
   },
   render () {
-    this.renderWithTemplate()
+    this.renderWithTemplate(this)
     this.renderButtons()
-    this.renderCollapsedContent()
     this.renderTags()
     this.renderHelp()
 
-    let $el = $(this.query('.panel-collapse.collapse'))
-    $el.on('show.bs.collapse', () => { this.collapsed = false })
-    $el.on('hide.bs.collapse', () => { this.collapsed = true  })
+    const $collapse = $(this.el)
+
+    $collapse.on('show.bs.collapse', (event) => {
+      const toggle = this.queryByHook('panel-heading')
+      const tEl = event.target
+
+      if (toggle.id.split('_')[3] !== tEl.id.split('_')[3]) { return }
+
+      this.collapsed = false
+      this.renderCollapsedContent()
+    })
+
+    $collapse.on('hidden.bs.collapse', (event) => {
+      const toggle = this.queryByHook('panel-heading')
+      const tEl = event.target
+
+      if (toggle.id.split('_')[3] !== tEl.id.split('_')[3]) { return }
+
+      this.collapsed = true
+      this.removeCollapsedContent()
+    })
   },
   renderButtons () {
     return
   },
   renderCollapsedContent () {
     return
+  },
+  removeCollapsedContent () {
+    this.collapsedContent?.remove()
   },
   renderTags () {
     if (this.model.tagsCollection) {

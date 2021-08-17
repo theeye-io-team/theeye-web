@@ -174,11 +174,10 @@ const Schema = AppModel.extend({
   fetchJobs (options, callback) {
     callback || (callback = () => {})
 
-    if (this.alreadyFetched===true && options.forceFetch!==true) {
+    if (this.alreadyFetched === true && options.forceFetch !== true) {
       return callback() // abort
     }
-
-    let query = {task_id: this.id}
+    let query = { task_id: this.id }
 
     if (options.hasOwnProperty(query)) {
       query = Object.assign({}, query, options.query)
@@ -190,10 +189,10 @@ const Schema = AppModel.extend({
       },
       success: () => {
         this.alreadyFetched = true
-        callback( null, this.jobs )
+        callback(null, this.jobs)
       },
       error: (arg1) => {
-        callback( new Error(arg1) )
+        callback(new Error(arg1))
       }
     })
   },

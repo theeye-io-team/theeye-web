@@ -35,26 +35,27 @@ export default CollapsibleRow.extend({
     }
   },
   renderCollapsedContent () {
+    this.collapsedContent = new CollapsedContentView({ model: this.model })
     this.renderSubview(
-      new SchedulesView({ model: this.model }),
-      this.queryByHook('collapse-container-body'),
+      this.collapsedContent,
+      this.queryByHook('collapse-container-body')
     )
+  }
+})
 
-    let $collapse = $(this.queryByHook('collapse-container'))
+const CollapsedContentView = View.extend({
+  template: `<div></div>`,
+  render () {
+    this.renderWithTemplate(this)
 
-    // render on click collapse
-    $collapse.on('show.bs.collapse', () => {
-      this.jobsList = new JobsList({ model: this.model, rowView: JobRow })
-      this.renderSubview(this.jobsList, this.queryByHook('collapse-container-body'))
+    this.jobsScheduler = new SchedulesView({ model: this.model })
+    this.renderSubview(this.jobsScheduler, this.el)
 
-      this.jobsPaginator = new JobsPaginator({ model: this.model })
-      this.renderSubview(this.jobsPaginator, this.queryByHook('collapse-container-body'))
-    })
+    this.jobsList = new JobsList({ model: this.model, rowView: JobRow })
+    this.renderSubview(this.jobsList, this.el)
 
-    $collapse.on('hidden.bs.collapse', () => {
-      this.jobsList.remove()
-      this.jobsPaginator.remove()
-    })
+    this.jobsPaginator = new JobsPaginator({ model: this.model })
+    this.renderSubview(this.jobsPaginator, this.el)
   }
 })
 

@@ -41,24 +41,9 @@ export default CollapsibleRow.extend({
     App.actions.workflow.fetchJobs(this.model)
   },
   renderCollapsedContent () {
+    this.collapsedContent = new WorkflowCollapsedContent({ model: this.model })
     this.renderSubview(
-      new SchedulesView({ model: this.model }),
-      this.queryByHook('collapse-container-body'),
-    )
-
-    this.listenToAndRun(this.model, 'change:table_view', () => {
-      if (this.jobsList) {
-        this.jobsList.remove()
-      }
-
-      this.jobsList = this.renderSubview(
-        new WorkflowJobsListView({ model: this.model }),
-        this.queryByHook('collapse-container-body')
-      )
-    })
-
-    this.jobsPaginator = this.renderSubview(
-      new JobsPaginator({ model: this.model }),
+      this.collapsedContent,
       this.queryByHook('collapse-container-body')
     )
   },
@@ -74,6 +59,22 @@ export default CollapsibleRow.extend({
         this.queryByHook('execute-button-container')
       )
     }
+  }
+})
+
+const WorkflowCollapsedContent = View.extend({
+  template: `<div></div>`,
+  render() {
+    this.renderWithTemplate(this)
+
+    this.jobsScheduler = new SchedulesView({ model: this.model })
+    this.renderSubview(this.jobsScheduler, this.el)
+
+    this.jobsList = new WorkflowJobsListView({ model: this.model })
+    this.renderSubview(this.jobsList, this.el)
+
+    this.jobsPaginator = new JobsPaginator({ model: this.model })
+    this.renderSubview(this.jobsPaginator, this.el)
   }
 })
 
@@ -189,14 +190,11 @@ const WorkflowJobRowView = CollapsibleRow.extend({
       this.queryByHook('icons-container')
     )
   },
-  renderCollapsedContent () {
+  renderCollapsedContent (event) {
+    this.collapsedContent = new WorkflowJobCollapsedContentView({ model: this.model })
     this.renderSubview(
-      new JobsList({
-        model: this.model,
-        rowView: TaskJobInputsRow,
-        renderHeader: false
-      }),
-      this.queryByHook('collapse-container-body'),
+      this.collapsedContent,
+      this.queryByHook('collapse-container-body')
     )
   },
   renderHelp () {
@@ -210,6 +208,21 @@ const WorkflowJobRowView = CollapsibleRow.extend({
       name: 'title'
     }
   })
+})
+
+const WorkflowJobCollapsedContentView = View.extend({
+  template: `<div></div>`,
+  render () {
+    this.renderWithTemplate(this)
+
+    this.jobsList = new JobsList({
+      model: this.model,
+      rowView: TaskJobInputsRow,
+      renderHeader: false
+    })
+
+    this.renderSubview(this.jobsList, this.el)
+  }
 })
 
 const WorkflowJobDateView = WorkflowJobRowView.extend({

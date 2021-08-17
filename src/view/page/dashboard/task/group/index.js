@@ -1,3 +1,4 @@
+import View from 'ampersand-view'
 import TaskCollapsibleRow from '../collapsible-row'
 import * as TaskConstants from 'constants/task'
 import TaskRowView from '../task'
@@ -72,13 +73,26 @@ export default TaskCollapsibleRow.extend({
     }
   },
   renderCollapsedContent () {
-    this.taskRows = this.renderCollection(
-      this.model.submodels,
-      TaskRowView,
+    this.collapsedContent = new CollapsedContentView({ model: this.model })
+    this.renderSubview(
+      this.collapsedContent,
       this.queryByHook('collapse-container-body')
     )
   },
   renderButtons () {
     this.el.querySelector('.panel-item.icons.dropdown').remove()
+  }
+})
+
+const CollapsedContentView = View.extend({
+  template: `<div></div>`,
+  render () {
+    this.renderWithTemplate(this)
+
+    this.renderCollection(
+      this.collection,
+      TaskRowView,
+      this.el
+    )
   }
 })
