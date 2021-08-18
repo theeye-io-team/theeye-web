@@ -178,13 +178,15 @@ export default {
           warn = true
         }
       })
-      if (warn) {
-        bootbox.alert('For security reasons, "Fixed value" arguments are exported with an undefined value')
+      const callback = () => {
+        const jsonContent = JSON.stringify(content)
+        const blob = new Blob([jsonContent], { type: 'application/json' })
+        const fileName = task.name.replace(/ /g,'_')
+        FileSaver.saveAs(blob, `${fileName}_arguments.json`)
       }
-      const jsonContent = JSON.stringify(content)
-      const blob = new Blob([jsonContent], { type: 'application/json' })
-      const fileName = task.name.replace(/ /g,'_')
-      FileSaver.saveAs(blob, `${fileName}_arguments.json`)
+      if (warn) {
+        bootbox.alert('For security reasons, "Fixed value" arguments are exported with an undefined value', callback)
+      } else callback()
     }
   },
   fetchRecipe (id, { backup }, next = emptyCallback) {
