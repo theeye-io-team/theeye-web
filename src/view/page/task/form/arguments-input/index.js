@@ -72,8 +72,8 @@ export default View.extend({
     View.prototype.initialize.apply(this, arguments)
   },
   events: {
-    'click [data-hook=add-argument]':'onClickAddTaskArgument',
-    'click [data-hook=copy-arguments]':'onClickCopyTaskArguments',
+    'click [data-hook=add-argument]': 'onClickAddTaskArgument',
+    'click [data-hook=copy-arguments]': 'onClickCopyTaskArguments',
     'click [data-hook=export-arguments]': 'exportArgumentsToArgumentsRecipe'
   },
   onClickAddTaskArgument (event) {
@@ -119,7 +119,7 @@ export default View.extend({
       bodyView: select
     })
 
-    this.listenTo(modal,'hidden',() => {
+    this.listenTo(modal, 'hidden', () => {
       select.remove()
       modal.remove()
     })
@@ -147,20 +147,23 @@ export default View.extend({
       console.log(e)
       bootbox.alert('Invalid JSON file.')
     }
-  // } else {
-  //   bootbox.alert('File not supported, please select a JSON file.')
-  
   },
   importArgumentsFromArgumentsRecipe (fileContent) {
-    let warn = false
-    fileContent.forEach(arg => {
-      if (arg.type === 'fixed') {
-        warn = true
+    const prevArgs = this.taskArguments
+    try {
+      let warn = false
+      fileContent.forEach(arg => {
+        if (arg.type === 'fixed') {
+          warn = true
+        }
+        this.onArgumentAdded(arg)
+      })
+      if (warn) {
+        bootbox.alert('Remember to manually set values for any "Fixed value" arguments')
       }
-      this.onArgumentAdded(arg)
-    })
-    if (warn) {
-      bootbox.alert('Remember to manually set values for any "Fixed value" arguments')
+    } catch (e) {
+      bootbox.alert('Invalid JSON file.')
+      this.taskArguments = prevArgs
     }
   },
   exportArgumentsToArgumentsRecipe () {
@@ -242,8 +245,7 @@ export default View.extend({
       //argument.label = `FixedArg${this.taskArguments.length}`
       argument.readonly = true
     }
-
-    this.taskArguments.add( new TaskArgument(argument) )
+    this.taskArguments.add(new TaskArgument(argument))
     this.trigger('change:taskArguments')
   },
   /**
