@@ -390,64 +390,87 @@ const addTaskJobToState = (props) => {
 }
 
 const parseArgumentsValues = (task, args) => {
-  if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_LEGACY) {
-    return args
-  }
-
   if (!args) { return [] }
 
-  const values = args.map(arg => {
-    if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_JSON) {
-      // form input output is string
-      if (arg.type === 'json') {
-        try {
-          return JSON.parse(arg.value)
-        } catch (err) {
-          return (arg.value || null)
-        }
-      } else {
-        return (arg.value || null)
-      }
-    } else if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_TEXT) {
-      if (!arg.value) {
-        return null
-      }
+  // new legacy behaviour
+  if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_LEGACY) {
+    return args.map(arg => arg.value||"") // API behaviour
+  }
 
-      if (Array.isArray(arg.value)) {
-        return JSON.stringify(arg.value)
-      }
+  if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_JSON) {
+    return mapAsJSON(args)
+  }
 
-      const value = arg.value.toString()
-
-      if (typeof value === 'string') {
-        return value
-      }
-
-      return JSON.stringify(arg.value || null)
-    } else {
-      return (arg.value || null)
-    }
-  })
-
-  return values
+  // map as text
+  return mapAsString(args)
 }
 
-//const updateInprogressCounter = (job, parent, operation) => {
-//  if (!operation) {
-//    return
-//  }
 //
-//  logger.debug(`${operation}: [${parent._type}] ${parent.name} > ${job.name} ${job.lifecycle}`)
+// convert each argument into a JSON string
 //
-//  if (operation === OperationsConstants.CREATE) {
-//    parent.inProgressJobs++
-//  } else if (operation === OperationsConstants.DELETE) {
-//    if (LifecycleConstants.inProgress(job.lifecycle)) {
-//      parent.inProgressJobs--
-//    }
-//  } else {
-//    if (LifecycleConstants.isCompleted(job.lifecycle)) {
-//      parent.inProgressJobs--
-//    }
-//  }
-//}
+const mapAsJSON = (args) => {
+  return args.map(arg => {
+    let value
+    if (arg.type === 'json') {
+      value = convertToObject(arg.value)
+    } else {
+      value = arg.value
+    }
+
+    if (value === null) {
+      if (arg.hasOwnProperty('default')) {
+        return arg.default
+      } else {
+        return null
+      }
+    }
+
+    return value
+  })
+}
+
+const convertToObject = (value) => {
+  if (typeof value !== 'string') {
+    return value
+  }
+
+  try {
+    return JSON.parse(value)
+  } catch (err) {
+    return null // default null ???
+  }
+}
+
+//
+// everything should be a string
+//
+const mapAsString = (args) => {
+  return args.map(arg => {
+    let value = convertToString(arg.value)
+    if (value === "") {
+      if (arg.hasOwnProperty('default')) {
+        return arg.default
+      } else {
+        return ""
+      }
+    }
+
+    return value
+  })
+}
+
+const convertToString = (value) => {
+  if (typeof value === 'string') {
+    return value
+  }
+
+  if (value === undefined) {
+    return ""
+  }
+
+  try {
+    return JSON.stringify(value)
+  } catch (err) {
+    return "" // default empty string ??
+  }
+}

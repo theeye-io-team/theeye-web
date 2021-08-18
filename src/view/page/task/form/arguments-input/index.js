@@ -1,11 +1,12 @@
-'use strict'
 
+import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import Collection from 'ampersand-collection'
 import { DynamicArgument as TaskArgument } from 'models/task/dynamic-argument'
 import * as FieldConstants from 'constants/field'
 import HelpIcon from 'components/help-icon'
+import TaskSelection from 'view/task-select'
 
 // component dependencies
 import ArgumentsCreator from './creator'
@@ -19,7 +20,12 @@ export default View.extend({
         <div style="padding-bottom: 15px;">
           <button data-hook="add-argument"
             title="add new argument"
-            class="btn btn-default"> Add arguments <i class="fa fa-plus"></i>
+            class="btn btn-default"> Add new argument <i class="fa fa-plus"></i>
+          </button>
+  or
+          <button data-hook="copy-arguments"
+            title="copy arguments"
+            class="btn btn-default"> Copy arguments from another task <i class="fa fa-copy"></i>
           </button>
         </div>
   			<ul class="list-group">
@@ -58,9 +64,10 @@ export default View.extend({
     View.prototype.initialize.apply(this,arguments)
   },
   events: {
-    'click [data-hook=add-argument]':'onClickAddScriptArgument',
+    'click [data-hook=add-argument]':'onClickAddTaskArgument',
+    'click [data-hook=copy-arguments]':'onClickCopyTaskArguments',
   },
-  onClickAddScriptArgument (event) {
+  onClickAddTaskArgument (event) {
     event.preventDefault()
     event.stopPropagation()
 
@@ -81,6 +88,32 @@ export default View.extend({
       creator.remove()
       modal.remove()
       this.onArgumentAdded(arg)
+    })
+
+    modal.show()
+
+    return false
+  },
+  onClickCopyTaskArguments (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const select = new TaskSelection({})
+
+    const modal = new Modalizer({
+      buttons: false,
+      title: 'Copy arguments from',
+      bodyView: select
+    })
+
+    this.listenTo(modal,'hidden',() => {
+      select.remove()
+      modal.remove()
+    })
+
+    this.listenTo(select, 'change:value', () => {
+      const task = App.state.tasks.get(select.value)
+      this.setValue(task.task_arguments)
     })
 
     modal.show()
@@ -136,8 +169,8 @@ export default View.extend({
   /**
    * @param {Mixed} value array of objects/models or a collection
    */
-  setValue (value) {
-    if (value.isCollection) value = value.serialize()
+  setValue (args) {
+    let value = (args.isCollection) ? args.serialize() : args
     this.taskArguments.reset(value)
   },
   derived: {
