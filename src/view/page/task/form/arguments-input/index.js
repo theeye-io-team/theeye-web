@@ -212,13 +212,17 @@ export default View.extend({
       reader.onloadend = event => {
         file.contents = event.target.result
         if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
-          const fileContent = JSON.parse(file.contents)
-          if (Object.keys(fileContent)[0] === 'task') {
-            this.importArgumentsFromTaskRecipe(fileContent)
-          } else {
-            this.importArgumentsFromArgumentsRecipe(fileContent)
+          try {
+            const fileContent = JSON.parse(file.contents)
+            if (Object.keys(fileContent)[0] === 'task') {
+              this.importArgumentsFromTaskRecipe(fileContent)
+            } else {
+              this.importArgumentsFromArgumentsRecipe(fileContent)
+            }
+          } catch (e) {
+            bootbox.alert('Invalid JSON file.')
           }
-        }
+        } else bootbox.alert('Not a JSON file.')
         input.value = '' // reset will allow to re import the same file again
       }
       reader.readAsText(file)
