@@ -159,7 +159,7 @@ export default View.extend({
         this.onArgumentAdded(arg)
       })
       if (warn) {
-        bootbox.alert('Remember to manually set values for any "Fixed value" arguments')
+        bootbox.alert('You have imported Fixed Arguments and you need to set the values manually')
       }
     } catch (e) {
       bootbox.alert('Invalid JSON file.')
