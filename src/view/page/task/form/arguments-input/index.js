@@ -7,6 +7,7 @@ import * as FieldConstants from 'constants/field'
 import HelpIcon from 'components/help-icon'
 import TaskSelection from 'view/task-select'
 import bootbox from 'bootbox'
+import FileSaver from 'file-saver'
 
 // component dependencies
 import ArgumentsCreator from './creator'
@@ -167,7 +168,22 @@ export default View.extend({
     }
   },
   exportArgumentsToArgumentsRecipe () {
-    App.actions.task.exportArguments(this.parent.model.id)
+    // App.actions.task.exportArguments(this.parent.model.id)
+    let warn = false
+    let args = this.taskArguments.serialize()
+    args.forEach(arg => {
+      if (arg.type === 'fixed') {
+        arg.value = undefined
+        warn = true
+      }
+    })
+    if (warn) {
+      bootbox.alert('For security reasons, "Fixed value" arguments are exported with an undefined value')
+    }
+    const jsonContent = JSON.stringify(args)
+    const blob = new Blob([jsonContent], { type: 'application/json' })
+    const fileName = this.parent.model?.name?.replace(/ /g, '_') || 'unsaved_task'
+    FileSaver.saveAs(blob, `${fileName}_arguments.json`)
   },
   render () {
     this.renderWithTemplate(this)
@@ -207,19 +223,19 @@ export default View.extend({
   },
   onArgumentAdded (argument) {
     // get the last id + 1
-    if (this.taskArguments.length===0) {
+    if (this.taskArguments.length === 0) {
       argument.id = 1
     } else {
       // taskArguments is not sorted by id
-      argument.id = this.taskArguments.reduce((max,arg) => {
-        return (arg.id>=max) ? arg.id : max
-      },1) + 1 // starting from id 1 , get the last + 1
+      argument.id = this.taskArguments.reduce((max, arg) => {
+        return (arg.id >= max) ? arg.id : max
+      }, 1) + 1 // starting from id 1 , get the last + 1
     }
 
     argument.order = this.taskArguments.length
 
     // fixed arguments does not has a label
-    if (argument.type===FieldConstants.TYPE_FIXED) {
+    if (argument.type === FieldConstants.TYPE_FIXED) {
       //argument.label = `FixedArg${this.taskArguments.length}`
       argument.readonly = true
     }
