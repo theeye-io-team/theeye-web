@@ -134,37 +134,34 @@ export default View.extend({
 
     return false
   },
-  onImportScriptArgument (file) {
+  importArgumentsFromTaskRecipe (fileContent) {
     // This is not used anymore weeeeeeeeee
-    if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
-      try {
-        const recipe = JSON.parse(file.contents)
-        console.log(recipe)
-        const task = App.actions.task.parseRecipe(recipe)
-        const taskArray = task.serialize()
-        taskArray.task_arguments.forEach(arg => {
-          this.onArgumentAdded(arg)
-        })
-      } catch (e) {
-        console.log(e)
-        bootbox.alert('Invalid JSON file.')
-      }
-    } else {
-      bootbox.alert('File not supported, please select a JSON file.')
-    }
-  },
-  importArgumentsFromArgumentsRecipe (file) {
-    let warn = false
-    if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
-      JSON.parse(file.contents).forEach(arg => {
-        if (arg.type === 'fixed') {
-          warn = true
-        }
+    try {
+      const recipe = fileContent
+      console.log(recipe)
+      const task = App.actions.task.parseRecipe(recipe)
+      const taskArray = task.serialize()
+      taskArray.task_arguments.forEach(arg => {
         this.onArgumentAdded(arg)
       })
-      if (warn) {
-        bootbox.alert('Remember to manually set values for any "Fixed value" arguments')
+    } catch (e) {
+      console.log(e)
+      bootbox.alert('Invalid JSON file.')
+    }
+  // } else {
+  //   bootbox.alert('File not supported, please select a JSON file.')
+  
+  },
+  importArgumentsFromArgumentsRecipe (fileContent) {
+    let warn = false
+    fileContent.forEach(arg => {
+      if (arg.type === 'fixed') {
+        warn = true
       }
+      this.onArgumentAdded(arg)
+    })
+    if (warn) {
+      bootbox.alert('Remember to manually set values for any "Fixed value" arguments')
     }
   },
   exportArgumentsToArgumentsRecipe () {
@@ -210,7 +207,14 @@ export default View.extend({
 
       reader.onloadend = event => {
         file.contents = event.target.result
-        this.importArgumentsFromArgumentsRecipe(file)
+        if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
+          const fileContent = JSON.parse(file.contents)
+          if (Object.keys(fileContent)[0] === 'task') {
+            this.importArgumentsFromTaskRecipe(fileContent)
+          } else {
+            this.importArgumentsFromArgumentsRecipe(fileContent)
+          }
+        }
         input.value = '' // reset will allow to re import the same file again
       }
       reader.readAsText(file)
