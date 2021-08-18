@@ -176,13 +176,15 @@ export default View.extend({
         warn = true
       }
     })
-    if (warn) {
-      bootbox.alert('For security reasons, "Fixed value" arguments are exported with an undefined value')
+    const callback = () => {
+      const jsonContent = JSON.stringify(args)
+      const blob = new Blob([jsonContent], { type: 'application/json' })
+      const fileName = this.parent.model?.name?.replace(/ /g, '_') || 'unsaved_task'
+      FileSaver.saveAs(blob, `${fileName}_arguments.json`)
     }
-    const jsonContent = JSON.stringify(args)
-    const blob = new Blob([jsonContent], { type: 'application/json' })
-    const fileName = this.parent.model?.name?.replace(/ /g, '_') || 'unsaved_task'
-    FileSaver.saveAs(blob, `${fileName}_arguments.json`)
+    if (warn) {
+      bootbox.alert('For security reasons, "Fixed value" arguments are exported with an undefined value', callback)
+    } else callback()
   },
   render () {
     this.renderWithTemplate(this)
