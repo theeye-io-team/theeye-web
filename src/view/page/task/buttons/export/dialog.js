@@ -58,6 +58,16 @@ export default Modalizer.extend({
 
                   <!-- row 3 -->
                   <div class="grid-col-button">
+                    <button type="button" class="btn btn-default" data-hook="arguments">
+                      <i class="fa fa-arrow-right"></i>
+                    </button>
+                  </div>
+                  <div class="grid-col-message">
+                    <span>${Help.task.export_arguments}</span>
+                  </div>
+
+                  <!-- row 4 -->
+                  <div class="grid-col-button">
                     <button type="button" class="btn btn-default" data-hook="close">
                       <i class="fa fa-arrow-left"></i>
                     </button>
@@ -76,6 +86,7 @@ export default Modalizer.extend({
   events: Object.assign({}, Modalizer.prototype.events, {
     'click [data-hook=backup]': 'clickBackupExportButton',
     'click [data-hook=recipe]': 'clickRecipeExportButton',
+    'click [data-hook=arguments]': 'clickArgumentsExportButton',
     'click [data-hook=close]': 'clickCloseButton'
   }),
   clickBackupExportButton (event) {
@@ -88,6 +99,12 @@ export default Modalizer.extend({
     event.preventDefault()
     event.stopPropagation()
     App.actions.task.exportRecipe(this.model.id)
+    this.hide()
+  },
+  clickArgumentsExportButton (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    App.actions.task.exportArguments(this.model.id)
     this.hide()
   },
   clickCloseButton (event) {
