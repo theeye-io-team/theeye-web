@@ -2,6 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import bootbox from 'bootbox'
 import moment from 'moment'
+import acls from 'lib/acls'
 import './style.less'
 
 export const Schedules = View.extend({
@@ -48,15 +49,24 @@ const ScheduleRow = View.extend({
             <span class="breakline" style="display:none;"><br></span>
             <span class="scheduleTitle">Next iteration: </span>
             <span data-hook="nextDate"></span>
-            <a href="#" data-hook="delete" class="btn-primary btn delete-schedule">
-              <span class="fa fa-trash"></span>
-            </a>
-            <span data-hook="pauseToggle" class="btn btn-primary"></span>
+            <span data-hook="buttons">
+              <a href="#" data-hook="delete" class="btn-primary btn delete-schedule">
+                <span class="fa fa-trash"></span>
+              </a>
+              <span data-hook="pauseToggle" class="btn btn-primary"></span>
+            </span>
           </div>
         </h4>
       </div>
     </div>
   `,
+  render () {
+    this.renderWithTemplate()
+    if (!acls.hasAccessLevel('admin')) {
+      //this.queryByHook('buttons').style.display = 'none'
+      this.queryByHook('buttons').remove()
+    }
+  },
   events: {
     'click [data-hook=delete]': function (event) {
       bootbox.confirm({
@@ -100,9 +110,9 @@ const ScheduleRow = View.extend({
       hook: 'pauseToggle',
       type: function (el, disabled, previousValue) {
         if (disabled) {
-          el.innerHTML = `<span class="fa fa-play"></span> Execute and Resume schedule`
+          el.innerHTML = '<span class="fa fa-play"></span> Execute and Resume schedule'
         } else {
-          el.innerHTML = `<span class="fa fa-pause"></span> Pause schedule`
+          el.innerHTML = '<span class="fa fa-pause"></span> Pause schedule'
         }
       }
     }

@@ -2,7 +2,7 @@
 import App from 'ampersand-app'
 
 // order matters
-const credentials = ['viewer','user','manager','admin','owner','root']
+const credentials = ['viewer', 'user', 'manager', 'admin', 'owner', 'root']
 
 export default {
   accessLevel (credential) {
@@ -10,7 +10,7 @@ export default {
   },
   hasAccessLevel (required, options) {
     const credential = App.state.session.user.credential
-    options||(options={})
+    options || (options = {})
 
     if (options.sameLevel) {
       return this.accessLevel(credential) == this.accessLevel(required)
