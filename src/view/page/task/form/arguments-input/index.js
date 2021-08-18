@@ -23,7 +23,6 @@ export default View.extend({
             title="add new argument"
             class="btn btn-default"> Add new argument <i class="fa fa-plus"></i>
           </button>
-  or
           <button data-hook="copy-arguments"
             title="copy arguments"
             class="btn btn-default"> Copy arguments from another task <i class="fa fa-copy"></i>
