@@ -133,8 +133,7 @@ export default View.extend({
 
     return false
   },
-  importArgumentsFromTaskRecipe (fileContent) {
-    // This is not used anymore weeeeeeeeee
+  importArgumentsFromTaskRecipe (fileContent, prevArgs) {
     try {
       const recipe = fileContent
       console.log(recipe)
@@ -146,10 +145,10 @@ export default View.extend({
     } catch (e) {
       console.log(e)
       bootbox.alert('Invalid JSON file.')
+      this.taskArguments = prevArgs
     }
   },
-  importArgumentsFromArgumentsRecipe (fileContent) {
-    const prevArgs = this.taskArguments
+  importArgumentsFromArgumentsRecipe (fileContent, prevArgs) {
     try {
       let warn = false
       fileContent.forEach(arg => {
@@ -214,10 +213,16 @@ export default View.extend({
         if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
           try {
             const fileContent = JSON.parse(file.contents)
-            if (Object.keys(fileContent)[0] === 'task') {
-              this.importArgumentsFromTaskRecipe(fileContent)
+            if (this.taskArguments.length > 0) {
+              const modal = new AsToOverrideModal({ fileContent, prevArgs: this.taskArguments, parent: this })
+              this.listenTo(modal, 'hidden', () => { modal.remove() })
+              modal.show()
             } else {
-              this.importArgumentsFromArgumentsRecipe(fileContent)
+              if (Object.keys(fileContent)[0] === 'task') {
+                this.importArgumentsFromTaskRecipe(fileContent, this.taskArguments)
+              } else {
+                this.importArgumentsFromArgumentsRecipe(fileContent, this.taskArguments)
+              }
             }
           } catch (e) {
             bootbox.alert('Invalid JSON file.')
@@ -229,7 +234,7 @@ export default View.extend({
     })
   },
   onArgumentRemoved (argument) {
-    this.taskArguments.models.forEach((arg,index) => {
+    this.taskArguments.models.forEach((arg, index) => {
       arg.order = index
     })
   },
@@ -248,7 +253,7 @@ export default View.extend({
 
     // fixed arguments does not has a label
     if (argument.type === FieldConstants.TYPE_FIXED) {
-      //argument.label = `FixedArg${this.taskArguments.length}`
+      // argument.label = `FixedArg${this.taskArguments.length}`
       argument.readonly = true
     }
     this.taskArguments.add(new TaskArgument(argument))
@@ -274,5 +279,80 @@ export default View.extend({
         return this.taskArguments.map(arg => arg.serialize())
       }
     }
+  }
+})
+
+const AsToOverrideModal = Modalizer.extend({
+  props: {
+    fileContent: 'object',
+    prevArgs: 'collection',
+    parent: 'state'
+  },
+  template: `
+    <div data-component="modalizer" class="modalizer">
+      <!-- MODALIZER CONTAINER -->
+      <div data-hook="modalizer-class" class="">
+        <div class="modal"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="modal"
+          aria-hidden="true"
+          style="display:none;">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button"
+                  class="close"
+                  data-dismiss="modal"
+                  aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 data-hook="title" class="modal-title"></h4>
+              </div>
+              <div class="modal-body" data-hook="body">
+                <span>This task already has arguments set up, do you want to override them? 
+                  <div style="bottom:0; position:absolute;"> </div>
+                </span>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-hook="override">Override existing arguments</button>
+                <button type="button" class="btn btn-primary" data-hook="append">Add arguments together</button>
+                <button type="button" class="btn btn-default" data-hook="cancel">Cancel</button>
+              </div>
+            </div><!-- /MODAL-CONTENT -->
+          </div><!-- /MODAL-DIALOG -->
+        </div><!-- /MODAL -->
+      </div><!-- /MODALIZER CONTAINER -->
+    </div>
+  `,
+  events: Object.assign({}, Modalizer.prototype.events, {
+    'click [data-hook=override]': 'clickOverrideButton',
+    'click [data-hook=append]': 'clickAppendButton',
+    'click [data-hook=cancel]': 'clickCancelButton'
+  }),
+  clickOverrideButton () {
+    this.parent.taskArguments.reset([])
+    if (Object.keys(this.fileContent)[0] === 'task') {
+      this.parent.importArgumentsFromTaskRecipe(this.fileContent, this.prevArgs)
+    } else {
+      this.parent.importArgumentsFromArgumentsRecipe(this.fileContent, this.prevArgs)
+    }
+    this.hide()
+  },
+  clickAppendButton () {
+    if (Object.keys(this.fileContent)[0] === 'task') {
+      this.parent.importArgumentsFromTaskRecipe(this.fileContent, this.prevArgs)
+    } else {
+      this.parent.importArgumentsFromArgumentsRecipe(this.fileContent, this.prevArgs)
+    }
+    this.hide()
+  },
+  clickCancelButton () {
+    this.hide()
+  },
+  initialize () {
+    this.title = 'Importing arguments'
+    this.buttons = false // disable build-in modals buttons
+    Modalizer.prototype.initialize.apply(this, arguments)
   }
 })
