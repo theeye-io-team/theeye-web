@@ -98,7 +98,11 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    const select = new TaskSelection({})
+    const select = new TaskSelection({
+      filterOptions: [
+        item => item.task_arguments.length > 0
+      ]
+    })
 
     const modal = new Modalizer({
       buttons: false,

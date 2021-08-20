@@ -350,9 +350,6 @@ const OptionView = View.extend({
     this.label = state.label
     this.order = state.order
   },
-  events: {
-    'click [data-hook=remove-option]':'onclickremoveoption'
-  },
   props: {
     id: 'string',
     order: 'number',
@@ -388,6 +385,9 @@ const OptionView = View.extend({
     })
 
     this.idInputView.input.focus()
+  },
+  events: {
+    'click [data-hook=remove-option]':'onclickremoveoption'
   },
   onclickremoveoption (event) {
     event.preventDefault()
@@ -474,7 +474,6 @@ const SelectOptionsView = View.extend({
     },
     value: {
       cache: false,
-      //deps: ['optionViews'],
       fn () {
         return this.optionViews.views.map(v => v.value)
       }

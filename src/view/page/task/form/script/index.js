@@ -1,4 +1,6 @@
 import App from 'ampersand-app'
+import State from 'ampersand-state'
+import Collection from 'ampersand-collection'
 import bootbox from 'bootbox'
 import View from 'ampersand-view'
 import InputView from 'components/input-view'
@@ -14,11 +16,16 @@ import EventsSelectView from 'view/events-select'
 import CheckboxView from 'components/checkbox-view'
 import AdvancedToggle from 'view/advanced-toggle'
 import * as TaskConstants from 'constants/task'
+import TaskSelection from 'view/task-select'
+import Modalizer from 'components/modalizer'
 
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
+// import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
 import CopyTaskSelect from '../copy-task-select'
 import TaskOnBoarding from '../../taskOnboarding'
+
+import './styles.less'
 
 export default TaskFormView.extend({
   initialize (options) {
@@ -27,9 +34,9 @@ export default TaskFormView.extend({
     // multiple only if new, allows to create multiple tasks at once
     let hostsSelection = new SelectView({
       label: 'Bots *',
-      name: ((isNewTask||this.isImport) ? 'hosts' : 'host_id'),
-      multiple: (isNewTask||this.isImport),
-      tags: (isNewTask||this.isImport),
+      name: ((isNewTask || this.isImport) ? 'hosts' : 'host_id'),
+      multiple: (isNewTask || this.isImport),
+      tags: (isNewTask || this.isImport),
       options: App.state.hosts,
       value: this.model.host_id,
       required: true,
@@ -42,7 +49,7 @@ export default TaskFormView.extend({
     })
 
     if (isNewTask) {
-      if(App.state.onboarding.onboardingActive) {
+      if (App.state.onboarding.onboardingActive) {
         App.state.runners.add({
           runner: '/usr/bin/env bash %script%'
         })
@@ -51,7 +58,7 @@ export default TaskFormView.extend({
         if (hostsSelection.value) {
           let hosts = []
           hostsSelection.value.forEach(hostId => {
-            hosts.push( App.state.hosts.get(hostId) )
+            hosts.push(App.state.hosts.get(hostId))
           })
 
           let oss = hosts.filter((host, index, self) => {
@@ -104,7 +111,7 @@ export default TaskFormView.extend({
     })
 
     const userInputsMembers = new MembersSelectView({
-      //multiple: true,
+      // multiple: true,
       required: false,
       visible: false,
       name: 'user_inputs_members',
@@ -189,8 +196,8 @@ export default TaskFormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.name,
       }),
-      hostsSelection ,
-      this.scriptSelection ,
+      hostsSelection,
+      this.scriptSelection,
       new TagsSelectView({
         required: false,
         name: 'tags',
@@ -303,33 +310,7 @@ export default TaskFormView.extend({
         name: 'show_result',
         value: this.model.show_result
       }),
-      new TextareaView({
-        prettyJson: true,
-        visible: false,
-        label: 'Environment (env)',
-        name: 'env',
-        //placeholder: '',
-        required: false,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        value: JSON.stringify(this.model.env),
-        tests: [
-          value => {
-            if (value === '') { return }
-            try {
-              let parsed = JSON.parse(value)
-              if (Array.isArray(parsed)) {
-                return 'Use {Key:Value} format'
-              }
-              if (parsed.hasOwnProperty("")) {
-                return 'Please, don\'t do that..'
-              }
-            } catch (e) {
-              return 'Invalid JSON string'
-            }
-          }
-        ]
-      }),
+      new EnvView({ values: (this.model.env||{}) }),
       new SelectView({
         label: 'Arguments Type (experimental)',
         name: 'arguments_type',
@@ -357,9 +338,13 @@ export default TaskFormView.extend({
     ]
 
     if (this.model.isNew()) {
-      const copySelect = new CopyTaskSelect({ type: TaskConstants.TYPE_SCRIPT, visible: false })
+      const copySelect = new CopyTaskSelect({
+        type: TaskConstants.TYPE_SCRIPT,
+        visible: false
+      })
+
       this.fields.splice(7, 0, copySelect)
-      this.listenTo(copySelect,'change',() => {
+      this.listenTo(copySelect, 'change', () => {
         if (copySelect.value) {
           let task = App.state.tasks.get(copySelect.value)
           this.setWithTask(task)
@@ -374,7 +359,7 @@ export default TaskFormView.extend({
 
     this.query('form').classList.add('form-horizontal')
 
-    if (this.model.isNew()||this.isImport) {
+    if (this.model.isNew() || this.isImport) {
       this.addHelpIcon('hosts')
     } else {
       this.addHelpIcon('host_id')
@@ -403,14 +388,16 @@ export default TaskFormView.extend({
 
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)
-    buttons.on('click:confirm', () => { this.submit() })
+    buttons.on('click:confirm', () => {
+      this.submit() 
+    })
 
     if (this.model.isNew()) {
-      if(App.state.onboarding.onboardingActive) {
-        var taskOnBoarding = new TaskOnBoarding({parent: this})
+      if (App.state.onboarding.onboardingActive) {
+        var taskOnBoarding = new TaskOnBoarding({ parent: this })
         taskOnBoarding.step2()
 
-        this.listenTo(App.state.onboarding,'change:showTaskLastStep',() => {
+        this.listenTo(App.state.onboarding, 'change:showTaskLastStep', () => {
           if (App.state.onboarding.showTaskLastStep) {
             taskOnBoarding.step4()
             App.state.onboarding.showTaskLastStep = false
@@ -420,8 +407,7 @@ export default TaskFormView.extend({
     }
   },
   submit (next) {
-    next || (next=()=>{})
-
+    next || (next = () => { })
     this.beforeSubmit()
     if (!this.valid) {
       return next(null, false)
@@ -450,29 +436,292 @@ export default TaskFormView.extend({
     f.type = TaskConstants.TYPE_SCRIPT
     f.grace_time = Number(data.grace_time)
     f.timeout = Number(data.timeout)
-    if (data.env) {
-      f.env = JSON.parse(data.env)
-    } else {
-      f.env = {}
-    }
 
     return f
-  },
-  /**
-   * @param {Object|Model} task can be a Task Model or an Object of props
-   */
-  setWithTask (task) {
-    TaskFormView.prototype.setWithTask.apply(this, arguments)
+  }
+})
 
-    //Object
-    //  .keys(this._fieldViews)
-    //  .forEach(prop => {
-    //    if (prop === 'env') {
-    //      this._fieldViews[prop].setValue(JSON.stringify(task[prop]))
-    //    } else {
-    //      this._fieldViews[prop].setValue(task[prop])
-    //    }
-    //  })
-    this._fieldViews['env'].setValue(JSON.stringify(task['env']))
+const SimpleInputView = InputView.extend({
+  template: `
+    <div style="margin:0;">
+      <input class="form-control form-input">
+      <div data-hook="message-container" class="message message-below message-error">
+        <p data-hook="message-text"></p>
+      </div>
+    </div>
+  `
+})
+
+const EnvVar = State.extend({
+  props: {
+    key: 'string',
+    value: 'mixed'
+  }
+})
+
+const EnvCol = Collection.extend({
+  mainIndex: 'key',
+  indexes: ['key', 'value'],
+  model: EnvVar,
+  /**
+   * Convert an Object of { key: value } into and Array [ { key, value } ]
+   * @param {Object} models
+   */
+  reset (models) {
+    const values = []
+    for (let key in models) {
+      const elem = {}
+      elem["key"] = key
+      elem["value"] = models[key]
+      values.push(elem)
+    }
+    return Collection.prototype.reset.call(this, values)
+  }
+})
+
+const EnvView = View.extend({
+  name: 'env',
+  required: false,
+  template: `
+    <div class="form-group" data-component="environment-view-component">
+      <label class="col-sm-3 control-label" data-hook="label">Environment Variables</label>
+      <div class="col-sm-9">
+        <div>
+          <button data-hook="add" class="btn btn-default">
+            Add new variable <i class="fa fa-plus"></i>
+          </button>
+          <button data-hook="copy"
+            title="copy environment"
+            class="btn btn-default">
+              Copy from another task <i class="fa fa-copy"></i>
+          </button>
+          <ul data-hook="list-group" class="list-group"></ul>
+        </div>
+      </div>
+    </div>
+  `,
+  props: {
+    visible: ['boolean', false, false],
+    values: ['object', true, () => { return {} }],
+    validValues: ['boolean', false],
+    variablesLength: ['number', false, 0]
+  },
+  collections: {
+    variables: EnvCol
+  },
+  initialize (options) {
+    View.prototype.initialize.apply(this, arguments)
+    this.setValue(this.values)
+    this.on('change:valid change:value', this.reportToParent, this)
+
+    this.variables.on('add remove reset sync', () => {
+      this.variablesLength = this.variables.length
+    })
+  },
+  derived: {
+    hasVariables: {
+      deps: ['variablesLength'],
+      fn () {
+        return Boolean(this.variablesLength > 0)
+      }
+    },
+    value: {
+      cache: false,
+      fn () {
+        const value = {}
+
+        this.variableViews
+          .views
+          .forEach(v => {
+            value[v.key] = v.label
+          })
+
+        return value
+      }
+    },
+    valid: {
+      deps: ['validValues'],
+      fn () {
+        return this.validValues
+      }
+    }
+  },
+  bindings: {
+    visible: {
+      type: 'toggle'
+    }
+  },
+  events: {
+    'click [data-hook=add]': 'onClickAddButton',
+    'click [data-hook=copy]': 'onClickCopyFromTaskButton'
+  },
+  onClickAddButton (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    this.variables.add({
+      key: '',
+      value: ''
+    })
+
+    return false
+  },
+  onClickCopyFromTaskButton (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const selectView = new TaskSelection({
+      filterOptions: [
+        item => item.env && Object.keys(item.env).length > 0
+      ]
+    })
+
+    const modal = new Modalizer({
+      buttons: false,
+      title: 'Copy Environment from',
+      bodyView: selectView
+    })
+
+    this.listenTo(modal,'hidden',() => {
+      selectView.remove()
+      modal.remove()
+    })
+
+    this.listenTo(selectView, 'change:value', () => {
+      const task = App.state.tasks.get(selectView.value)
+      this.setValue(task.env)
+    })
+
+    modal.show()
+    return false
+  },
+  setValue (value) {
+    this.variables.reset(value)
+  },
+  render () {
+    this.renderWithTemplate(this)
+
+    const collVu = this.variableViews = this.renderCollection(
+      this.variables,
+      EnvVarView,
+      this.queryByHook('list-group')
+    )
+
+    collVu.collection.on('add', child => {
+      const view = collVu.views.find(vu => vu.model === child)
+      view.keyInputView.input.focus()
+    })
+  },
+  update () {
+    this.reportToParent()
+  },
+  reportToParent () {
+    if (this.parent) { this.parent.update(this) }
+  },
+  beforeSubmit () {
+    this.variableViews.views.forEach(vu => vu.beforeSubmit())
+    this.runTests()
+  },
+  runTests () {
+    if (this.variableViews.views.length === 0) {
+      this.validValues = true
+      return
+    }
+
+    this.validValues = this.variableViews.views.every(view => view.valid)
+  }
+})
+
+const EnvVarView = View.extend({
+  template: `
+    <li class="list-group-item">
+      <div class="row">
+        <span class="col-xs-5" data-hook="key"> </span>
+        <span class="col-xs-5" data-hook="label"> </span>
+        <span class="col-xs-2">
+          <span class="btn" data-hook="remove-option">
+            <i class="fa fa-remove"></i>
+          </span>
+        </span>
+      </div>
+    </li>
+  `,
+  initialize () {
+    View.prototype.initialize.apply(this,arguments)
+    this.updateState(this.model)
+    this.on('change:valid change:value', this.reportToParent, this)
+  },
+  updateState (state) {
+    this.key = state.key
+    this.label = state.value
+  },
+  props: {
+    key: 'string',
+    label: 'string',
+    name: ['string', false, 'env_var'] // my input name
+  },
+  derived: {
+    value: {
+      deps: ['key', 'label'],
+      fn () {
+        return {
+          key: this.key,
+          value: this.label
+        }
+      }
+    },
+    valid: {
+      deps: ['key', 'label'],
+      fn () {
+        return Boolean(this.key && this.label)
+      }
+    }
+  },
+  events: {
+    'click [data-hook=remove-option]': 'onClickRemoveButton'
+  },
+  onClickRemoveButton (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    // mmmmm...
+    this.model.collection.remove(this.model)
+  },
+  render () {
+    this.renderWithTemplate(this)
+
+    this.keyInputView = new SimpleInputView({
+      name: 'key',
+      value: this.model.key,
+      placeholder: 'Key',
+      required: true
+    })
+    this.renderSubview(this.keyInputView, this.queryByHook('key'))
+
+    this.valueInputView = new SimpleInputView({
+      name: 'value',
+      value: this.model.value,
+      placeholder: 'Value',
+      required: true
+    })
+    this.renderSubview(this.valueInputView, this.queryByHook('label'))
+
+    // use internal state
+    this.listenTo(this.keyInputView, 'change:value', () => {
+      this.key = this.keyInputView.value
+    })
+
+    this.listenTo(this.valueInputView, 'change:value', () => {
+      this.label = this.valueInputView.value
+    })
+  },
+  update () {
+    this.reportToParent()
+  },
+  reportToParent () {
+    if (this.parent) { this.parent.update(this) }
+  },
+  beforeSubmit () {
+    this.keyInputView.beforeSubmit()
+    this.valueInputView.beforeSubmit()
   }
 })

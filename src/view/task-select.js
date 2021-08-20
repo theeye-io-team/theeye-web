@@ -1,15 +1,17 @@
-'use strict'
-
 import App from 'ampersand-app'
 import SelectView from 'components/select2-view'
 import FilteredCollection from 'ampersand-filtered-subcollection'
 
 export default SelectView.extend({
   initialize (specs) {
-
-    var filters = [
+    let filters = [
       item => true,
-      item => item.type === 'approval' || item.type === 'dummy' || item.type === 'notification' || item.host_id
+      item => (
+        item.type === 'approval' ||
+        item.type === 'dummy' ||
+        item.type === 'notification' ||
+        item.host_id
+      )
     ]
 
     if (
@@ -19,8 +21,8 @@ export default SelectView.extend({
       filters = filters.concat(specs.filterOptions)
     }
 
-    var options = new FilteredCollection(
-      specs.options || App.state.tasks,
+    const options = new FilteredCollection(
+      (specs.options || App.state.tasks),
       { filters }
     )
 
@@ -35,6 +37,6 @@ export default SelectView.extend({
     this.textAttribute = 'summary'
     this.allowCreateTags = false
 
-    SelectView.prototype.initialize.apply(this,arguments)
+    SelectView.prototype.initialize.apply(this, arguments)
   }
 })
