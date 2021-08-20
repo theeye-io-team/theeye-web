@@ -657,7 +657,7 @@ const EnvVarView = View.extend({
   },
   props: {
     key: 'string',
-    label: 'string',
+    label: 'mixed',
     name: ['string', false, 'env_var'] // my input name
   },
   derived: {
