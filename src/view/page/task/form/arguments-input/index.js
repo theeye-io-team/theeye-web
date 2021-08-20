@@ -27,10 +27,7 @@ export default View.extend({
             title="copy arguments"
             class="btn btn-default"> Copy arguments from another task <i class="fa fa-copy"></i>
           </button>
-          <input type="file" name="file" id="file" style="display:none;" data-hook="import-arguments">
-          <label for="file" title="import arguments" class="btn btn-default"> 
-            Import arguments from file <i class="fa fa-copy"></i>
-          </label>
+          <div style="display:inline-block;" data-hook="file-import-placeholder"></div>
           <button data-hook="export-arguments"
             title="export arguments"
             class="btn btn-default"> Export arguments to file <i class="fa fa-file-code-o"></i>
@@ -133,23 +130,15 @@ export default View.extend({
 
     return false
   },
-  importArgumentsFromTaskRecipe (fileContent, prevArgs) {
-    try {
+  importArgumentsFromTaskRecipe (fileContent) {
       const recipe = fileContent
-      console.log(recipe)
       const task = App.actions.task.parseRecipe(recipe)
       const taskArray = task.serialize()
       taskArray.task_arguments.forEach(arg => {
         this.onArgumentAdded(arg)
       })
-    } catch (e) {
-      console.log(e)
-      bootbox.alert('Invalid JSON file.')
-      this.taskArguments = prevArgs
-    }
   },
-  importArgumentsFromArgumentsRecipe (fileContent, prevArgs) {
-    try {
+  importArgumentsFromArgumentsRecipe (fileContent) {
       let warn = false
       fileContent.forEach(arg => {
         if (arg.type === 'fixed') {
@@ -160,10 +149,6 @@ export default View.extend({
       if (warn) {
         bootbox.alert('You have imported Fixed Arguments and you need to set the values manually')
       }
-    } catch (e) {
-      bootbox.alert('Invalid JSON file.')
-      this.taskArguments = prevArgs
-    }
   },
   exportArgumentsToArgumentsRecipe () {
     // App.actions.task.exportArguments(this.parent.model.id)
@@ -198,40 +183,45 @@ export default View.extend({
     this.listenTo(this.taskArguments, 'remove', this.onArgumentRemoved)
 
     this.renderSubview(
-      new HelpIcon({
-        text: 'Click argument order to swap'
-      }),
+      new HelpIcon({ text: 'Click argument order to swap' }),
       this.queryByHook('order-row-header')
     )
-    const input = this.queryByHook('import-arguments')
-    input.addEventListener('change', (e) => {
-      var reader = new window.FileReader()
-      var file = e.target.files[0] // file input in single mode, read only 1st item in files array
 
-      reader.onloadend = event => {
-        file.contents = event.target.result
-        if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
-          try {
-            const fileContent = JSON.parse(file.contents)
-            if (this.taskArguments.length > 0) {
-              const modal = new AsToOverrideModal({ fileContent, prevArgs: this.taskArguments, parent: this })
-              this.listenTo(modal, 'hidden', () => { modal.remove() })
-              modal.show()
-            } else {
-              if (Object.keys(fileContent)[0] === 'task') {
-                this.importArgumentsFromTaskRecipe(fileContent, this.taskArguments)
-              } else {
-                this.importArgumentsFromArgumentsRecipe(fileContent, this.taskArguments)
-              }
-            }
-          } catch (e) {
-            bootbox.alert('Invalid JSON file.')
-          }
-        } else bootbox.alert('Not a JSON file.')
-        input.value = '' // reset will allow to re import the same file again
+    this.renderFileImportView()
+  },
+  renderFileImportView () {
+    const fileImport = new FileImportView({ })
+    this.renderSubview(fileImport, this.queryByHook("file-import-placeholder"))
+    fileImport.on('value', (fileContent) => {
+      if (this.taskArguments.length > 0) {
+        const modal = new AskToOverrideModal()
+        this.listenTo(modal, 'button:override', () => {
+          this.taskArguments.reset([])
+          this.importFileContent(fileContent)
+          modal.hide()
+        })
+
+        this.listenTo(modal, 'button:append', () => {
+          this.importFileContent(fileContent)
+          modal.hide()
+        })
+
+        this.listenTo(modal, 'hidden', () => {
+          modal.remove()
+        })
+
+        modal.show()
+      } else {
+        this.importFileContent(fileContent)
       }
-      reader.readAsText(file)
     })
+  },
+  importFileContent (fileContent) {
+    if (Object.keys(fileContent)[0] === 'task') {
+      this.importArgumentsFromTaskRecipe(fileContent)
+    } else {
+      this.importArgumentsFromArgumentsRecipe(fileContent)
+    }
   },
   onArgumentRemoved (argument) {
     this.taskArguments.models.forEach((arg, index) => {
@@ -282,12 +272,52 @@ export default View.extend({
   }
 })
 
-const AsToOverrideModal = Modalizer.extend({
-  props: {
-    fileContent: 'object',
-    prevArgs: 'collection',
-    parent: 'state'
+const FileImportView = View.extend({
+  template: `
+    <div data-component="file-import">
+      <input type="file" name="file" id="file" style="display:none;">
+      <label for="file" title="import arguments" class="btn btn-default"> 
+        Import arguments from file <i class="fa fa-copy"></i>
+      </label>
+    </div>
+  `,
+  events: {
+    'change input': 'onChangeInput'
   },
+  onChangeInput (changeEvent) {
+    const reader = new window.FileReader()
+    const input = this.query('input')
+    const file = input.files[0] // file input in single mode, read only 1st item in files array
+
+    reader.onloadend = event => {
+      file.contents = event.target.result
+      if (
+        file &&
+        /json\/*/.test(file.type) === true &&
+        file.contents &&
+        file.contents.length
+      ) {
+        let fileContent
+        try {
+          fileContent = JSON.parse(file.contents)
+        } catch (e) {
+          bootbox.alert('Invalid JSON file.')
+          return
+        }
+
+        this.trigger('value', fileContent)
+      } else {
+        bootbox.alert('Not a JSON file.')
+      }
+
+      input.value = '' // reset will allow to re import the same file again
+    }
+
+    reader.readAsText(file)
+  }
+})
+
+const AskToOverrideModal = Modalizer.extend({
   template: `
     <div data-component="modalizer" class="modalizer">
       <!-- MODALIZER CONTAINER -->
@@ -325,34 +355,23 @@ const AsToOverrideModal = Modalizer.extend({
       </div><!-- /MODALIZER CONTAINER -->
     </div>
   `,
+  initialize () {
+    this.title = 'Importing arguments'
+    this.buttons = false // disable build-in modals buttons
+    Modalizer.prototype.initialize.apply(this, arguments)
+  },
   events: Object.assign({}, Modalizer.prototype.events, {
     'click [data-hook=override]': 'clickOverrideButton',
     'click [data-hook=append]': 'clickAppendButton',
     'click [data-hook=cancel]': 'clickCancelButton'
   }),
   clickOverrideButton () {
-    this.parent.taskArguments.reset([])
-    if (Object.keys(this.fileContent)[0] === 'task') {
-      this.parent.importArgumentsFromTaskRecipe(this.fileContent, this.prevArgs)
-    } else {
-      this.parent.importArgumentsFromArgumentsRecipe(this.fileContent, this.prevArgs)
-    }
-    this.hide()
+    this.trigger('button:override')
   },
   clickAppendButton () {
-    if (Object.keys(this.fileContent)[0] === 'task') {
-      this.parent.importArgumentsFromTaskRecipe(this.fileContent, this.prevArgs)
-    } else {
-      this.parent.importArgumentsFromArgumentsRecipe(this.fileContent, this.prevArgs)
-    }
-    this.hide()
+    this.trigger('button:append')
   },
   clickCancelButton () {
     this.hide()
-  },
-  initialize () {
-    this.title = 'Importing arguments'
-    this.buttons = false // disable build-in modals buttons
-    Modalizer.prototype.initialize.apply(this, arguments)
   }
 })
