@@ -6,7 +6,8 @@ export default Modalizer.extend({
     Modalizer.prototype.initialize.apply(this, arguments)
 
     this.buttons = false
-    this.title = 'Edit Task'
+    const { name, id } = this.model
+    this.title = `Edit task ${name} [${id}]`
 
     this.form = new TaskForm({ model: this.model })
     this.bodyView = this.form

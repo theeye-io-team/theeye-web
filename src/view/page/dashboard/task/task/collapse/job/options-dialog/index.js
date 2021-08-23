@@ -70,12 +70,12 @@ export default Modalizer.extend({
 
                   <!-- row 4 -->
                   <div class="grid-col-button">
-                    <button type="button" class="btn btn-default" data-hook="cancel">
-                      <i class="fa fa-arrow-right"></i>
+                    <button type="button" class="btn btn-default" data-hook="close">
+                      <i class="fa fa-arrow-left"></i>
                     </button>
                   </div>
                   <div class="grid-col-message">
-                    <span><b>Cancel</b></span>
+                    <span><b>Go Back</b></span>
                   </div>
                 </div>
               </div>
@@ -86,7 +86,7 @@ export default Modalizer.extend({
     </div>
   `,
   events: {
-    'click [data-hook=cancel]':function (event) {
+    'click [data-hook=close]':function (event) {
       event.preventDefault()
       event.stopPropagation()
       this.hide()

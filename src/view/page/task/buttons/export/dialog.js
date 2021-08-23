@@ -58,12 +58,22 @@ export default Modalizer.extend({
 
                   <!-- row 3 -->
                   <div class="grid-col-button">
-                    <button type="button" class="btn btn-default" data-hook="cancel">
+                    <button type="button" class="btn btn-default" data-hook="arguments">
                       <i class="fa fa-arrow-right"></i>
                     </button>
                   </div>
                   <div class="grid-col-message">
-                    <span><b>Close</b></span>
+                    <span>${Help.task.export_arguments}</span>
+                  </div>
+
+                  <!-- row 4 -->
+                  <div class="grid-col-button">
+                    <button type="button" class="btn btn-default" data-hook="close">
+                      <i class="fa fa-arrow-left"></i>
+                    </button>
+                  </div>
+                  <div class="grid-col-message">
+                    <span><b>Go Back</b></span>
                   </div>
                 </div>
               </div>
@@ -74,9 +84,10 @@ export default Modalizer.extend({
     </div>
   `,
   events: Object.assign({}, Modalizer.prototype.events, {
-    'click [data-hook=backup]':'clickBackupExportButton',
-    'click [data-hook=recipe]':'clickRecipeExportButton',
-    'click [data-hook=cancel]':'clickCancelButton'
+    'click [data-hook=backup]': 'clickBackupExportButton',
+    'click [data-hook=recipe]': 'clickRecipeExportButton',
+    'click [data-hook=arguments]': 'clickArgumentsExportButton',
+    'click [data-hook=close]': 'clickCloseButton'
   }),
   clickBackupExportButton (event) {
     event.preventDefault()
@@ -90,7 +101,13 @@ export default Modalizer.extend({
     App.actions.task.exportRecipe(this.model.id)
     this.hide()
   },
-  clickCancelButton (event) {
+  clickArgumentsExportButton (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    App.actions.task.exportArguments(this.model.id)
+    this.hide()
+  },
+  clickCloseButton (event) {
     event.preventDefault()
     event.stopPropagation()
     this.hide()

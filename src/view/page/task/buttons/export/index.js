@@ -11,7 +11,7 @@ export default View.extend({
     </li>
   `,
   events: {
-    'click button':'onClickButton',
+    'click button': 'onClickButton'
   },
   onClickButton (event) {
     event.stopPropagation()
@@ -22,4 +22,3 @@ export default View.extend({
     return false
   }
 })
-
