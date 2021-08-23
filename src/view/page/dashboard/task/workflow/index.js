@@ -20,6 +20,8 @@ import IntegrationsWorkflowButton from 'view/page/workflow/buttons/integrations'
 import ScheduleButton from 'view/buttons/schedule'
 import SchedulesView from 'view/page/task/schedules'
 
+import DownloadButton from 'view/buttons/download'
+
 import './styles.less'
 
 export default CollapsibleRow.extend({
@@ -322,14 +324,19 @@ const InputsView = View.extend({
       const inputs = job.task_arguments_values
       //const data = []
 
-      this.el.appendChild( dateElem(wfJob.creation_date) )
+      this.el.appendChild(dateElem(wfJob.creation_date))
 
       if (argsdefs.length > 0) {
         for (let index = 0; index < argsdefs.length; index++) {
           //const def = argsdefs[index]
           let col = document.createElement('div')
-          col.innerHTML = inputs[ index ]
-          this.el.appendChild( col )
+          if (inputs[index].includes('base64')) {
+            const dwld = new DownloadButton({ blob: inputs[index] })
+            this.renderSubview(dwld, col)
+          } else {
+            col.innerHTML = inputs[index]
+          }
+          this.el.appendChild(col)
         }
       }
 
