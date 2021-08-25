@@ -148,6 +148,10 @@ export default {
     export_recipe: '<b>Recipe</b>: Create task template. Values for fixed arguments and environment variables will be empty.',
     export_arguments: '<b>Arguments</b>: Export task arguments only. Values for fixed arguments will be empty.'
   },
+  workflow: {
+    export_backup: '<b>Backup</b>: Export workflow template, including fixed arguments and environment variables.<br/><b>Keep this recipe safe, to avoid private data leaks and keys exposure</b>',
+    export_recipe: '<b>Recipe</b>: Create workflow template. Values for fixed arguments and environment variables will be empty.'
+  },
   job: {
     repeat: 'Start new job (uses same inputs)',
     repeat_edit: 'Repeat this job, but allow me to edit the arguments',
@@ -169,7 +173,7 @@ export default {
       script: 'Load your scripts. You can also drop it in this window.'
     }
   },
-  titles:{
+  titles: {
     user_page: 'Users CRUD operations',
     customer_page: 'Customers CRUD operations',
     file_page: 'Scripts and Files CRUD operations',

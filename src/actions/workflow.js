@@ -7,6 +7,8 @@ import JobActions from 'actions/job'
 import union from 'lodash/union'
 import uniq from 'lodash/uniq'
 import difference from 'lodash/difference'
+import FileSaver from 'file-saver'
+import { v4 as uuidv4 } from 'uuid'
 import loggerModule from 'lib/logger'; const logger = loggerModule('actions:workflow')
 
 export default {
@@ -161,6 +163,55 @@ export default {
         return next(new Error(msg))
       }
     })
+  },
+
+  createRecipe (id, options = {}, callback) {
+    const workflow = App.state.workflows.get(id).serialize()
+    let recipe = {}
+    recipe.name = workflow.name
+    recipe.description = workflow.description
+    recipe.empty_viewers = workflow.empty_viewers
+    recipe.table_view = workflow.table_view
+    recipe.graph = workflow.graph
+    let tasks = []
+    for (let i in workflow.graph.nodes) {
+      const id = workflow.graph.nodes[i].v
+      const uuid = uuidv4()
+
+      if (workflow.graph.nodes[i].value.type) {
+        tasks.push(new Promise((resolve, reject) => {
+          App.actions.task.fetchRecipe(id, options, (err, recipe) => {
+            recipe.task.id = uuid
+            resolve(recipe.task)
+          })
+        }))
+      }
+
+      if (workflow.start_task_id === id) { recipe.start_task_id = uuid }
+
+      for (let a in recipe.graph.edges) {
+        if (recipe.graph.edges[a].v === id) { recipe.graph.edges[a].v = uuid }
+        if (recipe.graph.edges[a].w === id) { recipe.graph.edges[a].w = uuid }
+      }
+
+      recipe.graph.nodes[i].v = uuid
+      recipe.graph.nodes[i].value.id = uuid
+    }
+    Promise.all(tasks).then((values) => {
+      recipe.tasks = values
+      callback(recipe)
+    })
+  },
+  
+  exportRecipe (id, options = {}) {
+    const callback = (recipe) => {
+      const jsonContent = JSON.stringify(recipe)
+      const blob = new Blob([jsonContent], { type: 'application/json' })
+      const fname = recipe.name.replace(/ /g, '_')
+      FileSaver.saveAs(blob, `${fname}.json`)
+    }
+
+    App.actions.workflow.createRecipe(id, options, callback)
   }
 }
 

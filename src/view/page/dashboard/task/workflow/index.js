@@ -16,6 +16,7 @@ import RemoveWorkflowButton from 'view/page/workflow/buttons/remove'
 import EditWorkflowButton from 'view/page/workflow/buttons/edit'
 import ReviewPendingWorkflowsButton from 'view/page/workflow/buttons/refresh'
 import ViewWorkflowButton from 'view/page/workflow/buttons/view'
+import ExportWorkflowButton from 'view/page/workflow/buttons/export'
 import IntegrationsWorkflowButton from 'view/page/workflow/buttons/integrations'
 import ScheduleButton from 'view/buttons/schedule'
 import SchedulesView from 'view/page/task/schedules'
@@ -330,6 +331,7 @@ const WorkflowButtonsView = View.extend({
     // edit comes before view
     if (Acls.hasAccessLevel('admin')) {
       this.renderSubview(new EditWorkflowButton({ model: this.model }), buttons)
+      this.renderSubview(new ExportWorkflowButton({ model: this.model }), buttons)
       this.renderSubview(new IntegrationsWorkflowButton({ model: this.model }), buttons)
       this.renderSubview(new RemoveWorkflowButton({ model: this.model }), buttons)
       this.renderSubview(new ScheduleButton({ model: this.model }), buttons)
