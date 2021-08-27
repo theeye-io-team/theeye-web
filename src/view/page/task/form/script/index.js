@@ -89,6 +89,7 @@ export default TaskFormView.extend({
     this.advancedFields = [
       'description',
       'acl',
+      'table_view',
       'triggers',
       'grace_time',
       'copy_task',
@@ -250,6 +251,13 @@ export default TaskFormView.extend({
         label: 'ACL\'s',
         value: this.model.acl
       }),
+      new CheckboxView({
+        required: false,
+        visible: false,
+        label: 'Table View',
+        name: 'table_view',
+        value: this.model.table_view
+      }),
       triggeredBy,
       triggerOnHold,
       new SelectView({
@@ -375,6 +383,7 @@ export default TaskFormView.extend({
     this.addHelpIcon('script_runas')
     this.addHelpIcon('script_id')
     this.addHelpIcon('acl')
+    this.addHelpIcon('table_view')
     this.addHelpIcon('triggers')
     this.addHelpIcon('grace_time')
     this.addHelpIcon('task_arguments')
@@ -389,7 +398,7 @@ export default TaskFormView.extend({
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)
     buttons.on('click:confirm', () => {
-      this.submit() 
+      this.submit()
     })
 
     if (this.model.isNew()) {

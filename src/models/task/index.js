@@ -46,7 +46,8 @@ const Script = Template.Script.extend({
     hostname: 'string',
     host_id: 'string',
     template_id: 'string',
-    multitasking: ['boolean',false,true],
+    multitasking: ['boolean', false, true],
+    table_view: ['boolean', false, false],
     env: 'object'
   },
   derived: {

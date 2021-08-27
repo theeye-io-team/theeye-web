@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
+import moment from 'moment'
 import SearchActions from 'actions/searchbox'
 import ExecTaskButton from '../task-exec-button'
 import TaskIntegrationButton from 'view/page/task/buttons/integrations'
@@ -11,10 +12,11 @@ import ReviewPendingTaskButton from 'view/page/task/buttons/refresh'
 import CollapsibleRow from 'view/page/dashboard/task/collapsible-row'
 import SchedulesView from 'view/page/task/schedules'
 import Acls from 'lib/acls'
-import $ from 'jquery'
 import JobRow from './job'
 import JobsList from 'view/page/dashboard/task/jobs-list'
 import JobsPaginator from 'view/page/paginator/footer'
+
+import './styles.less'
 
 export default CollapsibleRow.extend({
   onClickToggleCollapse (event) {
@@ -43,6 +45,67 @@ export default CollapsibleRow.extend({
   }
 })
 
+const dateElem = (date) => {
+  let col = document.createElement('div')
+  col.innerHTML = moment(date).format('DD-MM-YYYY HH:mm:ss')
+  return col
+}
+
+const InputsView = View.extend({
+  props: {
+    data: 'object'
+  },
+  template: `<div data-component="inputs-row"></div>`,
+  render () {
+    this.renderWithTemplate(this)
+
+    this.listenToAndRun(this.model, 'change:_values', () => {
+      const job = this.model._values
+      if (!job) return
+      this.renderJobArguments(job)
+    })
+  },
+  renderJobArguments (job) {
+    const tJob = this.model
+    const argsdefs = tJob.task.task_arguments.models
+    const inputs = job.task_arguments_values
+    //const data = []
+
+    this.el.appendChild(dateElem(tJob.creation_date))
+
+    if (argsdefs.length > 0) {
+      for (let index = 0; index < argsdefs.length; index++) {
+        //const def = argsdefs[index]
+        let col = document.createElement('div')
+        if (inputs[index].includes('base64')) {
+          const dwld = new DownloadButton({ blob: inputs[index] })
+          this.renderSubview(dwld, col)
+        } else {
+          col.innerHTML = inputs[index]
+        }
+        this.el.appendChild(col)
+      }
+    }
+
+    // round 2 decimal
+    const cols = Math.round(100 / (argsdefs.length + 1) * 1e1) / 1e1
+    const colStyle = `grid-template-columns: repeat(auto-fill, minmax(${cols}%, 1fr))`
+    this.el.setAttribute('style', colStyle)
+  }
+})
+
+const TableRow = JobRow.extend({
+  derived: null,
+  bindings: null,
+  render () {
+    this.renderWithTemplate(this)
+    const table = new InputsView({ model: this.model })
+    const el = this.queryByHook('title')
+    this.renderSubview(table, el)
+    this.renderButtons()
+  }
+})
+
 const CollapsedContentView = View.extend({
   template: `<div></div>`,
   render () {
@@ -51,7 +114,10 @@ const CollapsedContentView = View.extend({
     this.jobsScheduler = new SchedulesView({ model: this.model })
     this.renderSubview(this.jobsScheduler, this.el)
 
-    this.jobsList = new JobsList({ model: this.model, rowView: JobRow })
+    this.jobsList = new JobsList({
+      model: this.model,
+      rowView: this.model.table_view ? TableRow : JobRow
+    })
     this.renderSubview(this.jobsList, this.el)
 
     this.jobsPaginator = new JobsPaginator({ model: this.model })

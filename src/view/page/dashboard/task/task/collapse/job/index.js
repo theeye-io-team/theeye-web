@@ -2,6 +2,8 @@ import View from 'ampersand-view'
 import JobExecButton from './job-exec-button'
 import moment from 'moment'
 
+import './styles.less'
+
 export default View.extend({
   template: `
     <div class="job-container">
@@ -9,7 +11,7 @@ export default View.extend({
         <h4 class="panel-title">
           <div class="panel-title-content">
             <div class="panel-item name">
-              <span class="title" data-hook="title"></span>
+              <div class="title" data-hook="title"></div>
             </div>
             <div data-hook="job-status-container" class="panel-item icons">
             </div>
