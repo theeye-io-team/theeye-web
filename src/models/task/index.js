@@ -138,7 +138,8 @@ const Scraper = Template.Scraper.extend({
 const Approval = Template.Approval.extend({
   urlRoot,
   props: {
-    template_id: 'string'
+    template_id: 'string',
+    table_view: ['boolean', false, false]
   },
   derived: {
     formatted_tags: formattedTags(),

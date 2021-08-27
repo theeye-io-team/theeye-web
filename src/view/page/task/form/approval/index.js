@@ -26,6 +26,7 @@ export default TaskFormView.extend({
     this.advancedFields = [
       'description',
       'acl',
+      'table_view',
       'triggers',
       'copy_task',
       'success_label',
@@ -209,6 +210,13 @@ export default TaskFormView.extend({
         label: 'ACL\'s',
         value: this.model.acl
       }),
+      new CheckboxView({
+        required: false,
+        visible: false,
+        label: 'Table View',
+        name: 'table_view',
+        value: this.model.table_view
+      }),
       new EventsSelectView({
         label: 'Triggered by',
         name: 'triggers',
@@ -259,6 +267,7 @@ export default TaskFormView.extend({
     this.addHelpIcon('description')
     this.addHelpIcon('tags')
     this.addHelpIcon('acl')
+    this.addHelpIcon('table_view')
     this.addHelpIcon('triggers')
     this.addHelpIcon('success_label')
     this.addHelpIcon('failure_label')
