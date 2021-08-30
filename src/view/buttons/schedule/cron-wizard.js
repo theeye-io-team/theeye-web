@@ -232,7 +232,7 @@ const LocalTimezoneView = View.extend({
     const message = ``
     return (
       `<timezone>
-        <p>Please note: The scheduler is using timezone: <b>${tz}</b></p>
+        <p>Please note: The scheduler will use your current timezone <b>${tz}</b></p>
       </timezone>`
     )
   }
