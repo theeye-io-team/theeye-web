@@ -70,9 +70,10 @@ const createWrapper = () => {
     App.actions.tabs.showNotification(TabsConstants.MONITORS)
   }
 
-  events[ TopicConstants.JOB_RESULT_RENDER ] = (event) => {
-    App.actions.notification.handleResultNotification(event.model)
-  }
+  // deprecated
+  //events[ TopicConstants.JOB_RESULT_RENDER ] = (event) => {
+  //  App.actions.notification.handleResultNotification(event.model)
+  //}
 
   events[ TopicConstants.HOST_INTEGRATIONS_CRUD ] = (event) => {
     App.actions.host.applyStateUpdate(event.model.id, event.model)
@@ -94,7 +95,7 @@ const createWrapper = () => {
       event.operation === OperationsConstants.CREATE ||
       event.operation === OperationsConstants.REPLACE
     ) {
-      App.actions.job.applyStateUpdate(event.model, event.operation)
+      App.actions.job.applyStateUpdate(event.model, event)
       //App.actions.host.applyIntegrationJobStateUpdates(event.model)
       App.actions.tabs.showNotification(TabsConstants.WORKFLOWS)
     }

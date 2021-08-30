@@ -88,18 +88,37 @@ const BaseJob = AppModel.extend({
   },
   requiresInteraction () {
     const session = App.state.session
-    if (this.lifecycle !== LifecycleConstants.ONHOLD) { return false }
+    if (this.lifecycle !== LifecycleConstants.ONHOLD) {
+      return false
+    }
 
-    if (this.user_inputs !== true) { return false }
+    if (! this.isInteractive()) {
+      return false
+    }
 
-    if (Array.isArray(this.user_inputs_members) && this.user_inputs_members.length > 0) {
+    if (this.requiresSpecificUsersInput()) {
       const members = this.user_inputs_members
-      if (Array.isArray(members) && members.length > 0) {
-        return (members.indexOf(session.member_id) !== -1)
-      }
+      return (members.indexOf(session.member_id) !== -1)
+    } else if (this.isAssigned()) {
+      return this.isAssignee(session.user)
     } else {
       return this.isOwner(session.user)
     }
+  },
+  isInteractive () {
+    return (this.user_inputs === true)
+  },
+  requiresSpecificUsersInput () {
+    return (
+      Array.isArray(this.user_inputs_members) &&
+      this.user_inputs_members.length > 0
+    )
+  },
+  isAssigned () {
+    return (this.assigned_users.length > 0)
+  },
+  isAssignee (user) {
+    return (this.assigned_users.indexOf(user.id) !== -1)
   },
   /**
    *
@@ -355,8 +374,11 @@ const ApprovalJob = BaseJob.extend({
   isApprover (user) {
     const userid = user.id
     if (
-      !this.approvers ||
-      (Array.isArray(this.approvers) && this.approvers.length === 0)
+      ! this.approvers ||
+      (
+        Array.isArray(this.approvers) &&
+        this.approvers.length === 0
+      )
     ) {
       return false
     }

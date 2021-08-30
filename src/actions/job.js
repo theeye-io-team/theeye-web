@@ -16,9 +16,10 @@ export default {
    *
    * @summary this is being updated via socket event
    * @param {Object} props job model properties
+   * @param {Object} topicEvent
    *
    */
-  applyStateUpdate (props) {
+  applyStateUpdate (props, topicEvent) {
     try {
       const job = addJobToState(props)
 
@@ -30,6 +31,8 @@ export default {
           if (job.requiresInteraction()) {
             App.actions.onHold.check(job)
           }
+
+          handleJobCompletedEvent(job, topicEvent)
         }
       }
     } catch (e) {
@@ -472,5 +475,50 @@ const convertToString = (value) => {
     return JSON.stringify(value)
   } catch (err) {
     return "" // default empty string ??
+  }
+}
+
+const handleJobCompletedEvent = (job, topicEvent) => {
+
+  if (!LifecycleConstants.isCompleted(job.lifecycle)) { return }
+  if (job.task.show_result !== true) { return }
+
+  const session = App.state.session
+  if (job.isAssigned()) {
+    if (!job.isAssignee(session.user)) {
+      return
+    }
+  } else if (!job.isOwner(session.user)) {
+    return
+  }
+
+  /**
+   *
+   * job.output is an array of arguments
+   *
+   */
+  let popupContent
+  // search on output for backwards compatibility
+  const output = job.output.map(arg => {
+    try {
+      return JSON.parse(arg)
+    } catch (e) {
+      logger.error(e.message)
+      return arg
+    }
+  })
+
+  const popup = output.find(out => out && out.popup_component)
+  if (popup) {
+    popupContent = popup.popup_component
+  }
+
+  // search on result compoment
+  if (job.result.components && job.result.components.popup) {
+    popupContent = job.result.components.popup
+  }
+
+  if (popupContent) {
+    App.actions.popup.show(popupContent, `Message from ${job.name}`)
   }
 }

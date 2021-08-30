@@ -86,37 +86,6 @@ export default {
       })
     }
   },
-  handleResultNotification (job) {
-    /**
-     *
-     * job.output is an array of arguments
-     *
-     */
-    let popupContent
-    // search on output for backwards compatibility
-    let output = job.output.map(arg => {
-      try {
-        return JSON.parse(arg)
-      } catch (e) {
-        logger.error(e.message)
-        return arg
-      }
-    })
-
-    let popup = output.find(out => out && out.popup_component)
-    if (popup) {
-      popupContent = popup.popup_component
-    }
-
-    // search on result compoment
-    if (job.result.components && job.result.components.popup) {
-      popupContent = job.result.components.popup
-    }
-
-    if (popupContent) {
-      App.actions.popup.show(popupContent, `Message from ${job.name}`)
-    }
-  },
   toggleInboxOpen () {
     App.state.inbox.toggle('isOpen')
   }
