@@ -1,8 +1,11 @@
+import View from 'ampersand-view'
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
 import $ from 'jquery'
-import ScheduleForm from './form'
 import bootbox from 'bootbox'
+import CronWizard from './cron-wizard'
+import DateSelector from './date-selector'
+import SelectView from 'components/select2-view'
 
 export default PanelButton.extend({
   initialize (options) {
@@ -29,22 +32,89 @@ export default PanelButton.extend({
         return
       }
 
-      const form = new ScheduleForm({ model: this.model })
+      const body = new SchedulerBody({ model: this.model })
 
       const modal = new Modalizer({
         buttons: false,
         title: this.title,
-        bodyView: form
+        bodyView: body 
       })
 
       this.listenTo(modal, 'hidden', () => {
-        form.remove()
+        body.remove()
         modal.remove()
       })
 
-      this.listenTo(form, 'submitted', modal.hide.bind(modal))
+      this.listenTo(body, 'submitted', () => {
+        modal.hide()
+        //modal.hide.bind(modal)
+      })
 
       modal.show()
     }
   }
 })
+
+const SchedulerBody = View.extend({
+  template: `
+    <div class="scheduler-form">
+      <div data-hook="selector-placeholder"></div>
+      <div data-hook='wizard-placeholder'></div>
+      <div id="schedule-form-buttons">
+        <div>
+          <button type="button" class="btn btn-default btn-block btn-lg" data-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary btn-block btn-lg" data-hook="save">Save</button>
+        </div>
+      </div>
+    </div>
+  `,
+  events: {
+    'click [data-hook=save]': 'onClickSave'
+  },
+  onClickSave (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    this.form.submit()
+    this.trigger('submitted')
+  },
+  render () {
+    this.renderWithTemplate()
+
+    const selector = new SelectView({
+      name: 'format',
+      label: 'Select Format',
+      multiple: false,
+      options: [
+        {text: "CRON", id: "cron" }, 
+        {text: "Single Execution", id: "oneTime" }
+      ],
+      required: true,
+      unselectedText: `Select a scheduler`,
+      requiredMessage: 'Selection required'
+    })
+
+    this.renderSubview(selector, this.queryByHook('selector-placeholder'))
+
+    this.listenTo(selector, 'change:value', () => {
+      if (this.form) { this.form.remove() }
+      Scheduler[selector.value].apply(this)
+    })
+  }
+})
+
+const Scheduler = {
+  cron () {
+    const form = new CronWizard({ model: this.model })
+    this.renderSubview(form, this.queryByHook('wizard-placeholder'))
+    this.form = form
+  },
+  human () {
+    console.log('not supported')
+  },
+  oneTime () {
+    const form = new DateSelector({ model: this.model })
+    this.renderSubview(form, this.queryByHook('wizard-placeholder'))
+    this.form = form
+  }
+}

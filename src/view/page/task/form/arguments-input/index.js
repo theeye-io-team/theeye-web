@@ -177,7 +177,7 @@ export default View.extend({
         bootbox.alert('There are no arguments to import')
         return
       }
-t
+
       if (this.taskArguments.length > 0) {
         const modal = new AskToOverrideModal()
 

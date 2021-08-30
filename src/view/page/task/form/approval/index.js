@@ -20,7 +20,7 @@ import EventsSelectView from 'view/events-select'
 import SelectView from 'components/select2-view'
 
 export default TaskFormView.extend({
-  initialize (options) {
+  initialize(options) {
     const isNewTask = Boolean(this.model.isNew())
 
     this.advancedFields = [
@@ -245,7 +245,7 @@ export default TaskFormView.extend({
 
     TaskFormView.prototype.initialize.apply(this, arguments)
   },
-  render () {
+  render() {
     TaskFormView.prototype.render.apply(this, arguments)
 
     this.query('form').classList.add('form-horizontal')

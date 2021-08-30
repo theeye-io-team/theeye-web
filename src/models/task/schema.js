@@ -10,7 +10,7 @@ import * as TaskConstants from 'constants/task'
 
 const TaskArguments = AmpersandCollection.extend({
   mainIndex: 'id',
-  indexes: ['label','order'],
+  indexes: ['label', 'order'],
   model: DynamicArgument
 })
 
@@ -30,15 +30,15 @@ const Schema = AppModel.extend({
     type: 'string',
     source_model_id: 'string',
     // empty tags and triggers
-    tags: ['array',false, () => { return [] }],
-    triggers: ['array',false, () => { return [] }],
+    tags: ['array', false, () => { return [] }],
+    triggers: ['array', false, () => { return [] }],
     timeout: 'number',
     //_id: 'string',
     _type: 'string', // discriminator
     show_result: 'boolean',
     user_inputs: 'boolean',
     user_inputs_members: 'array',
-    arguments_type: ['string',false],
+    arguments_type: ['string', false],
     allows_dynamic_settings: ['boolean', false],
     assigned_users: ['array', false, () => { return [] }],
     cancellable: ['boolean', false, true]

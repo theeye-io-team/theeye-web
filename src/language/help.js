@@ -190,7 +190,7 @@ export default {
   },
   scheduler: {
     taskform: {
-      datetime: 'pick-a-date',
+      datetime: 'Pick a date in which this task will be executed first',
       frequency: 'Use a "human interval" expression like "1 hour", "3 days", "2 weeks", etc... Leave empty for no repetition'
     }
   },

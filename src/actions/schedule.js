@@ -10,7 +10,8 @@ export default {
       method: 'POST',
       jsonData: {
         runDate: data.datetime,
-        repeatEvery: data.frequency
+        repeatEvery: data.frequency,
+        timezone: data.timezone
       },
       headers: {
         Accept: 'application/json;charset=UTF-8'
@@ -56,11 +57,12 @@ export default {
       }
     })
   },
-  disabledToggle (schedule) {
+  disabledToggle (schedule, nextRun) {
     const action = (schedule.disabled === true) ? 'start' : 'stop'
     XHR.send({
       url: `${schedule.url()}/${action}`,
       method: 'put',
+      jsonData: { schedule: nextRun?.toISOString() },
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },

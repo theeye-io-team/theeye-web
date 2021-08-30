@@ -1,9 +1,15 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
+import FormView from 'ampersand-form-view'
 import bootbox from 'bootbox'
 import moment from 'moment'
 import acls from 'lib/acls'
 import './style.less'
+import Modalizer from 'components/modalizer'
+import Datepicker from 'components/input-view/datepicker'
+import MinMaxTimePlugin from 'flatpickr/dist/plugins/minMaxTimePlugin'
+import { DateTime } from 'luxon'
+const parser = require('cron-parser')
 
 export const Schedules = View.extend({
   template: `
@@ -86,7 +92,32 @@ const ScheduleRow = View.extend({
       })
     },
     'click [data-hook=pauseToggle]': function (event) {
-      App.actions.scheduler.disabledToggle(this.model)
+      try {
+        const interval = parser.parseExpression(
+          this.model.data.scheduleData.repeatEvery,
+          { currentDate: new Date() }
+        )
+        const next = interval.next().toDate()
+        App.actions.scheduler.disabledToggle(this.model, next)
+      } catch {
+        if (this.model.disabled) {
+          const form = new NextRun({ model: this.model })
+          const modal = new Modalizer({
+            buttons: false,
+            title: 'Resume schedule',
+            bodyView: form
+          })
+          window.modal = modal
+          this.listenTo(modal, 'hidden', () => {
+            form.remove()
+            modal.remove()
+          })
+          this.listenTo(form, 'submitted', () => {
+            modal.hide()
+          })
+          modal.show()
+        } else App.actions.scheduler.disabledToggle(this.model)
+      }
     }
   },
   bindings: {
@@ -110,11 +141,102 @@ const ScheduleRow = View.extend({
       hook: 'pauseToggle',
       type: function (el, disabled, previousValue) {
         if (disabled) {
-          el.innerHTML = '<span class="fa fa-play"></span> Execute and Resume schedule'
+          el.innerHTML = `<span class="fa fa-play"></span> Resume schedule`
         } else {
           el.innerHTML = '<span class="fa fa-pause"></span> Pause schedule'
         }
       }
     }
+  }
+})
+
+const NextRun = FormView.extend({
+  initialize (options) {
+    let minMaxTable = {}
+    let now = DateTime.now().plus({minutes: 2})
+    minMaxTable[ now.toFormat('YYYY-MM-DD') ] = {
+      minTime: now.toFormat('HH:mm'),
+      maxTime: "23:59"
+    }
+
+    const dateInput = new Datepicker({
+      name: 'datetime',
+      minDate: 'today',
+      enableTime: true,
+      plugins: [
+        new MinMaxTimePlugin({ table: minMaxTable })
+      ],
+      required: true,
+      altInput: false,
+      visible: true,
+      label: 'When shall I run next? *',
+      dateFormat: 'F J, Y at H:i',
+      value: new Date( DateTime.now().plus({minutes: 2}).toISO() ),
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      placeholder: 'click to pick',
+      tests: [
+        items => {
+          if (items.length === 0) {
+            return 'Can\'t schedule without a date, please pick one'
+          }
+          return
+        },
+        items => {
+          if (!this.isCron) {
+            const now = DateTime.now()
+            const picked = DateTime.fromJSDate(items[0])
+
+            if (picked.valueOf < now.valueOf) {
+              return 'Can\'t schedule a task to run in the past'
+            }
+          }
+
+          return
+        }
+      ]
+    })
+    this.fields = [dateInput]
+    FormView.prototype.initialize.apply(this, arguments)
+  },
+  render () {
+    FormView.prototype.render.apply(this, arguments)
+    const buttons = new ModalButtons({
+      action: () => {
+        App.actions.scheduler.disabledToggle(
+          this.model,
+          new Date(this._fieldViews['datetime'].value)
+        )
+        this.trigger('submitted')
+      }
+    })
+    this.renderSubview(buttons)
+  }
+})
+
+const ModalButtons = View.extend({
+  template: `
+    <div id="schedule-form-buttons" data-hook="buttons-container">
+      <div>
+        <button
+          type="button"
+          class="btn btn-default btn-block btn-lg"
+          data-dismiss="modal">Cancel</button>
+        <button
+          type="button"
+          class="btn btn-primary btn-block btn-lg"
+          data-hook="action"></button>
+      </div>
+    </div>`,
+  props: {
+    actionText: ['string', true, 'Save'],
+    action: ['any', true, event => { event && event.preventDefault() }]
+  },
+  bindings: {
+    actionText: { hook: 'action' }
+  },
+  render () {
+    this.renderWithTemplate(this)
+    this.queryByHook('action').onclick = this.action
   }
 })
