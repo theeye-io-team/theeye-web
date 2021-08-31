@@ -452,17 +452,17 @@ const SimpleInputView = InputView.extend({
   `
 })
 
-const EnvVar = State.extend({
-  props: {
-    key: 'string',
-    value: 'mixed'
-  }
-})
 
 const EnvCol = Collection.extend({
-  mainIndex: 'key',
-  indexes: ['key', 'value'],
-  model: EnvVar,
+  mainIndex: 'id',
+  indexes: ['id', 'key', 'value'],
+  model: State.extend({
+    props: {
+      id: 'number',
+      key: 'string',
+      value: 'mixed'
+    }
+  }),
   /**
    * Convert an Object of { key: value } into and Array [ { key, value } ]
    * @param {Object} models
@@ -560,6 +560,7 @@ const EnvView = View.extend({
     event.stopPropagation()
 
     this.variables.add({
+      id: new Date().getTime(),
       key: '',
       value: ''
     })
