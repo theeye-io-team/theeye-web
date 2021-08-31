@@ -391,10 +391,10 @@ const BaseJobView = View.extend({
     }
 
     this.renderResultView()
-    this.renderJsonView({ json: this.output, el: this.queryByHook('output') })
-    this.renderJsonView({ json: this.input, el: this.queryByHook('input') })
-    this.renderJsonView({ json: this.components, el: this.queryByHook('components') })
-    this.renderJsonView({ json: this.next, el: this.queryByHook('next') })
+    this.renderJsonView({ obj: this.output, el: this.queryByHook('output') })
+    this.renderJsonView({ obj: this.input, el: this.queryByHook('input') })
+    this.renderJsonView({ obj: this.components, el: this.queryByHook('components') })
+    this.renderJsonView({ obj: this.next, el: this.queryByHook('next') })
   },
   renderResultView () {
     const type = this.job._type
@@ -409,8 +409,8 @@ const BaseJobView = View.extend({
     )
   },
   renderJsonView (opts) {
-    let { json, el } = opts
-    let view = new JsonViewer({ json })
+    let { obj, el } = opts
+    let view = new JsonViewer({ json: obj })
     this.renderSubview(view, el)
   }
 })

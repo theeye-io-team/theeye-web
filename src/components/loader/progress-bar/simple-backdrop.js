@@ -1,6 +1,7 @@
 import svg from './ripple.svg'
 const SimpleBackdrop = function () {
   this.elem = document.createElement('div')
+  this.elem.classList.add('loader')
   this._visible = false
   // styles copied from 'modal-backdrop fade in'
   // without the fade animation

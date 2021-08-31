@@ -4,7 +4,7 @@ import './styles.less'
 
 export default View.extend({
   props: {
-    json: ['any',true]
+    json: ['any', true]
   },
   template: `
     <div class="json-viewer-component" data-hook="container"></div>
@@ -12,7 +12,6 @@ export default View.extend({
   renderJson () {
     const container = this.queryByHook('container')
     const json = this.json
-
     var html = json2html(json)
     if (isCollapsable(json)) {
       html = '<a href="#" data-hook="json-toggle" class="json-toggle"></a>' + html
@@ -59,6 +58,9 @@ function json2html (json) {
     json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     if (isURL(json))
       html += '<a href="' + json + '" class="json-string">' + json + '</a>';
+    else if(json.includes('base64')) {
+      html += '<a href="' + json + '" target="_blank" download="file" class="json-file"><i class="fa fa-download"></i>File</a>'
+    }
     else
       html += '<span class="json-string">"' + json + '"</span>';
   }
