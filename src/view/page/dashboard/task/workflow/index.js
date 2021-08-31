@@ -330,7 +330,7 @@ const InputsView = View.extend({
         for (let index = 0; index < argsdefs.length; index++) {
           //const def = argsdefs[index]
           let col = document.createElement('div')
-          if (inputs[index].includes('base64')) {
+          if (argsdefs[index].type === 'file') {
             const dwld = new DownloadButton({ blob: inputs[index] })
             this.renderSubview(dwld, col)
           } else {
