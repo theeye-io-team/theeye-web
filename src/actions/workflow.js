@@ -9,6 +9,7 @@ import uniq from 'lodash/uniq'
 import difference from 'lodash/difference'
 import FileSaver from 'file-saver'
 import { v4 as uuidv4 } from 'uuid'
+import { Factory as TaskFactory } from 'models/task'
 import loggerModule from 'lib/logger'; const logger = loggerModule('actions:workflow')
 
 export default {
@@ -165,7 +166,7 @@ export default {
     })
   },
 
-  createRecipe (id, options = {}, callback) {
+  createRecipe (id, options = {}) {
     const workflow = App.state.workflows.get(id).serialize()
     let recipe = {}
     recipe.name = workflow.name
@@ -173,18 +174,17 @@ export default {
     recipe.empty_viewers = workflow.empty_viewers
     recipe.table_view = workflow.table_view
     recipe.graph = workflow.graph
-    let tasks = []
+    recipe.tasks = []
+
     for (let i in workflow.graph.nodes) {
       const id = workflow.graph.nodes[i].v
       const uuid = uuidv4()
 
       if (workflow.graph.nodes[i].value.type) {
-        tasks.push(new Promise((resolve, reject) => {
-          App.actions.task.fetchRecipe(id, options, (err, recipe) => {
-            recipe.task.id = uuid
-            resolve(recipe.task)
-          })
-        }))
+        const data = App.state.tasks.get(id).serialize()
+        const task = new TaskFactory(data, { store: false })
+
+        recipe.tasks.push(task)
       }
 
       if (workflow.start_task_id === id) { recipe.start_task_id = uuid }
@@ -197,21 +197,16 @@ export default {
       recipe.graph.nodes[i].v = uuid
       recipe.graph.nodes[i].value.id = uuid
     }
-    Promise.all(tasks).then((values) => {
-      recipe.tasks = values
-      callback(recipe)
-    })
-  },
-  
-  exportRecipe (id, options = {}) {
-    const callback = (recipe) => {
-      const jsonContent = JSON.stringify(recipe)
-      const blob = new Blob([jsonContent], { type: 'application/json' })
-      const fname = recipe.name.replace(/ /g, '_')
-      FileSaver.saveAs(blob, `${fname}.json`)
-    }
 
-    App.actions.workflow.createRecipe(id, options, callback)
+    return (recipe)
+  },
+
+  exportRecipe (id, options = {}) {
+    const recipe = App.actions.workflow.createRecipe(id, options)
+    const jsonContent = JSON.stringify(recipe)
+    const blob = new Blob([jsonContent], { type: 'application/json' })
+    const fname = recipe.name.replace(/ /g, '_')
+    FileSaver.saveAs(blob, `${fname}.json`)
   }
 }
 

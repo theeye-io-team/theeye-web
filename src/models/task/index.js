@@ -242,7 +242,7 @@ const Notification = Template.Notification.extend({
   }
 })
 
-const TaskFactory = function (attrs, options={}) {
+const TaskFactory = function (attrs, options = {}) {
   const store = App.state.tasks
 
   if (attrs.isCollection) { return attrs }
@@ -282,8 +282,8 @@ const TaskFactory = function (attrs, options={}) {
   }
 
   model = createModel()
-  if (options.collection !== store && !model.isNew()) {
-    store.add(model, {merge:true})
+  if (options.collection !== store && !model.isNew() && options.store !== false) {
+    store.add(model, { merge: true })
   }
   return model
 }

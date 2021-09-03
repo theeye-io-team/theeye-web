@@ -19,6 +19,7 @@ import bootbox from 'bootbox'
 
 export default FormView.extend({
   initialize (options) {
+    console.log(this.model)
     const isNew = Boolean(this.model.isNew())
 
     this.advancedFields = [
@@ -182,6 +183,7 @@ export default FormView.extend({
 
     // id property is the required value, with "numeric" data type
     let data = this.prepareData(this.data)
+    console.log(data)
     //data.looptime = this._fieldViews.looptime.selected().id
     if (!this.model.isNew()) {
       App.actions.workflow.update(this.model.id, data)

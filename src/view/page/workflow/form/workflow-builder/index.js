@@ -87,6 +87,7 @@ export default View.extend({
     </div>
   `,
   initialize (options) {
+    console.log(graphlib.json.write(options.value))
     if (options.value) {
       //clone to new graph
       this.graph = graphlib.json.read(graphlib.json.write(options.value))
