@@ -15,6 +15,7 @@ import Acls from 'lib/acls'
 import JobRow from './job'
 import JobsList from 'view/page/dashboard/task/jobs-list'
 import JobsPaginator from 'view/page/paginator/footer'
+import DownloadButton from 'view/buttons/download'
 
 import './styles.less'
 
