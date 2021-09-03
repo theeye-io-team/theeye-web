@@ -310,10 +310,9 @@ const InputsView = View.extend({
   template: `<div data-component="inputs-row"></div>`,
   render () {
     this.renderWithTemplate(this)
-
     this.listenToAndRun(this.model, 'change:first_job', () => {
       const job = this.model.first_job
-      if (!job) return
+      if (!job) { return }
       this.renderJobArguments(job)
     })
   },
@@ -328,14 +327,17 @@ const InputsView = View.extend({
 
       if (argsdefs.length > 0) {
         for (let index = 0; index < argsdefs.length; index++) {
-          //const def = argsdefs[index]
-          let col = document.createElement('div')
-          if (inputs[index].includes('base64')) {
-            const dwld = new DownloadButton({ blob: inputs[index] })
+          const col = document.createElement('div')
+          const arg = argsdefs[index]
+          const value = inputs[index]
+
+          if (arg.type === 'file' && value?.includes('base64')) {
+            const dwld = new DownloadButton({ blob: value })
             this.renderSubview(dwld, col)
           } else {
-            col.innerHTML = inputs[index]
+            col.innerHTML = (value||'')
           }
+
           this.el.appendChild(col)
         }
       }
