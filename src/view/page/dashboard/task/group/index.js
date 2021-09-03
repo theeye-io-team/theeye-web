@@ -73,7 +73,10 @@ export default TaskCollapsibleRow.extend({
     }
   },
   renderCollapsedContent () {
-    this.collapsedContent = new CollapsedContentView({ model: this.model })
+    this.collapsedContent = new CollapsedContentView({
+      model: this.model,
+      collection: this.model.submodels
+    })
     this.renderSubview(
       this.collapsedContent,
       this.queryByHook('collapse-container-body')
