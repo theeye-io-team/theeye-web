@@ -26,22 +26,45 @@
     padding: 17px;
     float: right;
   }
+  
+  div.panel-heading {
+    display: grid;
+    grid-template-columns: max-content auto;
 
-  [data-component="inputs-row"] {
-    // display: grid;
-    // grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
-    //grid-row-gap: 20px;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-
-    div {
-      flex:1;
-      padding: 8px;
-      hyphens: auto;
-      overflow-wrap: break-word;
-      width: 0; // No, yo tampoco se por que anda esto
+    h4.panel-title-icon {
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    h4.panel-title > div {
+      display: grid;    
+      grid-template-columns: auto max-content;
+      
+      section[data-hook="icons-container"] {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      
+      [data-component="inputs-row"] {
+        // display: grid;
+        // grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+        //grid-row-gap: 20px;
+        align-items: center;
+        display: flex;
+        justify-content: space-between;
+        
+        div {
+          flex:1;
+          padding: 8px;
+          hyphens: auto;
+          overflow-wrap: break-word;
+          width: 0; // No, yo tampoco se por que anda esto
+        }
+      }
     }
   }
 }
+  

@@ -148,8 +148,8 @@ const WorkflowJobRowView = CollapsibleRow.extend({
               aria-expanded="false"
               aria-controls="unbinded">
 
-              <section data-hook="icons-container"></section>
               <section class="panel-title-content" data-hook="row-container"> </section>
+              <section data-hook="icons-container"></section>
             </div>
           </h4>
         </div>
@@ -328,6 +328,7 @@ const InputsView = View.extend({
       if (argsdefs.length > 0) {
         for (let index = 0; index < argsdefs.length; index++) {
           const col = document.createElement('div')
+          col.classList.add('parameter')
           const arg = argsdefs[index]
           const value = inputs[index]
 
