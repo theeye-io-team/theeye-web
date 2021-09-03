@@ -62,7 +62,9 @@ export default {
     XHR.send({
       url: `${schedule.url()}/${action}`,
       method: 'put',
-      jsonData: { schedule: nextRun?.toISOString() },
+      jsonData: {
+        runDate: nextRun?.toISOString()
+      },
       headers: {
         Accept: 'application/json;charset=UTF-8'
       },
