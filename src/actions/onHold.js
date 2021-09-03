@@ -5,9 +5,6 @@ import * as LifecycleConstants from 'constants/lifecycle'
 import { ExecOnHoldJob } from 'view/page/dashboard/task/task/collapse/job/exec-job'
 
 export default {
-  //skip (job) {
-  //  job.skipInputs = true
-  //},
   /**
    * @summary check if job is on hold and requires intervention
    * of the current user
@@ -51,13 +48,13 @@ export default {
   release () {
     App.state.onHold.newArrived = false
     App.state.onHold.underExecution = false
-    App.state.onHold.newJobs = []
+    App.state.onHold.queue = []
   }
 }
 
 const holdJob = (job) => {
   App.state.onHold.newArrived = true
-  App.state.onHold.newJobs.push(job)
+  App.state.onHold.queue.push(job)
 }
 
 const checkWorkflow = (workflow) => {
@@ -95,7 +92,7 @@ const controlPendingJobsIteration = (jobs) => {
     // if err ?
     if (App.state.onHold.newArrived === true) {
       App.state.onHold.newArrived = false
-      iteratePendingJobs(App.state.onHold.newJobs, 0, () => {
+      iteratePendingJobs(App.state.onHold.queue, 0, () => {
         App.actions.onHold.release()
       })
     } else {

@@ -6,7 +6,7 @@ import AmpersandModel from 'ampersand-model'
 import InputView from 'components/input-view'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
-import parser from 'cron-parser'
+import cronParser from 'cron-parser'
 import { DateTime } from 'luxon'
 
 import './scheduler.less'
@@ -46,7 +46,7 @@ export default FormView.extend({
           }
 
           try {
-            parser.parseExpression(interval)
+            cronParser.parseExpression(interval)
           } catch (err) {
             return err.message
           }
@@ -92,8 +92,8 @@ export default FormView.extend({
       return
     }
 
-    //const interval = parser.parseExpression(value, { utc: true })
-    const interval = parser.parseExpression(frequency.value, {})
+    //const interval = cronParser.parseExpression(value, { utc: true })
+    const interval = cronParser.parseExpression(frequency.value, {})
     const dates = []
     for (let count = 0; count < 5; count++) {
       let nextDate = interval.next().toDate()
@@ -122,7 +122,7 @@ export default FormView.extend({
     App.actions.scheduler.create(this.model, data)
   },
   prepareData (data) {
-    //const nextRun = parser.parseExpression(data.frequency).next().toDate()
+    //const nextRun = cronParser.parseExpression(data.frequency).next().toDate()
 
     return {
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,

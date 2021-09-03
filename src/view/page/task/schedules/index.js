@@ -9,7 +9,7 @@ import Modalizer from 'components/modalizer'
 import Datepicker from 'components/input-view/datepicker'
 import MinMaxTimePlugin from 'flatpickr/dist/plugins/minMaxTimePlugin'
 import { DateTime } from 'luxon'
-const parser = require('cron-parser')
+const cronParser = require('cron-parser')
 
 export const Schedules = View.extend({
   template: `
@@ -91,34 +91,7 @@ const ScheduleRow = View.extend({
         }
       })
     },
-    'click [data-hook=pauseToggle]': function (event) {
-      try {
-        const interval = parser.parseExpression(
-          this.model.data.scheduleData.repeatEvery,
-          { currentDate: new Date() }
-        )
-        const next = interval.next().toDate()
-        App.actions.scheduler.disabledToggle(this.model, next)
-      } catch {
-        if (this.model.disabled) {
-          const form = new NextRun({ model: this.model })
-          const modal = new Modalizer({
-            buttons: false,
-            title: 'Resume schedule',
-            bodyView: form
-          })
-          window.modal = modal
-          this.listenTo(modal, 'hidden', () => {
-            form.remove()
-            modal.remove()
-          })
-          this.listenTo(form, 'submitted', () => {
-            modal.hide()
-          })
-          modal.show()
-        } else App.actions.scheduler.disabledToggle(this.model)
-      }
-    }
+    'click [data-hook=pauseToggle]': 'onClickToggleSchedule'
   },
   bindings: {
     'model.data.scheduleData.repeatEvery': {
@@ -147,6 +120,38 @@ const ScheduleRow = View.extend({
         }
       }
     }
+  },
+  onClickToggleSchedule (event) {
+    if (this.model.disabled === false) {
+      App.actions.scheduler.disabledToggle(this.model)
+    } else {
+      const repetition = this.model.data.scheduleData.repeatEvery
+      const cronInterval = parseCronExpression(repetition)
+      if (cronInterval !== null) {
+        App.actions.scheduler.disabledToggle(this.model)
+      } else {
+        this.renderNextRunInput()
+      }
+    }
+  },
+  renderNextRunInput () {
+    const form = new NextRun({ model: this.model })
+    const modal = new Modalizer({
+      buttons: false,
+      title: 'Resume schedule',
+      bodyView: form
+    })
+
+    this.listenTo(modal, 'hidden', () => {
+      form.remove()
+      modal.remove()
+    })
+
+    this.listenTo(form, 'submitted', () => {
+      modal.hide()
+    })
+
+    modal.show()
   }
 })
 
@@ -183,13 +188,10 @@ const NextRun = FormView.extend({
           return
         },
         items => {
-          if (!this.isCron) {
-            const now = DateTime.now()
-            const picked = DateTime.fromJSDate(items[0])
-
-            if (picked.valueOf < now.valueOf) {
-              return 'Can\'t schedule a task to run in the past'
-            }
+          const now = DateTime.now()
+          const picked = DateTime.fromJSDate(items[0])
+          if (picked.valueOf < now.valueOf) {
+            return 'Can\'t schedule a task to run in the past'
           }
 
           return
@@ -240,3 +242,11 @@ const ModalButtons = View.extend({
     this.queryByHook('action').onclick = this.action
   }
 })
+
+const parseCronExpression = (expression) => {
+  try {
+    return cronParser.parseExpression(expression, { currentDate: new Date() })
+  } catch (err) {
+    return null
+  }
+}
