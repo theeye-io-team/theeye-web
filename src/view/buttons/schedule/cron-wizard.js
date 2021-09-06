@@ -6,7 +6,10 @@ import AmpersandModel from 'ampersand-model'
 import InputView from 'components/input-view'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
-import cronParser from 'cron-parser'
+import cronparser from 'cron-parser'
+import cronstrue from 'cronstrue/i18n'
+//const cronstrue = require('cronstrue/i18n')
+
 import { DateTime } from 'luxon'
 
 import './scheduler.less'
@@ -46,7 +49,7 @@ export default FormView.extend({
           }
 
           try {
-            cronParser.parseExpression(interval)
+            cronparser.parseExpression(interval)
           } catch (err) {
             return err.message
           }
@@ -56,9 +59,7 @@ export default FormView.extend({
       ]
     })
 
-    this.listenTo(cronExpressionInput, 'change:value', () => {
-      this.updateNextIterations(cronExpressionInput)
-    })
+    this.cronExpressionInput = cronExpressionInput
 
     this.fields = [ cronExpressionInput ]
 
@@ -67,16 +68,17 @@ export default FormView.extend({
   props: {
     nextDates: 'collection'
   },
-  template: `<div></div>`,
+  template: `<div><cronstrue></construe></div>`,
   render () {
     FormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
     this.addHelpIcon('frequency')
 
-    this.renderSubview(
-      new SchedulePreview({ collection: this.nextDates })
-    )
+    const cronstrueView = new CronsTrueView({})
+    this.renderSubview(cronstrueView, this.query('cronstrue'))
+
+    this.renderSubview( new SchedulePreview({ collection: this.nextDates }) )
 
     const samples = new CronFormat()
     this.listenTo(samples, 'show:sample', (expression) => {
@@ -85,6 +87,14 @@ export default FormView.extend({
     this.renderSubview(samples)
 
     this.renderSubview(new LocalTimezoneView())
+
+    const cronExpressionInput = this.cronExpressionInput
+    this.listenTo(cronExpressionInput, 'change:value', () => {
+      if (this.valid) {
+        this.updateNextIterations(cronExpressionInput)
+        cronstrueView.cronExpression = cronExpressionInput.value
+      }
+    })
   },
   updateNextIterations (frequency) {
     if (!frequency.value || !frequency.valid) {
@@ -92,8 +102,8 @@ export default FormView.extend({
       return
     }
 
-    //const interval = cronParser.parseExpression(value, { utc: true })
-    const interval = cronParser.parseExpression(frequency.value, {})
+    //const interval = cronparser.parseExpression(value, { utc: true })
+    const interval = cronparser.parseExpression(frequency.value, {})
     const dates = []
     for (let count = 0; count < 5; count++) {
       let nextDate = interval.next().toDate()
@@ -122,7 +132,7 @@ export default FormView.extend({
     App.actions.scheduler.create(this.model, data)
   },
   prepareData (data) {
-    //const nextRun = cronParser.parseExpression(data.frequency).next().toDate()
+    //const nextRun = cronparser.parseExpression(data.frequency).next().toDate()
 
     return {
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
@@ -235,5 +245,23 @@ const LocalTimezoneView = View.extend({
         <p>Please note: The scheduler will use your current timezone <b>${tz}</b></p>
       </timezone>`
     )
+  }
+})
+
+const CronsTrueView = View.extend({
+  initialize () {
+    View.prototype.initialize.apply(this, arguments)
+    this.cronstrue = cronstrue
+  },
+  props: {
+    cronExpression: 'string'
+  },
+  template: `<div data-component="cronstrue"></div>`,
+  render () {
+    this.renderWithTemplate(this)
+
+    this.on('change:cronExpression', () => {
+      this.el.innerHTML = this.cronstrue.toString(this.cronExpression)
+    })
   }
 })
