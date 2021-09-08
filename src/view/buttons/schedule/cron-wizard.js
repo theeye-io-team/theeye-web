@@ -16,8 +16,6 @@ import './scheduler.less'
 
 export default FormView.extend({
   initialize () {
-    this.nextDates = new AmpersandCollection([])
-
     const cronExpressionInput = new InputView({
       template: `
         <div>
@@ -65,9 +63,6 @@ export default FormView.extend({
 
     FormView.prototype.initialize.apply(this, arguments)
   },
-  props: {
-    nextDates: 'collection'
-  },
   template: `<div><cronstrue></construe></div>`,
   render () {
     FormView.prototype.render.apply(this, arguments)
@@ -78,40 +73,28 @@ export default FormView.extend({
     const cronstrueView = new CronsTrueView({})
     this.renderSubview(cronstrueView, this.query('cronstrue'))
 
-    this.renderSubview( new SchedulePreview({ collection: this.nextDates }) )
+    const nextRunPreview = new SchedulePreview({}) 
+    this.renderSubview(nextRunPreview)
 
-    const samples = new CronFormat()
-    this.listenTo(samples, 'show:sample', (expression) => {
-      this._fieldViews['frequency'].setValue(expression)
-    })
-    this.renderSubview(samples)
+    this.renderSamples()
 
     this.renderSubview(new LocalTimezoneView())
 
     const cronExpressionInput = this.cronExpressionInput
     this.listenTo(cronExpressionInput, 'change:value', () => {
-      if (this.valid) {
-        this.updateNextIterations(cronExpressionInput)
-        cronstrueView.cronExpression = cronExpressionInput.value
-      }
+      const value = (cronExpressionInput.valid) ?
+        cronExpressionInput.value : null
+
+      nextRunPreview.cronExpression = value
+      cronstrueView.cronExpression = value
     })
   },
-  updateNextIterations (frequency) {
-    if (!frequency.value || !frequency.valid) {
-      this.nextDates.reset()
-      return
-    }
-
-    //const interval = cronparser.parseExpression(value, { utc: true })
-    const interval = cronparser.parseExpression(frequency.value, {})
-    const dates = []
-    for (let count = 0; count < 5; count++) {
-      let nextDate = interval.next().toDate()
-      dates.push(new DateEntryModel({ date: nextDate.toString() }))
-      //dates.push(new DateEntryModel({ date: nextDate.toUTCString() }))
-    }
-
-    this.nextDates.reset(dates)
+  renderSamples () {
+    const samples = new CronFormat()
+    this.listenTo(samples, 'show:sample', (expression) => {
+      this._fieldViews['frequency'].setValue(expression)
+    })
+    this.renderSubview(samples)
   },
   addHelpIcon (field) {
     const view = this._fieldViews[field]
@@ -150,6 +133,8 @@ const DateEntryModel = AmpersandModel.extend({
 
 const SchedulePreview = View.extend({
   props: {
+    nextDates: 'collection',
+    cronExpression: ['string', false],
     collectionLength: ['number', false, 0]
   },
   bindings: {
@@ -168,18 +153,40 @@ const SchedulePreview = View.extend({
   initialize () {
     View.prototype.initialize.apply(this, arguments)
 
-    this.listenTo(this.collection, 'reset', () => {
-      this.collectionLength = this.collection.length
+    this.nextDates = new AmpersandCollection([])
+
+    this.listenTo(this.nextDates, 'reset', () => {
+      this.collectionLength = this.nextDates.length
     })
   },
   render () {
     this.renderWithTemplate(this)
     this.renderCollection(
-      this.collection,
+      this.nextDates,
       DateEntry,
       this.queryByHook('date-list')
     )
-  }
+
+    this.on('change:cronExpression', this.updateNextIterations)
+  },
+  updateNextIterations () {
+    const frequency = this.cronExpression
+    if (!frequency) {
+      this.nextDates.reset()
+      return
+    }
+
+    //const interval = cronparser.parseExpression(value, { utc: true })
+    const interval = cronparser.parseExpression(frequency, {})
+    const dates = []
+    for (let count = 0; count < 5; count++) {
+      let nextDate = interval.next().toDate()
+      dates.push(new DateEntryModel({ date: nextDate.toString() }))
+      //dates.push(new DateEntryModel({ date: nextDate.toUTCString() }))
+    }
+
+    this.nextDates.reset(dates)
+  },
 })
 
 const DateEntry = View.extend({
@@ -254,14 +261,16 @@ const CronsTrueView = View.extend({
     this.cronstrue = cronstrue
   },
   props: {
-    cronExpression: 'string'
+    cronExpression: ['string',false]
   },
   template: `<div data-component="cronstrue"></div>`,
   render () {
     this.renderWithTemplate(this)
 
     this.on('change:cronExpression', () => {
-      this.el.innerHTML = this.cronstrue.toString(this.cronExpression)
+      if (this.cronExpression) {
+        this.el.innerHTML = this.cronstrue.toString(this.cronExpression)
+      }
     })
   }
 })
