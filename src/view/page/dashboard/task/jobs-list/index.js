@@ -55,20 +55,23 @@ export default View.extend({
     this.listenTo(this.model.jobs, 'reset', this.updateJobsState('reset'))
     this.listenTo(this.model.jobs, 'remove', this.updateJobsState('remove'))
 
-    this.listenToAndRun(App.state.localSettings, 'change:jobsListLength', () => {
-      this.listLength = App.state.localSettings.jobsListLength || LIMIT_COUNTER
+    // this.listenToAndRun(App.state.localSettings, 'change:jobsListLength', () => {
+    //   this.listLength = App.state.localSettings.jobsListLength || LIMIT_COUNTER
+    //   this.updateJobsState('reset')(this.model.jobs)
+    // })
+
+    this.listenToAndRun(this.model, 'change:paginator_last', () => {
+      this.listLength = this.model.paginator_length
+      this.updateJobsState('reset')(this.model.jobs)
+    })
+    this.listenToAndRun(this.model, 'change:paginator_first', () => {
+      this.listLength = this.model.paginator_length
       this.updateJobsState('reset')(this.model.jobs)
     })
   },
   updateJobsState (eventName) {
     return (model) => {
       const availableJobs = this.model.jobs
-
-      if (eventName === 'add') {
-        if (this.jobs.length < this.listLength) {
-          this.jobs.add(model)
-        }
-      }
 
       if (eventName === 'remove') {
         this.jobs.remove(model.id)
@@ -81,15 +84,18 @@ export default View.extend({
               replaced = true
             }
           }
-        }
+        } else this.renderedLenght--
       }
 
-      if (eventName === 'sync' || eventName === 'reset') {
+      if (eventName === 'sync' || eventName === 'reset' || eventName === 'add') {
         this.jobs.reset([])
+        this.renderedLenght = 0
         if (availableJobs.length >= this.listLength) {
-          for (let index = 0; index < this.listLength; index++) {
-            const job = availableJobs.models[index]
+          const source = availableJobs.models.slice().reverse()
+          for (let index = this.model.paginator_last; index >= this.model.paginator_first; index--) {
+            const job = source[index]
             this.jobs.add(job)
+            this.renderedLenght++
           }
         } else {
           this.jobs.reset(this.model.jobs.models)

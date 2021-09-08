@@ -5,6 +5,7 @@ import { Collection as ScheduleCollection } from 'models/schedule'
 import { Collection as TagCollection } from 'models/tag'
 import graphlib from 'graphlib'
 import * as JobConstants from 'constants/job'
+import { LIMIT_COUNTER } from 'constants/paginator'
 
 import config from 'config'
 const urlRoot = `${config.supervisor_api_url}/workflows`
@@ -90,7 +91,10 @@ const Workflow = AppModel.extend({
     end_task_id: ['string'],
     current_task_id: 'string',
     graph: ['graphlib.Graph', true],
-    allows_dynamic_settings: ['boolean',false]
+    allows_dynamic_settings: ['boolean',false],
+    paginator_length: ['number', true, LIMIT_COUNTER],
+    paginator_first: ['number', true, 0],
+    paginator_last: ['number', true, LIMIT_COUNTER - 1]
   },
   collections: {
     schedules: ScheduleCollection,

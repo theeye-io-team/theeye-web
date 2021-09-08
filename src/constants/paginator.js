@@ -1,2 +1,2 @@
-export const LIMIT_COUNTER = 20
+export const LIMIT_COUNTER = 10
 

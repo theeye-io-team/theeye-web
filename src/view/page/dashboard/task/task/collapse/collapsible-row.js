@@ -14,7 +14,7 @@ import Acls from 'lib/acls'
 import $ from 'jquery'
 import JobRow from './job'
 import JobsList from 'view/page/dashboard/task/jobs-list'
-import JobsPaginator from 'view/page/paginator/footer'
+import { JobsPaginator } from 'view/page/paginator/footer'
 
 export default CollapsibleRow.extend({
   onClickToggleCollapse (event) {
