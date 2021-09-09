@@ -416,7 +416,7 @@ export default TaskFormView.extend({
 
     let data = this.prepareData(this.data)
 
-    if (!isMongoId(this.model.id)) {
+    if (typeof (this.model.id) === 'string' && !isMongoId(this.model.id)) {
       console.log(data)
     } else if (this.isImport) {
       App.actions.file.create(App.state.taskForm.file, function (err, file) {
