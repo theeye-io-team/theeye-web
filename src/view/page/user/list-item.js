@@ -24,6 +24,13 @@ export default ListItem.extend({
         return this.model.username
       }
     },
+    item_description: {
+      deps: ['model.email','model.name'],
+      fn () {
+        const { name, email } = this.model
+        return `${name} <${email}>`
+      }
+    },
   },
   render () {
     ListItem.prototype.render.apply(this,arguments)
