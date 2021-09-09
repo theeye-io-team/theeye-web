@@ -15,6 +15,7 @@ import isURL from 'validator/lib/isURL'
 import * as WebhooksConstants from 'constants/webhooks'
 import * as TaskConstants from 'constants/task'
 import HelpTexts from 'language/help'
+import isMongoId from 'validator/lib/isMongoId'
 
 import CopyTaskSelect from '../copy-task-select'
 
@@ -322,7 +323,9 @@ export default TaskFormView.extend({
     if (!this.valid) return next(null,false) // cancel submit
 
     let data = this.prepareData(this.data)
-    if (!this.model.isNew()) {
+    if (isMongoId(this.model.id)) {
+      console.log(data)
+    } if (!this.model.isNew()) {
       App.actions.task.update(this.model.id, data)
     } else {
       App.actions.task.createMany(data.hosts, data)

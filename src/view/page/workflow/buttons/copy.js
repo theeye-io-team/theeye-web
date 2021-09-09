@@ -22,7 +22,7 @@ export default PanelButton.extend({
         bodyView: form
       })
 
-    //   this.listenTo(modal, 'shown', () => { form.focus() })
+      // this.listenTo(modal, 'shown', () => { form.focus() })
 
       this.listenTo(modal, 'hidden', () => {
         form.remove()

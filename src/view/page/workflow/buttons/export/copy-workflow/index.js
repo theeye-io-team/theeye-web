@@ -17,7 +17,7 @@ export default View.extend({
    * @param {Resource} resource resource monitor instance
    */
   createForm (workflow) {
-    const form = new WorkflowFormView({ model: workflow })
+    const form = new WorkflowFormView({ model: workflow, copying: true })
     this.renderSubview(form, this.queryByHook('form-container'))
     this.form = form
     // form.on('submitted', () => { this.trigger('submitted') })

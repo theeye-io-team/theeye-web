@@ -10,6 +10,7 @@ import * as TaskConstants from 'constants/task'
 import Buttons from 'view/buttons'
 import TaskFormView from '../form'
 import CopyTaskSelect from '../copy-task-select'
+import isMongoId from 'validator/lib/isMongoId'
 
 export default TaskFormView.extend({
   initialize (options) {
@@ -164,7 +165,9 @@ export default TaskFormView.extend({
     if (!this.valid) { return next(null, false) }
 
     let data = this.prepareData(this.data)
-    if (!this.model.isNew()) {
+    if (isMongoId(this.model.id)) {
+      console.log(data)
+    } else if (!this.model.isNew()) {
       App.actions.task.update(this.model.id, data)
     } else {
       App.actions.task.create(data)

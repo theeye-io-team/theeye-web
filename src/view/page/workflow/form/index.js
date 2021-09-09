@@ -18,6 +18,9 @@ import EventsSelectView from 'view/events-select'
 import bootbox from 'bootbox'
 
 export default FormView.extend({
+  props: {
+    copying: ['boolean', false, false]
+  },
   initialize (options) {
     console.log(this.model)
     const isNew = Boolean(this.model.isNew())
@@ -33,11 +36,12 @@ export default FormView.extend({
     ]
 
     App.actions.workflow.populate(this.model)
-
+    debugger
     const workflowBuilder = new WorkflowBuilder({
       workflow_id: this.model.id,
       name: 'graph',
-      value: this.model.graph
+      value: this.model.graph,
+      task_list: this.copying ? this.model.tasks.models : undefined
     })
 
     const startingTaskSelect = new StartingTaskSelectionView({

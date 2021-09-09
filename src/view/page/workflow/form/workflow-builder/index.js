@@ -9,10 +9,11 @@ import TaskSelectView from 'view/task-select'
 import DisabledInputView from 'components/input-view/disabled'
 import bootbox from 'bootbox'
 import graphlib from 'graphlib'
-
+import isMongoId from 'validator/lib/isMongoId'
 import FormButtons from 'view/buttons'
 import CopyTaskButton from 'view/page/task/buttons/copy'
 import CreateTaskButton from 'view/page/task/buttons/create'
+import EditModalizer from 'view/page/task/edit-modalizer'
 
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 
@@ -20,7 +21,8 @@ export default View.extend({
   props: {
     workflow_id: 'string',
     name: ['string', false, 'workflow'],
-    graph: ['object', false]
+    graph: ['object', false],
+    task_list: ['array', false]
   },
   derived: {
     value: {
@@ -159,13 +161,17 @@ export default View.extend({
   onTapNode (event) {
     var self = this
     var node = event.cyTarget.data()
-
+    debugger
     if (this.contextMenu) {
       this.contextMenu.remove()
     }
 
     if (/Task$/.test(node.value._type) === true) {
-      var task = App.state.tasks.get(node.id)
+      if (this.task_list) {
+        var task = this.task_list.filter(task => task.id === node.id)[0]
+      } else {
+        var task = App.state.tasks.get(node.id)
+      }
       var menu = new Menu({ model: task })
       menu.render()
       menu.el.style.position = 'absolute'
@@ -404,7 +410,7 @@ const Menu = View.extend({
   `,
   render () {
     this.renderWithTemplate(this)
-
+    debugger
     const copyButton = new CopyTaskButton({ model: this.model, elem: 'a' })
     this.renderSubview(copyButton, this.queryByHook("menu-buttons"))
   },
@@ -418,14 +424,28 @@ const Menu = View.extend({
   onClickEdit (event) {
     event.preventDefault()
     event.stopPropagation()
-    App.actions.task.edit(this.model.id)
+    if (isMongoId(this.model.id)) {
+      App.actions.task.edit(this.model.id)
+    } else {
+      const editView = new EditModalizer({
+        model: this.model
+      })
+      editView.show()
+    }
     this.trigger('click:edit')
     this.remove()
   },
   onClickCopy (event) {
     event.preventDefault()
     event.stopPropagation()
-    App.actions.task.edit(this.model.id)
+    if (isMongoId(this.model.id)) {
+      App.actions.task.edit(this.model.id)
+    } else {
+      const editView = new EditModalizer({
+        model: this.model
+      })
+      editView.show()
+    }
     this.trigger('click:edit')
     this.remove()
   },

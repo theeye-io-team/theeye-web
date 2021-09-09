@@ -182,6 +182,7 @@ export default {
 
       if (workflow.graph.nodes[i].value.type) {
         const data = App.state.tasks.get(id).serialize()
+        data.id = uuid
         const task = new TaskFactory(data, { store: false })
 
         recipe.tasks.push(task)
