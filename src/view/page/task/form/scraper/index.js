@@ -324,7 +324,7 @@ export default TaskFormView.extend({
 
     let data = this.prepareData(this.data)
     if (isMongoId(this.model.id)) {
-      console.log(data)
+      // Editing tasks while copying a workflow is not supported
     } if (!this.model.isNew()) {
       App.actions.task.update(this.model.id, data)
     } else {

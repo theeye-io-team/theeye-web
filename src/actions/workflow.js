@@ -101,6 +101,31 @@ export default {
       }
     })
   },
+  createFromCopy (data) {
+    let ids = []
+    let promises = []
+    for (let task of data.tasks) {
+      const uuid = task.id
+      ids.push(uuid)
+      const recipe = Object.assign({}, task)
+      delete recipe.id
+      delete recipe.workflow_id
+      promises.push(App.actions.task.create(recipe))
+    }
+    Promise.all(promises).then((results) => {
+      const newIds = results.map((result) => result.id)
+      data.start_task_id = newIds[ids.indexOf(data.start_task_id)]
+      for (const node of data.graph.nodes) {
+        node["v"] = newIds[ids.indexOf(node["v"])]
+        node["value"].id = newIds[ids.indexOf(node["value"].id)]
+      }
+      for (const edge of data.graph.edges) {
+        edge["v"] = newIds[ids.indexOf(edge["v"])]
+        edge["w"] = newIds[ids.indexOf(edge["w"])]
+      }
+      this.create(data)
+    })
+  },
   remove (id) {
     const workflow = App.state.workflows.get(id)
     workflow.destroy({

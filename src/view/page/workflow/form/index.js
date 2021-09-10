@@ -16,13 +16,14 @@ import HelpTexts from 'language/help'
 import WorkflowBuilder from './workflow-builder'
 import EventsSelectView from 'view/events-select'
 import bootbox from 'bootbox'
+import isMongoId from 'validator/lib/isMongoId'
+import { Factory as TaskFactory } from 'models/task'
 
 export default FormView.extend({
   props: {
     copying: ['boolean', false, false]
   },
   initialize (options) {
-    console.log(this.model)
     const isNew = Boolean(this.model.isNew())
 
     this.advancedFields = [
@@ -36,7 +37,6 @@ export default FormView.extend({
     ]
 
     App.actions.workflow.populate(this.model)
-    debugger
     const workflowBuilder = new WorkflowBuilder({
       workflow_id: this.model.id,
       name: 'graph',
@@ -187,9 +187,10 @@ export default FormView.extend({
 
     // id property is the required value, with "numeric" data type
     let data = this.prepareData(this.data)
-    console.log(data)
     //data.looptime = this._fieldViews.looptime.selected().id
-    if (!this.model.isNew()) {
+    if (this.copying) {
+      App.actions.workflow.createFromCopy(this.model.serialize())
+    } else if (!this.model.isNew()) {
       App.actions.workflow.update(this.model.id, data)
     } else {
       App.actions.workflow.create(data)

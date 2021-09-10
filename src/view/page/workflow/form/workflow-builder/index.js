@@ -89,7 +89,6 @@ export default View.extend({
     </div>
   `,
   initialize (options) {
-    console.log(graphlib.json.write(options.value))
     if (options.value) {
       //clone to new graph
       this.graph = graphlib.json.read(graphlib.json.write(options.value))
@@ -161,7 +160,6 @@ export default View.extend({
   onTapNode (event) {
     var self = this
     var node = event.cyTarget.data()
-    debugger
     if (this.contextMenu) {
       this.contextMenu.remove()
     }
@@ -410,7 +408,6 @@ const Menu = View.extend({
   `,
   render () {
     this.renderWithTemplate(this)
-    debugger
     const copyButton = new CopyTaskButton({ model: this.model, elem: 'a' })
     this.renderSubview(copyButton, this.queryByHook("menu-buttons"))
   },

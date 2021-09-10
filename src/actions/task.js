@@ -89,8 +89,11 @@ export default {
     }
   },
   create (data) {
-    create(data)
-      .then(task => successCreated([ task ]))
+    return create(data)
+      .then(task => {
+        successCreated([task])
+        return (task)
+      })
       .catch(err => {})
   },
   remove (id) {
