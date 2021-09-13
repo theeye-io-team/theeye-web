@@ -8,7 +8,8 @@ const JobsPaginator = View.extend({
   props: {
     listLength: ['number', false, LIMIT_COUNTER],
     jobsLength: ['number', false, 0],
-    lastPage: 'boolean'
+    lastPage: 'boolean',
+    label: ['string', false, 'jobs']
   },
   template: `
     <div data-component="paginator-footer">
@@ -102,7 +103,7 @@ const JobsPaginator = View.extend({
       deps: ['jobsLength', 'model.paginator_first', 'model.paginator_last'],
       fn () {
         if (this.jobsLength > this.model.paginator_length) {
-          return `showing jobs ${this.model.paginator_first + 1} - ${this.model.paginator_last + 1} out of ${this.jobsLength}`
+          return `showing ${this.label} ${this.model.paginator_first + 1} - ${this.model.paginator_last + 1} out of ${this.jobsLength}`
         } else {
           return this.jobsLength
         }
@@ -119,7 +120,8 @@ const JobsPaginator = View.extend({
 const CollectionPaginator = View.extend({
   props: {
     length: 'number',
-    page: 'number'
+    page: 'number',
+    label: ['string', false, 'jobs']
   },
   template: `
     <div data-component="paginator-footer">
@@ -181,9 +183,9 @@ const CollectionPaginator = View.extend({
   changeCount () {
     if (this.pageLength < this.length) {
       if ((this.page + 1) * this.pageLength > this.length) 
-        return `showing jobs ${(this.page * this.pageLength) + 1} - ${this.length} out of ${this.length}`
+        return `showing ${this.label} ${(this.page * this.pageLength) + 1} - ${this.length} out of ${this.length}`
       else
-        return `showing jobs ${(this.page * this.pageLength) + 1} - ${(this.page + 1) * this.pageLength} out of ${this.length}`
+        return `showing ${this.label} ${(this.page * this.pageLength) + 1} - ${(this.page + 1) * this.pageLength} out of ${this.length}`
     } else {
       return this.length
     }

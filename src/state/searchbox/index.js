@@ -48,19 +48,23 @@ export default State.extend({
   filterRows () {
     const search = this.search
     if (!search || typeof search !== 'string') {
+      this.rowsViews.forEach(row => row.show = true)
+      this.trigger('rerender')
       return this.endSearch()
     }
 
     const terms = parseTerms(search)
 
     this.results.set([])
+    debugger
     this.findTermsOverElements(terms, this.rowsViews, (row, matches) => {
       const hit = Boolean(matches.length > 0)
       if (hit) {
-        this.results.add(row.model)
+        this.results.add(row)
       }
       this.trigger('onrow', { row, hit })
     })
+    this.trigger('rerender')
   },
   findMatches (search) {
     if (search === this.search) { return }
@@ -140,19 +144,21 @@ const searchTermsOverTags = (terms,tags) => {
 }
 
 const findTermsOverElem = (terms, row) => {
-  if (!row.model.formatted_tags) {
+  if (!row.formatted_tags) {
     logger.error('no formatted_tags property available in model')
     return
   }
 
-  if (!(row.model.formatted_tags.length > 0)) {
+  if (!(row.formatted_tags.length > 0)) {
     logger.error('empty tags')
     return
   }
 
-  let tags = row.model.formatted_tags
+  let tags = row.formatted_tags
   let matches = searchTermsOverTags(terms, tags)
 
+  // TODO: No entiendo que hace esto
+  /*
   if (row.model.submonitors || row.model.submodels) {
     const models = (row.model.submonitors || row.model.submodels).models
     for (let model of models) {
@@ -160,6 +166,7 @@ const findTermsOverElem = (terms, row) => {
       matches = matches.concat(searchTermsOverTags(terms, tags))
     }
   }
+  */
 
   return matches
 }

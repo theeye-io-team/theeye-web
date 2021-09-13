@@ -60,10 +60,13 @@ export default View.extend({
   renderList (ViewClass, options) {
     this.View = (ViewClass || ListItem)
     this.options = options
-    this.paginator = new CollectionPaginator({ length: this.collection.models.length })
+    this.paginator = new CollectionPaginator({
+      length: this.collection.models.filter(model => model.show === true).length,
+      label: this.title.toLowerCase()
+    })
     this.renderSubview(this.paginator, this.queryByHook('paginator-container'))
     this.subCollection = new Collection(
-      this.collection.models.slice(
+      this.collection.models.filter(model => model.show === true).slice(
         this.paginator.page * this.paginator.pageLenght,
         (this.paginator.page * this.paginator.pageLenght) + this.paginator.pageLenght
       )
@@ -87,16 +90,21 @@ export default View.extend({
       }
     })
 
-    this.listenToAndRun(this.collection, 'sync', function () {
+    this.listenTo(App.state.searchbox, 'rerender', (data) => {
       this.updateList(true)
-      App.actions.searchbox.resetRowsViews(this.list.views)
+    })
+
+    this.listenToAndRun(this.collection, 'sync reset add remove', function () {
+      this.updateList(true)
+      App.actions.searchbox.resetRowsViews(this.collection.models)
     })
   },
   updateList (isNewList = false) {
-    this.paginator.length = this.collection.models.length
+    this.paginator.length = this.collection.models.filter(model => model.show === true).length
+
 
     this.subCollection = new Collection(
-      this.collection.models.slice(
+      this.collection.models.filter(model => model.show === true).slice(
         this.paginator.page * this.paginator.pageLength,
         (this.paginator.page * this.paginator.pageLength) + this.paginator.pageLength
       )
