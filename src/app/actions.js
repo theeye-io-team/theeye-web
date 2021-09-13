@@ -1,6 +1,7 @@
 import App from 'ampersand-app'
 
 import AuthActions from 'actions/auth'
+import IntegrationActions from 'actions/integrations'
 import CustomerActions from 'actions/customer'
 import DashboardActions from 'actions/dashboard'
 import FileActions from 'actions/file'
@@ -35,11 +36,14 @@ export default {
     file: FileActions,
     host: HostActions,
     indicator: IndicatorActions,
+    integrations: IntegrationActions,
     job: JobActions,
+    localSettings: LocalSettingsActions,
     member: MemberActions,
     monitor: MonitorActions,
     navbar: NavbarActions,
     notification: NotificationActions,
+    onboarding: OnboardingActions,
     onHold: OnHoldActions,
     popup: PopupActions,
     resource: ResourceActions,
@@ -51,9 +55,7 @@ export default {
     tabs: TabsActions,
     task: TaskActions,
     token: TokenActions,
-    workflow: WorkflowActions,
     user: UserActions,
-    onboarding: OnboardingActions,
-    localSettings: LocalSettingsActions
+    workflow: WorkflowActions,
   }
 }

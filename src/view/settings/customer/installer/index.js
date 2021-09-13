@@ -6,8 +6,8 @@ import hopscotch from 'hopscotch'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
 import acls from 'lib/acls'
-import { startBot } from 'actions/integrations'
 import config from 'config'
+import SelfProvidedBotView from './self-provided-bot'
 
 export default View.extend({
   initialize() {
@@ -167,12 +167,6 @@ export default View.extend({
   events: {
     'click [data-hook=go-to-dashboard]':'onClickGoToDashboard',
     'click .start-onboarding':'onClickStartOnboarding',
-    'click [data-hook=start-bot]': 'onClickStartBot'
-  },
-  onClickStartBot (event) {
-    event.preventDefault()
-    event.stopPropagation()
-    if (acls.hasAccessLevel('admin')) { startBot() }
   },
   onClickGoToDashboard (event) {
     event.preventDefault()
@@ -207,6 +201,16 @@ export default View.extend({
       }),
       this.queryByHook('start-bot-help')
     )
+
+    this.renderSelfProvidedBotsButton()
+  },
+  renderSelfProvidedBotsButton () {
+    if (acls.hasAccessLevel('root')) {
+      this.renderSubview(
+        new SelfProvidedBotView(),
+        this.queryByHook('autobot-placerholder')
+      )
+    }
   }
 })
 
@@ -215,16 +219,7 @@ const template = (state) => {
   let html = `
     <div>
       <div data-hook="agent-set">
-        <section > <!-- INSTALLER SECTION -->
-          <h3 class="blue bold">SELF-PROVIDED BOT</h3>
-          <i data-hook="start-bot-help"></i>
-          <div id="self-provided-installer" class="row border">
-            <div data-hook="start-bot" data-tutorial="self-provided-onboarding" class="btn btn-default col-xs-12">
-              <i class="fa theeye-robot-solid" style="    bottom: 2px; position: relative;"></i>
-              <a href="#">Click to start a Bot</a>
-            </div>
-          </div>
-        </section>
+        <autobot data-hook="autobot-placerholder"></autobot>
         <section> <!-- INSTALLER SECTION -->
           <h3 class="blue bold start-onboarding">INSTALLER</h3>
           <i class="start-onboarding" data-hook="start-onboarding"></i>
