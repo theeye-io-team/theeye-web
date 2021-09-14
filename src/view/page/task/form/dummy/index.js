@@ -12,7 +12,6 @@ import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 import CopyTaskSelect from '../copy-task-select'
 import bootbox from 'bootbox'
-import isMongoId from 'validator/lib/isMongoId'
 
 export default TaskFormView.extend({
   initialize (options) {
@@ -130,9 +129,7 @@ export default TaskFormView.extend({
 
     let data = this.prepareData(this.data)
 
-    if (isMongoId(this.model.id)) {
-      // Editing tasks while copying a workflow is not supported
-    } else if (!this.model.isNew()) {
+    if (!this.model.isNew()) {
       App.actions.task.update(this.model.id, data)
     } else {
       App.actions.task.create(data)

@@ -12,7 +12,6 @@ import ArgumentsView from '../arguments-input'
 import bootbox from 'bootbox'
 import HelpIcon from 'components/help-icon'
 import CheckboxView from 'components/checkbox-view'
-import isMongoId from 'validator/lib/isMongoId'
 
 import CopyTaskSelect from '../copy-task-select'
 import MembersSelectView from 'view/members-select'
@@ -303,9 +302,7 @@ export default TaskFormView.extend({
     if (!this.valid) { return next(null, false) }
 
     let data = this.prepareData(this.data)
-    if (isMongoId(this.model.id)) {
-      // Editing tasks while copying a workflow is not supported
-    } else if (!this.model.isNew()) {
+    if (!this.model.isNew()) {
       App.actions.task.update(this.model.id, data)
     } else {
       App.actions.task.create(data)

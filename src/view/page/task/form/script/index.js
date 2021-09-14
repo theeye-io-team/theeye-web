@@ -18,7 +18,6 @@ import AdvancedToggle from 'view/advanced-toggle'
 import * as TaskConstants from 'constants/task'
 import TaskSelection from 'view/task-select'
 import Modalizer from 'components/modalizer'
-import isMongoId from 'validator/lib/isMongoId'
 
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
@@ -416,9 +415,7 @@ export default TaskFormView.extend({
 
     let data = this.prepareData(this.data)
 
-    if (typeof (this.model.id) === 'string' && !isMongoId(this.model.id)) {
-      // Editing tasks while copying a workflow is not supported
-    } else if (this.isImport) {
+    if (this.isImport) {
       App.actions.file.create(App.state.taskForm.file, function (err, file) {
         data.script_id = file.id
         delete data.script_name
