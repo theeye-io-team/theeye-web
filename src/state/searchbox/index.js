@@ -59,7 +59,11 @@ export default State.extend({
     this.findTermsOverElements(terms, this.rowsViews, (row, matches) => {
       const hit = Boolean(matches.length > 0)
       if (hit) {
-        this.results.add(row)
+        if (row.model) {
+          this.results.add(row.model)
+        } else {
+          this.results.add(row)
+        }
       }
       this.trigger('onrow', { row, hit })
     })
@@ -143,19 +147,17 @@ const searchTermsOverTags = (terms,tags) => {
 }
 
 const findTermsOverElem = (terms, row) => {
-  if (row.model) {row = row.model}
-
-  if (!row.formatted_tags) {
+  if (!row.model?.formatted_tags && !row.formatted_tags) {
     logger.error('no formatted_tags property available in model')
     return
   }
 
-  if (!(row.formatted_tags.length > 0)) {
+  if (!((row.model?.formatted_tags || row.formatted_tags).length > 0)) {
     logger.error('empty tags')
     return
   }
 
-  let tags = row.formatted_tags
+  let tags = row.model?.formatted_tags || row.formatted_tags
   let matches = searchTermsOverTags(terms, tags)
 
   // TODO: No entiendo que hace esto
