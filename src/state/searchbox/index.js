@@ -56,7 +56,6 @@ export default State.extend({
     const terms = parseTerms(search)
 
     this.results.set([])
-    debugger
     this.findTermsOverElements(terms, this.rowsViews, (row, matches) => {
       const hit = Boolean(matches.length > 0)
       if (hit) {
@@ -144,6 +143,8 @@ const searchTermsOverTags = (terms,tags) => {
 }
 
 const findTermsOverElem = (terms, row) => {
+  if (row.model) {row = row.model}
+
   if (!row.formatted_tags) {
     logger.error('no formatted_tags property available in model')
     return
