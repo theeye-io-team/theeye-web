@@ -101,30 +101,30 @@ export default {
       }
     })
   },
-  createFromCopy (data) {
-    let ids = []
-    let promises = []
-    for (let task of data.tasks) {
-      const uuid = task.id
-      ids.push(uuid)
-      const recipe = Object.assign({}, task)
-      delete recipe.id
-      delete recipe.workflow_id
-      promises.push(App.actions.task.create(recipe))
-    }
-    Promise.all(promises).then((results) => {
-      const newIds = results.map((result) => result.id)
-      data.start_task_id = newIds[ids.indexOf(data.start_task_id)]
-      for (const node of data.graph.nodes) {
-        node["v"] = newIds[ids.indexOf(node["v"])]
-        node["value"].id = newIds[ids.indexOf(node["value"].id)]
-      }
-      for (const edge of data.graph.edges) {
-        edge["v"] = newIds[ids.indexOf(edge["v"])]
-        edge["w"] = newIds[ids.indexOf(edge["w"])]
-      }
-      this.create(data)
-    })
+  importCreate (recipe) {
+    //let ids = []
+    //let promises = []
+    //for (let task of data.tasks) {
+    //  const uuid = task.id
+    //  ids.push(uuid)
+    //  const recipe = Object.assign({}, task)
+    //  delete recipe.id
+    //  delete recipe.workflow_id
+    //  promises.push(App.actions.task.create(recipe))
+    //}
+    //Promise.all(promises).then((results) => {
+    //  const newIds = results.map((result) => result.id)
+    //  data.start_task_id = newIds[ids.indexOf(data.start_task_id)]
+    //  for (const node of data.graph.nodes) {
+    //    node["v"] = newIds[ids.indexOf(node["v"])]
+    //    node["value"].id = newIds[ids.indexOf(node["value"].id)]
+    //  }
+    //  for (const edge of data.graph.edges) {
+    //    edge["v"] = newIds[ids.indexOf(edge["v"])]
+    //    edge["w"] = newIds[ids.indexOf(edge["w"])]
+    //  }
+    //  this.create(data)
+    //})
   },
   remove (id) {
     const workflow = App.state.workflows.get(id)
@@ -191,21 +191,20 @@ export default {
     })
   },
 
-  createRecipe (id, options = {}) {
-    const workflow = App.state.workflows.get(id).serialize()
-    let recipe = {}
-    recipe.name = workflow.name
-    recipe.description = workflow.description
-    recipe.empty_viewers = workflow.empty_viewers
-    recipe.table_view = workflow.table_view
-    recipe.graph = workflow.graph
+  createRecipe (data) {
+    const recipe = {}
+    recipe.name = data.name
+    recipe.description = data.description
+    recipe.empty_viewers = data.empty_viewers
+    recipe.table_view = data.table_view
+    recipe.graph = data.graph
     recipe.tasks = []
 
-    for (let i in workflow.graph.nodes) {
-      const id = workflow.graph.nodes[i].v
+    for (let i in data.graph.nodes) {
+      const id = data.graph.nodes[i].v
       const uuid = uuidv4()
 
-      if (workflow.graph.nodes[i].value.type) {
+      if (data.graph.nodes[i].value.type) {
         const data = App.state.tasks.get(id).serialize()
         data.id = uuid
         const task = new TaskFactory(data, { store: false })
@@ -213,7 +212,7 @@ export default {
         recipe.tasks.push(task)
       }
 
-      if (workflow.start_task_id === id) { recipe.start_task_id = uuid }
+      if (data.start_task_id === id) { recipe.start_task_id = uuid }
 
       for (let a in recipe.graph.edges) {
         if (recipe.graph.edges[a].v === id) { recipe.graph.edges[a].v = uuid }
@@ -227,8 +226,9 @@ export default {
     return (recipe)
   },
 
-  exportRecipe (id, options = {}) {
-    const recipe = App.actions.workflow.createRecipe(id, options)
+  exportRecipe (id) {
+    const data = App.state.workflows.get(id).serialize()
+    const recipe = App.actions.workflow.createRecipe(data)
     const jsonContent = JSON.stringify(recipe)
     const blob = new Blob([jsonContent], { type: 'application/json' })
     const fname = recipe.name.replace(/ /g, '_')

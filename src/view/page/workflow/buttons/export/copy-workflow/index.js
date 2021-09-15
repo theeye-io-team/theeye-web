@@ -10,7 +10,7 @@ export default View.extend({
   render () {
     this.renderWithTemplate(this)
 
-    const recipe = App.actions.workflow.createRecipe(this.model.id, {})
+    const recipe = App.actions.workflow.createRecipe(this.model.serialize(), {})
     this.createForm(new Workflow(recipe))
   },
   /**

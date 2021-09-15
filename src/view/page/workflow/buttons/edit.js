@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
 import FormView from '../form'
@@ -30,7 +31,10 @@ export default PanelButton.extend({
         modal.remove()
       })
 
-      form.on('submitted', () => { modal.hide() })
+      form.on('submit', data => {
+        App.actions.workflow.update(this.model.id, data)
+        modal.hide()
+      })
 
       modal.show()
     }

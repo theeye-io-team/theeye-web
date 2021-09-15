@@ -9,20 +9,19 @@ import TaskSelectView from 'view/task-select'
 import DisabledInputView from 'components/input-view/disabled'
 import bootbox from 'bootbox'
 import graphlib from 'graphlib'
-import isMongoId from 'validator/lib/isMongoId'
 import FormButtons from 'view/buttons'
 import CopyTaskButton from 'view/page/task/buttons/copy'
 import CreateTaskButton from 'view/page/task/buttons/create'
-import EditModalizer from 'view/page/task/edit-modalizer'
+import EditTask from 'view/page/task/edit-modalizer'
 
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 
 export default View.extend({
   props: {
-    workflow_id: 'string',
     name: ['string', false, 'workflow'],
+    workflow_id: 'string',
     graph: ['object', false],
-    task_list: ['array', false]
+    tasks: 'collection'
   },
   derived: {
     value: {
@@ -42,7 +41,7 @@ export default View.extend({
         return nodes.length > 0 && edges.length > 0
       }
     },
-    workflowTasksCollection: {
+    graphTasks: {
       //cache: false,
       deps: ['graph'],
       fn () {
@@ -51,15 +50,15 @@ export default View.extend({
         nodes.forEach(id => {
           var node = this.graph.node(id)
           if (node && !/Event/.test(node._type)) {
-            let task = App.state.tasks.get(id)
-            if (!task) return
+            let task = getTask(id, this.tasks)
+            if (!task) { return }
             tasks.push(task)
           }
         })
         return new Collection(tasks)
       }
     },
-    workflowEventsCollection: {
+    graphEvents: {
       //cache: false,
       deps: ['graph'],
       fn () {
@@ -158,19 +157,15 @@ export default View.extend({
     this.trigger('change:graph', graph)
   },
   onTapNode (event) {
-    var self = this
     var node = event.cyTarget.data()
     if (this.contextMenu) {
       this.contextMenu.remove()
     }
 
     if (/Task$/.test(node.value._type) === true) {
-      if (this.task_list) {
-        var task = this.task_list.filter(task => task.id === node.id)[0]
-      } else {
-        var task = App.state.tasks.get(node.id)
-      }
-      var menu = new Menu({ model: task })
+      const task = getTask(node.id, this.tasks)
+
+      const menu = new ContextualMenu({ model: task })
       menu.render()
       menu.el.style.position = 'absolute'
       menu.el.style.top = (event.cyRenderedPosition.y + 120) + 'px'
@@ -182,15 +177,13 @@ export default View.extend({
 
       // this is a task node
       menu.on('click:edit', () => {
-        self.stopListening(task, 'change:name')
-        self.listenTo(task, 'change:name', function() {
-          self.trigger('change:graph', self.graph)
+        this.stopListening(task, 'change:name')
+        this.listenTo(task, 'change:name', function() {
+          this.trigger('change:graph', this.graph)
         })
       })
 
-      menu.on('click:remove', () => {
-        this.removeNodeDialog(node)
-      })
+      menu.on('click:remove', () => { this.removeNodeDialog(node) })
     } else {
       this.removeNodeDialog(node)
     }
@@ -236,9 +229,9 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    const builder = new WorkflowBuilderView({
-      workflow_tasks: this.workflowTasksCollection,
-      workflow_events: this.workflowEventsCollection,
+    const builder = new WorkflowEventsSelection({
+      tasks: this.graphTasks,
+      events: this.graphEvents,
       workflow_id: this.workflow_id,
       label: 'Event',
       name: 'event'
@@ -292,10 +285,10 @@ const CustomDisabledInputView = DisabledInputView.extend({
   }
 })
 
-const WorkflowBuilderView = FormView.extend({
+const WorkflowEventsSelection = FormView.extend({
   props: {
-    workflow_tasks: 'collection',
-    workflow_events: 'collection',
+    tasks: 'collection',
+    events: 'collection',
     workflow_id: 'string',
     nodes: ['array', false, () => { return [] }]
   },
@@ -304,12 +297,12 @@ const WorkflowBuilderView = FormView.extend({
     let stateEventSelection
     let taskSelection
 
-    if (this.workflow_tasks.length>0) {
+    if (this.tasks.length>0) {
       emitterSelection = new TaskSelectView({
         required: true,
         label: 'Task A',
         name: 'emitter',
-        options: this.workflow_tasks
+        options: this.tasks
       })
     } else {
       emitterSelection = new TaskSelectView({
@@ -330,7 +323,7 @@ const WorkflowBuilderView = FormView.extend({
       if (!emitter) return
       let options = App.state.events.filterEmitterEvents(
         emitter,
-        this.workflow_events
+        this.events
       )
       stateEventSelection.options = options
       if (options.length>0) {
@@ -395,7 +388,7 @@ const WorkflowBuilderView = FormView.extend({
   }
 })
 
-const Menu = View.extend({
+const ContextualMenu = View.extend({
   template: `
     <div class="dropdown">
       <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons">
@@ -421,35 +414,29 @@ const Menu = View.extend({
   onClickEdit (event) {
     event.preventDefault()
     event.stopPropagation()
-    if (isMongoId(this.model.id)) {
-      App.actions.task.edit(this.model.id)
-    } else {
-      const editView = new EditModalizer({
-        model: this.model
-      })
-      editView.show()
-    }
+
+    const editTask = new EditTask({ model: this.model })
+    editTask.show()
+
     this.trigger('click:edit')
     this.remove()
   },
   onClickCopy (event) {
     event.preventDefault()
     event.stopPropagation()
-    if (isMongoId(this.model.id)) {
-      App.actions.task.edit(this.model.id)
-    } else {
-      const editView = new EditModalizer({
-        model: this.model
-      })
-      editView.show()
-    }
+
+    const editTask = new EditTask({ model: this.model })
+    editTask.show()
+
     this.trigger('click:edit')
     this.remove()
   },
   onClickEditScript (event) {
     event.preventDefault()
     event.stopPropagation()
+
     App.actions.file.edit(this.model.script_id)
+
     this.trigger('click:edit')
     this.remove()
   },
@@ -465,8 +452,6 @@ const Menu = View.extend({
 
     const dialog = new ExportDialog({ model: this.model })
     dialog.show()
-
-    //App.actions.task.exportRecipe(this.model.id)
     this.remove()
   },
 })
@@ -475,4 +460,12 @@ const pointerPosition = (e) => {
   var posx = e.clientX
   var posy = e.clientY
   return { x: posx, y: posy }
+}
+
+const getTask = (id, tasks) => {
+  if (tasks.length > 0) {
+    return tasks.get(id)
+  } else {
+    return App.state.tasks.get(id)
+  }
 }

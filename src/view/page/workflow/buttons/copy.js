@@ -1,7 +1,9 @@
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
 import $ from 'jquery'
-import CopyWorkflow from './export/copy-workflow'
+import App from 'ampersand-app'
+import { Workflow } from 'models/workflow'
+import WorkflowFormView from '../form'
 
 export default PanelButton.extend({
   initialize (options) {
@@ -13,9 +15,12 @@ export default PanelButton.extend({
     click (event) {
       event.stopPropagation()
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
-      const form = new CopyWorkflow({
-        model: this.model
-      })
+
+      const recipe = App.actions.workflow.createRecipe(this.model.serialize(), {})
+      const workflow = new Workflow(recipe)
+
+      const form = new WorkflowFormView({ model: workflow })
+
       const modal = new Modalizer({
         buttons: false,
         title: `Copy # ${this.model.id}`,
@@ -29,7 +34,11 @@ export default PanelButton.extend({
         modal.remove()
       })
 
-      form.on('submitted', () => { modal.hide() })
+      form.on('submit', data => {
+        const recipe = App.actions.workflow.createRecipe(workflow.serialize())
+        App.actions.workflow.importCreate(recipe)
+        modal.hide()
+      })
 
       modal.show()
     }

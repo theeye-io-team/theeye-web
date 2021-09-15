@@ -13,16 +13,13 @@ import TaskSelectView from 'view/task-select'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
 //import WorkflowActions from 'actions/workflow'
-import WorkflowBuilder from './workflow-builder'
+import WorkflowBuilderView from './workflow-builder'
 import EventsSelectView from 'view/events-select'
 import bootbox from 'bootbox'
 import isMongoId from 'validator/lib/isMongoId'
 import { Factory as TaskFactory } from 'models/task'
 
 export default FormView.extend({
-  props: {
-    copying: ['boolean', false, false]
-  },
   initialize (options) {
     const isNew = Boolean(this.model.isNew())
 
@@ -37,11 +34,11 @@ export default FormView.extend({
     ]
 
     App.actions.workflow.populate(this.model)
-    const workflowBuilder = new WorkflowBuilder({
+    const workflowBuilder = new WorkflowBuilderView({
       workflow_id: this.model.id,
       name: 'graph',
       value: this.model.graph,
-      task_list: this.copying ? this.model.tasks.models : undefined
+      tasks: this.model.tasks
     })
 
     const startingTaskSelect = new StartingTaskSelectionView({
@@ -139,8 +136,8 @@ export default FormView.extend({
       })
     ]
 
-    this.listenTo(workflowBuilder, 'change:workflowTasksCollection', () => {
-      startingTaskSelect.options = workflowBuilder.workflowTasksCollection
+    this.listenTo(workflowBuilder, 'change:graphTasks', () => {
+      startingTaskSelect.options = workflowBuilder.graphTasks
     })
 
     FormView.prototype.initialize.apply(this, arguments)
@@ -187,16 +184,7 @@ export default FormView.extend({
 
     // id property is the required value, with "numeric" data type
     let data = this.prepareData(this.data)
-    //data.looptime = this._fieldViews.looptime.selected().id
-    if (this.copying) {
-      App.actions.workflow.createFromCopy(this.model.serialize())
-    } else if (!this.model.isNew()) {
-      App.actions.workflow.update(this.model.id, data)
-    } else {
-      App.actions.workflow.create(data)
-    }
-
-    this.trigger('submitted')
+    this.trigger('submit', data)
     next(null, true)
   },
   prepareData (data) {
@@ -220,7 +208,6 @@ const StartingTaskSelectionView = TaskSelectView.extend({
   },
   render () {
     TaskSelectView.prototype.render.apply(this, arguments)
-
     this.$select.on('select2:opening', this.onOpenning)
   }
 })
