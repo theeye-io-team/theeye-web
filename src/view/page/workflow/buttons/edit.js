@@ -15,9 +15,8 @@ export default PanelButton.extend({
       event.stopPropagation()
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
-      const form = new FormView({
-        model: this.model
-      })
+      App.actions.workflow.populate(this.model)
+      const form = new FormView({ model: this.model })
       const modal = new Modalizer({
         buttons: false,
         title: `Edit # ${this.model.id}`,

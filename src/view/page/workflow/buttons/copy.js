@@ -16,6 +16,7 @@ export default PanelButton.extend({
       event.stopPropagation()
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
+      App.actions.workflow.populate(this.model)
       const recipe = App.actions.workflow.createRecipe(this.model.serialize(), {})
       const workflow = new Workflow(recipe)
 

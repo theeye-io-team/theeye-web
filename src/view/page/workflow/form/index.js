@@ -1,4 +1,3 @@
-import App from 'ampersand-app'
 import AdvancedToggle from 'view/advanced-toggle'
 import LanguajeLabels from 'language/labels'
 import FormView from 'ampersand-form-view'
@@ -12,11 +11,9 @@ import MembersSelectView from 'view/members-select'
 import TaskSelectView from 'view/task-select'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
-//import WorkflowActions from 'actions/workflow'
 import WorkflowBuilderView from './workflow-builder'
 import EventsSelectView from 'view/events-select'
 import bootbox from 'bootbox'
-import isMongoId from 'validator/lib/isMongoId'
 import { Factory as TaskFactory } from 'models/task'
 
 export default FormView.extend({
@@ -34,7 +31,6 @@ export default FormView.extend({
       'allows_dynamic_settings'
     ]
 
-    App.actions.workflow.populate(workflow)
     const workflowBuilder = new WorkflowBuilderView({
       name: 'graph',
       workflow_id: workflow.id,
