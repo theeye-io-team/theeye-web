@@ -105,22 +105,17 @@ const TaskCreationWizard = View.extend({
     'click button[data-hook=scraper]': function (event) {
       event.preventDefault()
       event.stopPropagation()
-      this.createFormTask( new ScraperTask() )
+      this.renderCreateFormTask( new ScraperTask() )
     },
     'click button[data-hook=approval]': function (event) {
       event.preventDefault()
       event.stopPropagation()
-      this.createFormTask( new ApprovalTask() )
+      this.renderCreateFormTask( new ApprovalTask() )
     },
-    //'click button[data-hook=dummy]': function (event) {
-    //  event.preventDefault()
-    //  event.stopPropagation()
-    //  this.createFormTask( new DummyTask() )
-    //},
     'click button[data-hook=notification]': function (event) {
       event.preventDefault()
       event.stopPropagation()
-      this.createFormTask( new NotificationTask() )
+      this.renderCreateFormTask( new NotificationTask() )
     }
   },
   launchScriptTaskForm: function (event) {
@@ -128,7 +123,7 @@ const TaskCreationWizard = View.extend({
       event.preventDefault()
       event.stopPropagation()
     }
-    this.createFormTask(new ScriptTask())
+    this.renderCreateFormTask(new ScriptTask())
   },
   render () {
     this.renderWithTemplate(this)
@@ -141,11 +136,16 @@ const TaskCreationWizard = View.extend({
 
     this.importTaskInput = new ImportTaskInputView({
       callback: (file) => {
-        if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
+        if (
+          file &&
+          /json\/*/.test(file.type) === true &&
+          file.contents &&
+          file.contents.length
+        ) {
           try {
             let recipe = JSON.parse(file.contents)
             let task = App.actions.task.parseRecipe(recipe)
-            this.createFormTask(task, {isImport: true})
+            this.renderImportFormTask(task)
           } catch (e) {
             console.log(e)
             bootbox.alert('Invalid JSON file.')
@@ -209,25 +209,41 @@ const TaskCreationWizard = View.extend({
       }),
       this.queryByHook('notification-help')
     )
-
   },
   /**
    * @param {Task} task a models/task instance
    */
-  createFormTask (task, options) {
+  renderCreateFormTask (task) {
     this.queryByHook('type-selection-container').remove()
-
-    options = Object.assign({}, options, {model: task})
-
-    const form = new TaskFormView(options)
-    this.renderSubview(form,this.queryByHook('form-container'))
+    const form = new TaskFormView({ model: task })
+    this.renderSubview(form, this.queryByHook('form-container'))
     this.form = form
-    this.listenTo(form,'submitted',() => { this.trigger('submitted') })
+    this.listenTo(form, 'submit', data => {
+      App.actions.task.create(data)
+      this.trigger('submitted')
+    })
+  },
+  renderImportFormTask (task) {
+    this.queryByHook('type-selection-container').remove()
+    const form = new TaskFormView({ model: task, isImport: true })
+    this.renderSubview(form, this.queryByHook('form-container'))
+    this.form = form
+    this.listenTo(form, 'submit', data => {
+      if (task.type === 'script') {
+        App.actions.file.create(App.state.taskForm.file, (err, file) => {
+          data.script_id = file.id
+          delete data.script_name
+          App.actions.task.create(data)
+          this.trigger('submitted')
+        })
+      } else {
+        App.actions.task.create(data)
+        this.trigger('submitted')
+      }
+    })
   },
   remove () {
-    if (this.form) this.form.remove()
+    if (this.form) { this.form.remove() }
     View.prototype.remove.apply(this,arguments)
-  },
-  update () {
   }
 })

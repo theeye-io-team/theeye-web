@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
 import bootbox from 'bootbox'
@@ -37,7 +38,8 @@ export default PanelButton.extend({
             modal.remove()
           })
 
-          this.listenTo(form,'submitted',() => {
+          this.listenTo(form,'submit', data => {
+            App.actions.task.create(data)
             modal.hide()
           })
 
