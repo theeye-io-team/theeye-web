@@ -265,9 +265,9 @@ export default View.extend({
     w.setEdge(data.emitter.id, data.emitter_state.id)
     w.setEdge(data.emitter_state.id, data.task.id)
 
-    this.currentTasks.add(data.emitter)
-    this.currentTasks.add(data.task)
-    this.currentEvents.add(data.emitter_state)
+    //this.currentTasks.add(data.emitter)
+    //this.currentTasks.add(data.task)
+    //this.currentEvents.add(data.emitter_state)
 
     // force change trigger
     this.trigger('change:graph', this.graph)
@@ -289,7 +289,7 @@ const WorkflowEventsSelection = FormView.extend({
     let stateEventSelection
     let taskSelection
 
-    if (this.currentTasks.length > 0) {
+    if (this.currentTasks && this.currentTasks.length > 0) {
       emitterSelection = new TaskSelectView({
         required: true,
         label: 'Task A',
