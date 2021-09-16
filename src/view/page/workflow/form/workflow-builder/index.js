@@ -6,7 +6,6 @@ import HelpTexts from 'language/help'
 import Modalizer from 'components/modalizer'
 import SelectView from 'components/select2-view'
 import TaskSelectView from 'view/task-select'
-import DisabledInputView from 'components/input-view/disabled'
 import bootbox from 'bootbox'
 import graphlib from 'graphlib'
 import FormButtons from 'view/buttons'
@@ -20,15 +19,15 @@ export default View.extend({
   props: {
     name: ['string', false, 'workflow'],
     workflow_id: 'string',
-    graph: ['object', false],
-    tasks: 'collection'
+    graph: 'object',
+    currentTasks: 'collection',
+    currentEvents: 'collection'
   },
   derived: {
     value: {
       cache: false,
       deps: ['graph'],
       fn () {
-        //return graphlib.json.write(this.graph)
         return this.graph
       }
     },
@@ -50,7 +49,7 @@ export default View.extend({
         nodes.forEach(id => {
           var node = this.graph.node(id)
           if (node && !/Event/.test(node._type)) {
-            let task = getTask(id, this.tasks)
+            let task = getTask(id, this.currentTasks)
             if (!task) { return }
             tasks.push(task)
           }
@@ -163,7 +162,7 @@ export default View.extend({
     }
 
     if (/Task$/.test(node.value._type) === true) {
-      const task = getTask(node.id, this.tasks)
+      const task = getTask(node.id, this.currentTasks)
 
       const menu = new ContextualMenu({ model: task })
       menu.render()
@@ -229,9 +228,9 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    const builder = new WorkflowEventsSelection({
-      tasks: this.graphTasks,
-      events: this.graphEvents,
+    const triggers = new WorkflowEventsSelection({
+      currentTasks: this.graphTasks,
+      currentEvents: this.graphEvents,
       workflow_id: this.workflow_id,
       label: 'Event',
       name: 'event'
@@ -240,16 +239,16 @@ export default View.extend({
     const modal = new Modalizer({
       buttons: false,
       title: 'Workflow',
-      bodyView: builder
+      bodyView:triggers 
     })
 
     this.listenTo(modal,'hidden',() => {
-      builder.remove()
+      triggers.remove()
       modal.remove()
     })
 
-    builder.on('event-added', (eventData) => {
-      this.onEventAdded(eventData)
+    triggers.on('submit', (data) => {
+      this.addTrigger(data)
       modal.hide() // hide and auto-remove
     })
 
@@ -257,9 +256,7 @@ export default View.extend({
 
     return false
   },
-  onClickCreateTask () {
-  },
-  onEventAdded (data) {
+  addTrigger (data) {
     const w = this.graph
     w.setNode(data.emitter.id, data.emitter)
     w.setNode(data.emitter_state.id, data.emitter_state)
@@ -267,6 +264,10 @@ export default View.extend({
 
     w.setEdge(data.emitter.id, data.emitter_state.id)
     w.setEdge(data.emitter_state.id, data.task.id)
+
+    this.currentTasks.add(data.emitter)
+    this.currentTasks.add(data.task)
+    this.currentEvents.add(data.emitter_state)
 
     // force change trigger
     this.trigger('change:graph', this.graph)
@@ -276,19 +277,10 @@ export default View.extend({
   }
 })
 
-const CustomDisabledInputView = DisabledInputView.extend({
-  props: {
-    selectedValue: 'any'
-  },
-  selected () {
-    return this.selectedValue
-  }
-})
-
 const WorkflowEventsSelection = FormView.extend({
   props: {
-    tasks: 'collection',
-    events: 'collection',
+    currentTasks: 'collection',
+    currentEvents: 'collection',
     workflow_id: 'string',
     nodes: ['array', false, () => { return [] }]
   },
@@ -297,12 +289,12 @@ const WorkflowEventsSelection = FormView.extend({
     let stateEventSelection
     let taskSelection
 
-    if (this.tasks.length>0) {
+    if (this.currentTasks.length > 0) {
       emitterSelection = new TaskSelectView({
         required: true,
         label: 'Task A',
         name: 'emitter',
-        options: this.tasks
+        options: this.currentTasks
       })
     } else {
       emitterSelection = new TaskSelectView({
@@ -320,10 +312,10 @@ const WorkflowEventsSelection = FormView.extend({
 
     emitterSelection.on('change:value', () => {
       let emitter = emitterSelection.selected()
-      if (!emitter) return
+      if (!emitter) { return }
       let options = App.state.events.filterEmitterEvents(
         emitter,
-        this.events
+        this.currentEvents
       )
       stateEventSelection.options = options
       if (options.length>0) {
@@ -377,7 +369,7 @@ const WorkflowEventsSelection = FormView.extend({
       return
     }
     let data = this.prepareData(this.data)
-    this.trigger('event-added', data)
+    this.trigger('submit', data)
   },
   prepareData () {
     return {
@@ -463,7 +455,7 @@ const pointerPosition = (e) => {
 }
 
 const getTask = (id, tasks) => {
-  if (tasks.length > 0) {
+  if (tasks && tasks.length > 0) {
     return tasks.get(id)
   } else {
     return App.state.tasks.get(id)
