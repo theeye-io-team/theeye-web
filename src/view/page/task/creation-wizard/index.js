@@ -61,44 +61,44 @@ const ImportTaskInputView = FileInputView.extend({
 
 const TaskCreationWizard = View.extend({
   template: `
-  <div>
-    <section data-hook="type-selection-container" class="task-type-selection">
-      <h1>Please, select the task type to continue</h1>
-      <div class="row task-button" style="text-align:center;">
-        <div class="col-xs-3">
-          <button data-hook="script" class="btn btn-default">
-            <i class="icons icons-script fa fa-code"></i>
-          </button>
-          <h2>Script<span data-hook="script-help"></span></h2>
+    <div>
+      <section data-hook="type-selection-container" class="task-type-selection">
+        <h1>Please, select the task type to continue</h1>
+        <div class="row task-button" style="text-align:center;">
+          <div class="col-xs-3">
+            <button data-hook="script" class="btn btn-default">
+              <i class="icons icons-script fa fa-code"></i>
+            </button>
+            <h2>Script<span data-hook="script-help"></span></h2>
+          </div>
+          <div class="col-xs-3">
+            <button data-hook="scraper" class="btn btn-default">
+              <i class="icons icons-scraper fa fa-cloud"></i>
+            </button>
+            <h2>Outgoing Webhook/<br>HTTP Request
+              <span data-hook="webhook-help"></span>
+            </h2>
+          </div>
+          <div class="col-xs-3">
+            <button data-hook="approval" class="btn btn-default">
+              <i class="icons icons-approval fa fa-thumbs-o-up"></i>
+            </button>
+            <h2>Approval<span data-hook="approval-help"></span></h2>
+          </div>
+          <div class="col-xs-3">
+            <button data-hook="notification" class="btn btn-default">
+              <i class="icons icons-notification fa fa-bell-o"></i>
+            </button>
+            <h2>Notification<span data-hook="notification-help"></span></h2>
+          </div>
         </div>
-        <div class="col-xs-3">
-          <button data-hook="scraper" class="btn btn-default">
-            <i class="icons icons-scraper fa fa-cloud"></i>
-          </button>
-          <h2>Outgoing Webhook/<br>HTTP Request
-            <span data-hook="webhook-help"></span>
-          </h2>
+        <div class="import-task-section">
+          <h1>Or you can import a task from a file</h1>
+          <div data-hook="import-task-container"></div>
         </div>
-        <div class="col-xs-3">
-          <button data-hook="approval" class="btn btn-default">
-            <i class="icons icons-approval fa fa-thumbs-o-up"></i>
-          </button>
-          <h2>Approval<span data-hook="approval-help"></span></h2>
-        </div>
-        <div class="col-xs-3">
-          <button data-hook="notification" class="btn btn-default">
-            <i class="icons icons-notification fa fa-bell-o"></i>
-          </button>
-          <h2>Notification<span data-hook="notification-help"></span></h2>
-        </div>
-      </div>
-      <div class="import-task-section">
-        <h1>Or you can import a task from a file</h1>
-        <div data-hook="import-task-container"></div>
-      </div>
-    </section>
-    <section data-hook="form-container"></section>
-  </div>
+      </section>
+      <section data-hook="form-container"></section>
+    </div>
   `,
   events: {
     'click button[data-hook=script]': 'launchScriptTaskForm',
@@ -245,5 +245,8 @@ const TaskCreationWizard = View.extend({
   remove () {
     if (this.form) { this.form.remove() }
     View.prototype.remove.apply(this,arguments)
+  },
+  update () {
+    // DO NOT REMOVE. must do nothing
   }
 })
