@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
+import Collection from 'ampersand-collection'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import { Collection as ScheduleCollection } from 'models/schedule'
@@ -163,6 +164,42 @@ const Workflow = AppModel.extend({
         }
 
         return this.start_task.hasDynamicArguments
+      }
+    },
+    graphTasks: {
+      //cache: false,
+      deps: ['graph'],
+      fn () {
+        const nodes = this.graph.nodes()
+        const tasks = []
+        nodes.forEach(id => {
+          var node = this.graph.node(id)
+          if (node && !/Event/.test(node._type)) {
+            let task = App.state.tasks.get(id)
+            if (task) {
+              tasks.push(task)
+            }
+          }
+        })
+        return new Collection(tasks)
+      }
+    },
+    graphEvents: {
+      //cache: false,
+      deps: ['graph'],
+      fn () {
+        const nodes = this.graph.nodes()
+        const events = []
+        nodes.forEach(id => {
+          var node = this.graph.node(id)
+          if (node && /Event/.test(node._type)) {
+            let model = App.state.events.get(id)
+            if (model) {
+              events.push(model)
+            }
+          }
+        })
+        return new Collection(events)
       }
     }
   },
