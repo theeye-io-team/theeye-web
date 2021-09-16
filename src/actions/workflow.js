@@ -137,7 +137,7 @@ export default {
     })
   },
   populate (workflow, force = false) {
-    if (workflow.isNew()) return
+    if (workflow.isNew()) { return }
 
     if (
       workflow.alreadyPopulated === false ||

@@ -67,8 +67,8 @@ export default {
    */
   createMany (hosts, data) {
     if (hosts.length === 1) {
-      let taskData = Object.assign({}, data, { host_id: hosts[0] })
-      create(taskData)
+      const taskData = Object.assign({}, data, { host_id: hosts[0] })
+      return create(taskData)
         .then(task => {
           // handle to display a custome message
           App.state.alerts.success('Success', `Task ${task.name} created.`)
@@ -76,25 +76,29 @@ export default {
         })
         .catch(errResponse => {})
     } else {
-      let promises = []
+      const promises = []
       for (let host_id of hosts) {
-        let taskData = Object.assign({}, data, { host_id })
+        const taskData = Object.assign({}, data, { host_id })
         promises.push( create(taskData) )
       }
 
-      Promise.all(promises).then(tasks => {
+      return Promise.all(promises).then(tasks => {
         App.state.alerts.success('Success', 'All Tasks created.')
         successCreated(tasks)
       }).catch(err => {})
     }
   },
   create (data) {
-    return create(data)
-      .then(task => {
-        successCreated([task])
-        return (task)
-      })
-      .catch(err => {})
+    if (data.hosts) {
+      return this.createMany(data.hosts, data)
+    } else {
+      return create(data)
+        .then(task => {
+          successCreated([task])
+          return (task)
+        })
+        .catch(err => {})
+    }
   },
   remove (id) {
     const task = App.state.tasks.get(id)
