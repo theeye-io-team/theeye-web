@@ -1,4 +1,59 @@
 import View from 'ampersand-view'
+import * as FieldsConstants from 'constants/field'
+
+export default View.extend({
+  template: `
+    <div>
+      <h2>You are going to run the task <b data-hook="name"></b>.</h2>
+      <div class="row" data-hook="args-header">
+        <div class="col-sm-3"><b>Label</b></div>
+        <div class="col-sm-8"><b>Value</b></div>
+      </div>
+      <div data-hook="args-rows-container">
+      </div>
+      <br>
+      <h2>Continue?</h2>
+    </div>
+  `,
+  props: {
+    name: ['string', false, ''],
+    taskArgs: ['array', false, () => { return [] }],
+    headerVisible: ['boolean', false, true]
+  },
+  bindings: {
+    'name': {
+      type: 'text',
+      hook: 'name'
+    },
+    'headerVisible': {
+      type: 'toggle',
+      hook: 'args-header'
+    }
+  },
+  render () {
+    this.renderWithTemplate(this)
+
+    for (let arg of this.taskArgs) {
+      if (typeof(arg.renderValue) == "object") {
+        arg.renderValue = JSON.stringify(arg.renderValue)
+      }
+
+      if (arg.type === FieldsConstants.TYPE_FIXED) {
+        arg.masked = true
+      }
+
+      let argRowView = new ArgRow(arg)
+      this.renderSubview(argRowView, this.queryByHook('args-rows-container'))
+    }
+  },
+  initialize (options) {
+    if (options.taskArgs.length === 0) {
+      this.headerVisible = false
+    } else {
+      this.headerVisible = true
+    }
+  }
+})
 
 const ArgRow = View.extend({
   template: `
@@ -49,56 +104,5 @@ const ArgRow = View.extend({
   },
   render () {
     this.renderWithTemplate(this)
-  }
-})
-
-export default View.extend({
-  template: `
-  <div>
-    <h2>You are going to run the task <b data-hook="name"></b>.</h2>
-    <div class="row" data-hook="args-header">
-      <div class="col-sm-3"><b>Label</b></div>
-      <div class="col-sm-8"><b>Value</b></div>
-    </div>
-    <div data-hook="args-rows-container">
-    </div>
-    <br>
-    <h2>Continue?</h2>
-  </div>
-  `,
-  props: {
-    name: ['string', false, ''],
-    taskArgs: ['array', false, () => { return [] }],
-    headerVisible: ['boolean', false, true]
-  },
-  bindings: {
-    'name': {
-      type: 'text',
-      hook: 'name'
-    },
-    'headerVisible': {
-      type: 'toggle',
-      hook: 'args-header'
-    }
-  },
-  render () {
-    let self = this
-    this.renderWithTemplate(this)
-
-    this.taskArgs.forEach(function (arg) {
-      if (typeof(arg.renderValue) == "object") {
-        arg.renderValue = JSON.stringify(arg.renderValue)
-      }
-
-      let argRowView = new ArgRow(arg)
-      self.renderSubview(argRowView, self.queryByHook('args-rows-container'))
-    })
-  },
-  initialize (options) {
-    if (options.taskArgs.length === 0) {
-      this.headerVisible = false
-    } else {
-      this.headerVisible = true
-    }
   }
 })

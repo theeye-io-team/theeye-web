@@ -126,9 +126,9 @@ export default {
     this.populate(workflow)
     App.actions.task.execute(workflow.start_task)
   },
-  run (workflow) {
-    JobActions.createFromTask(workflow.start_task)
-  },
+  //run (workflow) {
+  //  JobActions.createFromTask(workflow.start_task)
+  //},
   getCredentials (id, next) {
     next || (next = () => {})
     let workflow = App.state.workflows.get(id)

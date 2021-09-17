@@ -3,6 +3,7 @@ import App from 'ampersand-app'
 import * as FIELD from 'constants/field'
 import DropableForm from 'components/dropable-form'
 import InputView from 'components/input-view'
+import DisabledInputView from 'components/input-view/disabled'
 import TextareaView from 'components/input-view/textarea'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
@@ -89,11 +90,22 @@ export default DropableForm.extend({
       case FIELD.TYPE_FILE:
         field = this.buildFileField(spec)
         break
+      case FIELD.TYPE_FIXED:
+        field = this.buildDisabledField(spec)
+        break;
       case FIELD.TYPE_REMOTE_OPTIONS:
         field = this.buildRemoteOptionsField(spec)
         break
     }
     return field
+  },
+  buildDisabledField (spec) {
+    return new DisabledInputView({
+      visible: false,
+      label: spec.label,
+      name: spec.order.toString(),
+      value: spec.value,
+    })
   },
   buildJsonField (spec) {
     return new TextareaView({
