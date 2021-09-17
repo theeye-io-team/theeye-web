@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
+import acls from 'lib/acls'
 
 export default View.extend({
   template: `
