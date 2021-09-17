@@ -96,7 +96,9 @@ const Workflow = AppModel.extend({
   },
   collections: {
     schedules: ScheduleCollection,
-    events: App.Models.Event.Collection,
+    events: function (models, options) {
+      return new App.Models.Event.Collection(models, options)
+    },
     tasks: function (models, options) {
       return new App.Models.Task.Collection(models, options)
     },
