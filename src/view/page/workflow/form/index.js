@@ -35,8 +35,8 @@ export default FormView.extend({
       name: 'graph',
       workflow_id: workflow.id,
       value: workflow.graph,
-      tasks: workflow.tasks,
-      events: workflow
+      currentTasks: workflow.tasks,
+      currentEvents: workflow.events
     })
 
     const initialTaskSelect = new InitialTaskSelectionView({
