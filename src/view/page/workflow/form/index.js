@@ -19,7 +19,7 @@ import { Factory as TaskFactory } from 'models/task'
 export default FormView.extend({
   initialize (options) {
     const workflow = this.model
-    const isNew = Boolean(workflow.isNew())
+    const isNew = (options.create === true || workflow.isNew())
 
     this.advancedFields = [
       'acl',
@@ -32,11 +32,14 @@ export default FormView.extend({
     ]
 
     const workflowBuilder = new WorkflowBuilderView({
+      create: isNew,
       name: 'graph',
-      workflow_id: workflow.id,
       value: workflow.graph,
-      currentTasks: workflow.tasks,
-      currentEvents: workflow.events
+      workflowTasks: workflow.graphTasks,
+      workflowEvents: workflow.graphEvents
+      //workflow_id: workflow.id,
+      //currentTasks: workflow.graphTasks,
+      //currentEvents: workflow.graphEvents
     })
 
     const initialTaskSelect = new InitialTaskSelectionView({

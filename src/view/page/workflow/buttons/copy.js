@@ -30,7 +30,7 @@ export default PanelButton.extend({
       //workflow.graph = graphlib.json.read(recipe.graph)
       //workflow.tasks = new Collection(recipe.tasks, { store: false })
 
-      const form = new WorkflowFormView({ model: workflow })
+      const form = new WorkflowFormView({ model: workflow, create: true })
 
       const modal = new Modalizer({
         buttons: false,

@@ -11,17 +11,46 @@ import graphlib from 'graphlib'
 import FormButtons from 'view/buttons'
 import CopyTaskButton from 'view/page/task/buttons/copy'
 import CreateTaskButton from 'view/page/task/buttons/create'
-import EditTask from 'view/page/task/edit-modalizer'
-
+import TaskForm from 'view/page/task/form'
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 
 export default View.extend({
+  template: `
+    <div class="workflow-builder-component form-group">
+      <label class="col-sm-3 control-label" data-hook="label"> Workflow Events </label>
+      <div class="col-sm-9">
+        <div style="padding-bottom: 15px;" data-hook="buttons">
+          <button data-hook="add-task" title="Add Task" class="btn btn-default">
+            Add Task <i class="fa fa-wrench"></i>
+          </button>
+        </div>
+      </div>
+      <div class="workflow-preview col-sm-12" data-hook="graph-preview"></div>
+    </div>
+  `,
+  initialize (options) {
+    View.prototype.initialize.apply(this,arguments)
+
+    if (options.value) {
+      //clone to new graph
+      this.graph = graphlib.json.read(graphlib.json.write(options.value))
+    } else {
+      this.graph = new graphlib.Graph({
+        directed: true,
+        multigraph: false,
+        compound: false
+      })
+    }
+
+    this.on('change:valid change:value', this.reportToParent, this)
+  },
   props: {
+    create: ['boolean', false, false ],
     name: ['string', false, 'workflow'],
-    workflow_id: 'string',
+    //workflow_id: 'string',
     graph: 'object',
-    currentTasks: 'collection',
-    currentEvents: 'collection'
+    workflowTasks: 'collection',
+    workflowEvents: 'collection'
   },
   derived: {
     value: {
@@ -40,69 +69,41 @@ export default View.extend({
         return nodes.length > 0 && edges.length > 0
       }
     },
-    graphTasks: {
-      //cache: false,
-      deps: ['graph'],
-      fn () {
-        let nodes = this.graph.nodes()
-        var tasks = []
-        nodes.forEach(id => {
-          var node = this.graph.node(id)
-          if (node && !/Event/.test(node._type)) {
-            let task = getTask(id, this.currentTasks)
-            if (!task) { return }
-            tasks.push(task)
-          }
-        })
-        return new Collection(tasks)
-      }
-    },
-    graphEvents: {
-      //cache: false,
-      deps: ['graph'],
-      fn () {
-        let nodes = this.graph.nodes()
-        var events = []
-        nodes.forEach(id => {
-          var node = this.graph.node(id)
-          if (/Event/.test(node._type)) {
-            events.push({ id })
-          }
-        })
-        return new Collection(events)
-      }
-    }
-  },
-  template: `
-    <div class="workflow-builder-component form-group">
-      <label class="col-sm-3 control-label" data-hook="label"> Workflow Events </label>
-      <div class="col-sm-9">
-        <div style="padding-bottom: 15px;" data-hook="buttons">
-          <button data-hook="build" title="build the workflow" class="btn btn-default">
-            Add event <i class="fa fa-wrench"></i>
-          </button>
-        </div>
-      </div>
-      <div class="workflow-preview col-sm-12" data-hook="graph-preview"></div>
-    </div>
-  `,
-  initialize (options) {
-    if (options.value) {
-      //clone to new graph
-      this.graph = graphlib.json.read(graphlib.json.write(options.value))
-    } else {
-      this.graph = new graphlib.Graph({
-        directed: true,
-        multigraph: false,
-        compound: false
-      })
-    }
-
-    View.prototype.initialize.apply(this,arguments)
-    this.on('change:valid change:value', this.reportToParent, this)
+    //graphTasks: {
+    //  //cache: false,
+    //  deps: ['graph'],
+    //  fn () {
+    //    let nodes = this.graph.nodes()
+    //    var tasks = []
+    //    nodes.forEach(id => {
+    //      var node = this.graph.node(id)
+    //      if (node && !/Event/.test(node._type)) {
+    //        let task = this.currentTasks.get(id)
+    //        if (!task) { return }
+    //        tasks.push(task)
+    //      }
+    //    })
+    //    return new Collection(tasks)
+    //  }
+    //},
+    //graphEvents: {
+    //  //cache: false,
+    //  deps: ['graph'],
+    //  fn () {
+    //    let nodes = this.graph.nodes()
+    //    var events = []
+    //    nodes.forEach(id => {
+    //      var node = this.graph.node(id)
+    //      if (/Event/.test(node._type)) {
+    //        events.push({ id })
+    //      }
+    //    })
+    //    return new Collection(events)
+    //  }
+    //}
   },
   events: {
-    'click [data-hook=build]':'onClickAddEvent'
+    'click [data-hook=add-task]':'onClickAddTask'
   },
   render () {
     this.renderWithTemplate(this)
@@ -162,8 +163,8 @@ export default View.extend({
     }
 
     if (/Task$/.test(node.value._type) === true) {
-      const task = getTask(node.id, this.currentTasks)
-
+      const id = node.value.id
+      const task = this.workflowTasks.get(id)
       const menu = new ContextualMenu({ model: task })
       menu.render()
       menu.el.style.position = 'absolute'
@@ -175,17 +176,38 @@ export default View.extend({
       this.contextMenu = menu
 
       // this is a task node
-      menu.on('click:edit', () => {
-        this.stopListening(task, 'change:name')
-        this.listenTo(task, 'change:name', function() {
-          this.trigger('change:graph', this.graph)
-        })
+      menu.on('edit', () => {
+        this.editTask(task)
       })
 
       menu.on('click:remove', () => { this.removeNodeDialog(node) })
     } else {
       this.removeNodeDialog(node)
     }
+  },
+  editTask (task) {
+    const form = new TaskForm({ model: task })
+    const modal = new Modalizer({
+      buttons: false,
+      title: `Edit task ${task.name} [${task.id}]`,
+      bodyView: form
+    })
+
+    modal.on('hidden', () => {
+      form.remove()
+      modal.remove()
+    })
+
+    form.on('submit', data => {
+      if (this.create === true) {
+        task.set(data)
+      } else {
+        App.actions.task.update(task.id, data)
+      }
+      modal.hide()
+    })
+
+    modal.show()
   },
   removeNodeDialog (node) {
     bootbox.confirm({
@@ -224,132 +246,71 @@ export default View.extend({
 
     this.trigger('change:graph', this.graph)
   },
-  onClickAddEvent (event) {
+  onClickAddTask (event) {
     event.preventDefault()
     event.stopPropagation()
 
-    const triggers = new WorkflowEventsSelection({
-      currentTasks: this.graphTasks,
-      currentEvents: this.graphEvents,
-      workflow_id: this.workflow_id,
-      label: 'Event',
-      name: 'event'
-    })
+    const taskSelection = new TaskSelectionModal({ tasks: App.state.tasks })
+
+    //const triggers = new WorkflowEventsSelection({
+    //  currentTasks: this.graphTasks,
+    //  currentEvents: this.graphEvents,
+    //  workflow_id: this.workflow_id,
+    //  label: 'Event',
+    //  name: 'event'
+    //})
 
     const modal = new Modalizer({
       buttons: false,
       title: 'Workflow',
-      bodyView:triggers 
+      bodyView: taskSelection 
     })
 
     this.listenTo(modal,'hidden',() => {
-      triggers.remove()
+      taskSelection.remove()
       modal.remove()
     })
 
-    triggers.on('submit', (data) => {
-      this.addTrigger(data)
+    taskSelection.on('submit', (task) => {
+      this.addTask(task)
       modal.hide() // hide and auto-remove
     })
 
     modal.show()
-
     return false
   },
-  addTrigger (data) {
+  addTask (task) {
     const w = this.graph
-    w.setNode(data.emitter.id, data.emitter)
-    w.setNode(data.emitter_state.id, data.emitter_state)
-    w.setNode(data.task.id, data.task)
+    w.setNode(task.id, task)
 
-    w.setEdge(data.emitter.id, data.emitter_state.id)
-    w.setEdge(data.emitter_state.id, data.task.id)
-
-    //this.currentTasks.add(data.emitter)
-    //this.currentTasks.add(data.task)
-    //this.currentEvents.add(data.emitter_state)
-
-    // force change trigger
+    // force change trigger to redraw
     this.trigger('change:graph', this.graph)
+
+    this.workflowTasks.add(task)
+
+    //w.setNode(data.emitter.id, data.emitter)
+    //w.setNode(data.emitter_state.id, data.emitter_state)
+    //w.setNode(data.task.id, data.task)
+
+    //w.setEdge(data.emitter.id, data.emitter_state.id)
+    //w.setEdge(data.emitter_state.id, data.task.id)
   },
   reportToParent () {
-    if (this.parent) this.parent.update(this)
+    if (this.parent) { this.parent.update(this) }
   }
 })
 
-const WorkflowEventsSelection = FormView.extend({
+const TaskSelectionModal = FormView.extend({
   props: {
-    currentTasks: 'collection',
-    currentEvents: 'collection',
-    workflow_id: 'string',
-    nodes: ['array', false, () => { return [] }]
+    tasks: 'collection',
   },
   initialize (options) {
-    let emitterSelection
-    let stateEventSelection
-    let taskSelection
-
-    if (this.currentTasks && this.currentTasks.length > 0) {
-      emitterSelection = new TaskSelectView({
-        required: true,
-        label: 'Task A',
-        name: 'emitter',
-        options: this.currentTasks
-      })
-    } else {
-      emitterSelection = new TaskSelectView({
-        required: true,
-        label: 'Task A',
-        name: 'emitter',
-        filterOptions: [
-          item => {
-            let filter = !item.workflow_id || (item.workflow_id === this.workflow_id)
-            return filter
-          }
-        ]
-      })
-    }
-
-    emitterSelection.on('change:value', () => {
-      let emitter = emitterSelection.selected()
-      if (!emitter) { return }
-      let options = App.state.events.filterEmitterEvents(
-        emitter,
-        this.currentEvents
-      )
-      stateEventSelection.options = options
-      if (options.length>0) {
-        stateEventSelection.setValue(options[0])
-      }
-    })
-
-    stateEventSelection = new SelectView({
-      required: true,
-      label: 'State',
-      name: 'emitter_state',
-      options: new Collection([]),
-      multiple: false,
-      tags: false,
-      idAttribute: 'id',
-      textAttribute: 'name',
-      unselectedText: 'select the emitter state'
-    })
-
-    taskSelection = new TaskSelectView({
-      required: true,
-      label: 'Task B',
-      filterOptions: [
-        item => {
-          let filter = !item.workflow_id || (item.workflow_id === this.workflow_id)
-          return filter
-        }
-      ]
-    })
-
     this.fields = [
-      emitterSelection,
-      stateEventSelection,
-      taskSelection
+      new TaskSelectView({
+        required: true,
+        label: 'Task',
+        options: this.tasks
+      })
     ]
 
     FormView.prototype.initialize.apply(this, arguments)
@@ -364,21 +325,119 @@ const WorkflowEventsSelection = FormView.extend({
   },
   submit () {
     this.beforeSubmit()
-    if (!this.valid) {
-      // cancel submit
-      return
-    }
+    if (!this.valid) { return }
     let data = this.prepareData(this.data)
     this.trigger('submit', data)
   },
   prepareData () {
-    return {
-      emitter: this._fieldViews.emitter.selected(),
-      emitter_state: this._fieldViews.emitter_state.selected(),
-      task: this._fieldViews.task.selected(),
-    }
+    const task = this._fieldViews.task.selected()
+    const clone = new App.Models.Task.Factory(task.serialize(), { store: false }) 
+    return clone
   }
 })
+
+//const WorkflowEventsSelection = FormView.extend({
+//  props: {
+//    currentTasks: 'collection',
+//    currentEvents: 'collection',
+//    workflow_id: 'string',
+//    nodes: ['array', false, () => { return [] }]
+//  },
+//  initialize (options) {
+//    let emitterSelection
+//    let stateEventSelection
+//    let taskSelection
+//
+//    if (this.currentTasks && this.currentTasks.length > 0) {
+//      emitterSelection = new TaskSelectView({
+//        required: true,
+//        label: 'Task A',
+//        name: 'emitter',
+//        options: this.currentTasks
+//      })
+//    } else {
+//      emitterSelection = new TaskSelectView({
+//        required: true,
+//        label: 'Task A',
+//        name: 'emitter',
+//        filterOptions: [
+//          item => {
+//            let filter = !item.workflow_id || (item.workflow_id === this.workflow_id)
+//            return filter
+//          }
+//        ]
+//      })
+//    }
+//
+//    emitterSelection.on('change:value', () => {
+//      let emitter = emitterSelection.selected()
+//      if (!emitter) { return }
+//      let options = App.state.events.filterEmitterEvents(
+//        emitter,
+//        this.currentEvents
+//      )
+//      stateEventSelection.options = options
+//      if (options.length>0) {
+//        stateEventSelection.setValue(options[0])
+//      }
+//    })
+//
+//    stateEventSelection = new SelectView({
+//      required: true,
+//      label: 'State',
+//      name: 'emitter_state',
+//      options: new Collection([]),
+//      multiple: false,
+//      tags: false,
+//      idAttribute: 'id',
+//      textAttribute: 'name',
+//      unselectedText: 'select the emitter state'
+//    })
+//
+//    taskSelection = new TaskSelectView({
+//      required: true,
+//      label: 'Task B',
+//      filterOptions: [
+//        item => {
+//          let filter = !item.workflow_id || (item.workflow_id === this.workflow_id)
+//          return filter
+//        }
+//      ]
+//    })
+//
+//    this.fields = [
+//      emitterSelection,
+//      stateEventSelection,
+//      taskSelection
+//    ]
+//
+//    FormView.prototype.initialize.apply(this, arguments)
+//  },
+//  render () {
+//    FormView.prototype.render.apply(this, arguments)
+//    this.query('form').classList.add('form-horizontal')
+//
+//    const buttons = new FormButtons({ confirmText: 'Add' })
+//    this.renderSubview(buttons)
+//    buttons.on('click:confirm', this.submit, this)
+//  },
+//  submit () {
+//    this.beforeSubmit()
+//    if (!this.valid) {
+//      // cancel submit
+//      return
+//    }
+//    let data = this.prepareData(this.data)
+//    this.trigger('submit', data)
+//  },
+//  prepareData () {
+//    return {
+//      emitter: this._fieldViews.emitter.selected(),
+//      emitter_state: this._fieldViews.emitter_state.selected(),
+//      task: this._fieldViews.task.selected(),
+//    }
+//  }
+//})
 
 const ContextualMenu = View.extend({
   template: `
@@ -398,7 +457,6 @@ const ContextualMenu = View.extend({
   },
   events: {
     'click [data-hook=edit]': 'onClickEdit',
-    'click [data-hook=copy]': 'onClickCopy',
     'click [data-hook=edit-script]': 'onClickEditScript',
     'click [data-hook=export]': 'onClickExport',
     'click [data-hook=remove]': 'onClickRemove'
@@ -406,21 +464,7 @@ const ContextualMenu = View.extend({
   onClickEdit (event) {
     event.preventDefault()
     event.stopPropagation()
-
-    const editTask = new EditTask({ model: this.model })
-    editTask.show()
-
-    this.trigger('click:edit')
-    this.remove()
-  },
-  onClickCopy (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    const editTask = new EditTask({ model: this.model })
-    editTask.show()
-
-    this.trigger('click:edit')
+    this.trigger('edit')
     this.remove()
   },
   onClickEditScript (event) {
@@ -454,10 +498,10 @@ const pointerPosition = (e) => {
   return { x: posx, y: posy }
 }
 
-const getTask = (id, tasks) => {
-  if (tasks && tasks.length > 0) {
-    return tasks.get(id)
-  } else {
-    return App.state.tasks.get(id)
-  }
-}
+//const getTask = (id, tasks) => {
+//  if (tasks && tasks.length > 0) {
+//    return tasks.get(id)
+//  } else {
+//    return App.state.tasks.get(id)
+//  }
+//}
