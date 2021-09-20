@@ -7,7 +7,7 @@ export default AmpersandModel.extend({
     is_loading: ['boolean', false, false]
   },
   session: {
-    // was loaded from the api
+    // was loaded or persisted in the api
     persisted: 'boolean'
   },
   dataTypes: {
@@ -39,15 +39,20 @@ export default AmpersandModel.extend({
       }
     }
   },
-  sync (method, model, options) {
-    let errorFn = options ? options.error : (()=>{})
+  sync (method, model, options = {}) {
+    const errorFn = (options?.error || (()=>{}))
+    const successFn = (options?.success || (()=>{}))
 
-    options = Object.assign({}, (options||{}), {
+    options = Object.assign({}, options, {
       error: function (respObj, errStr, errMsg) {
         if (respObj.statusCode >= 400) {
           XHR.handleError(respObj.rawRequest, options)
         }
         if (errorFn) { errorFn.call(this, arguments) }
+      },
+      success: function () {
+        model.persisted = true
+        if (successFn) { successFn.call(this, arguments) }
       }
     })
 
