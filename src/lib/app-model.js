@@ -6,6 +6,10 @@ export default AmpersandModel.extend({
   props: {
     is_loading: ['boolean', false, false]
   },
+  session: {
+    // was loaded from the api
+    persisted: 'boolean'
+  },
   dataTypes: {
     collection: {
       set: function (newVal) {
@@ -48,5 +52,10 @@ export default AmpersandModel.extend({
     })
 
     return AmpersandModel.prototype.sync.call(this, method, model, options)
+  },
+  parse () {
+    var attrs = AmpersandModel.prototype.parse.apply(this, arguments)
+    this.persisted = true
+    return attrs
   }
 })
