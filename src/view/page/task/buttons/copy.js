@@ -18,7 +18,7 @@ export default PanelButton.extend({
 
       return import(/* webpackChunkName: "task-form" */ '../form')
         .then(({ default: FormView }) => {
-          const task = new TaskFactory({ type: this.model.type })
+          const task = new TaskFactory({ type: this.model.type }, { store: false })
           const form = new FormView({ model: task })
           const modal = new Modalizer({
             buttons: false,

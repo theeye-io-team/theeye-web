@@ -2,7 +2,7 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
-import { Factory as TaskModelFactory } from 'models/task'
+import { Factory as TaskFactory } from 'models/task'
 import * as TaskConstants from 'constants/task'
 import TaskRouter from 'router/task'
 import after from 'lodash/after'
@@ -221,7 +221,7 @@ export default {
       delete recipe.task.url
     }
 
-    let task = TaskModelFactory(recipe.task)
+    const task = new TaskFactory(recipe.task, { store: false })
 
     if (recipe.file) {
       let file = new File(recipe.file, { parse: true })
@@ -288,7 +288,7 @@ export default {
  */
 const create = (data) => {
   return new Promise((resolve, reject) => {
-    const task = TaskModelFactory(data)
+    const task = new TaskFactory(data, { store: false })
     XHR.send({
       url: task.url(),
       jsonData: task.serialize(),
