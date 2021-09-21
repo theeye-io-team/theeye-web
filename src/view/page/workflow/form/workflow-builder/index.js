@@ -201,20 +201,45 @@ export default View.extend({
     }
 
     if (/Task$/.test(node.value._type) === true) {
-      const id = node.value.id
-      const task = this.workflow.tasks.get(id)
-      const menu = new ContextualMenu({ model: task })
-      menu.render()
-      menu.el.style.position = 'absolute'
-      menu.el.style.top = (event.cyRenderedPosition.y + 120) + 'px'
-      menu.el.style.left = event.cyRenderedPosition.x + 'px'
+      var task = App.state.tasks.get(node.id)
 
-      this.el.appendChild(menu.el)
-      this.registerSubview(menu)
-      this.contextMenu = menu
+      if (this.taskSelected === true) {
+        this.connectTask['task'] = task
+        this.taskSelected = false
+        this.onEventAdded(this.connectTask)
+      } else {
+        var menu = new ContextualMenu({
+          model: task,
+          workflow_events: this.workflowEventsCollection
+        })
+        menu.render()
+        
+        menu.el.style.position = 'absolute'
+        menu.el.style.top = (event.cyRenderedPosition.y + 120) + 'px'
+        menu.el.style.left = event.cyRenderedPosition.x + 'px'
 
-      menu.on('edit', () => { this.editTask(task) })
-      menu.on('click:remove', () => { this.removeNodeDialog(node) })
+        this.el.appendChild(menu.el)
+        this.registerSubview(menu)
+        this.contextMenu = menu
+
+        // this is a task node
+        menu.on('click:edit', () => {
+          self.stopListening(task, 'change:name')
+          self.listenTo(task, 'change:name', function() {
+            self.trigger('change:graph', self.graph)
+          })
+        })
+
+        menu.on('click:remove', () => { this.removeNodeDialog(node) })
+
+        menu.on('click:connect', (action) => {
+          this.connectTask = {
+            emitter: task,
+            emitter_state: action
+          }
+          this.taskSelected = true
+        })
+      }
     } else {
       this.removeNodeDialog(node)
     }
@@ -487,6 +512,8 @@ const ContextualMenu = View.extend({
   template: `
     <div class="dropdown">
       <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons">
+        <li><a data-hook="success" href="#">On Success</a></li>
+        <li><a data-hook="failure" href="#">On Failure</a></li>
         <li><a data-hook="edit" href="#">Edit Task</a></li>
         <li><a data-hook="edit-script" href="#">Edit Script</a></li>
         <li><a data-hook="remove" href="#">Remove</a></li>
@@ -494,12 +521,23 @@ const ContextualMenu = View.extend({
       </ul>
     </div>
   `,
+  props: {
+    workflow_events: 'collection'
+  },
   render () {
     this.renderWithTemplate(this)
+
+    this.events = App.state.events.filterEmitterEvents(
+      this.model,
+      this.workflow_events
+    )
+
     const copyButton = new CopyTaskButton({ model: this.model, elem: 'a' })
     this.renderSubview(copyButton, this.queryByHook("menu-buttons"))
   },
   events: {
+    'click [data-hook=success]': 'onConnectTasks',
+    'click [data-hook=failure]': 'onConnectTasks',
     'click [data-hook=edit]': 'onClickEdit',
     'click [data-hook=edit-script]': 'onClickEditScript',
     'click [data-hook=export]': 'onClickExport',
@@ -534,6 +572,13 @@ const ContextualMenu = View.extend({
     dialog.show()
     this.remove()
   },
+  onConnectTasks (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    const action = this.events.filter(e => e.name == event.target.dataset.hook)[0]
+    this.trigger('click:connect', action)
+    this.remove()
+  }
 })
 
 const pointerPosition = (e) => {
