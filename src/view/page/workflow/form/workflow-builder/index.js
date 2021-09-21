@@ -34,35 +34,24 @@ export default View.extend({
   initialize (options) {
     View.prototype.initialize.apply(this,arguments)
 
-		const recipe = App.actions.workflow.createRecipe(options.value, {})
-		// store:false avoid merging the state into the app.state
-		const workflow = new App.Models.Workflow.Workflow(recipe, {store: false})
+    let recipe
+    if (this.mode === 'edit') {
+      // keep the same original ids
+      recipe = options.value.serialize()
+    } else {
+      // replace ids
+      recipe = App.actions.workflow.createRecipe(options.value)
+    } 
 
-    this.workflow = workflow
-
-    //if (options.value) {
-    //  //clone to new graph
-    //  this.graph = graphlib.json.read(graphlib.json.write(options.value))
-    //} else {
-    //  this.graph = new graphlib.Graph({
-    //    directed: true,
-    //    multigraph: false,
-    //    compound: false
-    //  })
-    //}
-
-    //this.workflowTasks = new App.Models.Task.Collection(options.tasksModels)
-    //this.workflowEvents = new App.Models.Event.Collection(options.eventsModels)
+    // store:false avoid merging the state into the app.state
+    this.workflow = new App.Models.Workflow.Workflow(recipe, { store: false })
 
     this.on('change:valid change:value', this.reportToParent, this)
   },
   props: {
-    create: ['boolean', false, false ],
+    mode: 'string',
     name: ['string', false, 'workflow'],
-    workflow: 'state',
-    //graph: 'object',
-    //workflowTasks: 'collection',
-    //workflowEvents: 'collection'
+    workflow: 'state'
   },
   derived: {
     graph: {
@@ -72,25 +61,12 @@ export default View.extend({
         return this.workflow.graph
       }
     },
-    //workflowTasks: {
-    //  cache: false,
-    //  deps: ['workflow'],
-    //  fn () {
-    //    return this.workflow.tasks
-    //  }
-    //},
-    //workflowEvents: {
-    //  cache: false,
-    //  deps: ['workflow'],
-    //  fn () {
-    //    return this.workflow.events
-    //  }
-    //},
     value: {
       cache: false,
       deps: ['workflow'],
       fn () {
-        return this.workflow
+        const { graph, tasks, events } = this.workflow.serialize()
+        return { graph, tasks, events }
       }
     },
     valid: {
@@ -99,42 +75,11 @@ export default View.extend({
       fn () {
         const graph = this.workflow.graph
         let nodes = graph.nodes()
-        let edges = graph.edges()
-        return (nodes.length > 0 && edges.length > 0)
+
+        // at least one node
+        return nodes.length > 0
       }
     },
-    //graphTasks: {
-    //  //cache: false,
-    //  deps: ['graph'],
-    //  fn () {
-    //    let nodes = this.graph.nodes()
-    //    var tasks = []
-    //    nodes.forEach(id => {
-    //      var node = this.graph.node(id)
-    //      if (node && !/Event/.test(node._type)) {
-    //        let task = this.currentTasks.get(id)
-    //        if (!task) { return }
-    //        tasks.push(task)
-    //      }
-    //    })
-    //    return new Collection(tasks)
-    //  }
-    //},
-    //graphEvents: {
-    //  //cache: false,
-    //  deps: ['graph'],
-    //  fn () {
-    //    let nodes = this.graph.nodes()
-    //    var events = []
-    //    nodes.forEach(id => {
-    //      var node = this.graph.node(id)
-    //      if (/Event/.test(node._type)) {
-    //        events.push({ id })
-    //      }
-    //    })
-    //    return new Collection(events)
-    //  }
-    //}
   },
   events: {
     'click [data-hook=add-task]':'onClickAddTask',
@@ -258,11 +203,12 @@ export default View.extend({
     })
 
     form.on('submit', data => {
-      if (task.persisted === true) {
+      if (task.synchronized === true) {
         App.actions.task.update(task.id, data)
       } else {
         task.set(data)
       }
+
       this.updateTaskNode(task)
       modal.hide()
     })
@@ -346,10 +292,9 @@ export default View.extend({
     this.trigger('change:graph')
   },
   addTaskNode (task) {
-
     const taskData = (task.isState?task.serialize():task)
     taskData.id = uuidv4()
-    //taskData.persisted = false
+    taskData.synchronized = false
     const clone = new App.Models.Task.Factory(taskData, { store: false }) 
 
     this.workflow.tasks.add(clone)
@@ -404,109 +349,6 @@ const TaskSelectionModal = FormView.extend({
     return this._fieldViews.task.selected()
   }
 })
-
-//const WorkflowEventsSelection = FormView.extend({
-//  props: {
-//    currentTasks: 'collection',
-//    currentEvents: 'collection',
-//    workflow_id: 'string',
-//    nodes: ['array', false, () => { return [] }]
-//  },
-//  initialize (options) {
-//    let emitterSelection
-//    let stateEventSelection
-//    let taskSelection
-//
-//    if (this.currentTasks && this.currentTasks.length > 0) {
-//      emitterSelection = new TaskSelectView({
-//        required: true,
-//        label: 'Task A',
-//        name: 'emitter',
-//        options: this.currentTasks
-//      })
-//    } else {
-//      emitterSelection = new TaskSelectView({
-//        required: true,
-//        label: 'Task A',
-//        name: 'emitter',
-//        filterOptions: [
-//          item => {
-//            let filter = !item.workflow_id || (item.workflow_id === this.workflow_id)
-//            return filter
-//          }
-//        ]
-//      })
-//    }
-//
-//    emitterSelection.on('change:value', () => {
-//      let emitter = emitterSelection.selected()
-//      if (!emitter) { return }
-//      let options = App.state.events.filterEmitterEvents(
-//        emitter,
-//        this.currentEvents
-//      )
-//      stateEventSelection.options = options
-//      if (options.length>0) {
-//        stateEventSelection.setValue(options[0])
-//      }
-//    })
-//
-//    stateEventSelection = new SelectView({
-//      required: true,
-//      label: 'State',
-//      name: 'emitter_state',
-//      options: new Collection([]),
-//      multiple: false,
-//      tags: false,
-//      idAttribute: 'id',
-//      textAttribute: 'name',
-//      unselectedText: 'select the emitter state'
-//    })
-//
-//    taskSelection = new TaskSelectView({
-//      required: true,
-//      label: 'Task B',
-//      filterOptions: [
-//        item => {
-//          let filter = !item.workflow_id || (item.workflow_id === this.workflow_id)
-//          return filter
-//        }
-//      ]
-//    })
-//
-//    this.fields = [
-//      emitterSelection,
-//      stateEventSelection,
-//      taskSelection
-//    ]
-//
-//    FormView.prototype.initialize.apply(this, arguments)
-//  },
-//  render () {
-//    FormView.prototype.render.apply(this, arguments)
-//    this.query('form').classList.add('form-horizontal')
-//
-//    const buttons = new FormButtons({ confirmText: 'Add' })
-//    this.renderSubview(buttons)
-//    buttons.on('click:confirm', this.submit, this)
-//  },
-//  submit () {
-//    this.beforeSubmit()
-//    if (!this.valid) {
-//      // cancel submit
-//      return
-//    }
-//    let data = this.prepareData(this.data)
-//    this.trigger('submit', data)
-//  },
-//  prepareData () {
-//    return {
-//      emitter: this._fieldViews.emitter.selected(),
-//      emitter_state: this._fieldViews.emitter_state.selected(),
-//      task: this._fieldViews.task.selected(),
-//    }
-//  }
-//})
 
 const ContextualMenu = View.extend({
   template: `
@@ -586,11 +428,3 @@ const pointerPosition = (e) => {
   var posy = e.clientY
   return { x: posx, y: posy }
 }
-
-//const getTask = (id, tasks) => {
-//  if (tasks && tasks.length > 0) {
-//    return tasks.get(id)
-//  } else {
-//    return App.state.tasks.get(id)
-//  }
-//}

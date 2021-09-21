@@ -4,11 +4,9 @@ import XHR from 'lib/xhr'
 
 export default AmpersandModel.extend({
   props: {
-    is_loading: ['boolean', false, false]
-  },
-  session: {
-    // was loaded or persisted in the api
-    persisted: 'boolean'
+    is_loading: ['boolean', false, false],
+    // sync with the API
+    synchronized: ['boolean', false, false]
   },
   dataTypes: {
     collection: {
@@ -51,7 +49,7 @@ export default AmpersandModel.extend({
         if (errorFn) { errorFn.call(this, arguments) }
       },
       success: function () {
-        model.persisted = true
+        model.synchronized = true
         if (successFn) { successFn.call(this, arguments) }
       }
     })
@@ -60,7 +58,7 @@ export default AmpersandModel.extend({
   },
   parse () {
     var attrs = AmpersandModel.prototype.parse.apply(this, arguments)
-    this.persisted = true
+    this.synchronized = true
     return attrs
   }
 })

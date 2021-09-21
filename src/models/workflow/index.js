@@ -169,42 +169,6 @@ const Workflow = AppModel.extend({
         return this.start_task.hasDynamicArguments
       }
     },
-    //graphTasks: {
-    //  //cache: false,
-    //  deps: ['graph'],
-    //  fn () {
-    //    const nodes = this.graph.nodes()
-    //    const tasks = []
-    //    nodes.forEach(id => {
-    //      var node = this.graph.node(id)
-    //      if (node && !/Event/.test(node._type)) {
-    //        let task = App.state.tasks.get(id)
-    //        if (task) {
-    //          tasks.push(task)
-    //        }
-    //      }
-    //    })
-    //    return new Collection(tasks)
-    //  }
-    //},
-    //graphEvents: {
-    //  //cache: false,
-    //  deps: ['graph'],
-    //  fn () {
-    //    const nodes = this.graph.nodes()
-    //    const events = []
-    //    nodes.forEach(id => {
-    //      var node = this.graph.node(id)
-    //      if (node && /Event/.test(node._type)) {
-    //        let model = App.state.events.get(id)
-    //        if (model) {
-    //          events.push(model)
-    //        }
-    //      }
-    //    })
-    //    return new Collection(events)
-    //  }
-    //}
   },
   initialize () {
     AppModel.prototype.initialize.apply(this,arguments)
@@ -264,6 +228,12 @@ const Workflow = AppModel.extend({
     })
 
     attrs.graph = graph
+
+    attrs.events = attrs.events.filter(model => model.synchronized !== true)
+    attrs.tasks = attrs.tasks.filter(model => model.synchronized !== true)
+
+    delete attrs.jobs
+    delete attrs.schedules
     return attrs
   },
   /**
