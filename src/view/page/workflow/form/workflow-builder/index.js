@@ -1,6 +1,5 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-import Collection from 'ampersand-collection'
 import FormView from 'ampersand-form-view'
 import HelpTexts from 'language/help'
 import Modalizer from 'components/modalizer'
@@ -10,9 +9,10 @@ import bootbox from 'bootbox'
 import graphlib from 'graphlib'
 import FormButtons from 'view/buttons'
 import CopyTaskButton from 'view/page/task/buttons/copy'
-import CreateTaskButton from 'view/page/task/buttons/create'
 import TaskForm from 'view/page/task/form'
+import CreateTaskWizard from 'view/page/task/creation-wizard'
 import ExportDialog from 'view/page/task/buttons/export/dialog'
+import uuidv4 from 'uuid'
 
 export default View.extend({
   template: `
@@ -20,8 +20,11 @@ export default View.extend({
       <label class="col-sm-3 control-label" data-hook="label"> Workflow Events </label>
       <div class="col-sm-9">
         <div style="padding-bottom: 15px;" data-hook="buttons">
-          <button data-hook="add-task" title="Add Task" class="btn btn-default">
-            Add Task <i class="fa fa-wrench"></i>
+          <button data-hook="add-task" title="Existent Task" class="btn btn-default">
+            Add Existent Task <i class="fa fa-wrench"></i>
+          </button>
+          <button data-hook="create-task" title="Create Task" class="btn btn-default">
+            Add New Task <i class="fa fa-plus-circle"></i>
           </button>
         </div>
       </div>
@@ -31,42 +34,73 @@ export default View.extend({
   initialize (options) {
     View.prototype.initialize.apply(this,arguments)
 
-    if (options.value) {
-      //clone to new graph
-      this.graph = graphlib.json.read(graphlib.json.write(options.value))
-    } else {
-      this.graph = new graphlib.Graph({
-        directed: true,
-        multigraph: false,
-        compound: false
-      })
-    }
+		const recipe = App.actions.workflow.createRecipe(options.value, {})
+		// store:false avoid merging the state into the app.state
+		const workflow = new App.Models.Workflow.Workflow(recipe, {store: false})
+
+    this.workflow = workflow
+
+    //if (options.value) {
+    //  //clone to new graph
+    //  this.graph = graphlib.json.read(graphlib.json.write(options.value))
+    //} else {
+    //  this.graph = new graphlib.Graph({
+    //    directed: true,
+    //    multigraph: false,
+    //    compound: false
+    //  })
+    //}
+
+    //this.workflowTasks = new App.Models.Task.Collection(options.tasksModels)
+    //this.workflowEvents = new App.Models.Event.Collection(options.eventsModels)
 
     this.on('change:valid change:value', this.reportToParent, this)
   },
   props: {
     create: ['boolean', false, false ],
     name: ['string', false, 'workflow'],
-    //workflow_id: 'string',
-    graph: 'object',
-    workflowTasks: 'collection',
-    workflowEvents: 'collection'
+    workflow: 'state',
+    //graph: 'object',
+    //workflowTasks: 'collection',
+    //workflowEvents: 'collection'
   },
   derived: {
+    graph: {
+      cache: false,
+      deps: ['workflow'],
+      fn () {
+        return this.workflow.graph
+      }
+    },
+    //workflowTasks: {
+    //  cache: false,
+    //  deps: ['workflow'],
+    //  fn () {
+    //    return this.workflow.tasks
+    //  }
+    //},
+    //workflowEvents: {
+    //  cache: false,
+    //  deps: ['workflow'],
+    //  fn () {
+    //    return this.workflow.events
+    //  }
+    //},
     value: {
       cache: false,
-      deps: ['graph'],
+      deps: ['workflow'],
       fn () {
-        return this.graph
+        return this.workflow
       }
     },
     valid: {
       cache: false,
-      deps: ['graph'],
+      deps: ['workflow'],
       fn () {
-        let nodes = this.graph.nodes()
-        let edges = this.graph.edges()
-        return nodes.length > 0 && edges.length > 0
+        const graph = this.workflow.graph
+        let nodes = graph.nodes()
+        let edges = graph.edges()
+        return (nodes.length > 0 && edges.length > 0)
       }
     },
     //graphTasks: {
@@ -103,14 +137,12 @@ export default View.extend({
     //}
   },
   events: {
-    'click [data-hook=add-task]':'onClickAddTask'
+    'click [data-hook=add-task]':'onClickAddTask',
+    'click [data-hook=create-task]':'onClickCreateTask',
   },
   render () {
     this.renderWithTemplate(this)
     this.renderWorkflowGraph()
-
-    const button = new CreateTaskButton()
-    this.renderSubview(button, this.queryByHook('buttons'))
   },
   renderWorkflowGraph () {
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
@@ -126,7 +158,13 @@ export default View.extend({
           this.workflowGraph.updateCytoscape()
         }, 1000)
 
-        this.on('change:graph', workflowGraph.updateCytoscape, workflowGraph)
+        const updateGraph = () => {
+          workflowGraph.updateCytoscape(this.workflow.graph)
+        }
+
+        this.on('change:graph', updateGraph)
+        this.workflow.tasks.on('change', updateGraph)
+
         this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(workflowGraph, 'clear', this.onClearButton)
       })
@@ -154,7 +192,7 @@ export default View.extend({
   clear () {
     var graph = this.graph
     graph.nodes().forEach(node => graph.removeNode(node))
-    this.trigger('change:graph', graph)
+    this.trigger('change:graph')
   },
   onTapNode (event) {
     var node = event.cyTarget.data()
@@ -164,7 +202,7 @@ export default View.extend({
 
     if (/Task$/.test(node.value._type) === true) {
       const id = node.value.id
-      const task = this.workflowTasks.get(id)
+      const task = this.workflow.tasks.get(id)
       const menu = new ContextualMenu({ model: task })
       menu.render()
       menu.el.style.position = 'absolute'
@@ -175,11 +213,7 @@ export default View.extend({
       this.registerSubview(menu)
       this.contextMenu = menu
 
-      // this is a task node
-      menu.on('edit', () => {
-        this.editTask(task)
-      })
-
+      menu.on('edit', () => { this.editTask(task) })
       menu.on('click:remove', () => { this.removeNodeDialog(node) })
     } else {
       this.removeNodeDialog(node)
@@ -199,11 +233,12 @@ export default View.extend({
     })
 
     form.on('submit', data => {
-      if (this.create === true) {
-        task.set(data)
-      } else {
+      if (task.persisted === true) {
         App.actions.task.update(task.id, data)
+      } else {
+        task.set(data)
       }
+      this.updateTaskNode(task)
       modal.hide()
     })
 
@@ -225,40 +260,15 @@ export default View.extend({
       },
       callback: confirm => {
         if (!confirm) { return }
-        this.removeNode(node.id)
+        this.removeNode(node)
       }
     })
-  },
-  removeNode (id) {
-    const graph = this.graph
-    var nodes = [id]
-    var node = graph.node(id)
-
-    // also remove the predecessor and successors event nodes of the task
-    if (!/Event/.test(node._type)) {
-      graph.predecessors(id).forEach(n => nodes.push(n))
-      graph.successors(id).forEach(n => nodes.push(n))
-    }
-
-    for (var i=0; i<nodes.length; i++) {
-      graph.removeNode(nodes[i])
-    }
-
-    this.trigger('change:graph', this.graph)
   },
   onClickAddTask (event) {
     event.preventDefault()
     event.stopPropagation()
 
     const taskSelection = new TaskSelectionModal({ tasks: App.state.tasks })
-
-    //const triggers = new WorkflowEventsSelection({
-    //  currentTasks: this.graphTasks,
-    //  currentEvents: this.graphEvents,
-    //  workflow_id: this.workflow_id,
-    //  label: 'Event',
-    //  name: 'event'
-    //})
 
     const modal = new Modalizer({
       buttons: false,
@@ -272,28 +282,64 @@ export default View.extend({
     })
 
     taskSelection.on('submit', (task) => {
-      this.addTask(task)
+      this.addTaskNode(task)
       modal.hide() // hide and auto-remove
     })
 
     modal.show()
     return false
   },
-  addTask (task) {
+  onClickCreateTask (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const wizard = new CreateTaskWizard({
+      submit: taskData => {
+        this.addTaskNode(taskData)
+      }
+    })
+
+    return false
+  },
+  removeNode (node) {
+    const id = node.id
+    const graph = this.graph
+    const nodes = [ id ]
+
+    // also remove the predecessor and successors event nodes of the task
+    if (!/Event/.test(node._type)) {
+      graph.predecessors(id).forEach(n => nodes.push(n))
+      graph.successors(id).forEach(n => nodes.push(n))
+    }
+
+    for (let i=0; i<nodes.length; i++) {
+      graph.removeNode(nodes[i])
+    }
+
+    this.workflow.tasks.remove(node.id)
+
+    this.trigger('change:graph')
+  },
+  addTaskNode (task) {
+
+    const taskData = (task.isState?task.serialize():task)
+    taskData.id = uuidv4()
+    //taskData.persisted = false
+    const clone = new App.Models.Task.Factory(taskData, { store: false }) 
+
+    this.workflow.tasks.add(clone)
+
     const w = this.graph
-    w.setNode(task.id, task)
+    w.setNode(clone.id, clone)
 
     // force change trigger to redraw
-    this.trigger('change:graph', this.graph)
-
-    this.workflowTasks.add(task)
-
-    //w.setNode(data.emitter.id, data.emitter)
-    //w.setNode(data.emitter_state.id, data.emitter_state)
-    //w.setNode(data.task.id, data.task)
-
-    //w.setEdge(data.emitter.id, data.emitter_state.id)
-    //w.setEdge(data.emitter_state.id, data.task.id)
+    this.trigger('change:graph')
+  },
+  updateTaskNode (task) {
+    const w = this.graph
+    w.setNode(task.id, task)
+    // force change trigger to redraw
+    this.trigger('change:graph')
   },
   reportToParent () {
     if (this.parent) { this.parent.update(this) }
@@ -326,13 +372,11 @@ const TaskSelectionModal = FormView.extend({
   submit () {
     this.beforeSubmit()
     if (!this.valid) { return }
-    let data = this.prepareData(this.data)
-    this.trigger('submit', data)
+    let task = this.prepareData()
+    this.trigger('submit', task)
   },
   prepareData () {
-    const task = this._fieldViews.task.selected()
-    const clone = new App.Models.Task.Factory(task.serialize(), { store: false }) 
-    return clone
+    return this._fieldViews.task.selected()
   }
 })
 

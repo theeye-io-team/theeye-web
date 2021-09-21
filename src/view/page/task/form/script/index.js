@@ -32,10 +32,14 @@ export default TaskFormView.extend({
 
     // multiple only if new, allows to create multiple tasks at once
     let hostsSelection = new SelectView({
-      label: 'Bots *',
-      name: (isNewTask ? 'hosts' : 'host_id'),
-      multiple: isNewTask,
-      tags: isNewTask,
+      //label: (isNewTask ? 'Bots *' : 'Bot *'),
+      //name: (isNewTask ? 'hosts' : 'host_id'),
+      //tags: isNewTask,
+      //multiple: isNewTask,
+      label: 'Bot *',
+      multiple: false,
+      name: 'host_id',
+      tags: false,
       options: App.state.hosts,
       value: this.model.host_id,
       required: true,
@@ -53,22 +57,22 @@ export default TaskFormView.extend({
           runner: '/usr/bin/env bash %script%'
         })
       }
-      this.listenTo(hostsSelection, 'change', () => {
-        if (hostsSelection.value) {
-          let hosts = []
-          hostsSelection.value.forEach(hostId => {
-            hosts.push(App.state.hosts.get(hostId))
-          })
+      //this.listenTo(hostsSelection, 'change', () => {
+      //  if (hostsSelection.value) {
+      //    let hosts = []
+      //    hostsSelection.value.forEach(hostId => {
+      //      hosts.push(App.state.hosts.get(hostId))
+      //    })
 
-          let oss = hosts.filter((host, index, self) => {
-            return self.indexOf(host.os_name) === index;
-          })
+      //    let oss = hosts.filter((host, index, self) => {
+      //      return self.indexOf(host.os_name) === index;
+      //    })
 
-          if (oss.length > 1) {
-            bootbox.alert('BOT\'s with different OS versions has been selected.')
-          }
-        }
-      })
+      //    if (oss.length > 1) {
+      //      bootbox.alert('BOT\'s with different OS versions has been selected.')
+      //    }
+      //  }
+      //})
     }
 
     if (this.isImport) {
@@ -358,11 +362,12 @@ export default TaskFormView.extend({
 
     this.query('form').classList.add('form-horizontal')
 
-    if (this.model.isNew()) {
-      this.addHelpIcon('hosts')
-    } else {
-      this.addHelpIcon('host_id')
-    }
+    //if (this.model.isNew()) {
+    //  this.addHelpIcon('hosts')
+    //} else {
+    //  this.addHelpIcon('host_id')
+    //}
+    this.addHelpIcon('host_id')
 
     if (this.model.isNew()) {
       this.addHelpIcon('copy_task')

@@ -1,6 +1,6 @@
+import FormView from 'ampersand-form-view'
 import AdvancedToggle from 'view/advanced-toggle'
 import LanguajeLabels from 'language/labels'
-import FormView from 'ampersand-form-view'
 import FormButtons from 'view/buttons'
 import SelectView from 'components/select2-view'
 import InputView from 'components/input-view'
@@ -33,13 +33,11 @@ export default FormView.extend({
 
     const workflowBuilder = new WorkflowBuilderView({
       create: isNew,
-      name: 'graph',
-      value: workflow.graph,
-      workflowTasks: workflow.graphTasks,
-      workflowEvents: workflow.graphEvents
-      //workflow_id: workflow.id,
-      //currentTasks: workflow.graphTasks,
-      //currentEvents: workflow.graphEvents
+      value: workflow,
+      //name: 'graph',
+      //value: workflow.graph,
+      //tasksModels: workflow.graphTasks.serialize(),
+      //eventsModels: workflow.graphEvents.serialize()
     })
 
     const initialTaskSelect = new InitialTaskSelectionView({
@@ -55,8 +53,10 @@ export default FormView.extend({
       }
     })
 
-    this.listenTo(workflowBuilder, 'change:graphTasks', () => {
-      initialTaskSelect.options = workflowBuilder.graphTasks
+    this.listenTo(workflowBuilder, 'change:graph', () => {
+      const selected = initialTaskSelect.selected()
+      initialTaskSelect.options = [ ...workflowBuilder.workflow.tasks.models ]
+      initialTaskSelect.setValue( selected?.id )
     })
 
     // backward compatibility.

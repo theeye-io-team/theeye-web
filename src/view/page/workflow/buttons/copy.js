@@ -21,16 +21,19 @@ export default PanelButton.extend({
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
       App.actions.workflow.populate(this.model)
-      const recipe = App.actions.workflow.createRecipe(this.model, {})
+      //const recipe = App.actions.workflow.createRecipe(this.model, {})
 
       // store:false avoid merging the state into the app.state
-      const workflow = new Workflow(recipe, {store: false})
+      //const workflow = new Workflow(recipe, {store: false})
 
       //const workflow = new (State.extend({ extraProperties: 'allow' }))(recipe)
       //workflow.graph = graphlib.json.read(recipe.graph)
       //workflow.tasks = new Collection(recipe.tasks, { store: false })
 
-      const form = new WorkflowFormView({ model: workflow, create: true })
+      const form = new WorkflowFormView({
+        model: this.model,
+        create: true
+      })
 
       const modal = new Modalizer({
         buttons: false,

@@ -20,8 +20,8 @@ import './styles.less'
 
 const docsLink = 'core-concepts/tasks/'
 
-export default function () {
-  const wizard = new TaskCreationWizard()
+export default function (options = {}) {
+  const wizard = new TaskCreationWizard({ submit: options?.submit })
   wizard.render()
   const modal = new Modalizer({
     buttons: false,
@@ -60,6 +60,9 @@ const ImportTaskInputView = FileInputView.extend({
 })
 
 const TaskCreationWizard = View.extend({
+  props: {
+    submit: 'function'
+  },
   template: `
     <div>
       <section data-hook="type-selection-container" class="task-type-selection">
@@ -219,7 +222,12 @@ const TaskCreationWizard = View.extend({
     this.renderSubview(form, this.queryByHook('form-container'))
     this.form = form
     this.listenTo(form, 'submit', data => {
-      App.actions.task.create(data)
+      if (this.submit) {
+        this.submit(data)
+      } else {
+        App.actions.task.create(data)
+      }
+
       this.trigger('submitted')
     })
   },
@@ -229,17 +237,21 @@ const TaskCreationWizard = View.extend({
     this.renderSubview(form, this.queryByHook('form-container'))
     this.form = form
     this.listenTo(form, 'submit', data => {
-      if (task.type === 'script') {
-        App.actions.file.create(App.state.taskForm.file, (err, file) => {
-          data.script_id = file.id
-          delete data.script_name
-          App.actions.task.create(data)
-          this.trigger('submitted')
-        })
+      if (this.submit) {
+        this.submit(data)
       } else {
-        App.actions.task.create(data)
-        this.trigger('submitted')
+        if (task.type === 'script') {
+          App.actions.file.create(App.state.taskForm.file, (err, file) => {
+            data.script_id = file.id
+            delete data.script_name
+            App.actions.task.create(data)
+          })
+        } else {
+          App.actions.task.create(data)
+        }
       }
+
+      this.trigger('submitted')
     })
   },
   remove () {
