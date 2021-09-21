@@ -229,9 +229,8 @@ const Workflow = AppModel.extend({
 
     attrs.graph = graph
 
-    attrs.events = attrs.events.filter(model => model.synchronized !== true)
-    attrs.tasks = attrs.tasks.filter(model => model.synchronized !== true)
-
+    //attrs.events = attrs.events.filter(model => model.synchronized !== true)
+    //attrs.tasks = attrs.tasks.filter(model => model.synchronized !== true)
     delete attrs.jobs
     delete attrs.schedules
     return attrs

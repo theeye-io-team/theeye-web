@@ -146,17 +146,17 @@ export default View.extend({
     }
 
     if (/Task$/.test(node.value._type) === true) {
-      var task = App.state.tasks.get(node.id)
+      const id = node.value.id
+      const task = this.workflow.tasks.get(id)
+      if (this.connectingTask !== undefined) {
+        const taskOrigin = this.connectingTask.task
+        const eventName = this.connectingTask.eventName
 
-      if (this.taskSelected === true) {
-        this.connectTask['task'] = task
-        this.taskSelected = false
-        this.onEventAdded(this.connectTask)
+        this.connectingTask = undefined
+
+        this.connectTasks(taskOrigin, task, eventName)
       } else {
-        var menu = new ContextualMenu({
-          model: task,
-          workflow_events: this.workflowEventsCollection
-        })
+        const menu = new TaskContextualMenu({ model: task })
         menu.render()
         
         menu.el.style.position = 'absolute'
@@ -167,22 +167,14 @@ export default View.extend({
         this.registerSubview(menu)
         this.contextMenu = menu
 
-        // this is a task node
-        menu.on('click:edit', () => {
-          self.stopListening(task, 'change:name')
-          self.listenTo(task, 'change:name', function() {
-            self.trigger('change:graph', self.graph)
-          })
+        menu.on('task:edit', () => {
+          this.editTask(task)
         })
-
-        menu.on('click:remove', () => { this.removeNodeDialog(node) })
-
-        menu.on('click:connect', (action) => {
-          this.connectTask = {
-            emitter: task,
-            emitter_state: action
-          }
-          this.taskSelected = true
+        menu.on('task:remove', () => {
+          this.removeNodeDialog(node)
+        })
+        menu.on('task:connect', (connect) => {
+          this.connectingTask = connect
         })
       }
     } else {
@@ -277,8 +269,10 @@ export default View.extend({
     const graph = this.graph
     const nodes = [ id ]
 
+    const type = (node._type || node.value._type)
+
     // also remove the predecessor and successors event nodes of the task
-    if (!/Event/.test(node._type)) {
+    if (!/Event/.test(type)) {
       graph.predecessors(id).forEach(n => nodes.push(n))
       graph.successors(id).forEach(n => nodes.push(n))
     }
@@ -310,6 +304,19 @@ export default View.extend({
     w.setNode(task.id, task)
     // force change trigger to redraw
     this.trigger('change:graph')
+  },
+  connectTasks (taskOrigin, taskTarget, eventName) {
+    const w = this.graph
+    //w.setNode(data.emitter.id, data.emitter)
+    //w.setNode(data.emitter_state.id, data.emitter_state)
+    //w.setNode(data.task.id, data.task)
+    //w.setEdge(data.emitter.id, data.emitter_state.id)
+    //w.setEdge(data.emitter_state.id, data.task.id)
+
+    w.setEdge(taskOrigin.id, taskTarget.id, eventName)
+
+    // force change trigger
+    this.trigger('change:graph', this.graph)
   },
   reportToParent () {
     if (this.parent) { this.parent.update(this) }
@@ -350,7 +357,7 @@ const TaskSelectionModal = FormView.extend({
   }
 })
 
-const ContextualMenu = View.extend({
+const TaskContextualMenu = View.extend({
   template: `
     <div class="dropdown">
       <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons">
@@ -378,32 +385,30 @@ const ContextualMenu = View.extend({
     this.renderSubview(copyButton, this.queryByHook("menu-buttons"))
   },
   events: {
-    'click [data-hook=success]': 'onConnectTasks',
-    'click [data-hook=failure]': 'onConnectTasks',
+    'click [data-hook=success]': 'onClickConnectTasks',
+    'click [data-hook=failure]': 'onClickConnectTasks',
     'click [data-hook=edit]': 'onClickEdit',
-    'click [data-hook=edit-script]': 'onClickEditScript',
+    //'click [data-hook=edit-script]': 'onClickEditScript',
     'click [data-hook=export]': 'onClickExport',
     'click [data-hook=remove]': 'onClickRemove'
   },
   onClickEdit (event) {
     event.preventDefault()
     event.stopPropagation()
-    this.trigger('edit')
+    this.trigger('task:edit')
     this.remove()
   },
-  onClickEditScript (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    App.actions.file.edit(this.model.script_id)
-
-    this.trigger('click:edit')
-    this.remove()
-  },
+  //onClickEditScript (event) {
+  //  event.preventDefault()
+  //  event.stopPropagation()
+  //  App.actions.file.edit(this.model.script_id)
+  //  this.trigger('script:edit')
+  //  this.remove()
+  //},
   onClickRemove (event) {
     event.preventDefault()
     event.stopPropagation()
-    this.trigger('click:remove')
+    this.trigger('task:remove')
     this.remove()
   },
   onClickExport (event) {
@@ -414,11 +419,11 @@ const ContextualMenu = View.extend({
     dialog.show()
     this.remove()
   },
-  onConnectTasks (event) {
+  onClickConnectTasks (event) {
     event.preventDefault()
     event.stopPropagation()
-    const action = this.events.filter(e => e.name == event.target.dataset.hook)[0]
-    this.trigger('click:connect', action)
+    const eventName = event.target.dataset.hook
+    this.trigger('task:connect', { task: this.model, eventName })
     this.remove()
   }
 })
