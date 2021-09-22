@@ -271,12 +271,6 @@ export default View.extend({
 
     const type = (node._type || node.value._type)
 
-    // also remove the predecessor and successors event nodes of the task
-    if (!/Event/.test(type)) {
-      graph.predecessors(id).forEach(n => nodes.push(n))
-      graph.successors(id).forEach(n => nodes.push(n))
-    }
-
     for (let i=0; i<nodes.length; i++) {
       graph.removeNode(nodes[i])
     }
