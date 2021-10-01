@@ -132,7 +132,7 @@ export default {
       success () {
         App.state.alerts.success('Success', 'Workflow removed')
         App.state.workflows.remove(workflow)
-        unlinkTasks(workflow)
+          unlinkTasks(workflow, keepCopies)
       }
     })
   },
@@ -243,15 +243,21 @@ export default {
   }
 }
 
-const unlinkTasks = (workflow) => {
+const unlinkTasks = (workflow, keepCopies = false) => {
   let graph = workflow.graph
   graph.nodes().forEach(node => {
-    var data = graph.node(node)
+    const data = graph.node(node)
     if (!/Event/.test(data._type)) {
-      var task = App.state.tasks.get(data.id)
-      if (!task) return
-      task.workflow_id = null
-      task.workflow = null
+      const task = App.state.tasks.get(data.id)
+      if (!task) { return }
+
+      let version = workflow.version||0
+      if (version < 2 || keepCopies) {
+        task.workflow_id = null
+        task.workflow = null
+      } else {
+        App.state.tasks.remove(task.id)
+      }
     }
   })
 }

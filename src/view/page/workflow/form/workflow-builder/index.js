@@ -355,12 +355,12 @@ const TaskContextualMenu = View.extend({
   template: `
     <div class="dropdown">
       <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons">
-        <li><a data-hook="success" href="#">On Success</a></li>
-        <li><a data-hook="failure" href="#">On Failure</a></li>
         <li><a data-hook="edit" href="#">Edit Task</a></li>
         <li><a data-hook="edit-script" href="#">Edit Script</a></li>
         <li><a data-hook="remove" href="#">Remove</a></li>
         <li><a data-hook="export" href="#">Export</a></li>
+        <li><a data-hook="success" href="#">On Success</a></li>
+        <li><a data-hook="failure" href="#">On Failure</a></li>
       </ul>
     </div>
   `,
