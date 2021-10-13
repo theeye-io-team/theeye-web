@@ -169,7 +169,22 @@ const ProgressIndicatorView = ProgressBar.extend({
   initialize () {
     ProgressBar.prototype.initialize.apply(this, arguments)
 
-    this.listenToAndRun(this.model, 'change:value', () => {
+    this.listenToAndRun(this.model, 'change:value change:state change:severity', () => {
+      if (this.model.state === 'normal') {
+        this.color = "#50D841"
+      } else switch (this.model.severity) {
+        case "low":
+          this.color = "#FFE400"
+          break;
+        case "high":
+          this.color = "#FF8640"
+          break;
+        case "critical":
+          this.color = "#FF4D4D"
+          break
+        default:
+          break;
+      }
       this.percent = this.model.value
     })
   }
