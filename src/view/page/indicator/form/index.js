@@ -72,6 +72,15 @@ export default DropableForm.extend({
           this.advancedFields.forEach(name => {
             this._fieldViews[name].toggle('visible')
           })
+          if ( this._fieldViews["_type"].value === IndicatorConstants.PROGRESS_TYPE
+            || this._fieldViews["failure_severity"].visible ) 
+          {
+            this._fieldViews["failure_severity"].toggle('visible')
+            // FIXME: Selecting the type "progress" while the advanced fields are
+            //        open will not render the severity selector, instead it will
+            //        render below the advanced toggle only when the advanced
+            //        fields are collapsed.
+          }
         }
       }),
       new InputView({
@@ -130,6 +139,11 @@ export default DropableForm.extend({
         name: 'read_only',
         value: this.model.read_only
       }),
+      new SeveritySelectView({
+        required: false,
+        visible: false,
+        value: this.model.severity.toUpperCase()
+      }),
       new TextareaView({
         label: 'More Info',
         required: false,
@@ -177,6 +191,7 @@ export default DropableForm.extend({
   },
   prepareData (data) {
     const f = Object.assign({}, data)
+    f["severity"] = f["failure_severity"].toLowerCase()
     f.type = f._type.replace('Indicator','').toLowerCase()
 
     if (
