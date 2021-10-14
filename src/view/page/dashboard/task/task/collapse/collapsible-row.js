@@ -6,6 +6,7 @@ import TaskIntegrationButton from 'view/page/task/buttons/integrations'
 import EditTaskButton from 'view/page/task/buttons/edit'
 import CopyTaskButton from 'view/page/task/buttons/copy'
 import DeleteTaskButton from 'view/page/task/buttons/delete'
+import ClearJobsButton from 'view/page/task/buttons/clear-jobs'
 import ExportTaskButton from 'view/page/task/buttons/export'
 import ReviewPendingTaskButton from 'view/page/task/buttons/refresh'
 import CollapsibleRow from 'view/page/dashboard/task/collapsible-row'
@@ -66,6 +67,7 @@ const TaskButtonsView = View.extend({
       <span data-hook="edit-script"> </span>
       <span data-hook="copy-button"> </span>
       <span data-hook="delete-button"> </span>
+      <span data-hook="clear-button"> </span>
       <span data-hook="export-button"> </span>
       <li>
         <button class="btn btn-primary" title="Workflow" data-hook="workflow">
@@ -124,6 +126,9 @@ const TaskButtonsView = View.extend({
 
       var deleteButton = new DeleteTaskButton({ model: this.model })
       this.renderSubview(deleteButton, this.queryByHook('delete-button'))
+
+      var clearButton = new ClearJobsButton({ model: this.model })
+      this.renderSubview(clearButton, this.queryByHook('clear-button'))
     }
 
     this.renderSubview(new ReviewPendingTaskButton({ model: this.model }), this.queryByHook('refresh-button'))
