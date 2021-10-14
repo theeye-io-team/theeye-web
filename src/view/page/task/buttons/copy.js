@@ -29,6 +29,7 @@ export default PanelButton.extend({
             form.focus()
             form.setWithTask(this.model)
             form._fieldViews.name.input.value += ' (copy)'
+            form._fieldViews.triggers.setValue([])
           })
 
           this.listenTo(modal,'hidden',() => {
