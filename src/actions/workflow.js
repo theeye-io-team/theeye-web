@@ -2,7 +2,6 @@ import App from 'ampersand-app'
 import bootbox from 'bootbox'
 import XHR from 'lib/xhr'
 import graphlib from 'graphlib'
-import { Workflow } from 'models/workflow'
 import JobActions from 'actions/job'
 import union from 'lodash/union'
 import uniq from 'lodash/uniq'
@@ -32,15 +31,16 @@ export default {
     })
   },
   update (id, data) {
-    let model = new Workflow(data)
+    let model = new App.Models.Workflow.Workflow(data, { store: false })
     model.id = id
-    model.save({},{
-      success: () => {
+    model.version = 2 // also upgrade version
+    model.save({}, {
+      success () {
         App.state.alerts.success('Success', 'Workflow updated')
 
         // reset workflow state
         const workflow = App.state.workflows.get(id)
-        workflow.set(model.serialize())
+        workflow.set( model.serialize() )
 
         App.actions.workflow.populate(workflow, true)
         workflow.tasks.fetch({
@@ -54,7 +54,7 @@ export default {
         workflow.fetchJobs(true)
         App.actions.scheduler.fetch(workflow)
       },
-      error: (err) => {
+      error (err) {
         logger.error(err)
         bootbox.alert('Something went wrong. Please refresh')
       }
@@ -80,10 +80,10 @@ export default {
     })
   },
   create (data) {
-    let workflow = new Workflow(data)
+    let workflow = new App.Models.Workflow.Workflow(data, { store: false })
     workflow.version = 2 // create only version 2 workflows.
     workflow.save({}, {
-      success: () => {
+      success () {
         App.state.alerts.success('Success', 'Workflow created')
         App.state.workflows.add(workflow)
         this.populate(workflow)
@@ -191,7 +191,6 @@ export default {
       }
     })
   },
-
   createRecipe (workflow) {
     const recipe = workflow.serialize()
     recipe.id = uuidv4()
@@ -233,7 +232,6 @@ export default {
     recipe.graph = graph
     return recipe
   },
-
   migrateGraph (graphData) {
     const cgraph = graphlib.json.read(graphData)
     const ngraph = new graphlib.Graph()
@@ -267,7 +265,6 @@ export default {
 
     return graphlib.json.write(ngraph)
   },
-
   exportRecipe (id) {
     const workflow = App.state.workflows.get(id)
     const recipe = App.actions.workflow.createRecipe(workflow)

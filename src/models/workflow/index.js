@@ -11,9 +11,6 @@ import * as JobConstants from 'constants/job'
 import config from 'config'
 const urlRoot = function () {
   let urlRoot = `${config.supervisor_api_url}/workflows`
-  if (this.version === 2) {
-    urlRoot += `/v2`
-  }
   return urlRoot
 }
 
@@ -46,6 +43,17 @@ const formattedTags = () => {
 }
 
 const Workflow = AppModel.extend({
+  ajaxConfig () {
+    const config = AppModel.prototype.ajaxConfig.apply(this, arguments)
+
+    if (this.version !== 2) {
+      config.headers['Accept-Version'] = '~1'
+    } else {
+      config.headers['Accept-Version'] = App.config.supervisor_api_version
+    }
+
+    return config
+  },
   dataTypes: {
     'graphlib.Graph': {
       set (graph) {

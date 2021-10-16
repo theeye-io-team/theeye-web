@@ -5,7 +5,7 @@ import XHR from 'lib/xhr'
 export default AmpersandModel.extend({
   props: {
     is_loading: ['boolean', false, false],
-    // sync with the API
+    // in sync with the API
     synchronized: ['boolean', false, false]
   },
   dataTypes: {

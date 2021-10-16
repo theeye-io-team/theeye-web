@@ -47,6 +47,7 @@ export default View.extend({
     // migrate to version 2
     if (version !== 2) {
       recipe.graph = App.actions.workflow.migrateGraph(recipe.graph) 
+      recipe.version = 2
     }
 
     // store:false avoid merging the state into the app.state
