@@ -34,14 +34,20 @@ export default View.extend({
   initialize (options) {
     View.prototype.initialize.apply(this,arguments)
 
-    let recipe
+    let recipe, workflow = options.value
+    const version = workflow.version
     if (this.mode === 'edit') {
       // keep the same original ids
-      recipe = options.value.serialize()
+      recipe = workflow.serialize()
     } else {
       // replace ids
-      recipe = App.actions.workflow.createRecipe(options.value)
-    } 
+      recipe = App.actions.workflow.createRecipe(workflow)
+    }
+
+    // migrate to version 2
+    if (version !== 2) {
+      recipe.graph = App.actions.workflow.migrateGraph(recipe.graph) 
+    }
 
     // store:false avoid merging the state into the app.state
     this.workflow = new App.Models.Workflow.Workflow(recipe, { store: false })

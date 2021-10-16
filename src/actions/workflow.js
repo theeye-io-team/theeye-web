@@ -81,7 +81,8 @@ export default {
   },
   create (data) {
     let workflow = new Workflow(data)
-    workflow.save({},{
+    workflow.version = 2 // create only version 2 workflows.
+    workflow.save({}, {
       success: () => {
         App.state.alerts.success('Success', 'Workflow created')
         App.state.workflows.add(workflow)
@@ -132,7 +133,7 @@ export default {
       success () {
         App.state.alerts.success('Success', 'Workflow removed')
         App.state.workflows.remove(workflow)
-          unlinkTasks(workflow, keepCopies)
+        unlinkTasks(workflow, Boolean(workflow.version !== 2))
       }
     })
   },
@@ -231,6 +232,40 @@ export default {
 
     recipe.graph = graph
     return recipe
+  },
+
+  migrateGraph (graphData) {
+    const cgraph = graphlib.json.read(graphData)
+    const ngraph = new graphlib.Graph()
+
+    const eventNodes = []
+    const nodes = cgraph.nodes()
+    for (let id of nodes) {
+      const value = cgraph.node(id)
+
+      if (/Event$/.test(value._type) === false) {
+        ngraph.setNode(id, value)
+      } else {
+        eventNodes.push({ id, value })
+      }
+    }
+
+    for (let node of eventNodes) {
+      const eventName = node.value.name
+      const edges = cgraph.nodeEdges(node.id)
+
+      const connect = []
+      for (let edge of edges) {
+        if (edge.w === node.id) {
+          connect[0] = edge.v
+        } else {
+          connect[1] = edge.w
+        }
+      }
+      ngraph.setEdge(connect[0], connect[1], eventName)
+    }
+
+    return graphlib.json.write(ngraph)
   },
 
   exportRecipe (id) {

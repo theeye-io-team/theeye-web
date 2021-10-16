@@ -9,7 +9,13 @@ import graphlib from 'graphlib'
 import * as JobConstants from 'constants/job'
 
 import config from 'config'
-const urlRoot = `${config.supervisor_api_url}/workflows`
+const urlRoot = function () {
+  let urlRoot = `${config.supervisor_api_url}/workflows`
+  if (this.version === 2) {
+    urlRoot += `/v2`
+  }
+  return urlRoot
+}
 
 const formattedTags = () => {
   return {
@@ -92,7 +98,8 @@ const Workflow = AppModel.extend({
     end_task_id: ['string'],
     current_task_id: 'string',
     graph: ['graphlib.Graph', true],
-    allows_dynamic_settings: ['boolean',false]
+    allows_dynamic_settings: ['boolean',false],
+    version: 'number'
   },
   collections: {
     schedules: ScheduleCollection,

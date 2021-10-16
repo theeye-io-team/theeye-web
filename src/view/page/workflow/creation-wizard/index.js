@@ -13,13 +13,13 @@ const docsLink = 'core-concepts/tasks/tasks_workflows/'
 
 export default function () {
 
-  const workflow = new Workflow({})
+  const workflow = new Workflow({ version: 2 })
   const form = new FormView({ model: workflow, create: true })
 
   const modal = new Modalizer({
     buttons: false,
     title: 'Create Workflow',
-    bodyView:form 
+    bodyView: form 
   })
 
   modal.renderSubview(

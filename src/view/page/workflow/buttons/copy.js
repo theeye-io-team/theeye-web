@@ -33,8 +33,7 @@ export default PanelButton.extend({
       })
 
       form.on('submit', data => {
-        const recipe = App.actions.workflow.createRecipe(workflow)
-        App.actions.workflow.importCreate(recipe)
+        App.actions.workflow.create(data)
         modal.hide()
       })
 
