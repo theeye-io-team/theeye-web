@@ -17,9 +17,10 @@ export default PanelButton.extend({
 
       App.actions.workflow.populate(this.model)
       const form = new FormView({ model: this.model, mode: 'edit' })
+
       const modal = new Modalizer({
         buttons: false,
-        title: `Edit # ${this.model.id}`,
+        title: `Edit # ${this.model.id} - Version ${this.model.version||'Migration'}`,
         bodyView: form
       })
 
