@@ -54,6 +54,7 @@ export default View.extend({
     label: { hook: 'label' }
   },
   props: {
+    isValid: ['boolean', false],
     visible: ['boolean', false, true],
     taskArguments: 'collection',
     name: ['string', false, 'taskArguments'],
@@ -72,6 +73,11 @@ export default View.extend({
     'click [data-hook=add-argument]': 'onClickAddTaskArgument',
     'click [data-hook=copy-arguments]': 'onClickCopyTaskArguments',
     'click [data-hook=export-arguments]': 'exportArgumentsToArgumentsRecipe'
+  },
+  beforeSubmit () {
+    debugger
+    const tasks = this.taskArguments.models.filter(task => task.type === FieldConstants.TYPE_FIXED)
+    this.isValid = tasks.every(task => task.value !== '')
   },
   onClickAddTaskArgument (event) {
     event.preventDefault()
@@ -269,7 +275,7 @@ export default View.extend({
   derived: {
     valid: {
       fn () {
-        return true
+        return this.isValid
       }
     },
     value: {
