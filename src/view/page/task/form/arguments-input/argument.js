@@ -4,6 +4,8 @@ import Modalizer from 'components/modalizer'
 import SelectView from 'ampersand-select-view'
 import * as FIELD from 'constants/field'
 
+import './style.less'
+
 export default View.extend({
   template: `
     <li class="list-group-item">
@@ -11,7 +13,7 @@ export default View.extend({
         <span class="col-xs-1" data-hook="order"></span>
         <span class="col-xs-2" data-hook="type"></span>
         <span class="col-xs-4" data-hook="label"></span>
-        <input class="col-xs-3" data-hook="value" id="value" readonly>
+        <input type="text" class="col-xs-3" data-hook="value" id="value" readonly>
         <span>
           <div class="fright" style="padding-right:8px;">
             <button class="btn btn-default btn-sm" data-hook="edit-script-argument">
@@ -146,6 +148,10 @@ export default View.extend({
     event.stopPropagation()
     if (this.model.type === FIELD.TYPE_FIXED) {
       this.model.set({ value: event.target.value })
+
+      this.model.value === "" ?
+        this.toggleWrong(true) :
+        this.toggleWrong(false)
     }
     if (this.model.masked) {
       event.target.value = event.target.value.replace(/./g, '*')
@@ -153,7 +159,17 @@ export default View.extend({
     return false
   },
   unmaskValue (event) {
+    this.toggleWrong(false)
     if (this.model.masked) { event.target.value = this.model.value }
     return false
+  },
+  toggleWrong (isWrong) {
+    if (isWrong === true) { 
+      this.query("input[type=text]").classList.add("wrong")
+    } else if (isWrong === false) {
+      this.query("input[type=text]").classList.remove("wrong")
+    } else { 
+      this.query("input[type=text]").classList.toggle("wrong")
+    }
   }
 })
