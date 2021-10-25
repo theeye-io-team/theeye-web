@@ -2,6 +2,7 @@ import View from 'ampersand-view'
 import ArgumentForm from './form'
 import Modalizer from 'components/modalizer'
 import SelectView from 'ampersand-select-view'
+import * as FIELD from 'constants/field'
 
 export default View.extend({
   template: `
@@ -10,7 +11,7 @@ export default View.extend({
         <span class="col-xs-1" data-hook="order"></span>
         <span class="col-xs-2" data-hook="type"></span>
         <span class="col-xs-4" data-hook="label"></span>
-        <span class="col-xs-3" data-hook="value"></span>
+        <input class="col-xs-3" data-hook="value" id="lname" name="lname">
         <span>
           <div class="fright" style="padding-right:8px;">
             <button class="btn btn-default btn-sm" data-hook="edit-script-argument">
@@ -27,8 +28,18 @@ export default View.extend({
   bindings: {
     'model.order': { hook: 'order' },
     'model.label': { hook: 'label' },
-    'model.type': { hook: 'type' },
-    'model.value': { hook: 'value' },
+    'model.type': [ { hook: 'type' }, {
+      type: function (el, value) {
+        el.required = (value === FIELD.TYPE_FIXED)
+      },
+      hook: 'value'
+    }],
+    'model.value': {
+      type: function (el, value) {
+        el.value = value;
+      },
+      hook: 'value'
+    },
     'model.masked': {
       type: 'booleanClass',
       name: 'blurry-text',
@@ -38,7 +49,8 @@ export default View.extend({
   events: {
     'click [data-hook=edit-script-argument]':'onClickEditScriptArgument',
     'click [data-hook=remove-script-argument]':'onClickRemoveScriptArgument',
-    'click [data-hook=order]':'onClickOrder'
+    'click [data-hook=order]':'onClickOrder',
+    'blur [data-hook=value]':'onDirectValueChange'
   },
   onClickOrder (event) {
     event.preventDefault()
@@ -120,6 +132,13 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
     this.model.collection.remove(this.model.id)
+    return false
+  },
+  onDirectValueChange (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.model.set({ value: event.target.value })
+    debugger
     return false
   }
 })
