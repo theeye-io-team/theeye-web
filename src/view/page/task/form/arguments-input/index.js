@@ -75,9 +75,11 @@ export default View.extend({
     'click [data-hook=export-arguments]': 'exportArgumentsToArgumentsRecipe'
   },
   beforeSubmit () {
-    debugger
     const tasks = this.taskArguments.models.filter(task => task.type === FieldConstants.TYPE_FIXED)
     this.isValid = tasks.every(task => task.value !== '')
+    if (!this.isValid) {
+      bootbox.alert('Please define values for every fixed argument')
+    }
   },
   onClickAddTaskArgument (event) {
     event.preventDefault()
@@ -273,6 +275,8 @@ export default View.extend({
     this.taskArguments.reset(value)
   },
   derived: {
+    cache: false,
+    deps: ['isValid'],
     valid: {
       fn () {
         return this.isValid
