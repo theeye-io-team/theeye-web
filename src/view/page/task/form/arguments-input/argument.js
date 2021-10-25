@@ -11,7 +11,7 @@ export default View.extend({
         <span class="col-xs-1" data-hook="order"></span>
         <span class="col-xs-2" data-hook="type"></span>
         <span class="col-xs-4" data-hook="label"></span>
-        <input class="col-xs-3" data-hook="value" id="lname" name="lname">
+        <input class="col-xs-3" data-hook="value" id="value" readonly>
         <span>
           <div class="fright" style="padding-right:8px;">
             <button class="btn btn-default btn-sm" data-hook="edit-script-argument">
@@ -30,7 +30,10 @@ export default View.extend({
     'model.label': { hook: 'label' },
     'model.type': [ { hook: 'type' }, {
       type: function (el, value) {
-        el.required = (value === FIELD.TYPE_FIXED)
+        if (value === FIELD.TYPE_FIXED) {
+          el.required = true;
+          el.removeAttribute('readonly')
+        }
       },
       hook: 'value'
     }],
@@ -41,8 +44,11 @@ export default View.extend({
       hook: 'value'
     },
     'model.masked': {
-      type: 'booleanClass',
-      name: 'blurry-text',
+      type: function (el, value) {
+        if (value === true) {
+          el.value = el.value.replace(/./g, '*')
+        }
+      },
       hook: 'value'
     }
   },
@@ -50,7 +56,8 @@ export default View.extend({
     'click [data-hook=edit-script-argument]':'onClickEditScriptArgument',
     'click [data-hook=remove-script-argument]':'onClickRemoveScriptArgument',
     'click [data-hook=order]':'onClickOrder',
-    'blur [data-hook=value]':'onDirectValueChange'
+    'blur [data-hook=value]':'onDirectValueChange',
+    'focus [data-hook=value]': 'unmaskValue'
   },
   onClickOrder (event) {
     event.preventDefault()
@@ -137,8 +144,16 @@ export default View.extend({
   onDirectValueChange (event) {
     event.preventDefault()
     event.stopPropagation()
-    this.model.set({ value: event.target.value })
-    debugger
+    if (this.model.type === FIELD.TYPE_FIXED) {
+      this.model.set({ value: event.target.value })
+    }
+    if (this.model.masked) {
+      event.target.value = event.target.value.replace(/./g, '*')
+    }
+    return false
+  },
+  unmaskValue (event) {
+    if (this.model.masked) { event.target.value = this.model.value }
     return false
   }
 })
