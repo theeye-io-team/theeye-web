@@ -6,7 +6,7 @@ import config from 'config'
 import { Model as Customer } from 'models/customer'
 
 const urlRoot = function () {
-  return `${config.supervisor_api_url}/${App.state.session.customer.name}/tag`
+  return `${config.supervisor_api_url}/tag`
 }
 
 const Model = AppModel.extend({
