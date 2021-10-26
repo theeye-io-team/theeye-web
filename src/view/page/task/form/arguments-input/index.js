@@ -275,9 +275,9 @@ export default View.extend({
     this.taskArguments.reset(value)
   },
   derived: {
-    cache: false,
-    deps: ['isValid'],
     valid: {
+      cache: false,
+      deps: ['isValid'],
       fn () {
         return this.isValid
       }
