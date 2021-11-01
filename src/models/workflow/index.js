@@ -1,4 +1,5 @@
 import App from 'ampersand-app'
+import XHR from 'lib/xhr'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import { Collection as ScheduleCollection } from 'models/schedule'
@@ -237,20 +238,16 @@ const Workflow = AppModel.extend({
         return resolve()
       }
 
-      this.jobs.fetch({
-        set: false,
-        data: {
-          where: {
-            workflow_id: this.id
-          }
-        },
-        success: (collection, jobs, options) => {
+      XHR.send({
+        method: 'GET',
+        url: `${App.config.supervisor_api_url}/workflows/${this.id}/job`,
+        done: (jobs) => {
           this.jobsAlreadyFetched = true
           const groups = groupJobs(jobs)
           this.jobs.reset(groups)
           resolve()
         },
-        error (arg1) {
+        fail (err, xhr) {
           reject( new Error(arg1) )
         }
       })

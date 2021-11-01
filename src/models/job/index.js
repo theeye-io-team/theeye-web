@@ -594,20 +594,6 @@ const WorkflowJob = BaseJob.extend({
     return this.current_job.requiresInteraction() 
   },
   derived: {
-    parsedInput: {
-      cache: false,
-      deps: ['first_job'],
-      fn () {
-        return this.first_job.parsedInput
-      }
-    },
-    parsedOutput: {
-      cache: false,
-      deps: ['current_job'],
-      fn () {
-        return this.current_job.parsedOutput
-      }
-    },
     first_job: {
       deps: ['jobsLength'],
       fn () {
@@ -632,11 +618,22 @@ const WorkflowJob = BaseJob.extend({
 
         return this.jobs.at(this.jobs.length - 1)
       }
-    }
+    },
+    parsedInput: {
+      cache: false,
+      deps: ['first_job.parsedInput'],
+      fn () {
+        return this.first_job.parsedInput
+      }
+    },
+    parsedOutput: {
+      cache: false,
+      deps: ['current_job'],
+      fn () {
+        return this.current_job.parsedOutput
+      }
+    },
   }
-  // getPreviousJob () {
-  //  return this.jobs.models[ this.jobs.length - 2 ]
-  // }
 })
 
 export const Approval = ApprovalJob
