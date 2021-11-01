@@ -34,15 +34,10 @@ export default View.extend({
     this.renderWithTemplate(this)
 
     for (let arg of this.taskArgs) {
-      if (typeof(arg.renderValue) == "object") {
-        arg.renderValue = JSON.stringify(arg.renderValue)
-      }
+      const renderValue = getArgRenderValue(arg)
+      const masked = (arg.type === FieldsConstants.TYPE_FIXED)
 
-      if (arg.type === FieldsConstants.TYPE_FIXED) {
-        arg.masked = true
-      }
-
-      let argRowView = new ArgRow(arg)
+      const argRowView = new ArgRow({ renderValue, masked, label: arg.label })
       this.renderSubview(argRowView, this.queryByHook('args-rows-container'))
     }
   },
@@ -54,6 +49,26 @@ export default View.extend({
     }
   }
 })
+
+const getArgRenderValue = (arg) => {
+  let renderValue, type = arg.type
+
+  if (type === 'date') {
+    if (Array.isArray(arg.value) && arg.value.length === 1) {
+      return arg.value?.toString()
+    }
+  }
+
+  if (type === 'file') {
+    return arg.value?.name
+  }
+
+  if (typeof(arg.value) == "object") {
+    return JSON.stringify(arg.value)
+  }
+
+  return arg.value
+}
 
 const ArgRow = View.extend({
   template: `

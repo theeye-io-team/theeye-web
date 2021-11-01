@@ -10,29 +10,6 @@ export const BaseExec = State.extend({
   props: {
     model: 'state'
   },
-  parseArgs (args) {
-    if (args.length > 0) {
-      args.forEach(function (arg) {
-        switch (arg.type) {
-          case 'date':
-            if (Array.isArray(arg.value) && arg.value.length === 1) {
-              arg.value = arg.value[0]
-              arg.renderValue = arg.value.toString()
-            }
-            break
-          case 'file':
-            arg.renderValue = arg.value?.name
-            arg.value = arg.value?.dataUrl
-            break
-          default:
-            arg.renderValue = arg.value
-            break
-        }
-      })
-    }
-
-    return args
-  },
   getDynamicArguments (next) {
     if (this.model.hasDynamicArguments) {
       const form = new DynamicForm({
@@ -106,7 +83,7 @@ export const BaseExec = State.extend({
   _confirmExecution (taskArgs) {
     let confirmView = new ConfirmExecution({
       name: this.model.name,
-      taskArgs: this.parseArgs(taskArgs)
+      taskArgs
     })
 
     const modal = new Modalizer({
@@ -123,7 +100,7 @@ export const BaseExec = State.extend({
 
     this.listenTo(modal, 'confirm', () => {
       modal.hide()
-      App.actions.job.createFromTask(this.model, taskArgs)
+      App.actions.job.create(this.model, taskArgs)
     })
 
     modal.show()
@@ -131,7 +108,7 @@ export const BaseExec = State.extend({
   _restartExecution (taskArgs) {
     let confirmView = new ConfirmExecution({
       name: this.model.name,
-      taskArgs: this.parseArgs(taskArgs)
+      taskArgs
     })
 
     const modal = new Modalizer({

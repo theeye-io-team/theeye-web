@@ -5,11 +5,12 @@ export default {
   api_url: 'http://localhost:6080/api',
   api_v3_url: 'http://localhost:6080/api',
   supervisor_api_url: 'http://127.0.0.1:60080',
+  supervisor_api_version: '~2',
   docs: 'https://documentation.theeye.io',
   request_timeout: 30000,
   landing_page_url: 'https://theeye.io',
   files: {
-    max_upload_size: 750
+    max_upload_size: 5120
   },
   session: {
     refresh_interval: 1000 * 60 * 30

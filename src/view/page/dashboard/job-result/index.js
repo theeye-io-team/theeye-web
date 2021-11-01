@@ -7,6 +7,7 @@ import State from 'ampersand-state'
 import Collection from 'ampersand-collection'
 import Modalizer from 'components/modalizer'
 import JsonViewer from 'components/json-viewer'
+import DownloadButton from 'view/buttons/download'
 
 import './styles.less'
 
@@ -66,32 +67,35 @@ const ScriptJobResult = View.extend({
   template: `
     <div class="result script-result">
       <h2>Script execution log</h2>
-      <table class="table">
+      <table>
         <thead> </thead>
         <tbody>
           <tr>
-            <td>Output Code</td>
+            <th>Output Code</th>
             <td><span data-hook="code"></span></td>
           </tr>
           <tr>
-            <td>Killed</td>
+            <th>Killed</th>
             <td>
               <span class="fa" data-hook="killed"></span>
             </td>
           </tr>
           <tr>
-            <td>Last Line</td>
+            <th>Last Line</th>
             <td>
               <div class="output">
-                <pre data-hook="lastline"></pre>
+                <span data-hook="lastline"></span>
               </div>
             </td>
           </tr>
           <tr>
-            <td>Log</td>
+            <th>Log</th>
             <td>
-              <div class="output">
-                <pre data-hook="log"></pre>
+              <div>
+                <a data-hook="formatter" href="#" class="fa fa-align-left"></a>
+              </div>
+              <div data-hook="formatter-log" class="output">
+                <span data-hook="log"></span>
               </div>
             </td>
           </tr>
@@ -99,6 +103,27 @@ const ScriptJobResult = View.extend({
       </table>
     </div>
   `,
+  events: {
+    'click [data-hook=formatter]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+
+      const container = this.queryByHook('formatter-log')
+
+      let innerElement = container.querySelector('span')
+      let newChild
+      if (innerElement !== null) {
+        newChild = document.createElement('pre')
+      } else {
+        innerElement = container.querySelector('pre')
+        newChild = document.createElement('span')
+      }
+
+      newChild.dataset.hook = 'log'
+      newChild.innerHTML = this.html_log
+      container.replaceChild(newChild, innerElement)
+    }
+  },
   bindings: {
     'result.code': { hook:'code' },
     'result.lastline': { hook: 'lastline' },
@@ -120,7 +145,6 @@ const ScriptJobResult = View.extend({
       fn () {
         if (!this.result||!this.result.log) { return '' }
         let text = this.result.log
-        //let node = document.createTextNode(this.result.log)
         let converter = new ansi2html()
         return converter.toHtml(escapeHtml(text))
       }
@@ -138,7 +162,7 @@ const ScriptJobResult = View.extend({
 
 const ScraperJobResult = View.extend({
   props: {
-    result: 'state',
+    result: 'state'
   },
   template: `
     <div class="result scraper-result">
@@ -149,7 +173,7 @@ const ScraperJobResult = View.extend({
           <tr><td>Message</td><td><i data-hook="message"></i></td></tr>
           <tr><td>Status Code</td><td><i data-hook="status_code"></i></td></tr>
           <tr><td>Headers</td><td data-hook="headers"></td></tr>
-          <tr><td>Body</td><td><div class="output"><pre data-hook="body"></pre></div></td></tr>
+          <tr><td>Body</td><td><div class="output"><span data-hook="body"></span></div></td></tr>
         </tbody>
       </table>
     </div>
@@ -172,7 +196,7 @@ const ScraperJobResult = View.extend({
     }
   },
   initialize () {
-    View.prototype.initialize.apply(this,arguments)
+    View.prototype.initialize.apply(this, arguments)
 
     this.collection = new Collection(this.result.headers, { model: Header })
 
@@ -265,6 +289,7 @@ const BaseJobView = View.extend({
             <i class="fa fa-hourglass-end"></i>
             <span data-hook="lastupdate"></span>
           </p>
+          <a href="#" data-hook="fetch">Update <i class="fa fa-refresh"></i></a>
           <div>
             <i class="fa fa-sign-in"></i> Input
             <div data-hook="input"></div>
@@ -311,58 +336,6 @@ const BaseJobView = View.extend({
     observers: { hook: 'observers' }
   },
   derived: {
-    output: {
-      deps: ['job.output'],
-      fn () {
-        let output = this.job.output
-        if (!output) { return '' }
-        if (Array.isArray(output)) {
-          let parsed = []
-          output.forEach(item => {
-            try {
-              parsed.push( JSON.parse(item) )
-            } catch (e) {
-              parsed.push(item)
-            }
-          })
-          return parsed
-        } else {
-          return output
-        }
-      }
-    },
-    components: {
-      deps: ['job.components'],
-      fn () {
-        return this.job.result.components || ''
-      }
-    },
-    next: {
-      deps: ['job.next'],
-      fn () {
-        return this.job.result.next || ''
-      }
-    },
-    input: {
-      deps: ['job.task_arguments_values', 'job.task.task_arguments'],
-      fn () {
-        let input = Object.assign({}, this.job.task_arguments_values)
-        if (
-          !input ||
-          (Array.isArray(input) && input.length === 0)
-        ) {
-          return ''
-        }
-
-        this.job.task.task_arguments.forEach(arg => {
-          if (arg.masked === true) {
-            input[arg.order] = '*******'
-          }
-        })
-
-        return input
-      }
-    },
     lastupdate: {
       deps: ['job.last_update'],
       fn () {
@@ -377,11 +350,17 @@ const BaseJobView = View.extend({
     }
   },
   events: {
-    'click a[data-hook=moreinfo-toggle]':'onClickToggleMoreInfo'
+    'click a[data-hook=moreinfo-toggle]':'onClickToggleMoreInfo',
+    'click a[data-hook=fetch]':'onClickFetch'
+  },
+  onClickFetch (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    App.actions.job.fetch(this.job.id)
   },
   onClickToggleMoreInfo (event) {
     this.toggle('moreinfo_toggle')
-    //this.query('moreinfo-container').
   },
   render () {
     this.renderWithTemplate(this)
@@ -391,10 +370,22 @@ const BaseJobView = View.extend({
     }
 
     this.renderResultView()
-    this.renderJsonView({ json: this.output, el: this.queryByHook('output') })
-    this.renderJsonView({ json: this.input, el: this.queryByHook('input') })
-    this.renderJsonView({ json: this.components, el: this.queryByHook('components') })
-    this.renderJsonView({ json: this.next, el: this.queryByHook('next') })
+    const inputView = new TableView({ rows: this.job.parsedInput })
+    this.renderSubview(inputView, this.queryByHook('input'))
+    this.listenTo(this.job,'change:parsedInput',() => {
+      inputView.rows = this.job.parsedInput
+    })
+
+    const outputView = new TableView({ rows: this.job.parsedOutput })
+    this.renderSubview(outputView, this.queryByHook('output'))
+    this.listenTo(this.job,'change:parsedOutput',() => {
+      outputView.rows = this.job.parsedOutput
+    })
+
+    //this.renderSubview(new JsonViewer({ json: this.output }), this.queryByHook('output'))
+
+    this.renderSubview(new JsonViewer({ json: this.job.parsedComponents }), this.queryByHook('components'))
+    this.renderSubview(new JsonViewer({ json: this.job.parsedNext }), this.queryByHook('next'))
   },
   renderResultView () {
     const type = this.job._type
@@ -408,10 +399,114 @@ const BaseJobView = View.extend({
       this.queryByHook('moreinfo-container')
     )
   },
-  renderJsonView (opts) {
-    let { json, el } = opts
-    let view = new JsonViewer({ json })
-    this.renderSubview(view, el)
+})
+
+const RowState = State.extend({
+  props: {
+    key: 'string',
+    value: 'string',
+    id: 'number',
+    type: 'string'
+  }
+})
+
+const TableView = View.extend({
+  props: {
+    rows: 'array'
+  },
+  template: `
+    <div class="table-component">
+      <table></table>
+    </div>
+  `,
+  initialize () {
+    View.prototype.initialize.apply(this, arguments)
+    this.collection = new Collection()
+    this.on('change:rows', this.updateState)
+    this.updateState()
+  },
+  updateState () {
+    this.collection.reset([])
+    if (this.rows === undefined) {
+      return
+    }
+
+    for (let index = 0; index < this.rows.length; index++) {
+      const row = this.rows[index]
+      const id = (index+1)
+
+      const label = (row?.label !== undefined) ? row?.label : String(id)
+      const value = (row?.value !== undefined) ? row?.value : JSON.stringify(row)
+
+      // FIXME: Should the output value be set to an object containing the key "value",
+      //        the table row will only display the value for said key, instead of the 
+      //        entire object. A better way to check for the main value is needed.
+
+      const data = {
+        value,
+        id,
+        key: label,
+        type: row?.type
+      }
+      this.collection.add( new RowState(data) )
+    }
+  },
+  render () {
+    this.renderWithTemplate()
+
+    this.renderCollection(
+      this.collection,
+      (specs) => {
+        const type = specs.model.type
+        if (type === 'file') {
+          return new TableRowFile(specs)
+        } else {
+          return new TableRowText(specs)
+        }
+      },
+      this.query('table')
+    )
+  }
+})
+
+const TableRowFile = View.extend({
+  template: `
+    <tr>
+      <th data-hook="key"></th>
+      <td data-hook="value"></td>
+    </tr>
+  `,
+  bindings: {
+    'model.key': {
+      type: 'text',
+      hook: 'key'
+    }
+  },
+  render () {
+    this.renderWithTemplate()
+    if (this.model.value) {
+      const btn = new DownloadButton({ blob: this.model.value })
+      this.renderSubview(btn, this.queryByHook('value'))
+    }
+  }
+})
+
+const TableRowText = View.extend({
+  template: `
+    <tr>
+      <th data-hook="key"></th>
+      <td data-hook="value"></td>
+    </tr>
+  `,
+  bindings: {
+    'model.key': {
+      type: 'text',
+      hook: 'key'
+    },
+    'model.value': {
+      type: 'text',
+      hook: 'value'
+    }
   }
 })
 

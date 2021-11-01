@@ -69,7 +69,7 @@ export default InputView.extend({
    * Load an image, validate size and dimension and generate preview
    *
    */
-  _loadImage (file) {
+  _loadFile (file) {
     const self = this
 
     let allowPreview = /image\/(?:png|jpeg|webp|gif|bmp|ico)/.test(file.type)
@@ -87,15 +87,6 @@ export default InputView.extend({
       if (allowPreview === true) {
         var image = new Image()
         image.onload = function () {
-          // 'this' is the current image being loaded
-          //if (self.maxImageWidth || self.maxImageHeight) {
-          //  if (this.width > self.maxImageWidth || this.height > self.maxImageHeight) {
-          //    bootbox.alert(`La imágen no puede tener mas de ${self.maxImageWidth} x ${self.maxImageHeight}`)
-          //    self.clearInput()
-          //    return
-          //  }
-          //}
-          // this will trigger a change on this FilePreview view
           self.inputValue = file
         }
 
@@ -115,7 +106,7 @@ export default InputView.extend({
     const input = this.input
     if (input.files && input.files[0]) {
       var file = input.files[0]
-      this._loadImage(file)
+      this._loadFile(file)
     }
   },
   remove () {

@@ -3,10 +3,11 @@ import View from 'ampersand-view'
 export default View.extend({
   props: {
     blob: 'string',
-    text: ['string', true, 'Download file']
+    text: ['string', true, 'Download file'],
+    download: 'string'
   },
   template: `
-    <a href="" download="file" class="btn btn-primary" target="_blank">
+    <a href="" download="" class="btn btn-primary" target="_blank">
       <i class="fa fa-download"></i>
       <span data-hook="text"></span>
     </a>
@@ -19,6 +20,11 @@ export default View.extend({
       selector: 'a',
       type: 'attribute',
       name: 'href'
+    },
+    download: {
+      selector: 'a',
+      type: 'attribute',
+      name: 'download'
     },
     text: {
       type: 'text',

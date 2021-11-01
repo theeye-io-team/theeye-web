@@ -13,6 +13,7 @@
  * @property {String} options.responseType default to 'json'
  * @property {Boolean} options.withCredentials default to 'false'
  * @property {Mixed} options.jsonData the json request body. also set the header "Content-Type: application/json;charset=UTF-8"
+ * @property {FormData} options.formData multipart-form-data
  * @property {Function} options.done success callback
  * @property {Function} options.fail failure callback
  * @property {Function} options.onload assign onload event to the xhr
@@ -60,11 +61,12 @@ XHR.send = (options, callback) => {
   }
 
   const onerrorFn = (ev) => {
-    var error = new Error(ev.description)
-    error.xhr = xhr
+    const err = new Error(ev.description)
+    err.xhr = xhr
     debug('request error %s', xhr.status)
-    options.fail ? options.fail(error, xhr) : null
-    callback(error, xhr, xhr.response)
+    options.fail ? options.fail(err, xhr) : null
+    callback(err, xhr, xhr.response)
+    XHR.handleError(xhr, options)
   }
 
   const progressFn = (ev) => { }
@@ -134,4 +136,9 @@ XHR.handleError = (xhr, options) => {
   } else if (xhr.status >= 500) {
     XHR.trigger('server_error', args)
   }
+
+  const err = new Error('XHR Error')
+  err.xhr = xhr
+  err.options = options
+  throw err
 }

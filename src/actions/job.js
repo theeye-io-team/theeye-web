@@ -15,13 +15,12 @@ export default {
   /**
    *
    * @summary this is being updated via socket event
-   * @param {Object} props job model properties
    * @param {Object} topicEvent
    *
    */
-  applyStateUpdate (props, topicEvent) {
+  applyStateUpdate (topicEvent) {
     try {
-      const job = addJobToState(props)
+      const job = addJobToState(topicEvent.model)
 
       /**
        * @summary check if job is on hold and requires intervention of the current user
@@ -38,6 +37,11 @@ export default {
     } catch (e) {
       console.error(e)
     }
+  },
+  fetch (id) {
+    const job = App.state.jobs.get(id)
+    if (!job) { return }
+    job.fetch()
   },
   cancel (job) {
     job.set('lifecycle', LifecycleConstants.CANCELED)
@@ -94,14 +98,8 @@ export default {
       }
     })
   },
-  /**
-   *
-   *
-   *
-   */
-  createFromTask (task, args) {
+  create (task, args) {
     const values = parseArgumentsValues(task, args)
-
     if (!task.workflow_id) {
       logger.debug('creating new job with task %o', task)
       createSingleTaskJob(task, values, (err, job) => { })
@@ -397,7 +395,7 @@ const parseArgumentsValues = (task, args) => {
 
   // new legacy behaviour
   if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_LEGACY) {
-    return args.map(arg => arg.value||"") // API behaviour
+    return args.map(arg => getValue(arg)) // API behaviour
   }
 
   if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_JSON) {
@@ -408,6 +406,16 @@ const parseArgumentsValues = (task, args) => {
   return mapAsString(args)
 }
 
+const getValue = (arg) => {
+  if (arg.type === 'file') {
+    return arg.value?.dataUrl
+  }
+  if (arg.type === 'date') {
+    return (Array.isArray(arg.value) && arg.value[0])
+  }
+  return (arg.value || '')
+}
+
 //
 // convert each argument into a JSON string
 //
@@ -415,9 +423,9 @@ const mapAsJSON = (args) => {
   return args.map(arg => {
     let value
     if (arg.type === 'json') {
-      value = convertToObject(arg.value)
+      value = convertToObject(getValue(arg))
     } else {
-      value = arg.value
+      value = getValue(arg)
     }
 
     if (value === null) {
@@ -449,7 +457,7 @@ const convertToObject = (value) => {
 //
 const mapAsString = (args) => {
   return args.map(arg => {
-    let value = convertToString(arg.value)
+    let value = convertToString(getValue(arg))
     if (value === "") {
       if (arg.hasOwnProperty('default')) {
         return arg.default

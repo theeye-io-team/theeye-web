@@ -6,6 +6,7 @@ export default State.extend({
     name: 'string',
     size: 'number',
     type: 'string',
-    dataUrl: 'string'
+    dataUrl: 'string',
+    blob: 'object'
 	}
 })

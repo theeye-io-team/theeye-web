@@ -274,7 +274,8 @@ export const ExecOnHoldJob = BaseExec.extend({
         })
 
         modal.hide()
-        next(this.parseArgs(taskArgs))
+        //next(this.parseArgs(taskArgs))
+        next(taskArgs)
       })
     })
 

@@ -1,5 +1,29 @@
-
 .job-result-component {
+
+  td {
+    vertical-align: top;
+  }
+
+  .table-component {
+    padding: 10px 10px 10px 25px;
+    table {
+      width: 100%;
+      
+      th {
+        width: 20%;
+      }
+
+      & th, td {
+        border: 1px solid #ddd;
+        padding: 0.5ch;
+        word-break: break-all;
+      }
+      th {
+        max-width: fit-content;
+      }
+      border-collapse: collapse;
+    }
+  }
 
   .text-block {
     padding: 0;
@@ -13,18 +37,14 @@
     overflow-y: scroll;
     max-height: 600px;
 
-    table {
-      td { vertical-align: top; }
-    }
-
     h2 {
       margin: 20px 0 20px 0;
     }
 
     .output {
-      padding: 0;
+      span, pre {
+        padding: 0;
 
-      pre {
         background-color: rgba(0,0,0,1);
         border-radius: 3px;
         font-size: 12px;
@@ -35,6 +55,10 @@
         border: none;
       }
     }
+
+    table {
+      th { width: 150px; }
+    }
   }
 
   .moreinfo-container {
@@ -44,6 +68,14 @@
 
     a.moreinfo {
       cursor: pointer;
+    }
+  }
+
+  [data-hook=log-container] {
+    .table { 
+      td {
+        width: 100px;
+      }
     }
   }
 }

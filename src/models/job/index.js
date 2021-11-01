@@ -8,13 +8,11 @@ import * as JobConstants from 'constants/job'
 import * as TaskConstants from 'constants/task'
 import { Model as User } from 'models/user'
 
-import config from 'config'
-
 const urlRoot = function (version) {
   if (version === 'v2') {
-    return `${config.supervisor_api_url}/job`
+    return `${App.config.supervisor_api_url}/job`
   } else {
-    return `${config.supervisor_api_url}/${App.state.session.customer.name}/job`
+    return `${App.config.supervisor_api_url}/${App.state.session.customer.name}/job`
   }
 }
 
@@ -151,6 +149,70 @@ const BaseJob = AppModel.extend({
     return false
   },
   derived: {
+    parsedInput: {
+      deps: ['task_arguments_values', 'task.task_arguments'],
+      fn () {
+        const values = this.task_arguments_values
+        if (values === undefined) { return undefined }
+
+        if (!Array.isArray(values)) {
+          return []
+        }
+
+        const input = [].concat(values)
+        if (input.length === 0) { return input }
+
+        for (let arg of this.task.task_arguments.models) {
+          let value = input[arg.order]
+          input[arg.order] = {
+            label: arg.label,
+            type: arg.type,
+            value,
+          }
+
+          if (arg.masked === true) {
+            input[arg.order].value = '*******'
+          }
+        }
+
+        return input
+      }
+    },
+    parsedOutput: {
+      deps: ['output'],
+      fn () {
+        let parsed = [], output = this.output
+
+        if (output === undefined) { return undefined }
+
+        if (!output) { return [] }
+
+        if (!Array.isArray(output)) {
+          output = [ output ]
+        }
+
+        for (let item of output) {
+          try {
+            parsed.push( JSON.parse(item) )
+          } catch (e) {
+            parsed.push(item)
+          }
+        }
+        return parsed
+      }
+    },
+    parsedComponents: {
+      deps: ['components'],
+      fn () {
+        return this.result?.components||{}
+      }
+    },
+    parsedNext: {
+      deps: ['next'],
+      fn () {
+        return this.result?.next||{}
+      }
+    },
     inProgress: {
       deps: ['lifecycle'],
       fn () {
@@ -532,6 +594,20 @@ const WorkflowJob = BaseJob.extend({
     return this.current_job.requiresInteraction() 
   },
   derived: {
+    parsedInput: {
+      cache: false,
+      deps: ['first_job'],
+      fn () {
+        return this.first_job.parsedInput
+      }
+    },
+    parsedOutput: {
+      cache: false,
+      deps: ['current_job'],
+      fn () {
+        return this.current_job.parsedOutput
+      }
+    },
     first_job: {
       deps: ['jobsLength'],
       fn () {
