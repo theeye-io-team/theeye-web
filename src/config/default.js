@@ -9,9 +9,9 @@ export default {
   docs: 'https://documentation.theeye.io',
   request_timeout: 30000,
   landing_page_url: 'https://theeye.io',
-  files: {
-    max_upload_size: 5120
-  },
+  //files: {
+  //  max_upload_size: 5120
+  //},
   session: {
     refresh_interval: 1000 * 60 * 30
   },

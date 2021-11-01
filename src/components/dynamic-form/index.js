@@ -255,7 +255,7 @@ export default DropableForm.extend({
       name: spec.order.toString(),
       value: new MediaFileModel(),
       required: spec.required,
-      maxFileSize: App.config.files.max_upload_size
+      maxFileSize: spec.sizemax // App.config.files.max_upload_size
     })
   },
   buildOptionsField (spec) {
