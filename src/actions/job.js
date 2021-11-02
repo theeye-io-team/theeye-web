@@ -489,7 +489,7 @@ const convertToString = (value) => {
 const handleJobCompletedEvent = (job, topicEvent) => {
 
   if (!LifecycleConstants.isCompleted(job.lifecycle)) { return }
-  if (job.task.show_result !== true) { return }
+  if (job.show_result !== true) { return }
 
   const session = App.state.session
   if (job.isAssigned()) {
@@ -505,28 +505,25 @@ const handleJobCompletedEvent = (job, topicEvent) => {
    * job.output is an array of arguments
    *
    */
-  let popupContent
-  // search on output for backwards compatibility
-  const output = job.output.map(arg => {
-    try {
-      return JSON.parse(arg)
-    } catch (e) {
-      logger.error(e.message)
-      return arg
-    }
-  })
-
-  const popup = output.find(out => out && out.popup_component)
-  if (popup) {
-    popupContent = popup.popup_component
-  }
+  //let popupContent
+  //if (job.output) {
+  //  // search on output for backwards compatibility
+  //  const output = job.output.map(arg => {
+  //    try {
+  //      return JSON.parse(arg)
+  //    } catch (e) {
+  //      logger.error(e.message)
+  //      return arg
+  //    }
+  //  })
+  //  const popup = output.find(out => out && out.popup_component)
+  //  if (popup) {
+  //    popupContent = popup.popup_component
+  //  }
+  //}
 
   // search on result compoment
-  if (job.result.components && job.result.components.popup) {
-    popupContent = job.result.components.popup
-  }
-
-  if (popupContent) {
-    App.actions.popup.show(popupContent, `Message from ${job.name}`)
+  if (job.components?.popup) {
+    App.actions.popup.show(job.components.popup, `Message from ${job.name}`)
   }
 }

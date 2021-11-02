@@ -73,7 +73,11 @@ const BaseJob = AppModel.extend({
     user_inputs_members: 'array',
     workflow_id: 'string',
     workflow_job_id: 'string',
-    assigned_users: ['array', false, () => { return [] }]
+    assigned_users: ['array', false, () => { return [] }],
+    show_result: 'boolean',
+    components: ['object', false, () => { return {} }],
+    next: ['object', false, () => { return {} }],
+    trigger_name: 'string'
   },
   children: {
     user: User
@@ -201,18 +205,18 @@ const BaseJob = AppModel.extend({
         return parsed
       }
     },
-    parsedComponents: {
-      deps: ['components'],
-      fn () {
-        return this.result?.components||{}
-      }
-    },
-    parsedNext: {
-      deps: ['next'],
-      fn () {
-        return this.result?.next||{}
-      }
-    },
+    //parsedComponents: {
+    //  deps: ['components'],
+    //  fn () {
+    //    return this.result?.components||{}
+    //  }
+    //},
+    //parsedNext: {
+    //  deps: ['next'],
+    //  fn () {
+    //    return this.result?.next||{}
+    //  }
+    //},
     inProgress: {
       deps: ['lifecycle'],
       fn () {
@@ -310,8 +314,8 @@ const ScriptJobResult = State.extend({
     stderr: ['string', false],
     log: ['string', false],
     times: ['object', false, () => { return {} }],
-    components: ['object', false, () => { return {} }],
-    next: ['object', false, () => { return {} }]
+    //components: ['object', false, () => { return {} }],
+    //next: ['object', false, () => { return {} }]
   }
 })
 

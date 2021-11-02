@@ -299,11 +299,11 @@ const BaseJobView = View.extend({
             <div data-hook="output"></div>
           </div>
           <div>
-            <i class="fa fa-cubes"></i> Components
+            <i class="fa fa-cubes"></i> UI Components
             <div data-hook="components"></div>
           </div>
           <div>
-            <i class="fa fa-flask"></i> Customize Next
+            <i class="fa fa-flask"></i> Next Task Settings
             <div data-hook="next"></div>
           </div>
         </div>
@@ -384,8 +384,8 @@ const BaseJobView = View.extend({
 
     //this.renderSubview(new JsonViewer({ json: this.output }), this.queryByHook('output'))
 
-    this.renderSubview(new JsonViewer({ json: this.job.parsedComponents }), this.queryByHook('components'))
-    this.renderSubview(new JsonViewer({ json: this.job.parsedNext }), this.queryByHook('next'))
+    this.renderSubview(new JsonViewer({ json: this.job.components }), this.queryByHook('components'))
+    this.renderSubview(new JsonViewer({ json: this.job.next }), this.queryByHook('next'))
   },
   renderResultView () {
     const type = this.job._type

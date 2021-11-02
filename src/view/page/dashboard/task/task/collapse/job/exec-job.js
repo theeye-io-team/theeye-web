@@ -286,14 +286,14 @@ export const ExecOnHoldJob = BaseExec.extend({
     if (!this.model.workflow_job_id) { return } // task is not in workflow
 
     // get previous job
-    let workflowJob = App.state.jobs.get(this.model.workflow_job_id)
+    const workflowJob = App.state.jobs.get(this.model.workflow_job_id)
     if (!workflowJob) { return } // workflow is not populated.
 
-    let previousJob = workflowJob.previous_job
     // get previous job components
-    if (previousJob && previousJob.result && previousJob.result.components) {
-      let components = previousJob.result.components
-      for(let componentName in components) {
+    const previousJob = workflowJob.previous_job
+    if (previousJob?.components) {
+      const components = previousJob.components
+      for (let componentName in components) {
         ComponentFactory(componentName, components[componentName], task)
       }
     }
