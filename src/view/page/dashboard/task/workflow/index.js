@@ -304,21 +304,34 @@ const WorkflowJobStatus = JobExecButton.extend({
 })
 
 const InputsView = View.extend({
-  props: { 
-    data: 'object'
-  },
   template: `<div data-component="inputs-row"></div>`,
   render () {
+    let contentView
     this.renderWithTemplate(this)
     this.listenToAndRun(this.model, 'change:first_job', () => {
       const job = this.model.first_job
       if (!job) { return }
-      this.renderJobArguments(job)
+      this.listenToAndRun(job, 'change:task change:task_arguments_values', () => {
+        // render a new one
+        if (contentView) { contentView.remove() }
+        contentView = new InputsContentView({ model: this.model })
+
+        this.renderSubview(contentView)
+      })
     })
-  },
-  renderJobArguments (job) {
+  }
+})
+
+const InputsContentView = View.extend({
+  template: `<div class="inputs-row-content"></div>`,
+  render () {
+    this.renderWithTemplate(this)
+
     const wfJob = this.model
-    if (job.task) {
+    const job = this.model.first_job
+
+    if (job.task?.task_arguments && Array.isArray(job.task_arguments_values)) {
+
       const argsdefs = job.task.task_arguments.models
       const inputs = job.task_arguments_values
       //const data = []

@@ -21,6 +21,16 @@ export default {
   applyStateUpdate (topicEvent) {
     try {
       const job = addJobToState(topicEvent.model)
+      if (topicEvent.operation === OperationsConstants.CREATE) {
+        if (job.workflow_id) {
+          const workflow = App.state.workflows.get(job.workflow_id)
+          // only fetch first job
+          //if (workflow.table_view === true && job.task_id === workflow.start_task_id) {
+          if (workflow.table_view === true) {
+            this.fetch(job)
+          }
+        }
+      }
 
       /**
        * @summary check if job is on hold and requires intervention of the current user
@@ -261,6 +271,18 @@ export default {
         }
       })
     }
+  },
+  fetchInputs (job) {
+    XHR.send({
+      method: 'get',
+      url: `${job.urlV2()}/input`,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (data, xhr) {
+        job.task_arguments_values = data
+      }
+    })
   }
 }
 
@@ -361,15 +383,16 @@ const addTaskJobToState = (props) => {
       throw err
     }
 
+    //
     // get the workflow job
+    //
     let workflowJob = workflow.jobs.get(taskJob.workflow_job_id)
     if (!workflowJob) { // async error ?
       if (!taskJob.workflow_job_id) {
         throw new Error('task definition error. workflow id is missing')
       }
-
       // add temp models to the collection
-      let attrs = {
+      const attrs = {
         id: taskJob.workflow_job_id,
         _type: JobConstants.WORKFLOW_TYPE
       }
