@@ -405,7 +405,7 @@ const BaseJobView = View.extend({
 const RowState = State.extend({
   props: {
     key: 'string',
-    value: 'string',
+    value: 'mixed',
     id: 'number',
     type: 'string'
   }
@@ -413,7 +413,7 @@ const RowState = State.extend({
 
 const TableView = View.extend({
   props: {
-    rows: 'array'
+    rows: ['array', false, () => { return [] }]
   },
   template: `
     <div class="table-component">
@@ -428,28 +428,34 @@ const TableView = View.extend({
   },
   updateState () {
     this.collection.reset([])
-    if (this.rows === undefined) {
-      return
+
+    // we need a string to display
+    const displayValue = (value) => {
+      if (
+        value !== undefined &&
+        value !== null &&
+        value.toString !== undefined
+      ) {
+        return value.toString()
+      } else {
+        return JSON.stringify(value)
+      }
     }
 
     for (let index = 0; index < this.rows.length; index++) {
       const row = this.rows[index]
-      const id = (index+1)
+      const id = (index + 1)
+      if (row) {
+        const value = row.hasOwnProperty('value') ? row.value : row
+        const data = {
+          value: displayValue(value),
+          id,
+          key: String(row.label || id),
+          type: row.type
+        }
 
-      const label = (row?.label !== undefined) ? row?.label : String(id)
-      const value = (row?.value !== undefined) ? row?.value : JSON.stringify(row)
-
-      // FIXME: Should the output value be set to an object containing the key "value",
-      //        the table row will only display the value for said key, instead of the 
-      //        entire object. A better way to check for the main value is needed.
-
-      const data = {
-        value,
-        id,
-        key: label,
-        type: row?.type
+        this.collection.add( new RowState(data) )
       }
-      this.collection.add( new RowState(data) )
     }
   },
   render () {
