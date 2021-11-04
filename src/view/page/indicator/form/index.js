@@ -19,7 +19,7 @@ export default DropableForm.extend({
   initialize (options) {
     const isNew = Boolean(this.model.isNew())
 
-    this.advancedFields = ['acl','tags','description','read_only','value']
+    this.advancedFields = ['acl','tags','description','read_only','value', 'failure_severity']
 
     const typeSelect = new SelectView({
       label: 'Type *',
@@ -130,6 +130,11 @@ export default DropableForm.extend({
         name: 'read_only',
         value: this.model.read_only
       }),
+      new SeveritySelectView({
+        required: false,
+        visible: false,
+        value: this.model.severity.toUpperCase()
+      }),
       new TextareaView({
         label: 'More Info',
         required: false,
@@ -177,6 +182,7 @@ export default DropableForm.extend({
   },
   prepareData (data) {
     const f = Object.assign({}, data)
+    f["severity"] = f["failure_severity"].toLowerCase()
     f.type = f._type.replace('Indicator','').toLowerCase()
 
     if (

@@ -13,7 +13,8 @@ export default View.extend({
     </div>
   `,
   props: {
-    percent: 'number'
+    percent: 'number',
+    color: ['string', false, "#42D5BB"]
   },
   derived: {
     percentText: {
@@ -33,6 +34,12 @@ export default View.extend({
     percentText: {
       type: 'text',
       hook: 'percent-text'
+    },
+    color: {
+      type: function (el, value) {
+        el.style.backgroundColor = value
+      },
+      hook: 'percent-visual'
     }
   }
 })
