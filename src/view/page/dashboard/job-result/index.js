@@ -8,6 +8,7 @@ import Collection from 'ampersand-collection'
 import Modalizer from 'components/modalizer'
 import JsonViewer from 'components/json-viewer'
 import DownloadButton from 'view/buttons/download'
+import isJSON from 'validator/lib/isJSON'
 
 import './styles.less'
 
@@ -460,6 +461,8 @@ const TableView = View.extend({
         const type = specs.model.type
         if (type === 'file') {
           return new TableRowFile(specs)
+        } else if (specs.model.value && isJSON(specs.model.value)) {
+          return new TableRowJSON(specs)
         } else {
           return new TableRowText(specs)
         }
@@ -506,6 +509,26 @@ const TableRowText = View.extend({
     'model.value': {
       type: 'text',
       hook: 'value'
+    }
+  }
+})
+const TableRowJSON = View.extend({
+  template: `
+    <tr>
+      <th data-hook="key"></th>
+      <td data-hook="value"></td>
+    </tr>
+  `,
+  bindings: {
+    'model.key': {
+      type: 'text',
+      hook: 'key'
+    }
+  },
+  render () {
+    this.renderWithTemplate()
+    if (this.model.value) {
+      this.renderSubview(new JsonViewer({ json: JSON.parse(this.model.value) }), this.queryByHook('value'))
     }
   }
 })
