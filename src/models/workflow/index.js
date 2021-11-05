@@ -242,10 +242,10 @@ const Workflow = AppModel.extend({
         method: 'GET',
         url: `${App.config.supervisor_api_url}/workflows/${this.id}/job`,
         done: (jobs) => {
-          this.jobsAlreadyFetched = true
           const groups = groupJobs(jobs)
           this.jobs.reset(groups)
           resolve()
+          this.jobsAlreadyFetched = true
         },
         fail (err, xhr) {
           reject( new Error(arg1) )

@@ -21,12 +21,12 @@ export default {
   applyStateUpdate (topicEvent) {
     try {
       const job = addJobToState(topicEvent.model)
+
       if (topicEvent.operation === OperationsConstants.CREATE) {
         if (job.workflow_id) {
           const workflow = App.state.workflows.get(job.workflow_id)
-          // only fetch first job
-          //if (workflow.table_view === true && job.task_id === workflow.start_task_id) {
-          if (workflow.table_view === true) {
+          // only fetch first job inputs
+          if (workflow.table_view === true && job.task_id === workflow.start_task_id) {
             this.fetch(job)
           }
         }
@@ -48,10 +48,16 @@ export default {
       console.error(e)
     }
   },
-  fetch (id) {
-    const job = App.state.jobs.get(id)
-    if (!job) { return }
-    job.fetch()
+  fetch (payload) {
+    if (!Array.isArray(payload)) {
+      payload = [ payload ]
+    }
+
+    for (let id of payload) {
+      const job = App.state.jobs.get(id)
+      if (!job) { return }
+      job.fetch()
+    }
   },
   cancel (job) {
     job.set('lifecycle', LifecycleConstants.CANCELED)
