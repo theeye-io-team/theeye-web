@@ -278,17 +278,22 @@ export default {
       })
     }
   },
-  fetchInputs (job) {
-    XHR.send({
-      method: 'get',
-      url: `${job.urlV2()}/input`,
-      headers: {
-        Accept: 'application/json;charset=UTF-8'
-      },
-      done (data, xhr) {
-        job.task_arguments_values = data
+  fetchInputs (jobs) {
+    for (let job of jobs) {
+      if (!job.task_arguments_values || !job.task.task_arguments) {
+        XHR.send({
+          method: 'get',
+          url: `${job.urlV2()}/input?include_definitions`,
+          headers: {
+            Accept: 'application/json;charset=UTF-8'
+          },
+          done (data, xhr) {
+            job.task.task_arguments.set(data.task.task_arguments)
+            job.task_arguments_values = data.task_arguments_values
+          }
+        })
       }
-    })
+    }
   }
 }
 

@@ -51,7 +51,7 @@ const BaseJob = AppModel.extend({
     acl: ['array', false, () => []],
     empty_viewers: ['boolean', false, false],
     // script_arguments: 'array',
-    task_arguments: 'array',
+    //task_arguments: 'array',
     customer_id: 'string',
     customer_name: 'string',
     // script: 'object', // embedded
