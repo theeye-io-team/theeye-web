@@ -138,7 +138,9 @@ const AppState = State.extend({
     taskForm: ['state', false, () => new TaskFormState()],
     tabs: ['state', false, () => new TabsState()],
     enterprise: ['state', false, () => { return new EnterpriseState() }],
+    progress: ['state', false, () => new ProgressState()]
   },
+
   initialize () {
     State.prototype.initialize.apply(this,arguments)
 
@@ -273,6 +275,15 @@ const PopupState = State.extend({
 const EnterpriseState = State.extend({
   props: {
     showEnterpriseForm: ['boolean',false,true]
+  }
+})
+
+const ProgressState = State.extend({
+  props: {
+    progress: ['integer', false, 0]
+  },
+  reset () {
+    this.progress = 0
   }
 })
 

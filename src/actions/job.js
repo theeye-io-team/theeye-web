@@ -274,6 +274,9 @@ const createSingleTaskJob = (task, args, next) => {
     headers: {
       Accept: 'application/json;charset=UTF-8'
     },
+    onuploadprogress (e) {
+      App.state.progress.progress = (e.loaded / e.total) * 100
+    },
     done (data, xhr) {
       logger.debug('job created. updating task')
       if (task.grace_time > 0) {

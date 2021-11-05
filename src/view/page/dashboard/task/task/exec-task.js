@@ -99,8 +99,13 @@ export const BaseExec = State.extend({
     })
 
     this.listenTo(modal, 'confirm', () => {
-      modal.hide()
       App.actions.job.create(this.model, taskArgs)
+      this.listenTo(App.state.progress, 'change:progress', () => {
+        if (App.state.progress.progress === 100) {
+          modal.hide()
+          App.state.progress.reset()
+        }
+      })
     })
 
     modal.show()
