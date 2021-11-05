@@ -6,7 +6,7 @@
   "keywords": [],
   "main": "src/main.js",
   "author": "facugon",
-  "license":"AGPL-3.0",
+  "license": "AGPL-3.0",
   "browserslist": ">0.25%, not dead",
   "scripts": {
     "build": "npx webpack --config webpack.prod.js",
