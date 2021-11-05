@@ -276,8 +276,10 @@ const createSingleTaskJob = (task, args, next) => {
     },
     onuploadprogress (e) {
       App.state.progress.progress = (e.loaded / e.total) * 100
+      App.state.progress.status = 'working'
     },
     done (data, xhr) {
+      App.state.progress.status = 'success'
       logger.debug('job created. updating task')
       if (task.grace_time > 0) {
         App.actions.scheduler.fetch(task)
@@ -287,6 +289,7 @@ const createSingleTaskJob = (task, args, next) => {
       next(null, data)
     },
     fail (err,xhr) {
+      App.state.progress.status = 'failure'
       App.state.alerts.danger('Job creation failed')
       next(err)
     }

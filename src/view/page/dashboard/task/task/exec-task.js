@@ -99,11 +99,16 @@ export const BaseExec = State.extend({
     })
 
     this.listenTo(modal, 'confirm', () => {
-      App.actions.job.create(this.model, taskArgs)
-      this.listenTo(App.state.progress, 'change:progress', () => {
-        if (App.state.progress.progress === 100) {
+      if (App.state.progress.status !== 'working') {
+        App.actions.job.create(this.model, taskArgs)
+      }
+      this.listenTo(App.state.progress, 'change:status', () => {
+        if (App.state.progress.status === 'success') {
           modal.hide()
           App.state.progress.reset()
+        }
+        else if (App.state.progress.status === 'failure') {
+          bootbox.alert('Failed to upload job, please try again. If the problem persists, reload the window')
         }
       })
     })

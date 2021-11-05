@@ -280,10 +280,12 @@ const EnterpriseState = State.extend({
 
 const ProgressState = State.extend({
   props: {
-    progress: ['integer', false, 0]
+    progress: ['integer', false, 0],
+    status: ['string', true, 'idle']
   },
   reset () {
     this.progress = 0
+    this.status = 'idle'
   }
 })
 
