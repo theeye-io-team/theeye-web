@@ -364,10 +364,16 @@ const InputsContentView = View.extend({
 })
 
 const DateView = View.extend({
-  template: `<div data-component="inputs-row"></div>`,
+  template: `
+    <div data-component="inputs-row">
+      <div class="inputs-row-content" data-hook="inputs-row-content"></div>
+    </div>
+  `,
   render () {
     this.renderWithTemplate(this)
-    this.el.appendChild( dateElem(this.model.creation_date) )
+    this
+      .queryByHook("inputs-row-content")
+      .appendChild( dateElem(this.model.creation_date) )
   }
 })
 
