@@ -40,7 +40,28 @@ export default CollapsibleRow.extend({
     }
   },
   onClickToggleCollapse (event) {
-    App.actions.workflow.fetchJobs(this.model)
+    const workflow = this.model
+    App.actions.workflow.fetchJobs(workflow)
+
+    // fetch inputs
+    this.listenToAndRun(workflow, 'change:table_view change:jobsAlreadyFetched', () => {
+      if (workflow.table_view === true && workflow.jobsAlreadyFetched) {
+        const startTaskId = workflow.start_task_id
+        const jobsToFetch = []
+
+        for (let wIndex in workflow.jobs.models) {
+          const wjob = workflow.jobs.models[wIndex]
+          for (let tIndex in wjob.jobs.models) {
+            const tjob = wjob.jobs.models[tIndex]
+            if (tjob.task_id === startTaskId) {
+              jobsToFetch.push(tjob)
+            }
+          }
+        }
+
+        App.actions.job.fetchInputs(jobsToFetch)
+      }
+    })
   },
   renderCollapsedContent () {
     this.collapsedContent = new WorkflowCollapsedContent({ model: this.model })
