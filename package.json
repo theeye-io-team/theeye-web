@@ -1,12 +1,12 @@
 {
   "name": "theeye-web",
   "private": true,
-  "version": "2.8.2",
+  "version": "2.9.0",
   "description": "TheEye WebApp/SPA Interface",
   "keywords": [],
   "main": "src/main.js",
   "author": "facugon",
-  "license": "",
+  "license":"AGPL-3.0",
   "browserslist": ">0.25%, not dead",
   "scripts": {
     "build": "npx webpack --config webpack.prod.js",
