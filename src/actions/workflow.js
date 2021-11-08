@@ -61,6 +61,7 @@ export default {
     workflow.fetchJobs()
   },
   fetchJobsInputs (workflow) {
+    workflow.is_loading = true
     XHR.send({
       method: 'get',
       url: `${workflow.url()}/jobs/input?include_definitions`,
@@ -69,6 +70,7 @@ export default {
       },
       done (jobs, xhr) {
         workflow.mergeJobs(jobs)
+        workflow.is_loading = false
         //job.task.task_arguments.set(data.task.task_arguments)
         //job.task_arguments_values = data.task_arguments_values
       }
