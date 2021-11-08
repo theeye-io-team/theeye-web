@@ -63,6 +63,9 @@ export default View.extend({
           class="panel-collapse collapse"
           aria-labelledby="unbinded"
           role="tabpanel">
+          <div class="panel-body" style="display:none;" data-hook="collapse-container-body-loader">
+            Loading ...
+            </div>
           <div class="panel-body" data-hook="collapse-container-body"> </div>
         </div>
         <!-- } END Collapsed Container -->
@@ -70,6 +73,7 @@ export default View.extend({
     </div>
   `,
   props: {
+    loadingContent: 'boolean',
     collapsed: ['boolean', false, true],
     show: ['boolean', false, true],
     hash: ['string', false, () => { return (new Date()).getTime() } ]
@@ -196,6 +200,19 @@ export default View.extend({
     this.renderButtons()
     this.renderTags()
     this.renderHelp()
+
+    //this.on('change:loadingContent', () => {
+    //  const loader = this.queryByHook('collapse-container-body-loader')
+    //  const content = this.queryByHook('collapse-container-body')
+
+    //  if (this.loadingContent === true) {
+    //    loader.style.display = 'block'
+    //    content.style.display = 'none'
+    //  } else {
+    //    loader.style.display = 'none'
+    //    content.style.display = 'block'
+    //  }
+    //})
 
     const $collapse = $(this.el)
 

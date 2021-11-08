@@ -18,6 +18,14 @@ import JobsPaginator from 'view/page/paginator/footer'
 
 export default CollapsibleRow.extend({
   onClickToggleCollapse (event) {
+    this.loadingContent = true
+    this.listenTo(this.model, 'change:is_loading', () => {
+      if (this.model.is_loading === false) {
+        this.loadingContent = false
+        this.stopListening(this.model, 'change:is_loading')
+      }
+    })
+
     App.actions.task.populate(this.model)
     return
   },
