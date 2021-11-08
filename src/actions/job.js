@@ -25,6 +25,9 @@ export default {
       if (topicEvent.operation === OperationsConstants.CREATE) {
         if (job.workflow_id) {
           const workflow = App.state.workflows.get(job.workflow_id)
+          if (job._type === 'WorkflowJob') {
+            job.startTaskId = workflow.start_task_id
+          }
           // only fetch first job inputs
           if (workflow.table_view === true && job.task_id === workflow.start_task_id) {
             this.fetch(job)

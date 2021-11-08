@@ -46,12 +46,43 @@ export default CollapsibleRow.extend({
     const workflow = this.model
     App.actions.workflow.fetchJobs(workflow)
 
+    if (workflow.table_view === true) {
+      this.tableViewDataFetch()
+    }
+  },
+  tableViewDataFetch () {
+    const workflow = this.model
+
+    if (this.inputs_fetched === true) { return }
+
+    const loader = this.queryByHook('collapse-container-body-loader')
+    const content = this.queryByHook('collapse-container-body')
+
+    loader.style.display = 'none'
+    content.style.display = 'none'
+    this.on('change:loadingContent', () => {
+      if (this.loadingContent === true) {
+        loader.style.display = 'block'
+        content.style.display = 'none'
+      } else {
+        loader.style.display = 'none'
+        content.style.display = 'block'
+      }
+    })
+
     // fetch inputs
-    this.listenToAndRun(workflow, 'change:table_view change:jobsAlreadyFetched', () => {
-      if (this.inputs_fetched === true) { return }
-      if (workflow.table_view === true && workflow.jobsAlreadyFetched) {
+    this.listenToAndRun(workflow, 'change:jobsAlreadyFetched', () => {
+      if (workflow.jobsAlreadyFetched) {
+        this.loadingContent = true
+        this.listenTo(workflow, 'change:is_loading', () => {
+          if (workflow.is_loading === false) {
+            this.inputs_fetched = true
+            this.loadingContent = false
+            this.stopListening(workflow, 'change:is_loading')
+          }
+        })
+
         App.actions.workflow.fetchJobsInputs(workflow)
-        this.inputs_fetched = true
       }
     })
   },
