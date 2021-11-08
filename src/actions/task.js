@@ -104,6 +104,7 @@ export default {
     })
   },
   populate (task) {
+    task.is_loading = true
     if (task.isNew()) { return }
 
     if (task.type === TaskConstants.TYPE_SCRIPT) {
@@ -114,8 +115,11 @@ export default {
       }
     }
 
-    task.fetchJobs(() => {})
     App.actions.scheduler.fetch(task)
+
+    task.fetchJobs({}, (err) => {
+      task.is_loading = false
+    })
   },
   massiveDelete (tasks) {
     App.state.loader.visible = true
