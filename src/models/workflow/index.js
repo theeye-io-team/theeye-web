@@ -242,7 +242,7 @@ const Workflow = AppModel.extend({
         method: 'GET',
         url: `${App.config.supervisor_api_url}/workflows/${this.id}/job`,
         done: (jobs) => {
-          const groups = groupJobs(jobs)
+          const groups = groupJobs(this, jobs)
           this.jobs.reset(groups)
           resolve()
           this.jobsAlreadyFetched = true
@@ -252,10 +252,14 @@ const Workflow = AppModel.extend({
         }
       })
     })
+  },
+  mergeJobs (jobs) {
+    const groups = groupJobs(this, jobs)
+    this.jobs.add(groups, {merge:true})
   }
 })
 
-const groupJobs = (jobs) => {
+const groupJobs = (workflow, jobs) => {
   let wJobs = []
   if (jobs.length>0) {
     let tJobs = []
@@ -263,6 +267,7 @@ const groupJobs = (jobs) => {
     // order resulting jobs into task and workflow jobs
     jobs.forEach(job => {
       if (job._type === 'WorkflowJob') {
+        job.startTaskId = workflow.start_task_id
         wJobs.push(job)
       } else {
         tJobs.push(job)

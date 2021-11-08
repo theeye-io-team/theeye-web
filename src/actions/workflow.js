@@ -60,6 +60,20 @@ export default {
   fetchJobs (workflow) {
     workflow.fetchJobs()
   },
+  fetchJobsInputs (workflow) {
+    XHR.send({
+      method: 'get',
+      url: `${workflow.url()}/jobs/input?include_definitions`,
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (jobs, xhr) {
+        workflow.mergeJobs(jobs)
+        //job.task.task_arguments.set(data.task.task_arguments)
+        //job.task_arguments_values = data.task_arguments_values
+      }
+    })
+  },
   create (data) {
     let workflow = new Workflow(data)
     workflow.save({},{
