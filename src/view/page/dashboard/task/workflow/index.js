@@ -25,6 +25,9 @@ import DownloadButton from 'view/buttons/download'
 import './styles.less'
 
 export default CollapsibleRow.extend({
+  props: {
+    inputs_fetched: 'boolean'
+  },
   derived: {
     hostname: {
       fn: () => ''
@@ -45,21 +48,10 @@ export default CollapsibleRow.extend({
 
     // fetch inputs
     this.listenToAndRun(workflow, 'change:table_view change:jobsAlreadyFetched', () => {
+      if (this.inputs_fetched === true) { return }
       if (workflow.table_view === true && workflow.jobsAlreadyFetched) {
-        const startTaskId = workflow.start_task_id
-        const jobsToFetch = []
-
-        for (let wIndex in workflow.jobs.models) {
-          const wjob = workflow.jobs.models[wIndex]
-          for (let tIndex in wjob.jobs.models) {
-            const tjob = wjob.jobs.models[tIndex]
-            if (tjob.task_id === startTaskId) {
-              jobsToFetch.push(tjob)
-            }
-          }
-        }
-
-        App.actions.job.fetchInputs(jobsToFetch)
+        App.actions.workflow.fetchJobsInputs(workflow)
+        this.inputs_fetched = true
       }
     })
   },
