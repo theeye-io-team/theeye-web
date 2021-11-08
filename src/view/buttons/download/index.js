@@ -4,7 +4,8 @@ export default View.extend({
   props: {
     blob: 'string',
     text: ['string', true, 'Download file'],
-    download: 'string'
+    download: 'string',
+    mini: ['boolean', true, false]
   },
   template: `
     <a href="" download="" class="btn btn-primary" target="_blank">
@@ -28,6 +29,14 @@ export default View.extend({
     },
     text: {
       type: 'text',
+      hook: 'text'
+    },
+    mini: {
+      type: function (el, value) {
+        if (value === true) {
+          el.style.display = 'none'
+        }
+      },
       hook: 'text'
     }
   },

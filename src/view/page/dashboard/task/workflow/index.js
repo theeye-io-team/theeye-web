@@ -367,7 +367,7 @@ const InputsView = View.extend({
 })
 
 const InputsContentView = View.extend({
-  template: `<div class="inputs-row-content"></div>`,
+  template: `<div class="row inputs-row-content"></div>`,
   render () {
     this.renderWithTemplate(this)
 
@@ -379,17 +379,19 @@ const InputsContentView = View.extend({
       const argsdefs = job.task.task_arguments.models
       const inputs = job.task_arguments_values
       //const data = []
-
-      this.el.appendChild(dateElem(wfJob.creation_date))
+      const date = dateElem(wfJob.creation_date)
+      date.classList.add('col-sm-1')
+      this.el.appendChild(date)
 
       if (argsdefs.length > 0) {
-        for (let index = 0; index < argsdefs.length; index++) {
+        for (let index = 0; index < 9; index++) {
           const col = document.createElement('div')
+          col.classList.add('col-sm-1')
           const arg = argsdefs[index]
           const value = inputs[index]
 
           if (arg.type === 'file' && value?.includes('base64')) {
-            const dwld = new DownloadButton({ blob: value })
+            const dwld = new DownloadButton({ blob: value, mini: true })
             this.renderSubview(dwld, col)
           } else {
             col.innerHTML = (value||'')
