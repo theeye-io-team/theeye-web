@@ -574,7 +574,8 @@ const WorkflowJob = BaseJob.extend({
   },
   session: {
     jobsLength: 'number',
-    lifecycle: 'string'
+    lifecycle: 'string',
+    startTaskId: 'string'
   },
   initialize () {
     BaseJob.prototype.initialize.apply(this, arguments)
@@ -602,7 +603,9 @@ const WorkflowJob = BaseJob.extend({
       deps: ['jobsLength'],
       fn () {
         if (this.jobs.length === 0) { return null }
-        return this.jobs.at(0)
+        const job = this.jobs.at(0)
+        if (job.task_id === this.startTaskId) { return job }
+        return null
       }
     },
     previous_job: {
@@ -625,8 +628,11 @@ const WorkflowJob = BaseJob.extend({
     },
     parsedInput: {
       cache: false,
-      deps: ['first_job.parsedInput'],
+      deps: ['first_job'],
       fn () {
+        if (this.first_job === null) {
+          return null
+        }
         return this.first_job.parsedInput
       }
     },
