@@ -72,7 +72,6 @@ export default CollapsibleRow.extend({
 
     // fetch inputs
     this.listenToAndRun(workflow, 'change:jobsAlreadyFetched', () => {
-      if (this.inputs_fetched === true) { return }
       if (workflow.jobsAlreadyFetched) {
         this.loadingContent = true
         this.listenTo(workflow, 'change:is_loading', () => {
