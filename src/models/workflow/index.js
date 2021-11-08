@@ -252,6 +252,10 @@ const Workflow = AppModel.extend({
         }
       })
     })
+  },
+  mergeJobs (jobs) {
+    const groups = groupJobs(jobs)
+    this.jobs.add(groups, {merge:true})
   }
 })
 

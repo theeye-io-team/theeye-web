@@ -48,17 +48,6 @@ export default {
       console.error(e)
     }
   },
-  fetch (payload) {
-    if (!Array.isArray(payload)) {
-      payload = [ payload ]
-    }
-
-    for (let id of payload) {
-      const job = App.state.jobs.get(id)
-      if (!job) { return }
-      job.fetch()
-    }
-  },
   cancel (job) {
     job.set('lifecycle', LifecycleConstants.CANCELED)
     XHR.send({
@@ -276,6 +265,17 @@ export default {
           App.state.alerts.danger('Failed to change assignee')
         }
       })
+    }
+  },
+  fetch (payload) {
+    if (!Array.isArray(payload)) {
+      payload = [ payload ]
+    }
+
+    for (let id of payload) {
+      const job = App.state.jobs.get(id)
+      if (!job) { return }
+      job.fetch()
     }
   },
   fetchInputs (jobs) {
