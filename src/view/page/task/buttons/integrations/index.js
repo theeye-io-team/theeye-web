@@ -9,7 +9,7 @@ import Clipboard from 'clipboard'
 import config from 'config'
 import Titles from 'language/titles'
 
-import hljs from 'highlight.js/lib/highlight'
+import hljs from 'highlight.js'
 import bash from 'highlight.js/lib/languages/bash'
 hljs.registerLanguage('bash', bash)
 
@@ -117,7 +117,7 @@ curl -i -sS -X POST "${config.supervisor_api_url}/task/\$\{task\}/secret/\$\{sec
     View.prototype.render.apply(this,arguments)
 
     let el = this.el.querySelector('[data-hook=sample-code]')
-    hljs.highlightBlock(el)
+    hljs.highlightElement(el, {language: 'bash'})
 
     this.clipId = new Clipboard( this.query('[data-hook=id]') )
     this.clipSecret = new Clipboard( this.query('[data-hook=secret]') )
