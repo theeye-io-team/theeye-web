@@ -30,24 +30,24 @@ export default {
       }
     },
     login: {
-      domain: {
-        enabled: false
-      },
       registration: {
         enabled: true
       },
       password_reset: {
         enabled: true 
       },
+      domain: {
+        enabled: false
+      },
       enterprise: {
         enabled: false
       },
       google: {
-        enabled: true
+        enabled: false
       }
     },
     grecaptcha: {
-      sitekey: '6LeisB4bAAAAANUyMQI8LhqgFAiBaL0EBJLmnap6'
+      sitekey: ''
     }
   }
 }
