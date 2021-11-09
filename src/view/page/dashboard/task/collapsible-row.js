@@ -63,8 +63,8 @@ export default View.extend({
           class="panel-collapse collapse"
           aria-labelledby="unbinded"
           role="tabpanel">
-          <div class="panel-body" style="display:none;" data-hook="collapse-container-body-loader">
-            Loading ...
+          <div class="panel-body" style="display:none; text-align:center;" data-hook="collapse-container-body-loader">
+            <i class="fa fa-refresh fa-spin"></i> Loading ...
             </div>
           <div class="panel-body" data-hook="collapse-container-body"> </div>
         </div>
