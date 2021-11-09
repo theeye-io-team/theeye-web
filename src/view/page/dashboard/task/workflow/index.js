@@ -58,15 +58,15 @@ export default CollapsibleRow.extend({
     const loader = this.queryByHook('collapse-container-body-loader')
     const content = this.queryByHook('collapse-container-body')
 
-    loader.style.display = 'none'
+    loader.style.display = 'block'
     content.style.display = 'none'
     this.on('change:loadingContent', () => {
-      if (this.loadingContent === true) {
-        loader.style.display = 'block'
-        content.style.display = 'none'
-      } else {
+      if (this.loadingContent !== true) {
         loader.style.display = 'none'
         content.style.display = 'block'
+      //} else {
+      //  loader.style.display = 'block'
+      //  content.style.display = 'none'
       }
     })
 
