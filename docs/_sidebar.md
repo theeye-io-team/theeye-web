@@ -1,0 +1,54 @@
+- [Home](/)
+- [First steps](first-steps.md)
+- Core concepts
+  - Bot Agent
+    - [Installation](./core-concepts/agent/)
+    - [Source Code](./core-concepts/agent/sources_install.md)
+    - [Binary build](./core-concepts/agent/binary_build.md)
+    - [Setup](./core-concepts/agent/setup.md)
+    - Debug
+      - [Unix](./core-concepts/agent/debug-unix.md)
+      - [Windows](./core-concepts/agent/debug-windows.md)
+    - [Raspberry](./core-concepts/agent/raspberry.md)
+    - Services in Linux
+      - [Example init.d](./core-concepts/agent/examples/etc_init.d_theeye-agent)
+      - [Example systemd](./core-concepts/agent/examples/etc_systemd_system_theeye-agent.service)
+  - [JSON](./core-concepts/json.md)
+  - [Events](./core-concepts/events.md)
+  - Tasks
+    - [Basics](./core-concepts/tasks/)
+    - [Triggers](./core-concepts/tasks/triggers.md)
+    - [Workflows](./core-concepts/tasks/workflows.md)
+    - Types
+      - [Notification](./core-concepts/tasks/notification_type.md)
+      - [Script](./core-concepts/tasks/script_type.md)
+  - [Alerts and Notifications](./core-concepts/alerts-and-notifications.md)
+  - [Indicators](./core-concepts/indicators.md)
+  - [Monitors](./core-concepts/monitors.md)
+  - [Templates](./core-concepts/templates.md)
+  - [Webhooks](./core-concepts/webhooks.md)
+  - Scripts
+    - [Definitions](./core-concepts/scripts/)
+    - [Run as...](./core-concepts/scripts/runas.md)
+    - [Write](./core-concepts/scripts/write.md)
+  - IAM
+    - [User Management](./core-concepts/iam/user-management.md)
+    - [Logical Access](./core-concepts/iam/logical_access.md)
+- Integrations
+  - [Logger](./integrations/logger/)
+  - [AWS](./integrations/aws/)
+  - [ELK](./integrations/elk/)
+  - [Kubernetes](./integrations/kubernetes/)
+- Assets
+  - [Recipes](./assets/recipes/)
+  - [Scripts](./assets/scripts/)
+- [CLI](./cli.md)
+- Support
+  - [Home](./support/)
+  - [Http Server](./support/http_server_discovery.md)
+  - [Troubleshooting](./support/troubleshooting.md)
+  - [TLS/SSL Certificates](./support/tls_certs.md)
+- [FAQ's](./faqs_pages/)
+- About
+  - [About us](./about/)
+  - [Terms and Conditions](./about/terms.md)
