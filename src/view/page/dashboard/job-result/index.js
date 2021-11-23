@@ -431,15 +431,25 @@ const TableView = View.extend({
 
     // we need a string to display
     const displayValue = (value) => {
-      if (
-        value !== undefined &&
-        value !== null &&
-        value.toString !== undefined
-      ) {
+      if (typeof value === 'number' || typeof value === 'string') {
         return value.toString()
-      } else {
-        return JSON.stringify(value)
       }
+
+      let out
+      if (
+        value === undefined ||
+        value === null ||
+        value?.toString === undefined ||
+        typeof value === 'object'
+      ) {
+        try {
+          out = JSON.stringify(value)
+        } catch (err) {
+          out = value
+        }
+      }
+
+      return out
     }
 
     for (let index = 0; index < this.rows.length; index++) {
@@ -451,7 +461,7 @@ const TableView = View.extend({
           value: displayValue(value),
           id,
           key: String(row.label || id),
-          type: row.type
+          type: row.type || 'input'
         }
 
         this.collection.add( new RowState(data) )
