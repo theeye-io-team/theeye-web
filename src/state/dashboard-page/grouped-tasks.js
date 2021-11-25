@@ -91,11 +91,9 @@ const groupByProperty = (models, prop) => {
   }
 
   let groups = createGroupsByProp(models, prop)
-
   return Object.keys(groups).map(key => {
     let group = groups[key]
-
-    if (group.submodels.models.length > 1) {
+    if (prop === 'hostname' || group.submodels.models.length > 1) {
       return group
     } else {
       return group.submodels.models[0]
