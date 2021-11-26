@@ -149,10 +149,10 @@ export default {
     export_arguments: '<b>Arguments</b>: Export task arguments only. Values for fixed arguments will be empty.'
   },
   job: {
-    repeat: 'Repeat this job',
+    repeat: 'Start new job (uses same inputs)',
     repeat_edit: 'Repeat this job, but allow me to edit the arguments',
-    restart: 'Restart this job',
-    restart_edit: 'Restart this job, but allow me to edit the arguments',
+    restart: 'Retry this job keeping the inputs and the environment',
+    restart_edit: 'Retry this job, but allow me to edit the arguments',
     change_assignee: 'Change this job\'s assignees'
   },
   file: {
