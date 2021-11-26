@@ -9,7 +9,6 @@ import EventsSelectView from 'view/events-select'
 import InputView from 'components/input-view'
 import TextareaView from 'components/input-view/textarea'
 import CheckboxView from 'components/checkbox-view'
-import FormButtons from 'view/buttons'
 import AdvancedToggle from 'view/advanced-toggle'
 import isURL from 'validator/lib/isURL'
 import * as WebhooksConstants from 'constants/webhooks'
@@ -297,10 +296,6 @@ export default TaskFormView.extend({
     this.addHelpIcon('acl')
     this.addHelpIcon('triggers')
     this.addHelpIcon('gzip')
-
-    const buttons = new FormButtons()
-    this.renderSubview(buttons)
-    buttons.on('click:confirm', () => { this.submit() })
   },
   addHelpIcon (field) {
     const view = this._fieldViews[field]
@@ -314,21 +309,6 @@ export default TaskFormView.extend({
   },
   remove () {
     TaskFormView.prototype.remove.apply(this)
-  },
-  submit (next) {
-    next||(next=()=>{})
-
-    this.beforeSubmit()
-    if (!this.valid) return next(null,false) // cancel submit
-
-    let data = this.prepareData(this.data)
-    if (!this.model.isNew()) {
-      App.actions.task.update(this.model.id, data)
-    } else {
-      App.actions.task.createMany(data.hosts, data)
-    }
-    this.trigger('submitted')
-    next(null,true)
   },
   prepareData (data) {
     let f = Object.assign({}, data)

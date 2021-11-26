@@ -16,6 +16,7 @@ import * as Task from 'models/task'
 import * as Token from 'models/token'
 import * as User from 'models/user'
 import * as Webhook from 'models/webhook'
+import * as Workflow from 'models/workflow'
 
 App.extend({
   Models: {
@@ -34,6 +35,7 @@ App.extend({
     Task,
     Token,
     User,
-    Webhook
+    Webhook,
+    Workflow,
   }
 })
