@@ -7,7 +7,6 @@ import TextareaView from 'components/input-view/textarea'
 import TagsSelectView from 'view/tags-select'
 import EventsSelectView from 'view/events-select'
 import * as TaskConstants from 'constants/task'
-import Buttons from 'view/buttons'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 import CopyTaskSelect from '../copy-task-select'
@@ -112,30 +111,6 @@ export default TaskFormView.extend({
     this.addHelpIcon('tags')
     this.addHelpIcon('acl')
     this.addHelpIcon('triggers')
-
-    const buttons = this.buttons = new Buttons()
-    this.renderSubview(buttons)
-    buttons.on('click:confirm', () => { this.submit() })
-  },
-  submit (next) {
-    next||(next=()=>{})
-
-    this.beforeSubmit()
-    if (!this.valid) { return next(null, false) }
-    if (!this.data.task_arguments.length) {
-      bootbox.alert('Please add at least one argument.')
-      return next(null, false)
-    }
-
-    let data = this.prepareData(this.data)
-    if (!this.model.isNew()) {
-      App.actions.task.update(this.model.id, data)
-    } else {
-      App.actions.task.create(data)
-    }
-
-    next(null,true)
-    this.trigger('submitted')
   },
   prepareData (data) {
     let f = Object.assign({}, data)
