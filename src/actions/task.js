@@ -2,7 +2,7 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
-import { Factory as TaskModelFactory } from 'models/task'
+import { Factory as TaskFactory } from 'models/task'
 import * as TaskConstants from 'constants/task'
 import TaskRouter from 'router/task'
 import after from 'lodash/after'
@@ -67,8 +67,8 @@ export default {
    */
   createMany (hosts, data) {
     if (hosts.length === 1) {
-      let taskData = Object.assign({}, data, { host_id: hosts[0] })
-      create(taskData)
+      const taskData = Object.assign({}, data, { host_id: hosts[0] })
+      return create(taskData)
         .then(task => {
           // handle to display a custome message
           App.state.alerts.success('Success', `Task ${task.name} created.`)
@@ -76,22 +76,29 @@ export default {
         })
         .catch(errResponse => {})
     } else {
-      let promises = []
+      const promises = []
       for (let host_id of hosts) {
-        let taskData = Object.assign({}, data, { host_id })
+        const taskData = Object.assign({}, data, { host_id })
         promises.push( create(taskData) )
       }
 
-      Promise.all(promises).then(tasks => {
+      return Promise.all(promises).then(tasks => {
         App.state.alerts.success('Success', 'All Tasks created.')
         successCreated(tasks)
       }).catch(err => {})
     }
   },
   create (data) {
-    create(data)
-      .then(task => successCreated([ task ]))
-      .catch(err => {})
+    if (data.hosts) {
+      return this.createMany(data.hosts, data)
+    } else {
+      return create(data)
+        .then(task => {
+          successCreated([task])
+          return (task)
+        })
+        .catch(err => {})
+    }
   },
   remove (id) {
     const task = App.state.tasks.get(id)
@@ -214,7 +221,7 @@ export default {
       delete recipe.task.url
     }
 
-    let task = TaskModelFactory(recipe.task)
+    const task = new TaskFactory(recipe.task, { store: false })
 
     if (recipe.file) {
       let file = new File(recipe.file, { parse: true })
@@ -281,7 +288,7 @@ export default {
  */
 const create = (data) => {
   return new Promise((resolve, reject) => {
-    const task = TaskModelFactory(data)
+    const task = new TaskFactory(data, { store: false })
     XHR.send({
       url: task.url(),
       jsonData: task.serialize(),

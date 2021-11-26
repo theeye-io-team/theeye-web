@@ -7,7 +7,6 @@ import InputView from 'components/input-view'
 import LanguajeLabels from 'language/labels'
 import TextareaView from 'components/input-view/textarea'
 import SelectView from 'components/select2-view'
-import Buttons from 'view/buttons'
 import TagsSelectView from 'view/tags-select'
 import ScriptSelectView from 'view/script-select'
 import ScriptImportView from 'view/script-import'
@@ -29,14 +28,18 @@ import './styles.less'
 
 export default TaskFormView.extend({
   initialize (options) {
-    const isNewTask = Boolean(this.model.isNew())
+    const isNewTask = Boolean(this.model.isNew()) // or is import
 
     // multiple only if new, allows to create multiple tasks at once
     let hostsSelection = new SelectView({
-      label: 'Bots *',
-      name: ((isNewTask || this.isImport) ? 'hosts' : 'host_id'),
-      multiple: (isNewTask || this.isImport),
-      tags: (isNewTask || this.isImport),
+      //label: (isNewTask ? 'Bots *' : 'Bot *'),
+      //name: (isNewTask ? 'hosts' : 'host_id'),
+      //tags: isNewTask,
+      //multiple: isNewTask,
+      label: 'Bot *',
+      multiple: false,
+      name: 'host_id',
+      tags: false,
       options: App.state.hosts,
       value: this.model.host_id,
       required: true,
@@ -54,22 +57,22 @@ export default TaskFormView.extend({
           runner: '/usr/bin/env bash %script%'
         })
       }
-      this.listenTo(hostsSelection, 'change', () => {
-        if (hostsSelection.value) {
-          let hosts = []
-          hostsSelection.value.forEach(hostId => {
-            hosts.push(App.state.hosts.get(hostId))
-          })
+      //this.listenTo(hostsSelection, 'change', () => {
+      //  if (hostsSelection.value) {
+      //    let hosts = []
+      //    hostsSelection.value.forEach(hostId => {
+      //      hosts.push(App.state.hosts.get(hostId))
+      //    })
 
-          let oss = hosts.filter((host, index, self) => {
-            return self.indexOf(host.os_name) === index;
-          })
+      //    let oss = hosts.filter((host, index, self) => {
+      //      return self.indexOf(host.os_name) === index;
+      //    })
 
-          if (oss.length > 1) {
-            bootbox.alert('BOT\'s with different OS versions has been selected.')
-          }
-        }
-      })
+      //    if (oss.length > 1) {
+      //      bootbox.alert('BOT\'s with different OS versions has been selected.')
+      //    }
+      //  }
+      //})
     }
 
     if (this.isImport) {
@@ -359,11 +362,12 @@ export default TaskFormView.extend({
 
     this.query('form').classList.add('form-horizontal')
 
-    if (this.model.isNew() || this.isImport) {
-      this.addHelpIcon('hosts')
-    } else {
-      this.addHelpIcon('host_id')
-    }
+    //if (this.model.isNew()) {
+    //  this.addHelpIcon('hosts')
+    //} else {
+    //  this.addHelpIcon('host_id')
+    //}
+    this.addHelpIcon('host_id')
 
     if (this.model.isNew()) {
       this.addHelpIcon('copy_task')
@@ -386,12 +390,6 @@ export default TaskFormView.extend({
     this.addHelpIcon('show_result')
     this.addHelpIcon('arguments_type')
 
-    const buttons = this.buttons = new Buttons()
-    this.renderSubview(buttons)
-    buttons.on('click:confirm', () => {
-      this.submit() 
-    })
-
     if (this.model.isNew()) {
       if (App.state.onboarding.onboardingActive) {
         var taskOnBoarding = new TaskOnBoarding({ parent: this })
@@ -406,37 +404,11 @@ export default TaskFormView.extend({
       }
     }
   },
-  submit (next) {
-    next || (next = () => { })
-    this.beforeSubmit()
-    if (!this.valid) {
-      return next(null, false)
-    }
-
-    let data = this.prepareData(this.data)
-    if (this.isImport) {
-      App.actions.file.create(App.state.taskForm.file, function (err, file) {
-        data.script_id = file.id
-        delete data.script_name
-        App.actions.task.createMany(data.hosts, data)
-      })
-    } else {
-      if (!this.model.isNew()) {
-        App.actions.task.update(this.model.id, data)
-      } else {
-        App.actions.task.createMany(data.hosts, data)
-      }
-    }
-
-    next(null, true)
-    this.trigger('submitted')
-  },
   prepareData (data) {
     let f = Object.assign({}, data)
     f.type = TaskConstants.TYPE_SCRIPT
     f.grace_time = Number(data.grace_time)
     f.timeout = Number(data.timeout)
-
     return f
   }
 })
@@ -451,7 +423,6 @@ const SimpleInputView = InputView.extend({
     </div>
   `
 })
-
 
 const EnvCol = Collection.extend({
   mainIndex: 'id',
