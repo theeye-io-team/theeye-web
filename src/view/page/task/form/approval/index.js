@@ -6,7 +6,6 @@ import ActivatableInputView from 'components/input-view/activatable'
 import AdvancedToggle from 'view/advanced-toggle'
 import TextareaView from 'components/input-view/textarea'
 import * as TaskConstants from 'constants/task'
-import Buttons from 'view/buttons'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 import bootbox from 'bootbox'
@@ -273,10 +272,6 @@ export default TaskFormView.extend({
       taskArgumentsView.query('label')
     )
 
-    const buttons = this.buttons = new Buttons()
-    this.renderSubview(buttons)
-    buttons.on('click:confirm', () => { this.submit() })
-
     let acl = this._fieldViews.acl
     let approvers = this._fieldViews.approvers
     acl.listenToAndRun(approvers, 'change:value', () => {
@@ -294,22 +289,6 @@ export default TaskFormView.extend({
         bootbox.alert('Make sure the approvers are in the ACL of the Workflow')
       }
     })
-  },
-  submit (next) {
-    next || (next = () => { })
-
-    this.beforeSubmit()
-    if (!this.valid) { return next(null, false) }
-
-    let data = this.prepareData(this.data)
-    if (!this.model.isNew()) {
-      App.actions.task.update(this.model.id, data)
-    } else {
-      App.actions.task.create(data)
-    }
-
-    next(null, true)
-    this.trigger('submitted')
   },
   prepareData (data) {
     const f = Object.assign({}, data)

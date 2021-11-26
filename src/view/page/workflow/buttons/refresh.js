@@ -1,6 +1,4 @@
 import PanelButton from 'components/list/item/panel-button'
-import Modalizer from 'components/modalizer'
-import FormView from '../form'
 import $ from 'jquery'
 import App from "ampersand-app"
 import Titles from 'language/titles'

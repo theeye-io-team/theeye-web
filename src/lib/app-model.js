@@ -4,7 +4,9 @@ import XHR from 'lib/xhr'
 
 export default AmpersandModel.extend({
   props: {
-    is_loading: ['boolean', false, false]
+    is_loading: ['boolean', false, false],
+    // in sync with the API
+    synchronized: ['boolean', false, false]
   },
   dataTypes: {
     collection: {
@@ -35,18 +37,28 @@ export default AmpersandModel.extend({
       }
     }
   },
-  sync (method, model, options) {
-    let errorFn = options ? options.error : (()=>{})
+  sync (method, model, options = {}) {
+    const errorFn = (options?.error || (()=>{}))
+    const successFn = (options?.success || (()=>{}))
 
-    options = Object.assign({}, (options||{}), {
+    options = Object.assign({}, options, {
       error: function (respObj, errStr, errMsg) {
         if (respObj.statusCode >= 400) {
           XHR.handleError(respObj.rawRequest, options)
         }
         if (errorFn) { errorFn.call(this, arguments) }
+      },
+      success: function () {
+        model.synchronized = true
+        if (successFn) { successFn.call(this, arguments) }
       }
     })
 
     return AmpersandModel.prototype.sync.call(this, method, model, options)
+  },
+  parse () {
+    var attrs = AmpersandModel.prototype.parse.apply(this, arguments)
+    this.synchronized = true
+    return attrs
   }
 })

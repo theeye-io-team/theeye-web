@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
 import bootbox from 'bootbox'
@@ -17,7 +18,7 @@ export default PanelButton.extend({
 
       return import(/* webpackChunkName: "task-form" */ '../form')
         .then(({ default: FormView }) => {
-          const task = new TaskFactory({ type: this.model.type })
+          const task = new TaskFactory({ type: this.model.type }, { store: false })
           const form = new FormView({ model: task })
           const modal = new Modalizer({
             buttons: false,
@@ -37,7 +38,8 @@ export default PanelButton.extend({
             modal.remove()
           })
 
-          this.listenTo(form,'submitted',() => {
+          this.listenTo(form,'submit', data => {
+            App.actions.task.create(data)
             modal.hide()
           })
 
