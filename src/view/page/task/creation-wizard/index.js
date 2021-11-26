@@ -20,8 +20,8 @@ import './styles.less'
 
 const docsLink = 'core-concepts/tasks/'
 
-export default function () {
-  const wizard = new TaskCreationWizard()
+export default function (options = {}) {
+  const wizard = new TaskCreationWizard({ submit: options?.submit })
   wizard.render()
   const modal = new Modalizer({
     buttons: false,
@@ -60,67 +60,65 @@ const ImportTaskInputView = FileInputView.extend({
 })
 
 const TaskCreationWizard = View.extend({
+  props: {
+    submit: 'function'
+  },
   template: `
-  <div>
-    <section data-hook="type-selection-container" class="task-type-selection">
-      <h1>Please, select the task type to continue</h1>
-      <div class="row task-button" style="text-align:center;">
-        <div class="col-xs-3">
-          <button data-hook="script" class="btn btn-default">
-            <i class="icons icons-script fa fa-code"></i>
-          </button>
-          <h2>Script<span data-hook="script-help"></span></h2>
+    <div>
+      <section data-hook="type-selection-container" class="task-type-selection">
+        <h1>Please, select the task type to continue</h1>
+        <div class="row task-button" style="text-align:center;">
+          <div class="col-xs-3">
+            <button data-hook="script" class="btn btn-default">
+              <i class="icons icons-script fa fa-code"></i>
+            </button>
+            <h2>Script<span data-hook="script-help"></span></h2>
+          </div>
+          <div class="col-xs-3">
+            <button data-hook="scraper" class="btn btn-default">
+              <i class="icons icons-scraper fa fa-cloud"></i>
+            </button>
+            <h2>Outgoing Webhook/<br>HTTP Request
+              <span data-hook="webhook-help"></span>
+            </h2>
+          </div>
+          <div class="col-xs-3">
+            <button data-hook="approval" class="btn btn-default">
+              <i class="icons icons-approval fa fa-thumbs-o-up"></i>
+            </button>
+            <h2>Approval<span data-hook="approval-help"></span></h2>
+          </div>
+          <div class="col-xs-3">
+            <button data-hook="notification" class="btn btn-default">
+              <i class="icons icons-notification fa fa-bell-o"></i>
+            </button>
+            <h2>Notification<span data-hook="notification-help"></span></h2>
+          </div>
         </div>
-        <div class="col-xs-3">
-          <button data-hook="scraper" class="btn btn-default">
-            <i class="icons icons-scraper fa fa-cloud"></i>
-          </button>
-          <h2>Outgoing Webhook/<br>HTTP Request
-            <span data-hook="webhook-help"></span>
-          </h2>
+        <div class="import-task-section">
+          <h1>Or you can import a task from a file</h1>
+          <div data-hook="import-task-container"></div>
         </div>
-        <div class="col-xs-3">
-          <button data-hook="approval" class="btn btn-default">
-            <i class="icons icons-approval fa fa-thumbs-o-up"></i>
-          </button>
-          <h2>Approval<span data-hook="approval-help"></span></h2>
-        </div>
-        <div class="col-xs-3">
-          <button data-hook="notification" class="btn btn-default">
-            <i class="icons icons-notification fa fa-bell-o"></i>
-          </button>
-          <h2>Notification<span data-hook="notification-help"></span></h2>
-        </div>
-      </div>
-      <div class="import-task-section">
-        <h1>Or you can import a task from a file</h1>
-        <div data-hook="import-task-container"></div>
-      </div>
-    </section>
-    <section data-hook="form-container"></section>
-  </div>
+      </section>
+      <section data-hook="form-container"></section>
+    </div>
   `,
   events: {
     'click button[data-hook=script]': 'launchScriptTaskForm',
     'click button[data-hook=scraper]': function (event) {
       event.preventDefault()
       event.stopPropagation()
-      this.createFormTask( new ScraperTask() )
+      this.renderCreateFormTask( new ScraperTask() )
     },
     'click button[data-hook=approval]': function (event) {
       event.preventDefault()
       event.stopPropagation()
-      this.createFormTask( new ApprovalTask() )
+      this.renderCreateFormTask( new ApprovalTask() )
     },
-    //'click button[data-hook=dummy]': function (event) {
-    //  event.preventDefault()
-    //  event.stopPropagation()
-    //  this.createFormTask( new DummyTask() )
-    //},
     'click button[data-hook=notification]': function (event) {
       event.preventDefault()
       event.stopPropagation()
-      this.createFormTask( new NotificationTask() )
+      this.renderCreateFormTask( new NotificationTask() )
     }
   },
   launchScriptTaskForm: function (event) {
@@ -128,7 +126,7 @@ const TaskCreationWizard = View.extend({
       event.preventDefault()
       event.stopPropagation()
     }
-    this.createFormTask(new ScriptTask())
+    this.renderCreateFormTask(new ScriptTask())
   },
   render () {
     this.renderWithTemplate(this)
@@ -141,11 +139,16 @@ const TaskCreationWizard = View.extend({
 
     this.importTaskInput = new ImportTaskInputView({
       callback: (file) => {
-        if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
+        if (
+          file &&
+          /json\/*/.test(file.type) === true &&
+          file.contents &&
+          file.contents.length
+        ) {
           try {
             let recipe = JSON.parse(file.contents)
             let task = App.actions.task.parseRecipe(recipe)
-            this.createFormTask(task, {isImport: true})
+            this.renderImportFormTask(task)
           } catch (e) {
             console.log(e)
             bootbox.alert('Invalid JSON file.')
@@ -209,25 +212,53 @@ const TaskCreationWizard = View.extend({
       }),
       this.queryByHook('notification-help')
     )
-
   },
   /**
    * @param {Task} task a models/task instance
    */
-  createFormTask (task, options) {
+  renderCreateFormTask (task) {
     this.queryByHook('type-selection-container').remove()
-
-    options = Object.assign({}, options, {model: task})
-
-    const form = new TaskFormView(options)
-    this.renderSubview(form,this.queryByHook('form-container'))
+    const form = new TaskFormView({ model: task })
+    this.renderSubview(form, this.queryByHook('form-container'))
     this.form = form
-    this.listenTo(form,'submitted',() => { this.trigger('submitted') })
+    this.listenTo(form, 'submit', data => {
+      if (this.submit) {
+        this.submit(data)
+      } else {
+        App.actions.task.create(data)
+      }
+
+      this.trigger('submitted')
+    })
+  },
+  renderImportFormTask (task) {
+    this.queryByHook('type-selection-container').remove()
+    const form = new TaskFormView({ model: task, isImport: true })
+    this.renderSubview(form, this.queryByHook('form-container'))
+    this.form = form
+    this.listenTo(form, 'submit', data => {
+      if (this.submit) {
+        this.submit(data)
+      } else {
+        if (task.type === 'script') {
+          App.actions.file.create(App.state.taskForm.file, (err, file) => {
+            data.script_id = file.id
+            delete data.script_name
+            App.actions.task.create(data)
+          })
+        } else {
+          App.actions.task.create(data)
+        }
+      }
+
+      this.trigger('submitted')
+    })
   },
   remove () {
-    if (this.form) this.form.remove()
+    if (this.form) { this.form.remove() }
     View.prototype.remove.apply(this,arguments)
   },
   update () {
+    // DO NOT REMOVE. must do nothing
   }
 })
