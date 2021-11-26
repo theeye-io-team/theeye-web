@@ -1,5 +1,7 @@
+import App from 'ampersand-app'
 import Modalizer from 'components/modalizer'
 import TaskForm from './form'
+import bootbox from 'bootbox'
 
 export default Modalizer.extend({
   initialize () {
@@ -20,8 +22,21 @@ export default Modalizer.extend({
       this.form.remove()
       this.remove()
     })
-    this.listenTo(this.form, 'submitted', () => {
+    this.listenTo(this.form, 'submit', data => {
+      App.actions.task.update(this.model.id, data)
       this.hide()
     })
+
+    if (this.model.hasTemplate) {
+      bootbox.alert({
+        title: 'Warning',
+        message: `
+          <div>
+            <p>Warning!</p>
+            <p>You are modifying a task that belongs to a template. The changes will be only applied to this task.</p>
+          </div>
+        `
+      })
+    }
   }
 })

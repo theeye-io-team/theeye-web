@@ -1,4 +1,5 @@
 import DropableForm from 'components/dropable-form'
+import Buttons from 'view/buttons'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
 import * as FieldConstants from 'constants/field'
@@ -61,5 +62,19 @@ export default DropableForm.extend({
       .forEach(prop => {
         this._fieldViews[prop].setValue(task[prop])
       })
+  },
+  submit () {
+    this.beforeSubmit()
+    if (!this.valid) { return }
+
+    let data = this.prepareData(this.data)
+    this.trigger('submit', data)
+  },
+  render () {
+    DropableForm.prototype.render.apply(this, arguments)
+
+    const buttons = this.buttons = new Buttons()
+    this.renderSubview(buttons)
+    buttons.on('click:confirm', () => { this.submit() })
   }
 })
