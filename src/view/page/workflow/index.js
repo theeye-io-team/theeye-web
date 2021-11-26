@@ -20,17 +20,17 @@ export default View.extend({
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
       .then(({ default: WorkflowView }) => {
 
-        var workflow = this.workflow = new WorkflowView({
+        const workflowView = new WorkflowView({
           graph: App.state.workflowPage.currentWorkflow
         })
 
-        this.renderSubview(workflow, this.queryByHook('workflow-container'))
+        this.renderSubview(workflowView, this.queryByHook('workflow-container'))
 
         this.listenToAndRun(
           App.state.workflowPage,
           'change:currentWorkflow',
           () => {
-            workflow.graph = App.state.workflowPage.currentWorkflow
+            workflowView.graph = App.state.workflowPage.currentWorkflow
           }
         )
       })

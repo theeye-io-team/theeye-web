@@ -47,7 +47,8 @@ const Script = Template.Script.extend({
     host_id: 'string',
     template_id: 'string',
     multitasking: ['boolean',false,true],
-    env: 'object'
+    env: 'object',
+    _type: ['string',false,'ScriptTask']
   },
   derived: {
     formatted_tags: formattedTags(),
@@ -94,7 +95,8 @@ const Scraper = Template.Scraper.extend({
     hostname: 'string',
     host_id: 'string',
     template_id: 'string',
-    multitasking: ['boolean',false,true]
+    multitasking: ['boolean',false,true],
+    _type: ['string',false,'ScraperTask']
   },
   derived: {
     formatted_tags: formattedTags(),
@@ -137,7 +139,8 @@ const Scraper = Template.Scraper.extend({
 const Approval = Template.Approval.extend({
   urlRoot,
   props: {
-    template_id: 'string'
+    template_id: 'string',
+    _type: ['string',false,'ApprovalTask']
   },
   derived: {
     formatted_tags: formattedTags(),
@@ -173,7 +176,8 @@ const Approval = Template.Approval.extend({
 const Dummy = Template.Dummy.extend({
   urlRoot,
   props: {
-    template_id: 'string'
+    template_id: 'string',
+    _type: ['string',false,'DummyTask']
   },
   derived: {
     formatted_tags: formattedTags(),
@@ -209,7 +213,8 @@ const Dummy = Template.Dummy.extend({
 const Notification = Template.Notification.extend({
   urlRoot,
   props: {
-    template_id: 'string'
+    template_id: 'string',
+    _type: ['string',false,'NotificationTask']
   },
   derived: {
     formatted_tags: formattedTags(),
@@ -242,7 +247,7 @@ const Notification = Template.Notification.extend({
   }
 })
 
-const TaskFactory = function (attrs, options={}) {
+const TaskFactory = function (attrs, options = {}) {
   const store = App.state.tasks
 
   if (attrs.isCollection) { return attrs }
@@ -282,8 +287,8 @@ const TaskFactory = function (attrs, options={}) {
   }
 
   model = createModel()
-  if (options.collection !== store && !model.isNew()) {
-    store.add(model, {merge:true})
+  if (options.collection !== store && !model.isNew() && options.store !== false) {
+    store.add(model, { merge: true })
   }
   return model
 }
