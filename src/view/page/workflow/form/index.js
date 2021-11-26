@@ -1,7 +1,6 @@
-import App from 'ampersand-app'
+import FormView from 'ampersand-form-view'
 import AdvancedToggle from 'view/advanced-toggle'
 import LanguajeLabels from 'language/labels'
-import FormView from 'ampersand-form-view'
 import FormButtons from 'view/buttons'
 import SelectView from 'components/select2-view'
 import InputView from 'components/input-view'
@@ -12,14 +11,15 @@ import MembersSelectView from 'view/members-select'
 import TaskSelectView from 'view/task-select'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
-//import WorkflowActions from 'actions/workflow'
-import WorkflowBuilder from './workflow-builder'
+import WorkflowBuilderView from './workflow-builder'
 import EventsSelectView from 'view/events-select'
 import bootbox from 'bootbox'
+import { Factory as TaskFactory } from 'models/task'
 
 export default FormView.extend({
   initialize (options) {
-    const isNew = Boolean(this.model.isNew())
+    const workflow = this.model
+    const isNew = (workflow.isNew())
 
     this.advancedFields = [
       'acl',
@@ -31,17 +31,15 @@ export default FormView.extend({
       'allows_dynamic_settings'
     ]
 
-    App.actions.workflow.populate(this.model)
-
-    const workflowBuilder = new WorkflowBuilder({
-      workflow_id: this.model.id,
-      name: 'graph',
-      value: this.model.graph
+    const workflowBuilder = new WorkflowBuilderView({
+      name: 'builder',
+      value: workflow,
+      mode: options.mode
     })
 
-    const startingTaskSelect = new StartingTaskSelectionView({
-      value: this.model.start_task_id,
-      options: this.model.tasks,
+    const initialTaskSelect = new InitialTaskSelectionView({
+      value: workflow.start_task_id,
+      options: workflow.tasks,
       onOpenning: (event) => {
         if (workflowBuilder.graph.nodes().length===0) {
           event.preventDefault()
@@ -52,6 +50,12 @@ export default FormView.extend({
       }
     })
 
+    this.listenTo(workflowBuilder, 'change:graph', () => {
+      const selected = initialTaskSelect.selected()
+      initialTaskSelect.options = [ ...workflowBuilder.workflow.tasks.models ]
+      initialTaskSelect.setValue( selected?.id )
+    })
+
     // backward compatibility.
     // new task will be forbidden.
     // old tasks will only be false if it is explicitly false
@@ -59,7 +63,7 @@ export default FormView.extend({
     if (isNew) {
       allowsDynamicSettings = false
     } else {
-      allowsDynamicSettings = (this.model.allows_dynamic_settings !== false)
+      allowsDynamicSettings = (workflow.allows_dynamic_settings !== false)
     }
 
     this.fields = [
@@ -69,10 +73,10 @@ export default FormView.extend({
         required: true,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        value: this.model.name,
+        value: workflow.name,
       }),
       workflowBuilder,
-      startingTaskSelect,
+      initialTaskSelect,
       // advanced fields starts visible = false
       new AdvancedToggle({
         onclick: (event) => {
@@ -90,40 +94,40 @@ export default FormView.extend({
         required: false,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        value: this.model.description,
+        value: workflow.description,
       }),
       new EventsSelectView({
         label: 'Triggered by',
         visible: false,
         name: 'triggers',
-        value: this.model.triggers
+        value: workflow.triggers
       }),
       new TagsSelectView({
         required: false,
         visible: false,
         name: 'tags',
-        value: this.model.tags
+        value: workflow.tags
       }),
       new MembersSelectView({
         required: false,
         visible: false,
         name: 'acl',
         label: 'ACL\'s',
-        value: this.model.acl
+        value: workflow.acl
       }),
       new CheckboxView({
         required: false,
         visible: false,
         label: 'Table View',
         name: 'table_view',
-        value: this.model.table_view
+        value: workflow.table_view
       }),
       new CheckboxView({
         required: false,
         visible: false,
         label: 'Only visible to assigned users',
         name: 'empty_viewers',
-        value: this.model.empty_viewers
+        value: workflow.empty_viewers
       }),
       new CheckboxView({
         required: false,
@@ -133,10 +137,6 @@ export default FormView.extend({
         value: allowsDynamicSettings
       })
     ]
-
-    this.listenTo(workflowBuilder, 'change:workflowTasksCollection', () => {
-      startingTaskSelect.options = workflowBuilder.workflowTasksCollection
-    })
 
     FormView.prototype.initialize.apply(this, arguments)
   },
@@ -182,24 +182,20 @@ export default FormView.extend({
 
     // id property is the required value, with "numeric" data type
     let data = this.prepareData(this.data)
-    //data.looptime = this._fieldViews.looptime.selected().id
-    if (!this.model.isNew()) {
-      App.actions.workflow.update(this.model.id, data)
-    } else {
-      App.actions.workflow.create(data)
-    }
-
-    this.trigger('submitted')
+    this.trigger('submit', data)
     next(null, true)
   },
   prepareData (data) {
-    let f = Object.assign({}, data)
-    delete f['advanced-toggler']
-    return f
+    const { graph, tasks, events } = data.builder
+
+    const wf = Object.assign({}, data, { graph, tasks, events })
+    delete wf['advanced-toggler']
+    delete wf['builder']
+    return wf
   }
 })
 
-const StartingTaskSelectionView = TaskSelectView.extend({
+const InitialTaskSelectionView = TaskSelectView.extend({
   initialize (specs) {
     TaskSelectView.prototype.initialize.apply(this,arguments)
 
@@ -213,7 +209,6 @@ const StartingTaskSelectionView = TaskSelectView.extend({
   },
   render () {
     TaskSelectView.prototype.render.apply(this, arguments)
-
     this.$select.on('select2:opening', this.onOpenning)
   }
 })
