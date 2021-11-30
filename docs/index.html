@@ -13,12 +13,14 @@
   <script>
     window.$docsify = {
       name: 'TheEye Documentation',
-      repo: '',
+      repo: 'https://github.com/theeye-io-team/theeye-web',
       loadNavbar: true,
       loadSidebar: true,
       subMaxLevel: 3,
       auto2top: true,
+      relativePath: true,
       search: 'auto',
+      fallbackLanguages: ['es'],
       logo: 'images/logo-theeye-theOeye.png',
       themeColor: "#004E7A"
     }
@@ -28,5 +30,6 @@
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/emoji.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
   <script src="//cdn.jsdelivr.net/npm/docsify-copy-code"></script>
+  <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-bash.min.js"></script>
 </body>
 </html>
