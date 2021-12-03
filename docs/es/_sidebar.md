@@ -1,0 +1,13 @@
+- [Introducción a TheEye](/es/)
+- Conceptos principales
+  - Tasks
+    - [Introducción](/es/core-concepts/tasks/)
+    - [Triggers](/es/core-concepts/tasks/triggers.md)
+    - [Workflows](/es/core-concepts/tasks/workflows.md)
+    - Types
+      - [Notificación](/es/core-concepts/tasks/notification_type)
+      - [Script](/es/core-concepts/tasks/script_type)
+  - Scripts
+    - [Introducción](/es/core-concepts/scripts/)
+    - [Ejecutar Scripts y asignar permisos](/es/core-concepts/scripts/runas.md)
+    - [Escribir scripts](/es/core-concepts/scripts/write.md)
