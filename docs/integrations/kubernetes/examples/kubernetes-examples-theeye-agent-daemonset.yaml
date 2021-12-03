@@ -1,0 +1,74 @@
+apiVersion: extensions/v1beta1
+kind: DaemonSet
+metadata:
+  creationTimestamp: null
+  generation: 1
+  labels:
+    component: theeye-agent
+  name: theeye-agent
+  selfLink: /apis/extensions/v1beta1/namespaces/default/daemonsets/theeye-agent
+spec:
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app: theeye-agent
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: theeye-agent
+        deploy: "1542803877"
+    spec:
+      containers:
+      - env:
+        - name: NODE_ENV
+          valueFrom:
+            secretKeyRef:
+              key: node_env
+              name: theeye-credentials
+        - name: THEEYE_SUPERVISOR_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              key: clientid
+              name: theeye-credentials
+        - name: THEEYE_SUPERVISOR_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              key: secret
+              name: theeye-credentials
+        - name: THEEYE_SUPERVISOR_CLIENT_CUSTOMER
+          valueFrom:
+            secretKeyRef:
+              key: customer
+              name: theeye-credentials
+        - name: THEEYE_SUPERVISOR_API_URL
+          valueFrom:
+            secretKeyRef:
+              key: api_url
+              name: theeye-credentials
+        - name: THEEYE_CLIENT_HOSTNAME
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: spec.nodeName
+        image: interactar/theeye-agent
+        imagePullPolicy: Always
+        name: theeye-agent
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  templateGeneration: 2
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 1
+    type: RollingUpdate
+status:
+  currentNumberScheduled: 0
+  desiredNumberScheduled: 0
+  numberMisscheduled: 0
+  numberReady: 0
