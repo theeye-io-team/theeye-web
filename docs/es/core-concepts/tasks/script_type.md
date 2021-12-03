@@ -2,6 +2,32 @@
 
 [![theeye.io](../../images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
+## Opciones
+
+Las opciones para tareas de Script son las siguientes:
+
+- **Name:** Nombre de la tarea
+- **Bots:** El Bot que ejecutará la tarea
+- **Scripts:** El script de la tarea
+- **Tags:** Etiquetas para facilitar la busqueda de tasks (opcional)
+- **Run As:** El comando que ejecuta la tarea. [Más información](../scripts/runas.md)
+- **Task Arguments:** Los parámetros que el script puede referenciar (opcional). [Más información](#Argumentos)
+- **Advanced options** _(Click para desplegar)_
+  - **Copy Task:** Puedes elegir una tarea y clonar sus opciones (opcional)
+  - **Description:** Breve descripción de la tarea (opcional)
+  - **ACL's:** Asignar permisos de ACL a otros usuarios (opcional). [Más información](../iam/user-management.md)
+  - **Triggered by:** Eventos que dispararán la tarea automáticamente (opcional)
+  - **Trigger on-hold time:** Tiempo desde uno de los eventos definidos anteriormente hasta el disparo de la tarea (opcional)
+  - **Excecution timeout:** Cuánto esperar la respuesta del servidor antes de cancelar ejecución (opcional)
+  - **Multitasking:** Permite a los Bots ejecutar multiples Jobs de esta tarea en paralelo
+  - **Is cancellable:** Puede o no la tarea ser cancelada
+  - **Require user interaction:** Solicitar confirmación antes de ejecutarse
+  - **Specific users interaction:** Solicitar confirmación de ciertos usuarios en particular (opcional)
+  - **Result popup:** Mostrar el resultado del job en una ventana al terminar
+  - **Environment Variables:** Variables de entorno para la tarea (opcional)
+  - **Arguments Type (experimental):** El formato JSON para los argumentos
+  - **Allows to change the behaviour of running jobs:** Permite que se modifiquen los parametros de un job en ejecución programáticamente
+
 ## Componentes
 
 Al trabajar con Workflows, puedes usar los componentes en el resultado de la tarea para modificar el comportamiento de la siguiente tarea:
