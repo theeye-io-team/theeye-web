@@ -39,5 +39,16 @@
     <% if (process.env.RECAPTCHA_DISABLED !== 'true') { %>
     <script src="https://www.google.com/recaptcha/api.js?render=explicit" async defer></script>
     <% } %>
+    <!--[if true]>
+  <script>
+    window.config = {
+      app_url: 'gateway url',
+      socket_url: 'gateway url',
+      api_url: 'gateway url/api',
+      api_v3_url: 'gateway url/api',
+      supervisor_api_url: 'supervisor url',
+    }
+    </script>
+    <![endif]-->
   </body>
 </html>
