@@ -96,7 +96,7 @@ const ScriptJobResult = View.extend({
                 <a data-hook="formatter" href="#" class="fa fa-align-left"></a>
               </div>
               <div data-hook="formatter-log" class="output">
-                <span data-hook="log"></span>
+                <pre data-hook="log"></pre>
               </div>
             </td>
           </tr>
@@ -111,13 +111,13 @@ const ScriptJobResult = View.extend({
 
       const container = this.queryByHook('formatter-log')
 
-      let innerElement = container.querySelector('span')
+      let innerElement = container.querySelector('pre')
       let newChild
       if (innerElement !== null) {
-        newChild = document.createElement('pre')
-      } else {
-        innerElement = container.querySelector('pre')
         newChild = document.createElement('span')
+      } else {
+        innerElement = container.querySelector('span')
+        newChild = document.createElement('pre')
       }
 
       newChild.dataset.hook = 'log'
