@@ -291,10 +291,14 @@ export default {
             Accept: 'application/json;charset=UTF-8'
           },
           done (data, xhr) {
-            job.task.task_arguments.set(data.task.task_arguments)
-            job.task_arguments_values = data.task_arguments_values
+            job.task.set('task_arguments', data.task.task_arguments)
+            job.set('task_arguments_values', data.task_arguments_values)
+            job.trigger('inputs-ready')
           }
         })
+      } else {
+        // already fetched
+        job.trigger('inputs-ready')
       }
     }
   }

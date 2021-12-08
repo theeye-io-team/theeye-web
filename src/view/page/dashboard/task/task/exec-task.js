@@ -82,7 +82,7 @@ export const BaseExec = State.extend({
   },
   _confirmExecution (taskArgs) {
     let confirmView = new ConfirmExecution({
-      name: this.model.name,
+      message: `run the task ${this.model.name}`,
       taskArgs
     })
 
@@ -104,33 +104,6 @@ export const BaseExec = State.extend({
     })
 
     modal.show()
-  },
-  _restartExecution (taskArgs) {
-    let confirmView = new ConfirmExecution({
-      name: this.model.name,
-      taskArgs
-    })
-
-    const modal = new Modalizer({
-      buttons: true,
-      confirmButton: 'Restart',
-      title: `Restart ${this.model.name}`,
-      bodyView: confirmView
-    })
-
-    this.listenTo(modal, 'hidden', () => {
-      confirmView.remove()
-      modal.remove()
-    })
-
-    this.listenTo(modal, 'confirm', () => {
-      modal.hide()
-      App.actions.job.restart(this.model, taskArgs)
-    })
-
-    modal.show()
-    
-    //App.actions.job.restart(this.model, taskArgs)
   },
 })
 
