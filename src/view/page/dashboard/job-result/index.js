@@ -502,9 +502,12 @@ const TableRowFile = View.extend({
     }
   },
   render () {
+    const job = this.model
     this.renderWithTemplate()
-    if (this.model.value) {
-      const btn = new DownloadButton({ blob: this.model.value })
+    if (job.value) {
+      const value = job.value
+      const blob = (value.indexOf('data:') === 0) ? value : undefined
+      const btn = new DownloadButton({ blob })
       this.renderSubview(btn, this.queryByHook('value'))
     }
   }

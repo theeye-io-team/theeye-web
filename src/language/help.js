@@ -153,8 +153,8 @@ export default {
     export_recipe: '<b>Recipe</b>: Create workflow template. Values for fixed arguments and environment variables will be empty.'
   },
   job: {
-    repeat: 'Start new job (uses same inputs)',
-    repeat_edit: 'Repeat this job, but allow me to edit the arguments',
+    repeat: 'Start a new job using the same inputs',
+    repeat_edit: 'Start a new job like this, but allow me to edit the arguments',
     restart: 'Retry this job keeping the inputs and the environment',
     restart_edit: 'Retry this job, but allow me to edit the arguments',
     change_assignee: 'Change this job\'s assignees'

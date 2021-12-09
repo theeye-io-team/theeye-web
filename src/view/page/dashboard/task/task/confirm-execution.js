@@ -61,7 +61,13 @@ const getArgRenderValue = (arg) => {
   }
 
   if (type === FieldsConstants.TYPE_FILE) {
-    return arg.value?.name
+    if (arg.value) {
+      if (arg.value.name) {
+        return arg.value.name
+      } else {
+        return 'Filename not available'
+      }
+    }
   }
 
   if (typeof(arg.value) == "object") {
