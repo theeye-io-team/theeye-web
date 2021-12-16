@@ -40,9 +40,11 @@ export default {
 
         // reset workflow state
         const workflow = App.state.workflows.get(id)
+        model.tasks.reset([])
+        model.events.reset([])
         workflow.set( model.serialize() )
 
-        App.actions.workflow.populate(workflow, true)
+        //App.actions.workflow.populate(workflow, true)
         workflow.tasks.fetch({
           data: {
             where: {
@@ -83,17 +85,20 @@ export default {
     let workflow = new App.Models.Workflow.Workflow(data, { store: false })
     workflow.version = 2 // create only version 2 workflows.
     workflow.save({}, {
-      success () {
+      success: () => {
         App.state.alerts.success('Success', 'Workflow created')
+        workflow.tasks.reset([]) // remove all temporary tasks
+        workflow.events.reset([]) // remove all temporary events
         App.state.workflows.add(workflow)
-        this.populate(workflow)
+        
         // update workflow tasks state from api
         workflow.tasks.fetch({
           data: {
             where: {
               workflow_id: workflow.id
             }
-          }
+          },
+          //success: () => App.actions.workflow.populate(workflow)
         })
       },
       error: (err) => {
@@ -168,7 +173,7 @@ export default {
     }
   },
   triggerExecution (workflow) {
-    this.populate(workflow)
+    //this.populate(workflow)
     App.actions.task.execute(workflow.start_task)
   },
   //run (workflow) {
