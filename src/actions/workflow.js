@@ -40,6 +40,8 @@ export default {
 
         // reset workflow state
         const workflow = App.state.workflows.get(id)
+        model.tasks.reset([])
+        model.events.reset([])
         workflow.set( model.serialize() )
 
         //App.actions.workflow.populate(workflow, true)
