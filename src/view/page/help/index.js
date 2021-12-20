@@ -9,12 +9,14 @@ export default View.extend({
       <div class="admin-panel">
         <h3 class="list-title"">Help</h3>
         <div data-hook="help-container" class="help-container">
-          <div class="version">TheEye Web <small data-hook="web-ver">fetching version</small></h3>
-          <div class="version">TheEye Supervisor <small data-hook="sup-ver">fetching version</small></h3>
-          <div class="version">TheEye Gateway <small data-hook="gate-ver">fetching version</small></h3>
           <h4>Need some help?</h4>
           <p>Visit our website: <a class="help-link" target="_blank" href="https://theeye.io/">theeye.io</a></p>
           <p>Our documentation: <a class="help-link" target="_blank" href="https://documentation.theeye.io">documentation.theeye.io</a></p>
+          <h4>Versions</h4>
+          <!-- <p class="version">TheEye Web <small data-hook="web-ver">fetching version</small></p> -->
+          <p class="version">TheEye Supervisor <small data-hook="sup-ver">fetching version</small></p>
+          <p class="version">TheEye Gateway <small data-hook="gate-ver">fetching version</small></p>
+
         </div>
       </div>
     </div>
@@ -54,6 +56,6 @@ export default View.extend({
       }
     })
 
-    this.queryByHook("web-ver").innerHTML = 'unknown version'
+    // this.queryByHook("web-ver").innerHTML = 'unknown version'
   }
 })
