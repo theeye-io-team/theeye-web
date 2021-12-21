@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
+import Collection from 'ampersand-collection'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import { Collection as ScheduleCollection } from 'models/schedule'
@@ -8,7 +9,10 @@ import graphlib from 'graphlib'
 import * as JobConstants from 'constants/job'
 
 import config from 'config'
-const urlRoot = `${config.supervisor_api_url}/workflows`
+const urlRoot = function () {
+  let urlRoot = `${config.supervisor_api_url}/workflows`
+  return urlRoot
+}
 
 const formattedTags = () => {
   return {
@@ -39,6 +43,17 @@ const formattedTags = () => {
 }
 
 const Workflow = AppModel.extend({
+  ajaxConfig () {
+    const config = AppModel.prototype.ajaxConfig.apply(this, arguments)
+
+    if (this.version !== 2) {
+      config.headers['Accept-Version'] = '~1'
+    } else {
+      config.headers['Accept-Version'] = App.config.supervisor_api_version
+    }
+
+    return config
+  },
   dataTypes: {
     'graphlib.Graph': {
       set (graph) {
@@ -91,10 +106,14 @@ const Workflow = AppModel.extend({
     end_task_id: ['string'],
     current_task_id: 'string',
     graph: ['graphlib.Graph', true],
-    allows_dynamic_settings: ['boolean',false]
+    allows_dynamic_settings: ['boolean',false],
+    version: 'number'
   },
   collections: {
     schedules: ScheduleCollection,
+    events: function (models, options) {
+      return new App.Models.Event.Collection(models, options)
+    },
     tasks: function (models, options) {
       return new App.Models.Task.Collection(models, options)
     },
@@ -158,13 +177,14 @@ const Workflow = AppModel.extend({
       cache: false,
       deps: ['start_task'],
       fn () {
-        if (!this.alreadyPopulated) {
-          console.error('cannot determine dynamic arguments. workflow information missing')
+        if (!this.start_task) {
+          //console.error('cannot determine dynamic arguments. workflow information missing')
+          return null
         }
 
         return this.start_task.hasDynamicArguments
       }
-    }
+    },
   },
   initialize () {
     AppModel.prototype.initialize.apply(this,arguments)
@@ -224,6 +244,11 @@ const Workflow = AppModel.extend({
     })
 
     attrs.graph = graph
+
+    //attrs.events = attrs.events.filter(model => model.synchronized !== true)
+    //attrs.tasks = attrs.tasks.filter(model => model.synchronized !== true)
+    delete attrs.jobs
+    delete attrs.schedules
     return attrs
   },
   /**
