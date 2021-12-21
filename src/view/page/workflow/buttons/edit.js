@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
 import FormView from '../form'
@@ -14,12 +15,12 @@ export default PanelButton.extend({
       event.stopPropagation()
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
-      const form = new FormView({
-        model: this.model
-      })
+      App.actions.workflow.populate(this.model)
+      const form = new FormView({ model: this.model, mode: 'edit' })
+
       const modal = new Modalizer({
         buttons: false,
-        title: `Edit # ${this.model.id}`,
+        title: `Edit # ${this.model.id} - Version ${this.model.version||'Migration'}`,
         bodyView: form
       })
 
@@ -30,7 +31,10 @@ export default PanelButton.extend({
         modal.remove()
       })
 
-      form.on('submitted', () => { modal.hide() })
+      form.on('submit', data => {
+        App.actions.workflow.update(this.model.id, data)
+        modal.hide()
+      })
 
       modal.show()
     }
