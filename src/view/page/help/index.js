@@ -31,7 +31,6 @@ export default View.extend({
         Accept: 'application/json;charset=UTF-8'
       },
       done: (response,xhr) => {
-        console.log(response)
         this.queryByHook("gate-ver").innerHTML = response.theeye_version
       },
       fail: (err,xhr) => {
@@ -47,7 +46,6 @@ export default View.extend({
         Accept: 'application/json;charset=UTF-8'
       },
       done: (response,xhr) => {
-        console.log(response)
         this.queryByHook("sup-ver").innerHTML = response.theeye_version
       },
       fail: (err,xhr) => {
@@ -56,6 +54,6 @@ export default View.extend({
       }
     })
 
-    this.queryByHook("web-ver").innerHTML = process.env.__VERSION__ || 'unknown version'
+    this.queryByHook("web-ver").innerHTML = process.env.APP_VERSION || 'unknown version'
   }
 })
