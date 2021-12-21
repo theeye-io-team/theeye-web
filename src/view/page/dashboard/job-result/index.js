@@ -96,7 +96,7 @@ const ScriptJobResult = View.extend({
                 <a data-hook="formatter" href="#" class="fa fa-align-left"></a>
               </div>
               <div data-hook="formatter-log" class="output">
-                <span data-hook="log"></span>
+                <pre data-hook="log"></pre>
               </div>
             </td>
           </tr>
@@ -111,13 +111,13 @@ const ScriptJobResult = View.extend({
 
       const container = this.queryByHook('formatter-log')
 
-      let innerElement = container.querySelector('span')
+      let innerElement = container.querySelector('pre')
       let newChild
       if (innerElement !== null) {
-        newChild = document.createElement('pre')
-      } else {
-        innerElement = container.querySelector('pre')
         newChild = document.createElement('span')
+      } else {
+        innerElement = container.querySelector('span')
+        newChild = document.createElement('pre')
       }
 
       newChild.dataset.hook = 'log'
@@ -431,15 +431,25 @@ const TableView = View.extend({
 
     // we need a string to display
     const displayValue = (value) => {
-      if (
-        value !== undefined &&
-        value !== null &&
-        value.toString !== undefined
-      ) {
+      if (typeof value === 'number' || typeof value === 'string') {
         return value.toString()
-      } else {
-        return JSON.stringify(value)
       }
+
+      let out
+      if (
+        value === undefined ||
+        value === null ||
+        value?.toString === undefined ||
+        typeof value === 'object'
+      ) {
+        try {
+          out = JSON.stringify(value)
+        } catch (err) {
+          out = value
+        }
+      }
+
+      return out
     }
 
     for (let index = 0; index < this.rows.length; index++) {
@@ -451,7 +461,7 @@ const TableView = View.extend({
           value: displayValue(value),
           id,
           key: String(row.label || id),
-          type: row.type
+          type: row.type || 'input'
         }
 
         this.collection.add( new RowState(data) )
@@ -492,9 +502,12 @@ const TableRowFile = View.extend({
     }
   },
   render () {
+    const job = this.model
     this.renderWithTemplate()
-    if (this.model.value) {
-      const btn = new DownloadButton({ blob: this.model.value })
+    if (job.value) {
+      const value = job.value
+      const blob = (value.indexOf('data:') === 0) ? value : undefined
+      const btn = new DownloadButton({ blob })
       this.renderSubview(btn, this.queryByHook('value'))
     }
   }
