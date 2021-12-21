@@ -7,7 +7,31 @@ export default Object.assign({}, defaultConfigs, {
   api_url: 'https://app.theeye.io/api',
   api_v3_url: 'https://app.theeye.io/api',
   supervisor_api_url: 'https://supervisor.theeye.io',
-  grecaptcha: {
-    sitekey: '6LfaIrsUAAAAAKmZPeN5ZqmFDvJZLEdtK0dev2eV',
+  components: {
+    dynamic_form: {
+      remote: {
+        query_limit: 10
+      }
+    },
+    login: {
+      domain: {
+        enabled: false
+      },
+      registration: {
+        enabled: true
+      },
+      password_reset: {
+        enabled: true
+      },
+      enterprise: {
+        enabled: false
+      },
+      google: {
+        enabled: true
+      }
+    },
+    grecaptcha: {
+      sitekey: '6LfZMM4cAAAAAImjGgjmOMHXj7p3Yr8JF4yMvkSt'
+    }
   }
 })
