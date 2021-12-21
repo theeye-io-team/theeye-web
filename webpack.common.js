@@ -9,10 +9,6 @@ const NODE_ENV = process.env['NODE_ENV'] || 'default'
 const PUBLIC_PATH = typeof process.env['PUBLIC_PATH'] === 'string' ? process.env['PUBLIC_PATH'] : '/'
 const TARGET_PATH = 'bundles/'
 
-let gitVer = require('child_process')
-  .execSync('git describe')
-  .toString();
-
 module.exports = {
   //stats: 'verbose',
   entry: `${__dirname}/src/main.js`,
