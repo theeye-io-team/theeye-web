@@ -36,7 +36,6 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
-        'GIT_VERSION': JSON.stringify(gitVer),
         '__VERSION__': JSON.stringify(process.env.APP_VERSION),
         'NODE_ENV': JSON.stringify(NODE_ENV),
         'RECAPTCHA_DISABLED': JSON.stringify(process.env.RECAPTCHA_DISABLED),

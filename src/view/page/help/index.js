@@ -56,6 +56,6 @@ export default View.extend({
       }
     })
 
-    this.queryByHook("web-ver").innerHTML = process.env.GIT_VERSION || 'unknown version'
+    this.queryByHook("web-ver").innerHTML = process.env.__VERSION__ || 'unknown version'
   }
 })
