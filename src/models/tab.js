@@ -4,7 +4,7 @@ import AppCollection from 'lib/app-collection'
 const Model = AppModel.extend({
   props: {
     name: 'string',
-    show: ['boolean', false, true],
+    show: ['boolean', false, false],
     active: ['boolean', false, false],
     showBadge: ['boolean', false, false]
   }
