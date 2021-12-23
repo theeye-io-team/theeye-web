@@ -58,9 +58,8 @@ export default View.extend({
     },
     valid: {
       cache: false,
-      deps: ['path'],
+      deps: ['input'],
       fn () {
-        if (!this.input) { return false }
         return this.input.valid
       }
     },
@@ -84,10 +83,10 @@ export default View.extend({
     let input = new PathInput({
       label: 'Path *',
       name: 'path',
-      placeholder: '/etc/theeye',
       styles: 'form-control',
-      required: false,
+      required: true,
       invalidClass: 'text-danger',
+      requiredMessage: 'Path required',
       validityClassSelector: '.control-label',
       value: this.path
     })
