@@ -64,7 +64,7 @@ export default View.extend({
           ? undefined
           : this.input.value == ''
             ? 'Path required'
-            : 'Invalid path'
+            : `Invalid ${this.OS} path`
 
         return this.isValid
       }
