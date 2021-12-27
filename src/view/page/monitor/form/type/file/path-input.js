@@ -44,7 +44,7 @@ export default View.extend({
     is_manual_path: 'boolean',
     message: 'string',
     isValid: 'boolean',
-    OS: ['string',true,'linux']
+    OS: ['string',true,'Linux']
   },
   derived: {
     value: {
@@ -130,10 +130,10 @@ export default View.extend({
     // TODO: The agent can be set up for Windows and Mac OS, which have different
     // path standards. This variable should be set as 'windows' or 'macos' depending
     // on what OS the agent is running on. That will help validate the path
-    if (os == 'linux' || os == 'macos') {
+    if (os == 'Linux' || os == 'Mac OS') {
       const reg = new RegExp(/\/((?!\0).+\/)*$/g)
       return reg.test(path)
-    } else if (os == 'windows') {
+    } else if (os == 'Windows') {
       const reg = new RegExp(/(?!\0|\<|\>|\:|\"|\/|\\|\||\?|\*|CON|PRN|AUX|NUL|COM1|COM2|COM3|COM4|COM5|COM6|COM7|COM8|COM9|LPT1|LPT2|LPT3|LPT4|LPT5|LPT6|LPT7|LPT8|LPT9)[a-zA-Z]:[\\\/](?:[a-zA-Z0-9]+[\\\/])*$/g)
       // This was pain
       return reg.test(path)
