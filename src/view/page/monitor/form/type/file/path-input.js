@@ -26,14 +26,11 @@ export default View.extend({
   `,
   bindings: {
     visible: { type: 'toggle' },
-    showMessage: [{
+    isValid: {
       type: 'toggle',
-      hook: 'message-container'
-    },{
-      type: 'booleanClass',
-      selector: 'label[for=path]',
-      name: 'text-danger'
-    }],
+      hook: 'message-container',
+      invert: true
+    },
     message: { hook: 'message-text' },
     label: { hook: 'label' },
     checkbox_label: { hook: 'checkbox_label' }
@@ -46,9 +43,8 @@ export default View.extend({
     path: 'string',
     is_manual_path: 'boolean',
     message: 'string',
-    showMessage: 'string',
     isValid: 'boolean',
-    OS: ['string',true,'windows']
+    OS: ['string',true,'linux']
   },
   derived: {
     value: {
@@ -63,6 +59,13 @@ export default View.extend({
       deps: ['input'],
       fn () {
         this.isValid = this.validatePath(this.input.value, this.OS)
+        
+        this.message = this.isValid
+          ? undefined
+          : this.input.value == ''
+            ? 'Path required'
+            : 'Invalid path'
+
         return this.isValid
       }
     },
@@ -81,10 +84,6 @@ export default View.extend({
     })
 
     this.input = this.renderPathInputView()
-
-    // this.listenTo(this, 'change:isValid', () => {
-    //   console.log(this.isValid)
-    // })
   },
   renderPathInputView () {
     let input = new PathInput({
@@ -104,9 +103,6 @@ export default View.extend({
     this.listenTo(input,'change:message',() => {
       this.message = input.message
     })
-    this.listenTo(input,'change:showMessage',() => {
-      this.showMessage = input.showMessage
-    })
 
     return input
   },
@@ -123,7 +119,12 @@ export default View.extend({
     this.input.setValue(opts.path)
   },
   beforeSubmit () {
-    this.valid
+    if (!this.isValid) {
+      this.query('label[for=path_input]').classList.add('text-danger')
+      this.listenToOnce(this.input, 'change:value', () => {
+        this.query('label[for=path_input]').classList.remove('text-danger')
+      })
+    }
   },
   validatePath (path, os) {
     // TODO: The agent can be set up for Windows and Mac OS, which have different
