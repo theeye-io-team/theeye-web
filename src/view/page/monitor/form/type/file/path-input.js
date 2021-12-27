@@ -46,7 +46,9 @@ export default View.extend({
     path: 'string',
     is_manual_path: 'boolean',
     message: 'string',
-    showMessage: 'string'
+    showMessage: 'string',
+    isValid: 'boolean',
+    OS: ['string',true,'windows']
   },
   derived: {
     value: {
@@ -60,7 +62,8 @@ export default View.extend({
       cache: false,
       deps: ['input'],
       fn () {
-        return this.input.valid
+        this.isValid = this.validatePath(this.input.value, this.OS)
+        return this.isValid
       }
     },
   },
@@ -78,6 +81,10 @@ export default View.extend({
     })
 
     this.input = this.renderPathInputView()
+
+    // this.listenTo(this, 'change:isValid', () => {
+    //   console.log(this.isValid)
+    // })
   },
   renderPathInputView () {
     let input = new PathInput({
@@ -108,10 +115,27 @@ export default View.extend({
    */
   update () {
     this.path = this.input.value
+    this.valid
     this.parent.update.apply(this.parent, arguments)
   },
   setValue (opts) {
     this.is_manual_path = opts.is_manual_path
     this.input.setValue(opts.path)
+  },
+  beforeSubmit () {
+    this.valid
+  },
+  validatePath (path, os) {
+    // TODO: The agent can be set up for Windows and Mac OS, which have different
+    // path standards. This variable should be set as 'windows' or 'macos' depending
+    // on what OS the agent is running on. That will help validate the path
+    if (os == 'linux' || os == 'macos') {
+      const reg = new RegExp(/\/((?!\0).+\/)*$/g)
+      return reg.test(path)
+    } else if (os == 'windows') {
+      const reg = new RegExp(/(?!\0|\<|\>|\:|\"|\/|\\|\||\?|\*|CON|PRN|AUX|NUL|COM1|COM2|COM3|COM4|COM5|COM6|COM7|COM8|COM9|LPT1|LPT2|LPT3|LPT4|LPT5|LPT6|LPT7|LPT8|LPT9)[a-zA-Z]:[\\\/](?:[a-zA-Z0-9]+[\\\/])*$/g)
+      // This was pain
+      return reg.test(path)
+    }
   }
 })
