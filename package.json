@@ -2,12 +2,16 @@
   "name": "theeye-web",
   "private": true,
   "version": "2.9.1",
-  "description": "TheEye WebApp/SPA Interface",
+  "description": "theeye web - spa interface",
   "keywords": [],
   "main": "src/main.js",
   "author": "facugon",
   "license": "AGPL-3.0",
   "browserslist": ">0.25%, not dead",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theeye/theeye-web.git"
+  },
   "scripts": {
     "build": "npx webpack --config webpack.prod.js",
     "build-dev": "NODE_ENV=dev npx webpack --watch --config webpack.dev.js",
