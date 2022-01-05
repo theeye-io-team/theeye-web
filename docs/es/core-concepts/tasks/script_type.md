@@ -16,7 +16,7 @@ Las opciones para tareas de Script son las siguientes:
   - **Copy Task:** Puedes elegir una tarea y clonar sus opciones (opcional)
   - **Description:** Breve descripción de la tarea (opcional)
   - **ACL's:** Asignar permisos de ACL a otros usuarios (opcional). [Más información](../iam/user-management.md)
-  - **Triggered by:** Eventos que dispararán la tarea automáticamente (opcional)
+  - **Triggered by:** Eventos que dispararán la tarea automáticamente (opcional). [Más información](/es/core-concepts/tasks/triggers.md)
   - **Trigger on-hold time:** Tiempo desde uno de los eventos definidos anteriormente hasta el disparo de la tarea (opcional)
   - **Excecution timeout:** Cuánto esperar la respuesta del servidor antes de cancelar ejecución (opcional)
   - **Multitasking:** Permite a los Bots ejecutar multiples Jobs de esta tarea en paralelo
