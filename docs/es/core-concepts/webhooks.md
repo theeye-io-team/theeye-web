@@ -45,5 +45,5 @@ Las opciones de los las tareas de tipo _Outgoing Webhook/HTTP Request_ son las s
   - **Use HTTP Compression**: Habilitar o no la compresión HTTP
   - **Req. timeout:** Cuánto esperar la respuesta del servidor antes de considerar el request como fallido (opcional)
   - **Success Status Code**: El código HTTP esperado como respuesta para considerarse exitosa. [Más información](https://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html)
-  - **Success Pattern**:  El cuerpo de la respuesta HTTP esperada. Puede escribir código HTML o usar una _Expresión Regular_
+  - **Success Pattern**:  El cuerpo de la respuesta HTTP esperada. Puede escribir código HTML o usar una _Expresión Regular_ (opcional)
   - **Multitasking:** Permite a los Bots ejecutar multiples Jobs de esta tarea en paralelo
