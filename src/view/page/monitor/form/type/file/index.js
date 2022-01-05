@@ -26,6 +26,10 @@ export default MonitorFormView.extend({
     const isNewMonitor = Boolean(resource.isNew())
 
     let hostsSelection = new SelectView({
+      // FIXME: You can choose multiple Bots. Choosing a Windows Monitor and a
+      // Linux or Mac OS Monitor will not work, as both filesystems are widely
+      // different. This could be fixed by filtering the Bot list by OS after
+      // the first one is selected
       label: 'Bots *',
       name: (isNewMonitor ? 'hosts' : 'host_id'),
       multiple: isNewMonitor,
@@ -51,6 +55,14 @@ export default MonitorFormView.extend({
 
     pathInput.render()
     this.registerSubview(pathInput)
+
+    this.listenTo(hostsSelection, 'change:value', () => {
+      let host
+      if (hostsSelection.value.length > 1) {
+        host = App.state.hosts.get(hostsSelection.value[0])
+      } else host = App.state.hosts.get(hostsSelection.value)
+      if (host) pathInput.OS = host.os_name
+    })
 
     let dirname = new InputView({
       label: 'Dirname',

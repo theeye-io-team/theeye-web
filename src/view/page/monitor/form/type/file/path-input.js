@@ -26,14 +26,11 @@ export default View.extend({
   `,
   bindings: {
     visible: { type: 'toggle' },
-    showMessage: [{
+    isValid: {
       type: 'toggle',
-      hook: 'message-container'
-    },{
-      type: 'booleanClass',
-      selector: 'label[for=path]',
-      name: 'text-danger'
-    }],
+      hook: 'message-container',
+      invert: true
+    },
     message: { hook: 'message-text' },
     label: { hook: 'label' },
     checkbox_label: { hook: 'checkbox_label' }
@@ -46,7 +43,8 @@ export default View.extend({
     path: 'string',
     is_manual_path: 'boolean',
     message: 'string',
-    showMessage: 'string'
+    isValid: 'boolean',
+    OS: ['string',true,'Linux']
   },
   derived: {
     value: {
@@ -58,10 +56,17 @@ export default View.extend({
     },
     valid: {
       cache: false,
-      deps: ['path'],
+      deps: ['input'],
       fn () {
-        if (!this.input) { return false }
-        return this.input.valid
+        this.isValid = this.validatePath(this.input.value, this.OS)
+        
+        this.message = this.isValid
+          ? undefined
+          : this.input.value == ''
+            ? 'Path required'
+            : `Invalid ${this.OS} path`
+
+        return this.isValid
       }
     },
   },
@@ -84,10 +89,10 @@ export default View.extend({
     let input = new PathInput({
       label: 'Path *',
       name: 'path',
-      placeholder: '/etc/theeye',
       styles: 'form-control',
-      required: false,
+      required: true,
       invalidClass: 'text-danger',
+      requiredMessage: 'Path required',
       validityClassSelector: '.control-label',
       value: this.path
     })
@@ -98,9 +103,6 @@ export default View.extend({
     this.listenTo(input,'change:message',() => {
       this.message = input.message
     })
-    this.listenTo(input,'change:showMessage',() => {
-      this.showMessage = input.showMessage
-    })
 
     return input
   },
@@ -109,10 +111,32 @@ export default View.extend({
    */
   update () {
     this.path = this.input.value
+    this.valid
     this.parent.update.apply(this.parent, arguments)
   },
   setValue (opts) {
     this.is_manual_path = opts.is_manual_path
     this.input.setValue(opts.path)
+  },
+  beforeSubmit () {
+    if (!this.isValid) {
+      this.query('label[for=path_input]').classList.add('text-danger')
+      this.listenToOnce(this.input, 'change:value', () => {
+        this.query('label[for=path_input]').classList.remove('text-danger')
+      })
+    }
+  },
+  validatePath (path, os) {
+    // TODO: The agent can be set up for Windows and Mac OS, which have different
+    // path standards. This variable should be set as 'windows' or 'macos' depending
+    // on what OS the agent is running on. That will help validate the path
+    if (os == 'Linux' || os == 'Mac OS') {
+      const reg = new RegExp(/\/((?!\0).+\/)*$/g)
+      return reg.test(path)
+    } else if (os == 'Windows') {
+      const reg = new RegExp(/(?!\0|\<|\>|\:|\"|\/|\\|\||\?|\*|CON|PRN|AUX|NUL|COM1|COM2|COM3|COM4|COM5|COM6|COM7|COM8|COM9|LPT1|LPT2|LPT3|LPT4|LPT5|LPT6|LPT7|LPT8|LPT9)[a-zA-Z]:[\\\/](?:[a-zA-Z0-9]+[\\\/])*$/g)
+      // This was pain
+      return reg.test(path)
+    }
   }
 })
