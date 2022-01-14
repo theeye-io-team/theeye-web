@@ -111,9 +111,20 @@ export default View.extend({
     event.stopPropagation()
     event.preventDefault()
 
-    const dialog = new OptionsDialog({ model: this.model })
-    dialog.show()
-    this.registerSubview( dialog )
+    App.state.loader.visible = true
+
+    this.listenToAndRun(this.model, 'change:task_arguments_values', () => {
+      if (this.model.task_arguments_values) { 
+        App.state.loader.visible = false
+        
+        const dialog = new OptionsDialog({ model: this.model })
+        
+        dialog.show()
+        this.registerSubview(dialog)
+      }
+    })
+    
+    App.actions.job.fetchInputs([ this.model ])
 
     return false
   }
