@@ -177,6 +177,27 @@ export default View.extend({
       }
     })
 
+    const updateEmptyView = () => {
+      if (
+        App.state.tabs.currentTab === '' && 
+        App.state.dashboard.dataSynced === true
+      ) {
+        this.queryByHook('empty-view').style.display = 'block'
+      } else {
+        this.queryByHook('empty-view').style.display = 'none'
+      }
+      const activeTabs = App.state.tabs.tabs.models.filter(tab => tab.show)
+      if (activeTabs.length === 1) {
+        App.actions.tabs.setCurrentTab(activeTabs[0].name)
+      }
+    }
+
+    this.listenToAndRun(App.state.tabs.tabs, 'change:show', updateEmptyView)
+
+    this.listenToAndRun(App.state.tabs, 'change:currentTab', updateEmptyView)
+
+    this.listenToAndRun(App.state.dashboard, 'change:dataSynced', updateEmptyView)
+
     this.renderNotificationsPanel()
     this.renderResultView()
 
@@ -374,6 +395,15 @@ const pageTemplate = () => {
     <div data-component="dashboard-page" class="admin-container dashboard">
       <div data-hook="tabs-container">
       </div>
+
+      <!-- EMPTY VIEW -->
+      <div data-hook="empty-view">
+        <div data-hook="empty-view-panel" class="empty-view-panel">
+          <h1>Placeholder</h1>
+        </div>
+      </div>
+      <!-- /EMPTY VIEW -->
+
       <!-- INDICATORS -->
       <div data-hook="indicators-tabview">
         <div data-hook="indicators-panel">
@@ -399,7 +429,6 @@ const pageTemplate = () => {
                 <a data-hook="toggle-up-and-running" href="#" class="fa fa-chevron-right rotate section-toggle"></a>
               </div>
             </div>
-
 
             <!-- HIDDEN CONTAINER WITH EXTRA OPTIONS -->
             <div data-hook="more-options" class="group hidden-container">
@@ -447,6 +476,7 @@ const pageTemplate = () => {
         </div>
       </div>
       <!-- /TASKS -->
+
       <!-- NOTIFICATIONS -->
       <div data-hook="notifications-tabview">
         <div data-hook="notifications-panel">
