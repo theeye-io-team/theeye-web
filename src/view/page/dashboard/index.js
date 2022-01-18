@@ -7,6 +7,7 @@ import $ from 'jquery'
 import TaskRowView from './task'
 import MonitorRowView from './monitor'
 import IndicatorRowView from './indicator'
+import EmptyView from './empty-view'
 
 import loggerModule from 'lib/logger'; const logger = loggerModule('view:page:dashboard')
 import ItemsFolding from './panel-items-fold'
@@ -166,6 +167,9 @@ export default View.extend({
 
     let notificationsTabView = this.queryByHook('notifications-tabview')
     this.tabContentViews.push({ name: TabsConstants.NOTIFICATIONS, view: notificationsTabView })
+
+    let emptyView = this.queryByHook('empty-view')
+    this.renderSubview(new EmptyView(), emptyView)
 
     this.listenToAndRun(App.state.tabs, 'change:currentTab', () => {
       for (const contentView of this.tabContentViews) {
@@ -398,9 +402,6 @@ const pageTemplate = () => {
 
       <!-- EMPTY VIEW -->
       <div data-hook="empty-view">
-        <div data-hook="empty-view-panel" class="empty-view-panel">
-          <h1>Placeholder</h1>
-        </div>
       </div>
       <!-- /EMPTY VIEW -->
 

@@ -30,11 +30,38 @@
     }
   }
 
-  .empty-view-panel {
+  .empty-view {
+    padding: 20px;
+    padding-top: 50px;
     display: flex;
-    height: 250px;
     width: 100%;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    text-align: center;
+
+    img {
+      max-width: 50vw;
+      max-height: 256px;
+      width: auto;
+    }
+
+    .text {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;     
+      text-align: center;
+      font-size: 1.5em;
+
+      [data-hook="par2"] {
+        font-size: 0.8em;
+      }
+    }
+
+    .btn-container {
+      gap: 5px
+    }
   }
 }
