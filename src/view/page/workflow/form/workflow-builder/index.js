@@ -119,6 +119,7 @@ export default View.extend({
         this.workflow.tasks.on('change', updateGraph)
 
         this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
+        this.listenTo(workflowGraph, 'tap:edge', this.onTapEdge)
         this.listenTo(workflowGraph, 'clear', this.onClearButton)
       })
   },
@@ -189,6 +190,10 @@ export default View.extend({
       this.removeNodeDialog(node)
     }
   },
+  onTapEdge (event) {
+    var edge = event.cyTarget.data()
+    this.removeEdgeDialog(edge)
+  },
   editTask (task) {
     const form = new TaskForm({ model: task })
     const modal = new Modalizer({
@@ -232,6 +237,26 @@ export default View.extend({
       callback: confirm => {
         if (!confirm) { return }
         this.removeNode(node)
+      }
+    })
+  },
+  removeEdgeDialog (edge) {
+    bootbox.confirm({
+      title: 'Edge action',
+      message: 'Delete this connection? You may create the connection again later',
+      buttons: {
+        confirm: {
+          label: 'Yes, please',
+          className: 'btn-danger'
+        },
+        cancel: {
+          label: 'Better keep it',
+          className: 'btn-default'
+        },
+      },
+      callback: confirm => {
+        if (!confirm) { return }
+        this.removeEdge(edge)
       }
     })
   },
@@ -284,6 +309,11 @@ export default View.extend({
     }
 
     this.workflow.tasks.remove(node.id)
+
+    this.trigger('change:graph')
+  },
+  removeEdge (edge) {
+    this.graph.removeEdge(edge.source, edge.target)
 
     this.trigger('change:graph')
   },

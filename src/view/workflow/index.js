@@ -180,9 +180,15 @@ export default View.extend({
 
     this.cy = cy
 
-    cy.on('tap', 'node', (event) => {
-      var node = event.cyTarget.data()
-      this.trigger('tap:node', event)
+    cy.on('tap', (event) => {
+      const isNode = typeof event.cyTarget.isNode === 'function' && event.cyTarget.isNode() 
+      const isEdge = typeof event.cyTarget.isEdge === 'function' && event.cyTarget.isEdge() 
+      
+      if (isNode) {
+        this.trigger('tap:node', event)
+      } else if (isEdge) {
+        this.trigger('tap:edge', event)
+      }
     })
   }
 })
