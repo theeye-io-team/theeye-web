@@ -120,6 +120,7 @@ export default View.extend({
 
         this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(workflowGraph, 'tap:edge', this.onTapEdge)
+        this.listenTo(workflowGraph, 'tap:back', this.onTapBackground)
         this.listenTo(workflowGraph, 'clear', this.onClearButton)
       })
   },
@@ -193,6 +194,11 @@ export default View.extend({
   onTapEdge (event) {
     var edge = event.cyTarget.data()
     this.removeEdgeDialog(edge)
+  },
+  onTapBackground (event) {
+    if (this.contextMenu) {
+      this.contextMenu.remove()
+    }
   },
   editTask (task) {
     const form = new TaskForm({ model: task })

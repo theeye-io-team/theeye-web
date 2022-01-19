@@ -188,6 +188,8 @@ export default View.extend({
         this.trigger('tap:node', event)
       } else if (isEdge) {
         this.trigger('tap:edge', event)
+      } else {
+        this.trigger('tap:back', event)
       }
     })
   }
