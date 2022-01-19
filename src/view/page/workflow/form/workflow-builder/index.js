@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
+import Collection from 'ampersand-collection'
 import FormView from 'ampersand-form-view'
 import HelpTexts from 'language/help'
 import Modalizer from 'components/modalizer'
@@ -379,7 +380,7 @@ const TaskContextualMenu = View.extend({
 
     this.events = App.state.events.filterEmitterEvents(
       this.model,
-      this.workflow_events
+      this.workflow_events || new Collection()
     )
 
     const copyButton = new CopyTaskButton({ model: this.model, elem: 'a' })
