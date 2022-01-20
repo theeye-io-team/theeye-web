@@ -73,8 +73,8 @@ export default View.extend({
       cache: false,
       deps: ['workflow'],
       fn () {
-        const { graph, tasks, events, start_task_id } = this.workflow.serialize()
-        return { graph, tasks, events, start_task_id }
+        const { graph, tasks, events } = this.workflow.serialize()
+        return { graph, tasks, events }
       }
     },
     valid: {

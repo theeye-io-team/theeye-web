@@ -19,7 +19,6 @@ import { Factory as TaskFactory } from 'models/task'
 export default FormView.extend({
   initialize (options) {
     const workflow = this.model
-
     const isNew = (workflow.isNew())
 
     this.advancedFields = [
@@ -198,9 +197,9 @@ export default FormView.extend({
     next(null, true)
   },
   prepareData (data) {
-    const { graph, tasks, events, start_task_id } = data.builder
+    const { graph, tasks, events } = data.builder
 
-    const wf = Object.assign({}, data, { graph, tasks, events, start_task_id })
+    const wf = Object.assign({}, data, { graph, tasks, events })
     delete wf['advanced-toggler']
     delete wf['builder']
     return wf
