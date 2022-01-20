@@ -63,12 +63,18 @@ const ScriptTask = Schema.extend({
    * transform into plain data before submit
    */
   serialize () {
-    return Schema.prototype.serialize.apply(this, arguments)
-    //var serial = Schema.prototype.serialize.apply(this, arguments)
+    const serial = Schema.prototype.serialize.apply(this, arguments)
+
+    if (this.script_id) {
+      serial.script = this.script_id
+    } else if (this.script && this.script.isNew()) { // is set but ID is not defined
+      serial.script = this.script.serialize()
+    }
+
     //serial.script = this.script ? this.script.id : null
     // serial.script_arguments = this.task_arguments.serialize() // transform collection into array
     // delete serial.task_arguments
-    //return serial
+    return serial
   }
 })
 
