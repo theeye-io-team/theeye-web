@@ -63,11 +63,12 @@ const ScriptTask = Schema.extend({
    * transform into plain data before submit
    */
   serialize () {
-    var serial = Schema.prototype.serialize.apply(this, arguments)
-    serial.script = this.script ? this.script.id : null
+    return Schema.prototype.serialize.apply(this, arguments)
+    //var serial = Schema.prototype.serialize.apply(this, arguments)
+    //serial.script = this.script ? this.script.id : null
     // serial.script_arguments = this.task_arguments.serialize() // transform collection into array
     // delete serial.task_arguments
-    return serial
+    //return serial
   }
 })
 

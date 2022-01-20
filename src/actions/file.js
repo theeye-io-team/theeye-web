@@ -66,7 +66,6 @@ export default {
   },
   create (data, next) {
     let formData = new FormData()
-
     formData.append('filename', data.filename)
     formData.append('description', data.description)
     formData.append('is_script', data.is_script)

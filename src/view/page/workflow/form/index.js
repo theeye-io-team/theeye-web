@@ -51,9 +51,20 @@ export default FormView.extend({
     })
 
     this.listenTo(workflowBuilder, 'change:graph', () => {
-      const selected = initialTaskSelect.selected()
-      initialTaskSelect.options = [ ...workflowBuilder.workflow.tasks.models ]
-      initialTaskSelect.setValue( selected?.id )
+      if (initialTaskSelect.options.length === 0) {
+        initialTaskSelect.options = [ ...workflowBuilder.workflow.tasks.models ]
+        if (initialTaskSelect.options.length === 1) {
+          initialTaskSelect.setValue( initialTaskSelect.options[0].id )
+        }
+      } else {
+        const selected = initialTaskSelect.selected()
+        initialTaskSelect.options = [ ...workflowBuilder.workflow.tasks.models ]
+        if (initialTaskSelect.options.length === 0) {
+          initialTaskSelect.setValue( null )
+        } else {
+          initialTaskSelect.setValue( selected?.id )
+        }
+      }
     })
 
     // backward compatibility.

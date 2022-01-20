@@ -81,10 +81,17 @@ const Script = Template.Script.extend({
     template: Template.Script
   },
   serialize () {
-    var serial = Template.Script.prototype.serialize.apply(this,arguments)
+    const serial = Template.Script.prototype.serialize.apply(this,arguments)
     serial.template = this.template ? this.template.id : null
     serial.host = this.host_id
-    serial.script = this.script_id
+
+    // the script was imported and/or it was not create at the API yet
+    //if (this.script.isNew()) {
+    //  serial.script = this.script.serialize()
+    //} else {
+    //  serial.script = this.script ? this.script.id : null
+    //}
+
     return serial
   },
 })

@@ -74,7 +74,9 @@ export default {
           App.state.alerts.success('Success', `Task ${task.name} created.`)
           successCreated([task])
         })
-        .catch(errResponse => {})
+        .catch(err => {
+          console.error(err)
+        })
     } else {
       const promises = []
       for (let host_id of hosts) {
@@ -85,7 +87,9 @@ export default {
       return Promise.all(promises).then(tasks => {
         App.state.alerts.success('Success', 'All Tasks created.')
         successCreated(tasks)
-      }).catch(err => {})
+      }).catch(err => {
+        console.error(err)
+      })
     }
   },
   create (data) {
@@ -97,7 +101,9 @@ export default {
           successCreated([task])
           return (task)
         })
-        .catch(err => {})
+        .catch(err => {
+          console.error(err)
+        })
     }
   },
   remove (id) {
@@ -308,6 +314,57 @@ const create = (data) => {
   })
 }
 
+const createUsingRecipe = (data) => {
+  return new Promise((resolve, reject) => {
+    const task = new TaskFactory(data, { store: false })
+
+    const formData = new FormData()
+
+    formData.append('task', new Blob([
+      JSON.stringify(task.serialize())
+    ], {
+      type: 'application/json'
+    }))
+
+    if (data.file) {
+      const file = data.file
+      const script = {
+        filename: file.filename,
+        description: file.description,
+        is_script: file.is_script,
+        extension: file.filename.split('.').pop(),
+        mimetype: file.mimetype
+      }
+
+      formData.append('script', new Blob([
+        JSON.stringify(script)
+      ], {
+        type: "application/json"
+      }))
+
+      const fileBlob = new Blob([file.data], { type: file.mimetype })
+      formData.append('scriptContent', fileBlob, file.filename)
+    }
+
+    XHR.send({
+      url: task.url(),
+      formData,
+      method: 'POST',
+      headers: {
+        Accept: 'application/json;charset=UTF-8'
+      },
+      done (response, xhr) {
+        task.set(response)
+        App.state.tasks.add(task, { merge: true })
+        resolve(task)
+      },
+      error (response, xhr) {
+        reject(response)
+      }
+    })
+  })
+}
+
 const successCreated = () => {
   App.state.events.fetch()
   App.state.tags.fetch()
@@ -323,4 +380,12 @@ const successCreated = () => {
 
     App.actions.onboarding.onboardingCompleted(true)
   }
+}
+
+const isObject = (value) => {
+  return (
+    typeof value === 'object' &&
+    ! Array.isArray(value) &&
+    value !== null
+  )
 }

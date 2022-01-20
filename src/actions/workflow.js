@@ -80,8 +80,37 @@ export default {
     })
   },
   create (data) {
-    let workflow = new App.Models.Workflow.Workflow(data, { store: false })
-    workflow.version = 2 // create only version 2 workflows.
+    XHR.send({
+      method: 'post',
+      url: App.Models.Workflow.Workflow.prototype.urlRoot(),
+      jsonData: data,
+      responseType: 'json',
+      headers: {
+        Accept: 'application/json;charset=UTF-8',
+        'Accept-Version': App.config.supervisor_api_version
+      },
+      done: (body, xhr) => {
+        App.state.alerts.success('Success', 'Workflow created')
+
+        const workflow = new App.Models.Workflow.Workflow(body, { store: false })
+        App.state.workflows.add(workflow)
+
+        this.populate(workflow)
+        // update workflow tasks state from api
+        workflow.tasks.fetch({
+          data: {
+            where: {
+              workflow_id: workflow.id
+            }
+          }
+        })
+      },
+      fail: (err, xhr) => {
+        logger.error(err)
+        bootbox.alert('Something went wrong. Please refresh')
+      }
+    })
+
     workflow.save({}, {
       success () {
         App.state.alerts.success('Success', 'Workflow created')
