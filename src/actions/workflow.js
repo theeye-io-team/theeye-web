@@ -111,6 +111,7 @@ export default {
       }
     })
 
+    /*
     workflow.save({}, {
       success () {
         App.state.alerts.success('Success', 'Workflow created')
@@ -130,6 +131,7 @@ export default {
         bootbox.alert('Something went wrong. Please refresh')
       }
     })
+    */
   },
   importCreate (recipe) {
     //let ids = []
