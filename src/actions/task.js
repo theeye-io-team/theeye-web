@@ -76,6 +76,7 @@ export default {
         })
         .catch(err => {
           console.error(err)
+          App.state.alerts.danger('Something goes wrong.')
         })
     } else {
       const promises = []
@@ -89,6 +90,7 @@ export default {
         successCreated(tasks)
       }).catch(err => {
         console.error(err)
+        App.state.alerts.danger('Something goes wrong.')
       })
     }
   },
@@ -103,6 +105,7 @@ export default {
         })
         .catch(err => {
           console.error(err)
+          App.state.alerts.danger('Something goes wrong.')
         })
     }
   },
