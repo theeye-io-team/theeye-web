@@ -44,7 +44,7 @@ export default FormView.extend({
         if (workflowBuilder.graph.nodes().length===0) {
           event.preventDefault()
           event.stopPropagation()
-          bootbox.alert('To select the Starting Task, you have to add Workflow Events first')
+          bootbox.alert('To choose a Starting Task, first you must add a Task')
           return false
         }
       }

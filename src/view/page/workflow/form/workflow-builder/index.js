@@ -18,7 +18,7 @@ import uuidv4 from 'uuid'
 export default View.extend({
   template: `
     <div class="workflow-builder-component form-group">
-      <label class="col-sm-3 control-label" data-hook="label"> Workflow Events </label>
+      <label class="col-sm-3 control-label" data-hook="label">Tasks</label>
       <div class="col-sm-9">
         <div style="padding-bottom: 15px;" data-hook="buttons">
           <button data-hook="add-task" title="Existent Task" class="btn btn-default">
