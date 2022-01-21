@@ -238,6 +238,7 @@ const TaskCreationWizard = View.extend({
     this.form = form
     this.listenTo(form, 'submit', data => {
       if (this.submit) {
+        data.script = App.state.taskForm.file
         this.submit(data)
       } else {
         if (task.type === 'script') {

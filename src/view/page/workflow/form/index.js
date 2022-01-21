@@ -44,16 +44,27 @@ export default FormView.extend({
         if (workflowBuilder.graph.nodes().length===0) {
           event.preventDefault()
           event.stopPropagation()
-          bootbox.alert('To select the Starting Task, you have to add Workflow Events first')
+          bootbox.alert('To choose a Starting Task, first you must add a Task')
           return false
         }
       }
     })
 
     this.listenTo(workflowBuilder, 'change:graph', () => {
-      const selected = initialTaskSelect.selected()
-      initialTaskSelect.options = [ ...workflowBuilder.workflow.tasks.models ]
-      initialTaskSelect.setValue( selected?.id )
+      if (initialTaskSelect.options.length === 0) {
+        initialTaskSelect.options = [ ...workflowBuilder.workflow.tasks.models ]
+        if (initialTaskSelect.options.length === 1) {
+          initialTaskSelect.setValue( initialTaskSelect.options[0].id )
+        }
+      } else {
+        const selected = initialTaskSelect.selected()
+        initialTaskSelect.options = [ ...workflowBuilder.workflow.tasks.models ]
+        if (initialTaskSelect.options.length === 0) {
+          initialTaskSelect.setValue( null )
+        } else {
+          initialTaskSelect.setValue( selected?.id )
+        }
+      }
     })
 
     // backward compatibility.
