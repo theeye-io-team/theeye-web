@@ -96,10 +96,19 @@ export default View.extend({
       })
     })
 
+    let labels = Object.assign({}, graph._edgeLabels)
+
     graph.edges().forEach(function (e) {
       elems.push({
         group: 'edges',
-        data: { source: e.v, target: e.w }
+        data: { source: e.v, target: e.w, label: ((e) => {
+          const key = Object.keys(labels).filter(
+            key => key.includes(e.v) && key.includes(e.w)
+          )[0]
+          const label = labels[key]
+          delete labels[key]
+          return label
+        })(e) }
       })
     })
 
@@ -154,16 +163,34 @@ export default View.extend({
           'target-arrow-shape': 'triangle',
           'line-color': '#9dbaea',
           'target-arrow-color': '#9dbaea',
-          'curve-style': 'bezier'
+          'curve-style': 'bezier',
+          'content': function (ele) {
+            return ele.data('label') || ''
+          },
+          'text-rotation': 'autorotate',
+          'text-margin-y': -10,
+          'color': '#FFF',
+          'font-size': 15,
+          'text-outline-width': 1,
+          'text-outline-color': '#111',
+          'text-opacity': 0.8,
         }
       }]
     })
 
     this.cy = cy
 
-    cy.on('tap', 'node', (event) => {
-      var node = event.cyTarget.data()
-      this.trigger('tap:node', event)
+    cy.on('tap', (event) => {
+      const isNode = typeof event.cyTarget.isNode === 'function' && event.cyTarget.isNode() 
+      const isEdge = typeof event.cyTarget.isEdge === 'function' && event.cyTarget.isEdge() 
+      
+      if (isNode) {
+        this.trigger('tap:node', event)
+      } else if (isEdge) {
+        this.trigger('tap:edge', event)
+      } else {
+        this.trigger('tap:back', event)
+      }
     })
   }
 })
