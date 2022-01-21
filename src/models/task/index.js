@@ -81,10 +81,9 @@ const Script = Template.Script.extend({
     template: Template.Script
   },
   serialize () {
-    var serial = Template.Script.prototype.serialize.apply(this,arguments)
+    const serial = Template.Script.prototype.serialize.apply(this,arguments)
     serial.template = this.template ? this.template.id : null
     serial.host = this.host_id
-    serial.script = this.script_id
     return serial
   },
 })
