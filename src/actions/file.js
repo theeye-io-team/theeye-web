@@ -36,7 +36,6 @@ export default {
 
     formData.append('filename', data.filename)
     formData.append('description', data.description)
-    formData.append('is_script', data.is_script)
     formData.append('extension', data.filename.split('.').pop())
     formData.append('mimetype', data.mimetype)
 
@@ -50,7 +49,6 @@ export default {
       done: (response,xhr) => {
         if (response && xhr.status === 200) {
           const file = App.state.files.get(id)
-          response.is_script = data.is_script
           file.set(response)
           next(null, file)
         } else {
@@ -66,10 +64,8 @@ export default {
   },
   create (data, next) {
     let formData = new FormData()
-
     formData.append('filename', data.filename)
     formData.append('description', data.description)
-    formData.append('is_script', data.is_script)
     formData.append('extension', data.filename.split('.').pop())
     formData.append('mimetype', data.mimetype)
 
@@ -81,7 +77,6 @@ export default {
       method: 'POST',
       formData: formData,
       done: (response,xhr) => {
-        response.is_script = data.is_script
         const file = new App.Models.File.Model(response)
         App.state.files.add(file)
         next(null, file)

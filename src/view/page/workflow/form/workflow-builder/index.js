@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
+import Collection from 'ampersand-collection'
 import FormView from 'ampersand-form-view'
 import HelpTexts from 'language/help'
 import Modalizer from 'components/modalizer'
@@ -17,7 +18,7 @@ import uuidv4 from 'uuid'
 export default View.extend({
   template: `
     <div class="workflow-builder-component form-group">
-      <label class="col-sm-3 control-label" data-hook="label"> Workflow Events </label>
+      <label class="col-sm-3 control-label" data-hook="label">Tasks</label>
       <div class="col-sm-9">
         <div style="padding-bottom: 15px;" data-hook="buttons">
           <button data-hook="add-task" title="Existent Task" class="btn btn-default">
@@ -118,6 +119,8 @@ export default View.extend({
         this.workflow.tasks.on('change', updateGraph)
 
         this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
+        this.listenTo(workflowGraph, 'tap:edge', this.onTapEdge)
+        this.listenTo(workflowGraph, 'tap:back', this.onTapBackground)
         this.listenTo(workflowGraph, 'clear', this.onClearButton)
       })
   },
@@ -188,6 +191,15 @@ export default View.extend({
       this.removeNodeDialog(node)
     }
   },
+  onTapEdge (event) {
+    var edge = event.cyTarget.data()
+    this.removeEdgeDialog(edge)
+  },
+  onTapBackground (event) {
+    if (this.contextMenu) {
+      this.contextMenu.remove()
+    }
+  },
   editTask (task) {
     const form = new TaskForm({ model: task })
     const modal = new Modalizer({
@@ -231,6 +243,26 @@ export default View.extend({
       callback: confirm => {
         if (!confirm) { return }
         this.removeNode(node)
+      }
+    })
+  },
+  removeEdgeDialog (edge) {
+    bootbox.confirm({
+      title: 'Edge action',
+      message: 'Delete this connection? You may create the connection again later',
+      buttons: {
+        confirm: {
+          label: 'Yes, please',
+          className: 'btn-danger'
+        },
+        cancel: {
+          label: 'Better keep it',
+          className: 'btn-default'
+        },
+      },
+      callback: confirm => {
+        if (!confirm) { return }
+        this.removeEdge(edge)
       }
     })
   },
@@ -283,6 +315,11 @@ export default View.extend({
     }
 
     this.workflow.tasks.remove(node.id)
+
+    this.trigger('change:graph')
+  },
+  removeEdge (edge) {
+    this.graph.removeEdge(edge.source, edge.target)
 
     this.trigger('change:graph')
   },
@@ -379,7 +416,7 @@ const TaskContextualMenu = View.extend({
 
     this.events = App.state.events.filterEmitterEvents(
       this.model,
-      this.workflow_events
+      this.workflow_events || new Collection()
     )
 
     const copyButton = new CopyTaskButton({ model: this.model, elem: 'a' })

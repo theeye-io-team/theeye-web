@@ -8,9 +8,9 @@ const urlRoot = function () {
 }
 
 export const Model = Schema.extend({
-  urlRoot: urlRoot,
+  urlRoot,
   props: {
-    _type: ['string',true,'Script']
+    _type: ['string', true, 'Script']
   }
 })
 
