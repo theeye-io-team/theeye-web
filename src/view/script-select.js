@@ -26,7 +26,7 @@ export default SelectView.extend({
     </div>
   `,
   initialize () {
-    this.options = new SubCollection(App.state.files,{ where: { is_script: true } })
+    this.options = new SubCollection(App.state.files, { where: { _type: 'Script' } })
     this.multiple = false
     this.tags = false
     this.label = 'Scripts'

@@ -31,22 +31,15 @@ export default AppModel.extend({
     public: { type: 'boolean', default: false },
     tags: { type: 'array', default: () => { return [] } },
     input_mode: { type: 'string', default: 'editor' },
-    //_type: { type: 'string', default: 'File' },
+    _type: { type: 'string' },
     template_id: 'string',
-    source_model_id: 'string', // temporal , is used to create templates
+    source_model_id: 'string',
     creation_date: { type: 'date', default: () => { return new Date() } },
     last_update: { type: 'date', default: () => { return new Date() } },
     data: { type: 'string' }
 	},
-  session: {
-    is_script: { type: 'boolean', default: false },
-  },
   collections: {
     linked_models: LinkedModels
-  },
-  parse (args) {
-    args.is_script = (args._type == 'Script')
-    return args
   },
   derived: {
     summary: {
