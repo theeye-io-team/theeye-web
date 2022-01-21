@@ -101,7 +101,8 @@ export default View.extend({
     const view = new JobResult({ job: this.model })
     view.show()
 
-    App.actions.job.fetch(this.model.id)
+    // App.actions.job.fetch(this.model.id)
+    App.actions.job.fetchInputs([ this.model ])
     App.actions.job.fillUser(this.model)
 
     return false
