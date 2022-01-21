@@ -229,8 +229,7 @@ export default FormView.extend({
       args,
       // fixed values
       {
-        data: this.editorView.codemirror.getValue(),
-        is_script: true
+        data: this.editorView.codemirror.getValue()
       }
     )
     return f
