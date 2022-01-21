@@ -331,7 +331,6 @@ const createUsingRecipe = (data) => {
       const script = {
         filename: file.filename,
         description: file.description,
-        is_script: file.is_script,
         extension: file.filename.split('.').pop(),
         mimetype: file.mimetype
       }
