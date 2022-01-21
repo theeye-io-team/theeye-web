@@ -229,7 +229,15 @@ const Workflow = AppModel.extend({
   },
   serialize () {
     let attrs = AppModel.prototype.serialize.apply(this,arguments)
-    let graph = graphlib.json.write(this.graph)
+    attrs.graph = this.serializeGraph()
+    //attrs.events = attrs.events.filter(model => model.synchronized !== true)
+    //attrs.tasks = attrs.tasks.filter(model => model.synchronized !== true)
+    delete attrs.jobs
+    delete attrs.schedules
+    return attrs
+  },
+  serializeGraph () {
+    const graph = graphlib.json.write(this.graph)
     graph.nodes = graph.nodes.map(node => {
       return {
         v: node.v,
@@ -241,14 +249,7 @@ const Workflow = AppModel.extend({
         }
       }
     })
-
-    attrs.graph = graph
-
-    //attrs.events = attrs.events.filter(model => model.synchronized !== true)
-    //attrs.tasks = attrs.tasks.filter(model => model.synchronized !== true)
-    delete attrs.jobs
-    delete attrs.schedules
-    return attrs
+    return graph
   },
   /**
    *
