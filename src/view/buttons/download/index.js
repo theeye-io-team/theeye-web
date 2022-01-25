@@ -4,6 +4,7 @@ export default View.extend({
   props: {
     blob: 'string',
     text: ['string', true, 'Download file'],
+    noFileText: ['string', true, 'No file provided'],
     download: 'string'
   },
   template: `
@@ -16,19 +17,36 @@ export default View.extend({
     'click a': 'onAclick'
   },
   bindings: {
-    blob: {
-      selector: 'a',
-      type: 'attribute',
-      name: 'href'
-    },
+    blob: [
+      {
+        selector: 'a',
+        type: 'attribute',
+        name: 'href'
+      },
+      {
+        type: function (el, value) {
+          el.innerHTML = 
+            value == "null" || !value ? 
+              this.noFileText : 
+              this.text
+        },
+        hook: 'text'
+      },
+      {
+        selector: 'a',
+        type: function (el, value) {
+          if (value == "null" || !value) {
+            el.classList.add('disabled')
+          } else {
+            el.classList.remove('disabled')
+          }
+        },
+      }
+    ],
     download: {
       selector: 'a',
       type: 'attribute',
       name: 'download'
-    },
-    text: {
-      type: 'text',
-      hook: 'text'
     }
   },
   onAclick (event) {
