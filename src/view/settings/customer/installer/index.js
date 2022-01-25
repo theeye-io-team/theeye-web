@@ -27,21 +27,28 @@ export default View.extend({
     this.listenTo(
       App.state.settingsMenu.customer,
       'change:current_tab change:visible change:agent',
-      () => {
-        if (hopscotch.getCurrTour()) {
-          hopscotch.endTour(true)
-        }
-
-        if (
-          App.state.settingsMenu.customer.visible === true &&
-          App.state.settingsMenu.customer.current_tab === 'installer' &&
-          App.state.settingsMenu.agent !== undefined &&
-          App.state.onboarding.onboardingActive
-        ) {
-          onboarding.start()
-        }
-      }
+      () => { this.startOnboarding() }
     )
+
+    this.listenTo(
+      App.state.onboarding,
+      'change:onboardingActive',
+      () => { this.startOnboarding() }
+    )
+  },
+  startOnboarding () {
+    if (hopscotch.getCurrTour()) {
+      hopscotch.endTour(true)
+    }
+
+    if (
+      App.state.settingsMenu.customer.visible === true &&
+      App.state.settingsMenu.customer.current_tab === 'installer' &&
+      App.state.settingsMenu.customer.agent !== undefined &&
+      App.state.onboarding.onboardingActive
+    ) {
+      onboarding.start()
+    }
   },
   updateState (state) {
     this.agent = state.agent
