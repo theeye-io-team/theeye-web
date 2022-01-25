@@ -73,14 +73,14 @@ class TaskOnBoarding {
           }
         },
         {
-          target: self.parent._fieldViews.hosts.query('div.col-sm-9'),
+          target: self.parent._fieldViews.host_id.query('div.col-sm-9'),
           title: "Task Tutorial",
           content: "The task must have a Bot to run.",
           placement: "top",
           yOffset: -5,
           xOffset: 15,
           onNext: function() {
-            self.parent._fieldViews.hosts.setValue(self.parent._fieldViews.hosts.options.models[0].id)
+            self.parent._fieldViews.host_id.setValue(self.parent._fieldViews.host_id.options.models[0].id)
           }
         },
         {
