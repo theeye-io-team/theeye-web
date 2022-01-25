@@ -86,7 +86,7 @@ export default Settings.extend({
       bootbox.dialog({
         title: 'Tutorial',
         message: 'Which tutorial would you like to see?',
-        closeButton: true,
+        closeButton: false,
         buttons: {
           self_provided: {
             label: 'Bot tutorial',
@@ -100,9 +100,16 @@ export default Settings.extend({
             label: 'Task tutorial',
             className: 'btn-primary',
             callback () {
-              App.actions.onboarding.activateOnboarding(true)
               App.actions.settingsMenu.hide('customer')
+              App.actions.onboarding.activateOnboarding(true)
               let wizard = new TaskCreationWizard()
+            }
+          },
+          cancel: {
+            label: 'Cancel',
+            className: 'btn-light',
+            callback () {
+              App.actions.onboarding.hideOnboarding()
             }
           }
         }
