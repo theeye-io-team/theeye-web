@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import bootbox from 'bootbox'
 import OnboardingActions from 'actions/onboarding'
 import hopscotch from 'hopscotch'
@@ -146,17 +147,6 @@ var showPlatformOnboarding = function(platform) {
         xOffset: -20
       },
     ]
-  } else if (platform === 'self-provided') {
-    steps = [
-      {
-        target: document.querySelectorAll('[data-tutorial=self-provided-onboarding]')[0],
-        title: "Self-Provided Bot installation",
-        content: "Click here to start a Self-Provided Bot.",
-        placement: "left",
-        yOffset: -20,
-        xOffset: -20
-      },
-    ]
   } else if (platform === 'aws') {
     var el = document.getElementById("aws-installer");
     el.scrollIntoView();
@@ -238,15 +228,8 @@ export default {
     bootbox.dialog({
       title: 'Tutorial',
       message: "Which installation tutorial do you want to Start?",
-      closeButton: true,
+      closeButton: false,
       buttons: {
-        self_provided: {
-          label: 'Self-Provided',
-          className: 'btn-primary',
-          callback () {
-            showPlatformOnboarding('self-provided')
-          }
-        },
         linux: {
           label: 'Linux',
           className: 'btn-primary',
@@ -273,6 +256,13 @@ export default {
           className: 'btn-primary',
           callback () {
             showPlatformOnboarding('aws')
+          }
+        },
+        cancel: {
+          label: 'Cancel',
+          className: 'btn-light',
+          callback () {
+            App.actions.onboarding.hideOnboarding()
           }
         }
       }
