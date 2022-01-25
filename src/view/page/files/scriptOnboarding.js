@@ -51,7 +51,7 @@ class ScriptOnBoarding {
           placement: "right",
           yOffset: -10,
           onNext: function() {
-            self.parent.exampleBtnView.onClickButton()
+            self.parent.boilerplateBtnView.onClickButton()
             var nextElem = self.parent.queryByHook('confirm')
             nextElem.scrollIntoView()
           }
