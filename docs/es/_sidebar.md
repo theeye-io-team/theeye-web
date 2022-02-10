@@ -7,6 +7,7 @@
     - Types
       - [Notificación](/es/core-concepts/tasks/notification_type)
       - [Script](/es/core-concepts/tasks/script_type)
+  - [Indicators](/es/core-concepts/indicators.md)
   - [Webhooks](/es/core-concepts/webhooks.md)
   - Scripts
     - [Introducción](/es/core-concepts/scripts/)
