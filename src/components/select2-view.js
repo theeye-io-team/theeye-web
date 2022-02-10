@@ -95,7 +95,8 @@ export default View.extend({
     }],
     removeEmptyValues: ['boolean', false, false],
     ajax: ['object', false, null],
-    enabled: 'boolean'
+    enabled: 'boolean',
+    autoselectSingleOption: ['boolean', true, false]
   },
   derived: {
     value: {
@@ -250,14 +251,16 @@ export default View.extend({
       }
     })
 
-    if (this.value === null || this.value === []) {
-      if (Array.isArray(this.options)) {
-        if (this.options.length === 1) {
-          this.setValue(this.options[0])
-        }
-      } else {
-        if (this.options.models.length === 1) {
-          this.setValue(this.options.models[0].id)
+    if (this.autoselectSingleOption) {
+      if (this.value === null || this.value === []) {
+        if (Array.isArray(this.options)) {
+          if (this.options.length === 1) {
+            this.setValue(this.options[0])
+          }
+        } else {
+          if (this.options.models.length === 1) {
+            this.setValue(this.options.models[0].id)
+          }
         }
       }
     }
