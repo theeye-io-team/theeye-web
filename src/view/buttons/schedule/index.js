@@ -91,12 +91,13 @@ const SchedulerBody = View.extend({
       ],
       required: true,
       unselectedText: `Select a scheduler`,
-      requiredMessage: 'Selection required'
+      requiredMessage: 'Selection required',
+      value: 'cron'
     })
 
     this.renderSubview(selector, this.queryByHook('selector-placeholder'))
 
-    this.listenTo(selector, 'change:value', () => {
+    this.listenToAndRun(selector, 'change:value', () => {
       if (this.form) { this.form.remove() }
       Scheduler[selector.value].apply(this)
     })
