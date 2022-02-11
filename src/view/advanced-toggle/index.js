@@ -5,9 +5,9 @@ export default View.extend({
   template: `
     <div class="advanced-section-toggle form-group">
       <div class="col-sm-12">
-        <div>
-          <label>Advanced Options</label>
-        </div>
+      <button data-hook="btn" class="btn btn-default">
+        Advanced Options
+      </button>
       </div>
     </div>
   `,
@@ -20,7 +20,7 @@ export default View.extend({
     valid: ['boolean',false,true]
   },
   events: {
-    'click': function (event) {
+    'click [data-hook=btn]': function (event) {
       this.toggle('folded')
       this.onclick && this.onclick(event, this)
     }
