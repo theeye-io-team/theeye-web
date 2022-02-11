@@ -205,9 +205,9 @@ export default MonitorFormView.extend({
     this.setValues({
       name: resource.name,
       description: resource.description,
-      looptime: resource.looptime,
-      is_regexp: resource.is_regexp,
-      raw_search: resource.raw_search,
+      looptime: resource.monitor.looptime,
+      is_regexp: resource.monitor.is_regexp,
+      raw_search: resource.monitor.raw_search,
       tags: resource.tags,
       acl: resource.acl,
       failure_severity: resource.failure_severity
