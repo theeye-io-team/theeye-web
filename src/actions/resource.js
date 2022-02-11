@@ -25,8 +25,6 @@ export default {
   update (id, data) {
     const resource = App.state.resources.get(id)
 
-    debugger
-
     // monitor and resource share almost the same properties.
     // should be unified into a single model
     resource.set(data)
