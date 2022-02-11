@@ -1,0 +1,19 @@
+.visually-hidden { 
+    // This is rendered but not visible, unlike display: none;
+    position: absolute !important;
+    height: 1px; 
+    width: 1px;
+    overflow: hidden;
+    clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap;
+}
+
+[type="file"]:focus + .btn {
+    // Same styles as .btn.btn-default:focus
+    color: #333;
+    background-color: #e6e6e6;
+    border-color: #adadad;
+    text-decoration: none;
+    outline: 5px auto -webkit-focus-ring-color;
+    outline-offset: -2px;   
+}

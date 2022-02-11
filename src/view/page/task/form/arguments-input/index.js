@@ -13,6 +13,8 @@ import FileSaver from 'file-saver'
 import ArgumentsCreator from './creator'
 import ArgumentView from './argument'
 
+import './style.less'
+
 export default View.extend({
   template: `
     <div class="form-group">
@@ -285,7 +287,7 @@ export default View.extend({
 const FileImportView = View.extend({
   template: `
     <div data-component="file-import">
-      <input type="file" name="file" id="file" style="display:none;">
+      <input type="file" name="file" id="file" class="visually-hidden" tabindex="0">
       <label for="file" title="import arguments" class="btn btn-default"> 
         Import arguments from file <i class="fa fa-copy"></i>
       </label>
