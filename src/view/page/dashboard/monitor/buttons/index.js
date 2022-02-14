@@ -20,7 +20,7 @@ export default View.extend({
 
     switch (type) {
       case MonitorConstants.TYPE_HOST:
-        buttons = [ Buttons.Workflow, Buttons.Search, Buttons.Mute, Buttons.BotReconfigure ]
+        buttons = [ Buttons.Toggle, Buttons.Workflow, Buttons.Search, Buttons.Mute, Buttons.BotReconfigure ]
         const submonitors = this.model.submonitors.models
         let showHostStats = submonitors.some((submonitor) => {
           return submonitor.type === 'dstat'
@@ -30,13 +30,13 @@ export default View.extend({
         }
         break;
       case MonitorConstants.TYPE_NESTED:
-        buttons = [ null, Buttons.Workflow, Buttons.Search, Buttons.Mute ]
+        buttons = [ Buttons.Toggle, null, Buttons.Workflow, Buttons.Search, Buttons.Mute ]
         break;
       case MonitorConstants.TYPE_SCRAPER:
       case MonitorConstants.TYPE_PROCESS:
       case MonitorConstants.TYPE_SCRIPT:
       case MonitorConstants.TYPE_FILE:
-        buttons = [ LastEvent, Buttons.Workflow, Buttons.Search, Buttons.Mute ]
+        buttons = [ Buttons.Toggle, LastEvent, Buttons.Workflow, Buttons.Search, Buttons.Mute ]
         break;
       default:
         buttons = []

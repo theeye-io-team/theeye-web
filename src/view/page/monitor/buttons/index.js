@@ -6,6 +6,39 @@ import PanelButton from 'components/list/item/panel-button'
 import bootbox from 'bootbox'
 import $ from 'jquery'
 
+export const Toggle = View.extend({
+  template: `
+    <button class="btn btn-primary" title="Toggle Monitor" data-hook="toggle">
+      <i class="fa fa-power-off dropdown-icon" aria-hidden="true"></i>
+      <span data-hook="label">Caca</span>
+    </button>
+  `,
+  derived: {
+    text: {
+      deps: ['model.enable'],
+      fn () {
+        return `Turn monitor ${this.model.enable ? 'off' : 'on'}`
+      }
+    }
+  },
+  bindings: {
+    text: {
+      hook: 'label',
+      type: 'text'
+    }
+  },
+  events: {
+    'click button[data-hook=toggle]':'onClickToggle'
+  },
+  onClickToggle (event) {
+    event.stopPropagation()
+    event.preventDefault()
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+    
+    App.actions.resource.update(this.model.id, { enable: !this.model.enable })
+  }
+})
+
 export const Edit = View.extend({
   template: `
     <button class="btn btn-primary" title="Edit Monitors" data-hook="edit">

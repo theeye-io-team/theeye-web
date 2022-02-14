@@ -67,6 +67,12 @@ const MonitorView = View.extend({
 
                   <!-- state_severity is a model object derived property, not an attribute -->
                   <div class="panel-item tooltiped state-icon state-container">
+                    <div data-hook="is-off" title="Turned off">
+                      <i class="fa fa-power-off" aria-hidden="true"></i>
+                    </div>
+                    <div data-hook="is-muted" title="Muted">
+                      <i class="fa fa-volume-off" aria-hidden="true"></i>
+                    </div>
                     <span data-hook="${this.iconHook}"></span>
                   </div>
 
@@ -162,6 +168,16 @@ const MonitorView = View.extend({
     },
     show: {
       type: 'toggle'
+    },
+    'model.enable': {
+      type: 'toggle',
+      hook: 'is-off',
+      invert: true
+    },
+    'model.alerts': {
+      type: 'toggle',
+      hook: 'is-muted',
+      invert: true
     }
   },
   render () {
