@@ -155,20 +155,26 @@ const WorkflowJobsListView = JobsList.extend({
           const workflowJob = view.model
           const jobs = workflowJob.jobs
 
-          const matchedJobs = jobs.filter(job => {
-            const matchedArgs = job.task_arguments_values.filter(arg => {
-              const pattern = new RegExp(value,'i')
-              return pattern.test(arg)
-            })
+          this.listenToAndRun(jobs, 'change:task_arguments_values', () => {
+            if (jobs.models[0].task_arguments_values !== undefined) {
+              const matchedJobs = jobs.filter(job => {
+                const matchedArgs = job.task_arguments_values.filter(arg => {
+                  const pattern = new RegExp(value,'i')
+                  return pattern.test(arg)
+                })
 
-            return ( matchedArgs.length > 0 )
+                return ( matchedArgs.length > 0 )
+              })
+
+              if (matchedJobs.length === 0) {
+                view.el.style.display = 'none'
+              } else {
+                // highligth matched element
+              }
+            }
           })
 
-          if (matchedJobs.length === 0) {
-            view.el.style.display = 'none'
-          } else {
-            // highligth matched element
-          }
+          App.actions.job.fetchInputs(jobs.models)
         })
       }
     })
