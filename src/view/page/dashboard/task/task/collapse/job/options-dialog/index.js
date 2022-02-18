@@ -104,7 +104,7 @@ export default Modalizer.extend({
       event.stopPropagation()
 
       if (this.model.inProgress) {
-      this.hide()
+        this.hide()
         return
       }
 
