@@ -25,6 +25,7 @@ function getUserLanguage () {
 
 // Extends our main app singleton
 App.extend(actions, {
+  version: window.APP_VERSION,
   language: getUserLanguage(),
   config: config,
   EasterEggs: require('components/easter-eggs').default,
