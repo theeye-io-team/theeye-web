@@ -159,8 +159,10 @@ const WorkflowJobsListView = JobsList.extend({
             if (jobs.models[0].task_arguments_values !== undefined) {
               const matchedJobs = jobs.filter(job => {
                 const matchedArgs = job.task_arguments_values.filter(arg => {
-                  const pattern = new RegExp(value,'i')
-                  return pattern.test(arg)
+                  // const pattern = new RegExp(value,'i')
+                  // return pattern.test(arg)
+                  const arg2 = arg.toLowerCase()
+                  return arg2.includes(value.toLowerCase())
                 })
 
                 return ( matchedArgs.length > 0 )
