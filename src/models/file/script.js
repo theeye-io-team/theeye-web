@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import AppCollection from 'lib/app-collection'
 import Schema from './schema'
 import config from 'config'
