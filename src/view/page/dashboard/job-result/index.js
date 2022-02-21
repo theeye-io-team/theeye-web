@@ -405,7 +405,7 @@ const BaseJobView = View.extend({
 const RowState = State.extend({
   props: {
     key: 'string',
-    value: 'mixed',
+    value: 'any',
     id: 'number',
     type: 'string'
   }

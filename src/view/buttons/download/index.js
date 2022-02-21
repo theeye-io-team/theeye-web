@@ -28,10 +28,7 @@ export default View.extend({
       },
       {
         type: function (el, value) {
-          el.innerHTML = 
-            value == "null" || !value ? 
-              this.noFileText : 
-              this.text
+          el.innerHTML = (value == "null" || !value) ? this.noFileText : this.text
         },
         hook: 'text'
       },
@@ -43,9 +40,9 @@ export default View.extend({
           } else {
             el.classList.remove('disabled')
           }
-        },
+        }
       }
-    ]
+    ],
     download: {
       selector: 'a',
       type: 'attribute',
@@ -55,4 +52,4 @@ export default View.extend({
   onAclick (event) {
     event.stopPropagation()
   }
-}
+})
