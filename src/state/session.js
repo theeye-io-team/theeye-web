@@ -44,6 +44,7 @@ export default AmpersandState.extend({
   },
   appInit () {
     this.storage = localforage.createInstance({
+      driver: [localforage.INDEXEDDB, localforage.WEBSQL],
       name: 'theeye',
       storeName: 'session'
     })
@@ -86,13 +87,17 @@ export default AmpersandState.extend({
     }
   },
   restoreFromStorage (next) {
-    this.storage
+    return this.storage
       .getItem('session')
       .then(data => {
         data || (data={})
         if (!data.access_token) { data.access_token = null }
         this.set(data, { silent: true })
         next(null, data)
+      })
+      .catch(err => {
+        console.error('ERROR %j', err)
+        next(err, {})
       })
   },
   clear () {
