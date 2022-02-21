@@ -1,5 +1,5 @@
 import AmpersandState from 'ampersand-state'
-import localForage from 'localforage'
+import localforage from 'localforage'
 
 export default AmpersandState.extend({
   props: {
@@ -11,23 +11,28 @@ export default AmpersandState.extend({
     storage: 'object'
   },
   appInit () {
-    this.storage = localForage.createInstance({
+    this.storage = localforage.createInstance({
+      driver: [localforage.INDEXEDDB, localforage.WEBSQL],
       name: 'theeye',
       storeName: 'localSettings'
     })
 
     this.on('change', this.syncWithStorage)
 
-    return this.storage.ready()
-      .then(() => this.storage.getItem('localSettings'))
-      .then(value => {
-        if (!value) {
-          // first time here, set some values
+    return this.storage
+      .getItem('localSettings')
+      .then(settings => {
+        if (!settings) {
+          // first time here, set some settingss
           this.storage.setItem('localSettings', this.toJSON())
         } else {
-          this.set(value, {silent: true})
+          this.set(settings, { silent: true })
         }
-        return value
+        return settings
+      })
+      .catch(err => {
+        console.error(err)
+        return null
       })
   },
   syncWithStorage (state, newValue) {

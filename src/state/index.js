@@ -158,7 +158,9 @@ const AppState = State.extend({
   },
   appInit () {
     this.localSettings.appInit()
-      .then(ls => this.session.appInit())
+      .then(() => {
+        this.session.appInit()
+      })
 
     const resetCredentialsCollection = () => {
       if (this.session.logged_in===undefined) {
