@@ -20,6 +20,7 @@ export default class Handler {
 
   initialize (next) {
     const storage = localforage.createInstance({
+      driver: [localforage.INDEXEDDB, localforage.WEBSQL],
       name: 'theeye',
       storeName: 'me'
     })
