@@ -5,7 +5,7 @@ import FileSaver from 'file-saver'
 import qs from 'qs'
 
 const Actions = {
-  create (data, applyToSourceHost) {
+  create (data) {
     const state = App.state.hostGroupPage
     const resources = state.resources.serialize()
     const tasks = state.tasks.serialize()
@@ -16,8 +16,7 @@ const Actions = {
       resources,
       tasks,
       files,
-      triggers,
-      applyToSourceHost
+      triggers
     })
 
     XHR.send({
@@ -114,12 +113,12 @@ const Actions = {
       //}
     })
   },
-  exportToJSON (id) {
-    this.fetchRecipe({hostgroup_id: id}, function (err, instructions) {
+  exportToJSON (model) {
+    this.fetchRecipe({ hostgroup_id: model.id }, function (err, instructions) {
       if (!err) {
         var jsonContent = JSON.stringify(instructions)
         var blob = new Blob([jsonContent], {type: 'application/json'})
-        FileSaver.saveAs(blob, 'template-recipe.json')
+        FileSaver.saveAs(blob, `${model.name.replace(' ', '_')}.json`)
       }
     })
   },

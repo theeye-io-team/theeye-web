@@ -14,8 +14,8 @@ export default SelectView.extend({
           <p data-hook="message-text"></p>
         </div>
       </div>
-        <div class="col-sm-3" data-hook="import-file-container"></div>
-        <section class="col-sm-12" data-hook="configs-container"> </section>
+      <div class="col-sm-3" data-hook="import-file-container"></div>
+      <section class="col-sm-12" data-hook="configs-container"> </section>
     </div>
   `,
   derived: {
@@ -44,7 +44,12 @@ export default SelectView.extend({
   render () {
     SelectView.prototype.render.apply(this, arguments)
 
-    var importFileInput = new ImportFileInputView({
+    this.renderSubview(
+      new ConfigsView({ edit_mode: true }),
+      this.queryByHook('configs-container')
+    )
+
+    const importFileInput = new ImportFileInputView({
       callback: (file) => {
         if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
           try {
@@ -62,11 +67,6 @@ export default SelectView.extend({
     })
 
     this.renderSubview(
-      new ConfigsView({ edit_mode: true }),
-      this.queryByHook('configs-container')
-    )
-
-    this.renderSubview(
       importFileInput,
       this.queryByHook('import-file-container')
     )
@@ -77,15 +77,17 @@ export default SelectView.extend({
 })
 
 const ImportFileInputView = FileInputView.extend({
+  initialize(){
+    FileInputView.prototype.initialize.apply(this, arguments)
+    this.styles = ''
+  },
   template: `
-    <div>
-      <div class="col-sm-12">
-        <div class="upload-btn-wrapper" style="display:block">
-          <button for="file-upload" data-hook="button-label" class="btn btn-primary" style="width:100%">
-            <i class="fa fa-upload"></i> Import
-          </button>
-          <input id="file-upload" class="" type="file">
-        </div>
+    <div class="col-sm-12">
+      <div class="upload-btn-wrapper" style="display:block">
+        <button for="file-upload" data-hook="button-label" class="btn btn-primary" style="width:100%">
+          <i class="fa fa-upload"></i> Import
+        </button>
+        <input id="file-upload" class="" type="file">
       </div>
     </div>
   `

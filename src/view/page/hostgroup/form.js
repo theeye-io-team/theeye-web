@@ -7,18 +7,16 @@ import ConfigsView from './configs'
 import HostConfigSelect from './buttons/hostconfig-select'
 import Modalizer from 'components/modalizer'
 import InputView from 'components/input-view'
+import CheckboxView from 'components/checkbox-view'
 import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
 
-let currentGroup
-
 export default FormView.extend({
   initialize (options) {
-    currentGroup = this.model
 
     const regexInput = new RegexInputView({
-      label: 'Auto provision Bot names matching this pattern',
+      label: 'Auto provision hosts with names matching this pattern',
       name: 'hostname_regex',
       required: false,
       invalidClass: 'text-danger',
@@ -37,7 +35,7 @@ export default FormView.extend({
     })
 
     const selectedHosts = new SelectView({
-      label: 'Destination Bots',
+      label: 'Destination host',
       name: 'hosts',
       multiple: true,
       tags: true,
@@ -45,7 +43,7 @@ export default FormView.extend({
       value: this.model.hosts,
       styles: 'form-group',
       required: false,
-      unselectedText: 'select a Bot',
+      unselectedText: 'select a host',
       idAttribute: 'id',
       textAttribute: 'hostname',
       requiredMessage: 'Selection required',
@@ -75,11 +73,22 @@ export default FormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
         value: this.model.description
-      })
+      }),
     ]
 
     if (this.model.isNew()) {
-      const configSelection = new HostConfigSelect({
+
+      this.fields.unshift(
+        new CheckboxView({
+          label: 'Join the source host to the template',
+          name: 'applyToSourceHost',
+          required: false,
+          invalidClass: 'text-danger',
+          validityClassSelector: '.control-label'
+        })
+      )
+
+      const configs = new HostConfigSelect({
         label: 'Source Bot (role model) *',
         name: 'copy_host',
         multiple: false,
@@ -88,7 +97,7 @@ export default FormView.extend({
         styles: 'form-group',
         required: false,
         // value: null,
-        unselectedText: 'select a Bot',
+        unselectedText: 'select a host',
         idAttribute: 'id',
         textAttribute: 'hostname',
         requiredMessage: 'Selection required',
@@ -96,14 +105,16 @@ export default FormView.extend({
         validityClassSelector: '.control-label',
         tests: [
           () => {
-            if (App.state.hostGroupPage.notConfigured()) {
+            if (!App.state.hostGroupPage.configured()) {
               return 'Configuration is required. We need something to create a template'
             }
           }
         ]
       })
-
-      this.fields.unshift(configSelection)
+      configs.listenTo(App.state.hostGroupPage, 'collections_changed', () => {
+        configs.valid
+      })
+      this.fields.unshift(configs)
     } else {
       App.state.hostGroupPage.setTemplate(this.model)
       const configs = new ConfigsView()
@@ -145,19 +156,6 @@ export default FormView.extend({
     this.previewModal.remove()
   }
 })
-
-/**
- *
- * @param {Host} hostModel
- *
- */
-const addHostToGroup = (hostModel) => {
-  currentGroup.hosts.add(hostModel)
-}
-
-const removeHostFromGroup = (hostModel) => {
-  currentGroup.hosts.remove(hostModel)
-}
 
 const RegexInputView = InputView.extend({
   template: `
@@ -204,31 +202,39 @@ const RegexInputView = InputView.extend({
   }
 })
 
-const ItemView = View.extend({
-  template: `
-    <li style="list-style-type:none; border-bottom: 1px solid #dadada; padding: 10px">
-      <span></span>
-      <a data-hook="" href="#">
-        <i class="fa fa-plus" style="float:right; position:relative; top: 4px; "></i>
-      </a>
-    </li>`,
-  bindings: {
-    'model.hostname': {
-      selector: 'span'
-    }
-  },
-  events: {
-    'click a': 'onClickButton'
-  },
-  onClickButton (event) {
-    // this.trigger('clicked',event)
-    addHostToGroup(this.model)
+const HostsPreviewModal = Modalizer.extend({
+  initialize (options) {
+    Modalizer.prototype.initialize.apply(this, arguments)
+
+    this.fade = options.fade || true
+    this.visible = options.visible || false // like auto open
+    this.title = options.title || 'Hosts matching the Regular Expression'
+    this.class = 'hosts-list-modal'
+
+    this.list = new HostsListView({
+      collection: App.state.hostsByRegex
+      //hosts: this.model.hosts
+    })
+
+    this.bodyView = this.list
+
+    this.listenTo(App.state.hostsByRegex, 'sync', () => {
+      this.show()
+    })
+
+    this.listenTo(this.list, 'add_all', () => {
+      this.model.hosts.add(App.state.hostsByRegex.models)
+      this.hide()
+    })
+    this.listenTo(this.list, 'add', (model) => {
+      this.model.hosts.add(model)
+    })
   }
 })
 
 const HostsListView = View.extend({
   props: {
-    hosts: 'collection',
+    //hosts: 'collection',
     massiveAddButton: ['boolean', false, false]
   },
   template: `
@@ -257,10 +263,10 @@ const HostsListView = View.extend({
     'click a[data-hook=massive-add]': 'onClickMassiveAddButton'
   },
   onClickMassiveAddButton () {
-    this.collection.forEach((model) => {
-      addHostToGroup(model)
-    })
-    this.trigger('click:add_all')
+    //this.collection.forEach((model) => { 
+    //  this.hosts.add(model)
+    //})
+    this.trigger('add_all')
   },
   bindings: {
     massiveAddButton: {
@@ -273,34 +279,37 @@ const HostsListView = View.extend({
 
     this.renderCollection(
       this.collection,
-      ItemView,
+      (options) => {
+        const view = new ItemView(options)
+        view.on('clicked', () => {
+          //this.hosts.add(model)
+          this.trigger('add', options.model)
+        })
+        return view
+      },
       this.queryByHook('items')
     )
   }
 })
 
-const HostsPreviewModal = Modalizer.extend({
-  initialize (options) {
-    Modalizer.prototype.initialize.apply(this, arguments)
-
-    this.fade = options.fade || true
-    this.visible = options.visible || false // like auto open
-    this.title = options.title || 'Bots matching the Regular Expression'
-    this.class = 'hosts-list-modal'
-
-    this.list = new HostsListView({
-      collection: App.state.hostsByRegex,
-      hosts: this.model.hosts
-    })
-
-    this.bodyView = this.list
-
-    this.listenTo(App.state.hostsByRegex, 'sync', () => {
-      this.show()
-    })
-
-    this.listenTo(this.list, 'click:add_all', () => {
-      this.hide()
-    })
+const ItemView = View.extend({
+  template: `
+    <li style="list-style-type:none; border-bottom: 1px solid #dadada; padding: 10px">
+      <span></span>
+      <a data-hook="" href="#">
+        <i class="fa fa-plus" style="float:right; position:relative; top: 4px; "></i>
+      </a>
+    </li>`,
+  bindings: {
+    'model.hostname': {
+      selector: 'span'
+    }
+  },
+  events: {
+    'click a': 'onClickButton'
+  },
+  onClickButton (event) {
+    this.trigger('clicked')
   }
 })
+

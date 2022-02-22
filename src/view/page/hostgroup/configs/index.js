@@ -3,11 +3,11 @@ import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import HostGroupActions from 'actions/hostgroup'
 
-import './styles.css'
+import './styles.less'
 
 export default View.extend({
   template: `
-    <div class="template-configs" style="padding:10px;">
+    <div data-component="template-configs">
       <div class="toggle" data-hook="configs-toggler">
         Display selected Bot config <i class="fa fa-chevron-down"></i>
       </div>
