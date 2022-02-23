@@ -1,6 +1,4 @@
 import App from 'ampersand-app'
-import AmpersandState from 'ampersand-state'
-import AmpersandCollection from 'ampersand-collection'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 
@@ -10,25 +8,11 @@ import { Collection as Tasks } from 'models/task'
 import { Collection as Resources } from 'models/resource'
 import { Collection as Files } from 'models/file'
 import config from 'config'
+import { Collection as TaskTriggers } from 'models/triggers'
 
 const urlRoot = function () {
   return `${config.supervisor_api_url}/${App.state.session.customer.name}/hostgroup`
 }
-
-const EventTemplate = AmpersandState.extend({
-	props: {
-    _id: 'string',
-		emitter_template_id: 'string',
-		event_name: 'string',
-		event_type: 'string',
-		task_template_id: 'string',
-    task_template: 'object'
-	}
-})
-
-const EventTemplates = AmpersandCollection.extend({
-  model: EventTemplate
-})
 
 export const Model = AppModel.extend({
   urlRoot,
@@ -49,7 +33,7 @@ export const Model = AppModel.extend({
     hosts: Hosts, // has many host
     tasks: Tasks, // has many task
     resources: Resources, // has many resource
-    triggers: EventTemplates, // has many event templates
+    triggers: TaskTriggers, // has many event templates
     files: Files // has many file templates
   }
 })

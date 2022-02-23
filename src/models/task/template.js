@@ -38,20 +38,18 @@ const ScriptTask = Schema.extend({
     Schema.prototype.initialize.apply(this, arguments)
     this.type = 'script'
   },
-  parse () {
-    var attrs = Schema.prototype.parse.apply(this, arguments)
-
-    if (attrs.script_arguments && !attrs.task_arguments) {
-      // convert old script_arguments into task_arguments
-      if (Array.isArray(attrs.script_arguments) && attrs.script_arguments.length > 0) {
-        attrs.task_arguments = filterScriptArguments(attrs.script_arguments)
-      } else {
-        attrs.task_arguments = []
-      }
-    }
-
-    return attrs
-  },
+  //parse () {
+  //  const attrs = Schema.prototype.parse.apply(this, arguments)
+  //  if (attrs.script_arguments && !attrs.task_arguments) {
+  //    // convert old script_arguments into task_arguments
+  //    if (Array.isArray(attrs.script_arguments) && attrs.script_arguments.length > 0) {
+  //      attrs.task_arguments = filterScriptArguments(attrs.script_arguments)
+  //    } else {
+  //      attrs.task_arguments = []
+  //    }
+  //  }
+  //  return attrs
+  //},
   props: {
     script_id: 'string',
     script_runas: 'string'
