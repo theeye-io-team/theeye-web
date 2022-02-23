@@ -7,7 +7,7 @@ export default function (monitor) {
 
   const modal = new Modalizer({
     buttons: false,
-    title: 'Edit Monitor',
+    title: `Edit monitor "${monitor.name}" [${monitor.id}]`,
     bodyView: form
   })
 
