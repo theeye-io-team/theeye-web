@@ -94,7 +94,7 @@ const Dialog = Modalizer.extend({
                 <p>What do you want to do?</p>
 
                 <div class="grid-container">
-                  <!-- row 2 -->
+                  <!-- row 1 -->
                   <div class="grid-col-button">
                     <button type="button" class="btn btn-default" data-hook="recipe">
                       <i class="fa fa-arrow-right"></i>
@@ -105,7 +105,7 @@ const Dialog = Modalizer.extend({
                     Keep a copy of the template
                   </div>
 
-                  <!-- row 1 -->
+                  <!-- row 2 -->
                   <div class="grid-col-button">
                     <button type="button" class="btn btn-default" data-hook="delete-template">
                       <i class="fa fa-arrow-right"></i>
@@ -117,7 +117,7 @@ const Dialog = Modalizer.extend({
                     You can recover the template from the recipe later.</span>
                   </div>
 
-                  <!-- row 2 -->
+                  <!-- row 3 -->
                   <div class="grid-col-button">
                     <button type="button" class="btn btn-default" data-hook="delete-everything">
                       <i class="fa fa-arrow-right"></i>
@@ -130,7 +130,7 @@ const Dialog = Modalizer.extend({
                     You can recover all the configurations from the recipe.
                   </div>
 
-                  <!-- row 3 -->
+                  <!-- row 4 -->
                   <div class="grid-col-button">
                     <button type="button" class="btn btn-default" data-hook="cancel">
                       <i class="fa fa-arrow-left"></i>
