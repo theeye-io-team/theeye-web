@@ -88,9 +88,11 @@ const ScraperTask = Schema.extend({
     status_code: 'number'
   },
   parse () {
-    var attrs = Schema.prototype.parse.apply(this, arguments)
-    attrs.remote_url = attrs.url
-    delete attrs.url
+    const attrs = Schema.prototype.parse.apply(this, arguments)
+    if (attrs.url) {
+      attrs.remote_url = attrs.url
+      delete attrs.url
+    }
     return attrs
   },
   serialize () {
