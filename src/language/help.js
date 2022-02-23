@@ -184,7 +184,7 @@ export default {
       description: 'Use a description to improve teamwork an usability',
       hostname_regex: 'Use a Regular Expression if you want the auto provisioning features. You can test the Regular Expression by using the "Search..." button',
       hosts: 'Select the Bots you want to include in this Template. [Warning] Existent Bots won\'t be included in the Template unless you choose them. [Tip] You can use the "Search..." button',
-      copy_host: 'Select a properly configured Bot to create the Template.',
+      source_host: 'Select a properly configured Host to create the Template.',
     },
     regexp_search: 'All this Bots match the regular expression. If you don\'t add them to the template they will be ignored. To include all this Bots into the Template click on <b style="color:#337ab7">Add All</b>'
   },

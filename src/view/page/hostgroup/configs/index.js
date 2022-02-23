@@ -3,11 +3,11 @@ import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import HostGroupActions from 'actions/hostgroup'
 
-import './styles.css'
+import './styles.less'
 
 export default View.extend({
   template: `
-    <div class="template-configs" style="padding:10px;">
+    <div data-component="template-configs">
       <div class="toggle" data-hook="configs-toggler">
         Display selected Bot config <i class="fa fa-chevron-down"></i>
       </div>
@@ -122,8 +122,24 @@ export default View.extend({
     this.renderCollection(
       App.state.hostGroupPage.triggers,
       (options) => {
+        const trigger = options.model
+        const task = App.state.hostGroupPage.tasks
+          .models // tasks array
+          .find(task => {
+            return (
+              task.source_model_id === trigger.task_id ||
+              task.id === trigger.task_id
+            )
+          })
+
+        // @TODO we can identify the originator of the event
+        // by searching the emitter using the event_type and the associated collection
+
         // edit only when create
         options.readonly = ! this.edit_mode
+        options.task_name = task?.name||'not found'
+        options.event_name = trigger.event_name
+        options.event_type = trigger.event_type
         return new TriggerItemView(options)
       },
       this.queryByHook('triggers')
@@ -152,14 +168,6 @@ const InfoView = View.extend({
 })
 
 const ItemView = View.extend({
-  //template: `
-  //  <li>
-  //    <span data-hook="name"></span>
-  //    (<span data-hook="type"></span>)
-  //    <i class="fa fa-remove" title="Do not add this to the Template" data-hook="remove-button"></i>
-  //    <i class="fa fa-eye" title="More" data-hook="show" style="display:none"></i>
-  //  </li>
-  //`,
   template: `
     <li>
       <span data-hook="name"></span>
@@ -193,11 +201,11 @@ const ItemView = View.extend({
   events: {
     'click i[data-hook=show]': function () {
       const info = new InfoView({ model: this.model })
-			const modal = new Modalizer({
+      const modal = new Modalizer({
         buttons: false,
         title: 'Info',
         bodyView: info,
-				removeOnHide: true
+        removeOnHide: true
       })
       modal.show()
     },
@@ -228,22 +236,41 @@ const FileItemView = ItemView.extend({
 })
 
 const TriggerItemView = ItemView.extend({
+  props: {
+    event_name: 'string',
+    event_type: 'string',
+    task_name: 'string'
+  },
   template: `
     <li>
-      <span data-hook="name"></span>
-      <span data-hook="count-visibility">(<span data-hook="count"></span> events attached)</span>
+      <span data-hook="task_name"></span>
+      <span data-hook="event_type"></span>
+      <span data-hook="event_name"></span>
       <i class="fa fa-remove" title="Do not add this to the Template" data-hook="remove-button"></i>
       <i class="fa fa-eye" title="More" data-hook="show" style="display:none"></i>
     </li>
   `,
-  bindings: Object.assign({}, ItemView.prototype.bindings, {
-    'model.task.name': {
-      type: 'text',
-      hook: 'name'
+  bindings: {
+    readonly: {
+      type: 'toggle',
+      hook: 'remove-button',
+      invert: true
     },
-    'model.events.length': {
+    styles: {
+      type: 'attribute',
+      name: 'class'
+    },
+    'task_name': {
       type: 'text',
-      hook: 'count'
+      hook: 'task_name'
+    },
+    'event_name': {
+      type: 'text',
+      hook: 'event_name'
+    },
+    'event_type': {
+      type: 'text',
+      hook: 'event_type'
     }
-  })
+  }
 })
