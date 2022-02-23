@@ -20,7 +20,7 @@ export default PanelButton.extend({
 
       const modal = new Modalizer({
         buttons: false,
-        title: `Edit # ${this.model.id} - Version ${this.model.version||'Migration'}`,
+        title: `Edit workflow "${this.model.name}" [${this.model.id}] - Version ${this.model.version||'Migration'}`,
         bodyView: form
       })
 

@@ -204,7 +204,7 @@ export default View.extend({
     const form = new TaskForm({ model: task })
     const modal = new Modalizer({
       buttons: false,
-      title: `Edit task ${task.name} [${task.id}]`,
+      title: `Edit task "${task.name}" [${task.id}]`,
       bodyView: form
     })
 

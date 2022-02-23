@@ -1,11 +1,10 @@
 import FormView from '../form'
 import Modalizer from 'components/modalizer'
 import PanelButton from 'components/list/item/panel-button'
-import Titles from 'language/titles'
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = Titles.indicator.buttons.edit
+    this.title =  `Edit indicator "${this.model.name}" [${this.model.id}]`
     this.iconClass = 'fa fa-edit dropdown-icon'
     this.className = 'btn btn-primary'
   },
