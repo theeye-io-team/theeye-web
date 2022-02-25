@@ -1,15 +1,12 @@
-# Core Concepts
+# Eventos
 
 [![theeye.io](../images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
-## Events
+Los eventos y acciones que los usuarios y recursos realizan están siendo constántemente despachados y notificados. La información generada puede pedirse en tiempo real y guardarse para análisis y rastreo en el futuro.
 
-Events and actions performed by users and resources are constantly being internally dispatched and notified.
-The generated information can be listened in realtime and saved for further analysis and traceability.
+## Estrctura
 
-### Structure
-
-Every event can be identified by common fields:
+Cada evento puede identificarse por alguno de estos atributos:
 
 - Topic
 - Date and time
