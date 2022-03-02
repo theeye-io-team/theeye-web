@@ -39,7 +39,7 @@ If it is the first time you access TheEye Website, from the web panel ([settings
 ![settings](images/settingsinstaller.gif)
 
 
-For more information please check the installation documentation in ([Bot Installer](/core-concepts/agent/)) you can download the binary agent and get the installation script for your host.
+For more information please check the installation documentation in ([Bot Installer](/en/core-concepts/agent/)) you can download the binary agent and get the installation script for your host.
 
 ### Play with bots
 
@@ -107,7 +107,7 @@ We will be able to have an extended repote by clicking on "More info"
 
 We hope this document has been helpful. You can find more information in the documentation system. In case you need assistance, contact our support team.
 
-Check the [Support team information](/support/) for more details.
+Check the [Support team information](/en/support/) for more details.
 
 ## Understanding the parts
 ### Dashboard: Check your first resource
@@ -116,7 +116,7 @@ Check the Dashboard view after login, you should see "All up and running" in the
 
 ### Users
 
-TheEye provides six different user roles. You can create users on the go with the appropiate role. See the [Users Management Documentation](/user-management/) for more details.
+TheEye provides six different user roles. You can create users on the go with the appropiate role. See the [Users Management Documentation](/en/user-management/) for more details.
 
 ### Resources
 
@@ -126,13 +126,13 @@ TheEye provides a way to store technical knowledge in Resources that become usab
 
 A monitor is used to check services' or resources' status. You can use this status information to take actions \(e.g. run a task, send notification\). You can always customize the time between checks.
 
-There are five kind of monitors you can set up from TheEye: Stats, Script, API/Web Check, Process and File. Check the [Monitors Documentation](/core-concepts/monitors/) for more details.
+There are five kind of monitors you can set up from TheEye: Stats, Script, API/Web Check, Process and File. Check the [Monitors Documentation](/en/core-concepts/monitors/) for more details.
 
-* Monitors will notify for events as desired. Check the Users ACLs' section for [Notifications](/core-concepts/alerts-and-notifications)
+* Monitors will notify for events as desired. Check the Users ACLs' section for [Notifications](/en/core-concepts/alerts-and-notifications)
 
 #### Tasks
 
-A task is an action that can be performed or executed on demand. You can also use the task scheduler to create and manage tasks that TheEye will carry out automatically at the times you specify. Check the [Tasks Documentation](/core-concepts/tasks/) for more details.
+A task is an action that can be performed or executed on demand. You can also use the task scheduler to create and manage tasks that TheEye will carry out automatically at the times you specify. Check the [Tasks Documentation](/en/core-concepts/tasks/) for more details.
 
 ![create tasks](images/createtask.gif)
 
@@ -166,5 +166,5 @@ Workflow connects your tasks together to automate complex or dependent processes
 
 Which trigger would you like to use? You can start a workflow directly with a play button or you can use monitors or tasks as triggers.
 
-Check the [Workflow Documentation](/core-concepts/tasks/tasks_workflows/) for more details.
+Check the [Workflow Documentation](/en/core-concepts/tasks/tasks_workflows/) for more details.
 
