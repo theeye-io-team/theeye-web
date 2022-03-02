@@ -1,61 +1,59 @@
-# Scripts Run As... and permissions
+# Ejecutar Scripts y asignar permisos
 
 [![theeye.io](../../images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
-## Scripts runs by default in this way:
+## Ejecución por defecto
 
-* on Linux: adding execution permission to the file and including the intepreter Hash in the first line.
-* on Windows: setting the interpreter that should use the OS by the file extension.
+* Linux: agregando permisos de ejecución al archivo e incluyendo el [Shebang (`#!`)](https://bash.cyberciti.biz/guide/Shebang) en la primera linea
+* Windows: configurando el interpreter que usa el SO según la extensión del archivo.
 
-Script RunAs allows to ejecute the script in a specific way, by using a different binary interpreter or in Linux using sudo. **Remember that** _**RunAs**_ **is part of the** _**Tasks'**_ **configuration, as** _**Tasks**_ **are responsible for Scripts' execution**. 
+La opción _Run As_ permite ejecutar tu Script de una manera especifica, usando diferentes intérpretes, o permitiendo el uso de `sudo` en Linux. **Recuerda que _Run As_ es parte de la configuración de tareas (_Tasks_), ya que estas se encargan de la ejecución de Scripts** 
 
-Please check the [Script Task Documentation](/core-concepts/scripts/) section for further details.
+Diríjase a la [Documentación de tareas de Script](/core-concepts/scripts/) para más detalles.
 
-## Notation
+## Notación
 
-The runas text could be any command line combination, using fixed variables, environment settings, command or anything that agent user\(by default theeye-a\) can do within the default shell \(usually bash or cmd\). We recommend to keep it simple and short. The only requirement is that the runas has to include the %script% KEYWORD. This KEYWORD indicates which part of the runas text will be replaced with the script path and its arguments.
+La opción _Run As_ puede contener cualquier linea de comando, incluyendo variables fijas, configuración de entorno, comandos, o lo que sea que el agente de TheEye pueda ejecutar dentro de la shell por defecto (Ej: bash, cmd); recomendamos mantenerla simple y corta. El único requisito es que la opción _Run As_ debe incluir la variable `%script%`, la cual en el momento de ejecución se reemplazará por el directorio del Script y sus argumentos.
 
-## In Linux
+## En Linux
 
 ### SUDO
 
-To run the script using sudo, use one of the following runas syntax
+Para ejecutar un Script como superusuario usando `sudo`, puede usar uno de los siguientes comandos en la opción de _Run As_:
 
-1. Sending arguments to the script to execute
-   -  Remember to add the " or the arguments won't be visible by the script
+1. Enviar argumentos al Script para ejecutarlos
+  - Recuerda agregar las comillas (`"`) para que los argumentos sean visibles por el Script
 
 ```bash
 sudo -u user -c "%script%"
 ```
 
-2. Run script without arguments
+2. Ejecutar el Script sin argumentos
 
 ```bash
 sudo -u user $(%script%)
 ```
 
-### Custom binaries
+### Usar otros intérpretes
 
-Some times is required to run the script with a binary which is not registered in the global or user paths.
-
-One case is to run a Nodejs script with a different interpreter version. To achive that include the full path to the interpreter in the `runas`
+En caso de necesitar correr el Script con un binario que no esté incluido en el `PATH` (Ej: distintas versiones de Node.js), se puede incluir el directorio absoluto en la opción _Run As_.
 
 ```bash
 /usr/local/lib/nodejs/v4/bin/node %script%
 ```
 
-## In Windows
+## En Windows
 
-The same aproach to execute custom scripts with unregistered interpreters apply both to Windows and Linux.
+Al igual que en Linux, se pueden usar intérpretes no registrados en el `PATH` escribiendo el directorio absouto en la opción _Run As_.
 
-You will have to provide the absolute path to script interpreter.
+```cmd
+"C:\Program Files\nodejs\node.exe" %script%
+```
 
-### Understanding the Windows scenario ("Run as ..." and the interpreter)
+### Entendiendo el caso Windows ("Run as ..." y el intérprete)
 
-NOTE: 
-
-  - The language of the script must always be considered before loading the interpreter's pareameters.
-  - Unlike linux, where the script and its interpreter are defined in its first line of code with the path and the interpreter (https://bash.cyberciti.biz/guide/Shebang). In Windows the inpreprete is a parameter inside the command executed in CMD.
+> - El lenguaje del Script debe ser considerado antes de cargar los parámetros del intérprete.
+> - A diferencia de Linux, que permite indicar el intérprete en la primera linea del Script utilizando el [Shebang (`#!`)](https://bash.cyberciti.biz/guide/Shebang), Windows requiere especificar el intérprete en el comando en que se ejecuta.
 
 **Scripts**
 
@@ -74,15 +72,13 @@ NOTE:
         - Perl
         - and more...
 
-**Interpreter**
+**Intérprete**
 
-  - Windows interpreter (BAT/PS1)
-    - It is installed by default on Windows 7 and Server 2008 R2 and later.
-      - It can be downloaded for Windows XP SP3, Windows Server 2003 SP2, Windows Vista SP1 and Windows Server 2008 SP2 (you may need to uninstall older versions of PowerShell first).
-  - Other options:
-    - The correct interpreter must be installed for the scripting language. And both its location and environment variables are correctly set to call the interpreter.
+Se pueden usar los intérpretes instalados por defecto en Windows, como `cmd.exe` o `PowerShell` (instalado por defecto desde Windows 7 y Server 2008 R2). Asímismo, cualquier intérprete compatible con Windows puede ser utilizado, asumiendo que está correctamente instalado y accesible desde el `PATH`. También puede utilizar ejecutables fuera del `PATH` especificando la ruta al archivo
 
-#### Example calling running scripts on a Windows host
+#### Ejemplo:
+
+TODO: Chequear esto 
 
 NOTE: if you forget to load the parameters of "Run as ..." in TheEye.
   - The script can not be executed with "Run as".
@@ -93,37 +89,33 @@ NOTE: To execute a powershell script you must add this line to the "RunAs" tasks
 
 ![Run as default](../../images/scriptsRunAsDefault.png)
 
-##### "Run as" or execute a script with another interpreter
+##### Usar "Run as" para ejecutar scripts con otros intérpretes
 
-Use the following line if you are using arguments in your script. Note that the file name of the ps1 script should not have spaces in it.
+* PowerShell
 
 ```powershell
 powershell.exe -NonInteractive -ExecutionPolicy ByPass -File "%script%"
 ```
-If you do not use arguments in the scripts, you can use the following line. Note that the file name of the ps1 script should not have spaces in it.
 
-```powershell
-powershell.exe -NonInteractive -ExecutionPolicy ByPass -File %script%
-```
+Si quieres ejecutar un script con argumentos en PowerShell, usa esta línea de código en _"Run as"_. En caso de no utilizar argumentos, se pueden omitir las comillas que engloban la variable `%script%`, pero no es recomendado. **IMPORTANTE:** El path al script no puede contener espacios.
 
 ![Run as powershell](../../images/scriptsRunAsPowershell.png)
 
-**Some examples executing script with other interpreters**
+**Ejemplos de otros interpretes**
 
-```python
+> Recuerde que los intérpretes deben estar instalados y agregados al `PATH`
+
+```bat
+:: Python 
 python.exe "%script%"
-```
 
-```js
+:: JavaScript (with Node.js)
 node "%script%"
-```
 
-```perl
+:: Perl
 perl "%script%"
 ```
 
-#### Sudo note.
+#### Ejecutar como administrador
 
-On Windows there are some alternatives to achieve the same result you can get using sudo. The native way is by using [runas](https://technet.microsoft.com/en-us/library/cc771525%28v=ws.10%29.aspx). The main important difference is that you should provide the user password at least once.
-
-There are other alternative tools and configurations you will have to find out by yourself.
+En Windows se puede ejecutar un script como administrador usando [`runas`](https://technet.microsoft.com/en-us/library/cc771525%28v=ws.10%29.aspx), similar al `sudo` de Linux. 

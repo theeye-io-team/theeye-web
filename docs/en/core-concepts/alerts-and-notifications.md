@@ -38,7 +38,7 @@ You can disable email notifications for Monitors by muting them from the dashboa
 
 ## Notifications outside of TheEye:
 
-Check the [Task Notifications](/core-concepts/tasks/taskNotifications) for more details.
+Check the [Task Notifications](/en/core-concepts/tasks/taskNotifications) for more details.
 
 
 
