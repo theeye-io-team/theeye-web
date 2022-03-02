@@ -1,24 +1,49 @@
+# Tarea de script
+
 [![theeye.io](../../images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
-# Script Task
+## Opciones
 
----
+Las opciones para tareas de Script son las siguientes:
 
-## Components
+- **Name:** Nombre de la tarea
+- **Bots:** El Bot que ejecutará la tarea
+- **Scripts:** El script de la tarea
+- **Tags:** Etiquetas para facilitar la busqueda de tasks (opcional)
+- **Run As:** El comando que ejecuta la tarea. [Más información](../scripts/runas.md)
+- **Task Arguments:** Los parámetros que el script puede referenciar (opcional). [Más información](#Argumentos)
+- **Advanced options** _(Click para desplegar)_
+  - **Copy Task:** Puedes elegir una tarea y clonar sus opciones (opcional)
+  - **Description:** Breve descripción de la tarea (opcional)
+  - **ACL's:** Asignar permisos de ACL a otros usuarios (opcional). [Más información](../iam/user-management.md)
+  - **Triggered by:** Eventos que dispararán la tarea automáticamente (opcional). [Más información](/core-concepts/tasks/triggers.md)
+  - **Trigger on-hold time:** Tiempo desde uno de los eventos definidos anteriormente hasta el disparo de la tarea (opcional)
+  - **Excecution timeout:** Cuánto esperar la respuesta del servidor antes de cancelar ejecución (opcional)
+  - **Multitasking:** Permite a los Bots ejecutar multiples Jobs de esta tarea en paralelo
+  - **Is cancellable:** Puede o no la tarea ser cancelada
+  - **Require user interaction:** Solicitar confirmación antes de ejecutarse
+  - **Specific users interaction:** Solicitar confirmación de ciertos usuarios en particular (opcional)
+  - **Result popup:** Mostrar el resultado del job en una ventana al terminar
+  - **Environment Variables:** Variables de entorno para la tarea (opcional)
+  - **Arguments Type (experimental):** El formato JSON para los argumentos
+  - **Allows to change the behaviour of running jobs:** Permite que se modifiquen los parametros de un job en ejecución programáticamente
 
-When working with workflows, you can use the components object on a task result to override the behavior of the next task:
+## Componentes
 
-### Modify an Option selection argument: input_option
+Al trabajar con Workflows, puedes usar los componentes en el resultado de la tarea para modificar el comportamiento de la siguiente tarea:
 
-You can use the input_option component from a task to modify the available options on an option selection argument of the next task.
-Let's check this example:
+### Modificar un argumento de selección de opciones: `input_options`
 
-#### task A
-Task A is the task that will modify the arguments of the next task. It's script output should be as follows:
+El componente `input_options` permite modificar las opciones disponibles en el argumento de opciones de la tarea siguiente.
+
+Revise este ejemplo:
+
+#### Task A
+
+Task A es la tarea que modificará el argumento de opciones de Task B. Su output debe ser el siguiente:
 
 ```javascript
-
-// place this piece of code within the NodeJS Boilerplate
+// Este snippet va dentro del boilerplate de NodeJS...
 const main = async () => {
   const options = [
     { id: '1', label: 'Agustin' },
@@ -27,138 +52,117 @@ const main = async () => {
     { id: '4', label: 'Santiago' }
   ]
   const components = {
-    input_options: [{ order: 1, options }]
+    input_options: [{ order: 0, options }]
   }
   return { data: [], components }
 }
-
 //...
 ```
 
-#### task B
-Task B is the task that will have its arguments modified.
-To enable this on task B:
+#### Task B
 
-1. Add an **Option Selection** argument on the same position as the **Order** property set on Task A output.
+Task B es una tarea con un argumento de opciones en primera posición (argumento #0), el cual Task A va a modificar. Puede reproducirlo de la siguiente manera:
 
-2. Open the task edition/creation form
+1. Agregue un argumento **Option Selection** en la misma posición que definió la propiedad **order** en el componente `input_options` del output de Task A
+2. Al final del formulario, despliegue las opciones avanzadas cliqueando en **Advanced Options**
+3. La opción **Require user interaction** (solicitar interacción de usuario) debe estar activada  
 
-3. Go to the bottom and click **Advanced Options**
+### Modificar un argumento de opciones remotas: `input_remote_options`
 
-4. The **Require user interaction** option must be checked   
+El componente `input_remote_options` permite modificar los parametros del argumento de opciones remotas en la siguiente tarea
 
----
+Los parámetros disponibles en el componente son los siguientes:
 
-### Modify an Remote Options argument: input_remote_option
+* `endpointUrl`: La URL de la API que enviará las opciones del argumento
+* `idAttribute`: La propiedad de las opciones que se usará como ID
+* `textAttribute`: La propiedad de las opciones que se mostrará en el selector de opciones
 
-You can use the input_remote_option component from a task to modify the params of the Remote options argument if the next task.
-You can pass all this params or just the one you need to everride. The available params to modify are:
+Puede pasarle todos los parámetros, o solo los que necesita sobreescribir.
 
-* endpointUrl: The endpoint from where the components gets the array of options
-* idAttribute: The options property used as ID.
-* textAttribute: The options property to show on the select input.
-
-Let's check this example:
+Revise este ejemplo:
 
 #### task A
 
-Task A is the task that will modify the remote options argument of the next task. It's script output should be as follows:
+Task A es la tarea que modificará el argumento de opciones remotas de Task B. Su output debe ser el siguiente:
 
 ```javascript
-
-#!/usr/bin/node
-
-try {
-  const endpointUrl = 'https://github.com/theeye-io/theeye-docs/blob/master/docs/assets/remote_example.json'
+// Este snippet va dentro del boilerplate de NodeJS...
+const main = async () => {
+  const endpointUrl = 'https://raw.githubusercontent.com/theeye-io/theeye-docs/master/docs/assets/remote_example.json'
   const idAttribute = 'id'
   const textAttribute = 'username'
   const components = {
     "input_remote_options": [
       {
-        "order": 1,
+        "order": 0,
         "endpointUrl": endpointUrl,
         "idAttribute": idAttribute,
         "textAttribute": textAttribute
       }
     ]
   }
-  console.log(JSON.stringify({
-    state: 'success',
-    data: [],
-    components: components
-  }))
-} catch (e) {
-  console.error(e)
-  console.error('failure')
-  process.exit(2)
+  return { data: [], components }
 }
-
+//...
 ```
 
 #### task B
 
-Task B is the task that will have its arguments modified.
-To enable this on task B:
+Task B es una tarea con un argumento de opciones remotas en primera posición (argumento #0), el cual Task A va a modificar. Puede reproducirlo de la siguiente manera:
 
-1. Add an **Remote Options** argument on the same position as the **Order** property set on Task A output.
+1. Agregue un argumento **Remote Options** en la misma posición que definió la propiedad **order** en el componente `input_remote_options` del output de Task A
+2. Al final del formulario, despliegue las opciones avanzadas cliqueando en **Advanced Options**
+3. La opción **Require user interaction** (solicitar interacción de usuario) debe estar activada  
 
-2. Open the task edition/creation form
+### Mostrar un mensaje emergente: `popup`
 
-3. Go to the bottom and click **Advanced Options**
+El componente `popup` muestra un mensaje emergente en la interfaz de la app al finalizar la ejecución de la tarea.
 
-4. The **Require user interaction** option must be checked    
+Cuando un usuario ejecuta una tarea en la WebApp y su sesión sigue activa, ese usuario recibirá un mensaje emergente. El mensaje puede ser cualquier string definida en el script.
 
----
+De momento hay 2 tipos de mensaje emergente:
 
-### Popup Message
+* Un mensaje de texto simple
+* Una lista
 
-The Web Popup Message allows to display a friendly message to the users when a task completes the execution.
+El mensaje emergente también convertirá URLs en links para mayor comodidad.
 
-When a user executes a task using the Web Application and he awaits for the task result, that user alone will receive a one-time message in the Web Application using a separted popup message box.
+Para emitir un mensaje simple, el código debe verse similar a este: 
 
-The message can be any string defined within the script. At this moment there are two flovours to choose:
+```javascript
+// Este snippet va dentro del boilerplate de NodeJS...
+const main = async () => {
+  const message = "Mensaje con un link clickeable: https://documentation.theeye.io"
 
-* A plain text message
-
-* A simple list of items
-
-The Popup Message will also interprete web links and will make them clickeable.
-
-
-To emit a plain text message using the popup message box, the task output should be defined as follow
-
-```json
-
-  {
-    "state": "success",
-    "data": [],
-    "components": {
-      "popup": "Message with a clickable link: https://documentation.theeye.io"
-    }
+  const components = {
+    "popup": message
   }
-
+  return { data: [], components }
+}
+//...
 ```
 
-To display a list, the value for popup property should be changed to an array
+Para mostrar una lista, el atributo `popup` debe contener un array
 
-```json
-
-  {
-    "state": "success",
-    "data": [],
-    "components": {
-      "popup": [
-        "Item 1",
-        "Item 2",
-        "info@theeye.io",
-        "https://documentation.theeye.io"
-      ]
-    }
+```javascript
+// Este snippet va dentro del boilerplate de NodeJS...
+const main = async () => {
+  const lista =  [
+    "Item 1",
+    "Item 2",
+    "info@theeye.io",
+    "https://documentation.theeye.io"
+  ]
+      
+  const components = {
+    "popup": lista
   }
-
+  return { data: [], components }
+}
+//...
 ```
 
-Sample code
+Código de ejemplo
 
 ```javascript
 
@@ -167,7 +171,7 @@ Sample code
 try {
   const name = process.argv[2]
   const components = {
-    "popup": "Hi " + name + ", visit our documentation for more information! https://documentation.theeye.io"
+    "popup": "Hola " + name + ", visita nuestra documentación para más información! https://documentation.theeye.io"
   }
   console.log(JSON.stringify({
     state: 'success',
@@ -182,92 +186,86 @@ try {
 
 ```
 
-You can download the recipe from this link.
+Puede descargar la receta de esta tarea desde el siguiente link
 
 [Popup Recipe](https://github.com/theeye-io/recipes/blob/master/task/script/Show_Popup_Message.json)
 
+#### Habilitar mensajes emergentes
 
-#### Enable Popup
+Para habilitar los mensajes emergentes para una tarea
+1. Diríjase al menú de la tarea y edítela, o cree una tarea nueva
+2. Al final del formulario, despliegue las opciones avanzadas cliqueando en **Advanced Options**
+3. La opción **Result Popup** debe estar activada
 
-To enable this feature
+### Aprovadores dinámicos
 
-1. Open the task edition/creation form
-
-2. Go to the bottom and click **Advanced Options**
-
-3. The **Result Popup** option must be checked
-
----
-
-### Dynamic Approvers
-
+<!-- TODO: Revisar esto -->
 
 ```json
-
-  {
-    "state": "success",
-    "data": [],
-    "next": {
-      "approval": {
-        "approvers": [ "theeye.user@theeye.io" ]
-      }
+{
+  "state": "success",
+  "data": [],
+  "next": {
+    "approval": {
+      "approvers": [ "theeye.user@theeye.io" ]
     }
   }
-
+}
 ```
 
----
+## Información de Runtime
 
+<!-- TODO: Agregar más info -->
 
-## Runtime Information
+Durante runtime, se puede consultar información del job que se está ejecutando mediante variables de entorno.
 
-During runtime, you can access basic information of the job being executed via environment variables.
+Toda la información está guardada en strings o estructuras JSON.
 
-The information is storead as JSON Strings or as JSON encoded Key-Value structures.
-All the environment variables belonging to TheEye runtime are prefixed with *THEEYE_* keyword
+Todas las variables de entorno del runtime de TheEye empiezan con el prefijo `THEEYE_`.
 
-### THEEYE_JOB (object)
+### `THEEYE_JOB` (objeto)
 
-Contains information of the current job.
+Contiene la información del job que se está ejecutando.
 
-| Name | Type | Description |
-| ---  | --- | --- |
-| id | string | the id of the job. you can fetch the API with it |
-| task_id | string | task definition id. can fetch the API with it |
+| Nombre  | Tipo   | Descripción                                                               |
+| ------- | ------ | ------------------------------------------------------------------------- |
+| id      | string | El ID del job. Se puede usar para consultar a la API                      |
+| task_id | string | El ID de la task que generó el job. Se puede usar para consultar a la API |
 
-### THEEYE_JOB_USER (object)
+### `THEEYE_JOB_USER` (objeto)
 
-This is the user that executes the Task. This env will contain different values depending on how the task was executed.
+Este es el usuario que ejecutó la task y creó el job. Esta variable va a contener distintos parámetros dependiendo de cómo se haya ejecutado
 
-* Automatic Execution: the user will be always a internal bot user.
-* Play Button: When the task is executed via User Interface. This will be the user that pushed the Play Button.
-* API Calls: Api calls can be done using Integration Keys (bot user) or Access Tokens (human user). The user would be a bot or a human.
+* **Ejecución automática:** El usuario va a ser siempre un bot interno.
+* **Botón Play:** El usuario va a ser quien que haya ejecutado la tarea desde la interfaz web.
+* **Llamada a la API:** Las llamadas a la API pueden hacerse con *Integration Keys* (el usuario sería un bot) o con *Access Tokens* (el usuario sería humano).
 
-| Name | Type | Description |
-| ---  | --- | --- |
-| id | string | the user id |
-| email | string | the user email |
+| Nombre | Tipo   | Descripción       |
+| ------ | ------ | ----------------- |
+| id     | string | ID del usuario    |
+| email  | string | Email del usuario |
 
-### THEEYE_JOB_WORKFLOW (object)
+### `THEEYE_JOB_WORKFLOW` (objeto)
 
-When Tasks belongs to Workflows, this constains information of the Workflow.
+Cuando las tareas son parte de un Workflow, esta variable contendrá información del mismo.
 
-| Name | Type | Description |
-| ---  | --- | --- |
-| id | string | the workflow schema id |
-| job_id | string | the workflow job execution instance |
+| Nombre  | Tipo   | Descripción                       |
+| ------- | ------ | --------------------------------- |
+| id      | string | Schema ID del workflow            |
+| job_id  | string | La instancia de ejecución del job |
 
-### THEEYE_API_URL (string)
+### `THEEYE_API_URL` (string)
 
-This is the default API URL.
+La URL de la API por defecto
 
-### THEEYE_ORGANIZATION_NAME (string)
+### `THEEYE_ORGANIZATION_NAME` (string)
 
-This is the organization name or project running the current script.
+El nombre de la organización dueña del script que se está ejecutando
 
-## Examples
+### Ejemplos
 
-###  Get user information from DOS / BAT scripts
+####  Conseguir información del usuario mediante un script de Windows (BAT)
 
-The following script shows how to get user id and email information, it can be replicated to get information for THEEYE_JOB and THEEYE_JOB_WORKFLOW:
-[Download Recipe](https://github.com/theeye-io/theeye-docs/blob/master/docs/assets/recipes/check_theeye_env_vars.json)
+Este script te muestra cómo conseguir el ID del usuario y su email. Puede usarse el mismo método para las variables `THEEYE_JOB` and `THEEYE_JOB_WORKFLOW`.
+
+[Descargar Receta](https://raw.githubusercontent.com/theeye-io/theeye-docs/master/docs/assets/recipes/check_theeye_env_vars.json)

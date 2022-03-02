@@ -1,52 +1,55 @@
-# Working with Scripts
+# Trabajando con Scripts
 
 [![theeye.io](../../images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
-## Create a Script
+## Crear un Script
 
-Scripts can be written directly from a live editor or can be uploaded by dropping files over the _Files & Scripts_' creation window. The live editor will recognize the notation language \(interpreter\) once you name the script file and set an extension \(e.g. runme.sh\). Bash, Python, Perl, Node and bat files are recognized, but any script can be executed as long as the interpreter is available in the destination host.
+Los Scripts pueden ser escritos desde el editor online o subidos en la ventana _Files & Scripts_. El editor online puede reconocer el lenguaje del archivo usando su nombre y extensión \(Ej: `runme.sh`\). Se reconocen los archivos de Bash, Python, Perl, Node y Bat, pero scripts de cualquier otro lenguaje pueden ejecutarse, siempre cuando el agente tenga instalado el interpreter necesario.
 
-TheEye will carry out the script execution over tasks. Check the [tasks' documentation](../tasks/#create-a-script-task) to find out how scripts are used.
+TheEye se encargará de la ejecución del script usando tareas. Revisa la [documentación de tareas](../tasks/#crear-una-tarea-de-script).
 
-You can also use a script to create a _Monitor_, please take a look at the [monitors' documentation](../monitors.md#monitor-type-script) to see how scripts are used.
+También se puede usar un script para crear un _Monitor_. Revisa la [documentación de monitores](../monitors.md#monitor-tipo-script).
 
-### Writing Scripts
+### Escribir Scripts
 
-TheEye will use the output from your scripts to determine whether or not the execution was successful. The last line of the scripts will be parsed looking for a string which represents a `state` or a `json` result object. So it is mandatory to indicate the execution status when writing scripts.
+TheEye usará el output de los scripts para determinar si el script se ejecutó correctamente. La ultima linea de tus strings va a ser analizada para encontrar un string que represente un estado \(`state`\) o un objeto de resultado `JSON`. Indicar el estado de ejecución es obligatorio al escribir scripts.
 
-A `state` could be any state or event linked to the task or monitor of this script. Default build-in events are `success` and `failure`.
+El `state` puede ser cualquier estado o evento vinculado a la tarea o el monitor del script.
 
-So if you script ended as expected \(success state\), you will have to make it print "success" as the last output line of your script.
+Los eventos incluidos por defecto son `success` \(el script se ejecutó correctamente\) y `failure` \(el script se ejecutó con errores\)
 
-* `success` when everythin is ok
-* `failure` in abnormal situations
+Si el script se ejecutó correctamente, debe escribir "`success`" en la ultima linea de output
 
-### Passing Arguments in Workflow.
+### Pasar argumentos en un Workflow
 
-There are different ways of passing arguments from monitor to task and from task to task.
+Al trabajar con Workflows, hay varias maneras de pasar argumentos [desde un monitor hacia una tarea](#monitor-a-tarea), y [de tarea en tarea](#tarea-a-tarea).
 
-#### Monitor to Task
+#### Monitor a tarea
 
-In this case the state is always required or a failure will be assumed. There are two options to provide output:
+En este caso, el script debe imprimir una string de formato JSON con 2 propiedades: `state` y `data`. 
 
-* The first option is to print a JSON formatted string with two properties: state and data. data must be an array with the arguments list that need to be provided to the next triggered task in the workflow. Each index of the array will be mapped in order to each argument of the triggered task.
+`state` debe contener el estado de ejecición del script. Proveer el estado es obligatorio, y ante la falta del mismo se asume el estado `failure`.
+
+`data` debe contener los argumentos con los que se debe ejecutar la siguiente tarea del Workflow. Hay 2 opciones para proveer estos argumentos:
+
+* Un _array_ con los argumentos que necesita la tarea siguiente en el Workflow. Dichos argumentos se envian por orden de índice.
 
 ```bash
+# El resto del script.
 
-# do your things here...
 if [ true ]; then
   echo { \"state\":\"success\", \"data\": [ \"val1\", \"val2\" ] }
 else
   echo { \"state\":\"failure\", \"data\": [ \"val1\", \"val2\" ] }
 fi
-
 ```
 
-* The second option is similar to the first one, but we use an object in the data property instead of an array. The difference is that the object will be passsed untouch as the firt argument of the next task.
+* Un _objeto_ con los argumentos que necesita la tarea siguiente en el Workflow, acompañados del nombre de cada argumento. Dichos argumentos se envian según el nombre, independientemente del orden.
+
 
 ```bash
+# El resto del script.
 
-# do your things here...
 if [ true ]; then
   echo { \"state\":\"success\", \"data\":{ \"val1\":$varTwo, \"val2\":$varUno }  }
 else
@@ -55,35 +58,38 @@ fi
 
 ```
 
-#### Task to Task
+#### Tarea a tarea
 
-This scenario is the same as the previous, but as the state is not explicitly required and can be ignored, the output is quite more simple. In task the output state is always "success", unless a "failure" is provided to stop the workflow.
+Este caso es similar al anterior, excepto que el estado no es obligatorio y puede ignorarse, y por ende el output es mas simple. En una tarea, el output es siempre `success` a menos que se especifique lo contrario. El output debe contener los argumentos con los que se debe ejecutar la siguiente tarea del Workflow. Hay 2 opciones para proveer estos argumentos:
 
-Output can be an array (each index will be mapped to each argument of the triggered task):
+* Un _array_ con los argumentos que necesita la tarea siguiente en el Workflow. Dichos argumentos se envian por orden de índice.
 
-```
+```bash
   echo [\"arg1\",\"arg2\",\"arg3\"]
 ```
 
-or an object (that will be the first argument of the triggered task):
+* Un _objeto_ con los argumentos que necesita la tarea siguiente en el Workflow, acompañados del nombre de cada argumento. Dichos argumentos se envian según el nombre, independientemente del orden.
 
 ```
   echo { \"val1\": $varTwo, \"val2\": $varUno }
 
 ```
 
-#### Limitations.
+#### Limitaciones
 
-The only detected limitation so far is the size of the string used as output. Dependeding on the operating system, the output buffer varies. Be aware that if the string exceded the output buffer, some characters can be lost, a json error will be arise (due to parsing errors) and the output of the monitor/task will be a failure. This situation can be detected analizing the output of the monitor or task.
+De momento, la unica limitación detectada es el tamaño de la string del output. Dependiendo del sistema operativo del agente, el buffer del output varía. Tenga en cuenta que si el string excede el buffer del output, algunos caracteres pueden perderse y causar un error de JSON, lo que producirá un estado `failure`. Este error se puede detectar analizando el output del monitor o la tarea.
 
-#### Example
+#### Ejemplo
 
-This is a simple check with `success` and `failure` states
+Este es un chequeo simple con estados `success` y `failure`
 
 ```bash
-# Some commands and checks here
+# El script hace los chequeos necesarios y
+# guarda los resultados en la variable $check
+# 
 # ...
-# And at the end of the script...
+
+# Al final del script mostramos los resultados
 
 if [ $check == true ]; then
   echo "success"
@@ -93,44 +99,33 @@ else
   exit
 fi
 
-# or you can keep doing more things, you can control the flow of your script and end it anytime
+# O puedes continuar con otras instrucciones
+# Puedes controlar el flow de tu script y terminarlo en cualquier momento 
 echo "success"
 ```
 
-If you need to report extra information to the API, you'll have to print the information to the `stdout` in json format like this
+Si necesitas reportar información extra a la API, tendrás que imprimir la información al `stdout` en formato JSON
 
 ```bash
 varUno="value1"
-varTwo="value2"
+varDos="value2"
 
-# This will output a valid JSON and will be parsed by TheEye agent
-# Manually writing a JSON string is not quite pleasant, we know that and we will improve this in the future
+# Esto imprime una string JSON válida que será analizada por el agente TheEye.
+# Escribir una string JSON manualmente no es lindo, lo sabemos. 
+# Estamos trabajando para mejorar esto en el futuro. 
+
 if [ true ]; then
-  echo { \"state\":\"success\", \"data\":{ \"val1\":$varTwo, \"val2\":$varUno } }
+  echo { \"state\":\"success\", \"data\":{ \"val1\":$varUno, \"val2\":$varDos } }
 else
-  echo { \"state\":\"failure\", \"data\":{ \"val1\":$varTwo, \"val2\":$varUno } }
+  echo { \"state\":\"failure\", \"data\":{ \"val1\":$varUno, \"val2\":$varDos } }
 fi
 ```
 
-The JSON output must have a `state` property with a the state value from your script execution, and a `data` property with any extra information you consider, TheEye will show the `data` value in the execution log.
+El output JSON debe tener la propiedad `state` con el estado de la ejecución de tu script, y la propiedad `data` con información extra necesaria. TheEye mostrará el valor de `data` en log de ejecución.
 
-If you need to validate the JSON output of your scripts, you can use this simple nodejs script - there are also nice web sites that can validate JSON for you too. Change it for your case
+Si necesitas validar el output JSON de tus scripts, puedes usar un script sencillo de NodeJS. Considere el siguiente ejemplo:
 
-`test_json.js`:
-
-```javascript
-// test.js
-var exec = require('child_process').exec;
-
-exec('./test.sh', function(err, stdout, stderr){
-    var obj = JSON.parse(stdout);
-
-    // if the stdout string was parsed successfuly the next sentence will give the members number - which is 1
-    console.log( obj.data );
-});
-```
-
-the `test.sh` script looks like this
+El script `test.sh` contiene lo siguiente
 
 ```bash
 #!/bin/bash
@@ -142,4 +137,19 @@ members=1
 # this is valid json when send to stdout
 echo { \"state\" : \"$state\" , \"data\" : { \"members\" : $members } }
 # this will echo { "state": "normal" , "data" : { "members": 1 } }
+```
+
+El script `test.js` revisa si el stdout de `test.sh` contiene una string JSON válidaff
+
+```javascript
+// test.js
+var exec = require('child_process').exec;
+
+exec('./test.sh', function(err, stdout, stderr){
+    // Si el string de stdout se puede analizar correctamente, el script imprime el contenido de data
+    var obj = JSON.parse(stdout);
+
+    console.log( obj.data );
+    // Esto imprime { "members": 1 }
+});
 ```
