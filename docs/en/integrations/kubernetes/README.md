@@ -6,16 +6,16 @@
 
 ### Theeye agent manifests examples
 
-* [DaemonSet](examples/kubernetes-examples-theeye-agent-daemonset.yaml)
+* [DaemonSet](./examples/kubernetes-examples-theeye-agent-daemonset.yaml)
 
 Ensures that all nodes in the cluster run a copy of theeye-agent. Allows monitoring of all hosts in the kubernetes cluster(cpu, mem, disk), run tasks.
 Each new host added to the cluster will have a copy of theeye-agent.
 
-* [Deployment](examples/kubernetes-examples-theeye-agent-deploy.yaml)
+* [Deployment](./examples/kubernetes-examples-theeye-agent-deploy.yaml)
 
 Creates a single copy of theeye-agent in the cluster. Allows to execute monitors/tasks that require connection to endpoints only accessible from within the kubernetes cluster.
 
-* [Secrets](examples/kubernetes-examples-theeye-agent-credentials.yaml)
+* [Secrets](./examples/kubernetes-examples-theeye-agent-credentials.yaml)
 
 * Environmental Variables                                                                                                                                                    
 
