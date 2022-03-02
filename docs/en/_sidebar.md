@@ -1,0 +1,42 @@
+- [Home](/en/)
+- [First steps](/en/first-steps.md)
+- Core concepts
+  - [JSON](/en/core-concepts/json.md)
+  - [Events](/en/core-concepts/events.md)
+  - Tasks
+    - [Basics](/en/core-concepts/tasks/)
+    - [Triggers](/en/core-concepts/tasks/triggers.md)
+    - [Workflows](/en/core-concepts/tasks/workflows.md)
+    - Types
+      - [Notification](/en/core-concepts/tasks/notification_type.md)
+      - [Script](/en/core-concepts/tasks/script_type.md)
+  - [Alerts and Notifications](/en/core-concepts/alerts-and-notifications.md)
+  - [Indicators](/en/core-concepts/indicators.md)
+  - [Monitors](/en/core-concepts/monitors.md)
+  - [Templates](/en/core-concepts/templates.md)
+  - [Webhooks](/en/core-concepts/webhooks.md)
+  - Scripts
+    - [Definitions](/en/core-concepts/scripts/)
+    - [Run as...](/en/core-concepts/scripts/runas.md)
+    - [Write](/en/core-concepts/scripts/write.md)
+  - IAM
+    - [User Management](/en/core-concepts/iam/user-management.md)
+    - [Logical Access](/en/core-concepts/iam/logical_access.md)
+- Integrations
+  - [Logger](/en/integrations/logger/)
+  - [AWS](/en/integrations/aws/)
+  - [ELK](/en/integrations/elk/)
+  - [Kubernetes](/en/integrations/kubernetes/)
+- Assets
+  - [Recipes](/en/assets/recipes/)
+  - [Scripts](/en/assets/scripts/)
+- [CLI](/en/cli.md)
+- Support
+  - [Home](/en/support/)
+  - [Http Server](/en/support/http_server_discovery.md)
+  - [Troubleshooting](/en/support/troubleshooting.md)
+  - [TLS/SSL Certificates](/en/support/tls_certs.md)
+- [FAQ's](/en/faqs_pages/)
+- About
+  - [About us](/en/about/)
+  - [Terms and Conditions](/en/about/terms.md)

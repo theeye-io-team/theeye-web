@@ -1,29 +1,30 @@
-# Writing scripts
+# Escribir scripts
 
 [![theeye.io](../../images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
-## Script responses
+## Respuestas de script 
 
-The agent will parse the last line of the scripts looking for a string which represents a `state` or a `json` result object.
+El agente va a interpretar la ultima linea del script en busca de un string que represente un `state` o un objeto de resultado en `JSON`
 
-A `state` could be any state or event linked to the task or monitor of this script. Default build-in events are `success` and `failure`.
+El `state` puede representar cualquier estado o evento vinculado a la tarea o el monitor asociado a dicho script. Los eventos integrados por defecto son `success` y `failure`, para cuando el script se ejecutó correctamente o falló.
 
-So if your scripts ended ok, in bash you have to `echo "ok"` as the last output of your script.
+Por ejemplo, si tu script en bash se ejecutó correctamente, la última línea debería ser `echo "success"`.
 
-> `success`, `normal` and `ok` are valid `success` states.
+> `normal` y `ok` son también estados `success` válidos.
 >
-> `failure` and `fail` are valid `failure` states.
+> `fail` es tambien un estado `failure` válido.
 
-## Some code
+## Ejemplos de código
 
-This is a simple check with success and failure
+Un chequeo simple con estados `success` y `failure`
 
 ```bash
-# Some comands and checks here
-
+# El script hace los chequeos necesarios y
+# guarda los resultados en la variable $check
+# 
 # ...
 
-# And at the end of the script...
+# Al final del script mostramos los resultados
 
 if [ $check == true ]; then
   echo "success"
@@ -37,40 +38,28 @@ fi
 echo "success"
 ```
 
-If you need to report extra information to the api, you have to send the information to stdout in json format like this
+Si necesitas reportar información extra a la API, tendrás que imprimir la información al `stdout` en formato JSON
 
 ```bash
 varUno="value1"
-varTwo="value2"
+varDos="value2"
 
-# This will output valid JSON and will be parsed by the agent
-# Write JSON by hand is ugly, we will improve this in the feature
+# Esto imprime una string JSON válida que será analizada por el agente TheEye.
+# Escribir una string JSON manualmente no es lindo, lo sabemos. 
+# Estamos trabajando para mejorar esto en el futuro. 
+
 if [ true ]; then
-  echo { \"state\":\"success\", \"data\":{ \"val1\":$varTwo, \"val2\":$varUno } }
+  echo { \"state\":\"success\", \"data\":{ \"val1\":$varUno, \"val2\":$varDos } }
 else
-  echo { \"state\":\"failure\", \"data\":{ \"val1\":$varTwo, \"val2\":$varUno } }
+  echo { \"state\":\"failure\", \"data\":{ \"val1\":$varUno, \"val2\":$varDos } }
 fi
 ```
 
-The JSON output needs to include a `state` property with the final state of your script, and a `data` property with any extra information you want to send to the api.
+El output JSON debe tener la propiedad `state` con el estado de la ejecución de tu script, y la propiedad `data` con información extra necesaria. TheEye mostrará el valor de `data` en log de ejecución.
 
-If you need to validate the JSON output of your scripts, you can use this simple nodejs script - there are also nice web sites that can validate JSON for you too. Change it for your case
+Si necesitas validar el output JSON de tus scripts, puedes usar un script sencillo de NodeJS. Considere el siguiente ejemplo:
 
-`test_json.js`
-
-```javascript
-// test.js
-var exec = require('child_process').exec;
-
-exec('./test.sh', function(err, stdout, stderr){
-    var obj = JSON.parse(stdout);
-
-    // if the stdout string was parsed successfuly the next sentence will give the members number - which is 1
-    console.log( obj.data );
-});
-```
-
-the `test.sh` script looks like this
+El script `test.sh` contiene lo siguiente
 
 ```bash
 #!/bin/bash
@@ -84,10 +73,23 @@ echo { \"state\" : \"$state\" , \"data\" : { \"members\" : $members } }
 # this will echo { "state": "normal" , "data" : { "members": 1 } }
 ```
 
-There are a lot of sample scripts, written in different languages wich are in production today.
+El script `test.js` revisa si el stdout de `test.sh` contiene una string JSON válidaff
 
-Check our [TheEye-io gist](https://gist.github.com/theeye-io) scripts page.
+```javascript
+// test.js
+var exec = require('child_process').exec;
 
-## TheEye Sample Scripts
+exec('./test.sh', function(err, stdout, stderr){
+    // Si el string de stdout se puede analizar correctamente, el script imprime el contenido de data
+    var obj = JSON.parse(stdout);
 
-Check the [Assets script for samples](/assets/scripts/) for more details.
+    console.log( obj.data );
+    // Esto imprime { "members": 1 }
+});
+```
+
+Hay muchos scripts que se pueden usar como ejemplo, escritos en diferentes lenguajes. Pueds buscarlos [aquí](https://gist.github.com/theeye-io)
+
+## Ejemplos de script de TheEye
+
+Revisa los [Assets](/assets/scripts/) incluidos en la documentación para más detalles.
