@@ -1,110 +1,97 @@
-# Notification Task
+# Tareas de notificación
 
 [![theeye.io](../../images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
-## How to work with tasks and notifications.
+## Cómo trabajar con notificaciones
 
-The toolkit allows you to streamline the flow of notifications and trigger them.
+Una tarea de notificación puede ayudarte a facilitar el proceso de notificar a los usuarios acerca de otras tareas
 
-The notifications can have different origins:
+Las notificaciones pueden tener diversos orígenes:
 
-- A script task, you can send your output parameters as input for a notification task.
+- Una tarea de script, que envía sus parámetros de output a la tarea de notificación
+- Una tarea de input, para notificar a los usuarios sobre los parámetros introducidos
+- Como parte de un Workflow
 
-- An input task, allows an operator to load the parameters of the msg that will receive the notification task.
-
-- A notification can be part of a workflow.
-
-
-*If you need assistance, contact us*
-
-
-### Notification Task details.
+### Detalles de la tarea de notificación
 
 ![notification task form](../../images/form_notification.png "Notification Form")
 
-
-
 *This type of tasks are responsible for sending messages inside and outside theeye*
 
-| UI Property | API Property | Type        | Description |
-| ---         | ---          | ---         | --- |
-| Name        | name         | text        | an identification name for the task |
-| Subject     | subject      | text        | subject to include in all the of notifications |
-| Send Email notification | notificationTypes.email | boolean | whether or not to send notification via email |
-| Send Desktop notification (theeye desktop app) | notificationTypes.desktop | boolean | whether or not to create an internal notification to theeye app desktop and mobile. If checked (true), this will create a new Notification in the App Notifications panel |
-| Send To     | recipients   | text array  | the list of recipients. should be valid user emails and must be registered in theeeye |
-| Tags        | tags         | text array  | list of tags. this is usefull to filte and search in theeye app |
-| Description | description  | text        | a description. this is added in workflows documentation and in the app ui |
-| Triggers    | triggers     | Event array | chain tasks events to create workflows |
-| ACL's       | acl          | text array  |  | 
-| Email Body  | body         | text, html formatted allowed | this field is used if the *send email* is checked (true). else is ignored and won't be visible in the task form |
-| Send Push notification (mobile) | notificationTypes.push | boolean | whether or not to send mobile notification |
+| Opción en la UI                                | Mombre en la API          | Tipo                                      | Descripción                                                                                        |
+| ---------------------------------------------- | ------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Name                                           | name                      | texto                                     | El nombre de la tarea                                                                              |
+| Subject                                        | subject                   | texto                                     | El asunto de la notificación a enviar                                                              |
+| Send Email notification                        | notificationTypes.email   | booleana                                  | Si se debería enviar la notificación por email                                                     |
+| Send Desktop notification (theeye desktop app) | notificationTypes.desktop | booleana                                  | Si se debería enviar la notificación a la app de TheEye                                            |
+| Send To                                        | recipients                | array de texto (deben ser emails válidos) | La lista de emails que debe recibir la notificación                                                |
+| Tags                                           | tags                      | array de texto (opcional)                 | Lista de etiquetas para buscar y filtrar en la app                                                 |
+| Description                                    | description               | texto (opcional)                          | Una breve descripción de la taréa                                                                  |
+| Triggers                                       | triggers                  | array de eventos (opcional)               | El evento que puede disparar la tarea                                                              |
+| ACL's                                          | acl                       | array de texto (opcional)                 | Usuarios que tendrán permisos de ACL                                                               |
+| Email Body                                     | body                      | texto/cuerpo HTML                         | El cuerpo del email de la notificación. Solo es visible si _Send Email notification_ está activado |
+| Send Push notification (mobile)                | notificationTypes.push    | booleana                                  | Si se debe enviar notificación a la app                                                            |
 
+### Uso básico
 
-### Basic Usage
+[Desscarga una receta de tarea de notificación básica para probar en tu entorno](https://documentation.theeye.io/assets/recipes/task_type-notification-send_notification.json)
 
-[Click to download a sample Notification Task recipe to import into your workflow](../../assets/recipes/task_type-notification-send_notification.json)
+### Disparar con eventos
 
-### Triggered by events
-The notification task can be triggered by other task or monitor as shown below:
+Las tareas de notificación se pueden disparar por cualquier otro evento, provenga de una tarea, monitor o webhook
 
-#### Triggered by _Input_ task
+#### Disparar con una tarea de _Input_
 
-The input task is responsible for getting the data that will be delivered to the notification task.
+La tarea de input se encarga de recibir la información que se enviará a la tarea de notificación
 
-Check the [Task input](/core-concepts/tasks/) for more details.
+Revisa la [documentación de tareas](./tasks/) para más información
 
-[Click to download the sample Input Task recipe to send notification](../../assets/recipes/task_type-input-send_notification.json)
+[Desscarga una receta de tarea de input para notificación](https://documentation.theeye.io/assets/recipes/task_type-input-send_notification.json)
 
-#### Triggered by _Script_ task or monitor
+#### Disparar con una tarea o monitor de _Script_
 
-This task is responsible for executing the code that generates the output required as input parameters for the notification task.
+Estas se encargan de ejecutar el código que genera el output como parámetros de input para la tarea de notificación
 
-Check the [Task scripts](/core-concepts/tasks/) for more details.
+Revisa la [documentación de tareas](./tasks/) para más información
 
+##### Argumentos de tarea de notificación
 
-#### Notification task's arguments
-
-In order to work with dynamic arguments for a notification task, the script task must generate the output with the following format.
-
-```json
-["subject","the email body raw text or html","info@theeye.io"]
-```
-
-The 3 arguments are required. If you need to ignore one argument or prioritize the once set in the task definition, use an empty string ""
-
-In this example, the third argument is ignored and the recipients from the task definition will be used.
+Para trabajar con argumentos dinámicos para tareas de notificación, la tarea de script debe generar un output con este formato:
 
 ```json
-["subject","the email body raw text or html",""]
+["asunto","el cuerpo de la notificación","mail@theeye.io"]
 ```
 
+Los 3 argumentos son obligatorios. En caso de necesitar ignorar un argumento o necesitar priorizar el que fue definido en la tarea de notificación, usa un string vacío `""`
 
-| Name | Format | Description |
-| ---- | ---- | ---- |
-| subject | plain text | this is the subject for all notifications configured to send in the task definition |
-| body | plain text/html | this is the email body |
+En el siguiente ejemplo, no se define ninguna dirección de correo para recibir la notificación, por lo que se envía a la dirección definida en la tarea de notificación:
+
+```json
+["asunto","el cuerpo de la notificación",""]
+```
+
+| Name       | Format          | Description                                                                                               |
+| ---------- | --------------- | --------------------------------------------------------------------------------------------------------- |
+| subject    | plain text      | this is the subject for all notifications configured to send in the task definition                       |
+| body       | plain text/html | this is the email body                                                                                    |
 | recipients | text/json array | the destination user emails registered in theeye. could be a single email or an array of multiples emails |
 
+[Descarga una tarea de script de ejemplo para enviar notificaciones](https://documentation.theeye.io/assets/recipes/task_type-script-send_notification.json)
 
+### Workflow de ejemplo para enviar notificaciones
 
-[Click to download the sample Script Task to send notifications](../../assets/recipes/task_type-script-send_notification.json)
-
-### Sample tasks for sending notifications
-
-**Create a workflow**
+**Crear un workflow**
 
 - task A: notification script
-    - [Task type: Scripts](../../assets/recipes/task_type-script-send_notification.json)
+  - [Task type: Scripts](https://documentation.theeye.io/assets/recipes/task_type-script-send_notification.json)
 - state: success
 - Task B: task notification
-    - [Task type: notification](../../assets/recipes/task_type-notification-send_notification.json)
+  - [Task type: notification](https://documentation.theeye.io/assets/recipes/task_type-notification-send_notification.json)
 
 ![dashboard_workflow_script_and_notification](../../images/dashboard_workflow_script_and_notification-00.png)
 
 ![dashboard_workflow_script_and_notification](../../images/dashboard_workflow_script_and_notification-01.png)
 
-**Run a workflow**
+**Ejecutar un workflow**
 
 ![dashboard_workflow_script_and_notification](../../images/dashboard_workflow_script_and_notification.png)
-

@@ -2,94 +2,90 @@
 
 [![theeye.io](../../images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
-With TheEye we can create different types of Tasks.
-A Task can also be considered as a template for a Job.
+Las tareas (tasks) son la forma de registrar y configurar el comportamiento y las acciones que se van a realizar a través de TheEye. Las tareas deben ser consideradas como plantillas que se pueden ejecutar bajo demanda, pueden ser modificadas, copiadas, se les puede hacer backup y pueden exportar e importadas a otros entornos. Las tareas registradas en la plataforma se pueden ejecutar manualmente desde la Interfaz Web, [invocarlas vía API](/api/), pueden ser configuradas para que se ejecuten de forma automática vía [Triggers](./triggers.md) o de manera periódica utilizando el [Scheduler](#Task-Scheduler).
 
-## Create and modify tasks
+## Crear y modificar tareas
 
-Creating a task is simple, from the dashboard, click in the "+" button to open the resources menu > click the "Task Button" (Play Icon) to create a new task.
-Then select the task type you want to create. A task can be modified directly from the Dashboard.
+Crear una tarea es simple. Desde el dashboard, cliquea el boton **+** y en el menú selecciona la opcion _Task_. Eso abrirá un menú en el que puedes seleccionar el tipo de tarea que quieres crear
 
 ![](../../images/newTaskDashboard.gif)
 
-You can also create, edit and delete tasks from the Tasks Admin page.
-
-## Types of Task
+## Tipos de Task
 
 ### Script
 
-Script Tasks requires a BOT to run. This task defines the set of orders and actions that the Bot must do. Actions are described as basic scripts.
+Las tareas de Script requieren un Bot para ejecutarlas. Estas tareas ejecutan un script asociado a la misma.
 
-Click on "advanced options" for further features. 
+Revisa la documentación de [tareas de Script](./script_type.md) para más información.
 
-![Script Task - advanced options](../../images/advancedoptionstask.jpg)
+### Webhooks o Request HTTP
 
-### Webhooks or HTTP Request
+Un Webhook en TheEye es un método de alterar o aumentar el comportamiento de los Workflows o Scripts, usando callbacks externos que pueden estar mantenidos y administrados por usuarios de terceros o developers que pueden no estar afiliados con los desarrolladores originales de la aplicación o página web
 
-Check the [Webhooks](/core-concepts/webhooks/) for more details.
+Revisa la documentación de [Webhooks](../webhooks/) para más detalles.
 
 ### Approval:
 
-Approval tasks handle approval requests in workflows. As breakpoints do, an approval task will pause the workflow execution until it is approved or rejected. Many approvers can be selected, only one approval is needed to continue workflow actions.
+Las tareas de aprobación (Approval tasks) están pensadas para usar en [Workflows](./workflows/). Una tarea de aprobación va pausar la ejecución del Workflow hasta que sea aprobada o rechazada. Pueden elegirse muchos usuarios para actuar de aprobadores, con que solo uno de ellos apruebe la tarea, el workflow continuará su curso.
 
 ### Input:
 
-An input task is a special task commonly used to start workflows. When executed, the input parameters will be submitted directly to the next chained task in the workflow.
+Una tarea de input es una tarea especial, usada comúnmente al inicio de workflows. Cuando se ejecuta, los parámetros solicitados pasarán directo a la siguiente tarea del Workflow.
 
-### Notification:
+### Notificación:
 
-Check the [Task Notifications](/core-concepts/tasks/taskNotifications) for more details.
+Como su nombre lo indica, la tarea de notificación envía notificaciones a los usuarios seleccionados, sea mediante la interfaz o por email. Revisa la [documentación de tareas de notificación](./taskNotifications) para más detalles.
 
-## Task Arguments.
+## Task Arguments
 
-To received input values into tasks it is required to define the Task Arguments.
-It is important to define the arguments in the same order in which they will be used in the script.
+Para recibir valores de input para tareas, es necesario definir sus argumentos.
+Es importante tener en cuenta que los argumentos deberían ser definidos en el mismo orden que se usan dentro de la tarea.
 
-| Type | UI Usage | Workflow Usage |
-| ----- | ----- | ----- |
-| Fixed | will not be visible to users into forms | this is a fixed value that will be always the same. cannot be rewrited or replaced |
-| Text | a free text input | it is usefull to receive dynamic values from outputs to inputs |
-| Options | create an options element | behave as Text Argument |
-| Remote Options | create an options element using the response of a Remote API. It is posible to include the email of the user executing the task at the momento of the fetch. This will be achived including the keyword %THEEYE_USER_EMAIL% in the queystring of the url of remote api. Example url http://tracking-tool.domain.com/tickets?user=%THEEYE_USER_EMAIL% | behave as Text Argument |
-| Date | create a Date Picker element | behave as Text Argument |
-| Email | creates a text input that only accepts email strings | behaves as Text Argument |
-| File | create a File Selection element | when it is used with Script Tasks the uploaded file will be downloaded and the argument will contain the local path to the file. |
-| RegExp | creates a text input that only accepts regular expression and validate the format | behave as Text Argument |
-
+| Tipo de argumento     | Nombre en la UI | Uso en la UI                                                                                                                                                                                                                                                                  | Uso en Workflows                                                                      |
+| --------------------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Fijo                  | Fixed           | No será visible en el formulario                                                                                                                                                                                                                                              | Es una variable fija definida en la tarea, no se puede modificar                      |
+| Texto                 | Text            | Una input de texto simple                                                                                                                                                                                                                                                     | Útil para recibir valores dinámicos                                                   |
+| Objeto en JSON        | JSON            | Una input que recibe solo strings de JSON                                                                                                                                                                                                                                     | Útil para validar la variable como JSON válido antes de ejecutar                      |
+| Selección de opciones | Options         | Te ofrece varias opciones predefinidas para que elijas antes de ejecutar                                                                                                                                                                                                      | Se comporta como un argumento de texto                                                |
+| Opciones remotas      | Remote options  | Crea un argumento de opciones usando la respuesta de una API. Se puede incluir el mail del usuario ejecutando la task usando la keyword `%THEEYE_USER_EMAIL%` en la queystring del url de la API, por ejemplo: http://tracking-tool.domain.com/tickets?user=%THEEYE_USER_EMAIL% | Se comporta como un argumento de texto                                                |
+| Fecha                 | Date            | Crea un selector de fecha y toma su input                                                                                                                                                                                                                                     | Se comporta como un argumento de texto                                                |
+| Email                 | Email           | Un input de texto que solo recibe direcciones válidas de email                                                                                                                                                                                                                | Se comporta como un argumento de texto                                                |
+| Expresión regular     | RegExp          | Un input de texto que solo recibe expresiones regulares válidas                                                                                                                                                                                                               | Se comporta como un argumento de texto                                                |
+| Archivo               | File            | Crea un botón para subir un archivo                                                                                                                                                                                                                                           | En una tarea de script, el archivo se sube al agente y se le pasa el path al archivo. |
 
 ## Task Scheduler.
 
-You can use the task scheduler to create and manage tasks that TheEye will carry out automatically at the times you specify. 
-Task Scheduler can be created using natural language or cron expressions. The main difference between them is that cron expressions is executed always at the exact same date and time. On the other hand, natural language could produce some time shift on successive executions.
+Se puede usar el Task Scheduler para administrar tareas que se ejecutarán en horarios programados, dichos horarios se pueden definir usando lenguaje natural (en inglés) o expresiones CRON. Las expresiones CRON son más precisas, pero suelen ser menos intuitivas de programar.
 
-Schedules can be created from the Dasboard as shown here below
-
-![Dashboard - Task Menu](../../images/image-08.png)
-
-Your new schedule will be shown when the task row is expanded:
+Se pueden programar Schedules desde la página principal, como se muestra en la imagen
 
 ![](../../images/schedule.gif)
 
-## Export and Import Tasks
+## Exportar e Importar tareas
 
-Inside TheEye community you will hear that other people had already solved or automated typical common problems using the platform. When this automation was performed by a task, you will be able to import the solution or on the other hand export and share the tasks you have created.
+Es posible que desee hacer una tarea que alguien de la comunidad TheEye ya haya hecho, por lo que poder compartir tareas es una funcionalidad crucial en el ecosistema TheEye.
 
-To export a task recipe, go to the task, click on the context menu, and then click on the "export recipe" icon as shown here:
+Al exportar una tarea, se puede hacer mediante un backup, el cual contendrá información sensible y potencialmente secreta, o mediante una receta (*recipe*), la cual está pensada para compartir con la comunidad, y se omite información sensible como el contenido de los argumentos fijos.
 
-![Dashboard - Task Export](../../images/exportecipe.gif)
+Para exportar una tarea, ubíquela en la págiina principal, abra su menú de opciones, y cliquee el botón *"export recipe"*, como se muestra en la imagen
 
+![Dashboard - Task Export](../../images/exportecipe.gif) 
+<!-- TODO: Actualizar imagen -->
 
+Para importar una tarea desde su receta o su backup, puede dirigirse al menú de creación de tarea, y cliquear el botón *"Import"*
 
-## Integration through API
+## Disparar tareas desde la API
 
-Check the [Integration through API documentation](/api/) for more details.
+Es posible disparar la ejecución de tareas desde la API. Revisa la [documentación de la integración desde la API](/api/) para más detalles.
 
-## Executing Tasks
+<!-- TODO: Documentar la API -->
 
-Tasks can be executed using different methods.
+## Ejecutar tareas
 
-* UI Play Button
-* Integration API Call
-* Workflows
-* Triggers
-* Webhooks
+Las tareas se pueden ejecutar de varias maneras:
+
+* Manualmente desde la app
+* Desde la API
+* [Workflows](./workflows)
+* [Triggers](./triggers)
+* [Webhooks](./../webhooks)

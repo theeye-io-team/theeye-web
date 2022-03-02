@@ -1,42 +1,15 @@
-- [Home](/)
-- [First steps](/first-steps.md)
-- Core concepts
-  - [JSON](/core-concepts/json.md)
-  - [Events](/core-concepts/events.md)
+- [Introducción a TheEye](/)
+- Conceptos principales
   - Tasks
-    - [Basics](/core-concepts/tasks/)
+    - [Introducción](/core-concepts/tasks/)
     - [Triggers](/core-concepts/tasks/triggers.md)
     - [Workflows](/core-concepts/tasks/workflows.md)
     - Types
-      - [Notification](/core-concepts/tasks/notification_type.md)
-      - [Script](/core-concepts/tasks/script_type.md)
-  - [Alerts and Notifications](/core-concepts/alerts-and-notifications.md)
+      - [Notificación](/core-concepts/tasks/notification_type)
+      - [Script](/core-concepts/tasks/script_type)
   - [Indicators](/core-concepts/indicators.md)
-  - [Monitors](/core-concepts/monitors.md)
-  - [Templates](/core-concepts/templates.md)
   - [Webhooks](/core-concepts/webhooks.md)
   - Scripts
-    - [Definitions](/core-concepts/scripts/)
-    - [Run as...](/core-concepts/scripts/runas.md)
-    - [Write](/core-concepts/scripts/write.md)
-  - IAM
-    - [User Management](/core-concepts/iam/user-management.md)
-    - [Logical Access](/core-concepts/iam/logical_access.md)
-- Integrations
-  - [Logger](/integrations/logger/)
-  - [AWS](/integrations/aws/)
-  - [ELK](/integrations/elk/)
-  - [Kubernetes](/integrations/kubernetes/)
-- Assets
-  - [Recipes](/assets/recipes/)
-  - [Scripts](/assets/scripts/)
-- [CLI](/cli.md)
-- Support
-  - [Home](/support/)
-  - [Http Server](/support/http_server_discovery.md)
-  - [Troubleshooting](/support/troubleshooting.md)
-  - [TLS/SSL Certificates](/support/tls_certs.md)
-- [FAQ's](/faqs_pages/)
-- About
-  - [About us](/about/)
-  - [Terms and Conditions](/about/terms.md)
+    - [Introducción](/core-concepts/scripts/)
+    - [Ejecutar Scripts y asignar permisos](/core-concepts/scripts/runas.md)
+    - [Escribir scripts](/core-concepts/scripts/write.md)

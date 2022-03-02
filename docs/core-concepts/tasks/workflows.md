@@ -2,35 +2,39 @@
 
 [![theeye.io](../../images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
-Workflows connects your tasks together to automate complex or dependent processes. Workflow are visibile in the Dashboard and are identified with the icon 
+Los Workflows conectan varias tareas juntas para automatizar procesos complejos o dependientes entre sí. Puede ver sus Workflows en el dashboard junto con el resto de las tareas, y se distinguen por el ícono distintivo de Workflow
 
 ![Workflow Icon](../../images/image-17.png)
 
-## Workflow Execution
+## Ejecutar Workflow
 
-Workflows are launched in the same way tasks are. Each time a workflow is launched a new job is created. The selected starting task, will be executed when a workflow is triggered. In this example the Workflow "Expense Management" is started:
+Los workflows se ejecutan de la misma manera que las tareas. Cada vez que se lanza un workflow, se crea un job, y la tarea seleccionada como tarea inicial va a ser ejecutada. En este ejemplo, se ejecutará la tarea _"Expense Management"_:
 
 ![Workflow &quot;Expense Management&quot; execution](../../images/workflow.gif)
 
-## Workflow Creation
+<!-- TODO: Poner una mejor imagen -->
 
-As workflows conects tasks, tasks must be designed and created in advance in order to use them in workflows. Arguments are passed through tasks on each workflow job \(execution\)_._
+## Crear un Workflow 
 
-In this video 3 tasks are conected to create "Expense Management" workflow:  
+Como los Workflows conectan tareas entre sí, estas tareas deben ya estar creadas de antemano para poder usarse en workflows. Los argumentos se pasan de tarea en tarea por cada uno de los jobs del workflow. 
 
-1. Start Expense Approval Process  \(Input task\)
-   * Receives a _text_, a _file_ and a _date._
-2. Approve Expense \(Approval task\)
-   * Expects a _text,_ a _file_ and a _date._
-   * Sends a _text,_ a _file_ and a _date_.
-3. Expense submission \(Script task\)
-   * Receives a _text_ a _file_ and a _date._
+Aquí se muestra cómo se conectan 3 tareas para crear el Workflow _"Expense Management"_
+
+1. Start Expense Approval Process (tarea de input)
+   * Recibe inputs de tipo _text_, _file_ y _date_
+2. Approve Expense (tarea de aprobación)
+   * Espera inputs de tipo _text_, _file_ y _date_
+   * Envía outputs de tipo _text_, _file_ y _date_
+3. Expense submission (tarea de script)
+   * Recibe inputs de tipo _text_, _file_ y _date_
 
 ![Workflow &quot;Expense Management&quot; creation](../../images/createworkflow.gif)
 
+<!-- TODO: Mejores imágenes -->
 
+### Creación paso por paso
 
-**Step by Step Creation**
+<!-- TODO: rehacer esta parte -->
 
 Create a new workflow from the dashboard by clicking the "+" button:
 

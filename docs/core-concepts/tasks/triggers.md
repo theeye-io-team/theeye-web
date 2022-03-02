@@ -2,33 +2,35 @@
 
 [![theeye.io](../../images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
-You can launch tasks in different ways. On one hand you can start them directly using the play button, on the other hand you can use triggers. Tasks are also started by Workflows.
+En TheEye se pueden lanzar tareas de diversas maneras; se pueden ejecutar directamente desde la app con el botón Play, se pueden ejecutar mediante un request a la API, se pueden ejecutar como parte de un workflow, o se pueden ejecutar usando _disparadores_ (triggers)  .
 
-### Tasks triggered by other tasks
+### Tareas disparadas por otras tareas
 
-When Tasks are triggered by other tasks, the output of the triggering task can be used as input as well. The key is to match trigger output with triggered input.
+Cuando una tarea dispara a otra, su output puede usarse como input de la tarea que está disparando, siempre y cuando coincidan los outputs de la tarea disparadora con los inputs de la tarea disparada.
 
-In this example we use the _success_ event of the Task "Get Stalled Transaction" to trigger "Execute Transaction". The transaction number is passed over tasks.
-
-Task "Execute Transaction" expects a transaction number and is **triggered by** "Get Stalled Transaction". The task configuration is shown below.
+En este ejemplo, se usa el evento `success` de la tarea _"Get Stalled Transaction"_ para disparar la tarea _"Excecute Transation"_. El parámetro **#0** _"Transaction Number"_ se recibe del output de la tarea disparadora. La opción **Triggered by** determina el evento que disparará automáticamente la tarea, en este caso el evento `success` de la tarea _"Get Stalled Transaction"_.
 
 ![](../../images/triggeredbytask.jpg)
 
-When "Get Stalled Transaction" tasks finishes running **successfuly**, then "Execute Transaction" is launched. The output data from "Get Stalled Transaction" is then used as input.
+Cuando la tarea _"Get Stalled Transaction"_ finaliza la ejecución **correctamente**, se lanzará la tarea _"Execute Transaction"_. la data del output de _"Get Stalled Transaction"_ se usa como input.
 
 ![&quot;Get Stalled Transaction&quot; output ](../../images/taskexecution.jpg)
 
-To use this feature, begin writing your script from the provided example that can be retrieved using  the "Load Example" button available at script creation time.
+Para usar esta función, escribe tu script empezando con el ejemplo incluido. Puede cargar el ejemplo con el botón **"Load Example"** en el editor de texto online de TheEye.
 
-### Tasks triggered by Monitors
+### Tareas disparadas por monitores
 
-Monitors can be used as triggers in the same way tasks do. Just set the monitor event you like as the "triggered by" field in the task.
+Los monitores pueden usarse para disparar tareas igual que los eventos de tareas. Para hacer esto, selecciona el monitor en la opcion **Triggered by**.
 
-If the output from the monitor is needed by the launched task, you will need to use the scripts as shown in the examples. You will always be able to load an example at creation or edition time.
+Si el output del monitor es necesaria para la tarea que se quiere lanzar, necesitarás usar un script como se muestra en los ejemplos. Siempre puedes ver un ejemplo en el editor de texto online de TheEye.
 
-### Tasks triggered by Workflows
+<!-- TODO: Agregar ejemplo acá -->
+
+### Tareas disparadas por Workflows
 
 Workflows triggers the task that is set as Starting Task, as shown below.
+
+Los Workflows son cadenas de varias tareas conectadas entre sí, y se usan para simplificar el uso de disparadores. Usando Workflows, la parametrización de disparadores se hace automáticamente, y solo se debe configura la tarea inicial, la cual se ejecutará primero cuando se ejecute el Workflow. [Más información](./workflows.md)
 
 ![](../../images/image-05.png)
 

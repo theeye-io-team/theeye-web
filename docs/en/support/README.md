@@ -1,6 +1,6 @@
 # Find our support team at:
 
-[![theeye.io](/images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
+[![theeye.io](/en/images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
 ## Support Web Site
 If your already have an active user at [support.theeye.io](https://support.theeye.io/) please avoid send us an email.

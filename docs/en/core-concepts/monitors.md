@@ -46,4 +46,4 @@ Name your "nested Monitor" or copy an already created one. Add or remove the mon
 
 ## List monitors via API
 
-Check the [API Documentation](/integrations/api/list_monitors_via_api) for more details.
+Check the [API Documentation](/en/integrations/api/list_monitors_via_api) for more details.
