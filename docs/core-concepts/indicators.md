@@ -1,18 +1,31 @@
-# Indicators
+# Indicadores
 
 [![theeye.io](../images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
-## Representation 
+Los indicadores son una herramienta que te permite tener información de todo tipo al alcance de la mano. Estos pueden contener todo tipo de información, la cual puede ser editada programáticamente.
 
-![Indicator Icon](../images/image-04.png)
+## Tipos de indicadores
 
-![Indicator&apos;s panel](../images/image-02.png)
+Hay varios tipos de indicadores, cada uno con su propósito específico:
 
-Indicators are shown at the top of the dashboard only when available.
+* **Chart:** Un gráfico de [Plotly](https://plotly.com/graphing-libraries/). El valor del indicador debe corresponder al parámetro `data` que se le cargaría a un componente cualquiera de Plotly. De momento, no se pueden visualizar en la interfaz de TheEye. 
+* **Counter:** Un valor numérico simple. Ejemplos de uso incluyen un contador de ejecuciones, el resultado de una operación, entre otros. El valor se muestra en la interfaz.
+* **Progress:** Un valor numérico entre 0 y 100, para indicar progreso. El valor se muestra en la interfaz en forma de una barra de progreso, la cual cambia de colr dependiendo el [estado del indicador](#estado).
+* **Text:** Un valor de alfanumérico en el que se puede escribir cualquier palabra o frase. El valor se muestra en la interfaz al igual que el Counter
 
-#### [Create an Indicator](#create)
+## Estado
 
-Indicators can be created from dashboard from the "+"  button:
+Los indicadores también cuentan con un estado. Gracias a este, puede hacer que sea más sencillo notificar a los usuarios de errores en la ejecución de tareas. Hay 2 estados para un indicador: `normal` y `failure`, y cada indicador tiene configurada una *severidad* para indicar qué tan grave es un estado de failure, indicado en el color del ícono
 
-![Dashboard - Create Indicator](../images//createIndicator.gif)
+![Severidad de los indicadores](../images/indicatorSeverity.png)
+
+> **NOTA:**
+> 
+> * En los indicadores de tipo *Progress*, la barra de progreso cambia de color junto con el ícono de severidad. Si el ícono es verde (indicando un estado normal), el color de la barra de progreso también será verde. 
+
+## Crear un Indicador
+
+Puede crear un Indicador desde el dashboard haciendo click en el botón **+**.
+
+![Dashboard - Crear Indicador](../images/createIndicator.gif)
 
