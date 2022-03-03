@@ -18,7 +18,9 @@ export default PanelButton.extend({
       event.stopPropagation()
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
-      const form = new FormView({ model: this.model })
+      const model = this.model
+
+      const form = new FormView({ model })
       const modal = new Modalizer({
         confirmButton: 'Save',
         buttons: true,
@@ -26,38 +28,42 @@ export default PanelButton.extend({
         bodyView: form
       })
 
-      this.listenTo(modal,'shown',() => { form.focus() })
+      this.listenTo(modal, 'shown', () => {
+        form.focus()
+      })
 
-      this.listenTo(modal,'hidden',() => {
+      this.listenTo(modal, 'hidden', () => {
         form.remove()
         modal.remove()
       })
 
-      this.listenTo(modal,'confirm',() => {
-        var self = this
+      this.listenTo(modal, 'confirm', () => {
         form.beforeSubmit()
-        if (!form.valid) return
+        if (!form.valid) { return }
 
-        if(self.hostsDeleted(form.data)) {
-          const model = self.model
+        if (this.deletedHosts(form.data)) {
           const dialog = new Dialog({ model, form })
           dialog.show()
         } else {
-          HostGroupActions.update(self.model.id, form.data, false)
+          HostGroupActions.update(model.id, form.data, false)
         }
+
         modal.hide()
       })
 
       modal.show()
     }
   },
-  hostsDeleted (data) {
-    var deleted = false
-    var prevHosts = this.model.hosts.models.map(i => i.id)
-    prevHosts.forEach( function(id) {
-      deleted = !data.hosts.includes(id)
-    })
-    return deleted
+  deletedHosts (data) {
+    const hosts = this.model.hosts.models
+
+    const deleted = hosts
+      .map(host => host.id)
+      .find(hostId => {
+        return (data.hosts.indexOf(hostId) === -1)
+      })
+
+    return (deleted !== undefined)
   }
 })
 
@@ -66,7 +72,6 @@ const Dialog = Modalizer.extend({
     form: 'view'
   },
   initialize (options) {
-
     const hostnames = this.model.hosts.models.map(i => {
       if (!i.hostname) {
         const host = App.state.hosts.get(i.id)
@@ -156,7 +161,7 @@ const Dialog = Modalizer.extend({
   onClickRemove (event) {
     event.preventDefault()
     event.stopPropagation()
-    HostGroupActions.remove(this.model.id, this.form.data, true)
+    HostGroupActions.update(this.model.id, this.form.data, true)
     this.hide()
   }
 })
