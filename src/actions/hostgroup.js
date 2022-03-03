@@ -36,9 +36,7 @@ const Actions = {
     })
   },
   update (id, data, deleteInstances) {
-    const body = Object.assign({},data,{
-      deleteInstances: deleteInstances
-    })
+    const body = Object.assign({}, data, { deleteInstances })
 
     XHR.send({
       url: `${App.config.supervisor_api_url}/${App.state.session.customer.name}/hostgroup/${id}`,
