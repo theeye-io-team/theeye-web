@@ -22,6 +22,10 @@ const defaultConfig = {
     address: '',
     authtoken: '',
     protocol: ''
+  },
+  enterprise_login: {
+    enabled: false, 
+    url: ''
   }
 }
 

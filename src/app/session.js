@@ -27,7 +27,12 @@ export default () => {
     let publicRoute = isPublicRoute(window.location.pathname)
     if (!publicRoute) {
       if (loggedIn===false) {
-        App.Router.redirectTo('login', {replace: true})
+        const enterprise_login = App.state.session.customer.config.enterprise_login
+        if (enterprise_login.enabled) {
+          window.location.href = enterprise_login.url
+        } else {
+          App.Router.redirectTo('login', {replace: true})
+        }
       } else {
         if (window.origin === 'null') {
           // redirect to dashboard only if pushState is not supported
