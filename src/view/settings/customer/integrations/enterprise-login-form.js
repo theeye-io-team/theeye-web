@@ -14,18 +14,6 @@ export default FormView.extend({
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label',
       required: false,
-      //tests: [
-      //  function (value) {
-      //    if (value.length > 0) {
-      //      if (!isURL(value, {
-      //        protocols: ['http', 'https'],
-      //        require_protocol: true
-      //      })) {
-      //        return 'Must be a valid URL (include protocol)'
-      //      }
-      //    }
-      //  }
-      //]
     })
 
     this.fields = [
