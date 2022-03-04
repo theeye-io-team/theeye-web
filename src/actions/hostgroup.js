@@ -28,7 +28,7 @@ const Actions = {
       },
       done (data,xhr) {
         App.state.hostGroups.add(data)
-        bootbox.alert('Host Template created')
+        App.state.alerts.success('Success', 'Template created')
       },
       fail (err,xhr) {
         bootbox.alert('Something goes wrong. Please refresh')
@@ -48,7 +48,7 @@ const Actions = {
       done (data,xhr) {
         const group = App.state.hostGroups.get(data.id)
         group.set(data)
-        bootbox.alert('Host Template updated')
+        App.state.alerts.success('Success', 'Template updated')
       },
       fail (err,xhr) {
         bootbox.alert('Something goes wrong. Please refresh')
@@ -62,7 +62,7 @@ const Actions = {
       headers: { Accept:'application/json;charset=UTF-8' },
       done (data,xhr) {
         App.state.hostGroups.remove(id)
-        bootbox.alert('Host Template removed')
+        App.state.alerts.success('Success', 'Template removed')
       },
       fail (err,xhr) {
         bootbox.alert('Something goes wrong. Please refresh')
