@@ -1,5 +1,8 @@
+import App from 'ampersand-app'
 import View from 'ampersand-view'
 import * as FieldsConstants from 'constants/field'
+
+import './styles.less'
 
 export default View.extend({
   template: `
@@ -13,12 +16,14 @@ export default View.extend({
       </div>
       <br>
       <h2>Continue?</h2>
+      <progress id="upload-progress" data-hook="upload-progress" max="100"></progress>
     </div>
   `,
   props: {
     name: ['string', false, ''],
     taskArgs: ['array', false, () => { return [] }],
-    headerVisible: ['boolean', false, true]
+    headerVisible: ['boolean', false, true],
+    progress: ['integer', false, 0]
   },
   bindings: {
     'name': {
@@ -28,6 +33,12 @@ export default View.extend({
     'headerVisible': {
       type: 'toggle',
       hook: 'args-header'
+    },
+    'progress': {
+      type: function (el, value) {
+        el.value = value
+      },
+      hook: 'upload-progress'
     }
   },
   render () {
@@ -40,8 +51,13 @@ export default View.extend({
       const argRowView = new ArgRow({ renderValue, masked, label: arg.label })
       this.renderSubview(argRowView, this.queryByHook('args-rows-container'))
     }
+
+    this.listenTo(App.state.progress, 'change:progress', () => {
+      this.progress = App.state.progress.progress
+    })
   },
   initialize (options) {
+    App.state.progress.reset()
     if (options.taskArgs.length === 0) {
       this.headerVisible = false
     } else {

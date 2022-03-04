@@ -19,7 +19,8 @@
  * @property {Function} options.onload assign onload event to the xhr
  * @property {Function} options.error assign onerror event to the xhr
  * @property {Function} options.abort assign onabort event to the xhr
- * @property {Function} options.progress assign onprogress event to the xhr
+ * @property {Function} options.onprogress assign onprogress event to the xhr
+ * @property {Function} options.onuploadprogress assign upload.onprogress event to the xhr
  *
  * @return {XMLHttpRequest}
  *
@@ -76,6 +77,7 @@ XHR.send = (options, callback) => {
   xhr.onerror = options.onerror || onerrorFn
   xhr.onabort = options.onabort || onerrorFn
   xhr.onprogress = options.onprogress || progressFn
+  xhr.upload.onprogress = options.onuploadprogress || progressFn
   xhr.ontimeout = options.ontimeout || ontimeoutFn
   xhr.open(method, url)
 

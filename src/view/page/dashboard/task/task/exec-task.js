@@ -38,19 +38,28 @@ export const BaseExec = State.extend({
          */
         form.submit((err, args) => {
           const orders = Object.keys(args)
-          next(
-            orders.map((order) => {
-              let data = {
-                order: parseInt(order),
-                label: this.model.task_arguments.get(parseInt(order), 'order').label,
-                value: args[order],
-                type: this.model.task_arguments.get(parseInt(order), 'order').type,
-                masked: this.model.task_arguments.get(parseInt(order), 'order').masked
-              }
-              return data
-            })
-          )
-          modal.hide()
+          let taskArgs = orders.map((order) => {
+            let data = {
+              order: parseInt(order),
+              label: this.model.task_arguments.get(parseInt(order), 'order').label,
+              value: args[order],
+              type: this.model.task_arguments.get(parseInt(order), 'order').type,
+              masked: this.model.task_arguments.get(parseInt(order), 'order').masked
+            }
+            return data
+          })
+          let totalFileSize = 0
+          taskArgs.forEach(arg => {
+            if (arg.type === 'file') {
+              totalFileSize += arg.value?.size
+            }
+          })
+          if (totalFileSize < 1048576) {
+            next(taskArgs)
+            modal.hide()
+          } else {
+            bootbox.alert('The total file size exceeds the maximum 10Mb value')
+          }
         })
       })
       modal.show()
@@ -99,8 +108,18 @@ export const BaseExec = State.extend({
     })
 
     this.listenTo(modal, 'confirm', () => {
-      modal.hide()
-      App.actions.job.create(this.model, taskArgs)
+      if (App.state.progress.status !== 'working') {
+        App.actions.job.create(this.model, taskArgs)
+      }
+      this.listenTo(App.state.progress, 'change:status', () => {
+        if (App.state.progress.status === 'success') {
+          modal.hide()
+          App.state.progress.reset()
+        }
+        else if (App.state.progress.status === 'failure') {
+          bootbox.alert('Failed to upload job, please try again. If the problem persists, reload the window')
+        }
+      })
     })
 
     modal.show()
