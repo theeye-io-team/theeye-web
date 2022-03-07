@@ -363,7 +363,7 @@ const template = (state) => {
                       agent credentials file
                     </a>
                     and place it in the config directory. <br/>
-                    <b>IMPORTANT!</b> You must name it <span data-hook="customer-name"></span>
+                    <b>IMPORTANT!</b> You must name it <span data-hook="customer-name"></span>.json
                 </li>
                 <li>
                   Execute the following command
