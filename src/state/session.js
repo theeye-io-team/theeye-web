@@ -97,9 +97,7 @@ export default AmpersandState.extend({
   },
   clear () {
     this.unset('access_token') // this triggers session unset
-    this.unset('show_account_actions') // @TODO: is this required here?
 
-    // mantein user & customer references
     this.customers.reset()
     this.user.clear()
     this.customer.clear()

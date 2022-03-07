@@ -69,7 +69,7 @@ export default PanelButton.extend({
 
 const Dialog = Modalizer.extend({
   props: {
-    form: 'view'
+    form: 'state'
   },
   initialize (options) {
     const hostnames = this.model.hosts.models.map(i => {

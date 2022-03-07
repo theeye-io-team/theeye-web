@@ -106,7 +106,6 @@ export default View.extend({
     enterpriseLoginEnabled: {
       deps: ['model.config'],
       fn () {
-        console.log(this.model.config)
         let cfg = this.model.config.enterprise_login
         return cfg && cfg.enabled === true
       }
