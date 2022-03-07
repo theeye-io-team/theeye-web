@@ -5,23 +5,18 @@ import bootbox from 'bootbox'
 
 const actions = {
   logout () {
+    // destroy the session, server side
     XHR.send({
       url: `${App.config.app_url}/api/session/logout`,
       method: 'get',
       headers: {
         Accept: 'application/json;charset=UTF-8'
-      //},
-      //done: (response,xhr) => {
-      //  if (xhr.status == 200) {
-      //  }
-      //},
-      //fail: (err,xhr) => {
-      //  bootbox.alert('Something goes wrong.')
       }
     })
 
-    App.state.reset() // reset all application states
-    App.state.session.clear() // force session destroy on client
+    // destroy the session, client side
+    App.state.reset() // reset the application state
+    App.state.session.clear() // force session destroy
     App.state.alerts.success('Logged Out.','See you soon')
   },
   changeCustomer (id) {
