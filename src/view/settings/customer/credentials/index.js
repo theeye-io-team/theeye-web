@@ -23,7 +23,7 @@ const AgentPanel = View.extend({
       <h3 class="blue bold">CREDENTIALS</h3>
       <div class="row border">
         <div class="col-xs-12">
-          <h4 class="blue"><i class="fa theeye-robot-solid"></i> Bot Credentials</h4>
+          <h4 class="blue"><i class="fa theeye-robot-solid"></i> Agent Credentials</h4>
           <div class="row input-row">
             <div class="col-xs-3"><label>Customer</label></div>
             <div class="input-group col-xs-9">

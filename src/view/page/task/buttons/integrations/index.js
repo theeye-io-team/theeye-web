@@ -4,11 +4,11 @@ import Modalizer from 'components/modalizer'
 import $ from 'jquery'
 import View from 'ampersand-view'
 import './style.less'
-import 'highlight.js/styles/github.css'
 import Clipboard from 'clipboard'
 import config from 'config'
 import Titles from 'language/titles'
 
+import 'highlight.js/styles/github.css'
 import hljs from 'highlight.js'
 import bash from 'highlight.js/lib/languages/bash'
 hljs.registerLanguage('bash', bash)
