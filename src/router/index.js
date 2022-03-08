@@ -108,13 +108,13 @@ export default Router.extend({
           route.route('index')
         })
     },
-    'admin/scheduler': () => {
-      return import(/* webpackChunkName: "router-scheduler" */ './scheduler')
-        .then(({ default: SchedulerRoute }) => {
-          const route = new SchedulerRoute()
-          route.route('index')
-        })
-    },
+    //'admin/scheduler': () => {
+    //  return import(/* webpackChunkName: "router-scheduler" */ './scheduler')
+    //    .then(({ default: SchedulerRoute }) => {
+    //      const route = new SchedulerRoute()
+    //      route.route('index')
+    //    })
+    //},
     'admin/hoststats/:id': function (id) {
       return import(/* webpackChunkName: "router-hoststats" */ './hoststats')
         .then(({ default: HostStatsRouter }) => {
