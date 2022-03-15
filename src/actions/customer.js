@@ -145,7 +145,7 @@ export default {
   getAgentCredentials () {
     if (Acls.hasAccessLevel('admin')) {
       XHR.send({
-        url: `${App.config.api_url}/bot/credentials`,
+        url: `${App.config.api_url}/bot/installer`,
         method: 'get',
         done: (response, xhr) => {
           if (xhr.status !== 200) {
