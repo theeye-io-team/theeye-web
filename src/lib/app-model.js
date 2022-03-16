@@ -46,11 +46,11 @@ export default AmpersandModel.extend({
         if (respObj.statusCode >= 400) {
           XHR.handleError(respObj.rawRequest, options)
         }
-        if (errorFn) { errorFn.call(this, arguments) }
+        if (errorFn) { errorFn.apply(errorFn, arguments) }
       },
       success: function () {
         model.synchronized = true
-        if (successFn) { successFn.call(this, arguments) }
+        if (successFn) { successFn.apply(successFn, arguments) }
       }
     })
 
