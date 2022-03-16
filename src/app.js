@@ -10,6 +10,7 @@ import AppState from 'state'
 import Router from 'router'
 import RootContainer from 'view/root-container'
 
+import errorHandler from 'app/errorHandler'
 import sockets from 'app/sockets'
 import session from 'app/session'
 import actions from 'app/actions'
@@ -22,6 +23,8 @@ function getUserLanguage () {
   const lang = navigator.language.substring(0, 2)
   return (suportedLanguages.indexOf(lang) > -1) ? lang : 'en'
 }
+
+errorHandler()
 
 // Extends our main app singleton
 App.extend(actions, {
