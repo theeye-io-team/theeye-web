@@ -140,5 +140,5 @@ XHR.handleError = (xhr, options) => {
   const err = new Error('XHR Error')
   err.xhr = xhr
   err.options = options
-  throw err
+  XHR.trigger('error', err)
 }

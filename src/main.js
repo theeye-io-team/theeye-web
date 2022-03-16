@@ -3,12 +3,6 @@ import Loader from 'components/loader/progress-bar'
 const loader = new Loader({ screenblock: true })
 loader.visible = true
 
-window.errors = []
-window.onerror = (msg, url, lineNo, columnNo, error) => {
-  console.error('window onerror')
-  window.errors.push({ msg, url, lineNo, columnNo, error })
-}
-
 window.addEventListener('load', () => {
   require.ensure(['ampersand-app', './app'], () => {
     const App = require('ampersand-app')
