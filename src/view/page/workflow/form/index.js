@@ -38,8 +38,8 @@ export default FormView.extend({
     })
 
     const initialTaskSelect = new InitialTaskSelectionView({
-      value: workflow.start_task_id,
-      options: workflow.tasks,
+      value: workflowBuilder.workflow.start_task_id,
+      options: workflowBuilder.workflow.tasks,
       onOpenning: (event) => {
         if (workflowBuilder.graph.nodes().length===0) {
           event.preventDefault()
