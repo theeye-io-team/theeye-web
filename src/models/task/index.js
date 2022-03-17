@@ -5,10 +5,10 @@ import isMongoId from 'validator/lib/isMongoId'
 import * as TaskConstants from 'constants/task'
 import * as LIFECYCLE from 'constants/lifecycle'
 import Schema from './schema'
+import { Model as ScriptFile } from 'models/file/script'
 
 //import { Model as Host } from 'models/host'
 
-import * as Template from './template'
 import config from 'config'
 
 const urlRoot = function () {
@@ -40,9 +40,15 @@ const formattedTags = () => {
 }
 
 // add host and template to both script and scraper tasks
-const Script = Template.Script.extend({
+const Script = Schema.extend({
   urlRoot,
+  initialize (attrs) {
+    Schema.prototype.initialize.apply(this, arguments)
+    this.type = 'script'
+  },
   props: {
+    script_id: 'string',
+    script_runas: 'string',
     hostname: 'string',
     host_id: 'string',
     template_id: 'string',
@@ -78,19 +84,38 @@ const Script = Template.Script.extend({
     }
   },
   children: {
-    template: Template.Script
+    script: ScriptFile
   },
   serialize () {
-    const serial = Template.Script.prototype.serialize.apply(this,arguments)
-    serial.template = this.template ? this.template.id : null
+    const serial = Schema.prototype.serialize.apply(this,arguments)
+
+    if (this.script_id) {
+      serial.script = this.script_id
+    } else if (this.script && this.script.isNew()) { // is set but ID is not defined
+      serial.script = this.script.serialize()
+    }
+
+    //serial.template = this.template ? this.template.id : null
     serial.host = this.host_id
     return serial
-  },
+  }
 })
 
-const Scraper = Template.Scraper.extend({
+const Scraper = Schema.extend({
   urlRoot,
+  initialize () {
+    Schema.prototype.initialize.apply(this, arguments)
+    this.type = 'scraper'
+  },
   props: {
+    remote_url: 'string',
+    method: 'string',
+    body: 'string',
+    parser: 'string',
+    pattern: 'string',
+    gzip: 'boolean',
+    json: 'boolean',
+    status_code: 'number',
     hostname: 'string',
     host_id: 'string',
     template_id: 'string',
@@ -124,22 +149,43 @@ const Scraper = Template.Scraper.extend({
       }
     }
   },
-  children: {
-    template: Template.Scraper,
+  parse () {
+    const attrs = Schema.prototype.parse.apply(this, arguments)
+    if (attrs.url) {
+      attrs.remote_url = attrs.url
+      delete attrs.url
+    }
+    return attrs
   },
   serialize () {
-    var serial = Template.Scraper.prototype.serialize.apply(this,arguments)
-    serial.template = this.template ? this.template.id : null
-    serial.host = this.host_id
-    return serial
-  },
+    const data = Schema.prototype.serialize.apply(this, arguments)
+    data.url = data.remote_url
+    //serial.template = this.template ? this.template.id : null
+    data.host = this.host_id
+    return data
+  }
 })
 
-const Approval = Template.Approval.extend({
+const Approval = Schema.extend({
   urlRoot,
+  initialize () {
+    Schema.prototype.initialize.apply(this, arguments)
+    this.type = 'approval'
+  },
   props: {
+    approvers: ['array', false, () => { return [] }],
+    approvals_target: ['string', false, ''],
+    approval_message: ['string', false, ''],
+    success_enabled: ['boolean', true, true],
+    failure_enabled: ['boolean', true, true],
+    cancel_enabled: ['boolean', true, true],
+    ignore_enabled: ['boolean', true, true],
+    success_label: ['string', true, 'Approve'],
+    failure_label: ['string', true, 'Reject'],
+    cancel_label: ['string', true, 'Cancel'],
+    ignore_label: ['string', true, 'Ignore'],
     template_id: 'string',
-    _type: ['string',false,'ApprovalTask']
+    _type: ['string',false,'ApprovalTask'],
   },
   derived: {
     formatted_tags: formattedTags(),
@@ -162,18 +208,19 @@ const Approval = Template.Approval.extend({
       }
     }
   },
-  children: {
-    template: Template.Approval,
-  },
-  serialize () {
-    var serial = Template.Approval.prototype.serialize.apply(this,arguments)
-    serial.template = this.template ? this.template.id : null
-    return serial
-  },
+  isApprover (user) {
+    const userid = user.id
+    if (!this.approvers) { return false }
+    return this.approvers.indexOf(userid) !== -1
+  }
 })
 
-const Dummy = Template.Dummy.extend({
+const Dummy = Schema.extend({
   urlRoot,
+  initialize () {
+    Schema.prototype.initialize.apply(this, arguments)
+    this.type = 'dummy'
+  },
   props: {
     template_id: 'string',
     _type: ['string',false,'DummyTask']
@@ -198,20 +245,27 @@ const Dummy = Template.Dummy.extend({
         return this.buildTaskSummary()
       }
     }
-  },
-  children: {
-    template: Template.Dummy,
-  },
-  serialize () {
-    var serial = Template.Dummy.prototype.serialize.apply(this,arguments)
-    serial.template = this.template ? this.template.id : null
-    return serial
   }
 })
 
-const Notification = Template.Notification.extend({
+const Notification = Schema.extend({
   urlRoot,
+  initialize () {
+    Schema.prototype.initialize.apply(this, arguments)
+    this.type = 'notification'
+  },
   props: {
+    subject: 'string',
+    body: 'string',
+    notificationTypes: ['object', false, () => {
+      return {
+        push: true,
+        email: false,
+        socket: false,
+        desktop: false
+      }
+    }],
+    recipients: 'array',
     template_id: 'string',
     _type: ['string',false,'NotificationTask']
   },
@@ -236,12 +290,9 @@ const Notification = Template.Notification.extend({
       }
     }
   },
-  children: {
-    template: Template.Notification,
-  },
   serialize () {
-    var serial = Template.Notification.prototype.serialize.apply(this, arguments)
-    serial.template = this.template ? this.template.id : null
+    var serial = Schema.prototype.serialize.apply(this, arguments)
+    //serial.template = this.template ? this.template.id : null
     return serial
   }
 })
@@ -293,8 +344,8 @@ const TaskFactory = function (attrs, options = {}) {
 }
 
 const Collection = AppCollection.extend({
-  comparator: 'name',
   url: urlRoot,
+  comparator: 'name',
   model: TaskFactory,
   isModel (model) {
     let isModel = (
@@ -309,10 +360,10 @@ const Collection = AppCollection.extend({
 })
 
 export const Task = Schema.extend({
+  urlRoot,
   session: {
     _all: 'object' // keep properties returned by the server as is
   },
-  urlRoot,
   mutate () {
     return new TaskFactory(this._all)
   },
