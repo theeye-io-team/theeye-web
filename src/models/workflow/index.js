@@ -177,8 +177,9 @@ const Workflow = AppModel.extend({
       cache: false,
       deps: ['start_task'],
       fn () {
-        if (!this.alreadyPopulated) {
-          console.error('cannot determine dynamic arguments. workflow information missing')
+        if (!this.start_task) {
+          //console.error('cannot determine dynamic arguments. workflow information missing')
+          return null
         }
 
         return this.start_task.hasDynamicArguments

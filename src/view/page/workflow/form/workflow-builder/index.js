@@ -414,10 +414,10 @@ const TaskContextualMenu = View.extend({
   render () {
     this.renderWithTemplate(this)
 
-    this.events = App.state.events.filterEmitterEvents(
-      this.model,
-      this.workflow_events || new Collection()
-    )
+    //this.events = App.state.events.filterEmitterEvents(
+    //  this.model,
+    //  this.workflow_events
+    //)
 
     const copyButton = new CopyTaskButton({ model: this.model, elem: 'a' })
     this.renderSubview(copyButton, this.queryByHook("menu-buttons"))
