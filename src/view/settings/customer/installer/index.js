@@ -379,10 +379,10 @@ const template = (state) => {
           <div class="row border">
             <div class="col-xs-12">
               <h4 class="blue"><i class="fa fa-download"></i> Downloads Section</h4>
-              <p> <a download="theeye-agent64.tar.gz" target="_blank" href="https://s3.amazonaws.com/theeye.agent/linux/theeye-agent64.tar.gz"> Linux 64bit Binary </a> </p>
-              <p> <a data-hook="agent-binary-download agent-binary-html" target="_blank"></a> </p>
+              <p> <a download="theeye-agent-linux.tar.gz" target="_blank" href="https://theeye-agent.s3.amazonaws.com/linux/theeye-agent64.tar.gz">Linux Binary</a> </p>
+              <p> <a download="theeye-agent-windows.zip" target="_blank" href="https://theeye-agent.s3.amazonaws.com/windows/theeye-agent.zip">Windows Binary</a> </p>
               <p>
-                <a data-hook="credentials-file-download" download="credentials.json" target="_blank" href="/api/bot/credentials?access_token=${accessToken}">
+                <a data-hook="credentials-file-download" target="_blank" href="/api/bot/credentials?access_token=${accessToken}">
                   <span data-hook="customer-name"></span>
                   Agent Credentials
                 </a>
