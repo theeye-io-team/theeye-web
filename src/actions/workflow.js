@@ -112,14 +112,31 @@ export default {
             where: {
               workflow_id: workflow.id
             }
-          },
-          success: () => {
-            for (let task of workflow.tasks.models) {
-              if (task.type === TaskConstants.TYPE_SCRIPT) {
-                App.actions.file.retrieve(task.script_id)
-              }
-            }
           }
+        })
+      },
+      fail: (err, xhr) => {
+        logger.error(err)
+        bootbox.alert('Something went wrong. Please refresh')
+      }
+    })
+
+    /*
+    workflow.save({}, {
+      success: () => {
+        App.state.alerts.success('Success', 'Workflow created')
+        workflow.tasks.reset([]) // remove all temporary tasks
+        workflow.events.reset([]) // remove all temporary events
+        App.state.workflows.add(workflow)
+        
+        // update workflow tasks state from api
+        workflow.tasks.fetch({
+          data: {
+            where: {
+              workflow_id: workflow.id
+            }
+          },
+          //success: () => App.actions.workflow.populate(workflow)
         })
       },
       fail: (err, xhr) => {
@@ -168,8 +185,12 @@ export default {
       //workflow.fetchJobs()
     }
   },
-  //triggerExecution (workflow) {
-  //  App.actions.task.execute(workflow.start_task)
+  triggerExecution (workflow) {
+    //this.populate(workflow)
+    App.actions.task.execute(workflow.start_task)
+  },
+  //run (workflow) {
+  //  JobActions.createFromTask(workflow.start_task)
   //},
   getCredentials (id, next) {
     next || (next = () => {})

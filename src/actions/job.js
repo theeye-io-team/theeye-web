@@ -472,13 +472,7 @@ const getValue = (arg) => {
     }
   }
 
-  if (arg.value) {
-    return arg.value
-  }
-  if (typeof arg === 'string') {
-    return arg
-  }
-  return ''
+  return (arg.value || '')
 }
 
 //
