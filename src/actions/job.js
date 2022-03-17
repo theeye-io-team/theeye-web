@@ -471,6 +471,7 @@ const getValue = (arg) => {
       return arg.value
     }
   }
+
   if (arg.value) {
     return arg.value
   }
