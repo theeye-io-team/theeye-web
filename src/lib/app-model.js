@@ -46,19 +46,23 @@ export default AmpersandModel.extend({
         if (respObj.statusCode >= 400) {
           XHR.handleError(respObj.rawRequest, options)
         }
-        if (errorFn) { errorFn.apply(errorFn, arguments) }
+        if (errorFn) {
+          errorFn.apply(this, arguments)
+        }
       },
       success: function () {
         model.synchronized = true
-        if (successFn) { successFn.apply(successFn, arguments) }
+        if (successFn) {
+          successFn.apply(this, arguments)
+        }
       }
     })
 
     return AmpersandModel.prototype.sync.call(this, method, model, options)
   },
   parse () {
-    var attrs = AmpersandModel.prototype.parse.apply(this, arguments)
-    this.synchronized = true
+    const attrs = AmpersandModel.prototype.parse.apply(this, arguments)
+    attrs.synchronized = true
     return attrs
   }
 })

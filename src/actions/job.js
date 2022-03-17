@@ -1,6 +1,7 @@
 
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
+import * as FieldConstants from 'constants/field'
 import * as OperationsConstants from 'constants/operations'
 import * as TaskConstants from 'constants/task'
 import * as LifecycleConstants from 'constants/lifecycle'
@@ -291,10 +292,14 @@ export default {
             Accept: 'application/json;charset=UTF-8'
           },
           done (data, xhr) {
-            job.task.task_arguments.set(data.task.task_arguments)
-            job.task_arguments_values = data.task_arguments_values
+            job.task.set('task_arguments', data.task.task_arguments)
+            job.set('task_arguments_values', data.task_arguments_values)
+            job.trigger('inputs-ready')
           }
         })
+      } else {
+        // already fetched
+        job.trigger('inputs-ready')
       }
     }
   }
@@ -448,12 +453,25 @@ const parseArgumentsValues = (task, args) => {
 }
 
 const getValue = (arg) => {
-  if (arg.type === 'file') {
-    return arg.value?.dataUrl
+  if (arg.type === FieldConstants.TYPE_FILE) {
+    if (arg.value) {
+      if (arg.value.dataUrl) {
+        return arg.value.dataUrl
+      }
+      if (arg.value.indexOf('data:') === 0) {
+        return arg.value
+      }
+    }
   }
-  if (arg.type === 'date') {
-    return (Array.isArray(arg.value) && arg.value[0])
+
+  if (arg.type === FieldConstants.TYPE_DATE) {
+    if (Array.isArray(arg.value) && arg.value[0]) {
+      return arg.value[0]
+    } else {
+      return arg.value
+    }
   }
+
   return (arg.value || '')
 }
 
@@ -528,7 +546,6 @@ const convertToString = (value) => {
 }
 
 const handleJobCompletedEvent = (job, topicEvent) => {
-
   if (!LifecycleConstants.isCompleted(job.lifecycle)) { return }
   if (job.show_result !== true) { return }
 
@@ -540,28 +557,6 @@ const handleJobCompletedEvent = (job, topicEvent) => {
   } else if (!job.isOwner(session.user)) {
     return
   }
-
-  /**
-   *
-   * job.output is an array of arguments
-   *
-   */
-  //let popupContent
-  //if (job.output) {
-  //  // search on output for backwards compatibility
-  //  const output = job.output.map(arg => {
-  //    try {
-  //      return JSON.parse(arg)
-  //    } catch (e) {
-  //      logger.error(e.message)
-  //      return arg
-  //    }
-  //  })
-  //  const popup = output.find(out => out && out.popup_component)
-  //  if (popup) {
-  //    popupContent = popup.popup_component
-  //  }
-  //}
 
   // search on result compoment
   if (job.components?.popup) {
