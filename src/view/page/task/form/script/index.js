@@ -431,7 +431,7 @@ const EnvCol = Collection.extend({
     props: {
       id: 'number',
       key: 'string',
-      value: 'mixed'
+      value: 'any'
     }
   }),
   /**
@@ -629,7 +629,7 @@ const EnvVarView = View.extend({
   },
   props: {
     key: 'string',
-    label: 'mixed',
+    label: 'any',
     name: ['string', false, 'env_var'] // my input name
   },
   derived: {

@@ -2,29 +2,28 @@ import View from 'ampersand-view'
 import * as FieldsConstants from 'constants/field'
 
 export default View.extend({
-  template: `
-    <div>
-      <h2>You are going to run the task <b data-hook="name"></b>.</h2>
-      <div class="row" data-hook="args-header">
-        <div class="col-sm-3"><b>Label</b></div>
-        <div class="col-sm-8"><b>Value</b></div>
+  template () {
+    const message = `
+      <div>
+        <h2>You are going to ${this.message}</h2>
+        <div class="row" data-hook="args-header">
+          <div class="col-sm-3"><b>Label</b></div>
+          <div class="col-sm-8"><b>Value</b></div>
+        </div>
+        <div data-hook="args-rows-container">
+        </div>
+        <br>
+        <h2>Continue?</h2>
       </div>
-      <div data-hook="args-rows-container">
-      </div>
-      <br>
-      <h2>Continue?</h2>
-    </div>
-  `,
+    `
+    return message
+  },
   props: {
-    name: ['string', false, ''],
+    message: 'string',
     taskArgs: ['array', false, () => { return [] }],
     headerVisible: ['boolean', false, true]
   },
   bindings: {
-    'name': {
-      type: 'text',
-      hook: 'name'
-    },
     'headerVisible': {
       type: 'toggle',
       hook: 'args-header'
@@ -53,14 +52,22 @@ export default View.extend({
 const getArgRenderValue = (arg) => {
   let renderValue, type = arg.type
 
-  if (type === 'date') {
+  if (type === FieldsConstants.TYPE_DATE) {
     if (Array.isArray(arg.value) && arg.value.length === 1) {
+      return arg.value[0]?.toString()
+    } else {
       return arg.value?.toString()
     }
   }
 
-  if (type === 'file') {
-    return arg.value?.name
+  if (type === FieldsConstants.TYPE_FILE) {
+    if (arg.value) {
+      if (arg.value.name) {
+        return arg.value.name
+      } else {
+        return 'Filename not available'
+      }
+    }
   }
 
   if (typeof(arg.value) == "object") {

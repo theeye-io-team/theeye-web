@@ -61,7 +61,7 @@ const ImportTaskInputView = FileInputView.extend({
 
 const TaskCreationWizard = View.extend({
   props: {
-    submit: 'function'
+    submit: 'any'
   },
   template: `
     <div>
