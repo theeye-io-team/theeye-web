@@ -11,48 +11,25 @@ import isURL from 'validator/lib/isURL'
 import * as JobConstants from 'constants/job'
 import * as LifecycleConstants from 'constants/lifecycle'
 import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
+import ConfirmExecution from '../../confirm-execution'
 
 export const RepeatCompletedJob = BaseExec.extend({
   execute () {
-    const task = this.model.task
-    const args = []
-    for (let arg of task.task_arguments.models) {
-      if (arg.type !== 'fixed') {
-        args.push({
-          value: this.model.task_arguments_values[ arg.order ],
-          order: parseInt(arg.order),
-          label: arg.label,
-          type: arg.type,
-          masked: arg.masked
-        })
-      }
-    }
-
-    const action = new ExecTask({ model: task })
-    action._confirmExecution(args)
+    const job = this.model
+    prepareArguments(job, (args) => {
+      const action = new ExecTask({ model: job.task })
+      action._confirmExecution(args)
+    })
   }
 })
 
 export const RestartCompletedJob = BaseExec.extend({
   execute () {
-    if (this.model.isCompleted) {
-      const task = this.model.task
-      const args = []
-
-      for (let arg of task.task_arguments.models) {
-        if (arg.type !== 'fixed') {
-          args.push({
-            value: this.model.task_arguments_values[ arg.order ],
-            order: parseInt(arg.order),
-            label: arg.label,
-            type: arg.type,
-            masked: arg.masked
-          })
-        }
-      }
-
-      const action = new ExecTask({ model: this.model })
-      action._restartExecution(args)
+    const job = this.model
+    if (job.isCompleted) {
+      prepareArguments(job, (args) => {
+        retryJob(job, args)
+      })
     }
   }
 })
@@ -396,4 +373,53 @@ const escapeHtml = (html) => {
   };
 
   return html.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
+const prepareArguments = (job, next) => {
+  job.once('inputs-ready', () => {
+    const task = job.task
+    const args = []
+
+    if (task.task_arguments.models && job.task_arguments_values) {
+      for (let arg of task.task_arguments.models) {
+        args.push({
+          value: job.task_arguments_values[ arg.order ],
+          order: parseInt(arg.order),
+          label: arg.label,
+          type: arg.type,
+          masked: arg.masked
+        })
+      }
+
+      next(args)
+    }
+  })
+
+  App.actions.job.fetchInputs([job])
+}
+
+const retryJob = (job, args) => {
+  let confirmView = new ConfirmExecution({
+    message: `retry job ${job.id}`,
+    taskArgs: args
+  })
+
+  const modal = new Modalizer({
+    buttons: true,
+    confirmButton: 'Restart',
+    title: `Restarting job ${job.id}`,
+    bodyView: confirmView
+  })
+
+  modal.on('hidden', () => {
+    confirmView.remove()
+    modal.remove()
+  })
+
+  modal.on('confirm', () => {
+    modal.hide()
+    App.actions.job.restart(job, args)
+  })
+
+  modal.show()
 }
