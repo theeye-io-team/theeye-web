@@ -291,7 +291,7 @@ const Notification = Schema.extend({
     }
   },
   serialize () {
-    var serial = Schema.prototype.serialize.apply(this, arguments)
+    const serial = Schema.prototype.serialize.apply(this, arguments)
     //serial.template = this.template ? this.template.id : null
     return serial
   }
