@@ -260,7 +260,7 @@ export default View.extend({
         } else {
           // models property exists only if options.isCollection === true 
           if (this.options.isCollection && Array.isArray(this.options.models) && this.options.models.length === 1) {
-            this.setValue(this.options.models[0].id)
+            this.setValue(this.options.models[0]?.id)
           }
         }
       }
