@@ -8,7 +8,7 @@ export default {
     XHR.send({
       responseType: 'text',
       method: 'get',
-      url: `${App.config.app_url}/helper/script/example/${extension}`,
+      url: `${App.config.app_url}/helper/boilerplate/${extension}`,
       done: (response) => {
         App.state.loader.visible = false
         if (!response) {
