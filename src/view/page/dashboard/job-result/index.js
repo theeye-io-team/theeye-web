@@ -239,8 +239,10 @@ const BaseJobView = View.extend({
   initialize () {
     View.prototype.initialize.apply(this, arguments)
 
-    // refetch
+    // fetch participants
     App.actions.job.getParticipants(this.job.id)
+    // fetch result
+    App.actions.job.fetch(this.job.id)
 
     this.listenToAndRun(this.job, 'change:assignee change:observers change:owner', () => {
       this.updateState()
