@@ -48,7 +48,8 @@ export default TaskFormView.extend({
       textAttribute: 'hostname',
       requiredMessage: 'Selection required',
       invalidClass: 'text-danger',
-      validityClassSelector: '.control-label'
+      validityClassSelector: '.control-label',
+      autoselectSingleOption: true
     })
 
     if (isNewTask) {
