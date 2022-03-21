@@ -18,6 +18,7 @@ const Schema = AppModel.extend({
   idAttribute: 'id',
   props: {
     id: 'string',
+    version: 'number',
     user_id: 'string',
     customer_id: 'string',
     workflow_id: 'string',
@@ -210,10 +211,12 @@ const Schema = AppModel.extend({
       }
     }
 
+    const version = ` [rev.${this.version}]`
+
     if (this.hostname) {
-      return `${this.type.toUpperCase()} - ${this.name} (${this.hostname}) ${tagsString}` 
+      return `${this.type.toUpperCase()} - ${this.name} (${this.hostname}) ${tagsString}${version}`
     } else {
-      return `${this.type.toUpperCase()} - ${this.name} ${tagsString}` 
+      return `${this.type.toUpperCase()} - ${this.name} ${tagsString}${version}`
     }
   }
 })

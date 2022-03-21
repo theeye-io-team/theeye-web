@@ -5,7 +5,7 @@ import FilteredCollection from 'ampersand-filtered-subcollection'
 export default SelectView.extend({
   initialize (specs) {
     let filters = [
-      item => true,
+      //item => true,
       item => (
         item.type === 'approval' ||
         item.type === 'dummy' ||
