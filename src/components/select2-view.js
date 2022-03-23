@@ -215,13 +215,15 @@ export default View.extend({
       select2setup.ajax = Object.assign({
         dataType: 'json',
         processResults: function (data) {
+          self.options = data // change options
+          const options = data.map(value => {
+            return {
+              text: self.getTextAttribute(value),
+              id: value[self.idAttribute]
+            }
+          })
           return {
-            results: data.map(value => {
-              return {
-                text: self.getTextAttribute(value),
-                id: value[self.idAttribute]
-              }
-            })
+            results: options
           }
         }
       }, this.ajax)

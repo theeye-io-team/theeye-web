@@ -47,7 +47,7 @@ export default {
         App.state.events.fetch()
         App.state.tags.fetch()
       },
-      error: () => {
+      fail: () => {
         bootbox.alert('Something goes wrong updating the Task')
       }
     })
@@ -310,7 +310,7 @@ const create = (data) => {
         App.state.tasks.add(task, { merge: true })
         resolve(task)
       },
-      error (response, xhr) {
+      fail (response, xhr) {
         reject(response)
       }
     })
@@ -360,7 +360,7 @@ const createUsingRecipe = (data) => {
         App.state.tasks.add(task, { merge: true })
         resolve(task)
       },
-      error (response, xhr) {
+      fail (response, xhr) {
         reject(response)
       }
     })
