@@ -7,6 +7,7 @@ import $ from 'jquery'
 import TaskRowView from './task'
 import MonitorRowView from './monitor'
 import IndicatorRowView from './indicator'
+import EmptyView from './empty-view'
 
 import loggerModule from 'lib/logger'; const logger = loggerModule('view:page:dashboard')
 import ItemsFolding from './panel-items-fold'
@@ -167,6 +168,9 @@ export default View.extend({
     let notificationsTabView = this.queryByHook('notifications-tabview')
     this.tabContentViews.push({ name: TabsConstants.NOTIFICATIONS, view: notificationsTabView })
 
+    let emptyView = this.queryByHook('empty-view')
+    this.renderSubview(new EmptyView(), emptyView)
+
     this.listenToAndRun(App.state.tabs, 'change:currentTab', () => {
       for (const contentView of this.tabContentViews) {
         if (contentView.name === App.state.tabs.currentTab) {
@@ -176,6 +180,27 @@ export default View.extend({
         }
       }
     })
+
+    const updateEmptyView = () => {
+      if (
+        App.state.tabs.currentTab === '' && 
+        App.state.dashboard.dataSynced === true
+      ) {
+        this.queryByHook('empty-view').style.display = 'block'
+      } else {
+        this.queryByHook('empty-view').style.display = 'none'
+      }
+      const activeTabs = App.state.tabs.tabs.models.filter(tab => tab.show)
+      if (activeTabs.length === 1) {
+        App.actions.tabs.setCurrentTab(activeTabs[0].name)
+      }
+    }
+
+    this.listenToAndRun(App.state.tabs.tabs, 'change:show', updateEmptyView)
+
+    this.listenToAndRun(App.state.tabs, 'change:currentTab', updateEmptyView)
+
+    this.listenToAndRun(App.state.dashboard, 'change:dataSynced', updateEmptyView)
 
     this.renderNotificationsPanel()
     this.renderResultView()
@@ -374,6 +399,12 @@ const pageTemplate = () => {
     <div data-component="dashboard-page" class="admin-container dashboard">
       <div data-hook="tabs-container">
       </div>
+
+      <!-- EMPTY VIEW -->
+      <div data-hook="empty-view">
+      </div>
+      <!-- /EMPTY VIEW -->
+
       <!-- INDICATORS -->
       <div data-hook="indicators-tabview">
         <div data-hook="indicators-panel">
@@ -399,7 +430,6 @@ const pageTemplate = () => {
                 <a data-hook="toggle-up-and-running" href="#" class="fa fa-chevron-right rotate section-toggle"></a>
               </div>
             </div>
-
 
             <!-- HIDDEN CONTAINER WITH EXTRA OPTIONS -->
             <div data-hook="more-options" class="group hidden-container">
@@ -447,6 +477,7 @@ const pageTemplate = () => {
         </div>
       </div>
       <!-- /TASKS -->
+
       <!-- NOTIFICATIONS -->
       <div data-hook="notifications-tabview">
         <div data-hook="notifications-panel">
