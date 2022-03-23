@@ -5,6 +5,7 @@ import FormView from 'ampersand-form-view'
 import HelpTexts from 'language/help'
 import Modalizer from 'components/modalizer'
 import SelectView from 'components/select2-view'
+//import TaskVersionSelectView from 'view/task-version-select'
 import TaskSelectView from 'view/task-select'
 import bootbox from 'bootbox'
 import graphlib from 'graphlib'
@@ -270,7 +271,7 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    const taskSelection = new TaskSelectionModal({ tasks: App.state.tasks })
+    const taskSelection = new TaskSelectionModal()
 
     const modal = new Modalizer({
       buttons: false,
@@ -362,15 +363,12 @@ export default View.extend({
 })
 
 const TaskSelectionModal = FormView.extend({
-  props: {
-    tasks: 'collection',
-  },
   initialize (options) {
     this.fields = [
+      //new TaskVersionSelectView({
       new TaskSelectView({
         required: true,
-        label: 'Task',
-        options: this.tasks
+        label: 'Task'
       })
     ]
 

@@ -19,6 +19,7 @@ const Schema = AppModel.extend({
   props: {
     id: 'string',
     version: 'number',
+    fingerprint: 'string',
     user_id: 'string',
     customer_id: 'string',
     workflow_id: 'string',
