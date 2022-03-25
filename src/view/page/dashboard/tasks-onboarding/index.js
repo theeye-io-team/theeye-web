@@ -4,14 +4,6 @@ import acls from 'lib/acls'
 import CreateButton from 'view/page/task/buttons/create'
 import OnboardingActions from 'actions/onboarding'
 
-
-const TutorialCreateButton = CreateButton.extend({
-  onClick: function(event) {
-    App.actions.onboarding.activateOnboarding()
-    CreateButton.prototype.onClick.apply(this, arguments)
-  }
-})
-
 export default View.extend({
   template: `
     <section>
@@ -51,5 +43,12 @@ export default View.extend({
           textElem.style.visibility = ''
       }
     })
+  }
+})
+
+const TutorialCreateButton = CreateButton.extend({
+  onClick: function(event) {
+    App.actions.onboarding.activateOnboarding()
+    CreateButton.prototype.onClick.apply(this, arguments)
   }
 })
