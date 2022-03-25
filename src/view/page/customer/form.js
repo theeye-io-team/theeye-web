@@ -27,7 +27,11 @@ export default FormView.extend({
         readonly: !isNew,
         tests: [
           (value) => {
-            if (!isEmail(`${value}@theeye.io`)) {
+            /* Old (if user would be a valid email after adding "@theeye.io") */
+            // if (!isEmail(`${value}@theeye.io`)) {
+            /* New (if user is between 6 and 20 characters, doesn't end nor begin with the characters  "_", "." or "-") */
+            const regex = new RegExp('^(?=.{6,20}$)(?![_.-])(?!.*[_.-]{2})[a-zA-Z0-9._-]+(?<![_.-])$')
+            if (!regex.test(value)) {
               return 'Please provide a valid customer name'
             }
           }
