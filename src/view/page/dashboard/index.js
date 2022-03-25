@@ -181,32 +181,31 @@ export default View.extend({
       }
     })
 
-    const updateEmptyView = () => {
-      if (
-        App.state.tabs.currentTab === '' && 
-        App.state.dashboard.dataSynced === true
-      ) {
-        this.queryByHook('empty-view').style.display = 'block'
-      } else {
-        this.queryByHook('empty-view').style.display = 'none'
-      }
-      const activeTabs = App.state.tabs.tabs.models.filter(tab => tab.show)
-      if (activeTabs.length === 1) {
-        App.actions.tabs.setCurrentTab(activeTabs[0].name)
-      }
-    }
-
-    this.listenToAndRun(App.state.tabs.tabs, 'change:show', updateEmptyView)
-
-    this.listenToAndRun(App.state.tabs, 'change:currentTab', updateEmptyView)
-
-    this.listenToAndRun(App.state.dashboard, 'change:dataSynced', updateEmptyView)
+    this.listenToAndRun(App.state.tabs.tabs, 'change:show', this.updateEmptyView)
+    this.listenToAndRun(App.state.tabs, 'change:currentTab', this.updateEmptyView)
+    this.listenToAndRun(App.state.dashboard, 'change:dataSynced', this.updateEmptyView)
 
     this.renderNotificationsPanel()
     this.renderResultView()
 
     document.getElementsByClassName('navbar')[0].style.display = 'block'
   },
+
+  updateEmptyView () {
+    if (
+      App.state.tabs.currentTab === '' && 
+      App.state.dashboard.dataSynced === true
+    ) {
+      this.queryByHook('empty-view').style.display = 'block'
+    } else {
+      this.queryByHook('empty-view').style.display = 'none'
+    }
+    const activeTabs = App.state.tabs.tabs.models.filter(tab => tab.show)
+    if (activeTabs.length === 1) {
+      App.actions.tabs.setCurrentTab(activeTabs[0].name)
+    }
+  },
+
   toggleUpAndRunningSign () {
     // upandrunning is disabled
     if (this.upAndRunningSignEnabled === false) { return }

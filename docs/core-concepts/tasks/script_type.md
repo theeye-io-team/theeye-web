@@ -244,6 +244,7 @@ Este es el usuario que ejecutó la task y creó el job. Esta variable va a conte
 | ------ | ------ | ----------------- |
 | id     | string | ID del usuario    |
 | email  | string | Email del usuario |
+| username | string | Username del usuario |
 
 ### `THEEYE_JOB_WORKFLOW` (objeto)
 

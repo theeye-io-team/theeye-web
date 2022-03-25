@@ -15,7 +15,6 @@ export default View.extend({
         <p data-hook="par1">It looks like your dashboard is empty.</p>
         <p data-hook="par2"></p>
         <div class="btn-container" data-hook="buttons">
-          <div class="btn btn-default" data-hook="task-tut">Task creation tutorial</div>
           <div class="btn btn-default" data-hook="bot-tut">Agent installation tutorial</div>
         </div>
       </div>
@@ -40,13 +39,11 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    bootbox.confirm(
-      'You\'re about to start the task tutorial. This will guide you through the process of creating a new script task. Do you want to continue?',
-      (res) => {
-        if (res) {
+    bootbox.alert(
+      'Great! You\'re about to start the task tutorial. This will guide you through the process of creating your first script task.',
+      () => {
           App.actions.onboarding.activateOnboarding(true)
           let wizard = new TaskCreationWizard()
-        }
       }
     )
   },
@@ -55,13 +52,11 @@ export default View.extend({
     event.stopPropagation()
 
     bootbox.confirm(
-      'You\'re about to start the agent installation tutorial. This will guide you through the process of installing the agent on a host machine. Do you want to continue?',
+      'Fantastic! You\'re about to start the agent installation tutorial. This will guide you through the process of installing the agent on a host machine to execute your tasks.',
       (res) => {
-        if (res) {
           App.actions.onboarding.activateOnboarding(true)
           // NavbarActions.toggleTopMenu()
           App.actions.settingsMenu.show('customer')          
-        }
       }
     )
   }
