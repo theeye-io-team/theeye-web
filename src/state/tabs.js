@@ -51,38 +51,62 @@ export default State.extend({
     App.actions.tabs.setCurrentTab(aVisibleTab.name)
     logger.log(`Active tab ${aVisibleTab.name}`)
   },
+  //addWorkflowsTab () {
+  //  const name = TabsConstants.WORKFLOWS
+  //  const tab = new Tab({ name })
+  //  this.tabs.add(tab)
+
+  //  const tasks = App.state.tasks
+  //  const workflows = App.state.workflows
+
+  //  this.listenToAndRun(App.state.dashboard, 'change:tasksDataSynced', () => {
+  //    if (App.state.dashboard.tasksDataSynced) {
+  //      tab.show = (workflows.length > 0 || tasks.length > 0)
+  //      this.stopListening(App.state.dashboard, 'change:tasksDataSynced')
+  //    }
+  //  })
+
+  //  const onElementAdded = () => {
+  //    if (
+  //      (workflows.length > 0 || tasks.length > 0) &&
+  //      tab.show === false
+  //    ) {
+  //      tab.show = true
+  //    } else if (
+  //      workflows.length === 0 &&
+  //      tasks.length === 0 &&
+  //      tab.show === true
+  //    ) { 
+  //      tab.show = false
+  //    }
+  //  }
+
+  //  this.listenToAndRun(workflows, 'add remove reset', onElementAdded)
+  //  this.listenToAndRun(tasks, 'add remove reset', onElementAdded)
+  //},
   addWorkflowsTab () {
     const name = TabsConstants.WORKFLOWS
     const tab = new Tab({ name })
     this.tabs.add(tab)
 
     const tasks = App.state.tasks
-    const workflows = App.state.workflows
 
     this.listenToAndRun(App.state.dashboard, 'change:tasksDataSynced', () => {
       if (App.state.dashboard.tasksDataSynced) {
-        tab.show = (workflows.length > 0 || tasks.length > 0)
+        tab.show = tasks.length > 0
         this.stopListening(App.state.dashboard, 'change:tasksDataSynced')
       }
     })
 
     const onElementAdded = () => {
-      if (
-        (workflows.length > 0 || tasks.length > 0) &&
-        tab.show === false
-      ) {
+      if (tasks.length > 0 && tab.show === false) {
         tab.show = true
-      } else if (
-        workflows.length === 0 &&
-        tasks.length === 0 &&
-        tab.show === true
-      ) { 
+      } else if (tasks.length === 0 && tab.show === true) { 
         tab.show = false
       }
     }
 
-    this.listenToAndRun(workflows, 'add remove', onElementAdded)
-    this.listenToAndRun(tasks    , 'add remove', onElementAdded)
+    this.listenToAndRun(tasks, 'add remove reset', onElementAdded)
   },
   addIndicatorsTab () {
     const tab = new Tab({ name: TabsConstants.INDICATORS })
@@ -98,7 +122,7 @@ export default State.extend({
       }
     })
 
-    this.listenToAndRun(collection, 'add', () => {
+    this.listenToAndRun(collection, 'add remove reset', () => {
       if (collection.length > 0 && tab.show === false) {
         tab.show = true
       } else if (collection.length === 0 && tab.show === true) {
@@ -120,7 +144,7 @@ export default State.extend({
       }
     })
 
-    this.listenToAndRun(collection, 'add', () => {
+    this.listenToAndRun(collection, 'add remove reset', () => {
       if (collection.length > 0 && tab.show === false) {
         tab.show = true
       } else if (collection.length === 0 && tab.show === true) {
@@ -135,7 +159,7 @@ export default State.extend({
     const collection = App.state.notifications
     tab.show = false
 
-    this.listenToAndRun(collection, 'add', () => {
+    this.listenToAndRun(collection, 'add remove reset', () => {
       if (collection.length > 0 && tab.show === false) {
         tab.show = true
       } else if (collection.length === 0 && tab.show === true) {
