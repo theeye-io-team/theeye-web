@@ -74,7 +74,7 @@ export default DropableForm.extend({
           })
         }
       }),
-      new InputView({
+      new TextareaView({
         label: 'Initial value',
         required: false,
         visible: false,
