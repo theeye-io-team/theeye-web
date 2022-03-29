@@ -215,6 +215,6 @@ Para habilitar los mensajes emergentes para una tarea
 
 ## Información del Runtime
 
-Durante runtime, se puede consultar información del job que se está ejecutando mediante variables de entorno.
+En tiempo de ejecución se puede consultar información del job que se está ejecutando mediante variables de entorno.
 
 Toda la información está guardada en strings o estructuras JSON, y puede consultarla mediante las variables de entorno del runtime de TheEye. [Más información](https://documentation.theeye.io/theeye-supervisor/#/runtime-info)
