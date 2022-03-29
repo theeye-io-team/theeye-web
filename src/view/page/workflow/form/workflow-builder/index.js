@@ -424,7 +424,7 @@ const TaskContextualMenu = View.extend({
     'click [data-hook=success]': 'onClickConnectTasks',
     'click [data-hook=failure]': 'onClickConnectTasks',
     'click [data-hook=edit]': 'onClickEdit',
-    //'click [data-hook=edit-script]': 'onClickEditScript',
+    'click [data-hook=edit-script]': 'onClickEditScript',
     'click [data-hook=export]': 'onClickExport',
     'click [data-hook=remove]': 'onClickRemove'
   },
@@ -434,13 +434,13 @@ const TaskContextualMenu = View.extend({
     this.trigger('task:edit')
     this.remove()
   },
-  //onClickEditScript (event) {
-  //  event.preventDefault()
-  //  event.stopPropagation()
-  //  App.actions.file.edit(this.model.script_id)
-  //  this.trigger('script:edit')
-  //  this.remove()
-  //},
+  onClickEditScript (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    App.actions.file.edit(this.model.script_id)
+    this.trigger('script:edit')
+    this.remove()
+  },
   onClickRemove (event) {
     event.preventDefault()
     event.stopPropagation()
