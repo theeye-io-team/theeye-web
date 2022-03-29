@@ -59,6 +59,23 @@ const IndicatorRowView = View.extend({
       }
     }
   },
+  events: {
+    'click [data-hook=launch-task]': (event) => {
+      event.preventDefault()
+      event.stopPropagation()
+
+      App.actions.job.create(
+        App.state.tasks.get(event.target.dataset.taskId),
+        JSON.parse(event.target.dataset.taskArguments)
+      )
+    },
+    'submit form': (event) => {
+      event.preventDefault()
+      event.stopPropagation()
+
+      App.state.alerts.danger('Cannot do that')
+    },
+  },
   bindings: {
     collapse_toggle_href: {
       hook: 'collapse-toggle',

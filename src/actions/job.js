@@ -318,6 +318,8 @@ const createSingleTaskJob = (task, args, next) => {
         let job = task.jobs.add(data, { merge: true })
       }
       next(null, data)
+
+      App.state.alerts.success('Job started')
     },
     fail (err,xhr) {
       App.state.alerts.danger('Job creation failed')
@@ -341,6 +343,8 @@ const createWorkflowJob = (workflow, args, next) => {
       //wait for socket update arrive and create there
       let job = workflow.jobs.add(data, { merge: true })
       next(null, data)
+
+      App.state.alerts.success('Workflow Job started')
     },
     fail (err,xhr) {
       App.state.alerts.danger('Job creation failed')
