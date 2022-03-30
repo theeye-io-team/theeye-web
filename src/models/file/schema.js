@@ -81,7 +81,7 @@ export default AppModel.extend({
   parse () {
     const attrs = AppModel.prototype.parse.apply(this, arguments)
     if (isDataUrl(attrs.data)) {
-      attrs.data = decodeUnicodeData(data)
+      attrs.data = decodeUnicodeData(attrs.data.split(',')[1])
     }
     return attrs
   },
