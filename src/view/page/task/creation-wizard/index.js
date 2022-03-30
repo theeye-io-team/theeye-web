@@ -23,6 +23,7 @@ const docsLink = 'core-concepts/tasks/'
 export default function (options = {}) {
   const wizard = new TaskCreationWizard({ submit: options?.submit })
   wizard.render()
+
   const modal = new Modalizer({
     buttons: false,
     title: 'Create Task',

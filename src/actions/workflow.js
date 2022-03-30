@@ -189,13 +189,23 @@ export default {
           const err = new Error('Error retrieving workflow serialization.')
           err.xhr = xhr
           err.error = xhrErr
-          App.state.alerts.danger('Failure', msg)
+          App.state.alerts.danger('Failure', err.message)
           reject(err)
         }
       })
     })
   },
-  serializeRecipe (workflow) {
+  parseSerialization (serial) {
+    const props = Object.assign({ tasks: null }, serial)
+    const tasks = []
+    for (let taskSerial of serial.tasks) {
+      tasks.push( App.actions.task.parseSerialization(taskSerial) )
+    }
+    props.tasks = tasks
+    const workflow = new App.Models.Workflow.Workflow(props, { store: false })
+    return workflow
+  },
+  serializeDAG (workflow) {
     const recipe = workflow.serialize()
     if (workflow.isRecipe === true) {
       return recipe

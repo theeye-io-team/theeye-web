@@ -36,14 +36,16 @@ export default View.extend({
   initialize (options) {
     View.prototype.initialize.apply(this,arguments)
 
-    let recipe, workflow = options.value
+    let recipe
+    let workflow = options.value
+
     const version = workflow.version
     if (this.mode === 'edit') {
       // keep the same original ids
       recipe = workflow.serialize()
     } else {
       // replace ids
-      recipe = App.actions.workflow.createRecipe(workflow)
+      recipe = App.actions.workflow.serializeDAG(workflow)
     }
 
     // migrate to version 2

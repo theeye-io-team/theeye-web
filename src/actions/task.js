@@ -224,6 +224,22 @@ export default {
       }
     })
   },
+  parseSerialization (serial) {
+    if (serial.type === TaskConstants.TYPE_SCRIPT) {
+      if (serial.script) {
+        const script = new File(serial.script, { parse: true })
+        script.dataFromBase64(serial.script.data)
+        serial.script = script // File model
+      }
+    } else
+    if (serial.type === TaskConstants.TYPE_SCRAPER) {
+      serial.remote_url = serial.url
+      delete serial.url
+    }
+
+    const task = new TaskFactory(serial, { store: false })
+    return task
+  },
   parseRecipe (recipe) {
     if (recipe.task.type === TaskConstants.TYPE_SCRAPER) {
       recipe.task.remote_url = recipe.task.url

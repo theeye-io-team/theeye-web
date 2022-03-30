@@ -29,3 +29,17 @@ Puede crear un Indicador desde el dashboard haciendo click en el botón **+**.
 
 ![Dashboard - Crear Indicador](../images/createIndicator.gif)
 
+
+## Indicador tipo Text HTML.
+
+Es posible inyectar templates HTML en el campo value de un indicador tipo text para generar indicadores con información mas compleja en formato de tablas, reportes.
+
+### Botón Launch Task
+
+Para lanzar una tarea desde un botón se puede utilizar el siguiente template HTML. Tener en cuenta cambiar los valores de arguments y task id de acuerdo a su entorno.
+
+```html
+
+<button data-hook="launch-task" data-task-id="616dbf5f6591d64cec86f954" data-task-arguments='["arg1","arg2","arg3"]' class="btn btn-default">Ejecutar Tarea</button>
+
+```
