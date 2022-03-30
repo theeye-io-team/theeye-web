@@ -7,7 +7,6 @@ import union from 'lodash/union'
 import uniq from 'lodash/uniq'
 import difference from 'lodash/difference'
 import FileSaver from 'file-saver'
-import { v4 as uuidv4 } from 'uuid'
 import { Factory as TaskFactory } from 'models/task'
 import loggerModule from 'lib/logger'; const logger = loggerModule('actions:workflow')
 
@@ -202,54 +201,10 @@ export default {
       tasks.push( App.actions.task.parseSerialization(taskSerial) )
     }
     props.tasks = tasks
+
+    delete props.id // his is a new workflow should not have it
     const workflow = new App.Models.Workflow.Workflow(props, { store: false })
     return workflow
-  },
-  serializeDAG (workflow) {
-    const recipe = workflow.serialize()
-    if (workflow.isRecipe === true) {
-      return recipe
-    }
-
-    recipe.id = uuidv4()
-    recipe.tasks = []
-    recipe.events = []
-
-    const graph = recipe.graph
-
-    for (let node of graph.nodes) {
-      const uuid = uuidv4()
-
-      let model
-      if (node && /Event$/.test(node.value._type)) {
-        model = App.state.events.get(node.value.id)
-        model = model.serialize()
-        recipe.events.push(model)
-      } else if (node && /Task$/.test(node.value._type)) {
-        model = App.state.tasks.get(node.value.id)
-        model = model.serialize()
-        recipe.tasks.push(model)
-
-        if (workflow.start_task_id === model.id) {
-          recipe.start_task_id = uuid
-        }
-      }
-
-      node.v = uuid
-      node.value.id = uuid
-
-      for (let edge of graph.edges) {
-        if (edge.v === model.id) { edge.v = uuid }
-        if (edge.w === model.id) { edge.w = uuid }
-      }
-
-      // update only after mapping edges with nodes
-      model.id = uuid
-    }
-
-    recipe.graph = graph
-    recipe.isRecipe = true
-    return recipe
   },
   migrateGraph (graphData) {
     const cgraph = graphlib.json.read(graphData)

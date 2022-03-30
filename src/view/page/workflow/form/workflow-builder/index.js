@@ -41,11 +41,10 @@ export default View.extend({
 
     const version = workflow.version
     if (this.mode === 'edit') {
-      // keep the same original ids
       recipe = workflow.serialize()
     } else {
-      // replace ids
-      recipe = App.actions.workflow.serializeDAG(workflow)
+      // will clone the tasks and replace the original ids
+      recipe = workflow.serializeClone()
     }
 
     // migrate to version 2
