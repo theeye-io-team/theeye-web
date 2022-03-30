@@ -58,25 +58,6 @@ export const BaseExec = State.extend({
       next([])
     }
   },
-  //checkInProgress () {
-  //  let inProgress = this.model.jobs.models.some(job => {
-  //    return job.inProgress
-  //  })
-
-  //  if (inProgress && this.model.multitasking === true) {
-  //    bootbox.confirm({
-  //      message: `Task <b>${this.model.name}</b> is currently under execution, do you wish to execute it again?`,
-  //      backdrop: true,
-  //      callback: (confirmed) => {
-  //        if (confirmed) {
-  //          this.checkRequiredArguments()
-  //        }
-  //      }
-  //    })
-  //  } else {
-  //    this.checkRequiredArguments()
-  //  }
-  //},
   checkRequiredArguments () {
     this.getDynamicArguments(args => this._confirmExecution(args))
   },
@@ -109,12 +90,11 @@ export const BaseExec = State.extend({
 
 export const ExecTask = BaseExec.extend({
   execute () {
-    let reporting = this.model.hostIsReporting()
-    if (reporting === null) {
-      return  // cannot find the resource for this task
-    }
+    if (this.preconditionsFulfilled() === false) { return }
 
-    if (reporting === false) {
+    if (this.model.hostIsReporting()) {
+      this.checkRequiredArguments()
+    } else {
       bootbox.confirm({
         message: `
         <h2>At this moment the host that runs this task is not reporting.</h2>
@@ -127,16 +107,28 @@ export const ExecTask = BaseExec.extend({
           }
         }
       })
-    } else {
-      this.checkRequiredArguments()
+    }
+    bootbox.alert(err.message)
+  },
+  preconditionsFulfilled () {
+    try {
+      if (App.state.session.licenseExpired) {
+        throw new Error('Your license has expired! </br> Please contact your service provider to activate the product again.')
+      }
+
+      const task = this.model
+      if (!task.canExecute) {
+        const reason = `Task <b>${task.name}</b>: ${task.missingConfiguration}`
+        if (task.hasWorkflow) {
+          throw new Error(`This workflow cannot be executed. You need to complete it first<br><br>Reason:<br>${reason}`)
+        } else {
+          throw new Error(`This task cannot be executed. You need to complete it first<br><br>Reason:<br>${reason}`)
+        }
+      }
+      return true
+    } catch (err) {
+      bootbox.alert(err.message)
+      return false
     }
   }
 })
-
-export const ExecTaskWithNoHost = BaseExec.extend({
-  execute () {
-    this.checkRequiredArguments()
-  }
-})
-
-//export { BaseExec, ExecTask, ExecTaskWithNoHost }

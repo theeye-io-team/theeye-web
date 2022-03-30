@@ -64,6 +64,18 @@ const Script = Schema.extend({
         return isMongoId(this.script_id || '') && isMongoId(this.host_id || '')
       }
     },
+    missingConfiguration: {
+      deps: ['script_id','host_id'],
+      fn () {
+        if (!isMongoId(this.host_id || '')) {
+          return 'A Host is not assigned.'
+        }
+
+        if (!isMongoId(this.script_id || '')) {
+          return 'A Script is not assigned.'
+        }
+      }
+    },
     canBatchExecute: {
       deps: ['hasDynamicArguments'],
       fn () {
@@ -134,6 +146,25 @@ const Scraper = Schema.extend({
           require_protocol: true
         })
         return isurl && isMongoId(this.host_id || '')
+      }
+    },
+    missingConfiguration: {
+      deps: ['remote_url','host_id'],
+      fn () {
+        const url = this.remote_url || ''
+
+        if (!isMongoId(this.host_id || '')) {
+          return 'A Host is not assigned'
+        }
+
+        const isUrl = /localhost/.test(url) || isURL(url, {
+          protocols: ['http','https'],
+          require_protocol: true
+        })
+
+        if (!isUrl) {
+          return 'The URL is not completed.'
+        }
       }
     },
     hasTemplate: {

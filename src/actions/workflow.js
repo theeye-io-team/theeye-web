@@ -152,12 +152,8 @@ export default {
       //workflow.fetchJobs()
     }
   },
-  triggerExecution (workflow) {
-    //this.populate(workflow)
-    App.actions.task.execute(workflow.start_task)
-  },
-  //run (workflow) {
-  //  JobActions.createFromTask(workflow.start_task)
+  //triggerExecution (workflow) {
+  //  App.actions.task.execute(workflow.start_task)
   //},
   getCredentials (id, next) {
     next || (next = () => {})

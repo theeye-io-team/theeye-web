@@ -8,7 +8,7 @@ import TaskRouter from 'router/task'
 import after from 'lodash/after'
 import TaskFormActions from 'actions/taskform'
 import FileSaver from 'file-saver'
-import { ExecTask, ExecTaskWithNoHost } from 'view/page/dashboard/task/task/exec-task.js'
+import { ExecTask as ExecTaskView } from 'view/page/dashboard/task/task/exec-task.js'
 import { Model as File } from 'models/file'
 import loggerModule from 'lib/logger'
 
@@ -283,22 +283,8 @@ export default {
     return false
   },
   execute (task) {
-    let execTask
-    if (!App.state.session.licenseExpired) {
-      if (!task.canExecute) {
-        bootbox.alert('This task cannot be executed')
-        return
-      }
-
-      if (task.hasHost()) {
-        execTask = new ExecTask({ model: task })
-      } else {
-        execTask = new ExecTaskWithNoHost({ model: task })
-      }
-      execTask.execute()
-    } else {
-      bootbox.alert('Your license has expired! </br> Please contact your service provider to activate the product again.')
-    }
+    const execTask = new ExecTaskView({ model: task })
+    execTask.execute()
   },
   edit (id) {
     // route edit file action

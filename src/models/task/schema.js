@@ -170,8 +170,8 @@ const Schema = AppModel.extend({
   },
   hostIsReporting () {
     let host = this.hostResource()
-    if (!host) return true // I cannot determine, so go ahead
-    return host.state === 'normal'
+    if (!host?.state) { return true } // I cannot determine, so go ahead
+    return (host.state === 'normal')
   },
   fetchJobs (options, callback) {
     callback || (callback = () => {})
