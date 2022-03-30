@@ -122,6 +122,7 @@ const Workflow = AppModel.extend({
     }
   },
   session: {
+    isRecipe: ['boolean', false, false],
     alreadyPopulated: ['boolean', false, false],
     jobsAlreadyFetched: ['boolean', false, false],
     inProgressJobs: 'number',

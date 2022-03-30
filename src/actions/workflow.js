@@ -112,56 +112,6 @@ export default {
         bootbox.alert('Something went wrong. Please refresh')
       }
     })
-
-    /*
-    workflow.save({}, {
-      success: () => {
-        App.state.alerts.success('Success', 'Workflow created')
-        workflow.tasks.reset([]) // remove all temporary tasks
-        workflow.events.reset([]) // remove all temporary events
-        App.state.workflows.add(workflow)
-        
-        // update workflow tasks state from api
-        workflow.tasks.fetch({
-          data: {
-            where: {
-              workflow_id: workflow.id
-            }
-          },
-          //success: () => App.actions.workflow.populate(workflow)
-        })
-      },
-      error: (err) => {
-        logger.error(err)
-        bootbox.alert('Something went wrong. Please refresh')
-      }
-    })
-    */
-  },
-  importCreate (recipe) {
-    //let ids = []
-    //let promises = []
-    //for (let task of data.tasks) {
-    //  const uuid = task.id
-    //  ids.push(uuid)
-    //  const recipe = Object.assign({}, task)
-    //  delete recipe.id
-    //  delete recipe.workflow_id
-    //  promises.push(App.actions.task.create(recipe))
-    //}
-    //Promise.all(promises).then((results) => {
-    //  const newIds = results.map((result) => result.id)
-    //  data.start_task_id = newIds[ids.indexOf(data.start_task_id)]
-    //  for (const node of data.graph.nodes) {
-    //    node["v"] = newIds[ids.indexOf(node["v"])]
-    //    node["value"].id = newIds[ids.indexOf(node["value"].id)]
-    //  }
-    //  for (const edge of data.graph.edges) {
-    //    edge["v"] = newIds[ids.indexOf(edge["v"])]
-    //    edge["w"] = newIds[ids.indexOf(edge["w"])]
-    //  }
-    //  this.create(data)
-    //})
   },
   remove (id) {
     const workflow = App.state.workflows.get(id)
@@ -222,13 +172,35 @@ export default {
       },
       fail (err, xhr) {
         let msg = 'Error retrieving workflow integrations credentials.'
-        bootbox.alert(msg)
+        App.state.alerts.danger('Failure', msg)
         return next(new Error(msg))
       }
     })
   },
-  createRecipe (workflow) {
+  getSerialization (id) {
+    return new Promise( (resolve, reject) => {
+      XHR.send({
+        method: 'GET',
+        url: `${App.config.supervisor_api_url}/workflows/${id}/serialize`,
+        done (serialization) {
+          resolve(serialization)
+        },
+        fail (xhrErr, xhr) {
+          const err = new Error('Error retrieving workflow serialization.')
+          err.xhr = xhr
+          err.error = xhrErr
+          App.state.alerts.danger('Failure', msg)
+          reject(err)
+        }
+      })
+    })
+  },
+  serializeRecipe (workflow) {
     const recipe = workflow.serialize()
+    if (workflow.isRecipe === true) {
+      return recipe
+    }
+
     recipe.id = uuidv4()
     recipe.tasks = []
     recipe.events = []
@@ -266,6 +238,7 @@ export default {
     }
 
     recipe.graph = graph
+    recipe.isRecipe = true
     return recipe
   },
   migrateGraph (graphData) {
@@ -302,12 +275,13 @@ export default {
     return graphlib.json.write(ngraph)
   },
   exportRecipe (id) {
-    const workflow = App.state.workflows.get(id)
-    const recipe = App.actions.workflow.createRecipe(workflow)
-    const jsonContent = JSON.stringify(recipe)
-    const blob = new Blob([jsonContent], { type: 'application/json' })
-    const fname = recipe.name.replace(/ /g, '_')
-    FileSaver.saveAs(blob, `${fname}.json`)
+    //const workflow = App.state.workflows.get(id)
+    App.actions.workflow.getSerialization(id).then(recipe => {
+      const jsonContent = JSON.stringify(recipe)
+      const blob = new Blob([jsonContent], { type: 'application/json' })
+      const fname = recipe.name.replace(/ /g, '_')
+      FileSaver.saveAs(blob, `${fname}_workflow.json`)
+    })
   }
 }
 
