@@ -4,15 +4,16 @@ import FilteredCollection from 'ampersand-filtered-subcollection'
 
 export default SelectView.extend({
   initialize (specs) {
-    let filters = [
-      //item => true,
-      item => (
-        item.type === 'approval' ||
-        item.type === 'dummy' ||
-        item.type === 'notification' ||
-        item.host_id
-      )
-    ]
+    //let filters = [
+    //  //item => true,
+    //  item => (
+    //    item.type === 'approval' ||
+    //    item.type === 'dummy' ||
+    //    item.type === 'notification' ||
+    //    item.host_id
+    //  )
+    //]
+    let filters = []
 
     if (
       Array.isArray(specs.filterOptions) &&
