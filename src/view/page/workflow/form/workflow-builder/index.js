@@ -42,6 +42,9 @@ export default View.extend({
     const version = workflow.version
     if (this.mode === 'edit') {
       recipe = workflow.serialize()
+    } else if (this.mode === 'import') {
+      recipe = workflow.serialize()
+      recipe.tasks = workflow.tasks.models // keep untouch
     } else {
       // will clone the tasks and replace the original ids
       recipe = workflow.serializeClone()
@@ -203,7 +206,9 @@ export default View.extend({
     }
   },
   editTask (task) {
-    const form = new TaskForm({ model: task })
+    App.state.taskForm.file = task.script.serialize()
+
+    const form = new TaskForm({ model: task, mode: this.mode })
     const modal = new Modalizer({
       buttons: false,
       title: `Edit task ${task.name} [${task.id}]`,

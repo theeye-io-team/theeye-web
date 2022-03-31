@@ -108,7 +108,6 @@ export const ExecTask = BaseExec.extend({
         }
       })
     }
-    bootbox.alert(err.message)
   },
   preconditionsFulfilled () {
     try {
