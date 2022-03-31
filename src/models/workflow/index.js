@@ -103,8 +103,7 @@ const Workflow = AppModel.extend({
     lifecycle: 'string',
     state: 'string',
     triggers: ['array', false, () => { return [] }],
-    start_task_id: ['string',true],
-    end_task_id: ['string'],
+    start_task_id: ['string'],
     current_task_id: 'string',
     graph: ['graphlib.Graph', true],
     allows_dynamic_settings: ['boolean',false],
@@ -153,16 +152,6 @@ const Workflow = AppModel.extend({
         }
 
         return App.state.tasks.get(this.start_task_id)
-      }
-    },
-    end_task: {
-      cache: false,
-      deps: ['end_task_id'],
-      fn () {
-        if (!this.end_task_id) {
-          return
-        }
-        return App.state.tasks.get(this.end_task_id)
       }
     },
     current_task: {
@@ -256,9 +245,9 @@ const Workflow = AppModel.extend({
   },
   serializeClone () {
     const serial = this.serialize()
-    if (this.isNew()) { return serial }
 
-    serial.id = uuidv4()
+    //serial.id = uuidv4()
+    delete serial.id
     serial.tasks = []
     serial.events = []
 
