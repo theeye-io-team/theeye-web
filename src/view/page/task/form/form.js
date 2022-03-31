@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import DropableForm from 'components/dropable-form'
 import Buttons from 'view/buttons'
 import HelpIcon from 'components/help-icon'
@@ -48,6 +49,18 @@ export default DropableForm.extend({
   //    }
   //  }
   //},
+  toggleAdvancedFields (unfold = null) {
+    if (unfold === true) {
+      if (!this.advancedToggle) {
+        throw new Error('Error')
+      }
+      if (this.advancedToggle.folded === false) {
+        // do nothing
+        return
+      }
+    }
+    this.advancedToggle.click()
+  },
   fillForm (data) {
     if (data.task) {
       this.setWithTask(data.task)
@@ -65,7 +78,12 @@ export default DropableForm.extend({
   },
   submit () {
     this.beforeSubmit()
-    if (!this.valid) { return }
+    if (!this.valid) {
+      App.state.alerts.danger('The task is not ready.', 'Please check again')
+      const fields = this.getInvalidFields()
+      fields[0].el.scrollIntoView()
+      return
+    }
 
     let data = this.prepareData(this.data)
     this.trigger('submit', data)
@@ -76,5 +94,15 @@ export default DropableForm.extend({
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)
     buttons.on('click:confirm', () => { this.submit() })
+  },
+  getInvalidFields () {
+    const fields = this._fieldViewsArray.filter(f => !f.valid)
+    let firstInvalid
+    if (Array.isArray(this.advancedFields)) {
+      if (fields.find(field => this.advancedFields.includes(field.name))) {
+        this.toggleAdvancedFields(true)
+      }
+    }
+    return fields
   }
 })
