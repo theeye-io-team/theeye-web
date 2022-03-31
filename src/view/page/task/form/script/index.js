@@ -672,6 +672,8 @@ const EnvVarView = View.extend({
       name: 'key',
       value: this.model.key,
       placeholder: 'Key',
+      invalidClass: 'text-danger',
+      validityClassSelector: 'p[data-hook=message-text]',
       required: true
     })
     this.renderSubview(this.keyInputView, this.queryByHook('key'))
@@ -680,9 +682,14 @@ const EnvVarView = View.extend({
       name: 'value',
       value: this.model.value,
       placeholder: 'Value',
+      invalidClass: 'text-danger',
+      validityClassSelector: 'p[data-hook=message-text]',
       required: true
     })
     this.renderSubview(this.valueInputView, this.queryByHook('label'))
+
+    this.listenTo(this.valueInputView, 'change:valid', this.validityCheck)
+    this.listenTo(this.keyInputView, 'change:valid', this.validityCheck)
 
     // use internal state
     this.listenTo(this.keyInputView, 'change:value', () => {
@@ -702,5 +709,16 @@ const EnvVarView = View.extend({
   beforeSubmit () {
     this.keyInputView.beforeSubmit()
     this.valueInputView.beforeSubmit()
+    this.validityCheck()
+  },
+  validityCheck () {
+    const key = this.keyInputView
+    const value = this.valueInputView
+
+    if (!key.valid || !value.valid) {
+      this.el.classList.add('box-danger')
+    } else {
+      this.el.classList.remove('box-danger')
+    }
   }
 })
