@@ -2,7 +2,7 @@
 import State from 'ampersand-state'
 import AlertView from './view'
 
-import './style.css'
+import './style.less'
 
 const ServerErrorType = {
   set (newVal) {
@@ -66,8 +66,9 @@ export default State.extend({
   },
   _renderAlertsContainer () {
     var elemDiv = document.createElement('div')
-    elemDiv.style.cssText = ''
-    elemDiv.className = 'alert-container'
+    elemDiv.dataset.component = 'alerts-component'
+    //elemDiv.style.cssText = ''
+    //elemDiv.className = 'alert-container'
     document.body.appendChild(elemDiv)
     this.container = elemDiv
   },
