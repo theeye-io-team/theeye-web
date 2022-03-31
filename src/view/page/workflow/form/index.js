@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import FormView from 'ampersand-form-view'
 import AdvancedToggle from 'view/advanced-toggle'
 import LanguajeLabels from 'language/labels'
@@ -34,8 +35,14 @@ export default FormView.extend({
     const workflowBuilder = new WorkflowBuilderView({
       name: 'builder',
       value: workflow,
-      mode: options.mode
+      mode: options.builder_mode
     })
+
+    App.state.formWorkflow = {
+      form: this,
+      workflow,
+      workflowBuilder
+    }
 
     const initialTaskSelect = new InitialTaskSelectionView({
       value: workflowBuilder.workflow.start_task_id,

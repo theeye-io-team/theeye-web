@@ -109,7 +109,7 @@ const renderCreateForm = (workflow = null) => {
     workflow = new Workflow({ version: 2 })
   }
 
-  const form = new FormView({ model: workflow, create: true })
+  const form = new FormView({ model: workflow, builder_mode: 'import' })
 
   const modal = new Modalizer({
     buttons: false,
