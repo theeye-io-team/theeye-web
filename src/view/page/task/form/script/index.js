@@ -1,3 +1,4 @@
+import isDataUrl from 'valid-data-url'
 import App from 'ampersand-app'
 import State from 'ampersand-state'
 import Collection from 'ampersand-collection'
@@ -9,7 +10,6 @@ import TextareaView from 'components/input-view/textarea'
 import SelectView from 'components/select2-view'
 import TagsSelectView from 'view/tags-select'
 import ScriptSelectView from 'view/script-select'
-import ScriptImportView from 'view/script-import'
 import MembersSelectView from 'view/members-select'
 import EventsSelectView from 'view/events-select'
 import CheckboxView from 'components/checkbox-view'
@@ -18,6 +18,7 @@ import * as TaskConstants from 'constants/task'
 import TaskSelection from 'view/task-select'
 import Modalizer from 'components/modalizer'
 
+import ScriptImportView from './file-import'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 // import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
@@ -76,9 +77,9 @@ export default TaskFormView.extend({
       //})
     }
 
-    if (this.isImport) {
+    if (this.isImport || isDataUrl(this.model.script.data)) {
       this.scriptSelection = new ScriptImportView({
-        value: App.state.taskForm.file.filename,
+        file: App.state.taskForm.file,
         required: true,
         name: 'script_name',
         label: 'Script'
@@ -106,6 +107,20 @@ export default TaskFormView.extend({
       'arguments_type',
       'allows_dynamic_settings'
     ]
+
+    this.advancedToggle = new AdvancedToggle({
+      onclick: (event) => {
+        // just toggle
+        if (Array.isArray(this.advancedFields)) {
+          this.advancedFields.forEach(name => {
+            const field = this._fieldViews[name]
+            if (!field) { return }
+            if (name === 'acl' && this.model.workflow_id) { return }
+            field.toggle('visible')
+          })
+        }
+      }
+    })
 
     const requireUserInputs = new CheckboxView({
       visible: false,
@@ -227,17 +242,8 @@ export default TaskFormView.extend({
         name: 'task_arguments',
         value: this.model.task_arguments
       }),
+      this.advancedToggle,
       // advanced fields starts visible = false
-      new AdvancedToggle({
-        onclick: (event) => {
-          this.advancedFields.forEach(name => {
-            var field = this._fieldViews[name]
-            if (!field) return
-            if (name === 'acl' && this.model.workflow_id) return
-            field.toggle('visible')
-          })
-        }
-      }),
       new TextareaView({
         visible: false,
         label: 'Description',
