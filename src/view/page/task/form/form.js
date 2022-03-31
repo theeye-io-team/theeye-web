@@ -52,7 +52,7 @@ export default DropableForm.extend({
   toggleAdvancedFields (unfold = null) {
     if (unfold === true) {
       if (!this.advancedToggle) {
-        throw new Error('Error')
+        return
       }
       if (this.advancedToggle.folded === false) {
         // do nothing
@@ -79,7 +79,7 @@ export default DropableForm.extend({
   submit () {
     this.beforeSubmit()
     if (!this.valid) {
-      App.state.alerts.danger('The task is not ready.', 'Please check again')
+      App.state.alerts.danger('The task is not ready.', 'Complete the required fields')
       const fields = this.getInvalidFields()
       fields[0].el.scrollIntoView()
       return
