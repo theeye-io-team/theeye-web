@@ -49,18 +49,6 @@ export default DropableForm.extend({
   //    }
   //  }
   //},
-  toggleAdvancedFields (unfold = null) {
-    if (unfold === true) {
-      if (!this.advancedToggle) {
-        return
-      }
-      if (this.advancedToggle.folded === false) {
-        // do nothing
-        return
-      }
-    }
-    this.advancedToggle.click()
-  },
   fillForm (data) {
     if (data.task) {
       this.setWithTask(data.task)
@@ -94,15 +82,5 @@ export default DropableForm.extend({
     const buttons = this.buttons = new Buttons()
     this.renderSubview(buttons)
     buttons.on('click:confirm', () => { this.submit() })
-  },
-  getInvalidFields () {
-    const fields = this._fieldViewsArray.filter(f => !f.valid)
-    let firstInvalid
-    if (Array.isArray(this.advancedFields)) {
-      if (fields.find(field => this.advancedFields.includes(field.name))) {
-        this.toggleAdvancedFields(true)
-      }
-    }
-    return fields
   }
 })

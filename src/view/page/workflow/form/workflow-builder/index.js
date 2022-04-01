@@ -90,7 +90,14 @@ export default View.extend({
         let nodes = graph.nodes()
 
         // at least one node
-        return nodes.length > 0
+        if ( !(nodes.length > 0) ) {
+          return false
+        }
+
+        const tasks = this.workflow.tasks.models.filter(t => !t.canExecute)
+        if (tasks.length > 0) {
+          return false
+        }
       }
     },
   },
