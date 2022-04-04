@@ -454,7 +454,13 @@ const getValue = (arg) => {
   if (arg.type === 'date') {
     return (Array.isArray(arg.value) && arg.value[0])
   }
-  return (arg.value || '')
+  if (arg.value) {
+    return arg.value
+  }
+  if (typeof arg === 'string') {
+    return arg
+  }
+  return ''
 }
 
 //
@@ -498,15 +504,10 @@ const convertToObject = (value) => {
 //
 const mapAsString = (args) => {
   return args.map(arg => {
-    let value = convertToString(getValue(arg))
+    const value = convertToString(getValue(arg))
     if (value === "") {
-      if (arg.hasOwnProperty('default')) {
-        return arg.default
-      } else {
-        return ""
-      }
+      return arg.hasOwnProperty('default') ? arg.default : ''
     }
-
     return value
   })
 }
