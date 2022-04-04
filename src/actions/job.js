@@ -471,8 +471,13 @@ const getValue = (arg) => {
       return arg.value
     }
   }
-
-  return (arg.value || '')
+  if (arg.value) {
+    return arg.value
+  }
+  if (typeof arg === 'string') {
+    return arg
+  }
+  return ''
 }
 
 //
@@ -516,15 +521,10 @@ const convertToObject = (value) => {
 //
 const mapAsString = (args) => {
   return args.map(arg => {
-    let value = convertToString(getValue(arg))
+    const value = convertToString(getValue(arg))
     if (value === "") {
-      if (arg.hasOwnProperty('default')) {
-        return arg.default
-      } else {
-        return ""
-      }
+      return arg.hasOwnProperty('default') ? arg.default : ''
     }
-
     return value
   })
 }
