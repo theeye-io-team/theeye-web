@@ -36,11 +36,11 @@ export default View.extend({
         <ul class="list-group">
           <li class="list-group-item">
             <div class="row" style="line-height: 30px;">
-              <span data-hook="order-row-header" class="col-xs-1">#</span>
-              <span class="col-xs-2">Type</span>
-              <span class="col-xs-4">Label</span>
+              <span data-hook="order-row-header" class="col-xs-1">Order</span>
+              <span class="col-xs-3">Type</span>
+              <span class="col-xs-3">Label</span>
               <span class="col-xs-3">Value</span>
-              <span></span>
+              <span class="col-xs-2"></span>
             </div>
           </li>
         </ul>
@@ -54,6 +54,7 @@ export default View.extend({
     label: { hook: 'label' }
   },
   props: {
+    isValid: ['boolean', false],
     visible: ['boolean', false, true],
     taskArguments: 'collection',
     name: ['string', false, 'taskArguments'],
@@ -72,6 +73,13 @@ export default View.extend({
     'click [data-hook=add-argument]': 'onClickAddTaskArgument',
     'click [data-hook=copy-arguments]': 'onClickCopyTaskArguments',
     'click [data-hook=export-arguments]': 'exportArgumentsToArgumentsRecipe'
+  },
+  beforeSubmit () {
+    const args = this.argumentsViews.views
+    this.isValid = args.filter(arg => {
+      arg.beforeSubmit()
+      return arg.valid !== true
+    }).length === 0
   },
   onClickAddTaskArgument (event) {
     event.preventDefault()
@@ -153,7 +161,7 @@ export default View.extend({
   render () {
     this.renderWithTemplate(this)
 
-    this.renderCollection(
+    this.argumentsViews = this.renderCollection(
       this.taskArguments,
       ArgumentView,
       this.query('ul')
@@ -268,8 +276,9 @@ export default View.extend({
   },
   derived: {
     valid: {
+      deps: ['isValid'],
       fn () {
-        return true
+        return this.isValid
       }
     },
     value: {
