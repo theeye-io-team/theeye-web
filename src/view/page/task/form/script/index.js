@@ -65,11 +65,9 @@ export default TaskFormView.extend({
       //    hostsSelection.value.forEach(hostId => {
       //      hosts.push(App.state.hosts.get(hostId))
       //    })
-
       //    let oss = hosts.filter((host, index, self) => {
       //      return self.indexOf(host.os_name) === index;
       //    })
-
       //    if (oss.length > 1) {
       //      bootbox.alert('BOT\'s with different OS versions has been selected.')
       //    }
@@ -146,7 +144,7 @@ export default TaskFormView.extend({
       enabled: (this.model.user_inputs === true)
     })
 
-    let form = this
+    const form = this
     requireUserInputs.on('change:value', (elem) => {
       userInputsMembers.enabled = (elem.value === true)
     })
@@ -192,6 +190,42 @@ export default TaskFormView.extend({
       }
     })
 
+    const runners = new SelectView({
+      label: 'Run As',
+      name: 'script_runas',
+      multiple: false,
+      tags: true,
+      allowCreateTags: true,
+      options: App.state.runners,
+      value: this.model.script_runas,
+      required: true,
+      unselectedText: 'select a runner',
+      idAttribute: 'runner',
+      textAttribute: 'runner',
+      requiredMessage: 'Selection required',
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label'
+    })
+
+    runners.listenTo(this.scriptSelection, 'change', () => {
+      if (!this.scriptSelection.value) {
+        runners.clear()
+      } else {
+        if (!runners.value) {
+          const selected = this.scriptSelection.selected()
+          if (!selected?.extension) { return }
+
+          const extension = selected.extension
+          if (extension === 'js') {
+            runners.setValue('node')
+          }
+          if (extension === 'sh' || extension === 'bat') {
+            runners.setValue('%scrip%')
+          }
+        }
+      }
+    })
+
     // backward compatibility.
     // new task will be forbidden.
     // old tasks will only be false if it is explicitly false
@@ -222,22 +256,7 @@ export default TaskFormView.extend({
         name: 'tags',
         value: this.model.tags
       }),
-      new SelectView({
-        label: 'Run As',
-        name: 'script_runas',
-        multiple: false,
-        tags: true,
-        allowCreateTags: true,
-        options: App.state.runners,
-        value: this.model.script_runas,
-        required: true,
-        unselectedText: 'select a runner',
-        idAttribute: 'runner',
-        textAttribute: 'runner',
-        requiredMessage: 'Selection required',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
-      }),
+      runners,
       new ArgumentsView({
         name: 'task_arguments',
         value: this.model.task_arguments

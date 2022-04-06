@@ -297,7 +297,12 @@ export default View.extend({
     //this.$select.trigger('change')
   },
   setValue (items) {
-    var data = []
+    if (!this.$select) {
+      this.startingValue = items
+      return
+    }
+
+    let data = []
     if (items) {
       if (items.isCollection) {
         if (items.length>0) {

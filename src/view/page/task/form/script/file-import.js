@@ -39,6 +39,9 @@ export default DisabledInputView.extend({
   events: {
     'click button[data-hook=edit-button]': 'onClickEditButton'
   },
+  selected () {
+    return this.file
+  },
   onClickEditButton (event) {
     if (event) {
       event.preventDefault()

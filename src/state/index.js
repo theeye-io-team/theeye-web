@@ -59,6 +59,17 @@ const ClearCollection = Collection.extend({
   }
 })
 
+const RunnersCollection = ClearCollection.extend({
+  initialize () {
+    this.initialState = [
+      { id: 'f8e966d1e207d02c44511a58dccff2f5429e9a3b', runner: 'node' },
+      { id: '815e186af6624b310b41085b2ec41d2a86c3ab35', runner: '%script%' }
+    ]
+    ClearCollection.prototype.initialize.apply(this, arguments)
+  },
+  mainIndex: 'runner'
+})
+
 const CredentialsCollection = ClearCollection.extend({
   initialize () {
     this.initialState = [
@@ -302,11 +313,12 @@ const _initCollections = function () {
     }
   })
 
-  const runners = this.runners = new Collection([])
   this.credentials = new CredentialsCollection()
   this.looptimes = new LooptimesCollection()
   this.severities = new SeveritiesCollection()
   this.indicatorTypes = new IndicatorTypesCollection()
+
+  const runners = this.runners = new RunnersCollection()
 
   const runnersAdd = (model) => {
     if (model.script_runas) {
