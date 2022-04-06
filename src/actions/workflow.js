@@ -7,6 +7,7 @@ import union from 'lodash/union'
 import uniq from 'lodash/uniq'
 import difference from 'lodash/difference'
 import FileSaver from 'file-saver'
+import * as TaskConstants from 'constants/task'
 import { Factory as TaskFactory } from 'models/task'
 import loggerModule from 'lib/logger'; const logger = loggerModule('actions:workflow')
 
@@ -97,11 +98,18 @@ export default {
         App.state.workflows.add(workflow)
 
         this.populate(workflow)
-        // update workflow tasks state from api
+        // fetch workflow tasks state to the api
         workflow.tasks.fetch({
           data: {
             where: {
               workflow_id: workflow.id
+            }
+          },
+          success: () => {
+            for (let task of workflow.tasks.models) {
+              if (task.type === TaskConstants.TYPE_SCRIPT) {
+                App.actions.file.retrieve(task.script_id)
+              }
             }
           }
         })
