@@ -84,7 +84,7 @@ export default View.extend({
     },
     valid: {
       cache: false,
-      deps: ['workflow'],
+      //deps: ['workflow'],
       fn () {
         const graph = this.workflow.graph
         let nodes = graph.nodes()
@@ -98,6 +98,8 @@ export default View.extend({
         if (tasks.length > 0) {
           return false
         }
+
+        return true
       }
     },
   },

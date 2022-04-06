@@ -32,7 +32,7 @@ export default DropableFormView.extend({
       'allows_dynamic_settings'
     ]
 
-    const workflowBuilder = new WorkflowBuilderView({
+    const workflowBuilder = this.workflowBuilder = new WorkflowBuilderView({
       name: 'builder',
       value: workflow,
       mode: options.builder_mode
@@ -195,11 +195,12 @@ export default DropableFormView.extend({
     this.beforeSubmit()
     if (!this.valid) {
       const fields = this.getInvalidFields()
-      if (fields[0] === 'builder') {
-        App.state.alerts.danger('Some of the task are not ready to be imported.')
+      const invalid = fields[0]
+      if (invalid.name === 'builder') {
+        App.state.alerts.danger('Some of the task are not ready.')
         //const reason = this.
       } else {
-        fields[0].el.scrollIntoView()
+        invalid.el.scrollIntoView()
       }
       return
     }
