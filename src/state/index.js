@@ -292,7 +292,8 @@ const OnHoldState = State.extend({
 
 const TaskFormState = State.extend({
   props: {
-    file: 'object'
+    file: 'object',
+    form: 'state' // view
   }
 })
 

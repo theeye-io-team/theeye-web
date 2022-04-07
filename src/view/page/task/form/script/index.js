@@ -32,7 +32,7 @@ export default TaskFormView.extend({
     const isNewTask = Boolean(this.model.isNew()) // or is import
 
     // multiple only if new, allows to create multiple tasks at once
-    let hostsSelection = new SelectView({
+    const hostsSelection = new SelectView({
       //label: (isNewTask ? 'Bots *' : 'Bot *'),
       //name: (isNewTask ? 'hosts' : 'host_id'),
       //tags: isNewTask,
@@ -75,9 +75,16 @@ export default TaskFormView.extend({
       //})
     }
 
-    if (this.isImport || isDataUrl(this.model.script.data)) {
+    if (this.isImport) { // imported using import button
       this.scriptSelection = new ScriptImportView({
-        file: App.state.taskForm.file,
+        file: App.state.taskForm.file, // @TODO remove taskForm state to improve this.
+        required: true,
+        name: 'script_name',
+        label: 'Script'
+      })
+    } else if (isDataUrl(this.model.script.data)) { // imported via workflow
+      this.scriptSelection = new ScriptImportView({
+        file: this.model.script,
         required: true,
         name: 'script_name',
         label: 'Script'
@@ -190,50 +197,12 @@ export default TaskFormView.extend({
       }
     })
 
-    const runners = new SelectView({
-      label: 'Run As',
-      name: 'script_runas',
-      multiple: false,
-      tags: true,
-      allowCreateTags: true,
-      options: App.state.runners,
-      value: this.model.script_runas,
-      required: true,
-      unselectedText: 'select a runner',
-      idAttribute: 'runner',
-      textAttribute: 'runner',
-      requiredMessage: 'Selection required',
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label'
+    const runners = this.runners = new RunnerSelectionView({
+      value: this.model.script_runas
     })
 
     runners.listenTo(this.scriptSelection, 'change', () => {
-      if (!runners.rendered) { return }
-      if (!this.scriptSelection.value) {
-        runners.clear()
-        return
-      }
-
-      const selected = this.scriptSelection.selected()
-      if (!selected?.extension) {
-        runners.clear()
-        return
-      }
-
-      const extension = selected.extension
-      let runner
-      if (extension === 'js') { runner = 'ccd461d9e99cb6fccadc34fff41655fa2982e38a' }
-      if (extension === 'sh') { runner = '8452d30e16c622c5e97a8ff798d9a78b48bfa7cc' }
-      if (extension === 'bat') { runner = '815e186af6624b310b41085b2ec41d2a86c3ab35' }
-      if (extension === 'ps1') { runner = '6bf84214aa4e20e0d77600adb7368d203339642b' }
-
-      if (
-        !runners.value || 
-        (runner !== runners.value && App.state.runners.isDefaultRunner(runners.value))
-      ) {
-        const model = App.state.runners.models.find(r => r.id === runner)
-        runners.setValue(model.runner)
-      }
+      runners.updateState({ scripts: this.scriptSelection })
     })
 
     // backward compatibility.
@@ -437,6 +406,12 @@ export default TaskFormView.extend({
             App.state.onboarding.showTaskLastStep = false
           }
         })
+      }
+    }
+
+    if (!this.runners.value) {
+      if (this.scriptSelection.selected()) {
+        this.runners.updateState({ scripts: this.scriptSelection })
       }
     }
   },
@@ -748,6 +723,54 @@ const EnvVarView = View.extend({
       this.el.classList.add('box-danger')
     } else {
       this.el.classList.remove('box-danger')
+    }
+  }
+})
+
+const RunnerSelectionView = SelectView.extend({
+  initialize (specs) {
+    this.label = 'Run As'
+    this.name = 'script_runas'
+    this.multiple = false
+    this.tags = true
+    this.allowCreateTags = true
+    this.options = App.state.runners
+    this.required = true
+    this.unselectedText = 'select a runner'
+    this.idAttribute = 'runner'
+    this.textAttribute = 'runner'
+    this.requiredMessage = 'Selection required'
+    this.invalidClass = 'text-danger'
+    this.validityClassSelector = '.control-label'
+
+    SelectView.prototype.initialize.apply(this, arguments)
+  },
+  updateState ({ scripts }) {
+    if (!this.rendered) { return }
+    if (!scripts.value) {
+      this.clear()
+      return
+    }
+
+    const selected = scripts.selected()
+    if (!selected?.extension) {
+      this.clear()
+      return
+    }
+
+    const extension = selected.extension
+    let runner
+    if (extension === 'js') { runner = 'ccd461d9e99cb6fccadc34fff41655fa2982e38a' }
+    if (extension === 'sh') { runner = '8452d30e16c622c5e97a8ff798d9a78b48bfa7cc' }
+    if (extension === 'bat') { runner = '815e186af6624b310b41085b2ec41d2a86c3ab35' }
+    if (extension === 'ps1') { runner = '6bf84214aa4e20e0d77600adb7368d203339642b' }
+
+    if (
+      !this.value || 
+      (runner !== this.value && App.state.runners.isDefaultRunner(this.value))
+    ) {
+      const model = App.state.runners.models.find(r => r.id === runner)
+      this.setValue(model.runner)
     }
   }
 })

@@ -59,9 +59,16 @@ const Script = Schema.extend({
   derived: {
     formatted_tags: formattedTags(),
     canExecute: {
-      deps: ['script_id','host_id'],
+      deps: ['script','script_runas','script_id','host_id'],
       fn () {
-        return isMongoId(this.script_id || '') && isMongoId(this.host_id || '')
+        return (
+          (
+            isMongoId(this.script_id || '') ||
+            this.script.data // the script is loaded but it was not persisted yet
+          ) &&
+          isMongoId(this.host_id || '') &&
+          Boolean(this.script_runas)
+        )
       }
     },
     missingConfiguration: {
@@ -221,7 +228,6 @@ const Approval = Schema.extend({
   derived: {
     formatted_tags: formattedTags(),
     canExecute: {
-      deps: [],
       fn () {
         return true
       }
@@ -259,7 +265,6 @@ const Dummy = Schema.extend({
   derived: {
     formatted_tags: formattedTags(),
     canExecute: {
-      deps: [],
       fn () {
         return true
       }
@@ -303,7 +308,6 @@ const Notification = Schema.extend({
   derived: {
     formatted_tags: formattedTags(),
     canExecute: {
-      deps: [],
       fn () {
         return true
       }

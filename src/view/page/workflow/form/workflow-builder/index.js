@@ -12,6 +12,7 @@ import graphlib from 'graphlib'
 import FormButtons from 'view/buttons'
 import CopyTaskButton from 'view/page/task/buttons/copy'
 import TaskForm from 'view/page/task/form'
+import * as TaskConstants from 'constants/task'
 import CreateTaskWizard from 'view/page/task/creation-wizard'
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 import uuidv4 from 'uuid'
@@ -94,9 +95,6 @@ export default View.extend({
         }
 
         const tasks = this.workflow.tasks.models.filter(t => {
-          if (this.mode === 'import') {
-            return !t.host_id
-          }
           return !t.canExecute
         })
 
@@ -220,7 +218,9 @@ export default View.extend({
     }
   },
   editTask (task) {
-    App.state.taskForm.file = task.script.serialize()
+    //if (task.type === TaskConstants.TYPE_SCRIPT) {
+    //  App.state.taskForm.file = task.script.serialize()
+    //}
 
     const form = new TaskForm({ model: task, mode: this.mode })
     const modal = new Modalizer({

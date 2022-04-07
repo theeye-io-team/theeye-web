@@ -6,6 +6,10 @@ import HelpTexts from 'language/help'
 import * as FieldConstants from 'constants/field'
 
 export default DropableForm.extend({
+  initialize () {
+    App.state.taskForm.form = this
+    DropableForm.prototype.initialize.apply(this, arguments)
+  },
   props: {
     isImport: ['boolean', false, false]
   },
