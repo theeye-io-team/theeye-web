@@ -84,7 +84,7 @@ export default AppModel.extend({
       attrs.data = decodeUnicodeData(attrs.data.split(',')[1])
     }
     return attrs
-  },
+  }
 })
 
 const encodeUnicodeData = (data) => {

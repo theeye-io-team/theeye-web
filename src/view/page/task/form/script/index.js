@@ -208,21 +208,31 @@ export default TaskFormView.extend({
     })
 
     runners.listenTo(this.scriptSelection, 'change', () => {
+      if (!runners.rendered) { return }
       if (!this.scriptSelection.value) {
         runners.clear()
-      } else {
-        if (!runners.value) {
-          const selected = this.scriptSelection.selected()
-          if (!selected?.extension) { return }
+        return
+      }
 
-          const extension = selected.extension
-          if (extension === 'js') {
-            runners.setValue('node')
-          }
-          if (extension === 'sh' || extension === 'bat') {
-            runners.setValue('%scrip%')
-          }
-        }
+      const selected = this.scriptSelection.selected()
+      if (!selected?.extension) {
+        runners.clear()
+        return
+      }
+
+      const extension = selected.extension
+      let runner
+      if (extension === 'js') { runner = 'ccd461d9e99cb6fccadc34fff41655fa2982e38a' }
+      if (extension === 'sh') { runner = '8452d30e16c622c5e97a8ff798d9a78b48bfa7cc' }
+      if (extension === 'bat') { runner = '815e186af6624b310b41085b2ec41d2a86c3ab35' }
+      if (extension === 'ps1') { runner = '6bf84214aa4e20e0d77600adb7368d203339642b' }
+
+      if (
+        !runners.value || 
+        (runner !== runners.value && App.state.runners.isDefaultRunner(runners.value))
+      ) {
+        const model = App.state.runners.models.find(r => r.id === runner)
+        runners.setValue(model.runner)
       }
     })
 

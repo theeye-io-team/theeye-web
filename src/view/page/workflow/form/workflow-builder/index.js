@@ -84,7 +84,6 @@ export default View.extend({
     },
     valid: {
       cache: false,
-      //deps: ['workflow'],
       fn () {
         const graph = this.workflow.graph
         let nodes = graph.nodes()
@@ -94,7 +93,13 @@ export default View.extend({
           return false
         }
 
-        const tasks = this.workflow.tasks.models.filter(t => !t.canExecute)
+        const tasks = this.workflow.tasks.models.filter(t => {
+          if (this.mode === 'import') {
+            return !t.host_id
+          }
+          return !t.canExecute
+        })
+
         if (tasks.length > 0) {
           return false
         }
