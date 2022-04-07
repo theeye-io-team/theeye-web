@@ -180,36 +180,6 @@ export default {
       }
     })
   },
-  getSerialization (id) {
-    return new Promise( (resolve, reject) => {
-      XHR.send({
-        method: 'GET',
-        url: `${App.config.supervisor_api_url}/workflows/${id}/serialize`,
-        done (serialization) {
-          resolve(serialization)
-        },
-        fail (xhrErr, xhr) {
-          const err = new Error('Error retrieving workflow serialization.')
-          err.xhr = xhr
-          err.error = xhrErr
-          App.state.alerts.danger('Failure', err.message)
-          reject(err)
-        }
-      })
-    })
-  },
-  parseSerialization (serial) {
-    const props = Object.assign({ tasks: null }, serial)
-    const tasks = []
-    for (let taskSerial of serial.tasks) {
-      tasks.push( App.actions.task.parseSerialization(taskSerial) )
-    }
-    props.tasks = tasks
-
-    delete props.id // his is a new workflow should not have it
-    const workflow = new App.Models.Workflow.Workflow(props, { store: false })
-    return workflow
-  },
   migrateGraph (graphData) {
     const cgraph = graphlib.json.read(graphData)
     const ngraph = new graphlib.Graph()
@@ -245,12 +215,46 @@ export default {
   },
   exportRecipe (id) {
     //const workflow = App.state.workflows.get(id)
-    App.actions.workflow.getSerialization(id).then(recipe => {
+    this.getSerialization(id).then(recipe => {
       const jsonContent = JSON.stringify(recipe)
       const blob = new Blob([jsonContent], { type: 'application/json' })
       const fname = recipe.name.replace(/ /g, '_')
       FileSaver.saveAs(blob, `${fname}_workflow.json`)
     })
+  },
+  getSerialization (id) {
+    return new Promise( (resolve, reject) => {
+      XHR.send({
+        method: 'GET',
+        url: `${App.config.supervisor_api_url}/workflows/${id}/serialize`,
+        headers: {
+          'Accept': 'application/json;charset=UTF-8',
+          'Accept-Version': App.config.supervisor_api_version
+        },
+        done (serialization) {
+          resolve(serialization)
+        },
+        fail (xhrErr, xhr) {
+          const err = new Error('Error retrieving workflow serialization.')
+          err.xhr = xhr
+          err.error = xhrErr
+          App.state.alerts.danger('Failure', err.message)
+          reject(err)
+        }
+      })
+    })
+  },
+  parseSerialization (serial) {
+    const props = Object.assign({ tasks: null }, serial)
+    const tasks = []
+    for (let taskSerial of serial.tasks) {
+      tasks.push( App.actions.task.parseSerialization(taskSerial) )
+    }
+    props.tasks = tasks
+
+    delete props.id // his is a new workflow should not have it
+    const workflow = new App.Models.Workflow.Workflow(props, { store: false })
+    return workflow
   }
 }
 
