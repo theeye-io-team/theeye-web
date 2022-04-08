@@ -239,8 +239,9 @@ const BaseJobView = View.extend({
   initialize () {
     View.prototype.initialize.apply(this, arguments)
 
-    // refetch
+    App.actions.job.fillUser(this.job)
     App.actions.job.getParticipants(this.job.id)
+    App.actions.job.fetch(this.job.id) // fetch inputs, task data, outputs, exec. result
 
     this.listenToAndRun(this.job, 'change:assignee change:observers change:owner', () => {
       this.updateState()
@@ -399,7 +400,7 @@ const BaseJobView = View.extend({
       this.result,
       this.queryByHook('moreinfo-container')
     )
-  },
+  }
 })
 
 const RowState = State.extend({

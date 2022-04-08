@@ -21,6 +21,7 @@ import ExportWorkflowButton from 'view/page/workflow/buttons/export'
 import IntegrationsWorkflowButton from 'view/page/workflow/buttons/integrations'
 import ScheduleButton from 'view/buttons/schedule'
 import SchedulesView from 'view/page/task/schedules'
+import { ExecTask as ExecTaskView } from 'view/page/dashboard/task/task/exec-task.js'
 
 import DownloadButton from 'view/buttons/download'
 
@@ -316,7 +317,9 @@ const ExecWorkflowButton = ExecButton.extend({
   onClick (event) {
     event.stopPropagation()
     event.preventDefault()
-    App.actions.workflow.triggerExecution(this.model)
+    const task = this.model.start_task
+    const execTask = new ExecTaskView({ model: task })
+    execTask.execute()
     return false
   }
 })

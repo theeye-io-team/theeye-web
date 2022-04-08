@@ -5,12 +5,14 @@ import FormView from 'ampersand-form-view'
 import HelpTexts from 'language/help'
 import Modalizer from 'components/modalizer'
 import SelectView from 'components/select2-view'
+//import TaskVersionSelectView from 'view/task-version-select'
 import TaskSelectView from 'view/task-select'
 import bootbox from 'bootbox'
 import graphlib from 'graphlib'
 import FormButtons from 'view/buttons'
 import CopyTaskButton from 'view/page/task/buttons/copy'
 import TaskForm from 'view/page/task/form'
+import * as TaskConstants from 'constants/task'
 import CreateTaskWizard from 'view/page/task/creation-wizard'
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 import uuidv4 from 'uuid'
@@ -35,14 +37,18 @@ export default View.extend({
   initialize (options) {
     View.prototype.initialize.apply(this,arguments)
 
-    let recipe, workflow = options.value
+    let recipe
+    let workflow = options.value
+
     const version = workflow.version
     if (this.mode === 'edit') {
-      // keep the same original ids
       recipe = workflow.serialize()
+    } else if (this.mode === 'import') {
+      recipe = workflow.serialize()
+      recipe.tasks = workflow.tasks.models // keep untouch
     } else {
-      // replace ids
-      recipe = App.actions.workflow.createRecipe(workflow)
+      // will clone the tasks and replace the original ids
+      recipe = workflow.serializeClone()
     }
 
     // migrate to version 2
@@ -79,13 +85,24 @@ export default View.extend({
     },
     valid: {
       cache: false,
-      deps: ['workflow'],
       fn () {
         const graph = this.workflow.graph
         let nodes = graph.nodes()
 
         // at least one node
-        return nodes.length > 0
+        if ( !(nodes.length > 0) ) {
+          return false
+        }
+
+        const tasks = this.workflow.tasks.models.filter(t => {
+          return !t.canExecute
+        })
+
+        if (tasks.length > 0) {
+          return false
+        }
+
+        return true
       }
     },
   },
@@ -201,7 +218,11 @@ export default View.extend({
     }
   },
   editTask (task) {
-    const form = new TaskForm({ model: task })
+    //if (task.type === TaskConstants.TYPE_SCRIPT) {
+    //  App.state.taskForm.file = task.script.serialize()
+    //}
+
+    const form = new TaskForm({ model: task, mode: this.mode })
     const modal = new Modalizer({
       buttons: false,
       title: `Edit task ${task.name} [${task.id}]`,
@@ -270,7 +291,7 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    const taskSelection = new TaskSelectionModal({ tasks: App.state.tasks })
+    const taskSelection = new TaskSelectionModal()
 
     const modal = new Modalizer({
       buttons: false,
@@ -362,15 +383,12 @@ export default View.extend({
 })
 
 const TaskSelectionModal = FormView.extend({
-  props: {
-    tasks: 'collection',
-  },
   initialize (options) {
     this.fields = [
+      //new TaskVersionSelectView({
       new TaskSelectView({
         required: true,
-        label: 'Task',
-        options: this.tasks
+        label: 'Task'
       })
     ]
 
@@ -426,7 +444,7 @@ const TaskContextualMenu = View.extend({
     'click [data-hook=success]': 'onClickConnectTasks',
     'click [data-hook=failure]': 'onClickConnectTasks',
     'click [data-hook=edit]': 'onClickEdit',
-    //'click [data-hook=edit-script]': 'onClickEditScript',
+    'click [data-hook=edit-script]': 'onClickEditScript',
     'click [data-hook=export]': 'onClickExport',
     'click [data-hook=remove]': 'onClickRemove'
   },
@@ -436,13 +454,13 @@ const TaskContextualMenu = View.extend({
     this.trigger('task:edit')
     this.remove()
   },
-  //onClickEditScript (event) {
-  //  event.preventDefault()
-  //  event.stopPropagation()
-  //  App.actions.file.edit(this.model.script_id)
-  //  this.trigger('script:edit')
-  //  this.remove()
-  //},
+  onClickEditScript (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    App.actions.file.edit(this.model.script_id)
+    this.trigger('script:edit')
+    this.remove()
+  },
   onClickRemove (event) {
     event.preventDefault()
     event.stopPropagation()

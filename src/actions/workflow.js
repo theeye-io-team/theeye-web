@@ -7,7 +7,7 @@ import union from 'lodash/union'
 import uniq from 'lodash/uniq'
 import difference from 'lodash/difference'
 import FileSaver from 'file-saver'
-import { v4 as uuidv4 } from 'uuid'
+import * as TaskConstants from 'constants/task'
 import { Factory as TaskFactory } from 'models/task'
 import loggerModule from 'lib/logger'; const logger = loggerModule('actions:workflow')
 
@@ -98,11 +98,18 @@ export default {
         App.state.workflows.add(workflow)
 
         this.populate(workflow)
-        // update workflow tasks state from api
+        // fetch workflow tasks state to the api
         workflow.tasks.fetch({
           data: {
             where: {
               workflow_id: workflow.id
+            }
+          },
+          success: () => {
+            for (let task of workflow.tasks.models) {
+              if (task.type === TaskConstants.TYPE_SCRIPT) {
+                App.actions.file.retrieve(task.script_id)
+              }
             }
           }
         })
@@ -112,56 +119,6 @@ export default {
         bootbox.alert('Something went wrong. Please refresh')
       }
     })
-
-    /*
-    workflow.save({}, {
-      success: () => {
-        App.state.alerts.success('Success', 'Workflow created')
-        workflow.tasks.reset([]) // remove all temporary tasks
-        workflow.events.reset([]) // remove all temporary events
-        App.state.workflows.add(workflow)
-        
-        // update workflow tasks state from api
-        workflow.tasks.fetch({
-          data: {
-            where: {
-              workflow_id: workflow.id
-            }
-          },
-          //success: () => App.actions.workflow.populate(workflow)
-        })
-      },
-      error: (err) => {
-        logger.error(err)
-        bootbox.alert('Something went wrong. Please refresh')
-      }
-    })
-    */
-  },
-  importCreate (recipe) {
-    //let ids = []
-    //let promises = []
-    //for (let task of data.tasks) {
-    //  const uuid = task.id
-    //  ids.push(uuid)
-    //  const recipe = Object.assign({}, task)
-    //  delete recipe.id
-    //  delete recipe.workflow_id
-    //  promises.push(App.actions.task.create(recipe))
-    //}
-    //Promise.all(promises).then((results) => {
-    //  const newIds = results.map((result) => result.id)
-    //  data.start_task_id = newIds[ids.indexOf(data.start_task_id)]
-    //  for (const node of data.graph.nodes) {
-    //    node["v"] = newIds[ids.indexOf(node["v"])]
-    //    node["value"].id = newIds[ids.indexOf(node["value"].id)]
-    //  }
-    //  for (const edge of data.graph.edges) {
-    //    edge["v"] = newIds[ids.indexOf(edge["v"])]
-    //    edge["w"] = newIds[ids.indexOf(edge["w"])]
-    //  }
-    //  this.create(data)
-    //})
   },
   remove (id) {
     const workflow = App.state.workflows.get(id)
@@ -203,12 +160,8 @@ export default {
       //workflow.fetchJobs()
     }
   },
-  triggerExecution (workflow) {
-    //this.populate(workflow)
-    App.actions.task.execute(workflow.start_task)
-  },
-  //run (workflow) {
-  //  JobActions.createFromTask(workflow.start_task)
+  //triggerExecution (workflow) {
+  //  App.actions.task.execute(workflow.start_task)
   //},
   getCredentials (id, next) {
     next || (next = () => {})
@@ -222,51 +175,10 @@ export default {
       },
       fail (err, xhr) {
         let msg = 'Error retrieving workflow integrations credentials.'
-        bootbox.alert(msg)
+        App.state.alerts.danger('Failure', msg)
         return next(new Error(msg))
       }
     })
-  },
-  createRecipe (workflow) {
-    const recipe = workflow.serialize()
-    recipe.id = uuidv4()
-    recipe.tasks = []
-    recipe.events = []
-
-    const graph = recipe.graph
-
-    for (let node of graph.nodes) {
-      const uuid = uuidv4()
-
-      let model
-      if (node && /Event$/.test(node.value._type)) {
-        model = App.state.events.get(node.value.id)
-        model = model.serialize()
-        recipe.events.push(model)
-      } else if (node && /Task$/.test(node.value._type)) {
-        model = App.state.tasks.get(node.value.id)
-        model = model.serialize()
-        recipe.tasks.push(model)
-
-        if (workflow.start_task_id === model.id) {
-          recipe.start_task_id = uuid
-        }
-      }
-
-      node.v = uuid
-      node.value.id = uuid
-
-      for (let edge of graph.edges) {
-        if (edge.v === model.id) { edge.v = uuid }
-        if (edge.w === model.id) { edge.w = uuid }
-      }
-
-      // update only after mapping edges with nodes
-      model.id = uuid
-    }
-
-    recipe.graph = graph
-    return recipe
   },
   migrateGraph (graphData) {
     const cgraph = graphlib.json.read(graphData)
@@ -302,12 +214,47 @@ export default {
     return graphlib.json.write(ngraph)
   },
   exportRecipe (id) {
-    const workflow = App.state.workflows.get(id)
-    const recipe = App.actions.workflow.createRecipe(workflow)
-    const jsonContent = JSON.stringify(recipe)
-    const blob = new Blob([jsonContent], { type: 'application/json' })
-    const fname = recipe.name.replace(/ /g, '_')
-    FileSaver.saveAs(blob, `${fname}.json`)
+    //const workflow = App.state.workflows.get(id)
+    this.getSerialization(id).then(recipe => {
+      const jsonContent = JSON.stringify(recipe)
+      const blob = new Blob([jsonContent], { type: 'application/json' })
+      const fname = recipe.name.replace(/ /g, '_')
+      FileSaver.saveAs(blob, `${fname}_workflow.json`)
+    })
+  },
+  getSerialization (id) {
+    return new Promise( (resolve, reject) => {
+      XHR.send({
+        method: 'GET',
+        url: `${App.config.supervisor_api_url}/workflows/${id}/serialize`,
+        headers: {
+          'Accept': 'application/json;charset=UTF-8',
+          'Accept-Version': App.config.supervisor_api_version
+        },
+        done (serialization) {
+          resolve(serialization)
+        },
+        fail (xhrErr, xhr) {
+          const err = new Error('Error retrieving workflow serialization.')
+          err.xhr = xhr
+          err.error = xhrErr
+          App.state.alerts.danger('Failure', err.message)
+          reject(err)
+        }
+      })
+    })
+  },
+  parseSerialization (serial) {
+    const props = Object.assign({ tasks: null }, serial)
+    const tasks = []
+    for (let taskSerial of serial.tasks) {
+      tasks.push( App.actions.task.parseSerialization(taskSerial) )
+    }
+    props.tasks = tasks
+
+    delete props.id // his is a new workflow should not have it
+    const workflow = new App.Models.Workflow.Workflow(props, { store: false })
+    return workflow
   }
 }
 

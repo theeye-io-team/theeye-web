@@ -8,7 +8,7 @@ import TaskRouter from 'router/task'
 import after from 'lodash/after'
 import TaskFormActions from 'actions/taskform'
 import FileSaver from 'file-saver'
-import { ExecTask, ExecTaskWithNoHost } from 'view/page/dashboard/task/task/exec-task.js'
+import { ExecTask as ExecTaskView } from 'view/page/dashboard/task/task/exec-task.js'
 import { Model as File } from 'models/file'
 import loggerModule from 'lib/logger'
 
@@ -47,7 +47,7 @@ export default {
         App.state.events.fetch()
         App.state.tags.fetch()
       },
-      error: () => {
+      fail: () => {
         bootbox.alert('Something goes wrong updating the Task')
       }
     })
@@ -224,6 +224,22 @@ export default {
       }
     })
   },
+  parseSerialization (serial) {
+    //if (serial.type === TaskConstants.TYPE_SCRIPT) {
+    //  if (serial.script) {
+    //    const script = new File(serial.script, { parse: true })
+    //    script.dataFromBase64(serial.script.data)
+    //    serial.script = script // File model
+    //  }
+    //} else
+    if (serial.type === TaskConstants.TYPE_SCRAPER) {
+      serial.remote_url = serial.url
+      delete serial.url
+    }
+
+    const task = new TaskFactory(serial, { store: false })
+    return task
+  },
   parseRecipe (recipe) {
     if (recipe.task.type === TaskConstants.TYPE_SCRAPER) {
       recipe.task.remote_url = recipe.task.url
@@ -267,22 +283,8 @@ export default {
     return false
   },
   execute (task) {
-    let execTask
-    if (!App.state.session.licenseExpired) {
-      if (!task.canExecute) {
-        bootbox.alert('This task cannot be executed')
-        return
-      }
-
-      if (task.hasHost()) {
-        execTask = new ExecTask({ model: task })
-      } else {
-        execTask = new ExecTaskWithNoHost({ model: task })
-      }
-      execTask.execute()
-    } else {
-      bootbox.alert('Your license has expired! </br> Please contact your service provider to activate the product again.')
-    }
+    const execTask = new ExecTaskView({ model: task })
+    execTask.execute()
   },
   edit (id) {
     // route edit file action
@@ -310,7 +312,7 @@ const create = (data) => {
         App.state.tasks.add(task, { merge: true })
         resolve(task)
       },
-      error (response, xhr) {
+      fail (response, xhr) {
         reject(response)
       }
     })
@@ -360,7 +362,7 @@ const createUsingRecipe = (data) => {
         App.state.tasks.add(task, { merge: true })
         resolve(task)
       },
-      error (response, xhr) {
+      fail (response, xhr) {
         reject(response)
       }
     })
