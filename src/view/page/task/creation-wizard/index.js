@@ -47,19 +47,6 @@ export default function (options = {}) {
   return modal
 }
 
-const ImportTaskInputView = FileInputView.extend({
-  template: `
-    <div>
-      <div class="upload-btn-wrapper">
-        <button for="file-upload" data-hook="button-label" class="btn btn-primary">
-          <i class="fa fa-upload"></i> Import
-        </button>
-        <input id="file-upload" type="file">
-      </div>
-    </div>
-  `
-})
-
 const TaskCreationWizard = View.extend({
   props: {
     submit: 'any'
@@ -154,7 +141,7 @@ const TaskCreationWizard = View.extend({
             bootbox.alert('Invalid JSON file.')
           }
 
-          let task = App.actions.task.parseRecipe(recipe)
+          const task = App.actions.task.parseSerialization(recipe)
           this.renderImportFormTask(task)
         } else {
           bootbox.alert('File not supported, please select a JSON file.')
@@ -239,13 +226,15 @@ const TaskCreationWizard = View.extend({
     const form = new TaskFormView({ model: task, isImport: true })
     this.renderSubview(form, this.queryByHook('form-container'))
     this.form = form
+
+    const script = task.script
     this.listenTo(form, 'submit', data => {
       if (this.submit) {
-        data.script = App.state.taskForm.file
+        data.script = script.serialize() // data from imported file. was not persisted yet
         this.submit(data)
       } else {
         if (task.type === 'script') {
-          App.actions.file.create(App.state.taskForm.file, (err, file) => {
+          App.actions.file.create(script.serialize(), (err, file) => {
             data.script_id = file.id
             delete data.script_name
             App.actions.task.create(data)
@@ -253,6 +242,7 @@ const TaskCreationWizard = View.extend({
         } else {
           App.actions.task.create(data)
         }
+        // @TODO create task. if it is a script task also create the file
       }
 
       this.trigger('submitted')
@@ -263,6 +253,20 @@ const TaskCreationWizard = View.extend({
     View.prototype.remove.apply(this,arguments)
   },
   update () {
-    // DO NOT REMOVE. must do nothing
+    // DO NOT REMOVE THIS METHOD. It must do nothing
   }
 })
+
+const ImportTaskInputView = FileInputView.extend({
+  template: `
+    <div>
+      <div class="upload-btn-wrapper">
+        <button for="file-upload" data-hook="button-label" class="btn btn-primary">
+          <i class="fa fa-upload"></i> Import
+        </button>
+        <input id="file-upload" type="file">
+      </div>
+    </div>
+  `
+})
+

@@ -87,21 +87,16 @@ export default View.extend({
       cache: false,
       fn () {
         const graph = this.workflow.graph
-        let nodes = graph.nodes()
-
+        const nodes = graph.nodes()
         // at least one node
         if ( !(nodes.length > 0) ) {
           return false
         }
 
-        const tasks = this.workflow.tasks.models.filter(t => {
-          return !t.canExecute
-        })
-
+        const tasks = this.getInvalidTasks()
         if (tasks.length > 0) {
           return false
         }
-
         return true
       }
     },
@@ -140,6 +135,11 @@ export default View.extend({
         this.listenTo(workflowGraph, 'tap:back', this.onTapBackground)
         this.listenTo(workflowGraph, 'clear', this.onClearButton)
       })
+  },
+  getInvalidTasks () {
+    return this.workflow.tasks.models.filter(t => {
+      return !t.canExecute
+    })
   },
   onClearButton () {
     bootbox.confirm({

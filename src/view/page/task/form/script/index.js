@@ -33,10 +33,6 @@ export default TaskFormView.extend({
 
     // multiple only if new, allows to create multiple tasks at once
     const hostsSelection = new SelectView({
-      //label: (isNewTask ? 'Bots *' : 'Bot *'),
-      //name: (isNewTask ? 'hosts' : 'host_id'),
-      //tags: isNewTask,
-      //multiple: isNewTask,
       label: 'Bot *',
       multiple: false,
       name: 'host_id',
@@ -59,32 +55,11 @@ export default TaskFormView.extend({
           runner: '/usr/bin/env bash %script%'
         })
       }
-      //this.listenTo(hostsSelection, 'change', () => {
-      //  if (hostsSelection.value) {
-      //    let hosts = []
-      //    hostsSelection.value.forEach(hostId => {
-      //      hosts.push(App.state.hosts.get(hostId))
-      //    })
-      //    let oss = hosts.filter((host, index, self) => {
-      //      return self.indexOf(host.os_name) === index;
-      //    })
-      //    if (oss.length > 1) {
-      //      bootbox.alert('BOT\'s with different OS versions has been selected.')
-      //    }
-      //  }
-      //})
     }
 
-    if (this.isImport) { // imported using import button
+    if (this.isImport || isDataUrl(this.model.script.data)) { // imported via workflow
       this.scriptSelection = new ScriptImportView({
-        file: App.state.taskForm.file, // @TODO remove taskForm state to improve this.
-        required: true,
-        name: 'script_name',
-        label: 'Script'
-      })
-    } else if (isDataUrl(this.model.script.data)) { // imported via workflow
-      this.scriptSelection = new ScriptImportView({
-        file: this.model.script,
+        file: this.model.script.serialize(),
         required: true,
         name: 'script_name',
         label: 'Script'

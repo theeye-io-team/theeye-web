@@ -224,38 +224,21 @@ export default {
       }
     })
   },
-  parseSerialization (serial) {
-    //if (serial.type === TaskConstants.TYPE_SCRIPT) {
-    //  if (serial.script) {
-    //    const script = new File(serial.script, { parse: true })
-    //    script.dataFromBase64(serial.script.data)
-    //    serial.script = script // File model
-    //  }
-    //} else
-    if (serial.type === TaskConstants.TYPE_SCRAPER) {
-      serial.remote_url = serial.url
-      delete serial.url
+  parseSerialization (recipe) {
+    // backward compatible with old recipes
+    let serial
+    if (recipe.task) {
+      serial = recipe.task
+      if (recipe.file) {
+        serial.script = recipe.file
+        // transform to data url
+        serial.script.data = `data:text/plain;base64,${serial.script.data}`
+      }
+    } else {
+      serial = recipe
     }
 
     const task = new TaskFactory(serial, { store: false })
-    return task
-  },
-  parseRecipe (recipe) {
-    if (recipe.task.type === TaskConstants.TYPE_SCRAPER) {
-      recipe.task.remote_url = recipe.task.url
-      delete recipe.task.url
-    }
-
-    const task = new TaskFactory(recipe.task, { store: false })
-
-    if (recipe.file) {
-      let file = new File(recipe.file, { parse: true })
-      file.dataFromBase64(recipe.file.data)
-      TaskFormActions.setFile(file._values)
-    } else {
-      TaskFormActions.clearFile()
-    }
-
     return task
   },
   recipeHasArguments (recipe) {
