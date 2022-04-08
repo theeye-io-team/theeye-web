@@ -3,11 +3,14 @@ import FileRouter from 'router/files'
 import bootbox from 'bootbox'
 import XHR from 'lib/xhr'
 import after from 'lodash/after'
+const isDataUrl = require('valid-data-url')
 
 export default {
   retrieve (id) {
-    const file = App.state.files.add({ id })
-    file.fetch() // only file metadata. the content is not
+    if (App.state.files.get(id) === undefined) {
+      const file = App.state.files.add({ id })
+      file.fetch() // only file metadata. the content is not
+    }
   },
   get (id, next) {
     next || (next=()=>{})
@@ -73,7 +76,9 @@ export default {
     formData.append('extension', data.filename.split('.').pop())
     formData.append('mimetype', data.mimetype)
 
-    let fileBlob = new Blob([data.data], { type: data.mimetype })
+    const plain = isDataUrl(data.data) ? atob(data.data.split(',')[1]) : data.data
+
+    let fileBlob = new Blob([plain], { type: data.mimetype })
     formData.append('file', fileBlob, data.filename)
 
     XHR.send({
