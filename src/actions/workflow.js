@@ -55,6 +55,13 @@ export default {
 
         workflow.fetchJobs(true)
         App.actions.scheduler.fetch(workflow)
+
+        // resync files
+        for (let task of workflow.tasks.models) {
+          if (task.type === TaskConstants.TYPE_SCRIPT) {
+            App.actions.file.retrieve(task.script_id)
+          }
+        }
       },
       error (err) {
         logger.error(err)

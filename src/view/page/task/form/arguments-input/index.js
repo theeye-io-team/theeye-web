@@ -235,7 +235,7 @@ export default View.extend({
     }
   },
   importArgumentsFromTaskRecipe (recipe) {
-    const task = App.actions.task.parseRecipe(recipe)
+    const task = App.actions.task.parseSerialization(recipe)
     const taskData = task.serialize()
     taskData.task_arguments.forEach(arg => {
       this.onArgumentAdded(arg)

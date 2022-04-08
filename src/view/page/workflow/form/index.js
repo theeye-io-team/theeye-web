@@ -197,6 +197,7 @@ export default DropableFormView.extend({
       const fields = this.getInvalidFields()
       const invalid = fields[0]
       if (invalid.name === 'builder') {
+        const invalidTasks = invalid.getInvalidTasks()
         App.state.alerts.danger('Some of the task are not ready.')
         //const reason = this.
       } else {
