@@ -23,6 +23,7 @@ const docsLink = 'core-concepts/tasks/'
 export default function (options = {}) {
   const wizard = new TaskCreationWizard({ submit: options?.submit })
   wizard.render()
+
   const modal = new Modalizer({
     buttons: false,
     title: 'Create Task',
@@ -145,14 +146,16 @@ const TaskCreationWizard = View.extend({
           file.contents &&
           file.contents.length
         ) {
+          let recipe
           try {
-            let recipe = JSON.parse(file.contents)
-            let task = App.actions.task.parseRecipe(recipe)
-            this.renderImportFormTask(task)
+            recipe = JSON.parse(file.contents)
           } catch (e) {
             console.log(e)
             bootbox.alert('Invalid JSON file.')
           }
+
+          let task = App.actions.task.parseRecipe(recipe)
+          this.renderImportFormTask(task)
         } else {
           bootbox.alert('File not supported, please select a JSON file.')
         }

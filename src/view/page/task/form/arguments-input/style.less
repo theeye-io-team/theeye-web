@@ -1,0 +1,26 @@
+[data-component=argument-item] {
+  input[type=text] {
+    border: 1px solid #00000000;
+    transition: 0.25ms ease-in-out;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:read-write {
+
+      &:hover {
+        outline: none;
+        border-bottom: 1px solid #00000055;
+      }
+
+      &:focus {
+        border: 1px solid #00000055;
+      }
+    }
+
+    &.invalid {
+      border: 1px solid #a94442;
+    }
+  }
+}

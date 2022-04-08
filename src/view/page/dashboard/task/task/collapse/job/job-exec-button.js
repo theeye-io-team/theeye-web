@@ -101,10 +101,6 @@ export default View.extend({
     const view = new JobResult({ job: this.model })
     view.show()
 
-    // App.actions.job.fetch(this.model.id)
-    App.actions.job.fetchInputs([ this.model ])
-    App.actions.job.fillUser(this.model)
-
     return false
   },
   onClickJobOptionsButton (event) {
@@ -118,7 +114,6 @@ export default View.extend({
         App.state.loader.visible = false
         
         const dialog = new OptionsDialog({ model: this.model })
-        
         dialog.show()
         this.registerSubview(dialog)
       }

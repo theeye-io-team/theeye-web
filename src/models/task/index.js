@@ -59,9 +59,28 @@ const Script = Schema.extend({
   derived: {
     formatted_tags: formattedTags(),
     canExecute: {
+      deps: ['script','script_runas','script_id','host_id'],
+      fn () {
+        return (
+          (
+            isMongoId(this.script_id || '') ||
+            this.script.data // the script is loaded but it was not persisted yet
+          ) &&
+          isMongoId(this.host_id || '') &&
+          Boolean(this.script_runas)
+        )
+      }
+    },
+    missingConfiguration: {
       deps: ['script_id','host_id'],
       fn () {
-        return isMongoId(this.script_id || '') && isMongoId(this.host_id || '')
+        if (!isMongoId(this.host_id || '')) {
+          return 'A Host is not assigned.'
+        }
+
+        if (!isMongoId(this.script_id || '')) {
+          return 'A Script is not assigned.'
+        }
       }
     },
     canBatchExecute: {
@@ -136,6 +155,25 @@ const Scraper = Schema.extend({
         return isurl && isMongoId(this.host_id || '')
       }
     },
+    missingConfiguration: {
+      deps: ['remote_url','host_id'],
+      fn () {
+        const url = this.remote_url || ''
+
+        if (!isMongoId(this.host_id || '')) {
+          return 'A Host is not assigned'
+        }
+
+        const isUrl = /localhost/.test(url) || isURL(url, {
+          protocols: ['http','https'],
+          require_protocol: true
+        })
+
+        if (!isUrl) {
+          return 'The URL is not completed.'
+        }
+      }
+    },
     hasTemplate: {
       deps: ['template_id'],
       fn () {
@@ -190,7 +228,6 @@ const Approval = Schema.extend({
   derived: {
     formatted_tags: formattedTags(),
     canExecute: {
-      deps: [],
       fn () {
         return true
       }
@@ -228,7 +265,6 @@ const Dummy = Schema.extend({
   derived: {
     formatted_tags: formattedTags(),
     canExecute: {
-      deps: [],
       fn () {
         return true
       }
@@ -272,7 +308,6 @@ const Notification = Schema.extend({
   derived: {
     formatted_tags: formattedTags(),
     canExecute: {
-      deps: [],
       fn () {
         return true
       }

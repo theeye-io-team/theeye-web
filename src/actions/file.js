@@ -5,6 +5,10 @@ import XHR from 'lib/xhr'
 import after from 'lodash/after'
 
 export default {
+  retrieve (id) {
+    const file = App.state.files.add({ id })
+    file.fetch() // only file metadata. the content is not
+  },
   get (id, next) {
     next || (next=()=>{})
     const file = App.state.files.get(id)

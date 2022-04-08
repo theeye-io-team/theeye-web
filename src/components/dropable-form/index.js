@@ -89,5 +89,27 @@ export default FormView.extend({
       .forEach(prop => {
         this._fieldViews[prop].setValue(data[prop])
       })
-  }
+  },
+  getInvalidFields () {
+    const fields = this._fieldViewsArray.filter(f => !f.valid)
+    let firstInvalid
+    if (Array.isArray(this.advancedFields)) {
+      if (fields.find(field => this.advancedFields.includes(field.name))) {
+        this.toggleAdvancedFields(true)
+      }
+    }
+    return fields
+  },
+  toggleAdvancedFields (unfold = null) {
+    if (unfold === true) {
+      if (!this.advancedToggle) {
+        return
+      }
+      if (this.advancedToggle.folded === false) {
+        // do nothing
+        return
+      }
+    }
+    this.advancedToggle.click()
+  },
 })

@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import DropableForm from 'components/dropable-form'
 import Buttons from 'view/buttons'
 import HelpIcon from 'components/help-icon'
@@ -5,6 +6,10 @@ import HelpTexts from 'language/help'
 import * as FieldConstants from 'constants/field'
 
 export default DropableForm.extend({
+  initialize () {
+    App.state.taskForm.form = this
+    DropableForm.prototype.initialize.apply(this, arguments)
+  },
   props: {
     isImport: ['boolean', false, false]
   },
@@ -65,7 +70,13 @@ export default DropableForm.extend({
   },
   submit () {
     this.beforeSubmit()
-    if (!this.valid) { return }
+    if (!this.valid) {
+      App.state.alerts.danger('The task is not ready.', 'Complete the required fields')
+      const fields = this.getInvalidFields()
+      fields[0].el.scrollIntoView()
+      fields[0].input?.focus()
+      return
+    }
 
     let data = this.prepareData(this.data)
     this.trigger('submit', data)

@@ -2,17 +2,25 @@ import View from 'ampersand-view'
 import ArgumentForm from './form'
 import Modalizer from 'components/modalizer'
 import SelectView from 'ampersand-select-view'
+import * as FIELD from 'constants/field'
+
+import './style.less'
 
 export default View.extend({
   template: `
-    <li class="list-group-item">
+    <li data-component="argument-item" class="list-group-item">
       <div class="row" style="line-height: 30px;">
-        <span class="col-xs-1" data-hook="order"></span>
-        <span class="col-xs-2" data-hook="type"></span>
-        <span class="col-xs-4" data-hook="label"></span>
-        <span class="col-xs-3" data-hook="value"></span>
-        <span>
-          <div class="fright" style="padding-right:8px;">
+        <span class="col-xs-1">
+          <span data-hook="order"></span>
+        </span>
+        <span class="col-xs-3" data-hook="type"></span>
+        <span class="col-xs-3" data-hook="label"></span>
+        <span class="col-xs-3">
+          <input data-hook="value" name="value" type="text" readonly>
+          <span data-hook="invalidity-message"></span>
+        </span>
+        <span class="col-xs-2">
+          <div class="fright">
             <button class="btn btn-default btn-sm" data-hook="edit-script-argument">
               <i class="fa fa-edit"></i>
             </button>
@@ -27,18 +35,56 @@ export default View.extend({
   bindings: {
     'model.order': { hook: 'order' },
     'model.label': { hook: 'label' },
-    'model.type': { hook: 'type' },
-    'model.value': { hook: 'value' },
+    'model.type': [ { hook: 'type' }, {
+      type: function (el, value) {
+        if (value === FIELD.TYPE_FIXED) {
+          el.required = true;
+          el.removeAttribute('readonly')
+        }
+      },
+      hook: 'value'
+    }],
+    'model.value': {
+      type: function (el, value) {
+        el.value = value;
+      },
+      hook: 'value'
+    },
     'model.masked': {
-      type: 'booleanClass',
-      name: 'blurry-text',
+      type: function (el, masked) {
+        if (masked === true) {
+          el.value = el.value.replace(/./g, '*')
+        }
+      },
       hook: 'value'
     }
   },
+  derived: {
+    valid: {
+      cache: false,
+      fn () {
+        if (this.model.type === FIELD.TYPE_FIXED) {
+          return Boolean(this.value !== "")
+        }
+        return true
+      }
+    },
+    value: {
+      deps: ['model.value'],
+      fn () {
+        return this.model.value
+      }
+    }
+  },
   events: {
-    'click [data-hook=edit-script-argument]':'onClickEditScriptArgument',
-    'click [data-hook=remove-script-argument]':'onClickRemoveScriptArgument',
-    'click [data-hook=order]':'onClickOrder'
+    'click [data-hook=edit-script-argument]': 'onClickEditScriptArgument',
+    'click [data-hook=remove-script-argument]': 'onClickRemoveScriptArgument',
+    'click [data-hook=order]': 'onClickOrder',
+    'blur [data-hook=value]': 'onDirectValueChanged',
+    'focus [data-hook=value]': 'unmaskValue'
+  },
+  beforeSubmit () {
+    this.toggleValidity(this.valid)
   },
   onClickOrder (event) {
     event.preventDefault()
@@ -121,5 +167,45 @@ export default View.extend({
     event.stopPropagation()
     this.model.collection.remove(this.model.id)
     return false
+  },
+  onDirectValueChanged (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    if (this.model.type === FIELD.TYPE_FIXED) {
+      this.model.set({ value: event.target.value })
+      this.toggleValidity(this.valid)
+    }
+
+    if (this.model.masked) {
+      event.target.value = event.target.value.replace(/./g, '*')
+    }
+
+    return false
+  },
+  unmaskValue (event) {
+    this.toggleValidity(true)
+    if (this.model.masked) {
+      event.target.value = this.model.value
+    }
+    return false
+  },
+  toggleValidity (valid) {
+    const input = this.query("input[type=text]")
+    if (valid === false) { 
+      input.classList.add("invalid")
+      input.setAttribute('placeholder','complete the value here')
+      input.nextElementSibling.classList.add('fa','fa-warning','text-danger')
+    } else {
+      input.classList.remove("invalid")
+      input.nextElementSibling.classList.remove('fa','fa-warning','text-danger')
+    }
+  },
+  initialize () {
+    View.prototype.initialize.apply(this, arguments)
+
+    this.on('change:valid', () => {
+      this.toggleValidity(this.valid)
+    })
   }
 })
