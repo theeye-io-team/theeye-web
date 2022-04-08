@@ -7,6 +7,7 @@ import { Collection as ScheduleCollection } from 'models/schedule'
 import { Collection as TagCollection } from 'models/tag'
 import graphlib from 'graphlib'
 import * as JobConstants from 'constants/job'
+import { v4 as uuidv4 } from 'uuid'
 
 import config from 'config'
 const urlRoot = function () {
@@ -102,8 +103,7 @@ const Workflow = AppModel.extend({
     lifecycle: 'string',
     state: 'string',
     triggers: ['array', false, () => { return [] }],
-    start_task_id: ['string',true],
-    end_task_id: ['string'],
+    start_task_id: ['string'],
     current_task_id: 'string',
     graph: ['graphlib.Graph', true],
     allows_dynamic_settings: ['boolean',false],
@@ -122,6 +122,7 @@ const Workflow = AppModel.extend({
     }
   },
   session: {
+    isRecipe: ['boolean', false, false],
     alreadyPopulated: ['boolean', false, false],
     jobsAlreadyFetched: ['boolean', false, false],
     inProgressJobs: 'number',
@@ -151,16 +152,6 @@ const Workflow = AppModel.extend({
         }
 
         return App.state.tasks.get(this.start_task_id)
-      }
-    },
-    end_task: {
-      cache: false,
-      deps: ['end_task_id'],
-      fn () {
-        if (!this.end_task_id) {
-          return
-        }
-        return App.state.tasks.get(this.end_task_id)
       }
     },
     current_task: {
@@ -251,6 +242,49 @@ const Workflow = AppModel.extend({
       }
     })
     return graph
+  },
+  serializeClone () {
+    const serial = this.serialize()
+
+    //serial.id = uuidv4()
+    delete serial.id
+    serial.tasks = []
+    serial.events = []
+
+    const graph = serial.graph
+
+    for (let node of graph.nodes) {
+      const uuid = uuidv4()
+
+      let model
+      if (node && /Event$/.test(node.value._type)) {
+        model = App.state.events.get(node.value.id)
+        model = model.serialize()
+        serial.events.push(model)
+      } else if (node && /Task$/.test(node.value._type)) {
+        model = App.state.tasks.get(node.value.id)
+        model = model.serialize()
+        serial.tasks.push(model)
+
+        if (this.start_task_id === model.id) {
+          serial.start_task_id = uuid
+        }
+      }
+
+      node.v = uuid
+      node.value.id = uuid
+
+      for (let edge of graph.edges) {
+        if (edge.v === model.id) { edge.v = uuid }
+        if (edge.w === model.id) { edge.w = uuid }
+      }
+
+      // update only after mapping edges with nodes
+      model.id = uuid
+    }
+
+    serial.graph = graph
+    return serial
   },
   /**
    *

@@ -6,7 +6,7 @@ export default View.extend({
     <div class="advanced-section-toggle form-group">
       <div class="col-sm-12">
         <div>
-          <label>Advanced Options</label>
+          <label><a>Advanced Options</a></label>
         </div>
       </div>
     </div>
@@ -20,10 +20,13 @@ export default View.extend({
     valid: ['boolean',false,true]
   },
   events: {
-    'click': function (event) {
+    'click a': function (event) {
       this.toggle('folded')
       this.onclick && this.onclick(event, this)
     }
+  },
+  click () {
+    this.query('a').click()
   },
   setValue (value) {
     // this is required to behave as InputView (interface)

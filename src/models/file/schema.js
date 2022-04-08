@@ -1,6 +1,7 @@
 import AppModel from 'lib/app-model'
 import App from 'ampersand-app'
 import moment from 'moment'
+const isDataUrl = require('valid-data-url')
 
 import Collection from 'ampersand-collection'
 import State from 'ampersand-state'
@@ -76,6 +77,13 @@ export default AppModel.extend({
   dataFromBase64 (data) {
     this.data = decodeUnicodeData(data)
     return this.data
+  },
+  parse () {
+    const attrs = AppModel.prototype.parse.apply(this, arguments)
+    if (isDataUrl(attrs.data)) {
+      attrs.data = decodeUnicodeData(attrs.data.split(',')[1])
+    }
+    return attrs
   }
 })
 

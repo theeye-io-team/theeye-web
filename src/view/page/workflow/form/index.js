@@ -1,4 +1,5 @@
-import FormView from 'ampersand-form-view'
+import App from 'ampersand-app'
+import DropableFormView from 'components/dropable-form'
 import AdvancedToggle from 'view/advanced-toggle'
 import LanguajeLabels from 'language/labels'
 import FormButtons from 'view/buttons'
@@ -16,7 +17,7 @@ import EventsSelectView from 'view/events-select'
 import bootbox from 'bootbox'
 import { Factory as TaskFactory } from 'models/task'
 
-export default FormView.extend({
+export default DropableFormView.extend({
   initialize (options) {
     const workflow = this.model
     const isNew = (workflow.isNew())
@@ -31,11 +32,17 @@ export default FormView.extend({
       'allows_dynamic_settings'
     ]
 
-    const workflowBuilder = new WorkflowBuilderView({
+    const workflowBuilder = this.workflowBuilder = new WorkflowBuilderView({
       name: 'builder',
       value: workflow,
-      mode: options.mode
+      mode: options.builder_mode
     })
+
+    App.state.formWorkflow = {
+      form: this,
+      workflow,
+      workflowBuilder
+    }
 
     const initialTaskSelect = new InitialTaskSelectionView({
       value: workflowBuilder.workflow.start_task_id,
@@ -149,13 +156,13 @@ export default FormView.extend({
       })
     ]
 
-    FormView.prototype.initialize.apply(this, arguments)
+    DropableFormView.prototype.initialize.apply(this, arguments)
   },
   focus () {
     this.query('input[name=name]').focus()
   },
   render () {
-    FormView.prototype.render.apply(this, arguments)
+    DropableFormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
     this.addHelpIcon('name')
@@ -180,15 +187,22 @@ export default FormView.extend({
     )
   },
   remove () {
-    FormView.prototype.remove.apply(this)
+    DropableFormView.prototype.remove.apply(this)
   },
   submit (next) {
     next||(next=()=>{})
 
     this.beforeSubmit()
     if (!this.valid) {
-      // cancel submit
-      return next(null,false)
+      const fields = this.getInvalidFields()
+      const invalid = fields[0]
+      if (invalid.name === 'builder') {
+        App.state.alerts.danger('Some of the task are not ready.')
+        //const reason = this.
+      } else {
+        invalid.el.scrollIntoView()
+      }
+      return
     }
 
     // id property is the required value, with "numeric" data type

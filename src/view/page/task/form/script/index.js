@@ -1,3 +1,4 @@
+import isDataUrl from 'valid-data-url'
 import App from 'ampersand-app'
 import State from 'ampersand-state'
 import Collection from 'ampersand-collection'
@@ -9,7 +10,6 @@ import TextareaView from 'components/input-view/textarea'
 import SelectView from 'components/select2-view'
 import TagsSelectView from 'view/tags-select'
 import ScriptSelectView from 'view/script-select'
-import ScriptImportView from 'view/script-import'
 import MembersSelectView from 'view/members-select'
 import EventsSelectView from 'view/events-select'
 import CheckboxView from 'components/checkbox-view'
@@ -18,6 +18,7 @@ import * as TaskConstants from 'constants/task'
 import TaskSelection from 'view/task-select'
 import Modalizer from 'components/modalizer'
 
+import ScriptImportView from './file-import'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 // import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
@@ -31,7 +32,7 @@ export default TaskFormView.extend({
     const isNewTask = Boolean(this.model.isNew()) // or is import
 
     // multiple only if new, allows to create multiple tasks at once
-    let hostsSelection = new SelectView({
+    const hostsSelection = new SelectView({
       //label: (isNewTask ? 'Bots *' : 'Bot *'),
       //name: (isNewTask ? 'hosts' : 'host_id'),
       //tags: isNewTask,
@@ -64,11 +65,9 @@ export default TaskFormView.extend({
       //    hostsSelection.value.forEach(hostId => {
       //      hosts.push(App.state.hosts.get(hostId))
       //    })
-
       //    let oss = hosts.filter((host, index, self) => {
       //      return self.indexOf(host.os_name) === index;
       //    })
-
       //    if (oss.length > 1) {
       //      bootbox.alert('BOT\'s with different OS versions has been selected.')
       //    }
@@ -76,9 +75,16 @@ export default TaskFormView.extend({
       //})
     }
 
-    if (this.isImport) {
+    if (this.isImport) { // imported using import button
       this.scriptSelection = new ScriptImportView({
-        value: App.state.taskForm.file.filename,
+        file: App.state.taskForm.file, // @TODO remove taskForm state to improve this.
+        required: true,
+        name: 'script_name',
+        label: 'Script'
+      })
+    } else if (isDataUrl(this.model.script.data)) { // imported via workflow
+      this.scriptSelection = new ScriptImportView({
+        file: this.model.script,
         required: true,
         name: 'script_name',
         label: 'Script'
@@ -107,6 +113,20 @@ export default TaskFormView.extend({
       'allows_dynamic_settings'
     ]
 
+    this.advancedToggle = new AdvancedToggle({
+      onclick: (event) => {
+        // just toggle
+        if (Array.isArray(this.advancedFields)) {
+          this.advancedFields.forEach(name => {
+            const field = this._fieldViews[name]
+            if (!field) { return }
+            if (name === 'acl' && this.model.workflow_id) { return }
+            field.toggle('visible')
+          })
+        }
+      }
+    })
+
     const requireUserInputs = new CheckboxView({
       visible: false,
       label: 'Require user interaction',
@@ -131,7 +151,7 @@ export default TaskFormView.extend({
       enabled: (this.model.user_inputs === true)
     })
 
-    let form = this
+    const form = this
     requireUserInputs.on('change:value', (elem) => {
       userInputsMembers.enabled = (elem.value === true)
     })
@@ -177,6 +197,14 @@ export default TaskFormView.extend({
       }
     })
 
+    const runners = this.runners = new RunnerSelectionView({
+      value: this.model.script_runas
+    })
+
+    runners.listenTo(this.scriptSelection, 'change', () => {
+      runners.updateState({ scripts: this.scriptSelection })
+    })
+
     // backward compatibility.
     // new task will be forbidden.
     // old tasks will only be false if it is explicitly false
@@ -207,37 +235,13 @@ export default TaskFormView.extend({
         name: 'tags',
         value: this.model.tags
       }),
-      new SelectView({
-        label: 'Run As',
-        name: 'script_runas',
-        multiple: false,
-        tags: true,
-        allowCreateTags: true,
-        options: App.state.runners,
-        value: this.model.script_runas,
-        required: true,
-        unselectedText: 'select a runner',
-        idAttribute: 'runner',
-        textAttribute: 'runner',
-        requiredMessage: 'Selection required',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
-      }),
+      runners,
       new ArgumentsView({
         name: 'task_arguments',
         value: this.model.task_arguments
       }),
+      this.advancedToggle,
       // advanced fields starts visible = false
-      new AdvancedToggle({
-        onclick: (event) => {
-          this.advancedFields.forEach(name => {
-            var field = this._fieldViews[name]
-            if (!field) return
-            if (name === 'acl' && this.model.workflow_id) return
-            field.toggle('visible')
-          })
-        }
-      }),
       new TextareaView({
         visible: false,
         label: 'Description',
@@ -402,6 +406,12 @@ export default TaskFormView.extend({
             App.state.onboarding.showTaskLastStep = false
           }
         })
+      }
+    }
+
+    if (!this.runners.value) {
+      if (this.scriptSelection.selected()) {
+        this.runners.updateState({ scripts: this.scriptSelection })
       }
     }
   },
@@ -666,6 +676,8 @@ const EnvVarView = View.extend({
       name: 'key',
       value: this.model.key,
       placeholder: 'Key',
+      invalidClass: 'text-danger',
+      validityClassSelector: 'p[data-hook=message-text]',
       required: true
     })
     this.renderSubview(this.keyInputView, this.queryByHook('key'))
@@ -674,9 +686,14 @@ const EnvVarView = View.extend({
       name: 'value',
       value: this.model.value,
       placeholder: 'Value',
+      invalidClass: 'text-danger',
+      validityClassSelector: 'p[data-hook=message-text]',
       required: true
     })
     this.renderSubview(this.valueInputView, this.queryByHook('label'))
+
+    this.listenTo(this.valueInputView, 'change:valid', this.validityCheck)
+    this.listenTo(this.keyInputView, 'change:valid', this.validityCheck)
 
     // use internal state
     this.listenTo(this.keyInputView, 'change:value', () => {
@@ -696,5 +713,64 @@ const EnvVarView = View.extend({
   beforeSubmit () {
     this.keyInputView.beforeSubmit()
     this.valueInputView.beforeSubmit()
+    this.validityCheck()
+  },
+  validityCheck () {
+    const key = this.keyInputView
+    const value = this.valueInputView
+
+    if (!key.valid || !value.valid) {
+      this.el.classList.add('box-danger')
+    } else {
+      this.el.classList.remove('box-danger')
+    }
+  }
+})
+
+const RunnerSelectionView = SelectView.extend({
+  initialize (specs) {
+    this.label = 'Run As'
+    this.name = 'script_runas'
+    this.multiple = false
+    this.tags = true
+    this.allowCreateTags = true
+    this.options = App.state.runners
+    this.required = true
+    this.unselectedText = 'select a runner'
+    this.idAttribute = 'runner'
+    this.textAttribute = 'runner'
+    this.requiredMessage = 'Selection required'
+    this.invalidClass = 'text-danger'
+    this.validityClassSelector = '.control-label'
+
+    SelectView.prototype.initialize.apply(this, arguments)
+  },
+  updateState ({ scripts }) {
+    if (!this.rendered) { return }
+    if (!scripts.value) {
+      this.clear()
+      return
+    }
+
+    const selected = scripts.selected()
+    if (!selected?.extension) {
+      this.clear()
+      return
+    }
+
+    const extension = selected.extension
+    let runner
+    if (extension === 'js') { runner = 'ccd461d9e99cb6fccadc34fff41655fa2982e38a' }
+    if (extension === 'sh') { runner = '8452d30e16c622c5e97a8ff798d9a78b48bfa7cc' }
+    if (extension === 'bat') { runner = '815e186af6624b310b41085b2ec41d2a86c3ab35' }
+    if (extension === 'ps1') { runner = '6bf84214aa4e20e0d77600adb7368d203339642b' }
+
+    if (
+      !this.value || 
+      (runner !== this.value && App.state.runners.isDefaultRunner(this.value))
+    ) {
+      const model = App.state.runners.models.find(r => r.id === runner)
+      this.setValue(model.runner)
+    }
   }
 })
