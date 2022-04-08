@@ -18,6 +18,8 @@ const Schema = AppModel.extend({
   idAttribute: 'id',
   props: {
     id: 'string',
+    version: 'number',
+    fingerprint: 'string',
     user_id: 'string',
     customer_id: 'string',
     workflow_id: 'string',
@@ -168,8 +170,8 @@ const Schema = AppModel.extend({
   },
   hostIsReporting () {
     let host = this.hostResource()
-    if (!host) return true // I cannot determine, so go ahead
-    return host.state === 'normal'
+    if (!host?.state) { return true } // I cannot determine, so go ahead
+    return (host.state === 'normal')
   },
   fetchJobs (options, callback) {
     callback || (callback = () => {})
@@ -210,10 +212,12 @@ const Schema = AppModel.extend({
       }
     }
 
+    const version = ` [rev.${this.version}]`
+
     if (this.hostname) {
-      return `${this.type.toUpperCase()} - ${this.name} (${this.hostname}) ${tagsString}` 
+      return `${this.type.toUpperCase()} - ${this.name} (${this.hostname}) ${tagsString}${version}`
     } else {
-      return `${this.type.toUpperCase()} - ${this.name} ${tagsString}` 
+      return `${this.type.toUpperCase()} - ${this.name} ${tagsString}${version}`
     }
   }
 })

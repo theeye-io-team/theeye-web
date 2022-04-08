@@ -59,6 +59,38 @@ const ClearCollection = Collection.extend({
   }
 })
 
+const RunnersCollection = ClearCollection.extend({
+  initialize () {
+      //getHash('node', console.log)
+      //getHash('node %script%', console.log)
+      //getHash('%script%', console.log)
+      //getHash('bash', console.log)
+      //getHash('bash %script%', console.log)
+      //getHash('powershell.exe -NonInteractive -ExecutionPolicy ByPass -File "%script%"', console.log)
+
+    this.initialState = [
+      { id: 'f8e966d1e207d02c44511a58dccff2f5429e9a3b', runner: 'node' },
+      { id: 'ccd461d9e99cb6fccadc34fff41655fa2982e38a', runner: 'node %script%' },
+      { id: '815e186af6624b310b41085b2ec41d2a86c3ab35', runner: '%script%' },
+      { id: 'c8a16b493c487d9f0d43546b842106bf2ffa7152', runner: 'bash' },
+      { id: '8452d30e16c622c5e97a8ff798d9a78b48bfa7cc', runner: 'bash %script%' },
+      {
+        id: '6bf84214aa4e20e0d77600adb7368d203339642b',
+        runner: 'powershell.exe -NonInteractive -ExecutionPolicy ByPass -File "%script%"'
+      }
+    ]
+    ClearCollection.prototype.initialize.apply(this, arguments)
+  },
+  isDefaultRunner (runner) {
+    return Boolean(
+      this.initialState.find(one => {
+        return (one.id === runner || one.runner === runner)
+      }) !== undefined
+    )
+  },
+  mainIndex: 'runner'
+})
+
 const CredentialsCollection = ClearCollection.extend({
   initialize () {
     this.initialState = [
@@ -260,7 +292,8 @@ const OnHoldState = State.extend({
 
 const TaskFormState = State.extend({
   props: {
-    file: 'object'
+    file: 'object',
+    form: 'state' // view
   }
 })
 
@@ -302,11 +335,12 @@ const _initCollections = function () {
     }
   })
 
-  const runners = this.runners = new Collection([])
   this.credentials = new CredentialsCollection()
   this.looptimes = new LooptimesCollection()
   this.severities = new SeveritiesCollection()
   this.indicatorTypes = new IndicatorTypesCollection()
+
+  const runners = this.runners = new RunnersCollection()
 
   const runnersAdd = (model) => {
     if (model.script_runas) {
