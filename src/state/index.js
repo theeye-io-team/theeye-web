@@ -377,13 +377,17 @@ const _initCollections = function () {
 //}
 
 const getHash = (data, cb) => {
-  let encoded = new TextEncoder().encode(data)
-  let digest = crypto.subtle.digest('SHA-1', encoded)
-  digest.then(bytes => {
-    let hash = Array
-      .from(new Uint8Array(bytes))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('')
-    cb(hash)
-  })
+  const encoded = new TextEncoder().encode(data)
+  if (!crypto.subtle) {
+    return cb(encoded.join(''))
+  } else {
+    let digest = crypto.subtle.digest('SHA-1', encoded)
+    digest.then(bytes => {
+      let hash = Array
+        .from(new Uint8Array(bytes))
+        .map(b => b.toString(16).padStart(2, '0'))
+        .join('')
+      cb(hash)
+    })
+  }
 }
