@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Collection from 'ampersand-collection'
 import FormView from 'ampersand-form-view'
-import HelpTexts from 'language/help'
+import Help from 'language/help'
 import Modalizer from 'components/modalizer'
 import SelectView from 'components/select2-view'
 //import TaskVersionSelectView from 'view/task-version-select'
@@ -70,20 +70,20 @@ export default View.extend({
   derived: {
     graph: {
       cache: false,
-      deps: ['workflow'],
+      deps: ['workflow.graph'],
       fn () {
         return this.workflow.graph
       }
     },
     value: {
       cache: false,
-      deps: ['workflow'],
       fn () {
-        const { graph, tasks, events } = this.workflow.serialize()
-        return { graph, tasks, events }
+        const { graph, tasks } = this.workflow.serialize()
+        return { graph, tasks }
       }
     },
     valid: {
+      deps: ['workflow.tasks','workflow.graph'],
       cache: false,
       fn () {
         const graph = this.workflow.graph
@@ -93,7 +93,7 @@ export default View.extend({
           return false
         }
 
-        const tasks = this.getInvalidTasks()
+        const tasks = this.workflow.getInvalidTasks()
         if (tasks.length > 0) {
           return false
         }
@@ -112,60 +112,72 @@ export default View.extend({
   renderWorkflowGraph () {
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
       .then(({ default: WorkflowView }) => {
-        const workflowGraph = new WorkflowView({
-          graph: this.graph,
-          mode: 'edit'
-        })
+        const workflowGraph = new WorkflowView({ graph: this.graph })
         this.workflowGraph = workflowGraph
         this.renderSubview(workflowGraph, this.queryByHook('graph-preview'))
 
-        setTimeout(() => {
-          this.workflowGraph.updateCytoscape()
-        }, 1000)
-
-        const updateGraph = () => {
-          workflowGraph.updateCytoscape(this.workflow.graph)
-        }
-
-        this.on('change:graph', updateGraph)
-        this.workflow.tasks.on('change', updateGraph)
+        //const updateGraph = () => {
+        //}
+        this.on('change:graph', this.updateVisualization)
+        this.workflow.tasks.on('change', this.updateVisualization)
 
         this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(workflowGraph, 'tap:edge', this.onTapEdge)
         this.listenTo(workflowGraph, 'tap:back', this.onTapBackground)
-        this.listenTo(workflowGraph, 'clear', this.onClearButton)
+        //this.listenTo(workflowGraph, 'click:clear', this.onClearButton)
+        this.listenTo(workflowGraph, 'click:warning-indicator', this.onClickWarningIndicator)
+        this.listenToAndRun(this, 'change:valid', () => {
+          workflowGraph.warningToggle = !this.valid
+        })
+
+        // initial render
+        setTimeout(() => {
+          this.workflowGraph.updateCytoscape()
+          this.workflowGraph.cy.center()
+        }, 500)
       })
   },
-  getInvalidTasks () {
-    return this.workflow.tasks.models.filter(t => {
-      return !t.canExecute
+  updateVisualization () {
+    this.workflowGraph.updateCytoscape(this.workflow.graph)
+  },
+  onClickWarningIndicator () {
+    const invalidTasks = this.workflow.getInvalidTasks()
+    const dialog = new TasksReviewDialog({
+      buttons: false,
+      title: `Tasks review`
     })
-  },
-  onClearButton () {
-    bootbox.confirm({
-      title: 'Workflow action',
-      message: 'Remove everything?',
-      buttons: {
-        confirm: {
-          label: 'Yes, please',
-          className: 'btn-danger'
-        },
-        cancel: {
-          label: 'Cancel',
-          className: 'btn-default'
-        },
-      },
-      callback: confirm => {
-        if (!confirm) { return }
-        this.clear()
-      }
+
+    dialog.on('hidden', () => {
+      dialog.remove()
     })
+
+    dialog.show()
   },
-  clear () {
-    var graph = this.graph
-    graph.nodes().forEach(node => graph.removeNode(node))
-    this.trigger('change:graph')
-  },
+  //onClearButton () {
+  //  bootbox.confirm({
+  //    title: 'Workflow action',
+  //    message: 'Remove everything?',
+  //    buttons: {
+  //      confirm: {
+  //        label: 'Yes, please',
+  //        className: 'btn-danger'
+  //      },
+  //      cancel: {
+  //        label: 'Cancel',
+  //        className: 'btn-default'
+  //      },
+  //    },
+  //    callback: confirm => {
+  //      if (!confirm) { return }
+  //      this.clear()
+  //    }
+  //  })
+  //},
+  //clear () {
+  //  var graph = this.graph
+  //  graph.nodes().forEach(node => graph.removeNode(node))
+  //  this.trigger('change:graph')
+  //},
   onTapNode (event) {
     var node = event.cyTarget.data()
     if (this.contextMenu) {
@@ -218,10 +230,6 @@ export default View.extend({
     }
   },
   editTask (task) {
-    //if (task.type === TaskConstants.TYPE_SCRIPT) {
-    //  App.state.taskForm.file = task.script.serialize()
-    //}
-
     const form = new TaskForm({ model: task, mode: this.mode })
     const modal = new Modalizer({
       buttons: false,
@@ -385,7 +393,7 @@ export default View.extend({
 const TaskSelectionModal = FormView.extend({
   initialize (options) {
     this.fields = [
-      //new TaskVersionSelectView({
+      //new TaskVersionSelectView
       new TaskSelectView({
         required: true,
         label: 'Task'
@@ -431,11 +439,6 @@ const TaskContextualMenu = View.extend({
   },
   render () {
     this.renderWithTemplate(this)
-
-    //this.events = App.state.events.filterEmitterEvents(
-    //  this.model,
-    //  this.workflow_events
-    //)
 
     const copyButton = new CopyTaskButton({ model: this.model, elem: 'a' })
     this.renderSubview(copyButton, this.queryByHook("menu-buttons"))
@@ -489,3 +492,89 @@ const pointerPosition = (e) => {
   var posy = e.clientY
   return { x: posx, y: posy }
 }
+
+const TasksReviewDialog = Modalizer.extend({
+  initialize () {
+    this.buttons = false // disable build-in modal buttons
+    Modalizer.prototype.initialize.apply(this, arguments)
+    this.on('hidden', () => { this.remove() })
+  },
+  template: `
+    <div data-component="export-dialog" class="modalizer">
+      <!-- MODALIZER CONTAINER -->
+      <div data-hook="modalizer-class" class="">
+        <div class="modal"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="modal"
+          aria-hidden="true"
+          style="display:none;">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button"
+                  class="close"
+                  data-dismiss="modal"
+                  aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 data-hook="title" class="modal-title"></h4>
+              </div>
+              <div class="modal-body" data-hook="body">
+                <h1>Review the following tasks</h1>
+                <div class="grid-container">
+                </div>
+              </div>
+            </div><!-- /MODAL-CONTENT -->
+          </div><!-- /MODAL-DIALOG -->
+        </div><!-- /MODAL -->
+      </div><!-- /MODALIZER CONTAINER -->
+    </div>
+  `,
+  events: Object.assign({}, Modalizer.prototype.events, {
+  })
+})
+
+/*
+ *
+                  <!-- row 1 -->
+                  <div class="grid-col-button">
+                    <button type="button" class="btn btn-default" data-hook="backup">
+                      <i class="fa fa-arrow-right"></i>
+                    </button>
+                  </div>
+                  <div class="grid-col-message">
+                    <span>${Help.task.export_backup}</span>
+                  </div>
+
+                  <!-- row 2 -->
+                  <div class="grid-col-button">
+                    <button type="button" class="btn btn-default" data-hook="recipe">
+                      <i class="fa fa-arrow-right"></i>
+                    </button>
+                  </div>
+                  <div class="grid-col-message">
+                    <span>${Help.task.export_recipe}</span>
+                  </div>
+
+                  <!-- row 3 -->
+                  <div class="grid-col-button">
+                    <button type="button" class="btn btn-default" data-hook="arguments">
+                      <i class="fa fa-arrow-right"></i>
+                    </button>
+                  </div>
+                  <div class="grid-col-message">
+                    <span>${Help.task.export_arguments}</span>
+                  </div>
+
+                  <!-- row 4 -->
+                  <div class="grid-col-button">
+                    <button type="button" class="btn btn-default" data-hook="close">
+                      <i class="fa fa-arrow-left"></i>
+                    </button>
+                  </div>
+                  <div class="grid-col-message">
+                    <span><b>Go Back</b></span>
+                  </div>
+
+                  */

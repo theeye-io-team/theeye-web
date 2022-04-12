@@ -67,11 +67,9 @@ const CreationWizard = View.extend({
   },
   render () {
     this.renderWithTemplate(this)
-
     this.renderImportButton()
   },
   renderImportButton () {
-
     const importButton = new ImportButton({
       callback: (file) => {
         if (
@@ -90,10 +88,7 @@ const CreationWizard = View.extend({
       }
     })
 
-    this.renderSubview(
-      importButton,
-      this.queryByHook('buttons')
-    )
+    this.renderSubview(importButton, this.queryByHook('buttons'))
   },
   remove () {
     if (this.form) { this.form.remove() }
