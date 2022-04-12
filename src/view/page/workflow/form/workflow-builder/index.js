@@ -457,7 +457,7 @@ const TaskContextualMenu = View.extend({
   onClickEditScript (event) {
     event.preventDefault()
     event.stopPropagation()
-    App.actions.file.edit(this.model.script_id)
+    App.actions.file.edit(this.model.script || this.model.script_id)
     this.trigger('script:edit')
     this.remove()
   },
