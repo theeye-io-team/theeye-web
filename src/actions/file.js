@@ -171,7 +171,7 @@ export default {
   },
   edit (value) {
     const router = new FileRouter()
-    const id = value?.id
+    const id = (value?.id || value)
     if (typeof id === 'string') {
       if (!isMongoId(id)) {
         throw new Error(`cannot edit ${id}`)
