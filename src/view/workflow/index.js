@@ -99,6 +99,7 @@ export default View.extend({
     event.stopPropagation()
 
     this.updateCytoscape()
+    this.cy.center()
 
     return false
   },

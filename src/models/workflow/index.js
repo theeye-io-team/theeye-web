@@ -122,9 +122,8 @@ const Workflow = AppModel.extend({
     }
   },
   getInvalidTasks () {
-    return this.tasks.models.filter(t => {
-      return !t.canExecute
-    })
+    const models = this.tasks.filter(t => !t.canExecute)
+    return new App.Models.Task.Collection(models)
   },
   session: {
     isRecipe: ['boolean', false, false],

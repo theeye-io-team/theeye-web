@@ -26,11 +26,7 @@ const Modalizer = View.extend({
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <button type="button"
-                  data-hook="close"
-                  class="close"
-                  data-dismiss="modal"
-                  aria-label="Close">
+                <button type="button" data-hook="close" class="close" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 data-hook="title" class="modal-title"></h4>
@@ -57,7 +53,8 @@ const Modalizer = View.extend({
     confirmButton: ['string',false,'Confirm'],
     cancelButton: ['string',false,'Cancel'],
     visible: ['boolean',false,false],
-    backdrop: ['boolean',false,true]
+    backdrop: ['boolean',false,true],
+    appendToParent: ['boolean', false, false]
   },
   bindings: {
     closeButton: {
@@ -93,8 +90,11 @@ const Modalizer = View.extend({
   onClickCancel () {
     this.trigger('cancel')
   },
-  onClickClose () {
+  onClickClose (event) {
+    event.stopPropagation()
+    event.preventDefault()
     this.trigger('close')
+    this.hide()
   },
   initialize (options) {
     this._triggerShown = this._triggerShown.bind(this)
@@ -104,7 +104,11 @@ const Modalizer = View.extend({
   render () {
     this.renderWithTemplate(this)
 
-    document.body.appendChild(this.el)
+    if (this.appendToParent && this.parent) {
+      this.parent.el.appendChild(this.el)
+    } else {
+      document.body.appendChild(this.el)
+    }
 
     var $modal = $( this.query('.modal') )
     this.$modal = $modal
@@ -139,9 +143,7 @@ const Modalizer = View.extend({
     }
   },
   renderBody () {
-    if (!this.bodyView) {
-      return
-    }
+    if (!this.bodyView) { return }
 
     const modalBody = this.queryByHook('body')
     if (modalBody.childNodes.length === 0) {
@@ -156,6 +158,9 @@ const Modalizer = View.extend({
     })
   },
   show () {
+    if (this.rendered === false) {
+      this.render()
+    }
     this.renderBody()
     this.visible = true
   },

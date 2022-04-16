@@ -117,11 +117,11 @@ export const ExecTask = BaseExec.extend({
 
       const task = this.model
       if (!task.canExecute) {
-        const reason = `Task <b>${task.name}</b>: ${task.missingConfiguration}`
+        //const reason = `Task <b>${task.name}</b>: ${task.missingConfiguration}`
         if (task.hasWorkflow) {
-          throw new Error(`This workflow cannot be executed. You need to complete it first<br><br>Reason:<br>${reason}`)
+          throw new Error(`This workflow cannot be executed. You need to complete it first`)
         } else {
-          throw new Error(`This task cannot be executed. You need to complete it first<br><br>Reason:<br>${reason}`)
+          throw new Error(`This task cannot be executed. You need to complete it first`)
         }
       }
       return true
