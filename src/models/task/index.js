@@ -5,6 +5,7 @@ import isMongoId from 'validator/lib/isMongoId'
 import * as TaskConstants from 'constants/task'
 import * as LIFECYCLE from 'constants/lifecycle'
 import Schema from './schema'
+import { labels } from 'language'
 import { Model as ScriptFile } from 'models/file/script'
 
 //import { Model as Host } from 'models/host'
@@ -74,13 +75,41 @@ const Script = Schema.extend({
     missingConfiguration: {
       deps: ['script_id','host_id'],
       fn () {
-        if (!isMongoId(this.host_id || '')) {
-          return 'A Host is not assigned.'
+        const missing = []
+        const addMissing = (name, values) => {
+          missing.push({
+            prop: name,
+            label: labels[name],
+            values
+          })
         }
 
-        if (!isMongoId(this.script_id || '')) {
-          return 'A Script is not assigned.'
+        if (!isMongoId(this.host_id || '')) {
+          addMissing('host_id')
         }
+
+        if (!isMongoId(this.script_id || '') && !this.script?.data) {
+          addMissing('script_id')
+        }
+
+        const incmpArgs = this.task_arguments.getIncompleted()
+        if (incmpArgs.length > 0) {
+          addMissing('task_arguments', incmpArgs)
+        }
+
+        const incmpEnvs = []
+        for (let name in this.env) {
+          const value = this.env[name]
+          if (value === '' || value === null || value === undefined) {
+            incmpEnvs.push(name)
+          }
+        }
+
+        if (incmpEnvs.length > 0) {
+          addMissing.push(env)
+        }
+
+        return missing
       }
     },
     canBatchExecute: {
@@ -158,11 +187,20 @@ const Scraper = Schema.extend({
     missingConfiguration: {
       deps: ['remote_url','host_id'],
       fn () {
-        const url = this.remote_url || ''
+        const missing = []
+        const addMissing = (name, values) => {
+          missing.push({
+            prop: name,
+            label: labels[name],
+            values
+          })
+        }
 
         if (!isMongoId(this.host_id || '')) {
-          return 'A Host is not assigned'
+          addMissing('host_id')
         }
+
+        const url = (this.remote_url || '')
 
         const isUrl = /localhost/.test(url) || isURL(url, {
           protocols: ['http','https'],
@@ -170,8 +208,10 @@ const Scraper = Schema.extend({
         })
 
         if (!isUrl) {
-          return 'The URL is not completed.'
+          addMissing('remote_url')
         }
+
+        return missing
       }
     },
     hasTemplate: {
