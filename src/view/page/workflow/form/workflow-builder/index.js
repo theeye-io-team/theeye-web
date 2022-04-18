@@ -497,7 +497,8 @@ const TasksReviewDialog = Modalizer.extend({
     Modalizer.prototype.initialize.apply(this, arguments)
     this.on('hidden', () => { this.remove() })
   },
-  template: `
+  template () {
+    return `
     <div data-component="invalid-tasks-dialog" class="modalizer">
       <!-- MODALIZER CONTAINER -->
       <div data-hook="modalizer-class" class="">
@@ -510,7 +511,7 @@ const TasksReviewDialog = Modalizer.extend({
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <button type="button" data-hook="close" class="close" aria-label="Close">
+                <button type="button" data-hook="close-${this.cid}" class="close" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 data-hook="title" class="modal-title"></h4>
@@ -527,7 +528,8 @@ const TasksReviewDialog = Modalizer.extend({
         </div><!-- /MODAL -->
       </div><!-- /MODALIZER CONTAINER -->
     </div>
-  `,
+  `
+  },
   events: Object.assign({}, Modalizer.prototype.events, {
     'click [data-hook=autocomplete]': function (event) {
       event.preventDefault()
