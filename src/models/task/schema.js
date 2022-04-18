@@ -14,10 +14,7 @@ const TaskArguments = AmpersandCollection.extend({
   model: DynamicArgument,
   getIncompleted () {
     return this.models.filter(arg => {
-      return Boolean(
-        arg.type !== FIELD.TYPE_FIXED &&
-        !arg.value
-      )
+      return Boolean(arg.type === FIELD.TYPE_FIXED && !arg.value)
     })
   }
 })

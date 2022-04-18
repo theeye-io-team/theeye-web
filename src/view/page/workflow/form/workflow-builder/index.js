@@ -534,6 +534,8 @@ const TasksReviewDialog = Modalizer.extend({
     'click [data-hook=autocomplete]': function (event) {
       event.preventDefault()
       event.stopPropagation()
+
+      const invalidTasks = this.workflow.getInvalidTasks()
     }
   }),
   render () {
@@ -575,22 +577,8 @@ const InvalidTaskView = View.extend({
       hook: 'edit-task',
       type: 'attribute',
       name: 'data-task-id'
-    },
-    //'model': {
-    //  hook: 'edit-task',
-    //  type: function (el, value) {
-    //    el.dataset.task = JSON.stringify(this.model.serialize())
-    //  }
-    //}
+    }
   },
-  //events: {
-  //  'click button': function (event) {
-  //    event.preventDefault()
-  //    event.stopPropagation()
-
-  //    this.trigger('task:edit', this.model)
-  //  }
-  //},
   render () {
     this.renderWithTemplate()
 
@@ -609,6 +597,17 @@ const InvalidTaskView = View.extend({
       this.queryByHook('tasks-missconfiguration'),
       {}
     )
+
+    this.listenTo(this.model, 'change', () => {
+      if (this.model.missingConfiguration.length === 0) {
+        const btn = this.queryByHook('edit-task')
+        btn.disabled = true
+        const icon = btn.querySelector('i')
+        icon.classList.remove('fa-edit')
+        icon.classList.add('fa-check')
+        btn.classList.add('alert-success')
+      }
+    })
   }
 })
 
