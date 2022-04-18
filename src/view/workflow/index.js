@@ -13,7 +13,9 @@ export default View.extend({
         <button class="btn btn-default" data-hook="fit">Fit</button>
         <button class="btn btn-default" data-hook="center">Center</button>
         <button class="btn btn-default" data-hook="redraw">Re-draw</button>
-        <button class="btn btn-danger" data-hook="clear">Clear!</button>
+        <button class="btn action-required" data-hook="warning-indicator" disabled>
+          <i class="fa fa-warning"></i>
+        </button>
       </div>
       <div class="workflow-container">
         <div class="workflow-graph-container" data-hook="graph-container"> </div>
@@ -21,21 +23,42 @@ export default View.extend({
     </div>
   `,
   props: {
-    mode: ['string',false],
-    //graph: 'graphlib'
+    warningToggle: ['boolean', false, false],
+    clearBtn: ['boolean', false, false],
+    cy: ['object', false],
     graph: 'object' // Graph (graphlib) instance
   },
   initialize () {
     View.prototype.initialize.apply(this,arguments)
 
+    const state = App.state.workflowVisualizer
     const updateState = () => {
-      App.state.workflowVisualizer.graph = this.graph
+      state.graph = this.graph
+      state.cy = this.cy
     }
 
     this.listenToAndRun(this, 'change:graph', updateState)
+    this.listenToAndRun(this, 'change:cy', updateState)
+  },
+  remove () {
+    const state = App.state.workflowVisualizer
+    state.graph = null
+    state.cy = null
   },
   bindings: {
-    mode: {
+    warningToggle: [
+      {
+        type: 'booleanClass',
+        name: 'btn-danger',
+        hook: 'warning-indicator'
+      }, {
+        type: 'booleanAttribute',
+        name: 'disabled',
+        hook: 'warning-indicator',
+        invert: true
+      }
+    ],
+    clearBtn: {
       type: 'toggle',
       hook: 'clear'
     }
@@ -45,6 +68,15 @@ export default View.extend({
     'click button[data-hook=center]':'onClickCenter',
     'click button[data-hook=redraw]':'onClickRedraw',
     'click button[data-hook=clear]':'onClickClear',
+    'click button[data-hook=warning-indicator]':'onClickWarningIndicator',
+  },
+  onClickWarningIndicator (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    this.trigger('click:warning-indicator')
+
+    return false
   },
   onClickFit (event) {
     event.preventDefault()
@@ -67,6 +99,7 @@ export default View.extend({
     event.stopPropagation()
 
     this.updateCytoscape()
+    this.cy.center()
 
     return false
   },
@@ -74,15 +107,101 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    this.trigger('clear')
+    this.trigger('click:clear')
 
     return false
   },
-  render () {
-    this.renderWithTemplate(this)
-    this.renderCytoscape()
+  updateCytoscape () {
+    if (this.cy) {
+      this.cy.destroy()
+      this.cy = null
+    }
+    return this.renderCytoscape()
+  },
+  renderCytoscape () {
+    if (!this.graph) {
+      return this
+    }
+    const elems = this.getCytoscapeElements()
 
-    this.on('change:graph', this.updateCytoscape, this) // force change event or replace graph object
+    const cy = cytoscape({
+      container: this.queryByHook('graph-container'),
+      elements: elems,
+      boxSelectionEnabled: false,
+      autounselectify: true,
+      wheelSensitivity: 0.1,
+      // initial zoom
+      zoom: 1.1,
+      minZoom: 0.5,
+      maxZoom: 2,
+      layout: {
+        fit: false,
+        name: 'dagre',
+        //rankDir: 'TB'
+        rankDir: 'LR'
+      },
+      style: [
+        {
+          selector: 'node',
+          style: {
+            'height': 50,
+            'width': 50,
+            'background-fit': 'cover',
+            'border-color': '#FFF',
+            'border-width': 1,
+            'border-opacity': 1,
+            'content': 'data(label)',
+            'color': '#FFF',
+            'text-outline-width': 2,
+            'text-outline-color': '#111',
+            'text-opacity': 0.8,
+            'text-valign': 'top',
+            'text-halign': 'center',
+            'background-color': '#ee8e40',
+            'background-image': function (ele) {
+              var node = new Node(ele.data('value'))
+              return node.getImgUrl()
+            }
+          }
+        }, {
+          selector: 'edge',
+          style: {
+            'width': 5,
+            'target-arrow-shape': 'triangle',
+            'line-color': '#9dbaea',
+            'target-arrow-color': '#9dbaea',
+            'curve-style': 'bezier',
+            'content': function (ele) {
+              return ele.data('label') || ''
+            },
+            'text-rotation': 'autorotate',
+            'text-margin-y': -10,
+            'color': '#FFF',
+            'font-size': 15,
+            'text-outline-width': 1,
+            'text-outline-color': '#111',
+            'text-opacity': 0.8,
+          }
+        }
+      ]
+    })
+
+    cy.on('tap', (event) => {
+      const isNode = typeof event.cyTarget.isNode === 'function' && event.cyTarget.isNode() 
+      const isEdge = typeof event.cyTarget.isEdge === 'function' && event.cyTarget.isEdge() 
+      
+      if (isNode) {
+        this.trigger('tap:node', event)
+      } else if (isEdge) {
+        this.trigger('tap:edge', event)
+      } else {
+        this.trigger('tap:back', event)
+      }
+    })
+
+    this.cy = cy
+
+    return this
   },
   getCytoscapeElements () {
     const elems = []
@@ -113,85 +232,6 @@ export default View.extend({
     })
 
     return elems
-  },
-  updateCytoscape () {
-    if (this.cy) { this.cy.destroy() }
-    this.renderCytoscape()
-  },
-  renderCytoscape () {
-    if (!this.graph) return
-    const elems = this.getCytoscapeElements()
-
-    const cy = cytoscape({
-      container: this.queryByHook('graph-container'),
-      elements: elems,
-      boxSelectionEnabled: false,
-      autounselectify: true,
-      layout: {
-        fit: true,
-        name: 'dagre',
-        center: true,
-        //rankDir: 'TB'
-        rankDir: 'LR'
-      },
-      style: [{
-        selector: 'node',
-        style: {
-          'height': 50,
-          'width': 50,
-          'background-fit': 'cover',
-          'border-color': '#FFF',
-          'border-width': 1,
-          'border-opacity': 1,
-          'content': 'data(label)',
-          'color': '#FFF',
-          'text-outline-width': 2,
-          'text-outline-color': '#111',
-          'text-opacity': 0.8,
-          'text-valign': 'top',
-          'text-halign': 'center',
-          'background-color': '#ee8e40',
-          'background-image': function (ele) {
-            var node = new Node(ele.data('value'))
-            return node.getImgUrl()
-          }
-        }
-      }, {
-        selector: 'edge',
-        style: {
-          'width': 5,
-          'target-arrow-shape': 'triangle',
-          'line-color': '#9dbaea',
-          'target-arrow-color': '#9dbaea',
-          'curve-style': 'bezier',
-          'content': function (ele) {
-            return ele.data('label') || ''
-          },
-          'text-rotation': 'autorotate',
-          'text-margin-y': -10,
-          'color': '#FFF',
-          'font-size': 15,
-          'text-outline-width': 1,
-          'text-outline-color': '#111',
-          'text-opacity': 0.8,
-        }
-      }]
-    })
-
-    this.cy = cy
-
-    cy.on('tap', (event) => {
-      const isNode = typeof event.cyTarget.isNode === 'function' && event.cyTarget.isNode() 
-      const isEdge = typeof event.cyTarget.isEdge === 'function' && event.cyTarget.isEdge() 
-      
-      if (isNode) {
-        this.trigger('tap:node', event)
-      } else if (isEdge) {
-        this.trigger('tap:edge', event)
-      } else {
-        this.trigger('tap:back', event)
-      }
-    })
   }
 })
 

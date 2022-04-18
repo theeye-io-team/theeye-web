@@ -1,5 +1,10 @@
 
 export default {
+  env: 'Environment Variable',
+  task_arguments: 'Input Arguments',
+  host_id: 'Host',
+  remote_url: 'URL',
+  script_id: 'Script',
   page: {
     task: {
       form: {
@@ -10,7 +15,7 @@ export default {
           target_fixed: 'Specific Approvers (Choose below)'
         },
         allows_behaviour_change: 'Allows to change the behaviour of running jobs'
-      }
+      },
     }
   }
 }
