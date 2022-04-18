@@ -11,7 +11,12 @@ import * as TaskConstants from 'constants/task'
 const TaskArguments = AmpersandCollection.extend({
   mainIndex: 'id',
   indexes: ['label', 'order'],
-  model: DynamicArgument
+  model: DynamicArgument,
+  getIncompleted () {
+    return this.models.filter(arg => {
+      return Boolean(arg.type === FIELD.TYPE_FIXED && !arg.value)
+    })
+  }
 })
 
 const Schema = AppModel.extend({

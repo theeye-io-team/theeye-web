@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import EditModalizer from 'view/page/files/edit-modalizer'
+import ImportModalizer from 'view/page/files/import-modalizer'
 import FilesPage from 'view/page/files'
 import { Model as File } from 'models/file'
 import Route from 'lib/router-route'
@@ -24,6 +25,15 @@ class FilesRoute extends Route {
       editView.show()
     })
 
+    if (!App.state.currentPage) {
+      return this.indexRoute()
+    }
+  }
+
+  importRoute (options) {
+    const model = options.model
+    const importView = new ImportModalizer({ file: model.serialize() })
+    importView.show()
     if (!App.state.currentPage) {
       return this.indexRoute()
     }

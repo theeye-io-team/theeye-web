@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Collection from 'ampersand-collection'
 import FormView from 'ampersand-form-view'
-import HelpTexts from 'language/help'
+import Help from 'language/help'
 import Modalizer from 'components/modalizer'
 import SelectView from 'components/select2-view'
 //import TaskVersionSelectView from 'view/task-version-select'
@@ -16,6 +16,7 @@ import * as TaskConstants from 'constants/task'
 import CreateTaskWizard from 'view/page/task/creation-wizard'
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 import uuidv4 from 'uuid'
+import './styles.less'
 
 export default View.extend({
   template: `
@@ -70,20 +71,20 @@ export default View.extend({
   derived: {
     graph: {
       cache: false,
-      deps: ['workflow'],
+      deps: ['workflow.graph'],
       fn () {
         return this.workflow.graph
       }
     },
     value: {
       cache: false,
-      deps: ['workflow'],
       fn () {
-        const { graph, tasks, events } = this.workflow.serialize()
-        return { graph, tasks, events }
+        const { graph, tasks } = this.workflow.serialize()
+        return { graph, tasks }
       }
     },
     valid: {
+      deps: ['workflow.tasks','workflow.graph'],
       cache: false,
       fn () {
         const graph = this.workflow.graph
@@ -93,7 +94,7 @@ export default View.extend({
           return false
         }
 
-        const tasks = this.getInvalidTasks()
+        const tasks = this.workflow.getInvalidTasks()
         if (tasks.length > 0) {
           return false
         }
@@ -104,6 +105,20 @@ export default View.extend({
   events: {
     'click [data-hook=add-task]':'onClickAddTask',
     'click [data-hook=create-task]':'onClickCreateTask',
+    'click [data-hook=edit-task]':'onClickEditTask',
+  },
+  onClickEditTask (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    
+    const eventData = event.delegateTarget.dataset
+
+    const task = this.workflow.tasks.get(eventData.taskId)
+    editTask(task, this.mode, () => {
+      this.updateTaskNode(task)
+    })
+
+    return false
   },
   render () {
     this.renderWithTemplate(this)
@@ -112,59 +127,47 @@ export default View.extend({
   renderWorkflowGraph () {
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
       .then(({ default: WorkflowView }) => {
-        const workflowGraph = new WorkflowView({
-          graph: this.graph,
-          mode: 'edit'
-        })
-        this.workflowGraph = workflowGraph
+        const workflowGraph = new WorkflowView({ graph: this.graph })
         this.renderSubview(workflowGraph, this.queryByHook('graph-preview'))
 
-        setTimeout(() => {
-          this.workflowGraph.updateCytoscape()
-        }, 1000)
-
-        const updateGraph = () => {
+        const updateVisualization = () => {
           workflowGraph.updateCytoscape(this.workflow.graph)
         }
 
-        this.on('change:graph', updateGraph)
-        this.workflow.tasks.on('change', updateGraph)
+        this.on('change:graph', updateVisualization)
+        this.workflow.tasks.on('change', updateVisualization)
 
         this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(workflowGraph, 'tap:edge', this.onTapEdge)
         this.listenTo(workflowGraph, 'tap:back', this.onTapBackground)
-        this.listenTo(workflowGraph, 'clear', this.onClearButton)
+        this.listenTo(workflowGraph, 'click:warning-indicator', this.onClickWarningIndicator)
+        this.listenToAndRun(this, 'change:valid', () => {
+          workflowGraph.warningToggle = !this.valid
+        })
+
+        // initial render
+        setTimeout(() => {
+          workflowGraph.updateCytoscape()
+          workflowGraph.cy.center()
+        }, 500)
       })
   },
-  getInvalidTasks () {
-    return this.workflow.tasks.models.filter(t => {
-      return !t.canExecute
+  onClickWarningIndicator () {
+    const dialog = new TasksReviewDialog({
+      workflow: this.workflow,
+      buttons: false,
+      title: `Tasks review`,
+      appendToParent: true
     })
-  },
-  onClearButton () {
-    bootbox.confirm({
-      title: 'Workflow action',
-      message: 'Remove everything?',
-      buttons: {
-        confirm: {
-          label: 'Yes, please',
-          className: 'btn-danger'
-        },
-        cancel: {
-          label: 'Cancel',
-          className: 'btn-default'
-        },
-      },
-      callback: confirm => {
-        if (!confirm) { return }
-        this.clear()
-      }
+
+    this.registerSubview(dialog)
+
+    dialog.on('hidden', () => {
+      dialog.remove()
     })
-  },
-  clear () {
-    var graph = this.graph
-    graph.nodes().forEach(node => graph.removeNode(node))
-    this.trigger('change:graph')
+
+    dialog.show()
+
   },
   onTapNode (event) {
     var node = event.cyTarget.data()
@@ -194,9 +197,6 @@ export default View.extend({
         this.registerSubview(menu)
         this.contextMenu = menu
 
-        menu.on('task:edit', () => {
-          this.editTask(task)
-        })
         menu.on('task:remove', () => {
           this.removeNodeDialog(node)
         })
@@ -216,36 +216,6 @@ export default View.extend({
     if (this.contextMenu) {
       this.contextMenu.remove()
     }
-  },
-  editTask (task) {
-    //if (task.type === TaskConstants.TYPE_SCRIPT) {
-    //  App.state.taskForm.file = task.script.serialize()
-    //}
-
-    const form = new TaskForm({ model: task, mode: this.mode })
-    const modal = new Modalizer({
-      buttons: false,
-      title: `Edit task ${task.name} [${task.id}]`,
-      bodyView: form
-    })
-
-    modal.on('hidden', () => {
-      form.remove()
-      modal.remove()
-    })
-
-    form.on('submit', data => {
-      if (task.synchronized === true) {
-        App.actions.task.update(task.id, data)
-      } else {
-        task.set(data)
-      }
-
-      this.updateTaskNode(task)
-      modal.hide()
-    })
-
-    modal.show()
   },
   removeNodeDialog (node) {
     bootbox.confirm({
@@ -382,10 +352,37 @@ export default View.extend({
   }
 })
 
+const editTask = (task, mode, done) => {
+  const form = new TaskForm({ model: task, mode })
+  const modal = new Modalizer({
+    buttons: false,
+    title: `Edit task ${task.name} [${task.id}]`,
+    bodyView: form
+  })
+
+  modal.on('hidden', () => {
+    form.remove()
+    modal.remove()
+  })
+
+  form.on('submit', data => {
+    if (task.synchronized === true) {
+      App.actions.task.update(task.id, data)
+    } else {
+      task.set(data)
+    }
+
+    done(task)
+    modal.hide()
+  })
+
+  modal.show()
+}
+
 const TaskSelectionModal = FormView.extend({
   initialize (options) {
     this.fields = [
-      //new TaskVersionSelectView({
+      //new TaskVersionSelectView
       new TaskSelectView({
         required: true,
         label: 'Task'
@@ -417,7 +414,7 @@ const TaskContextualMenu = View.extend({
   template: `
     <div class="dropdown">
       <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons">
-        <li><a data-hook="edit" href="#">Edit Task</a></li>
+        <li><a data-hook="edit-task" href="#">Edit Task</a></li>
         <li><a data-hook="edit-script" href="#">Edit Script</a></li>
         <li><a data-hook="remove" href="#">Remove</a></li>
         <li><a data-hook="export" href="#">Export</a></li>
@@ -426,16 +423,18 @@ const TaskContextualMenu = View.extend({
       </ul>
     </div>
   `,
+  bindings: {
+    'model.id': {
+      hook: 'edit-task',
+      type: 'attribute',
+      name: 'data-task-id'
+    },
+  },
   props: {
     workflow_events: 'collection'
   },
   render () {
     this.renderWithTemplate(this)
-
-    //this.events = App.state.events.filterEmitterEvents(
-    //  this.model,
-    //  this.workflow_events
-    //)
 
     const copyButton = new CopyTaskButton({ model: this.model, elem: 'a' })
     this.renderSubview(copyButton, this.queryByHook("menu-buttons"))
@@ -443,21 +442,19 @@ const TaskContextualMenu = View.extend({
   events: {
     'click [data-hook=success]': 'onClickConnectTasks',
     'click [data-hook=failure]': 'onClickConnectTasks',
-    'click [data-hook=edit]': 'onClickEdit',
+    'click [data-hook=edit-task]': 'onClickEdit',
     'click [data-hook=edit-script]': 'onClickEditScript',
     'click [data-hook=export]': 'onClickExport',
     'click [data-hook=remove]': 'onClickRemove'
   },
   onClickEdit (event) {
-    event.preventDefault()
-    event.stopPropagation()
-    this.trigger('task:edit')
+    //this.trigger('task:edit')
     this.remove()
   },
   onClickEditScript (event) {
     event.preventDefault()
     event.stopPropagation()
-    App.actions.file.edit(this.model.script_id)
+    App.actions.file.edit(this.model.script || this.model.script_id)
     this.trigger('script:edit')
     this.remove()
   },
@@ -489,3 +486,137 @@ const pointerPosition = (e) => {
   var posy = e.clientY
   return { x: posx, y: posy }
 }
+
+const TasksReviewDialog = Modalizer.extend({
+  autoRender: false,
+  props: {
+    workflow: 'state'
+  },
+  initialize () {
+    this.buttons = false // disable build-in modal buttons
+    Modalizer.prototype.initialize.apply(this, arguments)
+    this.on('hidden', () => { this.remove() })
+  },
+  template () {
+    return `
+    <div data-component="invalid-tasks-dialog" class="modalizer">
+      <!-- MODALIZER CONTAINER -->
+      <div data-hook="modalizer-class" class="">
+        <div class="modal"
+          tabindex="-1"
+          role="dialog"
+          aria-labelledby="modal"
+          aria-hidden="true"
+          style="display:none;">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" data-hook="close-${this.cid}" class="close" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 data-hook="title" class="modal-title"></h4>
+              </div>
+              <div class="modal-body" data-hook="body">
+                <button class="autocomplete btn btn-primary" data-hook="autocomplete">
+                  <i class="fa fa-recycle"></i> Auto
+                </button>
+                <h1>Review the following tasks</h1>
+                <ul class="tasks-list" data-hook="tasks-container"></ul>
+              </div>
+            </div><!-- /MODAL-CONTENT -->
+          </div><!-- /MODAL-DIALOG -->
+        </div><!-- /MODAL -->
+      </div><!-- /MODALIZER CONTAINER -->
+    </div>
+  `
+  },
+  events: Object.assign({}, Modalizer.prototype.events, {
+    'click [data-hook=autocomplete]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+
+      const invalidTasks = this.workflow.getInvalidTasks()
+    }
+  }),
+  render () {
+    Modalizer.prototype.render.apply(this, arguments)
+
+    const invalidTasks = this.workflow.getInvalidTasks()
+
+    this.renderCollection(
+      invalidTasks,
+      InvalidTaskView,
+      this.queryByHook('tasks-container'),
+      {}
+      //{reverse: true}
+    )
+  }
+})
+
+const InvalidTaskView = View.extend({
+  template: `
+    <li class="tasks-list-item">
+      <!-- row -->
+      <div class="">
+        <span data-hook="task-name"></span>
+      </div>
+      <div class="" style="text-align: right;">
+        <button type="button" class="btn btn-default" data-hook="edit-task">
+          <i class="fa fa-edit"></i>
+        </button>
+      </div>
+      <!-- row -->
+      <ul data-hook="tasks-missconfiguration" class=""> </ul>
+    </li>
+  `,
+  bindings: {
+    'model.name': {
+      hook: 'task-name'
+    },
+    'model.id': {
+      hook: 'edit-task',
+      type: 'attribute',
+      name: 'data-task-id'
+    }
+  },
+  render () {
+    this.renderWithTemplate()
+
+    const models = this.model.missingConfiguration
+      .map(missing => {
+        return { label: missing.label }
+      })
+
+    const missingConfiguration = new Collection(models)
+
+    this.renderCollection(
+      missingConfiguration,
+      ({ model }) => {
+        return new MissingConfigurationView({ label: model.label })
+      },
+      this.queryByHook('tasks-missconfiguration'),
+      {}
+    )
+
+    this.listenTo(this.model, 'change', () => {
+      if (this.model.missingConfiguration.length === 0) {
+        const btn = this.queryByHook('edit-task')
+        btn.disabled = true
+        const icon = btn.querySelector('i')
+        icon.classList.remove('fa-edit')
+        icon.classList.add('fa-check')
+        btn.classList.add('alert-success')
+      }
+    })
+  }
+})
+
+const MissingConfigurationView = View.extend({ 
+  props: {
+    label: 'string',
+  },
+  template: `<li></li>`,
+  bindings: {
+    'label': { selector: 'li' }
+  }
+})

@@ -13,7 +13,8 @@ import './styles.less'
 $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 
 const Modalizer = View.extend({
-  template: `
+  template () {
+    return `
     <div data-component="modalizer" class="modalizer">
       <!-- MODALIZER CONTAINER -->
       <div data-hook="modalizer-class" class="">
@@ -26,11 +27,7 @@ const Modalizer = View.extend({
           <div class="modal-dialog">
             <div class="modal-content">
               <div class="modal-header">
-                <button type="button"
-                  data-hook="close"
-                  class="close"
-                  data-dismiss="modal"
-                  aria-label="Close">
+                <button type="button" data-hook="close-${this.cid}" class="close" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 data-hook="title" class="modal-title"></h4>
@@ -44,7 +41,8 @@ const Modalizer = View.extend({
         </div><!-- /.modal -->
       </div><!-- /MODALIZER CONTAINER -->
     </div>
-  `,
+  `
+  },
   autoRender: true,
   props: {
     closeButton: ['boolean',false,true],
@@ -57,7 +55,8 @@ const Modalizer = View.extend({
     confirmButton: ['string',false,'Confirm'],
     cancelButton: ['string',false,'Cancel'],
     visible: ['boolean',false,false],
-    backdrop: ['boolean',false,true]
+    backdrop: ['boolean',false,true],
+    appendToParent: ['boolean', false, false]
   },
   bindings: {
     closeButton: {
@@ -93,20 +92,27 @@ const Modalizer = View.extend({
   onClickCancel () {
     this.trigger('cancel')
   },
-  onClickClose () {
+  onClickClose (event) {
+    event.stopPropagation()
+    event.preventDefault()
     this.trigger('close')
+    this.hide()
   },
-  initialize (options) {
-    this._triggerShown = this._triggerShown.bind(this)
-    this._triggerHidden = this._triggerHidden.bind(this)
-    this._onBeingHide = this._onBeingHide.bind(this)
-  },
+  //initialize (options) {
+  //  this._triggerShown = this._triggerShown.bind(this)
+  //  this._triggerHidden = this._triggerHidden.bind(this)
+  //  this._onBeingHide = this._onBeingHide.bind(this)
+  //},
   render () {
     this.renderWithTemplate(this)
 
-    document.body.appendChild(this.el)
+    if (this.appendToParent && this.parent) {
+      this.parent.el.appendChild(this.el)
+    } else {
+      document.body.appendChild(this.el)
+    }
 
-    var $modal = $( this.query('.modal') )
+    const $modal = $( this.query('.modal') )
     this.$modal = $modal
     $modal.modal({
       keyboard: false,
@@ -116,11 +122,11 @@ const Modalizer = View.extend({
 
     this.renderButtons()
 
-    this.$modal.on('hide.bs.modal',this._onBeingHide)
-    this.$modal.on('show.bs.modal',this._triggerShown)
-    this.$modal.on('hidden.bs.modal',this._triggerHidden)
+    //this.$modal.on('hide.bs.modal', this._onBeingHide)
+    //this.$modal.on('show.bs.modal', this._triggerShown)
+    //this.$modal.on('hidden.bs.modal', this._triggerHidden)
 
-    this.listenTo(this,'change:visible',this._toggleVisibility)
+    this.listenTo(this, 'change:visible', this._toggleVisibility)
 
     if (this.removeOnHide === true) {
       this.on('hidden',function(){
@@ -129,6 +135,13 @@ const Modalizer = View.extend({
     }
 
     if (this.visible) this.show()
+
+    const closeBtn = this.query(`button[data-hook=close-${this.cid}]`)
+    if (closeBtn) {
+      closeBtn.addEventListener('click', (e) => {
+        this.hide()
+      })
+    }
   },
   renderButtons () {
     if (this.buttons) {
@@ -139,9 +152,7 @@ const Modalizer = View.extend({
     }
   },
   renderBody () {
-    if (!this.bodyView) {
-      return
-    }
+    if (!this.bodyView) { return }
 
     const modalBody = this.queryByHook('body')
     if (modalBody.childNodes.length === 0) {
@@ -156,6 +167,9 @@ const Modalizer = View.extend({
     })
   },
   show () {
+    if (this.rendered === false) {
+      this.render()
+    }
     this.renderBody()
     this.visible = true
   },
@@ -163,19 +177,26 @@ const Modalizer = View.extend({
     this.visible = false
   },
   /**
-   * if bootstrap modal is being hided (with click or X) from bootstrap modal itself
+   * if bootstrap modal is being hided (with click or X)
+   * from bootstrap modal itself
    */
-  _onBeingHide () {
-    if (this.visible) {
-      // change inner state
-      this.hide()
-    }
-  },
-  _triggerShown () {
-    this.trigger('shown')
-  },
-  _triggerHidden () {
-    this.trigger('hidden')
+  //
+  // NOTE: disabled due to unexpected behaviour with outer modals.
+  //
+  //_onBeingHide () {
+  //  if (this.visible) {
+  //    // change inner state
+  //    this.hide()
+  //  }
+  //},
+  //_triggerShown () {
+  //  this.trigger('shown')
+  //},
+  //_triggerHidden () {
+  //  this.trigger('hidden')
+  //},
+  _toggleVisibility () {
+    this.visible ? this._showElem() : this._hideElem()
   },
   _showElem () {
     this.$modal.modal('show')
@@ -183,9 +204,6 @@ const Modalizer = View.extend({
   _hideElem () {
     this.trigger('hide')
     this.$modal.modal('hide')
-  },
-  _toggleVisibility () {
-    this.visible ? this._showElem() : this._hideElem()
   },
   remove () {
     this.hide()

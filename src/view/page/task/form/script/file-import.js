@@ -3,7 +3,6 @@ import App from 'ampersand-app'
 import { Model as FileModel } from 'models/file'
 import FileForm from 'view/page/files/form'
 import Modalizer from 'components/modalizer'
-import TaskFormActions from 'actions/taskform'
 import InputView from 'components/input-view/index'
 import DisabledInputView from 'components/input-view/disabled'
 
@@ -83,7 +82,6 @@ export default DisabledInputView.extend({
 const ImportFileForm = FileForm.extend({
   submitCallback () {
     let data = this.prepareData(this.data)
-    TaskFormActions.setFile(data)
     this.trigger('submitted', data)
   }
 })

@@ -3,9 +3,9 @@ import State from  'ampersand-state'
 import graphlib from 'graphlib'
 
 export default State.extend({
-  //graphlib,
   props: {
-    graph: 'object'
+    graph: 'object',
+    cy: 'object'
   },
   tarjan () {
     return graphlib.alg.tarjan(this.graph)

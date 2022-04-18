@@ -121,6 +121,10 @@ const Workflow = AppModel.extend({
       return new App.Models.Job.Collection(models, options)
     }
   },
+  getInvalidTasks () {
+    const models = this.tasks.filter(t => !t.canExecute)
+    return new App.Models.Task.Collection(models)
+  },
   session: {
     isRecipe: ['boolean', false, false],
     alreadyPopulated: ['boolean', false, false],
@@ -190,6 +194,10 @@ const Workflow = AppModel.extend({
         tags = tags.slice(0, 3)
         this.tagsCollection.set(tags)
       }
+    })
+
+    this.listenToAndRun(this.tasks, 'add change sync reset remove', () => {
+      this.trigger('change:tasks')
     })
 
     this.listenToAndRun(this.jobs, 'add change sync reset remove', function () {

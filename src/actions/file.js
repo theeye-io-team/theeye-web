@@ -3,7 +3,8 @@ import FileRouter from 'router/files'
 import bootbox from 'bootbox'
 import XHR from 'lib/xhr'
 import after from 'lodash/after'
-const isDataUrl = require('valid-data-url')
+import isDataUrl from 'valid-data-url'
+import isMongoId from 'validator/lib/isMongoId'
 
 export default {
   retrieve (id) {
@@ -168,9 +169,19 @@ export default {
       }
     })
   },
-  edit (id) {
-    // route edit file action
-    let router = new FileRouter()
-    router.route('edit', { id: id })
+  edit (value) {
+    const router = new FileRouter()
+    const id = (value?.id || value)
+    if (typeof id === 'string') {
+      if (!isMongoId(id)) {
+        throw new Error(`cannot edit ${id}`)
+      }
+      // route edit file action
+      router.route('edit', { id })
+    } else {
+      if (value?.data) {
+        router.route('import', { model: value })
+      }
+    }
   }
 }
