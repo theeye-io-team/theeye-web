@@ -5,6 +5,7 @@ import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
 
 import { Integrations } from 'models/integration'
+import GroupsMenu from 'view/groups-menu'
 
 import './style.less'
 
@@ -49,7 +50,7 @@ export default View.extend({
   },
   props: {
     customers_switch: ['boolean', false, false],
-    customerSearch: ['string', false, ''],
+    customerSearch: ['string', false, '']
   },
   collections: {
     integrations: Integrations
@@ -110,6 +111,8 @@ export default View.extend({
     this.renderWithTemplate(this)
     this.renderCustomers()
 
+    this.registerSubview(new GroupsMenu())
+
     this.listenToAndRun(App.state.session.user, 'change:credential', () => {
       this.renderMenuLinks()
     })
@@ -161,11 +164,13 @@ export default View.extend({
       }
 
       if (Acls.hasAccessLevel('manager')) {
-        let link = html2dom(`<li><a href="" data-hook="settings-menu" class="eyeicon eyemenu-icon eyeicon-settings">Settings</a></li>`)
-        link.onclick = () => {
-          App.actions.settingsMenu.show('customer')
-        }
+        const link = html2dom(`<li><a href="" data-hook="settings-menu" class="eyeicon eyemenu-icon eyeicon-settings">Settings</a></li>`)
+        link.onclick = () => { App.actions.settingsMenu.show('customer') }
         container.appendChild(link)
+
+        const groupsBtn = html2dom(`<li><a href="" data-hook="groups-menu" class="eyeicon eyemenu-icon eyeicon-settings"> Groups </a></li>`)
+        groupsBtn.onclick = () => App.actions.groups.menu.show()
+        container.appendChild(groupsBtn)
       }
 
       if (Acls.hasAccessLevel('root')) {
