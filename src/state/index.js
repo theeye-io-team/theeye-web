@@ -16,6 +16,7 @@ import { Collection as Tags } from 'models/tag'
 import { Collection as Files } from 'models/file'
 import { Collection as Events } from 'models/event'
 import { Workflows } from 'models/workflow'
+import { Collection as Groups } from 'models/group'
 //import { EmitterCollection as Emitters } from 'models/event'
 import { Collection as Notifications } from 'models/notification'
 import Alerts from 'components/alerts'
@@ -28,6 +29,7 @@ import DashboardPageState from './dashboard-page'
 import SessionState from './session'
 import NavbarState from './navbar'
 import SettingsMenuState from './settings-menu'
+import GroupsMenuState from './groups'
 import HostStatsPageState from './hoststats-page'
 import InboxState from './inbox'
 import OnboardingState from './onboarding'
@@ -151,6 +153,7 @@ const AppState = State.extend({
     this.localSettings = new LocalSettings()
     this.navbar = new NavbarState()
     this.settingsMenu = new SettingsMenuState()
+    this.groupsMenu = new GroupsMenuState()
     this.sideMenu = new SideMenuState()
     this.searchbox = new SearchBoxState()
     this.inbox = new InboxState({ appState: this })
@@ -295,6 +298,7 @@ const _initCollections = function () {
     events: new Events([]),
     notifications: new Notifications([]),
     workflows: new Workflows([]),
+    groups: new Groups([]),
     admin: {
       users: new Users([]),
       customers: new Customers([]),
