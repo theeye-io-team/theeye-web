@@ -29,7 +29,7 @@ import DashboardPageState from './dashboard-page'
 import SessionState from './session'
 import NavbarState from './navbar'
 import SettingsMenuState from './settings-menu'
-import GroupsMenuState from './groups'
+import IamMenuState from './iam-menu'
 import HostStatsPageState from './hoststats-page'
 import InboxState from './inbox'
 import OnboardingState from './onboarding'
@@ -219,7 +219,7 @@ const AppState = State.extend({
     this.localSettings = new LocalSettings()
     this.navbar = new NavbarState()
     this.settingsMenu = new SettingsMenuState()
-    this.groupsMenu = new GroupsMenuState()
+    this.iamMenu = new IamMenuState()
     this.sideMenu = new SideMenuState()
     this.searchbox = new SearchBoxState()
     this.inbox = new InboxState({ appState: this })

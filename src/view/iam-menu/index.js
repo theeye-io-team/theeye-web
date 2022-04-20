@@ -17,14 +17,14 @@ import './styes.less'
 
 export default FullContainer.extend({
   template: `
-    <div data-component="groups-menu-container" class="full-page-container">
-      <div class="groups-menu-page">
+    <div data-component="iam-menu-container" class="full-page-container">
+      <div class="iam-menu-page">
       <div class="header text-center">
         <span>Your groups in <span data-hook="customer-view_name"></span></span>
         <span data-hook="close-button" class="close-button fa fa-remove" style=""></span>
       </div>
       <div class="col-xs-3 panel-left">
-        <ul class="nav nav-tabs tabs-left" data-hook="groups-menu-links-container">
+        <ul class="nav nav-tabs tabs-left" data-hook="iam-menu-links-container">
         </ul>
       </div>
       <div class="col-xs-9 panel-right">
@@ -48,8 +48,8 @@ export default FullContainer.extend({
   initialize () {
     FullContainer.prototype.initialize.apply(this,arguments)
     this.autoAppend = true
-    this.listenToAndRun(App.state.groupsMenu,'change',() => {
-      this.updateState(App.state.groupsMenu)
+    this.listenToAndRun(App.state.iamMenu,'change',() => {
+      this.updateState(App.state.iamMenu)
     })
     this.name = 'customer'
   },
@@ -61,6 +61,7 @@ export default FullContainer.extend({
         window.scrollTo(0,0)
         document.body.style.overflow = 'hidden'
       } else {
+        App.state.groups.fetch()
         document.body.style.overflow = 'auto'
       }
     })
@@ -69,7 +70,7 @@ export default FullContainer.extend({
 
     this.on('change:current_tab', () => {
       let tab = this.current_tab
-      let selector = `[data-hook=groups-menu-links-container] a[href="#${tab}"]`
+      let selector = `[data-hook=iam-menu-links-container] a[href="#${tab}"]`
       $( this.query(selector) ).tab('show')
     })
   },
@@ -87,22 +88,22 @@ export default FullContainer.extend({
   onClickCloseButton (event) {
     event.preventDefault()
     event.stopPropagation()
-    App.actions.groups.menu.hide()
+    App.actions.iamMenu.hide()
     return false
   },
   onKeyEvent (event) {
     if (event.keyCode === 27) {
       event.preventDefault()
       event.stopPropagation()
-      App.actions.groups.menu.hide()
+      App.actions.iamMenu.hide()
       return false
     }
   },
   setCurrentTab (event) {
-    App.actions.groups.menu.toggleTab(event.target.hash.substring(1))
+    App.actions.iamMenu.toggleTab(event.target.hash.substring(1))
   },
   renderTabs () {
-    const groupsLinks = this.queryByHook('groups-menu-links-container')
+    const groupsLinks = this.queryByHook('iam-menu-links-container')
 
     if (Acls.hasAccessLevel('admin')) {
       groupsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#groups" data-toggle="tab">Groups</a></li>`))

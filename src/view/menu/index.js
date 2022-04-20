@@ -5,7 +5,7 @@ import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
 
 import { Integrations } from 'models/integration'
-import GroupsMenu from 'view/groups-menu'
+import IamMenu from 'view/iam-menu'
 
 import './style.less'
 
@@ -111,7 +111,7 @@ export default View.extend({
     this.renderWithTemplate(this)
     this.renderCustomers()
 
-    this.registerSubview(new GroupsMenu())
+    this.registerSubview(new IamMenu())
 
     this.listenToAndRun(App.state.session.user, 'change:credential', () => {
       this.renderMenuLinks()
@@ -168,9 +168,9 @@ export default View.extend({
         link.onclick = () => { App.actions.settingsMenu.show('customer') }
         container.appendChild(link)
 
-        const groupsBtn = html2dom(`<li><a href="" data-hook="groups-menu" class="eyeicon eyemenu-icon eyeicon-settings"> Groups </a></li>`)
-        groupsBtn.onclick = () => App.actions.groups.menu.show()
-        container.appendChild(groupsBtn)
+        const iamBtn = html2dom(`<li><a href="" data-hook="iam-menu" class="eyeicon eyemenu-icon eyeicon-settings"> Groups </a></li>`)
+        iamBtn.onclick = () => App.actions.iamMenu.show()
+        container.appendChild(iamBtn)
       }
 
       if (Acls.hasAccessLevel('root')) {
