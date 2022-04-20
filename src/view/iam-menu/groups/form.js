@@ -23,10 +23,8 @@ export default FormView.extend({
     FormView.prototype.initialize.apply(this, arguments)
   },
   prepareData() {
-    debugger
     let data = Object.assign({}, this.data)
     data.customer = App.state.session.customer.id
-    console.log(data)
     return data
   }
 })

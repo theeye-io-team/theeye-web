@@ -4,7 +4,7 @@ import SideMenuActions from 'actions/sideMenu'
 import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
 import CustomerSettings from 'view/settings/customer'
-import GroupsMenu from 'view/groups-menu'
+import IamMenu from 'view/iam-menu'
 
 import './style.less'
 
@@ -98,7 +98,7 @@ export default View.extend({
     this.renderCustomers()
 
     this.registerSubview(new CustomerSettings())
-    this.registerSubview(new GroupsMenu())
+    this.registerSubview(new IamMenu())
 
     this.listenToAndRun(App.state.session.user, 'change:credential', () => {
       this.renderMenuLinks()
@@ -152,9 +152,9 @@ export default View.extend({
         let settingsBtn = html2dom(`<li><a href="" data-hook="settings-menu" class="eyeicon eyemenu-icon eyeicon-settings"> Settings </a></li>`)
         settingsBtn.onclick = () => App.actions.settingsMenu.show('customer')
         container.appendChild(settingsBtn)
-        let groupsBtn = html2dom(`<li><a href="" data-hook="groups-menu" class="eyeicon eyemenu-icon eyeicon-settings"> Groups </a></li>`)
-        groupsBtn.onclick = () => App.actions.groups.menu.show()
-        container.appendChild(groupsBtn)
+        let iamBtn = html2dom(`<li><a href="" data-hook="iam-menu" class="eyeicon eyemenu-icon eyeicon-settings"> Groups </a></li>`)
+        iamBtn.onclick = () => App.actions.iamMenu.show()
+        container.appendChild(iamBtn)
 
       }
 
