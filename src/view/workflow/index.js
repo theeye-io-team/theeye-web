@@ -99,7 +99,6 @@ export default View.extend({
     event.stopPropagation()
 
     this.updateCytoscape()
-    this.cy.center()
 
     return false
   },
@@ -116,7 +115,13 @@ export default View.extend({
       this.cy.destroy()
       this.cy = null
     }
-    return this.renderCytoscape()
+
+    this.renderCytoscape()
+
+    this.cy.center()
+    this.cy.fit()
+
+    return this
   },
   renderCytoscape () {
     if (!this.graph) {
@@ -133,7 +138,7 @@ export default View.extend({
       // initial zoom
       zoom: 1.1,
       minZoom: 0.5,
-      maxZoom: 2,
+      maxZoom: 1.1,
       layout: {
         fit: false,
         name: 'dagre',
