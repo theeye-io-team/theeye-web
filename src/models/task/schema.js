@@ -62,6 +62,11 @@ const Schema = AppModel.extend({
       fn () {
         return this.grace_time > 0
       }
+    },
+    missingConfiguration: {
+      fn () {
+        return []
+      }
     }
   },
   session: {

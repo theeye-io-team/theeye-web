@@ -2,6 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Collection from 'ampersand-collection'
 import FormView from 'ampersand-form-view'
+import InputView from 'components/input-view'
 import Help from 'language/help'
 import Modalizer from 'components/modalizer'
 import SelectView from 'components/select2-view'
@@ -17,6 +18,10 @@ import CreateTaskWizard from 'view/page/task/creation-wizard'
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 import uuidv4 from 'uuid'
 import './styles.less'
+import isMongoId from 'validator/lib/isMongoId'
+
+const MODE_EDIT   = 'edit'
+const MODE_IMPORT = 'import'
 
 export default View.extend({
   template: `
@@ -42,9 +47,9 @@ export default View.extend({
     let workflow = options.value
 
     const version = workflow.version
-    if (this.mode === 'edit') {
+    if (this.mode === MODE_EDIT) {
       recipe = workflow.serialize()
-    } else if (this.mode === 'import') {
+    } else if (this.mode === MODE_IMPORT) {
       recipe = workflow.serialize()
       recipe.tasks = workflow.tasks.models // keep untouch
     } else {
@@ -178,13 +183,10 @@ export default View.extend({
     if (/Task$/.test(node.value._type) === true) {
       const id = node.value.id
       const task = this.workflow.tasks.get(id)
-      if (this.connectingTask !== undefined) {
+      if (this.connectingTask?.task !== undefined) {
         const taskOrigin = this.connectingTask.task
-        const eventName = this.connectingTask.eventName
-
         this.connectingTask = undefined
-
-        this.connectTasks(taskOrigin, task, eventName)
+        this.connectTasks(taskOrigin, task)
       } else {
         const menu = new TaskContextualMenu({ model: task })
         menu.render()
@@ -264,6 +266,8 @@ export default View.extend({
     const taskSelection = new TaskSelectionModal()
 
     const modal = new Modalizer({
+      fade: false,
+      center: true,
       buttons: false,
       title: 'Workflow',
       bodyView: taskSelection 
@@ -317,7 +321,6 @@ export default View.extend({
   addTaskNode (task) {
     const taskData = (task.isState?task.serialize():task)
     taskData.id = uuidv4()
-    taskData.synchronized = false
     const clone = new App.Models.Task.Factory(taskData, { store: false }) 
 
     this.workflow.tasks.add(clone)
@@ -334,18 +337,32 @@ export default View.extend({
     // force change trigger to redraw
     this.trigger('change:graph')
   },
-  connectTasks (taskOrigin, taskTarget, eventName) {
-    const w = this.graph
-    //w.setNode(data.emitter.id, data.emitter)
-    //w.setNode(data.emitter_state.id, data.emitter_state)
-    //w.setNode(data.task.id, data.task)
-    //w.setEdge(data.emitter.id, data.emitter_state.id)
-    //w.setEdge(data.emitter_state.id, data.task.id)
+  connectTasks (taskOrigin, taskTarget) {
+    const bodyView = new EventNameInputView({})
 
-    w.setEdge(taskOrigin.id, taskTarget.id, eventName)
+    const modal = new Modalizer({
+      center: true,
+      fade: false,
+      buttons: false,
+      title: 'Workflow',
+      bodyView 
+    })
 
-    // force change trigger
-    this.trigger('change:graph', this.graph)
+    this.listenTo(modal, 'hidden', () => {
+      bodyView.remove()
+      modal.remove()
+    })
+
+    bodyView.on('submit', (eventName) => {
+      const w = this.graph
+      w.setEdge(taskOrigin.id, taskTarget.id, eventName)
+      // force change trigger
+      this.trigger('change:graph', this.graph)
+
+      modal.hide() // hide and auto-remove
+    })
+
+    modal.show()
   },
   reportToParent () {
     if (this.parent) { this.parent.update(this) }
@@ -366,7 +383,7 @@ const editTask = (task, mode, done) => {
   })
 
   form.on('submit', data => {
-    if (task.synchronized === true) {
+    if (mode === MODE_EDIT && isMongoId(task.id)) {
       App.actions.task.update(task.id, data)
     } else {
       task.set(data)
@@ -418,8 +435,7 @@ const TaskContextualMenu = View.extend({
         <li><a data-hook="edit-script" href="#">Edit Script</a></li>
         <li><a data-hook="remove" href="#">Remove</a></li>
         <li><a data-hook="export" href="#">Export</a></li>
-        <li><a data-hook="success" href="#">On Success</a></li>
-        <li><a data-hook="failure" href="#">On Failure</a></li>
+        <li><a data-hook="connect" href="#">Connect to ...</a></li>
       </ul>
     </div>
   `,
@@ -440,8 +456,7 @@ const TaskContextualMenu = View.extend({
     this.renderSubview(copyButton, this.queryByHook("menu-buttons"))
   },
   events: {
-    'click [data-hook=success]': 'onClickConnectTasks',
-    'click [data-hook=failure]': 'onClickConnectTasks',
+    'click [data-hook=connect]': 'onClickConnectTasks',
     'click [data-hook=edit-task]': 'onClickEdit',
     'click [data-hook=edit-script]': 'onClickEditScript',
     'click [data-hook=export]': 'onClickExport',
@@ -475,8 +490,7 @@ const TaskContextualMenu = View.extend({
   onClickConnectTasks (event) {
     event.preventDefault()
     event.stopPropagation()
-    const eventName = event.target.dataset.hook
-    this.trigger('task:connect', { task: this.model, eventName })
+    this.trigger('task:connect', { task: this.model })
     this.remove()
   }
 })
@@ -490,12 +504,35 @@ const pointerPosition = (e) => {
 const TasksReviewDialog = Modalizer.extend({
   autoRender: false,
   props: {
-    workflow: 'state'
+    workflow: 'state',
+    autohost: 'boolean'
+  },
+  bindings: {
+    autohost: {
+      hook: 'autohost',
+      type: 'toggle'
+    }
   },
   initialize () {
     this.buttons = false // disable build-in modal buttons
     Modalizer.prototype.initialize.apply(this, arguments)
     this.on('hidden', () => { this.remove() })
+
+    if (App.state.hosts.length === 1) {
+      this.listenToAndRun(this.workflow, 'change:tasks', () => {
+        this.updateState()
+      })
+    }
+  },
+  updateState () {
+    this.autohost = this.workflow
+      .getInvalidTasks()
+      .models
+      .map(t => t.missingConfiguration)
+      .filter(c => {
+        return (c.find(p => p.label === 'Host') !== undefined)
+      })
+      .length > 0
   },
   template () {
     return `
@@ -514,13 +551,17 @@ const TasksReviewDialog = Modalizer.extend({
                 <button type="button" data-hook="close-${this.cid}" class="close" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 data-hook="title" class="modal-title"></h4>
+                <h4 data-hook="title" class="modal-title">
+                  Review the following tasks
+                </h4>
               </div>
               <div class="modal-body" data-hook="body">
-                <button class="autocomplete btn btn-primary" data-hook="autocomplete">
-                  <i class="fa fa-recycle"></i> Auto
-                </button>
-                <h1>Review the following tasks</h1>
+                <section data-hook="actions-container">
+                  <button class="autocomplete" data-hook="autohost">
+                    <i class="fa fa-server"></i> Autocomplete Host
+                  </button>
+                </section>
+                <h1></h1>
                 <ul class="tasks-list" data-hook="tasks-container"></ul>
               </div>
             </div><!-- /MODAL-CONTENT -->
@@ -531,20 +572,31 @@ const TasksReviewDialog = Modalizer.extend({
   `
   },
   events: Object.assign({}, Modalizer.prototype.events, {
-    'click [data-hook=autocomplete]': function (event) {
+    'click [data-hook=autohost]': function (event) {
       event.preventDefault()
       event.stopPropagation()
 
-      const invalidTasks = this.workflow.getInvalidTasks()
+      if ( App.state.hosts.length !== 1 ) { return }
+
+      const tasksCollection = this.workflow.getInvalidTasks()
+
+      for (let task of tasksCollection.models) {
+        for (let cfg of task.missingConfiguration) {
+          if (/host/i.test(cfg.label)) {
+            const host = App.state.hosts.models[0]
+            task.host_id = host.id
+          }
+        }
+      }
     }
   }),
   render () {
     Modalizer.prototype.render.apply(this, arguments)
 
-    const invalidTasks = this.workflow.getInvalidTasks()
+    const tasksCollection = this.workflow.getInvalidTasks()
 
     this.renderCollection(
-      invalidTasks,
+      tasksCollection,
       InvalidTaskView,
       this.queryByHook('tasks-container'),
       {}
@@ -582,12 +634,12 @@ const InvalidTaskView = View.extend({
   render () {
     this.renderWithTemplate()
 
-    const models = this.model.missingConfiguration
+    const missing = this.model.missingConfiguration
       .map(missing => {
         return { label: missing.label }
       })
 
-    const missingConfiguration = new Collection(models)
+    const missingConfiguration = new Collection(missing)
 
     this.renderCollection(
       missingConfiguration,
@@ -619,4 +671,56 @@ const MissingConfigurationView = View.extend({
   bindings: {
     'label': { selector: 'li' }
   }
+})
+
+const EventNameInputView = FormView.extend({
+  initialize (options) {
+    this.fields = [
+      new InputView({
+        label: 'Event Name',
+        name: 'eventName',
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        placeholder: 'use "success" to go in a single direction',
+        value: 'success'
+      })
+    ]
+    FormView.prototype.initialize.apply(this, arguments)
+  },
+  render () {
+    FormView.prototype.render.apply(this, arguments)
+    this.query('form').classList.add('form-horizontal')
+
+    const buttons = new FormButtons({ confirmText: 'Confirm' })
+    this.renderSubview(buttons)
+    buttons.on('click:confirm', this.submit, this)
+
+    this.renderSubview(new EventsMessage(), this.query('.form-group'))
+  },
+  submit () {
+    this.beforeSubmit()
+    if (!this.valid) { return }
+    const eventName = this.data.eventName
+    if (eventName !== 'success' && eventName !== 'failure') {
+      // do something?
+    }
+
+    this.trigger('submit', eventName)
+  }
+})
+
+const EventsMessage = View.extend({
+  template: `
+    <div>
+      New!:<br/><br/>
+      When using named events different than "success" you should add the key "event_name" in the last line of your script.<br/>
+      <br/>
+      Using an event named "completed" the lastline should be
+      <br/>
+      <code class="javascript">
+        {"state":"success","event_name":"completed","data":[...]}
+      </code>
+    </div>
+  `
 })

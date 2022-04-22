@@ -230,8 +230,6 @@ const Workflow = AppModel.extend({
   serialize () {
     let attrs = AppModel.prototype.serialize.apply(this,arguments)
     attrs.graph = this.serializeGraph()
-    //attrs.events = attrs.events.filter(model => model.synchronized !== true)
-    //attrs.tasks = attrs.tasks.filter(model => model.synchronized !== true)
     delete attrs.jobs
     delete attrs.schedules
     return attrs
