@@ -490,12 +490,35 @@ const pointerPosition = (e) => {
 const TasksReviewDialog = Modalizer.extend({
   autoRender: false,
   props: {
-    workflow: 'state'
+    workflow: 'state',
+    autohost: 'boolean'
+  },
+  bindings: {
+    autohost: {
+      hook: 'autohost',
+      type: 'toggle'
+    }
   },
   initialize () {
     this.buttons = false // disable build-in modal buttons
     Modalizer.prototype.initialize.apply(this, arguments)
     this.on('hidden', () => { this.remove() })
+
+    if (App.state.hosts.length === 1) {
+      this.listenToAndRun(this.workflow, 'change:tasks', () => {
+        this.updateState()
+      })
+    }
+  },
+  updateState () {
+    this.autohost = this.workflow
+      .getInvalidTasks()
+      .models
+      .map(t => t.missingConfiguration)
+      .filter(c => {
+        return (c.find(p => p.label === 'Host') !== undefined)
+      })
+      .length > 0
   },
   template () {
     return `
@@ -514,13 +537,17 @@ const TasksReviewDialog = Modalizer.extend({
                 <button type="button" data-hook="close-${this.cid}" class="close" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
-                <h4 data-hook="title" class="modal-title"></h4>
+                <h4 data-hook="title" class="modal-title">
+                  Review the following tasks
+                </h4>
               </div>
               <div class="modal-body" data-hook="body">
-                <button class="autocomplete btn btn-primary" data-hook="autocomplete">
-                  <i class="fa fa-recycle"></i> Auto
-                </button>
-                <h1>Review the following tasks</h1>
+                <section data-hook="actions-container">
+                  <button class="autocomplete" data-hook="autohost">
+                    <i class="fa fa-server"></i> Autocomplete Host
+                  </button>
+                </section>
+                <h1></h1>
                 <ul class="tasks-list" data-hook="tasks-container"></ul>
               </div>
             </div><!-- /MODAL-CONTENT -->
@@ -531,20 +558,31 @@ const TasksReviewDialog = Modalizer.extend({
   `
   },
   events: Object.assign({}, Modalizer.prototype.events, {
-    'click [data-hook=autocomplete]': function (event) {
+    'click [data-hook=autohost]': function (event) {
       event.preventDefault()
       event.stopPropagation()
 
-      const invalidTasks = this.workflow.getInvalidTasks()
+      if ( App.state.hosts.length !== 1 ) { return }
+
+      const tasksCollection = this.workflow.getInvalidTasks()
+
+      for (let task of tasksCollection.models) {
+        for (let cfg of task.missingConfiguration) {
+          if (/host/i.test(cfg.label)) {
+            const host = App.state.hosts.models[0]
+            task.host_id = host.id
+          }
+        }
+      }
     }
   }),
   render () {
     Modalizer.prototype.render.apply(this, arguments)
 
-    const invalidTasks = this.workflow.getInvalidTasks()
+    const tasksCollection = this.workflow.getInvalidTasks()
 
     this.renderCollection(
-      invalidTasks,
+      tasksCollection,
       InvalidTaskView,
       this.queryByHook('tasks-container'),
       {}
@@ -582,12 +620,12 @@ const InvalidTaskView = View.extend({
   render () {
     this.renderWithTemplate()
 
-    const models = this.model.missingConfiguration
+    const missing = this.model.missingConfiguration
       .map(missing => {
         return { label: missing.label }
       })
 
-    const missingConfiguration = new Collection(models)
+    const missingConfiguration = new Collection(missing)
 
     this.renderCollection(
       missingConfiguration,

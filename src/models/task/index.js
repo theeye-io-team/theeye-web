@@ -73,7 +73,7 @@ const Script = Schema.extend({
       }
     },
     missingConfiguration: {
-      deps: ['script_id','host_id'],
+      deps: ['script_id','host_id','task_arguments','env'],
       fn () {
         const missing = []
         const addMissing = (name, values) => {
@@ -106,7 +106,7 @@ const Script = Schema.extend({
         }
 
         if (incmpEnvs.length > 0) {
-          addMissing.push(env)
+          addMissing('env', incmpEnvs)
         }
 
         return missing
