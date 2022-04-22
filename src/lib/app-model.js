@@ -4,9 +4,7 @@ import XHR from 'lib/xhr'
 
 export default AmpersandModel.extend({
   props: {
-    is_loading: ['boolean', false, false],
-    // in sync with the API
-    synchronized: ['boolean', false, false]
+    is_loading: ['boolean', false, false]
   },
   dataTypes: {
     collection: {
@@ -51,7 +49,6 @@ export default AmpersandModel.extend({
         }
       },
       success: function () {
-        model.synchronized = true
         if (successFn) {
           successFn.apply(this, arguments)
         }
@@ -62,7 +59,6 @@ export default AmpersandModel.extend({
   },
   parse () {
     const attrs = AmpersandModel.prototype.parse.apply(this, arguments)
-    attrs.synchronized = true
     return attrs
   }
 })

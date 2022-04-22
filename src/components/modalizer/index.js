@@ -56,9 +56,15 @@ const Modalizer = View.extend({
     cancelButton: ['string',false,'Cancel'],
     visible: ['boolean',false,false],
     backdrop: ['boolean',false,true],
-    appendToParent: ['boolean', false, false]
+    appendToParent: ['boolean', false, false],
+    center: ['boolean', false, false]
   },
   bindings: {
+    center: {
+      type: 'booleanClass',
+      selector: '.modal-dialog',
+      name: 'centered'
+    },
     closeButton: {
       type: 'toggle',
       hook: 'close'
