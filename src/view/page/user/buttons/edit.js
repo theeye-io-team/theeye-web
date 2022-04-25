@@ -7,7 +7,7 @@ import $ from 'jquery'
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = 'Edit user'
+    this.title = 'Edit Profile'
     this.iconClass = 'fa fa-edit dropdown-icon'
     this.className = 'btn btn-primary editButton'
   },
