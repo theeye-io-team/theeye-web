@@ -32,6 +32,7 @@ export default ListItem.extend({
       { view: UserButtons.InfoButton, params: { model: this.model } },
       { view: UserButtons.ResendInvitationButton, params: { model: this.model } },
       { view: UserButtons.EditButton, params: { model: this.model } },
+      { view: UserButtons.PasswordButton, params: { model: this.model } },
       { view: UserButtons.DeleteButton, params: { model: this.model } },
     ])
 
