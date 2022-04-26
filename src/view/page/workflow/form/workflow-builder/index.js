@@ -338,7 +338,8 @@ export default View.extend({
     this.trigger('change:graph')
   },
   connectTasks (taskOrigin, taskTarget) {
-    const bodyView = new EventNameInputView({})
+    const currentEventName = this.graph.edge(taskOrigin.id, taskTarget.id) 
+    const bodyView = new EventNameInputView({ currentEventName })
 
     const modal = new Modalizer({
       center: true,
@@ -674,6 +675,16 @@ const MissingConfigurationView = View.extend({
 })
 
 const EventNameInputView = FormView.extend({
+  props: {
+    currentEventName: 'string'
+  },
+  bindings: {
+    currentEventName: {
+      hook: 'currentEventName',
+      type: 'toggle',
+      reverse: true
+    }
+  },
   initialize (options) {
     this.fields = [
       new InputView({
@@ -696,7 +707,10 @@ const EventNameInputView = FormView.extend({
     this.renderSubview(buttons)
     buttons.on('click:confirm', this.submit, this)
 
-    this.renderSubview(new EventsMessage(), this.query('.form-group'))
+    this.renderSubview(
+      new EventsMessage({ currentEventName: this.currentEventName }),
+      this.query('.form-group')
+    )
   },
   submit () {
     this.beforeSubmit()
@@ -711,16 +725,29 @@ const EventNameInputView = FormView.extend({
 })
 
 const EventsMessage = View.extend({
-  template: `
+  props: {
+    currentEventName: 'string'
+  },
+  template () {
+    return (`
     <div>
-      New!:<br/><br/>
-      When using named events different than "success" you should add the key "event_name" in the last line of your script.<br/>
-      <br/>
-      Using an event named "completed" the lastline should be
-      <br/>
-      <code class="javascript">
-        {"state":"success","event_name":"completed","data":[...]}
-      </code>
+      <section data-hook="currentEventName">
+        <b class="">Warning</b><br/>
+        This nodes are already connected via ${this.currentEventName}.
+        You can't have multiples arrows going from one node to another in the same direction.
+        If continue the current arrow will be replaced
+      </section>
+      <section>
+        New:<br/><br/>
+        When using named events different than "success" you should add the key "event_name" in the last line of your script.<br/>
+        <br/>
+        Using an event named "completed" the lastline should be
+        <br/>
+        <code class="javascript">
+          {"state":"success","event_name":"completed","data":[...]}
+        </code>
+      </section>
     </div>
-  `
+  `)
+  }
 })
