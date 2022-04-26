@@ -1,9 +1,9 @@
 import App from 'ampersand-app'
+import Modalizer from 'components/modalizer'
 import DropableFormView from 'components/dropable-form'
 import AdvancedToggle from 'view/advanced-toggle'
 import LanguajeLabels from 'language/labels'
 import FormButtons from 'view/buttons'
-import SelectView from 'components/select2-view'
 import InputView from 'components/input-view'
 import CheckboxView from 'components/checkbox-view'
 import TextareaView from 'components/input-view/textarea'
@@ -16,6 +16,9 @@ import WorkflowBuilderView from './workflow-builder'
 import EventsSelectView from 'view/events-select'
 import bootbox from 'bootbox'
 import { Factory as TaskFactory } from 'models/task'
+import HostSelectionComponent from './host-selection'
+
+import './styles.less'
 
 export default DropableFormView.extend({
   initialize (options) {
@@ -29,7 +32,8 @@ export default DropableFormView.extend({
       'triggers',
       'table_view',
       'empty_viewers',
-      'allows_dynamic_settings'
+      'allows_dynamic_settings',
+      'host'
     ]
 
     const workflowBuilder = this.workflowBuilder = new WorkflowBuilderView({
@@ -105,6 +109,13 @@ export default DropableFormView.extend({
           })
         }
       }),
+      //new HostSelectionComponent({
+      //  value: 'Change the host of all tasks',
+      //  visible: false,
+      //  onSelection: (id) => {
+      //    workflowBuilder.workflow.setHost(id)
+      //  }
+      //}),
       new TextareaView({
         visible: false,
         label: 'More Info',
@@ -237,3 +248,4 @@ const InitialTaskSelectionView = TaskSelectView.extend({
     this.$select.on('select2:opening', this.onOpenning)
   }
 })
+
