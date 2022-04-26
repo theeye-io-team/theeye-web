@@ -128,13 +128,14 @@ export default {
       }
     })
   },
-  remove (id) {
+  remove (id, keepTasks) {
     const workflow = App.state.workflows.get(id)
     workflow.destroy({
+      data: { keepTasks },
       success () {
         App.state.alerts.success('Success', 'Workflow removed')
         App.state.workflows.remove(workflow)
-        unlinkTasks(workflow, Boolean(workflow.version !== 2))
+        unlinkTasks(workflow, keepTasks)
       }
     })
   },
@@ -266,7 +267,7 @@ export default {
   }
 }
 
-const unlinkTasks = (workflow, keepCopies = false) => {
+const unlinkTasks = (workflow, keepTasks = false) => {
   let graph = workflow.graph
   graph.nodes().forEach(node => {
     const data = graph.node(node)
@@ -275,7 +276,7 @@ const unlinkTasks = (workflow, keepCopies = false) => {
       if (!task) { return }
 
       let version = workflow.version||0
-      if (version < 2 || keepCopies) {
+      if (keepTasks === true) {
         task.workflow_id = null
         task.workflow = null
       } else {

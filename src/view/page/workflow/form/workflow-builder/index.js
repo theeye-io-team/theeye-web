@@ -273,7 +273,7 @@ export default View.extend({
       bodyView: taskSelection 
     })
 
-    this.listenTo(modal,'hidden',() => {
+    modal.on('hidden',() => {
       taskSelection.remove()
       modal.remove()
     })
