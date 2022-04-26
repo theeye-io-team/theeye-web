@@ -149,8 +149,8 @@ export default {
     export_arguments: '<b>Arguments</b>: Export task arguments only. Values for fixed arguments will be empty.'
   },
   workflow: {
-    export_backup: '<b>Backup</b>: Export workflow template, including fixed arguments and environment variables.<br/><b>Keep this recipe safe, to avoid private data leaks and keys exposure</b>',
-    export_recipe: '<b>Recipe</b>: Create workflow template. Values for fixed arguments and environment variables will be empty.'
+    export_deep: '<b>Deep Export</b>: Export the workflow for backup. It will include fixed arguments, environment variables, script references, acls, etc.<br/><b>Keep this recipe safe, to avoid private data leaks and keys exposure</b>',
+    export_shallow: '<b>Shallow Export</b>: Export the workflow for sharing or reusing in other organizations. Values for fixed arguments, environment variables, acls, hosts will be empty.'
   },
   job: {
     repeat: 'Start a new job using the same inputs',

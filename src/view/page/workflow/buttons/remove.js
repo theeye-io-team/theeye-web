@@ -7,7 +7,7 @@ import './remove.less'
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = 'Remove workflow'
+    this.title = 'Remove'
     this.iconClass = 'fa fa-trash dropdown-icon'
     this.className = 'btn btn-primary'
   },

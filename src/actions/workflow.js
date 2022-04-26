@@ -222,20 +222,20 @@ export default {
 
     return graphlib.json.write(ngraph)
   },
-  exportRecipe (id) {
+  exportSerialization (id, mode) {
     //const workflow = App.state.workflows.get(id)
-    this.getSerialization(id).then(recipe => {
+    this.getSerialization(id, mode).then(recipe => {
       const jsonContent = JSON.stringify(recipe)
       const blob = new Blob([jsonContent], { type: 'application/json' })
       const fname = recipe.name.replace(/ /g, '_')
       FileSaver.saveAs(blob, `${fname}_workflow.json`)
     })
   },
-  getSerialization (id) {
+  getSerialization (id, mode) {
     return new Promise( (resolve, reject) => {
       XHR.send({
         method: 'GET',
-        url: `${App.config.supervisor_api_url}/workflows/${id}/serialize`,
+        url: `${App.config.supervisor_api_url}/workflows/${id}/serialize?mode=${mode}`,
         headers: {
           'Accept': 'application/json;charset=UTF-8',
           'Accept-Version': App.config.supervisor_api_version

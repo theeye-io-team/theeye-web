@@ -7,7 +7,7 @@ import $ from 'jquery'
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = 'Copy task'
+    this.title = 'Copy'
     this.iconClass = 'fa fa-copy dropdown-icon'
     this.className = 'btn btn-primary'
   },

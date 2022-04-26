@@ -8,7 +8,7 @@ import DOMPurify from 'dompurify'
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = 'View workflow'
+    this.title = 'View'
     this.iconClass = 'fa fa-sitemap dropdown-icon'
     this.className = 'btn btn-primary'
   },
