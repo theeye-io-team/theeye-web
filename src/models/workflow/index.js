@@ -322,6 +322,13 @@ const Workflow = AppModel.extend({
   mergeJobs (jobs) {
     const groups = groupJobs(this, jobs)
     this.jobs.add(groups, {merge:true})
+  },
+  setHost (hostId) {
+    for (let task of this.tasks.models) {
+      if (task.needAHost === true) {
+        task.host_id = hostId
+      }
+    }
   }
 })
 

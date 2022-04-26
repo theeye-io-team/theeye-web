@@ -5,7 +5,6 @@ import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import Help from 'language/help'
 import Modalizer from 'components/modalizer'
-import SelectView from 'components/select2-view'
 //import TaskVersionSelectView from 'view/task-version-select'
 import TaskSelectView from 'view/task-select'
 import bootbox from 'bootbox'
@@ -19,6 +18,7 @@ import ExportDialog from 'view/page/task/buttons/export/dialog'
 import uuidv4 from 'uuid'
 import './styles.less'
 import isMongoId from 'validator/lib/isMongoId'
+import HostSelectionComponent from '../host-selection'
 
 const MODE_EDIT   = 'edit'
 const MODE_IMPORT = 'import'
@@ -557,12 +557,11 @@ const TasksReviewDialog = Modalizer.extend({
                 </h4>
               </div>
               <div class="modal-body" data-hook="body">
-                <section data-hook="actions-container">
+                <section data-hook="actions-container" styles="display: inline-block;">
                   <button class="autocomplete" data-hook="autohost">
                     <i class="fa fa-server"></i> Autocomplete Host
                   </button>
                 </section>
-                <h1></h1>
                 <ul class="tasks-list" data-hook="tasks-container"></ul>
               </div>
             </div><!-- /MODAL-CONTENT -->
@@ -593,6 +592,15 @@ const TasksReviewDialog = Modalizer.extend({
   }),
   render () {
     Modalizer.prototype.render.apply(this, arguments)
+
+    const view = new HostSelectionComponent({
+      value: 'Set the host for all tasks',
+      onSelection: (id) => {
+        this.workflow.setHost(id)
+      }
+    })
+    this.renderSubview(view, this.queryByHook('actions-container'))
+    view.el.querySelector('label').remove()
 
     const tasksCollection = this.workflow.getInvalidTasks()
 
