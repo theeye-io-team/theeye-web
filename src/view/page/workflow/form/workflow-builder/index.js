@@ -5,7 +5,6 @@ import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import Help from 'language/help'
 import Modalizer from 'components/modalizer'
-import SelectView from 'components/select2-view'
 //import TaskVersionSelectView from 'view/task-version-select'
 import TaskSelectView from 'view/task-select'
 import bootbox from 'bootbox'
@@ -19,6 +18,7 @@ import ExportDialog from 'view/page/task/buttons/export/dialog'
 import uuidv4 from 'uuid'
 import './styles.less'
 import isMongoId from 'validator/lib/isMongoId'
+import HostSelectionComponent from '../host-selection'
 
 const MODE_EDIT   = 'edit'
 const MODE_IMPORT = 'import'
@@ -338,7 +338,8 @@ export default View.extend({
     this.trigger('change:graph')
   },
   connectTasks (taskOrigin, taskTarget) {
-    const bodyView = new EventNameInputView({})
+    const currentEventName = this.graph.edge(taskOrigin.id, taskTarget.id) 
+    const bodyView = new EventNameInputView({ currentEventName })
 
     const modal = new Modalizer({
       center: true,
@@ -556,12 +557,11 @@ const TasksReviewDialog = Modalizer.extend({
                 </h4>
               </div>
               <div class="modal-body" data-hook="body">
-                <section data-hook="actions-container">
+                <section data-hook="actions-container" styles="display: inline-block;">
                   <button class="autocomplete" data-hook="autohost">
                     <i class="fa fa-server"></i> Autocomplete Host
                   </button>
                 </section>
-                <h1></h1>
                 <ul class="tasks-list" data-hook="tasks-container"></ul>
               </div>
             </div><!-- /MODAL-CONTENT -->
@@ -592,6 +592,15 @@ const TasksReviewDialog = Modalizer.extend({
   }),
   render () {
     Modalizer.prototype.render.apply(this, arguments)
+
+    const view = new HostSelectionComponent({
+      value: 'Set the host for all tasks',
+      onSelection: (id) => {
+        this.workflow.setHost(id)
+      }
+    })
+    this.renderSubview(view, this.queryByHook('actions-container'))
+    view.el.querySelector('label').remove()
 
     const tasksCollection = this.workflow.getInvalidTasks()
 
@@ -674,6 +683,16 @@ const MissingConfigurationView = View.extend({
 })
 
 const EventNameInputView = FormView.extend({
+  props: {
+    currentEventName: 'string'
+  },
+  bindings: {
+    currentEventName: {
+      hook: 'currentEventName',
+      type: 'toggle',
+      reverse: true
+    }
+  },
   initialize (options) {
     this.fields = [
       new InputView({
@@ -696,7 +715,10 @@ const EventNameInputView = FormView.extend({
     this.renderSubview(buttons)
     buttons.on('click:confirm', this.submit, this)
 
-    this.renderSubview(new EventsMessage(), this.query('.form-group'))
+    this.renderSubview(
+      new EventsMessage({ currentEventName: this.currentEventName }),
+      this.query('.form-group')
+    )
   },
   submit () {
     this.beforeSubmit()
@@ -711,16 +733,29 @@ const EventNameInputView = FormView.extend({
 })
 
 const EventsMessage = View.extend({
-  template: `
+  props: {
+    currentEventName: 'string'
+  },
+  template () {
+    return (`
     <div>
-      New!:<br/><br/>
-      When using named events different than "success" you should add the key "event_name" in the last line of your script.<br/>
-      <br/>
-      Using an event named "completed" the lastline should be
-      <br/>
-      <code class="javascript">
-        {"state":"success","event_name":"completed","data":[...]}
-      </code>
+      <section data-hook="currentEventName">
+        <b class="">Warning</b><br/>
+        This nodes are already connected via ${this.currentEventName}.
+        You can't have multiples arrows going from one node to another in the same direction.
+        If continue the current arrow will be replaced
+      </section>
+      <section>
+        New:<br/><br/>
+        When using named events different than "success" you should add the key "event_name" in the last line of your script.<br/>
+        <br/>
+        Using an event named "completed" the lastline should be
+        <br/>
+        <code class="javascript">
+          {"state":"success","event_name":"completed","data":[...]}
+        </code>
+      </section>
     </div>
-  `
+  `)
+  }
 })

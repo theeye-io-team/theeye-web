@@ -178,9 +178,11 @@ const Modalizer = View.extend({
     }
     this.renderBody()
     this.visible = true
+    this.trigger('shown')
   },
   hide () {
     this.visible = false
+    this.trigger('hidden')
   },
   /**
    * if bootstrap modal is being hided (with click or X)
@@ -208,11 +210,10 @@ const Modalizer = View.extend({
     this.$modal.modal('show')
   },
   _hideElem () {
-    this.trigger('hide')
     this.$modal.modal('hide')
+    //this.trigger('hide')
   },
   remove () {
-    this.hide()
     if (this.bodyView && this.bodyView.rendered === true) {
       this.bodyView.remove()
     }

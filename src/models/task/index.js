@@ -45,6 +45,7 @@ const Script = Schema.extend({
   urlRoot,
   initialize (attrs) {
     Schema.prototype.initialize.apply(this, arguments)
+    this.needAHost = true
     this.type = 'script'
   },
   props: {
@@ -153,6 +154,7 @@ const Scraper = Schema.extend({
   urlRoot,
   initialize () {
     Schema.prototype.initialize.apply(this, arguments)
+    this.needAHost = true
     this.type = 'scraper'
   },
   props: {
