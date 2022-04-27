@@ -594,7 +594,7 @@ const TasksReviewDialog = Modalizer.extend({
     Modalizer.prototype.render.apply(this, arguments)
 
     const view = new HostSelectionComponent({
-      value: 'Set the host for all tasks',
+      value: 'Assign the same host to all tasks',
       onSelection: (id) => {
         this.workflow.setHost(id)
       }
@@ -740,19 +740,13 @@ const EventsMessage = View.extend({
     return (`
     <div>
       <section data-hook="currentEventName">
-        <b class="">Warning</b><br/>
-        This nodes are already connected via ${this.currentEventName}.
-        You can't have multiples arrows going from one node to another in the same direction.
-        If continue the current arrow will be replaced
+        <b>Warning</b> The current event ${this.currentEventName} will be replaced.</br>
       </section>
       <section>
-        New:<br/><br/>
-        When using named events different than "success" you should add the key "event_name" in the last line of your script.<br/>
-        <br/>
-        Using an event named "completed" the lastline should be
-        <br/>
+        Keep in mind that the event you define must be considered in the script.</br>
+        For example if the event is named "completed" an "event_name" property in the last line should be added like this
         <code class="javascript">
-          {"state":"success","event_name":"completed","data":[...]}
+        {"state":"success","event_name":"completed","data":[...]}
         </code>
       </section>
     </div>

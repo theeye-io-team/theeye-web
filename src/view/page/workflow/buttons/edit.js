@@ -63,10 +63,9 @@ const ActionDialog = Modalizer.extend({
               </div>
               <div class="modal-body" data-hook="body">
                 <p>
-                The Workflow will be migrated to Version 2.<br/>
-                You can edit your old workflows directly and the structure will be inmediatelly migrated.<br/>
-                Now you can choose to make a copy of the workflow and test it.<br/>
-                All the tasks and settings will be the exact same.
+                The Workflow will be upgraded to a new version<br/>
+                In this new version you will see visual changes but workflows will remain unchaged.</br>
+                Before editing a Productive Workflow we recommend to try and test a copy first.<br/>
                 </p>
 
                 <div class="grid-container">
