@@ -3,6 +3,7 @@ import View from 'ampersand-view'
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
 import './styles.less'
+import $ from 'jquery'
 
 import DOMPurify from 'dompurify'
 
@@ -16,44 +17,42 @@ export default PanelButton.extend({
     click (event) {
       event.stopPropagation()
       event.preventDefault()
-      this.renderWorkflowModal()
+      $('.dropdown.open .dropdown-toggle').dropdown('toggle')
+      renderWorkflowModal(this.model)
     }
-  },
-  renderWorkflowModal () {
-    import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
-      .then(({ default: WorkflowView }) => {
-        const workflowGraph = new WorkflowView({ graph: this.model.graph })
-
-        const workflowGraphContainer = new WorkflowViewContainer({
-          name: this.model.name,
-          description: this.model.description,
-          graph: workflowGraph
-        })
-
-        const modal = new Modalizer({
-          buttons: false,
-          title: this.title,
-          bodyView: workflowGraphContainer,
-          class: 'workflow-viewer'
-        })
-
-        this.listenTo(modal,'shown',() => {
-          App.state.loader.visible = true
-          setTimeout(() => {
-            workflowGraph.updateCytoscape()
-            App.state.loader.visible = false
-          }, 1000)
-        })
-
-        this.listenTo(modal,'hidden',() => {
-          workflowGraphContainer.remove()
-          modal.remove()
-        })
-
-        modal.show()
-      })
   }
 })
+
+const renderWorkflowModal = (model) => {
+  import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
+    .then(({ default: WorkflowView }) => {
+      const workflowGraph = new WorkflowView({ graph: model.graph })
+
+      const workflowGraphContainer = new WorkflowViewContainer({
+        name: model.name,
+        description: model.description,
+        graph: workflowGraph
+      })
+
+      const modal = new Modalizer({
+        buttons: false,
+        title: `Workflow ${model.name}`,
+        bodyView: workflowGraphContainer,
+        class: 'workflow-viewer'
+      })
+
+      modal.on('shown', () => {
+        workflowGraph.updateCytoscape()
+      })
+
+      modal.on('hidden', () => {
+        workflowGraphContainer.remove()
+        modal.remove()
+      })
+
+      modal.show()
+    })
+}
 
 const WorkflowViewContainer = View.extend({
   template: `

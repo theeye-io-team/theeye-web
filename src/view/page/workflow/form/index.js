@@ -197,9 +197,6 @@ export default DropableFormView.extend({
       view.query('label')
     )
   },
-  remove () {
-    DropableFormView.prototype.remove.apply(this)
-  },
   submit (next) {
     next||(next=()=>{})
 

@@ -29,7 +29,7 @@ export default Modalizer.extend({
               <div class="modal-header">
                 <button type="button"
                   class="close"
-                  data-dismiss="modal"
+                  data-hook="close"
                   aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>

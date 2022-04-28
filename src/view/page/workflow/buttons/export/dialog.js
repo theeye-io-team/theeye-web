@@ -28,7 +28,7 @@ export default Modalizer.extend({
               <div class="modal-header">
                 <button type="button"
                   class="close"
-                  data-dismiss="modal"
+                  data-hook="close"
                   aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -76,7 +76,6 @@ export default Modalizer.extend({
   events: Object.assign({}, Modalizer.prototype.events, {
     'click [data-hook=deep]': 'clickDeepExportButton',
     'click [data-hook=shallow]': 'clickShallowExportButton',
-    'click [data-hook=close]': 'clickCloseButton'
   }),
   clickDeepExportButton (event) {
     event.preventDefault()
@@ -88,11 +87,6 @@ export default Modalizer.extend({
     event.preventDefault()
     event.stopPropagation()
     App.actions.workflow.exportSerialization(this.model.id, 'shallow')
-    this.hide()
-  },
-  clickCloseButton (event) {
-    event.preventDefault()
-    event.stopPropagation()
     this.hide()
   }
 })

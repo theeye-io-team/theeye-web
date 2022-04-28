@@ -55,7 +55,7 @@ const DeleteMessageModalizer = Modalizer.extend({
               <div class="modal-header">
                 <button type="button"
                   class="close"
-                  data-dismiss="modal"
+                  data-hook="close"
                   aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -79,12 +79,8 @@ const DeleteMessageModalizer = Modalizer.extend({
   `,
   events: Object.assign({}, Modalizer.prototype.events, {
     'click [data-hook=finished]':'clickFinishedButton',
-    'click [data-hook=all]':'clickAllButton',
-    'click [data-hook=cancel]':'clickCancelButton'
+    'click [data-hook=all]':'clickAllButton'
   }),
-  clickCancelButton (event) {
-    this.hide()
-  },
   clickAllButton (event) {
     this.trigger('delete-all', event)
   },
