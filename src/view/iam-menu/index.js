@@ -10,7 +10,7 @@ import bootbox from 'bootbox'
 // tabs
 import GroupsTab from './groups'
 
-import CredentialsTab from './credentials'
+import PolicyTab from './policies'
 import MembersTab from './members'
 
 import './styes.less'
@@ -30,7 +30,7 @@ export default FullContainer.extend({
       <div class="col-xs-9 panel-right">
         <div class="tab-content" data-hook="panes-container">
           <div class="tab-pane fade" id="groups" data-hook="groups-tab"></div>
-          <div class="tab-pane fade" id="permissions" data-hook="permissions-tab"></div>
+          <div class="tab-pane fade" id="policies" data-hook="policy-tab"></div>
           <div class="tab-pane fade" id="members" data-hook="members-tab"></div>
         </div>
       </div>
@@ -107,14 +107,14 @@ export default FullContainer.extend({
 
     if (Acls.hasAccessLevel('admin')) {
       groupsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#groups" data-toggle="tab">Groups</a></li>`))
-      groupsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#permissions" data-toggle="tab">Permissions</a></li>`))
+      groupsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#policies" data-toggle="tab">Policies</a></li>`))
       groupsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#members" data-toggle="tab">Members</a></li>`))
 
       const groupsTab = new GroupsTab()
       this.renderSubview(groupsTab, this.queryByHook('groups-tab'))
 
-      const credentialsTab = new CredentialsTab()
-      this.renderSubview(credentialsTab, this.queryByHook('permissions-tab'))
+      const policyTab = new PolicyTab()
+      this.renderSubview(policyTab, this.queryByHook('policy-tab'))
 
       const membersTab = new MembersTab()
       this.renderSubview(membersTab, this.queryByHook('members-tab'))

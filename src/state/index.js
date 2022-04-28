@@ -17,6 +17,7 @@ import { Collection as Files } from 'models/file'
 import { Collection as Events } from 'models/event'
 import { Workflows } from 'models/workflow'
 import { Collection as Groups } from 'models/group'
+import { Collection as Policies } from 'models/policy'
 //import { EmitterCollection as Emitters } from 'models/event'
 import { Collection as Notifications } from 'models/notification'
 import Alerts from 'components/alerts'
@@ -367,6 +368,7 @@ const _initCollections = function () {
     notifications: new Notifications([]),
     workflows: new Workflows([]),
     groups: new Groups([]),
+    policies: new Policies([]),
     admin: {
       users: new Users([]),
       customers: new Customers([]),
