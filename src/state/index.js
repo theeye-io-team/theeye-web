@@ -368,7 +368,11 @@ const _initCollections = function () {
     notifications: new Notifications([]),
     workflows: new Workflows([]),
     groups: new Groups([]),
-    policies: new Policies([]),
+    //policies: new Policies([]),
+    policies: new Policies([
+      { id: '1', method: 'get', path: '/task', name: 'FetchTasks' },
+      { id: '2', method: 'get', path: '/task/${task}', name: 'GetTask' }
+    ]),
     admin: {
       users: new Users([]),
       customers: new Customers([]),

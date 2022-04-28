@@ -75,6 +75,9 @@ export default View.extend({
       App.state.groups.create(data)
       modal.hide()
     })
+    form.on('submit', (data) => {
+      App.state.groups.create(data)
+    })
     modal.show()
   },
   onSearchInput (event) {

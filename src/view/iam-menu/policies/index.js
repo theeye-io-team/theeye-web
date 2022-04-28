@@ -3,7 +3,7 @@ import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import Form from './form'
 import PolicyRow from './policy-row'
-import DoubleColumnSelectView from './double-column-select'
+//import DoubleColumnSelectView from './double-column-select'
 
 import './style.less'
 
@@ -49,12 +49,12 @@ export default View.extend({
   },
   render () {
     this.renderWithTemplate(this)
-    this.renderSubview(
-      new DoubleColumnSelectView({
-        placeholder: 'aaaaa'
-      }),
-      this.queryByHook('test')
-    )
+    //this.renderSubview(
+    //  new DoubleColumnSelectView({
+    //    placeholder: 'aaaaa'
+    //  }),
+    //  this.queryByHook('test')
+    //)
     this.renderCollection(
       App.state.policies,
       PolicyRow,
