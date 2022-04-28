@@ -2,6 +2,10 @@ import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 
+const urlRoot = function () {
+  return `${App.config.api_url}/policy`
+}
+
 const RuleModel = AppModel.extend({
   props: {
     name: 'string',
@@ -18,6 +22,7 @@ const RulesCollection = AppCollection.extend({
 })
 
 const Model = AppModel.extend({
+  urlRoot,
   props: {
     name: 'string',
     id: 'string'
@@ -28,6 +33,7 @@ const Model = AppModel.extend({
 })
 
 const Collection = AppCollection.extend({
+  url: urlRoot,
   indexes: ['id'],
   Model: Model
 })
