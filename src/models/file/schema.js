@@ -84,6 +84,14 @@ export default AppModel.extend({
       attrs.data = decodeUnicodeData(attrs.data.split(',')[1])
     }
     return attrs
+  },
+  serialize (options) {
+    const serial = AppModel.prototype.serialize.apply(this, arguments)
+    if (options?.encode === true) {
+      const b64 = encodeUnicodeData(serial.data)
+      serial.data = `data:text/plain;base64,${b64}`
+    }
+    return serial
   }
 })
 

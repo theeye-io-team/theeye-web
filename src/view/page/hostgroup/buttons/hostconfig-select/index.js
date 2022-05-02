@@ -37,7 +37,7 @@ export default SelectView.extend({
 
     this.on('change:value', () => {
       if (this.value) {
-        HostGroupActions.fetchHostConfig(this.value)
+        HostGroupActions.getHostTemplate(this.value)
       }
     }, this)
   },
