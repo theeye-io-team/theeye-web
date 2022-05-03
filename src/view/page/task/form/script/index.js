@@ -40,7 +40,7 @@ export default TaskFormView.extend({
       options: App.state.hosts,
       value: this.model.host_id,
       required: true,
-      unselectedText: 'select a Bot',
+      unselectedText: 'select a Host',
       idAttribute: 'id',
       textAttribute: 'hostname',
       requiredMessage: 'Selection required',

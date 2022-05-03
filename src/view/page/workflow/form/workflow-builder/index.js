@@ -430,10 +430,10 @@ const TaskContextualMenu = View.extend({
     <div class="dropdown">
       <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons">
         <li><a data-hook="edit-task" href="#">Edit Task</a></li>
-        <li><a data-hook="copy-task" href="#">Copy Task</a></li>
         <li><a data-hook="edit-script" href="#">Edit Script</a></li>
         <li><a data-hook="remove" href="#">Remove</a></li>
         <li><a data-hook="export" href="#">Export</a></li>
+        <li><a data-hook="copy-task" href="#">Copy Task</a></li>
         <li><a data-hook="connect" href="#">Connect to ...</a></li>
       </ul>
     </div>
