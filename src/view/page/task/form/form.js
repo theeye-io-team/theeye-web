@@ -11,7 +11,7 @@ export default DropableForm.extend({
     DropableForm.prototype.initialize.apply(this, arguments)
   },
   props: {
-    isImport: ['boolean', false, false]
+    mode: ['string', false]
   },
   focus () {
     const eles = this.queryAll('.form-control')
