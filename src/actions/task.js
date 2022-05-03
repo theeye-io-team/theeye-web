@@ -1,5 +1,6 @@
 
 import App from 'ampersand-app'
+import isMongoId from 'validator/lib/isMongoId'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 import { Factory as TaskFactory } from 'models/task'
@@ -208,11 +209,11 @@ export default {
       } else callback()
     }
   },
-  fetchRecipe (id, { backup }, next = emptyCallback) {
+  fetchRecipe (id, { mode }, next = emptyCallback) {
     const task = App.state.tasks.get(id)
     XHR.send({
       method: 'GET',
-      url: `${task.url()}/recipe?backup=${backup||false}`,
+      url: `${task.url()}/serialize?mode=${mode||'shallow'}`,
       done (recipe) {
         next(null, recipe)
       },
@@ -228,13 +229,35 @@ export default {
     let serial
     if (recipe.task) {
       serial = recipe.task
-      if (recipe.file) {
-        serial.script = recipe.file
-        // transform to data url
-        serial.script.data = `data:text/plain;base64,${serial.script.data}`
-      }
     } else {
       serial = recipe
+    }
+
+    if (serial.file) {
+      serial.script = recipe.file
+      // transform to data url
+      serial.script.data = `data:text/plain;base64,${serial.script.data}`
+    }
+
+    // properties that are not valid must be reseted
+    switch (serial.type) {
+      case TaskConstants.TYPE_SCRIPT:
+        if (!App.state.hosts.get(serial.host_id)) {
+          serial.host = null
+          serial.host_id = null
+        }
+
+        if (!App.state.files.get(serial.script_id)) {
+          serial.script_id = null
+        }
+        break;
+
+      case TaskConstants.TYPE_SCRAPER:
+        if (!App.state.hosts.get(serial.host_id)) {
+          serial.host = null
+          serial.host_id = null
+        }
+        break;
     }
 
     const task = new TaskFactory(serial, { store: false })

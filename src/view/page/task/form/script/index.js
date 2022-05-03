@@ -57,7 +57,10 @@ export default TaskFormView.extend({
       }
     }
 
-    if (this.isImport || isDataUrl(this.model.script.data)) { // imported via workflow
+    if (
+      this.mode === 'import'
+      //|| isDataUrl(this.model.script.data)
+    ) { // imported script
       this.scriptSelection = new ScriptImportView({
         file: this.model.script.serialize(),
         required: true,

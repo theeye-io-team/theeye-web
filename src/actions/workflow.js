@@ -105,7 +105,6 @@ export default {
         const workflow = new App.Models.Workflow.Workflow(body, { store: false })
         App.state.workflows.add(workflow)
 
-        this.populate(workflow)
         // fetch workflow tasks state to the api
         workflow.tasks.fetch({
           data: {
@@ -128,13 +127,14 @@ export default {
       }
     })
   },
-  remove (id) {
+  remove (id, keepTasks) {
     const workflow = App.state.workflows.get(id)
     workflow.destroy({
+      data: { keepTasks },
       success () {
         App.state.alerts.success('Success', 'Workflow removed')
         App.state.workflows.remove(workflow)
-        unlinkTasks(workflow, Boolean(workflow.version !== 2))
+        unlinkTasks(workflow, keepTasks)
       }
     })
   },
@@ -221,20 +221,20 @@ export default {
 
     return graphlib.json.write(ngraph)
   },
-  exportRecipe (id) {
+  exportSerialization (id, mode) {
     //const workflow = App.state.workflows.get(id)
-    this.getSerialization(id).then(recipe => {
+    this.getSerialization(id, mode).then(recipe => {
       const jsonContent = JSON.stringify(recipe)
       const blob = new Blob([jsonContent], { type: 'application/json' })
       const fname = recipe.name.replace(/ /g, '_')
-      FileSaver.saveAs(blob, `${fname}_workflow.json`)
+      FileSaver.saveAs(blob, `${fname}_workflow_${mode}.json`)
     })
   },
-  getSerialization (id) {
+  getSerialization (id, mode) {
     return new Promise( (resolve, reject) => {
       XHR.send({
         method: 'GET',
-        url: `${App.config.supervisor_api_url}/workflows/${id}/serialize`,
+        url: `${App.config.supervisor_api_url}/workflows/${id}/serialize?mode=${mode}`,
         headers: {
           'Accept': 'application/json;charset=UTF-8',
           'Accept-Version': App.config.supervisor_api_version
@@ -266,7 +266,7 @@ export default {
   }
 }
 
-const unlinkTasks = (workflow, keepCopies = false) => {
+const unlinkTasks = (workflow, keepTasks = false) => {
   let graph = workflow.graph
   graph.nodes().forEach(node => {
     const data = graph.node(node)
@@ -275,7 +275,7 @@ const unlinkTasks = (workflow, keepCopies = false) => {
       if (!task) { return }
 
       let version = workflow.version||0
-      if (version < 2 || keepCopies) {
+      if (keepTasks === true) {
         task.workflow_id = null
         task.workflow = null
       } else {

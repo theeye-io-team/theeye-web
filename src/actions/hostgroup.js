@@ -10,7 +10,11 @@ const Actions = {
     const resources = state.resources.serialize()
     const tasks = state.tasks.serialize()
     const triggers = state.triggers.serialize()
-    const files = state.files.serialize()
+
+    const files = []
+    for (let file of state.files.models) {
+      files.push( file.serialize({encode:true}) )
+    }
 
     const body = Object.assign({}, data, {
       resources,
@@ -72,14 +76,13 @@ const Actions = {
   resetTemplatesConfig () {
     App.state.hostGroupPage.resetCollection()
   },
-  fetchHostConfig (id,next) {
+  getHostTemplate (id) {
     XHR.send({
       method: 'GET',
-      url: `${App.config.supervisor_api_url}/recipe/host/${id}/config`,
+      url: `${App.config.supervisor_api_url}/host/${id}/template`,
       done: (data, xhr) => {
         this.resetTemplatesConfig()
         App.state.hostGroupPage.setConfigs(data)
-        //next(null,data)
       },
       fail (err,xhr) {
         bootbox.alert('Fail to fetch host config')

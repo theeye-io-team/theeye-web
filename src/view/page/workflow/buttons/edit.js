@@ -9,7 +9,7 @@ import './edit.less'
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = 'Edit workflow'
+    this.title = 'Edit'
     this.iconClass = 'fa fa-edit dropdown-icon'
     this.className = 'btn btn-primary'
   },
@@ -37,8 +37,6 @@ const ActionDialog = Modalizer.extend({
     this.buttons = false // disable build-in modal buttons
 
     Modalizer.prototype.initialize.apply(this, arguments)
-
-    this.on('hidden', () => { this.remove() })
   },
   template: `
     <div data-component="edit-workflow-dialog" class="modalizer">
@@ -55,7 +53,7 @@ const ActionDialog = Modalizer.extend({
               <div class="modal-header">
                 <button type="button"
                   class="close"
-                  data-dismiss="modal"
+                  data-hook="close"
                   aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -125,8 +123,6 @@ const ActionDialog = Modalizer.extend({
 })
 
 export const editWorkflow = (model) => {
-  $('.dropdown.open .dropdown-toggle').dropdown('toggle')
-
   App.actions.workflow.populate(model)
   const form = new WorkflowFormView({ model, builder_mode: 'edit' })
 
@@ -136,9 +132,11 @@ export const editWorkflow = (model) => {
     bodyView: form
   })
 
-  //modal.on('shown',() => { form.focus() })
+  modal.on('shown', () => {
+    form.focus()
+  })
 
-  modal.on('hidden',() => {
+  modal.on('hidden', () => {
     form.remove()
     modal.remove()
   })

@@ -1,6 +1,5 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-import Collection from 'ampersand-collection'
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import Help from 'language/help'
@@ -10,15 +9,13 @@ import TaskSelectView from 'view/task-select'
 import bootbox from 'bootbox'
 import graphlib from 'graphlib'
 import FormButtons from 'view/buttons'
-import CopyTaskButton from 'view/page/task/buttons/copy'
 import TaskForm from 'view/page/task/form'
 import * as TaskConstants from 'constants/task'
 import CreateTaskWizard from 'view/page/task/creation-wizard'
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 import uuidv4 from 'uuid'
-import './styles.less'
 import isMongoId from 'validator/lib/isMongoId'
-import HostSelectionComponent from '../host-selection'
+import TasksReviewDialog from './task-review-dialog'
 
 const MODE_EDIT   = 'edit'
 const MODE_IMPORT = 'import'
@@ -109,21 +106,7 @@ export default View.extend({
   },
   events: {
     'click [data-hook=add-task]':'onClickAddTask',
-    'click [data-hook=create-task]':'onClickCreateTask',
-    'click [data-hook=edit-task]':'onClickEditTask',
-  },
-  onClickEditTask (event) {
-    event.preventDefault()
-    event.stopPropagation()
-    
-    const eventData = event.delegateTarget.dataset
-
-    const task = this.workflow.tasks.get(eventData.taskId)
-    editTask(task, this.mode, () => {
-      this.updateTaskNode(task)
-    })
-
-    return false
+    'click [data-hook=create-task]':'onClickCreateTask'
   },
   render () {
     this.renderWithTemplate(this)
@@ -159,20 +142,21 @@ export default View.extend({
   },
   onClickWarningIndicator () {
     const dialog = new TasksReviewDialog({
+      fade: false,
+      center: true,
       workflow: this.workflow,
       buttons: false,
       title: `Tasks review`,
-      appendToParent: true
     })
 
     this.registerSubview(dialog)
-
-    dialog.on('hidden', () => {
-      dialog.remove()
-    })
-
     dialog.show()
-
+    dialog.el.addEventListener('click [data-hook=edit-task]', (event) => {
+      const task = event.detail.task
+      editTask(task, () => {
+        this.updateTaskNode(task)
+      })
+    })
   },
   onTapNode (event) {
     var node = event.cyTarget.data()
@@ -199,6 +183,14 @@ export default View.extend({
         this.registerSubview(menu)
         this.contextMenu = menu
 
+        menu.on('task:copy', (task) => {
+          this.addTaskNode(task)
+        })
+        menu.on('task:edit', (task) => {
+          editTask(task, () => {
+            this.updateTaskNode(task)
+          })
+        })
         menu.on('task:remove', () => {
           this.removeNodeDialog(node)
         })
@@ -273,7 +265,7 @@ export default View.extend({
       bodyView: taskSelection 
     })
 
-    this.listenTo(modal,'hidden',() => {
+    modal.on('hidden',() => {
       taskSelection.remove()
       modal.remove()
     })
@@ -370,7 +362,12 @@ export default View.extend({
   }
 })
 
-const editTask = (task, mode, done) => {
+const editTask = (task, done) => {
+  let mode
+  if (!task.script_id) {
+    mode = MODE_IMPORT
+  }
+
   const form = new TaskForm({ model: task, mode })
   const modal = new Modalizer({
     buttons: false,
@@ -384,7 +381,7 @@ const editTask = (task, mode, done) => {
   })
 
   form.on('submit', data => {
-    if (mode === MODE_EDIT && isMongoId(task.id)) {
+    if (isMongoId(task.id)) {
       App.actions.task.update(task.id, data)
     } else {
       task.set(data)
@@ -433,6 +430,7 @@ const TaskContextualMenu = View.extend({
     <div class="dropdown">
       <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons">
         <li><a data-hook="edit-task" href="#">Edit Task</a></li>
+        <li><a data-hook="copy-task" href="#">Copy Task</a></li>
         <li><a data-hook="edit-script" href="#">Edit Script</a></li>
         <li><a data-hook="remove" href="#">Remove</a></li>
         <li><a data-hook="export" href="#">Export</a></li>
@@ -450,21 +448,21 @@ const TaskContextualMenu = View.extend({
   props: {
     workflow_events: 'collection'
   },
-  render () {
-    this.renderWithTemplate(this)
-
-    const copyButton = new CopyTaskButton({ model: this.model, elem: 'a' })
-    this.renderSubview(copyButton, this.queryByHook("menu-buttons"))
-  },
   events: {
     'click [data-hook=connect]': 'onClickConnectTasks',
-    'click [data-hook=edit-task]': 'onClickEdit',
+    'click [data-hook=edit-task]': 'onClickEditTask',
     'click [data-hook=edit-script]': 'onClickEditScript',
     'click [data-hook=export]': 'onClickExport',
-    'click [data-hook=remove]': 'onClickRemove'
+    'click [data-hook=remove]': 'onClickRemove',
+    'click [data-hook=copy-task]': 'onClickCopyTask',
   },
-  onClickEdit (event) {
-    //this.trigger('task:edit')
+  onClickCopyTask (event) {
+    const taks = this.model
+    this.trigger('task:copy', this.model)
+    this.remove()
+  },
+  onClickEditTask (event) {
+    this.trigger('task:edit', this.model)
     this.remove()
   },
   onClickEditScript (event) {
@@ -501,186 +499,6 @@ const pointerPosition = (e) => {
   var posy = e.clientY
   return { x: posx, y: posy }
 }
-
-const TasksReviewDialog = Modalizer.extend({
-  autoRender: false,
-  props: {
-    workflow: 'state',
-    autohost: 'boolean'
-  },
-  bindings: {
-    autohost: {
-      hook: 'autohost',
-      type: 'toggle'
-    }
-  },
-  initialize () {
-    this.buttons = false // disable build-in modal buttons
-    Modalizer.prototype.initialize.apply(this, arguments)
-    this.on('hidden', () => { this.remove() })
-
-    if (App.state.hosts.length === 1) {
-      this.listenToAndRun(this.workflow, 'change:tasks', () => {
-        this.updateState()
-      })
-    }
-  },
-  updateState () {
-    this.autohost = this.workflow
-      .getInvalidTasks()
-      .models
-      .map(t => t.missingConfiguration)
-      .filter(c => {
-        return (c.find(p => p.label === 'Host') !== undefined)
-      })
-      .length > 0
-  },
-  template () {
-    return `
-    <div data-component="invalid-tasks-dialog" class="modalizer">
-      <!-- MODALIZER CONTAINER -->
-      <div data-hook="modalizer-class" class="">
-        <div class="modal"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="modal"
-          aria-hidden="true"
-          style="display:none;">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" data-hook="close-${this.cid}" class="close" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 data-hook="title" class="modal-title">
-                  Review the following tasks
-                </h4>
-              </div>
-              <div class="modal-body" data-hook="body">
-                <section data-hook="actions-container" styles="display: inline-block;">
-                  <button class="autocomplete" data-hook="autohost">
-                    <i class="fa fa-server"></i> Autocomplete Host
-                  </button>
-                </section>
-                <ul class="tasks-list" data-hook="tasks-container"></ul>
-              </div>
-            </div><!-- /MODAL-CONTENT -->
-          </div><!-- /MODAL-DIALOG -->
-        </div><!-- /MODAL -->
-      </div><!-- /MODALIZER CONTAINER -->
-    </div>
-  `
-  },
-  events: Object.assign({}, Modalizer.prototype.events, {
-    'click [data-hook=autohost]': function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-
-      if ( App.state.hosts.length !== 1 ) { return }
-
-      const tasksCollection = this.workflow.getInvalidTasks()
-
-      for (let task of tasksCollection.models) {
-        for (let cfg of task.missingConfiguration) {
-          if (/host/i.test(cfg.label)) {
-            const host = App.state.hosts.models[0]
-            task.host_id = host.id
-          }
-        }
-      }
-    }
-  }),
-  render () {
-    Modalizer.prototype.render.apply(this, arguments)
-
-    const view = new HostSelectionComponent({
-      value: 'Assign the same host to all tasks',
-      onSelection: (id) => {
-        this.workflow.setHost(id)
-      }
-    })
-    this.renderSubview(view, this.queryByHook('actions-container'))
-    view.el.querySelector('label').remove()
-
-    const tasksCollection = this.workflow.getInvalidTasks()
-
-    this.renderCollection(
-      tasksCollection,
-      InvalidTaskView,
-      this.queryByHook('tasks-container'),
-      {}
-      //{reverse: true}
-    )
-  }
-})
-
-const InvalidTaskView = View.extend({
-  template: `
-    <li class="tasks-list-item">
-      <!-- row -->
-      <div class="">
-        <span data-hook="task-name"></span>
-      </div>
-      <div class="" style="text-align: right;">
-        <button type="button" class="btn btn-default" data-hook="edit-task">
-          <i class="fa fa-edit"></i>
-        </button>
-      </div>
-      <!-- row -->
-      <ul data-hook="tasks-missconfiguration" class=""> </ul>
-    </li>
-  `,
-  bindings: {
-    'model.name': {
-      hook: 'task-name'
-    },
-    'model.id': {
-      hook: 'edit-task',
-      type: 'attribute',
-      name: 'data-task-id'
-    }
-  },
-  render () {
-    this.renderWithTemplate()
-
-    const missing = this.model.missingConfiguration
-      .map(missing => {
-        return { label: missing.label }
-      })
-
-    const missingConfiguration = new Collection(missing)
-
-    this.renderCollection(
-      missingConfiguration,
-      ({ model }) => {
-        return new MissingConfigurationView({ label: model.label })
-      },
-      this.queryByHook('tasks-missconfiguration'),
-      {}
-    )
-
-    this.listenTo(this.model, 'change', () => {
-      if (this.model.missingConfiguration.length === 0) {
-        const btn = this.queryByHook('edit-task')
-        btn.disabled = true
-        const icon = btn.querySelector('i')
-        icon.classList.remove('fa-edit')
-        icon.classList.add('fa-check')
-        btn.classList.add('alert-success')
-      }
-    })
-  }
-})
-
-const MissingConfigurationView = View.extend({ 
-  props: {
-    label: 'string',
-  },
-  template: `<li></li>`,
-  bindings: {
-    'label': { selector: 'li' }
-  }
-})
 
 const EventNameInputView = FormView.extend({
   props: {

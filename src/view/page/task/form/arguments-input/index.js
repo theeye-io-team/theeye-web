@@ -352,7 +352,7 @@ const AskToOverrideModal = Modalizer.extend({
               <div class="modal-header">
                 <button type="button"
                   class="close"
-                  data-dismiss="modal"
+                  data-hook="close"
                   aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -375,6 +375,8 @@ const AskToOverrideModal = Modalizer.extend({
     </div>
   `,
   initialize () {
+    this.center = true
+    this.fade = false
     this.title = 'Importing arguments'
     this.buttons = false // disable build-in modals buttons
     Modalizer.prototype.initialize.apply(this, arguments)
@@ -382,15 +384,11 @@ const AskToOverrideModal = Modalizer.extend({
   events: Object.assign({}, Modalizer.prototype.events, {
     'click [data-hook=override]': 'clickOverrideButton',
     'click [data-hook=append]': 'clickAppendButton',
-    'click [data-hook=cancel]': 'clickCancelButton'
   }),
   clickOverrideButton () {
     this.trigger('button:override')
   },
   clickAppendButton () {
     this.trigger('button:append')
-  },
-  clickCancelButton () {
-    this.hide()
   }
 })

@@ -160,7 +160,12 @@ const taskEventSummary = (emitter, eventName) => {
 const monitorEventSummary = (emitter, eventName) => {
   let summary, hostname
   let typeStr = displayMonitorType(emitter)
-  if (emitter.host) {
+
+  if (
+    emitter.host &&
+    typeof emitter.host === 'object' &&
+    emitter.host.hasOwnProperty('hostname')
+  ) {
     hostname = emitter.host.hostname.toLowerCase()
   }
 

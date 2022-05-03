@@ -223,17 +223,29 @@ const TaskCreationWizard = View.extend({
   },
   renderImportFormTask (task) {
     this.queryByHook('type-selection-container').remove()
-    const form = new TaskFormView({ model: task, isImport: true })
+
+    let script, mode = 'import'
+    if (task.script_id) {
+      script = App.state.files.get(task.script_id)
+      if (!script) {
+        task.script_id = null
+      } else {
+        mode = null
+      }
+    }
+
+    script || (script = task.script)
+
+    const form = new TaskFormView({ model: task, mode })
     this.renderSubview(form, this.queryByHook('form-container'))
     this.form = form
 
-    const script = task.script
     this.listenTo(form, 'submit', data => {
       if (this.submit) {
         data.script = script.serialize() // data from imported file. was not persisted yet
         this.submit(data)
       } else {
-        if (task.type === 'script') {
+        if (task.type === 'script' && mode === 'import') {
           App.actions.file.create(script.serialize(), (err, file) => {
             data.script_id = file.id
             delete data.script_name
@@ -242,7 +254,6 @@ const TaskCreationWizard = View.extend({
         } else {
           App.actions.task.create(data)
         }
-        // @TODO create task. if it is a script task also create the file
       }
 
       this.trigger('submitted')

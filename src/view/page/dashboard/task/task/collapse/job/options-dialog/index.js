@@ -28,7 +28,7 @@ export default Modalizer.extend({
               <div class="modal-header">
                 <button type="button"
                   class="close"
-                  data-dismiss="modal"
+                  data-hook="close"
                   aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -85,12 +85,7 @@ export default Modalizer.extend({
       </div><!-- /MODALIZER CONTAINER -->
     </div>
   `,
-  events: {
-    'click [data-hook=close]':function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-      this.hide()
-    },
+  events: Object.assign({}, Modalizer.prototype.events, {
     'click button[data-hook=repeat-button]': function (event) {
       event.preventDefault()
       event.stopPropagation()
@@ -104,7 +99,7 @@ export default Modalizer.extend({
       event.stopPropagation()
 
       if (this.model.inProgress) {
-      this.hide()
+        this.hide()
         return
       }
 
@@ -119,7 +114,7 @@ export default Modalizer.extend({
       const action = new ChangeAssignee({model: this.model})
       action.show()
     }
-  },
+  }),
   derived: {
     cannotRestart: {
       deps: ['model.workflow_id', 'model.inProgress'],

@@ -224,7 +224,6 @@ export const ExecOnHoldJob = BaseExec.extend({
     })
 
     this.listenTo(modal, 'cancel', () => {
-      modal.hide()
       next(null, true)
     })
 
