@@ -93,20 +93,18 @@ export default View.extend({
       bodyView: creator
     })
 
-    this.listenTo(modal, 'hidden', () => {
+    modal.on('hidden', () => {
       creator.remove()
       modal.remove()
     })
 
-    this.listenTo(creator, 'added', arg => {
+    creator.on('added', arg => {
       creator.remove()
-      modal.remove()
+      modal.hide()
       this.onArgumentAdded(arg)
     })
 
     modal.show()
-
-    return false
   },
   onClickCopyTaskArguments (event) {
     event.preventDefault()
@@ -124,12 +122,12 @@ export default View.extend({
       bodyView: select
     })
 
-    this.listenTo(modal, 'hidden', () => {
+    modal.on('hidden', () => {
       select.remove()
       modal.remove()
     })
 
-    this.listenTo(select, 'change:value', () => {
+    select.on('change:value', () => {
       const task = App.state.tasks.get(select.value)
       this.setValue(task.task_arguments)
     })

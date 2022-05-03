@@ -158,6 +158,7 @@ const Scraper = Schema.extend({
     this.type = 'scraper'
   },
   props: {
+    register_body: 'boolean',
     remote_url: 'string',
     method: 'string',
     body: 'string',
