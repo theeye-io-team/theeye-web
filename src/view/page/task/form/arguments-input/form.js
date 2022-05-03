@@ -197,7 +197,7 @@ export default FormView.extend({
 
       this.fields.push(
         new CheckboxView({
-          label: 'Required (beta)',
+          label: 'Required',
           name: 'required',
           value: this.model.required,
         })
