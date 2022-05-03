@@ -7,9 +7,8 @@ export default Modalizer.extend({
   initialize () {
     this.title = 'Task Export'
     this.buttons = false // disable build-in modal buttons
+    this.removeOnHidden = true
     Modalizer.prototype.initialize.apply(this, arguments)
-
-    this.on('hidden', () => { this.remove() })
   },
   template: `
     <div data-component="export-dialog" class="modalizer">
@@ -26,7 +25,7 @@ export default Modalizer.extend({
               <div class="modal-header">
                 <button type="button"
                   class="close"
-                  data-dismiss="modal"
+                  data-hook="close"
                   aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
@@ -86,13 +85,12 @@ export default Modalizer.extend({
   events: Object.assign({}, Modalizer.prototype.events, {
     'click [data-hook=backup]': 'clickBackupExportButton',
     'click [data-hook=recipe]': 'clickRecipeExportButton',
-    'click [data-hook=arguments]': 'clickArgumentsExportButton',
-    'click [data-hook=close]': 'clickCloseButton'
+    'click [data-hook=arguments]': 'clickArgumentsExportButton'
   }),
   clickBackupExportButton (event) {
     event.preventDefault()
     event.stopPropagation()
-    App.actions.task.exportRecipe(this.model.id, { backup: true })
+    App.actions.task.exportRecipe(this.model.id, { mode: 'deep' })
     this.hide()
   },
   clickRecipeExportButton (event) {
@@ -105,11 +103,6 @@ export default Modalizer.extend({
     event.preventDefault()
     event.stopPropagation()
     App.actions.task.exportArguments(this.model.id)
-    this.hide()
-  },
-  clickCloseButton (event) {
-    event.preventDefault()
-    event.stopPropagation()
     this.hide()
   }
 })

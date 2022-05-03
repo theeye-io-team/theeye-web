@@ -44,6 +44,12 @@ export default View.extend({
     const state = App.state.workflowVisualizer
     state.graph = null
     state.cy = null
+
+    if (this.cy) {
+      this.cy.destroy()
+      this.cy = null
+    }
+    View.prototype.remove.apply(this, arguments)
   },
   bindings: {
     warningToggle: [

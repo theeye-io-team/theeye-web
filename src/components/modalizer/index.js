@@ -15,10 +15,11 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 const Modalizer = View.extend({
   template () {
     return `
-    <div data-component="modalizer" class="modalizer">
+    <div data-component="modalizer" data-modalizer-id="${this.cid}" class="modalizer">
       <!-- MODALIZER CONTAINER -->
       <div data-hook="modalizer-class" class="">
         <div class="modal"
+          data-modal-id="${this.cid}"
           tabindex="-1"
           role="dialog"
           aria-labelledby="modal"
@@ -56,7 +57,6 @@ const Modalizer = View.extend({
     cancelButton: ['string',false,'Cancel'],
     visible: ['boolean',false,false],
     backdrop: ['boolean',false,true],
-    appendToParent: ['boolean', false, false],
     center: ['boolean', false, false]
   },
   bindings: {
@@ -97,6 +97,7 @@ const Modalizer = View.extend({
   },
   onClickCancel () {
     this.trigger('cancel')
+    this.hide()
   },
   onClickClose (event) {
     event.stopPropagation()
@@ -104,19 +105,11 @@ const Modalizer = View.extend({
     this.trigger('close')
     this.hide()
   },
-  //initialize (options) {
-  //  this._triggerShown = this._triggerShown.bind(this)
-  //  this._triggerHidden = this._triggerHidden.bind(this)
-  //  this._onBeingHide = this._onBeingHide.bind(this)
-  //},
   render () {
     this.renderWithTemplate(this)
-
-    if (this.appendToParent && this.parent) {
-      this.parent.el.appendChild(this.el)
-    } else {
-      document.body.appendChild(this.el)
-    }
+    
+    const root = getRootContainer()
+    root.appendChild(this.el)
 
     const $modal = $( this.query('.modal') )
     this.$modal = $modal
@@ -128,24 +121,24 @@ const Modalizer = View.extend({
 
     this.renderButtons()
 
-    //this.$modal.on('hide.bs.modal', this._onBeingHide)
-    //this.$modal.on('show.bs.modal', this._triggerShown)
-    //this.$modal.on('hidden.bs.modal', this._triggerHidden)
-
-    this.listenTo(this, 'change:visible', this._toggleVisibility)
+    // wait fade effect
+    this.$modal.on('shown.bs.modal', () => {
+      this.trigger('shown')
+    })
+    this.$modal.on('hidden.bs.modal', () => {
+      this.trigger('hidden')
+    })
 
     if (this.removeOnHide === true) {
-      this.on('hidden',function(){
+      this.on('hidden', function(){
         this.remove()
       })
     }
 
-    if (this.visible) this.show()
-
     const closeBtn = this.query(`button[data-hook=close-${this.cid}]`)
     if (closeBtn) {
       closeBtn.addEventListener('click', (e) => {
-        this.hide()
+        this.onClickClose(e)
       })
     }
   },
@@ -168,50 +161,19 @@ const Modalizer = View.extend({
       modalBody.appendChild(this.bodyView.el)
     }
 
-    this.listenTo(this.bodyView, 'remove', () => {
-      this.hide()
-    })
+    this.registerSubview(this.bodyView)
   },
   show () {
     if (this.rendered === false) {
       this.render()
     }
     this.renderBody()
+    this.$modal.modal('show')
     this.visible = true
-    this.trigger('shown')
   },
   hide () {
-    this.visible = false
-    this.trigger('hidden')
-  },
-  /**
-   * if bootstrap modal is being hided (with click or X)
-   * from bootstrap modal itself
-   */
-  //
-  // NOTE: disabled due to unexpected behaviour with outer modals.
-  //
-  //_onBeingHide () {
-  //  if (this.visible) {
-  //    // change inner state
-  //    this.hide()
-  //  }
-  //},
-  //_triggerShown () {
-  //  this.trigger('shown')
-  //},
-  //_triggerHidden () {
-  //  this.trigger('hidden')
-  //},
-  _toggleVisibility () {
-    this.visible ? this._showElem() : this._hideElem()
-  },
-  _showElem () {
-    this.$modal.modal('show')
-  },
-  _hideElem () {
     this.$modal.modal('hide')
-    //this.trigger('hide')
+    this.visible = false
   },
   remove () {
     if (this.bodyView && this.bodyView.rendered === true) {
@@ -220,6 +182,16 @@ const Modalizer = View.extend({
     View.prototype.remove.apply(this, arguments)
   }
 })
+
+const getRootContainer = () => {
+  const el = document.querySelector('div[data-component=modalizer-root]')
+  if (el) { return el }
+
+  let root = document.createElement('div')
+  root.setAttribute('data-component','modalizer-root')
+  document.body.appendChild(root)
+  return root
+}
 
 export default Modalizer
 
@@ -233,8 +205,7 @@ const ButtonsView = View.extend({
       <div class="col-xs-12 col-md-6">
         <button type="button"
           class="btn btn-default"
-          data-hook="cancel"
-          data-dismiss="modal">
+          data-hook="cancel">
         </button>
       </div>
       <div class="col-xs-12 col-md-6">
@@ -264,5 +235,10 @@ const ButtonsView = View.extend({
       hook: 'cancel',
       type: 'text'
     }
-  }
+  },
+  //events: {
+  //  'click button': (event) => {
+  //    event
+  //  }
+  //}
 })

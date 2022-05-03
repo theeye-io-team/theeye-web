@@ -6,6 +6,7 @@ import bootbox from 'bootbox'
 import CronWizard from './cron-wizard'
 import DateSelector from './date-selector'
 import SelectView from 'components/select2-view'
+import Buttons from 'view/buttons'
 
 export default PanelButton.extend({
   initialize (options) {
@@ -60,16 +61,10 @@ const SchedulerBody = View.extend({
     <div class="scheduler-form">
       <div data-hook="selector-placeholder"></div>
       <div data-hook='wizard-placeholder'></div>
-      <div id="schedule-form-buttons">
-        <div>
-          <button type="button" class="btn btn-default btn-block btn-lg" data-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary btn-block btn-lg" data-hook="save">Save</button>
-        </div>
-      </div>
     </div>
   `,
   events: {
-    'click [data-hook=save]': 'onClickSave'
+    'click button[data-hook=confirm]': 'onClickSave'
   },
   onClickSave (event) {
     event.preventDefault()
@@ -80,6 +75,8 @@ const SchedulerBody = View.extend({
   },
   render () {
     this.renderWithTemplate()
+
+    this.renderSubview(new Buttons({ confirmText: 'Save' }), this.el)
 
     const selector = new SelectView({
       name: 'format',

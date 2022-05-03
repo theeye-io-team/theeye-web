@@ -8,6 +8,7 @@ import { Collection as TagCollection } from 'models/tag'
 import graphlib from 'graphlib'
 import * as JobConstants from 'constants/job'
 import { v4 as uuidv4 } from 'uuid'
+import qs from 'qs'
 
 import config from 'config'
 const urlRoot = function () {
@@ -44,6 +45,19 @@ const formattedTags = () => {
 }
 
 const Workflow = AppModel.extend({
+  sync (method, model, options) {
+    if (options.data && method === 'delete') {
+      let url = model.url()
+      // make sure we've got a '?'
+      url += (url.includes('?') ? '&' : '?')
+      // set stringify encoding options and create a different URI output if qsOption is defined
+      // ex) qsOptions = { indices: false }
+      // https://www.npmjs.com/package/qs/v/4.0.0#stringifying
+      url += qs.stringify(options.data, options.qsOptions)
+      options.url = url
+    }
+    return AppModel.prototype.sync.apply(this, arguments)
+  },
   ajaxConfig () {
     const config = AppModel.prototype.ajaxConfig.apply(this, arguments)
 

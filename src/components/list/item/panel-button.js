@@ -1,4 +1,3 @@
-'use strict'
 import CommonButton from 'components/common-button'
 export default CommonButton.extend({
   props: {

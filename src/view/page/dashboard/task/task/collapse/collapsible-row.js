@@ -154,6 +154,7 @@ const EditScriptButton = View.extend({
   onClickButton (event) {
     event.preventDefault()
     event.stopPropagation()
+    $('.dropdown.open .dropdown-toggle').dropdown('toggle')
     if (!this.model.script_id) { return }
     App.actions.file.edit(this.model.script_id)
     return false

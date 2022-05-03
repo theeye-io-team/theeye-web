@@ -5,7 +5,7 @@ import $ from 'jquery'
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = 'Delete task'
+    this.title = 'Remove'
     this.iconClass = 'fa fa-trash dropdown-icon'
     this.className = 'btn btn-primary'
   },

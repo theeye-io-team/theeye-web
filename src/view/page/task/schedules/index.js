@@ -9,7 +9,8 @@ import Modalizer from 'components/modalizer'
 import Datepicker from 'components/input-view/datepicker'
 import MinMaxTimePlugin from 'flatpickr/dist/plugins/minMaxTimePlugin'
 import { DateTime } from 'luxon'
-const cronParser = require('cron-parser')
+import cronParser from 'cron-parser'
+import Buttons from 'view/buttons'
 
 export const Schedules = View.extend({
   template: `
@@ -203,45 +204,49 @@ const NextRun = FormView.extend({
   },
   render () {
     FormView.prototype.render.apply(this, arguments)
-    const buttons = new ModalButtons({
-      action: () => {
-        App.actions.scheduler.disabledToggle(
-          this.model,
-          new Date(this._fieldViews['datetime'].value)
-        )
-        this.trigger('submitted')
-      }
+    //const buttons = new ModalButtons({
+    //  action: () => {
+    //    App.actions.scheduler.disabledToggle(
+    //      this.model,
+    //      new Date(this._fieldViews['datetime'].value)
+    //    )
+    //    this.trigger('submitted')
+    //  }
+    //})
+    const buttons = new Buttons({
+      confirmText: 'Save'
+    })
+    buttons.on('click:confirm', () => {
+      App.actions.scheduler.disabledToggle(
+        this.model,
+        new Date(this._fieldViews['datetime'].value)
+      )
+      this.trigger('submitted')
     })
     this.renderSubview(buttons)
   }
 })
 
-const ModalButtons = View.extend({
-  template: `
-    <div id="schedule-form-buttons" data-hook="buttons-container">
-      <div>
-        <button
-          type="button"
-          class="btn btn-default btn-block btn-lg"
-          data-dismiss="modal">Cancel</button>
-        <button
-          type="button"
-          class="btn btn-primary btn-block btn-lg"
-          data-hook="action"></button>
-      </div>
-    </div>`,
-  props: {
-    actionText: ['string', true, 'Save'],
-    action: ['any', true, event => { event && event.preventDefault() }]
-  },
-  bindings: {
-    actionText: { hook: 'action' }
-  },
-  render () {
-    this.renderWithTemplate(this)
-    this.queryByHook('action').onclick = this.action
-  }
-})
+//const ModalButtons = View.extend({
+//  template: `
+//    <div id="schedule-form-buttons" data-hook="buttons-container">
+//      <div>
+//        <button type="button" class="btn btn-default btn-block btn-lg" data-dismiss="modal">Cancel</button>
+//        <button type="button" class="btn btn-primary btn-block btn-lg" data-hook="action"></button>
+//      </div>
+//    </div>`,
+//  props: {
+//    actionText: ['string', true, 'Save'],
+//    action: ['any', true, event => { event && event.preventDefault() }]
+//  },
+//  bindings: {
+//    actionText: { hook: 'action' }
+//  },
+//  render () {
+//    this.renderWithTemplate(this)
+//    this.queryByHook('action').onclick = this.action
+//  }
+//})
 
 const parseCronExpression = (expression) => {
   try {

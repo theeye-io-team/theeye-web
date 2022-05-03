@@ -5,7 +5,7 @@ export default View.extend({
     <div class="form-buttons" data-hook="buttons-container">
       <div class="row">
         <div class="col-xs-12 col-md-6">
-          <button type="button" class="btn btn-default" data-dismiss="modal"> Cancel </button>
+          <button type="button" class="btn btn-default" data-hook="cancel">Cancel</button>
         </div>
         <div class="col-xs-12 col-md-6">
           <button type="button" class="btn btn-primary" data-hook="confirm">
@@ -34,7 +34,6 @@ export default View.extend({
   onClickConfirm (event) {
     event.preventDefault()
     event.stopPropagation()
-
     this.trigger('click:confirm')
   }
 })

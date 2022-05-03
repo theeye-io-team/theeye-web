@@ -6,10 +6,12 @@ import './styles.less'
 export default Modalizer.extend({
   initialize () {
     this.title = 'Workflow Export'
+    this.fade = false
+    this.center = true
     this.buttons = false // disable build-in modal buttons
+    this.removeOnHide = true
     Modalizer.prototype.initialize.apply(this, arguments)
-
-    this.on('hidden', () => { this.remove() })
+    //this.on('hidden', () => { this.remove() })
   },
   template: `
     <div data-component="export-dialog" class="modalizer">
@@ -26,34 +28,32 @@ export default Modalizer.extend({
               <div class="modal-header">
                 <button type="button"
                   class="close"
-                  data-dismiss="modal"
+                  data-hook="close"
                   aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
                 <h4 data-hook="title" class="modal-title"></h4>
               </div>
               <div class="modal-body" data-hook="body">
-                <h1>Workflow export options</h1>
-
                 <div class="grid-container">
                   <!-- row 1 -->
                   <div class="grid-col-button">
-                    <button type="button" class="btn btn-default" data-hook="backup">
+                    <button type="button" class="btn btn-default" data-hook="deep">
                       <i class="fa fa-arrow-right"></i>
                     </button>
                   </div>
                   <div class="grid-col-message">
-                    <span>${Help.workflow.export_backup}</span>
+                    <span>${Help.workflow.export_deep}</span>
                   </div>
 
                   <!-- row 2 -->
                   <div class="grid-col-button">
-                    <button type="button" class="btn btn-default" data-hook="recipe">
+                    <button type="button" class="btn btn-default" data-hook="shallow">
                       <i class="fa fa-arrow-right"></i>
                     </button>
                   </div>
                   <div class="grid-col-message">
-                    <span>${Help.task.export_recipe}</span>
+                    <span>${Help.workflow.export_shallow}</span>
                   </div>
 
                   <!-- row 3 -->
@@ -74,25 +74,19 @@ export default Modalizer.extend({
     </div>
   `,
   events: Object.assign({}, Modalizer.prototype.events, {
-    'click [data-hook=backup]': 'clickBackupExportButton',
-    'click [data-hook=recipe]': 'clickRecipeExportButton',
-    'click [data-hook=close]': 'clickCloseButton'
+    'click [data-hook=deep]': 'clickDeepExportButton',
+    'click [data-hook=shallow]': 'clickShallowExportButton',
   }),
-  clickBackupExportButton (event) {
+  clickDeepExportButton (event) {
     event.preventDefault()
     event.stopPropagation()
-    App.actions.workflow.exportRecipe(this.model.id, { backup: true })
+    App.actions.workflow.exportSerialization(this.model.id, 'deep')
     this.hide()
   },
-  clickRecipeExportButton (event) {
+  clickShallowExportButton (event) {
     event.preventDefault()
     event.stopPropagation()
-    App.actions.workflow.exportRecipe(this.model.id)
-    this.hide()
-  },
-  clickCloseButton (event) {
-    event.preventDefault()
-    event.stopPropagation()
+    App.actions.workflow.exportSerialization(this.model.id, 'shallow')
     this.hide()
   }
 })

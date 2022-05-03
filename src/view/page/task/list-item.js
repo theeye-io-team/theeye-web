@@ -85,6 +85,7 @@ const Item = ListItem.extend({
         { view: ScheduleButton, params: { model: this.model } }
       ])
     }
+
     this.addButtons([
       { view: CopyButton, params: { model: this.model } },
       { view: EditButton, params: { model: this.model } },
@@ -179,8 +180,9 @@ const Collapsed = View.extend({
     <div class="col-sm-12">
       <h4>Task Information</h4>
       <div class="row" data-hook="schedule-section"></div>
-    </div>`,
-  render: function () {
+    </div>
+  `,
+  render () {
     this.renderWithTemplate(this)
     this.renderSubview(
       new Schedules({model: this.model}),

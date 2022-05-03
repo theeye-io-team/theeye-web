@@ -6,7 +6,7 @@ import WorkflowFormView from '../form'
 
 export default PanelButton.extend({
   initialize (options) {
-    this.title = 'Copy workflow'
+    this.title = 'Copy'
     this.iconClass = 'fa fa-copy dropdown-icon'
     this.className = 'btn btn-primary'
   },
