@@ -21,21 +21,21 @@ export default TaskFormView.extend({
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew())
 
-    // multiple only if new, allows to create multiple tasks at once
-    let hostsSelection = new SelectView({
-      label: 'Bots *',
-      name: ((isNewTask||this.mode==='import') ? 'hosts' : 'host_id'),
-      multiple: (isNewTask||this.mode==='import'),
-      tags: (isNewTask||this.mode==='import'),
+    const hostsSelection = new SelectView({
+      label: 'Bot *',
+      multiple: false,
+      name: 'host_id',
+      tags: false,
       options: App.state.hosts,
       value: this.model.host_id,
       required: true,
-      unselectedText: 'select a Bot',
+      unselectedText: 'select a Host',
       idAttribute: 'id',
       textAttribute: 'hostname',
       requiredMessage: 'Selection required',
       invalidClass: 'text-danger',
-      validityClassSelector: '.control-label'
+      validityClassSelector: '.control-label',
+      autoselectSingleOption: true
     })
 
     const jsonBodyCheckbox = new CheckboxView({
@@ -83,7 +83,8 @@ export default TaskFormView.extend({
       'status_code',
       'pattern',
       'copy_task',
-      'multitasking'
+      'multitasking',
+      'register_body',
     ]
 
     this.fields = [
@@ -198,6 +199,12 @@ export default TaskFormView.extend({
         name: 'gzip',
         value: this.model.gzip || true
       }),
+      new CheckboxView({
+        visible: false,
+        label: 'Collect and persist response body',
+        name: 'register_body',
+        value: (this.model.register_body || false)
+      }),
       new SelectView({
         label: 'Req. Timeout',
         sort: false,
@@ -296,6 +303,7 @@ export default TaskFormView.extend({
     this.addHelpIcon('acl')
     this.addHelpIcon('triggers')
     this.addHelpIcon('gzip')
+    this.addHelpIcon('register_body')
   },
   addHelpIcon (field) {
     const view = this._fieldViews[field]
@@ -318,27 +326,5 @@ export default TaskFormView.extend({
     f.status_code = Number(data.status_code)
     f.parser = this._fieldViews.pattern.use_parser // selected parser
     return f
-  },
-  //setWithTask (task) {
-  //  this.setValues({
-  //    name: task.name,
-  //    remote_url: task.remote_url,
-  //    description: task.description,
-  //    tags: task.tags,
-  //    method: task.method,
-  //    json: task.json,
-  //    body: task.body,
-  //    gzip: task.json,
-  //    timeout: task.timeout,
-  //    grace_time: task.grace_time,
-  //    status_code: task.status_code,
-  //    pattern: task.pattern,
-  //  })
-  //},
-  //fillForm (data) {
-  //  if (data.task && data.task.url) {
-  //    data.task.remote_url = data.task.url
-  //  }
-  //  TaskFormView.prototype.fillForm.apply(this, arguments)
-  //}
+  }
 })
