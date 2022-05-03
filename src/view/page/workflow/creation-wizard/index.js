@@ -29,11 +29,10 @@ export default function () {
   )
 
   modal.on('hidden',() => {
-    wizard.remove()
     modal.remove()
   })
 
-  wizard.on('submitted', () => {
+  wizard.on('removed', () => {
     modal.hide()
   })
 
@@ -61,8 +60,8 @@ const CreationWizard = View.extend({
     'click button[data-hook=create]': function (event) {
       event.preventDefault()
       event.stopPropagation()
-      this.remove()
       renderCreateForm()
+      this.remove()
     }
   },
   render () {
@@ -78,10 +77,10 @@ const CreationWizard = View.extend({
           file.contents &&
           file.contents.length
         ) {
-          this.remove()
           const serial = JSON.parse(file.contents)
           const workflow = App.actions.workflow.parseSerialization(serial)
           renderCreateForm(workflow)
+          this.remove()
         } else {
           bootbox.alert('File not supported, please select a JSON file.')
         }
@@ -91,7 +90,7 @@ const CreationWizard = View.extend({
     this.renderSubview(importButton, this.queryByHook('buttons'))
   },
   remove () {
-    if (this.form) { this.form.remove() }
+    this.trigger('removed')
     View.prototype.remove.apply(this,arguments)
   },
   update () {
@@ -117,7 +116,7 @@ const renderCreateForm = (workflow = null) => {
     modal.queryByHook('title')
   )
 
-  modal.on('hidden',() => {
+  modal.on('hidden', () => {
     form.remove()
     modal.remove()
   })
