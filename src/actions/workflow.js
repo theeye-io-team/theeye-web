@@ -105,7 +105,6 @@ export default {
         const workflow = new App.Models.Workflow.Workflow(body, { store: false })
         App.state.workflows.add(workflow)
 
-        this.populate(workflow)
         // fetch workflow tasks state to the api
         workflow.tasks.fetch({
           data: {
@@ -228,7 +227,7 @@ export default {
       const jsonContent = JSON.stringify(recipe)
       const blob = new Blob([jsonContent], { type: 'application/json' })
       const fname = recipe.name.replace(/ /g, '_')
-      FileSaver.saveAs(blob, `${fname}_workflow.json`)
+      FileSaver.saveAs(blob, `${fname}_workflow_${mode}.json`)
     })
   },
   getSerialization (id, mode) {
