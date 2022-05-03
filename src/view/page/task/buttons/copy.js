@@ -15,36 +15,38 @@ export default PanelButton.extend({
     click (event) {
       event.stopPropagation()
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
-
-      return import(/* webpackChunkName: "task-form" */ '../form')
-        .then(({ default: FormView }) => {
-          const task = new TaskFactory({ type: this.model.type }, { store: false })
-          const form = new FormView({ model: task })
-          const modal = new Modalizer({
-            buttons: false,
-            title: this.title,
-            bodyView: form
-          })
-
-          this.listenTo(modal,'shown',() => {
-            form.focus()
-            form.setWithTask(this.model)
-            form._fieldViews.name.input.value += ' (copy)'
-            form._fieldViews.triggers.setValue([])
-          })
-
-          this.listenTo(modal,'hidden',() => {
-            form.remove()
-            modal.remove()
-          })
-
-          this.listenTo(form,'submit', data => {
-            App.actions.task.create(data)
-            modal.hide()
-          })
-
-          modal.show()
-        })
+      return copyTask(this.model)
     }
   }
 })
+
+const copyTask = (task) => {
+  return import(/* webpackChunkName: "task-form" */ '../form')
+    .then(({ default: FormView }) => {
+      const model = new TaskFactory({ type: task.type }, { store: false })
+      const form = new FormView({ model })
+      const modal = new Modalizer({
+        buttons: false,
+        title: `Coping Task ${task.name}`,
+        bodyView: form
+      })
+
+      modal.on('shown',() => {
+        form.focus()
+        form.setWithTask(task)
+        form._fieldViews.triggers.setValue([])
+      })
+
+      modal.on('hidden',() => {
+        form.remove()
+        modal.remove()
+      })
+
+      form.on('submit', (data) => {
+        App.actions.task.create(data)
+        modal.hide()
+      })
+
+      modal.show()
+    })
+}
