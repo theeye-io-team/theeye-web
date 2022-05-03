@@ -37,8 +37,6 @@ const ActionDialog = Modalizer.extend({
     this.buttons = false // disable build-in modal buttons
 
     Modalizer.prototype.initialize.apply(this, arguments)
-
-    this.on('hidden', () => { this.remove() })
   },
   template: `
     <div data-component="edit-workflow-dialog" class="modalizer">
