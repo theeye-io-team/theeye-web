@@ -90,7 +90,7 @@ export default Modalizer.extend({
   clickBackupExportButton (event) {
     event.preventDefault()
     event.stopPropagation()
-    App.actions.task.exportRecipe(this.model.id, { backup: true })
+    App.actions.task.exportRecipe(this.model.id, { mode: 'deep' })
     this.hide()
   },
   clickRecipeExportButton (event) {
