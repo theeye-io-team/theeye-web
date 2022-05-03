@@ -15,10 +15,11 @@ $.fn.modal.Constructor.prototype.enforceFocus = function() {};
 const Modalizer = View.extend({
   template () {
     return `
-    <div data-component="modalizer" class="modalizer">
+    <div data-component="modalizer" data-modalizer-id="${this.cid}" class="modalizer">
       <!-- MODALIZER CONTAINER -->
       <div data-hook="modalizer-class" class="">
         <div class="modal"
+          data-modal-id="${this.cid}"
           tabindex="-1"
           role="dialog"
           aria-labelledby="modal"
@@ -56,7 +57,6 @@ const Modalizer = View.extend({
     cancelButton: ['string',false,'Cancel'],
     visible: ['boolean',false,false],
     backdrop: ['boolean',false,true],
-    appendToParent: ['boolean', false, false],
     center: ['boolean', false, false]
   },
   bindings: {
@@ -109,12 +109,7 @@ const Modalizer = View.extend({
     this.renderWithTemplate(this)
     
     const root = getRootContainer()
-
-    if (this.appendToParent && this.parent) {
-      this.parent.el.appendChild(this.el)
-    } else {
-      root.appendChild(this.el)
-    }
+    root.appendChild(this.el)
 
     const $modal = $( this.query('.modal') )
     this.$modal = $modal
@@ -135,7 +130,7 @@ const Modalizer = View.extend({
     })
 
     if (this.removeOnHide === true) {
-      this.on('hidden',function(){
+      this.on('hidden', function(){
         this.remove()
       })
     }
