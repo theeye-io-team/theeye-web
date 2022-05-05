@@ -55,15 +55,17 @@ export default FormView.extend({
       selectedHosts.setValue(this.model.hosts)
     })
 
+    const templateName = new InputView({
+      label: 'Template Name *',
+      name: 'name',
+      required: true,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      value: this.model.name
+    })
+
     this.fields = [
-      new InputView({
-        label: 'Template Name *',
-        name: 'name',
-        required: true,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        value: this.model.name
-      }),
+      templateName,
       regexInput,
       selectedHosts,
       new InputView({
@@ -110,9 +112,22 @@ export default FormView.extend({
           }
         ]
       })
+
       configs.listenTo(App.state.hostGroupPage, 'collections_changed', () => {
         configs.valid
       })
+
+      templateName.listenTo(configs, 'change:value', () => {
+        const selected = configs.selected()
+        if (selected) {
+          templateName.setValue(selected.hostname)
+        }
+      })
+
+      templateName.listenTo(configs, 'file_imported', (file, recipe) => {
+        templateName.setValue(file.name)
+      })
+      
       this.fields.unshift(configs)
     } else {
       App.state.hostGroupPage.setTemplate(this.model)
