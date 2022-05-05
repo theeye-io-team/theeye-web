@@ -99,6 +99,10 @@ export default View.extend({
       type: 'innerHTML',
       hook: 'windows-curl-agent'
     },
+    'windowsAgentSchtask': {
+      type: 'innerHTML',
+      hook: 'windows-agent-schtask'
+    },
     'dockerCurlAgent': {
       type: 'innerHTML',
       hook: 'docker-curl-agent'
@@ -147,6 +151,13 @@ export default View.extend({
       fn: function(){
         if (!this.agent) { return }
         return this.agent.windowsCurl
+      }
+    },
+    windowsAgentSchtask: {
+      deps: ['agent'],
+      fn: function(){
+        if (!this.agent) { return }
+        return this.agent.windowsSchtask
       }
     },
     dockerCurlAgent: {
@@ -290,13 +301,29 @@ const template = (state) => {
                 </li>
                 <li data-tutorial="windows-onboarding">
                   <i>NOTE: The installation script assumes that administrator access is granted and that Powershell V5.0 or greater is installed.</i>
+                <li data-tutorial="windows-onboarding">
+                  Copy and paste one of the following lines into the console to begin the installation.
                 </li>
                 <li data-tutorial="windows-onboarding">
-                  Copy and paste the following line into the console to begin the installation.
-                    <button class="btn btn-primary container-clipboard" type="button" data-hook="clipboard-windows" data-clipboard-target="#windowsAgentCurl">
-                      <span class="fa fa-files-o" alt="copy to clipboard"></span>
-                    </button>
-                    <div id="windowsAgentCurl" class="bash installer-script" data-hook="installer-sample windows-curl-agent"></div>
+                  <span>For Windows there are two alternative installations:</span><br/>
+                  <span>
+                    <i class="fa fa-angle-right"></i>
+                    <i class="fa fa-angle-right"></i>
+                    To Install the agent as a background service to run background process and automations that doesn't need visual interaction
+                  </span>
+                  <button class="btn btn-primary container-clipboard" type="button" data-hook="clipboard-windows" data-clipboard-target="#windowsAgentCurl">
+                    <span class="fa fa-files-o" alt="copy to clipboard"></span>
+                  </button>
+                  <div id="windowsAgentCurl" class="bash installer-script" data-hook="installer-sample windows-curl-agent"></div>
+                  <span>
+                    <i class="fa fa-angle-right"></i>
+                    <i class="fa fa-angle-right"></i>
+                    To Install the agent in your user space as a Windows scheduled task. This is recommended to run Desktop Bots and Web Bots that may need a screen
+                  </span>
+                  <button class="btn btn-primary container-clipboard" type="button" data-hook="clipboard-windows" data-clipboard-target="#windowsAgentCurl">
+                    <span class="fa fa-files-o" alt="copy to clipboard"></span>
+                  </button>
+                  <div id="windowsAgentCurl" class="bash installer-script" data-hook="installer-sample windows-agent-schtask"></div>
                 </li>
                 <li data-tutorial="windows-onboarding">Wait for the installer to complete all actions.</li>
                 <li data-tutorial="windows-onboarding">Check you Dashboard, you should see the host reporting.</li>
