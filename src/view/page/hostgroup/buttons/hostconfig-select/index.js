@@ -53,9 +53,9 @@ export default SelectView.extend({
       callback: (file) => {
         if (file && /json\/*/.test(file.type) === true && file.contents && file.contents.length) {
           try {
-            var recipe = JSON.parse(file.contents)
-
-            HostGroupActions.readRecipeConfig(recipe)
+            const recipe = JSON.parse(file.contents)
+            HostGroupActions.readRecipeConfig(recipe, file.name)
+            this.trigger('file_imported', file, recipe)
           } catch (e) {
             bootbox.alert('Invalid JSON file.')
           }
@@ -66,10 +66,7 @@ export default SelectView.extend({
       }
     })
 
-    this.renderSubview(
-      importFileInput,
-      this.queryByHook('import-file-container')
-    )
+    this.renderSubview(importFileInput, this.queryByHook('import-file-container'))
   },
   update () {
     this.clear()
