@@ -8,7 +8,8 @@ const urlRoot = function () {
 
 const RuleModel = AppModel.extend({
   props: {
-    name: 'string',
+    service: 'string',
+    text: 'string',
     id: 'string',
     method: 'string',
     path: 'string',
@@ -30,6 +31,7 @@ const RuleModel = AppModel.extend({
 //
 const RulesCollection = AppCollection.extend({
   indexes: ['id'],
+  mainIndex: 'text',
   model: RuleModel
 })
 
@@ -37,7 +39,8 @@ const Model = AppModel.extend({
   urlRoot,
   props: {
     name: 'string',
-    id: 'string'
+    id: 'string',
+    builtin: ['boolean', true, false]
   },
   collections: {
     rules: RulesCollection
@@ -50,4 +53,4 @@ const Collection = AppCollection.extend({
   model: Model
 })
 
-export { Model, Collection }
+export { Model, Collection, RuleModel, RulesCollection }
