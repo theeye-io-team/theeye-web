@@ -17,7 +17,7 @@ import { Collection as Files } from 'models/file'
 import { Collection as Events } from 'models/event'
 import { Workflows } from 'models/workflow'
 import { Collection as Groups } from 'models/group'
-import { Collection as Policies } from 'models/policy'
+import { Collection as Policies, RulesCollection as Rules } from 'models/policy'
 //import { EmitterCollection as Emitters } from 'models/event'
 import { Collection as Notifications } from 'models/notification'
 import Alerts from 'components/alerts'
@@ -350,6 +350,31 @@ const EnterpriseState = State.extend({
   }
 })
 
+// FIXME: This is hardcoded, but it shouldn't
+
+const rules = {
+  Task: new Rules([
+    { service: 'Task', text: 'FetchTasks', id: 'FetchTasks', method: 'get', path: '/task' },
+    { service: 'Task', text: 'GetTasks', id: 'GetTasks', method: 'get', path: '/task/:task' }
+  ]),
+  Workflow: new Rules([]),
+  Webhook: new Rules([]),
+  Indicator: new Rules([])
+} 
+
+const policies = new Policies([
+  { 
+    id: '1', builtin: false, name: 'Task fetcher', rules: [
+      rules.Task.get('FetchTasks')
+    ]
+  },
+  {
+    id: '2', builtin: true, name: 'Task getter', rules: [
+      rules.Task.get('GetTasks')
+    ]
+  }
+])
+
 const _initCollections = function () {
   Object.assign(this, {
     hostGroups: new HostGroups([]),
@@ -368,11 +393,9 @@ const _initCollections = function () {
     notifications: new Notifications([]),
     workflows: new Workflows([]),
     groups: new Groups([]),
-    //policies: new Policies([]),
-    policies: new Policies([
-      { id: '1', method: 'get', path: '/task', name: 'FetchTasks' },
-      { id: '2', method: 'get', path: '/task/${task}', name: 'GetTask' }
-    ]),
+    // FIXME: This references the hardcoded stuff from earlier
+    rules: rules,
+    policies: policies,
     admin: {
       users: new Users([]),
       customers: new Customers([]),
