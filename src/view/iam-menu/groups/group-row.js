@@ -14,6 +14,7 @@ export default View.extend({
         </div>
       </div>
       <div class="col-xs-2">
+        <i class="fa fa-user"></i>
         <span data-hook="count"></span>
       </div>
       <div class="col-xs-2">
