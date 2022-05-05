@@ -7,7 +7,7 @@ import Form from './form'
 export default View.extend({
   template: `
     <div class="row border social">
-      <div class="col-xs-8">
+      <div class="col-xs-7">
         <div class="social-container">
           <span class="circle" style="background:#073666"></span>
           <span class="legend" data-hook="name"></span>
@@ -16,11 +16,11 @@ export default View.extend({
       <div class="col-xs-2">
         <span data-hook="count"></span>
       </div>
-      <div class="col-xs-2">
+      <div class="col-xs-3">
         <div data-hook="group-icons" class="pull-right action-icons">
           <span><i class="fa fa-eye blue" data-hook="show-policy"></i></span>
-          <span><i class="fa fa-edit blue" data-hook="edit-policy"></i></span>
-          <span><i class="fa fa-trash blue" data-hook="remove-policy"></i></span>
+          <span><i class="fa fa-edit" data-hook="edit-policy"></i></span>
+          <span><i class="fa fa-trash" data-hook="remove-policy"></i></span>
         </div>
       </div>
     </div>
@@ -35,6 +35,18 @@ export default View.extend({
     'model.members.length': {
       hook:'count'
     },
+    'model.builtin': [{
+      type: 'booleanClass',
+      no: 'blue',
+      yes: 'grey',
+      hook: 'edit-policy'
+    }, {
+      type: 'booleanClass',
+      no: 'blue',
+      yes: 'grey',
+      hook: 'remove-policy'
+    }]
+    ,
     'visible': {
       type: 'toggle'
     }
@@ -66,6 +78,10 @@ export default View.extend({
   },
   removePolicy: function (event) {
     event.stopPropagation()
+    if (this.model.builtin) {
+      App.state.alerts.danger("You can't remove this policy")
+      return
+    }
     bootbox.confirm(`Are you sure you want to remove the group "${this.model.user.username}"?`,
       (confirmed) => {
         if (!confirmed) { return }
@@ -75,6 +91,10 @@ export default View.extend({
   },
   editPolicy: function (event) {
     event.stopPropagation()
+    if (this.model.builtin) {
+      App.state.alerts.danger("You can't edit this policy")
+      return
+    }
     const form = new Form({ model: this.model })
     const modal = new Modalizer({
       title: 'Edit group' + this.model.name,
