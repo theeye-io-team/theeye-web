@@ -18,31 +18,8 @@ export default PanelButton.extend({
       event.preventDefault()
       $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
-      const onConfirmDelete = () => {
-        const model = this.model
-        if (model.hosts.models.length>0) {
-          const dialog = new Dialog({ model })
-          dialog.show()
-        } else {
-          HostGroupActions.remove(model.id, false)
-        }
-      }
-
-      bootbox.dialog({
-        title: 'Delete template',
-        message: 'Are you sure you want to delete this template?',
-        buttons: {
-          confirm: {
-            label: 'Confirm',
-            className: 'btn-danger',
-            callback: onConfirmDelete
-          },
-          cancel: {
-            label: 'Cancel',
-            className: 'btn-default'
-          }
-        }
-      })
+      const dialog = new Dialog({ model: this.model })
+      dialog.show()
     }
   }
 })
@@ -101,8 +78,9 @@ const Dialog = Modalizer.extend({
                     </button>
                   </div>
                   <div class="grid-col-message">
-                    <span><b>Download a backup recipe first</b></span>
-                    Keep a copy of the template
+                    <span><b>Download a copy of the template (recommended).</b></span>
+                    If this template is important to you keep a copy of the template and then decide.
+                    Note: We will also keep a copy, just in case you need it.
                   </div>
 
                   <!-- row 1 -->
@@ -124,10 +102,9 @@ const Dialog = Modalizer.extend({
                     </button>
                   </div>
                   <div class="grid-col-message">
-                    <span><b>Delete Everything (WARNING! This cannot be undone).</b></span>
-                    The template will be deleted.
-                    Also the monitors, tasks and files attached to the destination Hosts will be deleted.
-                    You can recover all the configurations from the recipe.
+                    <span><b>Delete Everything.</b></span>
+                    The template will be deleted and the monitors, tasks and files attached to the destination hosts too.
+                    You can rollback this later using the backup.
                   </div>
 
                   <!-- row 3 -->
