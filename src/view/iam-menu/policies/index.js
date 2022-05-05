@@ -3,7 +3,7 @@ import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import Form from './form'
 import PolicyRow from './policy-row'
-//import DoubleColumnSelectView from './double-column-select'
+import SimpleSwitch from 'components/simple-switch'
 
 import './style.less'
 
@@ -19,7 +19,13 @@ export default View.extend({
             <input autocomplete="off" data-hook="policy-input" class="policy-input" placeholder="Search">
           </div>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-3">
+          <div class="toggle-container">
+            <span>Show built in policies</span>
+            <span data-hook="toggle"></span>
+          </div>
+        </div>
+        <div class="col-xs-3">
           <h4 class="pull-right cursor-pointer">
             <a class="blue" data-hook="create-policy">
               <i class="fa fa-plus"></i> Create policy
@@ -35,7 +41,8 @@ export default View.extend({
     </div>
   `,
   props: {
-    policySearch: ['string', false, '']
+    policySearch: ['string', false, ''],
+    builtinVisible: ['boolean', true, true]
   },
   bindings: {
     policySearch: {
@@ -61,6 +68,12 @@ export default View.extend({
       this.queryByHook('list-container'),
       {}
     )
+    const toggler = new SimpleSwitch({ value: this.builtinVisible })
+    toggler.on('change:value', () => {
+      this.builtinVisible = toggler.value
+      this.filterList()
+    })
+    this.renderSubview(toggler, this.queryByHook('toggle'))
   },
   createPolicy () {
     const form = new Form({ model: new App.Models.Policy.Model() })
@@ -86,10 +99,15 @@ export default View.extend({
     modal.show()
   },
   onSearchInput (event) {
+    this.policySearch = event.target.value.toLowerCase()
+    this.filterList()
+  },
+  filterList () {
     this._subviews[0].views.forEach(
       view => {
         view.visible = (
-          view.model.name.toLowerCase().includes(event.target.value.toLowerCase())
+          view.model.name.toLowerCase().includes(this.policySearch) && 
+          (this.builtinVisible || !view.model.builtin)
         )
       }
     )
