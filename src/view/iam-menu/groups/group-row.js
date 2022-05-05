@@ -19,7 +19,7 @@ export default View.extend({
       <div class="col-xs-2">
         <div data-hook="group-icons" class="pull-right action-icons">
           <span><i class="fa fa-edit blue" data-hook="edit-group"></i></span>
-          <span><i class="fa fa-trash-can blue" data-hook="remove-group"></i></span> //FIXME: Icon isn't rendering
+          <span><i class="fa fa-trash blue" data-hook="remove-group"></i></span>
         </div>
       </div>
     </div>
