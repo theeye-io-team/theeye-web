@@ -92,7 +92,7 @@ export default FormView.extend({
         label: 'Customer',
         unselectedText: 'customer',
         idAttribute: 'id',
-        textAttribute: 'name',
+        textAttribute: 'formatted_name',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       }),
