@@ -51,7 +51,8 @@ const Model = AppModel.extend({
           'username=' + this.username,
           'email=' + this.email,
           'credential=' + this.credential,
-          'enabled=' + this.enabled
+          'enabled=' + this.enabled,
+          'creation_date=' + this.creation_date
         ]
       }
     }

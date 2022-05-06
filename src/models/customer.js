@@ -52,7 +52,11 @@ const Model = AppModel.extend({
       deps: ['name'],
       fn () {
         return [
-          'name=' + this.name
+          'name=' + this.name,
+          'display_name=' + this.display_name,
+          'description=' + this.description,
+          'id=' + this.id,
+          'creation_date=' + this.creation_date
         ]
       }
     },
@@ -60,6 +64,15 @@ const Model = AppModel.extend({
       deps: ['name','display_name'],
       fn () {
         return (this.display_name || this.name)
+      }
+    },
+    formatted_name: {
+      deps: ['name','display_name'],
+      fn () {
+        if (this.display_name) {
+          return `${this.display_name} [${this.name}]`
+        }
+        return this.name
       }
     }
   },
@@ -82,10 +95,10 @@ const Model = AppModel.extend({
 })
 
 const Collection = AppCollection.extend({
-  indexes: ['name'],
+  indexes: ['name','display_name'],
   url: urlRoot,
   model: Model,
-  comparator: 'name'
+  comparator: 'display_name'
 })
 
 export { Model, Collection }

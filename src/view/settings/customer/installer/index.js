@@ -103,10 +103,20 @@ export default View.extend({
       type: 'innerHTML',
       hook: 'windows-agent-schtask'
     },
-    'dockerCurlAgent': {
+    'dockerAgent': {
       type: 'innerHTML',
       hook: 'docker-curl-agent'
     },
+    'dockerAgentLocalhost': [
+      {
+        type: 'toggle',
+        selector: 'section[data-hook=docker-agent-localhost]',
+        reverse: true,
+      }, {
+        type: 'innerHTML',
+        hook: 'docker-agent-localhost'
+      }
+    ],
     'awsCurlAgent': {
       type: 'innerHTML',
       hook: 'aws-curl-agent'
@@ -160,11 +170,25 @@ export default View.extend({
         return this.agent.windowsSchtask
       }
     },
-    dockerCurlAgent: {
+    dockerAgent: {
       deps: ['agent'],
       fn: function(){
         if (!this.agent) { return }
         return this.agent.dockerCurl
+      }
+    },
+    dockerAgentLocalhost: {
+      deps: ['agent'],
+      fn: function(){
+        if (!this.agent) { return }
+        if (/localhost:60080/.test(this.agent.dockerCurl) === false) { return }
+
+        // theeye running localhost. dev or test env
+        const lines = this.agent.dockerCurl.split('\\')
+        lines.splice(1, 0, `\n  --add-host host.docker.internal:host-gateway `)
+        let curl = lines.join('\\')
+        curl = curl.replace('localhost:60080', 'host.docker.internal:60080')
+        return curl
       }
     },
     awsCurlAgent: {
@@ -227,8 +251,10 @@ export default View.extend({
     new Clipboard( this.queryByHook('clipboard-curl') )
     new Clipboard( this.queryByHook('clipboard-windows') )
     new Clipboard( this.queryByHook('clipboard-docker') )
+    new Clipboard( this.queryByHook('clipboard-docker-localhost') )
     new Clipboard( this.queryByHook('clipboard-aws-curl') )
     new Clipboard( this.queryByHook('clipboard-local-linux') )
+    new Clipboard( this.queryByHook('clipboard-curl') )
 
     for (let el of this.queryAll('[data-hook=installer-sample]')) {
       hljs.highlightElement(el, {language: 'bash'})
@@ -343,6 +369,16 @@ const template = (state) => {
                       <span class="fa fa-files-o" alt="copy to clipboard"></span>
                     </button>
                     <div id="dockerAgentCurl" class="bash installer-script" data-hook="installer-sample docker-curl-agent"></div>
+
+                    <section data-hook="docker-agent-local">
+                      It seems that you are running a local development or test version of TheEye.
+                      Docker containers are not able to connect to the host machine without extra configuration.
+                      If your are using Docker +20 you may find useful the following <code>docker run</code> command.
+                      <button class="btn btn-primary container-clipboard" data-hook="clipboard-docker-localhost" type="button" data-clipboard-target="#dockerAgentLocalhost">
+                        <span class="fa fa-files-o" alt="copy to clipboard"></span>
+                      </button>
+                      <div id="dockerAgentLocalhost" class="bash installer-script" data-hook="installer-sample docker-agent-localhost"></div>
+                    </section>
                 </li>
                 <li data-tutorial="docker-onboarding">Wait for the installer to complete all actions.</li>
                 <li data-tutorial="docker-onboarding">Check your <a data-hook="go-to-dashboard">Dashboard<i class="fa fa-dashboard"></i></a>, you should see the installed Agent.</li>

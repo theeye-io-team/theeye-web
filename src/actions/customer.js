@@ -6,14 +6,14 @@ import Acls from 'lib/acls'
 
 export default {
   remove (id) {
-    var customer = new App.Models.Customer.Model({ id: id })
+    const customer = new App.Models.Customer.Model({ id: id })
     customer.destroy({
       success: function(){
-        bootbox.alert('Customer Deleted')
+        App.state.alerts.success(`Customer removed`)
         App.state.admin.customers.remove( customer )
       },
       error: function (err) {
-        bootbox.alert('Error removing customer')
+        App.state.alerts.danger(`Failed to remove customer ${customer.view_name}`)
       }
     });
   },
@@ -133,11 +133,11 @@ export default {
     customer.set(data)
     customer.save({}, {
       success: function () {
-        bootbox.alert('Customer Created')
+        App.state.alerts.success(`Customer ${customer.view_name} created`)
         App.state.admin.customers.add(customer)
       },
       error: function (err) {
-        bootbox.alert('Error creating customer')
+        App.state.alerts.danger(`Failed to create customer ${customer.view_name}`)
       }
     })
     modal.hide()

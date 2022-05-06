@@ -11,9 +11,9 @@ import $ from 'jquery'
 export default ListItem.extend({
   derived: {
     item_name: {
-      deps: ['model.name'],
+      deps: ['model.view_name'],
       fn () {
-        return this.model.name
+        return this.model.view_name
       }
     },
     item_description: {
@@ -78,7 +78,7 @@ const CustomerButtons = BaseView.extend({
     $('.dropdown.open .dropdown-toggle').dropdown('toggle')
 
     var model = this.model;
-    bootbox.confirm('Continue removing ' + model.get('name') + ' customer ?', function(confirmed){
+    bootbox.confirm('Continue removing ' + model.get('view_name') + ' customer ?', function(confirmed){
       if (confirmed) {
         CustomerActions.remove(model.id);
       }
@@ -113,6 +113,11 @@ const Collapsed = View.extend({
   template: `
   <div class="row">
       <div class="col-sm-12">
+        <h4>Name</h4>
+        <span data-hook="name"></span>
+      </div>
+
+      <div class="col-sm-12">
         <h4>Description</h4>
         <span data-hook="description"></span>
       </div>
@@ -130,18 +135,13 @@ const Collapsed = View.extend({
   </div>
   `,
   bindings: {
-    'model.description': {
-      hook: 'description'
-    },
-    display_name: {
-      hook: 'display_name'
-    },
-    'model.creation_date': {
-      hook: 'creation_date'
-    }
+    'model.name': { hook: 'name' },
+    'model.description': { hook: 'description' },
+    display_name: { hook: 'display_name' },
+    'model.creation_date': { hook: 'creation_date' }
   },
   derived: {
-    display_name: {
+    isplay_name: {
       deps: ['model.display_name'],
       fn () {
         return this.model.display_name || 'Not Set'
