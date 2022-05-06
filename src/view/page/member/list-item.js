@@ -9,6 +9,72 @@ import $ from 'jquery'
 import { Model as MemberModel } from 'models/member'
 import FilteredCollection from 'ampersand-filtered-subcollection'
 
+export default ListItem.extend({
+  derived: {
+    item_name: {
+      deps: ['model.view_name'],
+      fn () {
+        return this.model.view_name
+      }
+    },
+    item_description: {
+      deps: ['model.id'],
+      fn () {
+        return 'unique id ' + this.model.id
+      }
+    }
+  },
+  initialize() {
+    this.showButtons = false
+    this.selectable = false
+    ListItem.prototype.initialize.apply(this,arguments)
+    this.model.on('change', () => this.render(), this)
+    this.model.on('destroy', () => this.remove(), this)
+  },
+  render () {
+    ListItem.prototype.render.apply(this,arguments)
+
+    this.renderSubview(
+      new Collapsed({ model: this.model }),
+      this.queryByHook('collapsed-content')
+    )
+  }
+})
+
+const Collapsed = View.extend({
+  template: `
+      <div class="col-sm-12">
+        <h1><span data-hook="name"></span> members:</h1>
+        <div class="members-container" data-hook="members"></div>
+      </div>
+  `,
+  bindings: {
+    'model.view_name': {
+      hook:'name'
+    },
+    'model.description': {
+      hook:'description'
+    }
+  },
+  collections: {
+    members: MemberModel
+  },
+  initialize () {
+    let self = this
+    let filters = [ model => model.customer_id === self.model.id ]
+    this.members = new FilteredCollection(App.state.admin.members, { filters })
+  },
+  render () {
+    View.prototype.render.apply(this,arguments)
+
+    this.renderCollection(
+      this.members,
+      MemberListItem,
+      this.queryByHook('members')
+    )
+  }
+})
+
 const MemberButtons = BaseView.extend({
   template: `
     <div>
@@ -77,40 +143,6 @@ const MemberButtons = BaseView.extend({
   }
 })
 
-const Collapsed = View.extend({
-  template: `
-      <div class="col-sm-12">
-        <h1><span data-hook="name"></span> members:</h1>
-        <div class="members-container" data-hook="members"></div>
-      </div>
-  `,
-  bindings: {
-    'model.name': {
-      hook:'name'
-    },
-    'model.description': {
-      hook:'description'
-    }
-  },
-  collections: {
-    members: MemberModel
-  },
-  initialize () {
-    let self = this
-    let filters = [ model => model.customer_id === self.model.id ]
-    this.members = new FilteredCollection(App.state.admin.members, { filters })
-  },
-  render () {
-    View.prototype.render.apply(this,arguments)
-
-    this.renderCollection(
-      this.members,
-      MemberListItem,
-      this.queryByHook('members')
-    )
-  }
-})
-
 const MemberListItem = View.extend({
   template () {
     const html = `
@@ -154,38 +186,6 @@ const MemberListItem = View.extend({
     this.renderSubview(
       new MemberButtons({ model: this.model }),
       this.query('div.panel-item.icons ul.dropdown-menu[data-hook=action-buttons]')
-    )
-  }
-})
-
-export default ListItem.extend({
-  derived: {
-    item_name: {
-      deps: ['model.name'],
-      fn () {
-        return this.model.name
-      }
-    },
-    item_description: {
-      deps: ['model.id'],
-      fn () {
-        return 'unique id ' + this.model.id
-      }
-    }
-  },
-  initialize() {
-    this.showButtons = false
-    this.selectable = false
-    ListItem.prototype.initialize.apply(this,arguments)
-    this.model.on('change', () => this.render(), this)
-    this.model.on('destroy', () => this.remove(), this)
-  },
-  render () {
-    ListItem.prototype.render.apply(this,arguments)
-
-    this.renderSubview(
-      new Collapsed({ model: this.model }),
-      this.queryByHook('collapsed-content')
     )
   }
 })
