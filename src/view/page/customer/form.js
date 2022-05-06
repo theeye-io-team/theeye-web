@@ -17,22 +17,22 @@ export default FormView.extend({
 
     this.showKibana = (!isNew ? this.model.config.kibana.enabled : false)
     this.fields = [
-      new InputView({
-        name: 'name',
-        label: 'Name',
-        value: this.model.name,
-        required: true,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        readonly: !isNew,
-        tests: [
-          (value) => {
-            if (!isEmail(`${value}@theeye.io`)) {
-              return 'Please provide a valid customer name'
-            }
-          }
-        ]
-      }),
+      //new InputView({
+      //  name: 'name',
+      //  label: 'Name',
+      //  value: this.model.name,
+      //  required: true,
+      //  invalidClass: 'text-danger',
+      //  validityClassSelector: '.control-label',
+      //  readonly: !isNew,
+      //  tests: [
+      //    (value) => {
+      //      if (!isEmail(`${value}@theeye.io`)) {
+      //        return 'Please provide a valid customer name'
+      //      }
+      //    }
+      //  ]
+      //}),
       new InputView({
         name: 'display_name',
         label: 'Display Name',
