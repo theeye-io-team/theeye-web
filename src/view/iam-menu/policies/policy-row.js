@@ -54,27 +54,7 @@ export default View.extend({
   events: {
     'click [data-hook=remove-policy]': 'removePolicy',
     'click [data-hook=edit-policy]': 'editPolicy',
-    'click [data-hook=show-policy]': 'showPolicy',
-  },
-  showPolicy (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    const content = new DisplayPolicy({ model: this.model })
-    const modal = new Modalizer({
-      center: true,
-      title: 'Show Policy ' + this.model.name,
-      bodyView: content,
-      buttons: false
-    })
-
-    modal.on('shown', () =>  { form.focus() })
-    modal.on('hidden', () => {
-      content.remove()
-      modal.remove()
-    })
-
-    modal.show()
+    'click [data-hook=show-policy]': 'viewPolicy',
   },
   removePolicy: function (event) {
     event.stopPropagation()
@@ -97,7 +77,7 @@ export default View.extend({
     }
     const form = new Form({ model: this.model })
     const modal = new Modalizer({
-      title: 'Edit group' + this.model.name,
+      title: 'Edit policy' + this.model.name,
       bodyView: form,
       buttons: true,
       confirmButton: 'Save'
@@ -116,9 +96,19 @@ export default View.extend({
       modal.hide()
     })
     modal.show()
+  },
+  viewPolicy: function (event) {
+    event.stopPropagation()
+    const form = new Form({ model: this.model, readonly: true })
+    const modal = new Modalizer({
+      title: 'Policy' + this.model.name,
+      bodyView: form,
+      buttons: false,
+    })
+    modal.on('hidden', () => {
+      content.remove()
+      modal.remove()
+    })
+    modal.show()
   }
-})
-
-const DisplayPolicy = View.extend({
-  template: ` <div>Hola Eze</div> `
 })
