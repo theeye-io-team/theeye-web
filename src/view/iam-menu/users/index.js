@@ -1,57 +1,54 @@
 import View from 'ampersand-view'
 import App from 'ampersand-app'
-import InviteMemberFormView from './invite-form'
+import InviteUserFormView from './invite-form'
 import Modalizer from 'components/modalizer'
 import UserRow from './user-row'
 
 import "./style.less"
 
 export default View.extend({
-  template: () => {
-    let html = `
-      <div>
-        <h3 class="blue bold">MEMBERS</h3>
-        <div class="row">
-          <div class="col-xs-6">
-            <div class="members-search">
-              <i class="fa fa-search" aria-hidden="true"></i>
-              <input autocomplete="off" data-hook="members-input" class="members-input" placeholder="Search">
-            </div>
-          </div>
-          <div class="col-xs-6">
-            <h4 class="pull-right cursor-pointer">
-              <a class="blue" data-hook="invite-user">
-                <i class="fa fa-plus"></i> Invite user
-              </a>
-            </h4>
+  template: `
+    <div>
+      <h3 class="blue bold">Users</h3>
+      <div class="row">
+        <div class="col-xs-6">
+          <div class="users-search">
+            <i class="fa fa-search" aria-hidden="true"></i>
+            <input autocomplete="off" data-hook="users-input" class="users-input" placeholder="Search">
           </div>
         </div>
-        <div class="row">
-          <div class="col-xs-12">
-            <div data-hook="list-container"></div>
-          </div>
+        <div class="col-xs-6">
+          <h4 class="pull-right cursor-pointer">
+            <a class="blue" data-hook="invite-user">
+              <i class="fa fa-plus"></i> Invite user
+            </a>
+          </h4>
         </div>
       </div>
-      `
-    return html
-  },
+      <div class="row">
+        <div class="col-xs-12">
+          <div data-hook="list-container"></div>
+        </div>
+      </div>
+    </div>
+  `,
   props: {
-    memberSearch: ['string', false, '']
+    userSearch: ['string', false, '']
   },
   bindings: {
-    memberSearch: {
+    userSearch: {
       type: 'value',
-      hook: 'members-input'
+      hook: 'users-input'
     }
   },
   events: {
-    'click [data-hook=invite-user]': 'inviteMember',
-    'input [data-hook=members-input]': 'onSearchInput',
+    'click [data-hook=invite-user]': 'inviteUser',
+    'input [data-hook=users-input]': 'onSearchInput',
   },
-  inviteMember: function (event) {
+  inviteUser: function (event) {
     event.stopPropagation()
 
-    const form = new InviteMemberFormView()
+    const form = new InviteUserFormView()
 
     const modal = new Modalizer({
       confirmButton: 'Send',
@@ -71,7 +68,7 @@ export default View.extend({
       if (!form.valid) {
         return
       }
-      App.actions.member.inviteMember(form.data)
+      App.actions.member.inviteUser(form.data)
       modal.hide()
     })
     modal.show()
@@ -86,7 +83,6 @@ export default View.extend({
     )
   },
   render() {
-    console.log("a")
     this.renderWithTemplate(this)
     this.renderCollection(
       App.state.members,
