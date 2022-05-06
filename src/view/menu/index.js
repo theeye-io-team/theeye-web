@@ -168,7 +168,7 @@ export default View.extend({
         link.onclick = () => { App.actions.settingsMenu.show('customer') }
         container.appendChild(link)
 
-        const iamBtn = html2dom(`<li><a href="" data-hook="iam-menu" class="eyeicon eyemenu-icon eyeicon-users"> Groups </a></li>`)
+        const iamBtn = html2dom(`<li><a href="" data-hook="iam-menu" class="eyeicon eyemenu-icon eyeicon-users"> IAM </a></li>`)
         iamBtn.onclick = () => App.actions.iamMenu.show()
         container.appendChild(iamBtn)
       }
