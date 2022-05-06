@@ -7,6 +7,9 @@ import { RuleModel, RulesCollection } from 'models/policy'
 import './style.less'
 
 export default FormView.extend({
+  props: {
+    readonly: ['boolean', true, false]
+  },
   initialize () {
     this.fields = [
       new InputView({
@@ -16,11 +19,13 @@ export default FormView.extend({
         required: true,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
+        readonly: this.readonly
       }),
       new RulesInput({
         name: 'rules',
         label: 'Rules',
-        value: this.model.rules
+        value: this.model.rules,
+        readonly: this.readonly
       })
     ]
     FormView.prototype.initialize.apply(this, arguments)
@@ -53,6 +58,7 @@ const RulesInput = View.extend({
   props: {
     name: 'string',
     label: ['string', true, ''],
+    readonly: ['boolean', true, false]
   },
   bindings: {
     'label': [
@@ -64,6 +70,11 @@ const RulesInput = View.extend({
           hook: 'label'
       }
     ],
+    'readonly': {
+      type: 'toggle',
+      hook: 'add-rule',
+      invert: true
+    }
   },
   derived: {
     value: {
@@ -88,7 +99,8 @@ const RulesInput = View.extend({
     this.renderCollection(
       this.rules,
       RuleView,
-      this.queryByHook('container')
+      this.queryByHook('container'),
+      { viewOptions: { readonly: this.readonly } }
     )
     console.log(this)
   },
@@ -101,6 +113,9 @@ const RulesInput = View.extend({
 })
 
 const RuleView = View.extend({
+  props: {
+    readonly: ['boolean', true, false]
+  },
   derived: {
     value: {
       cache: false,
@@ -137,6 +152,8 @@ const RuleView = View.extend({
   render () {
     this.renderWithTemplate(this)
 
+    console.log(this.readonly)
+
     this.serviceInput = new SelectView({
       name: 'service',
       placeholder: 'Service',
@@ -148,7 +165,8 @@ const RuleView = View.extend({
       }),
       value: this.model.service,
       template: this.inputTemplate,
-      styles: null
+      styles: null,
+      enabled: !this.readonly
     })
     this.ruleInput = new SelectView({
       name: 'rule',
@@ -159,7 +177,8 @@ const RuleView = View.extend({
       options: [],
       visible: false,
       template: this.inputTemplate,
-      styles: null
+      styles: null,
+      enabled: !this.readonly
     })
 
     this.serviceInput.on('change:value', () => {

@@ -11,7 +11,6 @@ export default View.extend({
   template: `
     <div>
       <h3 class="bold blue">Policies</h3>
-      <div data-hook="test"></div>
       <div class="row">
         <div class="col-xs-6">
           <div class="policy-search">
@@ -56,12 +55,6 @@ export default View.extend({
   },
   render () {
     this.renderWithTemplate(this)
-    //this.renderSubview(
-    //  new DoubleColumnSelectView({
-    //    placeholder: 'aaaaa'
-    //  }),
-    //  this.queryByHook('test')
-    //)
     this.renderCollection(
       App.state.policies,
       PolicyRow,
