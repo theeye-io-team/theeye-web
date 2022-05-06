@@ -152,7 +152,7 @@ export default View.extend({
         let settingsBtn = html2dom(`<li><a href="" data-hook="settings-menu" class="eyeicon eyemenu-icon eyeicon-settings"> Settings </a></li>`)
         settingsBtn.onclick = () => App.actions.settingsMenu.show('customer')
         container.appendChild(settingsBtn)
-        let iamBtn = html2dom(`<li><a href="" data-hook="iam-menu" class="eyeicon eyemenu-icon eyeicon-users"> Groups </a></li>`)
+        let iamBtn = html2dom(`<li><a href="" data-hook="iam-menu" class="eyeicon eyemenu-icon eyeicon-users"> IAM </a></li>`)
         iamBtn.onclick = () => App.actions.iamMenu.show()
         container.appendChild(iamBtn)
 
