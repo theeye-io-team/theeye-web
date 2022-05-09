@@ -263,6 +263,23 @@ export default {
     delete props.id // his is a new workflow should not have it
     const workflow = new App.Models.Workflow.Workflow(props, { store: false })
     return workflow
+  },
+  changeHost (workflow, hostId) {
+    App.state.loader.visible = true
+    const promises = []
+    for (let task of workflow.tasks.models) {
+      promises.push(
+        new Promise((resolve, reject) => {
+          task.host_id = hostId
+          task.save({}, { success: resolve, error: reject })
+        })
+      )
+    }
+
+    Promise.all(promises).then(res => {
+      App.state.loader.visible = false
+      App.state.alerts.success('Host changed')
+    })
   }
 }
 
