@@ -241,19 +241,20 @@ const TaskCreationWizard = View.extend({
     this.form = form
 
     this.listenTo(form, 'submit', data => {
+      data.script = script.serialize() // data from imported file. was not persisted yet
       if (this.submit) {
-        data.script = script.serialize() // data from imported file. was not persisted yet
         this.submit(data)
       } else {
-        if (task.type === 'script' && mode === 'import') {
-          App.actions.file.create(script.serialize(), (err, file) => {
-            data.script_id = file.id
-            delete data.script_name
-            App.actions.task.create(data)
-          })
-        } else {
-          App.actions.task.create(data)
-        }
+        App.actions.task.create(data)
+        //if (task.type === 'script' && mode === 'import') {
+        //  App.actions.file.create(script.serialize(), (err, file) => {
+        //    data.script_id = file.id
+        //    delete data.script_name
+        //    App.actions.task.create(data)
+        //  })
+        //} else {
+        //  App.actions.task.create(data)
+        //}
       }
 
       this.trigger('submitted')
