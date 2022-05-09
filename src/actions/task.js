@@ -233,10 +233,12 @@ export default {
       serial = recipe
     }
 
-    if (serial.file) {
-      serial.script = recipe.file
-      // transform to data url
-      serial.script.data = `data:text/plain;base64,${serial.script.data}`
+    if (recipe.file) {
+      if (/data:.*;base64/.test(recipe.file.data) === false) {
+        serial.script = recipe.file
+        // transform to data url
+        serial.script.data = `data:text/plain;base64,${recipe.file.data}`
+      }
     }
 
     // properties that are not valid must be reseted

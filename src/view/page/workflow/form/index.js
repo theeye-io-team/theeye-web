@@ -109,13 +109,13 @@ export default DropableFormView.extend({
           })
         }
       }),
-      //new HostSelectionComponent({
-      //  value: 'Change the host of all tasks',
-      //  visible: false,
-      //  onSelection: (id) => {
-      //    workflowBuilder.workflow.setHost(id)
-      //  }
-      //}),
+      new HostSelectionComponent({
+        value: 'Change the host of all tasks',
+        visible: false,
+        onSelection: (hostId) => {
+          App.actions.workflow.changeHost(this.model, hostId)
+        }
+      }),
       new TextareaView({
         visible: false,
         label: 'More Info',
