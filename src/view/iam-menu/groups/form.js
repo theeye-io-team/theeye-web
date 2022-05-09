@@ -1,8 +1,7 @@
-import App from 'ampersand-app'
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import MembersSelectView from 'view/members-select'
-import SelectView from 'components/select2-view'
+import PolicySelectView from '../policy-selector'
 
 export default FormView.extend({
   initialize () {
@@ -40,21 +39,4 @@ export default FormView.extend({
       this.trigger('submit', data)
     }
   },
-})
-
-const PolicySelectView = SelectView.extend({
-  initialize (specs) {
-    this.options = App.state.policies 
-    this.multiple = true
-    this.tags = false
-    this.label = 'Policy Selection'
-    this.name = 'policies'
-    this.styles = 'form-group'
-    this.unselectedText = 'select a policy'
-    this.idAttribute = 'id'
-    this.textAttribute = 'name'
-    this.allowCreateTags = false
-
-    SelectView.prototype.initialize.apply(this, arguments)
-  }
 })
