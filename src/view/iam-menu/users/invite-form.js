@@ -3,6 +3,7 @@ import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import isEmail from 'validator/lib/isEmail'
 import SelectView from 'components/select2-view'
+import PolicySelectView from '../policy-selector'
 
 export default FormView.extend({
   initialize: function (options) {
@@ -49,6 +50,7 @@ export default FormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       }),
+      new PolicySelectView()
     ]
 
     FormView.prototype.initialize.apply(this, arguments)

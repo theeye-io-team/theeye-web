@@ -68,7 +68,8 @@ export default View.extend({
       if (!form.valid) {
         return
       }
-      App.actions.member.inviteUser(form.data)
+      debugger
+      App.actions.member.inviteMember(form.data)
       modal.hide()
     })
     modal.show()
