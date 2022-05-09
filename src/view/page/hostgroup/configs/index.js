@@ -220,6 +220,9 @@ const FileItemView = ItemView.extend({
   template: `
     <li>
       <span data-hook="filename"></span>
+      <button class="btn btn-sm btn-default" data-hook="edit">
+        <i class="fa fa-eye"></i>
+      </button>
     </li>
   `,
   derived: {
@@ -229,6 +232,15 @@ const FileItemView = ItemView.extend({
         //let fid = this.model.id
       }
     }
+  },
+  events: {
+    'click button': 'onClickViewFile'
+  },
+  onClickViewFile (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    App.actions.file.edit(this.model)
   },
   bindings: Object.assign({}, ItemView.prototype.bindings, {
     'model.filename': { hook: 'filename' },

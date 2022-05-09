@@ -2,7 +2,6 @@ import App from 'ampersand-app'
 import XHR from 'lib/xhr'
 import bootbox from 'bootbox'
 import FileSaver from 'file-saver'
-import qs from 'qs'
 
 const Actions = {
   create (data) {
@@ -90,6 +89,16 @@ const Actions = {
     })
   },
   readRecipeConfig (recipe) {
+    if (recipe.files) {
+      for (let index = 0; index < recipe.files.length; index++) {
+        const data = recipe.files[index].data
+        // old base 64 recipe, whithout metadata
+        if (/^data:.*;base64,.*$/.test(data) === false) {
+          recipe.files[index].data = `data:text/plain;base64,${data}`
+        }
+      }
+    }
+
     this.resetTemplatesConfig()
     App.state.hostGroupPage.setConfigs(recipe)
   },
@@ -115,34 +124,24 @@ const Actions = {
     })
   },
   exportToJSON (model) {
-    this.fetchRecipe({ hostgroup_id: model.id }, function (err, instructions) {
+    this.getSerialization(model, (err, instructions) => {
       if (!err) {
         var jsonContent = JSON.stringify(instructions)
         var blob = new Blob([jsonContent], {type: 'application/json'})
-        FileSaver.saveAs(blob, `${model.name.replace(' ', '_')}.json`)
+        FileSaver.saveAs(blob, `${model.name.replace(' ', '_')}_template.json`)
       }
     })
   },
-  fetchRecipe (where, next) {
-    let query = qs.stringify({ where })
-    next || (next = () => {})
-
+  getSerialization (model, next) {
     XHR.send({
       method: 'GET',
-      url: `${App.config.supervisor_api_url}/recipe?${query}`,
+      url: `${App.config.supervisor_api_url}/hostgroup/${model.id}/serialize`,
       done: (data, xhr) => {
-        if (data.length) {
-          next(null, data[0].instructions)
-        } else {
-          let msg = 'Sorry, template recipe not found. Please create this template again to be able to export it.'
-          bootbox.alert(msg)
-          return next(new Error(msg))
-        }
+        next(null, data)
       },
       fail (err, xhr) {
-        let msg = 'Error retrieving template recipe.'
-        bootbox.alert(msg)
-        return next(new Error(msg))
+        App.state.alerts.danger('The template is not available')
+        return next(err)
       }
     })
   }
