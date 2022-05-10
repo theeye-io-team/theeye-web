@@ -18,10 +18,12 @@ export default FormView.extend({
       }),
       new MembersSelectView({
         name: 'members',
+        required: true,
         value: this.model.members,
         idAttribute: 'id',
       }),
       new PolicySelectView({
+        required: true,
         value: this.model.policies
       })
     ]
