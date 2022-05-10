@@ -22,21 +22,26 @@ export default Modalizer.extend({
     Modalizer.prototype.initialize.apply(this, arguments)
     this.on('hidden', () => { this.remove() })
 
-    if (App.state.hosts.length === 1) {
-      this.listenToAndRun(this.workflow, 'change:tasks', () => {
-        this.updateState()
-      })
-    }
+    this.invalidTasksCollection = new App.Models.Task.Collection([])
+
+    this.listenToAndRun(this.workflow, 'change:tasks', () => {
+      this.updateState()
+    })
   },
   updateState () {
-    this.autohost = this.workflow
-      .getInvalidTasks()
-      .models
-      .map(t => t.missingConfiguration)
-      .filter(c => {
-        return (c.find(p => p.label === 'Host') !== undefined)
-      })
-      .length > 0
+    const tasks = this.workflow.getInvalidTasks().models 
+    this.invalidTasksCollection.reset(tasks)
+
+    if (App.state.hosts.length === 1) {
+      this.autohost = this.workflow
+        .getInvalidTasks()
+        .models
+        .map(t => t.missingConfiguration)
+        .filter(c => {
+          return (c.find(p => p.label === 'Host') !== undefined)
+        })
+        .length > 0
+    }
   },
   template () {
     return `
@@ -79,7 +84,7 @@ export default Modalizer.extend({
       event.preventDefault()
       event.stopPropagation()
 
-      if ( App.state.hosts.length !== 1 ) { return }
+      if (App.state.hosts.length !== 1) { return }
 
       const tasksCollection = this.workflow.getInvalidTasks()
 
@@ -106,10 +111,8 @@ export default Modalizer.extend({
     this.renderSubview(view, this.queryByHook('actions-container'))
     view.el.querySelector('label').remove()
 
-    const tasksCollection = this.workflow.getInvalidTasks()
-
     this.renderCollection(
-      tasksCollection,
+      this.invalidTasksCollection,
       InvalidTaskView,
       this.queryByHook('tasks-container'),
       {}
@@ -144,6 +147,23 @@ const InvalidTaskView = View.extend({
       name: 'data-task-id'
     }
   },
+  initialize () {
+    View.prototype.initialize.apply(this, arguments)
+
+    this.missingConfiguration = new Collection([])
+
+    this.listenToAndRun(this.model, 'change', () => {
+      this.updateState()
+    })
+  },
+  updateState () {
+    const missing = this.model.missingConfiguration
+      .map(missing => {
+        return { label: missing.label }
+      })
+
+    this.missingConfiguration.reset(missing)
+  },
   events: {
     'click [data-hook=edit-task]': 'onClickEditTask'
   },
@@ -158,32 +178,14 @@ const InvalidTaskView = View.extend({
   render () {
     this.renderWithTemplate()
 
-    const missing = this.model.missingConfiguration
-      .map(missing => {
-        return { label: missing.label }
-      })
-
-    const missingConfiguration = new Collection(missing)
-
     this.renderCollection(
-      missingConfiguration,
+      this.missingConfiguration,
       ({ model }) => {
         return new MissingConfigurationView({ label: model.label })
       },
       this.queryByHook('tasks-missconfiguration'),
       {}
     )
-
-    this.listenTo(this.model, 'change', () => {
-      if (this.model.missingConfiguration.length === 0) {
-        const btn = this.queryByHook('edit-task')
-        btn.disabled = true
-        const icon = btn.querySelector('i')
-        icon.classList.remove('fa-edit')
-        icon.classList.add('fa-check')
-        btn.classList.add('alert-success')
-      }
-    })
   }
 })
 

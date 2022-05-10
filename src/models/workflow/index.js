@@ -136,7 +136,7 @@ const Workflow = AppModel.extend({
     }
   },
   getInvalidTasks () {
-    const models = this.tasks.filter(t => !t.canExecute)
+    const models = this.tasks.filter(t => t.missingConfiguration.length > 0)
     return new App.Models.Task.Collection(models)
   },
   session: {
