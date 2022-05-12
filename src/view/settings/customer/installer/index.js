@@ -110,7 +110,7 @@ export default View.extend({
     'dockerAgentLocalhost': [
       {
         type: 'toggle',
-        selector: 'section[data-hook=docker-agent-localhost]',
+        selector: 'section[data-hook=docker-agent-local]',
         reverse: true,
       }, {
         type: 'innerHTML',
@@ -179,9 +179,11 @@ export default View.extend({
     },
     dockerAgentLocalhost: {
       deps: ['agent'],
-      fn: function(){
+      fn: function () {
         if (!this.agent) { return }
-        if (/localhost:60080/.test(this.agent.dockerCurl) === false) { return }
+        if (/localhost:60080/.test(this.agent.dockerCurl) === false) {
+          return
+        }
 
         // theeye running localhost. dev or test env
         const lines = this.agent.dockerCurl.split('\\')
