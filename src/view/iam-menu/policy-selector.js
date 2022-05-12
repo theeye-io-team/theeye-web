@@ -36,9 +36,9 @@ export default SelectView.extend({
     SelectView.prototype.initialize.apply(this, arguments)
   },
   events: {
-    'click button[data-hook=mode-button]':'onClickModeButton'
+    'click button[data-hook=create-button]':'onClickCreateButton'
   },
-  onClickModeButton (event) {
+  onClickCreateButton (event) {
     event.preventDefault()
     event.stopPropagation()
 
@@ -62,6 +62,7 @@ export default SelectView.extend({
       App.state.policies.create(data)
       policyModal.hide()
     })
+    
     policyModal.show()
   },
   derived: {
