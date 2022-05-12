@@ -262,7 +262,7 @@ export default {
         break;
     }
 
-    const task = new TaskFactory(serial, { store: false })
+    const task = new TaskFactory(serial, { store: false, parse: true })
     return task
   },
   recipeHasArguments (recipe) {

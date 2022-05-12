@@ -31,8 +31,8 @@ class ScriptOnBoarding {
           placement: "bottom",
           delay: 1000,
           onNext: function() {
-            self.parent._fieldViews.filename.input.value = 'helloWorld.sh'
-            self.parent._fieldViews.filename.inputValue = 'helloWorld.sh'
+            self.parent._fieldViews.filename.input.value = 'helloWorld.js'
+            self.parent._fieldViews.filename.inputValue = 'helloWorld.js'
           }
         },
         {
