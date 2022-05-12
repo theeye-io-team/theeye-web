@@ -10,19 +10,22 @@ import bootbox from 'bootbox'
 import graphlib from 'graphlib'
 import FormButtons from 'view/buttons'
 import TaskForm from 'view/page/task/form'
-import * as TaskConstants from 'constants/task'
 import CreateTaskWizard from 'view/page/task/creation-wizard'
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 import uuidv4 from 'uuid'
 import isMongoId from 'validator/lib/isMongoId'
 import TasksReviewDialog from './task-review-dialog'
+import * as TaskConstants from 'constants/task'
+import * as WorkflowConstants from 'constants/workflow'
 
-const MODE_EDIT   = 'edit'
-const MODE_IMPORT = 'import'
+import './styles.less'
+
+//const MODE_EDIT   = 'edit'
+//const MODE_IMPORT = 'import'
 
 export default View.extend({
   template: `
-    <div class="workflow-builder-component form-group">
+    <div data-component="workflow-builder" class="workflow-builder-component form-group">
       <label class="col-sm-3 control-label" data-hook="label">Tasks</label>
       <div class="col-sm-9">
         <div style="padding-bottom: 15px;" data-hook="buttons">
@@ -44,9 +47,9 @@ export default View.extend({
     let workflow = options.value
 
     const version = workflow.version
-    if (this.mode === MODE_EDIT) {
+    if (this.mode === WorkflowConstants.MODE_EDIT) {
       recipe = workflow.serialize()
-    } else if (this.mode === MODE_IMPORT) {
+    } else if (this.mode === WorkflowConstants.MODE_IMPORT) {
       recipe = workflow.serialize()
       recipe.tasks = workflow.tasks.models // keep untouch
     } else {
@@ -365,7 +368,7 @@ export default View.extend({
 const editTask = (task, done) => {
   let mode
   if (!task.script_id) {
-    mode = MODE_IMPORT
+    mode = WorkflowConstants.MODE_IMPORT
   }
 
   const form = new TaskForm({ model: task, mode })
@@ -444,6 +447,18 @@ const TaskContextualMenu = View.extend({
       type: 'attribute',
       name: 'data-task-id'
     },
+    editScript: {
+      type: 'toggle',
+      hook: 'edit-script'
+    }
+  },
+  derived: {
+    editScript: {
+      deps: ['model.type'],
+      fn () {
+        return Boolean(this.model.type === 'script')
+      }
+    }
   },
   props: {
     workflow_events: 'collection'
@@ -468,7 +483,7 @@ const TaskContextualMenu = View.extend({
   onClickEditScript (event) {
     event.preventDefault()
     event.stopPropagation()
-    App.actions.file.edit(this.model.script || this.model.script_id)
+    App.actions.file.edit(this.model.script_id || this.model.script)
     this.trigger('script:edit')
     this.remove()
   },
@@ -512,17 +527,17 @@ const EventNameInputView = FormView.extend({
     }
   },
   initialize (options) {
-    this.fields = [
-      new InputView({
-        label: 'Event Name',
-        name: 'eventName',
-        required: true,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        placeholder: 'use "success" to go in a single direction',
-        value: 'success'
-      })
-    ]
+    this.eventName = new InputView({
+      label: 'Event Name',
+      name: 'eventName',
+      required: true,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      placeholder: 'use "success" to go in a single direction',
+      value: 'success'
+    })
+
+    this.fields = [ this.eventName ]
     FormView.prototype.initialize.apply(this, arguments)
   },
   render () {
@@ -533,10 +548,16 @@ const EventNameInputView = FormView.extend({
     this.renderSubview(buttons)
     buttons.on('click:confirm', this.submit, this)
 
-    this.renderSubview(
-      new EventsMessage({ currentEventName: this.currentEventName }),
-      this.query('.form-group')
-    )
+    const eventMessage = new EventsMessage({
+      currentEventName: this.currentEventName,
+      eventName: this.eventName.value // initial value
+    })
+
+    this.renderSubview(eventMessage, this.query('.form-group'))
+
+    this.eventName.input.addEventListener('keyup', () => {
+      eventMessage.eventName = this.eventName.input.value
+    })
   },
   submit () {
     this.beforeSubmit()
@@ -552,19 +573,32 @@ const EventNameInputView = FormView.extend({
 
 const EventsMessage = View.extend({
   props: {
-    currentEventName: 'string'
+    currentEventName: 'string',
+    eventName: 'string'
+  },
+  bindings: {
+    currentEventName: {
+      type: 'toggle',
+      hook: 'currentEventName'
+    },
+    eventName: {
+      hook: 'eventName'
+    }
   },
   template () {
     return (`
-    <div>
+    <div class="event-message">
       <section data-hook="currentEventName">
         <b>Warning</b> The current event ${this.currentEventName} will be replaced.</br>
       </section>
       <section>
-        Keep in mind that the event you define must be considered in the script.</br>
-        For example if the event is named "completed" an "event_name" property in the last line should be added like this
+        Keep in mind that if you use an event different than "success" it must be considered in the script.</br>
+        For example if the event is named "continue" an "event_name" property should be added like this</br>
+      </section>
+      <section class="code-container">
         <code class="javascript">
-        {"state":"success","event_name":"completed","data":[...]}
+          // this must be the last line of the script</br>
+          {"event_name":"<span data-hook="eventName">${this.eventName}</span>","data": []}
         </code>
       </section>
     </div>

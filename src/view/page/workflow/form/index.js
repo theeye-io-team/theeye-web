@@ -17,6 +17,7 @@ import EventsSelectView from 'view/events-select'
 import bootbox from 'bootbox'
 import { Factory as TaskFactory } from 'models/task'
 import HostSelectionComponent from './host-selection'
+import * as WorkflowConstants from 'constants/workflow'
 
 import './styles.less'
 
@@ -110,10 +111,14 @@ export default DropableFormView.extend({
         }
       }),
       new HostSelectionComponent({
-        value: 'Change the host of all tasks',
+        value: 'Change the Bot for all tasks',
         visible: false,
         onSelection: (hostId) => {
-          App.actions.workflow.changeHost(this.model, hostId)
+          if (options.builder_mode === WorkflowConstants.MODE_EDIT) {
+            App.actions.workflow.changeHost(this.model, hostId)
+          } else { // import or create
+            workflow.setHost(hostId)
+          }
         }
       }),
       new TextareaView({

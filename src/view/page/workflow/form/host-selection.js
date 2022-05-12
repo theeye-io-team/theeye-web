@@ -7,7 +7,7 @@ import SelectView from 'components/select2-view'
 
 export default InputView.extend({
   initialize (options) {
-    this.label = 'Host change'
+    this.label = 'Change Bot'
     this.name = 'host'
     this.required = false
     this.type = 'button'
@@ -23,7 +23,7 @@ export default InputView.extend({
         fade: false,
         center: true,
         buttons: false,
-        title: 'Host Selection',
+        title: 'Bot Selection',
         bodyView: hostSelection 
       })
       dialog.on('hidden', () => {
@@ -43,14 +43,14 @@ const HostSelectionInput = FormView.extend({
   initialize (options) {
     this.fields = [
       new SelectView({
-        label: 'Select the new host',
+        label: 'Select the new Bot',
         multiple: false,
         name: 'host',
         tags: false,
         options: App.state.hosts,
         value: null,
         required: true,
-        unselectedText: 'change the host',
+        unselectedText: 'change the bot',
         idAttribute: 'id',
         textAttribute: 'hostname',
         requiredMessage: 'Selection required',

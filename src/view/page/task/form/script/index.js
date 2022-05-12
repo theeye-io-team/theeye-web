@@ -748,7 +748,9 @@ const RunnerSelectionView = SelectView.extend({
       (runner !== this.value && App.state.runners.isDefaultRunner(this.value))
     ) {
       const model = App.state.runners.models.find(r => r.id === runner)
-      this.setValue(model.runner)
+      if (model !== undefined) {
+        this.setValue(model.runner)
+      }
     }
   }
 })
