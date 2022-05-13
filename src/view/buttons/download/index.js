@@ -2,22 +2,35 @@ import View from 'ampersand-view'
 
 export default View.extend({
   props: {
-    blob: 'string',
+    value: 'string',
     text: ['string', true, 'Download file'],
     noFileText: ['string', true, 'No file provided'],
     download: 'string'
   },
+  derived: {
+    blob: {
+      deps: ['value'],
+      fn () {
+        const value = this.value
+        const blob = (value.indexOf('data:') === 0) ? value : undefined
+        return blob
+      }
+    }
+  },
   template: `
     <div>
-      <a data-hook="download-button" href="" download="" class="btn btn-primary" target="_blank">
+      <a data-hook="download-button"
+        href="" 
+        download="" 
+        class="btn btn-primary" 
+        target="_blank">
         <i class="fa fa-download"></i>
         <span data-hook="text"></span>
       </a>
-      <span data-hook="nofile">No file</span>
     </div>
   `,
   events: {
-    'click a': 'onAclick'
+    'click a': 'onClickDownload'
   },
   bindings: {
     blob: [
@@ -49,7 +62,7 @@ export default View.extend({
       name: 'download'
     }
   },
-  onAclick (event) {
+  onClickDownload (event) {
     event.stopPropagation()
   }
 })
