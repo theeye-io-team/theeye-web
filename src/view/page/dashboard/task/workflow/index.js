@@ -395,9 +395,8 @@ const InputsContentView = View.extend({
           const arg = argsdefs[index]
           const value = inputs[index]
 
-          if (arg.type === 'file' && value?.includes('base64')) {
-            const dwld = new DownloadButton({ blob: value })
-            this.renderSubview(dwld, col)
+          if (arg.type === 'file') {
+            this.renderSubview(new DownloadButton({ value }), col)
           } else {
             col.innerHTML = (value||'')
           }
