@@ -17,18 +17,22 @@ import * as Token from 'models/token'
 import * as User from 'models/user'
 import * as Webhook from 'models/webhook'
 import * as Workflow from 'models/workflow'
+import * as Group from 'models/group'
+import * as Policy from 'models/policy'
 
 App.extend({
   Models: {
     Customer,
     Event,
     File,
+    Group,
     Host,
     HostGroup,
     Indicator,
     Job,
     Member,
     Monitor,
+    Policy,
     Resource,
     Script,
     Tag,

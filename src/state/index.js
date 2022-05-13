@@ -16,6 +16,8 @@ import { Collection as Tags } from 'models/tag'
 import { Collection as Files } from 'models/file'
 import { Collection as Events } from 'models/event'
 import { Workflows } from 'models/workflow'
+import { Collection as Groups } from 'models/group'
+import { Collection as Policies, RulesCollection as Rules } from 'models/policy'
 //import { EmitterCollection as Emitters } from 'models/event'
 import { Collection as Notifications } from 'models/notification'
 import Alerts from 'components/alerts'
@@ -28,6 +30,7 @@ import DashboardPageState from './dashboard-page'
 import SessionState from './session'
 import NavbarState from './navbar'
 import SettingsMenuState from './settings-menu'
+import IamMenuState from './iam-menu'
 import HostStatsPageState from './hoststats-page'
 import InboxState from './inbox'
 import OnboardingState from './onboarding'
@@ -183,6 +186,7 @@ const AppState = State.extend({
     this.localSettings = new LocalSettings()
     this.navbar = new NavbarState()
     this.settingsMenu = new SettingsMenuState()
+    this.iamMenu = new IamMenuState()
     this.sideMenu = new SideMenuState()
     this.searchbox = new SearchBoxState()
     this.inbox = new InboxState({ appState: this })
@@ -311,6 +315,31 @@ const EnterpriseState = State.extend({
   }
 })
 
+// FIXME: This is hardcoded, but it shouldn't
+
+const rules = {
+  Task: new Rules([
+    { service: 'Task', text: 'FetchTasks', id: 'FetchTasks', method: 'get', path: '/task' },
+    { service: 'Task', text: 'GetTasks', id: 'GetTasks', method: 'get', path: '/task/:task' }
+  ]),
+  Workflow: new Rules([]),
+  Webhook: new Rules([]),
+  Indicator: new Rules([])
+} 
+
+const policies = new Policies([
+  { 
+    id: '1', builtin: false, name: 'Task fetcher', rules: [
+      rules.Task.get('FetchTasks')
+    ]
+  },
+  {
+    id: '2', builtin: true, name: 'Task getter', rules: [
+      rules.Task.get('GetTasks')
+    ]
+  }
+])
+
 const _initCollections = function () {
   Object.assign(this, {
     hostGroups: new HostGroups([]),
@@ -328,6 +357,10 @@ const _initCollections = function () {
     events: new Events([]),
     notifications: new Notifications([]),
     workflows: new Workflows([]),
+    groups: new Groups([]),
+    // FIXME: This references the hardcoded stuff from earlier
+    rules: rules,
+    policies: policies,
     admin: {
       users: new Users([]),
       customers: new Customers([]),

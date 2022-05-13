@@ -60,6 +60,7 @@ export default {
     data.user.email = data.email
     data.user.name = data.name
     data.user.credential = data.credential
+    data.user.policies = data.policies
     delete data.email
 
     member.set(data)

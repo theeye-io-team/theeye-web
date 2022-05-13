@@ -20,6 +20,8 @@ import SchedulerActions from 'actions/schedule'
 import SearchBoxActions from 'actions/searchbox'
 import SessionActions from 'actions/session'
 import SettingsMenuActions from 'actions/settings-menu'
+import IamMenuActions from 'actions/iam-menu'
+import GroupsActions from 'actions/groups'
 import TabsActions from 'actions/tabs'
 import TaskActions from 'actions/task'
 import TokenActions from 'actions/token'
@@ -52,6 +54,8 @@ export default {
     searchbox: SearchBoxActions,
     session: SessionActions,
     settingsMenu: SettingsMenuActions,
+    iamMenu: IamMenuActions,
+    groups: GroupsActions,
     tabs: TabsActions,
     task: TaskActions,
     token: TokenActions,
