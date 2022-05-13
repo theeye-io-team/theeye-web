@@ -59,7 +59,6 @@ export default State.extend({
         return
       },
       onEnd: function() {
-        App.actions.onboarding.hideOnboarding()
         self.active = false
         return
       },
@@ -103,7 +102,6 @@ export default State.extend({
         return
       },
       onEnd: function() {
-        App.actions.onboarding.hideOnboarding()
         self.active = false
         return
       },

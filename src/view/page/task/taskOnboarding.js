@@ -45,6 +45,7 @@ class TaskOnBoarding {
         return
       },
       onClose: function() {
+        App.actions.onboarding.hideOnboarding()
         hopscotch.resetDefaultI18N()
         return
       }
@@ -103,6 +104,7 @@ class TaskOnBoarding {
         return
       },
       onClose: function() {
+        App.actions.onboarding.hideOnboarding()
         hopscotch.resetDefaultI18N()
         return
       }
@@ -151,6 +153,7 @@ class TaskOnBoarding {
         return
       },
       onClose: function() {
+        App.actions.onboarding.hideOnboarding()
         hopscotch.resetDefaultI18N()
         return
       }
