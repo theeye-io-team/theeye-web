@@ -21,6 +21,9 @@ export default MediaInputView.extend({
           </div>
           <div data-hook="preview-container"></div>
         </section>
+        <div data-hook="message-container" class="message message-below message-error">
+          <p data-hook="message-text"></p>
+        </div>
       </div>
     </div>
   `,
@@ -30,6 +33,12 @@ export default MediaInputView.extend({
     options.value = ""
     InputView.prototype.initialize.apply(this, arguments)
     this.loadInputPreview = this.loadInputPreview.bind(this)
+  },
+  beforeSubmit () {
+    this.shouldValidate = true
+    if (!this.valid) {
+      this.message = this.requiredMessage
+    }
   },
   events: Object.assign({}, MediaInputView.prototype.events, {
     'click [data-hook=preview]': function (event) {
