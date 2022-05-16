@@ -1,6 +1,7 @@
 import App from 'ampersand-app'
 import FormView from 'ampersand-form-view'
 import SelectView from 'components/select2-view'
+import PolicySelectView from 'view/iam-menu/policy-selector'
 
 export default FormView.extend({
   initialize: function (options) {
@@ -27,6 +28,7 @@ export default FormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       }),
+      new PolicySelectView()
     ]
     FormView.prototype.initialize.apply(this, arguments)
   },
