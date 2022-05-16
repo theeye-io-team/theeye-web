@@ -40,6 +40,8 @@ const Model = AppModel.extend({
   props: {
     name: 'string',
     id: 'string',
+    customer: 'string',
+    customer_id: 'string',
     builtin: ['boolean', true, false]
   },
   collections: {
