@@ -362,18 +362,18 @@ const rules = {
   Indicator: new Rules([])
 } 
 
-const policies = new Policies([
-  { 
-    id: '1', builtin: false, name: 'Task fetcher', rules: [
-      rules.Task.get('FetchTasks')
-    ]
-  },
-  {
-    id: '2', builtin: true, name: 'Task getter', rules: [
-      rules.Task.get('GetTasks')
-    ]
-  }
-])
+// const policies = new Policies([
+//   { 
+//     id: '1', builtin: false, name: 'Task fetcher', rules: [
+//       rules.Task.get('FetchTasks')
+//     ]
+//   },
+//   {
+//     id: '2', builtin: true, name: 'Task getter', rules: [
+//       rules.Task.get('GetTasks')
+//     ]
+//   }
+// ])
 
 const _initCollections = function () {
   Object.assign(this, {
@@ -395,7 +395,7 @@ const _initCollections = function () {
     groups: new Groups([]),
     // FIXME: This references the hardcoded stuff from earlier
     rules: rules,
-    policies: policies,
+    policies: new Policies([]),
     admin: {
       users: new Users([]),
       customers: new Customers([]),
