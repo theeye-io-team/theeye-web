@@ -1,3 +1,4 @@
+import App from 'ampersand-app'
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import MembersSelectView from 'view/members-select'
@@ -29,11 +30,11 @@ export default FormView.extend({
     ]
     FormView.prototype.initialize.apply(this, arguments)
   },
-  //prepareData() {
-  //  let data = Object.assign({}, this.data)
-  //  data.customer = App.state.session.customer.id
-  //  return data
-  //},
+  prepareData() {
+    let data = Object.assign({}, this.data)
+    data.customer = App.state.session.customer.id
+    return data
+  },
   submit () {
     this.beforeSubmit()
     if (this.valid) {
