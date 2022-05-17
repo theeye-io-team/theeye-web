@@ -88,7 +88,7 @@ export default Settings.extend({
         message: 'Which tutorial would you like to see?',
         closeButton: false,
         buttons: {
-          self_provided: {
+          bot: {
             label: 'Bot tutorial',
             className: 'btn-primary',
             callback () {
@@ -96,7 +96,7 @@ export default Settings.extend({
               App.actions.settingsMenu.toggleTab('customer','installer')
             }
           },
-          linux: {
+          task: {
             label: 'Task tutorial',
             className: 'btn-primary',
             callback () {
@@ -116,11 +116,12 @@ export default Settings.extend({
       })
     } else {
       // if the user doesn't have bots or tasks, show the corresponding tutorial
-      App.actions.onboarding.activateOnboarding(true)
       if (App.state.resources.length === 0) {
+        App.actions.onboarding.activateOnboarding(true)
         App.actions.settingsMenu.toggleTab('customer','installer')
       } else {
         App.actions.settingsMenu.hide('customer')
+        App.actions.onboarding.activateOnboarding(true)
         let wizard = new TaskCreationWizard()
       }
     }

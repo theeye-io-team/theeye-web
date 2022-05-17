@@ -30,6 +30,14 @@ export default function (options = {}) {
     bodyView: wizard
   })
 
+  modal.onClickClose = (event) => {
+    App.actions.onboarding.hideOnboarding()
+    event.stopPropagation()
+    event.preventDefault()
+    modal.trigger('close')
+    modal.hide()
+  },
+
   modal.renderSubview(
     new HelpIconView({ link: `${config.docs}/${docsLink}` }),
     modal.queryByHook('title')

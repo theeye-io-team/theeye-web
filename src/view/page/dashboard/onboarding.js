@@ -54,6 +54,7 @@ export default State.extend({
       ],
       showCloseButton: true,
       onClose: function() {
+        App.actions.onboarding.hideOnboarding()
         self.active = false
         return
       },
@@ -62,6 +63,7 @@ export default State.extend({
         return
       },
       onError: function() {
+        App.actions.onboarding.hideOnboarding()
         self.active = false
         return
       }
@@ -95,6 +97,7 @@ export default State.extend({
       ],
       showCloseButton: true,
       onClose: function() {
+        App.actions.onboarding.hideOnboarding()
         self.active = false
         return
       },
@@ -103,6 +106,7 @@ export default State.extend({
         return
       },
       onError: function() {
+        App.actions.onboarding.hideOnboarding()
         self.active = false
         return
       }

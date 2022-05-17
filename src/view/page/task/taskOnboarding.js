@@ -45,6 +45,7 @@ class TaskOnBoarding {
         return
       },
       onClose: function() {
+        App.actions.onboarding.hideOnboarding()
         hopscotch.resetDefaultI18N()
         return
       }
@@ -103,6 +104,7 @@ class TaskOnBoarding {
         return
       },
       onClose: function() {
+        App.actions.onboarding.hideOnboarding()
         hopscotch.resetDefaultI18N()
         return
       }
@@ -123,11 +125,12 @@ class TaskOnBoarding {
         {
           target: self.parent._fieldViews.script_runas.query('div.col-sm-9'),
           title: "Task Tutorial",
-          content: "Set the script Run As | Interpreter",
+          content: "Set the script Run As | Interpreter. It's sometimes chosen by default depending of the script, but it can be overwritten",
           placement: "top",
           delay: 1000,
           onNext: function() {
-            self.parent._fieldViews.script_runas.setValue(self.parent._fieldViews.script_runas.options.models[0].runner)
+            if (!self.parent._fieldViews.script_runas.value)
+              self.parent._fieldViews.script_runas.setValue(self.parent._fieldViews.script_runas.options.models[0].runner)
           }
         },
         {
@@ -150,6 +153,7 @@ class TaskOnBoarding {
         return
       },
       onClose: function() {
+        App.actions.onboarding.hideOnboarding()
         hopscotch.resetDefaultI18N()
         return
       }
