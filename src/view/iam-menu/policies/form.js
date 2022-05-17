@@ -25,7 +25,9 @@ export default FormView.extend({
         name: 'rules',
         label: 'Rules',
         value: this.model.rules,
-        readonly: this.readonly
+        readonly: this.readonly,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
       })
     ]
     FormView.prototype.initialize.apply(this, arguments)
@@ -166,7 +168,9 @@ const RuleView = View.extend({
       value: this.model.service,
       template: this.inputTemplate,
       styles: null,
-      enabled: !this.readonly
+      enabled: !this.readonly,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label'
     })
     this.ruleInput = new SelectView({
       name: 'rule',
@@ -178,7 +182,9 @@ const RuleView = View.extend({
       visible: false,
       template: this.inputTemplate,
       styles: null,
-      enabled: !this.readonly
+      enabled: !this.readonly,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label'
     })
 
     this.serviceInput.on('change:value', () => {
