@@ -71,12 +71,13 @@ const RunnersCollection = ClearCollection.extend({
     this.initialState = [
       //{ id: 'f8e966d1e207d02c44511a58dccff2f5429e9a3b', runner: 'node' },
       //{ id: 'c8a16b493c487d9f0d43546b842106bf2ffa7152', runner: 'bash' },
-      { id: '815e186af6624b310b41085b2ec41d2a86c3ab35', runner: '%script%' },
-      { id: 'ccd461d9e99cb6fccadc34fff41655fa2982e38a', runner: 'node %script%' },
-      { id: '8452d30e16c622c5e97a8ff798d9a78b48bfa7cc', runner: 'bash %script%' },
+      { id: '815e186af6624b310b41085b2ec41d2a86c3ab35', runner: '%script%', binary: 'cmd' },
+      { id: 'ccd461d9e99cb6fccadc34fff41655fa2982e38a', runner: 'node %script%', binary: 'node' },
+      { id: '8452d30e16c622c5e97a8ff798d9a78b48bfa7cc', runner: 'bash %script%', binary: 'bash' },
       {
         id: '6bf84214aa4e20e0d77600adb7368d203339642b',
-        runner: 'powershell.exe -NonInteractive -ExecutionPolicy ByPass -File "%script%"'
+        runner: 'powershell.exe -NonInteractive -ExecutionPolicy ByPass -File "%script%"',
+        binary: 'powershell.exe'
       }
     ]
     ClearCollection.prototype.initialize.apply(this, arguments)
@@ -87,6 +88,36 @@ const RunnersCollection = ClearCollection.extend({
         return (one.id === runner || one.runner === runner)
       }) !== undefined
     )
+  },
+  interpreterByExtension (extension) {
+    let interp
+    if (extension === 'js') { interp = 'ccd461d9e99cb6fccadc34fff41655fa2982e38a' }
+    if (extension === 'sh') { interp = '8452d30e16c622c5e97a8ff798d9a78b48bfa7cc' }
+    if (extension === 'bat') { interp = '815e186af6624b310b41085b2ec41d2a86c3ab35' }
+    if (extension === 'ps1') { interp = '6bf84214aa4e20e0d77600adb7368d203339642b' }
+    if (!interp) {
+      return null
+    }
+    const model = App.state.runners.models.find(r => r.id === interp)
+    return model
+  },
+  detectInterpreterByScript (script) {
+    if (!script) {
+      return null
+    }
+
+    let extension = script?.extension
+    if (!extension) {
+      if (script?.filename) {
+        const parts = script.filename.split('.')
+        extension = parts[ parts.length - 1 ]
+      }
+    }
+    if (!extension) {
+      return null
+    }
+    const interpreter = this.interpreterByExtension(extension)
+    return interpreter
   },
   mainIndex: 'runner'
 })

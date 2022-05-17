@@ -9,13 +9,18 @@ export default Modalizer.extend({
   autoRender: false,
   props: {
     workflow: 'state',
-    autohost: 'boolean'
+    autohost: 'boolean',
+    autorunner: 'boolean'
   },
   bindings: {
     autohost: {
       hook: 'autohost',
       type: 'toggle'
-    }
+    },
+    autorunner: {
+      hook: 'autorunner',
+      type: 'toggle'
+    },
   },
   initialize () {
     this.buttons = false // disable build-in modal buttons
@@ -32,13 +37,23 @@ export default Modalizer.extend({
     const tasks = this.workflow.getInvalidTasks().models 
     this.invalidTasksCollection.reset(tasks)
 
+    // toggle automatic runas assignment
+    this.autorunner = this.workflow
+      .getInvalidTasks()
+      .models
+      .map(t => t.missingConfiguration)
+      .filter(c => {
+        return (c.find(p => p.prop === 'script_runas') !== undefined)
+      })
+      .length > 0
+
     if (App.state.hosts.length === 1) {
       this.autohost = this.workflow
         .getInvalidTasks()
         .models
         .map(t => t.missingConfiguration)
         .filter(c => {
-          return (c.find(p => p.label === 'Host') !== undefined)
+          return (c.find(p => p.prop === 'host_id') !== undefined)
         })
         .length > 0
     }
@@ -69,6 +84,9 @@ export default Modalizer.extend({
                   <button class="autocomplete" data-hook="autohost">
                     <i class="fa fa-server"></i> Autocomplete Host
                   </button>
+                  <button class="autocomplete" data-hook="autorunner">
+                    <i class="fa fa-script"></i> Autocomplete Interpreter
+                  </button>
                 </section>
                 <ul class="tasks-list" data-hook="tasks-container"></ul>
               </div>
@@ -90,9 +108,24 @@ export default Modalizer.extend({
 
       for (let task of tasksCollection.models) {
         for (let cfg of task.missingConfiguration) {
-          if (/host/i.test(cfg.label)) {
+          if (cfg.prop === 'host_id') {
             const host = App.state.hosts.models[0]
             task.host_id = host.id
+          }
+        }
+      }
+    },
+    'click [data-hook=autorunner]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+
+      const tasksCollection = this.workflow.getInvalidTasks()
+
+      for (let task of tasksCollection.models) {
+        for (let cfg of task.missingConfiguration) {
+          if (cfg.prop === 'script_runas') {
+            const interpreter = App.state.runners.detectInterpreterByScript(task.script)
+            task.script_runas = interpreter.runner
           }
         }
       }

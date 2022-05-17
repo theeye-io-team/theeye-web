@@ -74,7 +74,7 @@ const Script = Schema.extend({
       }
     },
     missingConfiguration: {
-      deps: ['script_id','host_id','task_arguments','env'],
+      deps: ['script_id','script_runas','host_id','task_arguments','env'],
       fn () {
         const missing = []
         const addMissing = (name, values) => {
@@ -83,6 +83,10 @@ const Script = Schema.extend({
             label: labels[name],
             values
           })
+        }
+
+        if (!this.script_runas) {
+          addMissing('script_runas')
         }
 
         if (!isMongoId(this.host_id || '')) {

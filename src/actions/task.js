@@ -37,7 +37,7 @@ export default {
   },
   update (id, data) {
     let task = App.state.tasks.get(id)
-    if (task.type == 'script') {
+    if (task.type === TaskConstants.TYPE_SCRIPT) {
       task.task_arguments.reset([])
     }
     task.set(data)
@@ -72,7 +72,7 @@ export default {
         .then(task => {
           // handle to display a custome message
           App.state.alerts.success('Success', `Task ${task.name} created.`)
-          successCreated([task])
+          successCreatedTask([task])
         })
         .catch(err => {
           console.error(err)
@@ -87,7 +87,7 @@ export default {
 
       return Promise.all(promises).then(tasks => {
         App.state.alerts.success('Success', 'All Tasks created.')
-        successCreated(tasks)
+        successCreatedTask(tasks)
       }).catch(err => {
         console.error(err)
         App.state.alerts.danger('Something goes wrong.')
@@ -100,7 +100,7 @@ export default {
     } else {
       return create(data)
         .then(task => {
-          successCreated([task])
+          successCreatedTask([task])
           return (task)
         })
         .catch(err => {
@@ -376,7 +376,16 @@ const createUsingRecipe = (data) => {
   })
 }
 
-const successCreated = () => {
+const successCreatedTask = (tasks) => {
+  for (let task of tasks) {
+    if (task.type === TaskConstants.TYPE_SCRIPT) {
+      const id = tasks[0].script_id
+      App.state.files.add({ id })
+      const file = App.state.files.get(id)
+      file.fetch()
+    }
+  }
+
   App.state.events.fetch()
   App.state.tags.fetch()
 
