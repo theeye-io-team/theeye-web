@@ -5,6 +5,7 @@ export default {
   host_id: 'Host',
   remote_url: 'URL',
   script_id: 'Script',
+  script_runas: 'Intepreter (runas)',
   page: {
     task: {
       form: {

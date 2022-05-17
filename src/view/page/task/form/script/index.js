@@ -179,8 +179,8 @@ export default TaskFormView.extend({
       value: this.model.script_runas
     })
 
-    runners.listenTo(this.scriptSelection, 'change', () => {
-      runners.updateState({ scripts: this.scriptSelection })
+    runners.listenToAndRun(this.scriptSelection, 'change', () => {
+      runners.updateState({ selector: this.scriptSelection })
     })
 
     // backward compatibility.
@@ -723,33 +723,24 @@ const RunnerSelectionView = SelectView.extend({
 
     SelectView.prototype.initialize.apply(this, arguments)
   },
-  updateState ({ scripts }) {
-    if (!this.rendered) { return }
-    if (!scripts.value) {
+  updateState ({ selector }) {
+    //if (!this.rendered) { return }
+    if (!selector.value) {
       this.clear()
       return
     }
 
-    const selected = scripts.selected()
-    if (!selected?.extension) {
-      this.clear()
-      return
-    }
-
-    const extension = selected.extension
-    let runner
-    if (extension === 'js') { runner = 'ccd461d9e99cb6fccadc34fff41655fa2982e38a' }
-    if (extension === 'sh') { runner = '8452d30e16c622c5e97a8ff798d9a78b48bfa7cc' }
-    if (extension === 'bat') { runner = '815e186af6624b310b41085b2ec41d2a86c3ab35' }
-    if (extension === 'ps1') { runner = '6bf84214aa4e20e0d77600adb7368d203339642b' }
-
-    if (
-      !this.value || 
-      (runner !== this.value && App.state.runners.isDefaultRunner(this.value))
-    ) {
-      const model = App.state.runners.models.find(r => r.id === runner)
-      if (model !== undefined) {
-        this.setValue(model.runner)
+    const script = selector.selected()
+    const interpreter = App.state.runners.detectInterpreterByScript(script)
+    if (interpreter !== null) {
+      if (
+        !this.value ||
+        (
+          interpreter.runner !== this.value &&
+          App.state.runners.isDefaultRunner(this.value)
+        )
+      ) {
+        this.setValue(interpreter.runner)
       }
     }
   }
