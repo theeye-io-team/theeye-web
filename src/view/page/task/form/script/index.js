@@ -414,7 +414,6 @@ const SimpleInputView = InputView.extend({
 })
 
 const EnvCol = Collection.extend({
-  mainIndex: 'id',
   indexes: ['id', 'key', 'value'],
   model: State.extend({
     props: {

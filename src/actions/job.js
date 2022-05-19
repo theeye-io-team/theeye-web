@@ -23,23 +23,23 @@ export default {
     try {
       const job = addJobToState(topicEvent.model)
 
-      if (topicEvent.operation === OperationsConstants.CREATE) {
-        if (job.workflow_id) {
-          const workflow = App.state.workflows.get(job.workflow_id)
-          if (job._type === 'WorkflowJob') {
-            job.startTaskId = workflow.start_task_id
-          }
-          // only fetch first job inputs
-          if (workflow.table_view === true && job.task_id === workflow.start_task_id) {
-            this.fetch(job)
+      if (job) {
+        if (topicEvent.operation === OperationsConstants.CREATE) {
+          if (job.workflow_id) {
+            const workflow = App.state.workflows.get(job.workflow_id)
+            if (job._type === 'WorkflowJob') {
+              job.startTaskId = workflow.start_task_id
+            }
+            // only fetch first job inputs
+            if (workflow.table_view === true && job.task_id === workflow.start_task_id) {
+              this.fetch(job)
+            }
           }
         }
-      }
 
-      /**
-       * @summary check if job is on hold and requires intervention of the current user
-       */
-      if (job) {
+        /**
+         * @summary check if job is on hold and requires intervention of the current user
+         */
         if (job._type !== 'WorkflowJob') {
           if (job.requiresInteraction()) {
             App.actions.onHold.check(job)
