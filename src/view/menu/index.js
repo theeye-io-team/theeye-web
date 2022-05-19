@@ -141,21 +141,22 @@ export default View.extend({
 
     if (App.state.session.user.credential) {
       if (Acls.hasAccessLevel('admin')) {
-        container.appendChild(html2dom(`<li><a href="/admin/file" class="eyeicon eyemenu-icon eyeicon-scripts"> Files & Scripts </a></li>`))
-        container.appendChild(html2dom(`<li><a href="/admin/webhook" class="eyeicon eyemenu-icon eyeicon-webhooks"> Webhooks </a></li>`))
-        container.appendChild(html2dom(`<li><a href="/admin/hostgroup" class="eyeicon eyemenu-icon eyeicon-templates"> Templates </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/task" class="eyeicon eyemenu-icon eyeicon-tasks">Tasks</a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/file" class="eyeicon eyemenu-icon eyeicon-scripts">Files & Scripts</a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/webhook" class="eyeicon eyemenu-icon eyeicon-webhooks">Webhooks</a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/hostgroup" class="eyeicon eyemenu-icon eyeicon-templates">Templates</a></li>`))
       }
 
       if (Acls.hasAccessLevel('manager')) {
-        let link = html2dom(`<li><a href="" data-hook="settings-menu" class="eyeicon eyemenu-icon eyeicon-settings"> Settings </a></li>`)
+        let link = html2dom(`<li><a href="" data-hook="settings-menu" class="eyeicon eyemenu-icon eyeicon-settings">Settings</a></li>`)
         link.onclick = () => App.actions.settingsMenu.show('customer')
         container.appendChild(link)
       }
 
       if (Acls.hasAccessLevel('root')) {
-        container.appendChild(html2dom(`<li><a href="/admin/user" class="eyeicon eyemenu-icon eyeicon-users"> Users </a></li>`))
-        container.appendChild(html2dom(`<li><a href="/admin/customer" class="eyeicon eyemenu-icon eyeicon-organizations"> Organizations </a></li>`))
-        container.appendChild(html2dom(`<li><a href="/admin/member" class="eyeicon eyemenu-icon eyeicon-users"> Members </a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/user" class="eyeicon eyemenu-icon eyeicon-users">Users</a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/customer" class="eyeicon eyemenu-icon eyeicon-organizations">Organizations</a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/member" class="eyeicon eyemenu-icon eyeicon-users">Members</a></li>`))
       }
     }
   },
