@@ -20,7 +20,6 @@ const TaskArguments = AmpersandCollection.extend({
 })
 
 const Schema = AppModel.extend({
-  idAttribute: 'id',
   props: {
     id: 'string',
     version: 'number',
