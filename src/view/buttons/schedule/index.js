@@ -63,20 +63,18 @@ const SchedulerBody = View.extend({
       <div data-hook='wizard-placeholder'></div>
     </div>
   `,
-  events: {
-    'click button[data-hook=confirm]': 'onClickSave'
-  },
-  onClickSave (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.form.submit()
-    this.trigger('submitted')
-  },
   render () {
     this.renderWithTemplate()
 
-    this.renderSubview(new Buttons({ confirmText: 'Save' }), this.el)
+    const buttons = new Buttons({ confirmText: 'Save' })
+    this.renderSubview(buttons, this.el)
+
+    this.listenTo(buttons, 'click:confirm', (event) => {
+      this.form.on('submitted', () => {
+        this.trigger('submitted')
+      })
+      this.form.submit()
+    })
 
     const selector = new SelectView({
       name: 'format',

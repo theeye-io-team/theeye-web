@@ -113,6 +113,7 @@ export default FormView.extend({
 
     const data = this.prepareData(this.data)
     App.actions.scheduler.create(this.model, data)
+    this.trigger('submitted')
   },
   prepareData (data) {
     //const nextRun = cronparser.parseExpression(data.frequency).next().toDate()
