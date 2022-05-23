@@ -32,7 +32,6 @@ export default View.extend({
   `,
   initialize (options) {
     this.workflowBuilder = new WorkflowBuilderView({
-      name: 'builder',
       value: this.model,
       mode: options.builder_mode
     })
@@ -58,7 +57,17 @@ export default View.extend({
       this.form,
       this.queryByHook('workflow-formview-container')
     )
-  }
+
+    this.listenTo(this.form, 'submit', (formData) => { this.submit(formData) })
+  },
+  submit (data) {
+    const { graph, tasks } = this.workflowBuilder.value
+    const events = this.workflowBuilder.workflow_events
+
+    const wf = Object.assign({}, data, { graph, tasks, events })
+    this.trigger('submit', wf)
+  },
+  update (field) { this.form.update(field) }
 })
 
 const Form = FormView.extend({
@@ -252,12 +261,17 @@ const Form = FormView.extend({
     this.trigger('submit', data)
     next(null, true)
   },
-  prepareData (data) {
-    const { graph, tasks, events } = data.builder
+  // prepareData (data) {
+  //   const { graph, tasks, events } = data.builder
 
-    const wf = Object.assign({}, data, { graph, tasks, events })
-    delete wf['advanced-toggler']
-    delete wf['builder']
+  //   const wf = Object.assign({}, data, { graph, tasks, events })
+  //   delete wf['advanced-toggler']
+  //   delete wf['builder']
+  //   return wf
+  // }
+  prepareData (data) {
+    const wf = Object.assign({}, data)
+    delete wf['advance-toggler']
     return wf
   }
 })

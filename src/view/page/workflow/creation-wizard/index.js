@@ -117,7 +117,7 @@ const renderCreateForm = (workflow = null) => {
   )
 
   modal.on('hidden', () => {
-    form.remove()
+    editView.remove()
     modal.remove()
   })
 
