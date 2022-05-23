@@ -723,11 +723,8 @@ const RunnerSelectionView = SelectView.extend({
     SelectView.prototype.initialize.apply(this, arguments)
   },
   updateState ({ selector }) {
-    //if (!this.rendered) { return }
-    if (!selector.value) {
-      this.clear()
-      return
-    }
+    if (!this.rendered) { return }
+    if (!selector.value) { return }
 
     const script = selector.selected()
     const interpreter = App.state.runners.detectInterpreterByScript(script)
