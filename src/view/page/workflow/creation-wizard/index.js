@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import Modalizer from 'components/modalizer'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
-import FormView from '../form'
+import WorkflowFormView from '../form'
 import View from 'ampersand-view'
 import config from 'config'
 import FileInputView from 'components/input-view/file'
@@ -103,12 +103,12 @@ const renderCreateForm = (workflow = null) => {
     workflow = new Workflow({ version: 2 })
   }
 
-  const form = new FormView({ model: workflow, builder_mode: 'import' })
+  const editView = new WorkflowFormView({ model: workflow, builder_mode: 'import' })
 
   const modal = new Modalizer({
     buttons: false,
     title: 'Create Workflow',
-    bodyView: form 
+    bodyView: editView 
   })
 
   modal.renderSubview(
@@ -121,7 +121,7 @@ const renderCreateForm = (workflow = null) => {
     modal.remove()
   })
 
-  form.on('submit', (data) => {
+  editView.on('submit', (data) => {
     App.actions.workflow.create(data)
     modal.hide()
   })

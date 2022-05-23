@@ -1,5 +1,7 @@
 import App from 'ampersand-app'
 import Modalizer from 'components/modalizer'
+import View from 'ampersand-view'
+import FormView from 'ampersand-form-view'
 import DropableFormView from 'components/dropable-form'
 import AdvancedToggle from 'view/advanced-toggle'
 import LanguajeLabels from 'language/labels'
@@ -21,7 +23,45 @@ import * as WorkflowConstants from 'constants/workflow'
 
 import './styles.less'
 
-export default DropableFormView.extend({
+export default View.extend({
+  template: `
+    <div class="workflow-editor-container">
+      <div class="workflow-graphview-container" data-hook="workflow-graphview-container"></div>
+      <div class="workflow-formview-container" data-hook="workflow-formview-container"></div>
+    </div> 
+  `,
+  initialize (options) {
+    this.workflowBuilder = new WorkflowBuilderView({
+      name: 'builder',
+      value: this.model,
+      mode: options.builder_mode
+    })
+    this.form = new Form({
+      model: this.model,
+      mode: options.builder_mode,
+      workflowBuilder: this.workflowBuilder
+    })
+    App.state.formWorkflow = {
+      workflow: this.model,
+      form: this.form,
+      workflowBuilder: this.workflowBuilder
+    }
+  },
+  render () {
+    this.renderWithTemplate(this)
+
+    this.renderSubview(
+      this.workflowBuilder,
+      this.queryByHook('workflow-graphview-container')
+    )
+    this.renderSubview(
+      this.form,
+      this.queryByHook('workflow-formview-container')
+    )
+  }
+})
+
+const Form = FormView.extend({
   initialize (options) {
     const workflow = this.model
     const isNew = (workflow.isNew())
@@ -37,17 +77,7 @@ export default DropableFormView.extend({
       'host'
     ]
 
-    const workflowBuilder = this.workflowBuilder = new WorkflowBuilderView({
-      name: 'builder',
-      value: workflow,
-      mode: options.builder_mode
-    })
-
-    App.state.formWorkflow = {
-      form: this,
-      workflow,
-      workflowBuilder
-    }
+    const workflowBuilder = this.workflowBuilder = options.workflowBuilder
 
     const initialTaskSelect = new InitialTaskSelectionView({
       value: workflowBuilder.workflow.start_task_id,
@@ -98,7 +128,6 @@ export default DropableFormView.extend({
         validityClassSelector: '.control-label',
         value: workflow.name,
       }),
-      workflowBuilder,
       initialTaskSelect,
       // advanced fields starts visible = false
       new AdvancedToggle({
@@ -172,13 +201,13 @@ export default DropableFormView.extend({
       })
     ]
 
-    DropableFormView.prototype.initialize.apply(this, arguments)
+    FormView.prototype.initialize.apply(this, arguments)
   },
   focus () {
     this.query('input[name=name]').focus()
   },
   render () {
-    DropableFormView.prototype.render.apply(this, arguments)
+    FormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
     this.addHelpIcon('name')
