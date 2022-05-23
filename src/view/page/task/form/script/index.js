@@ -88,7 +88,8 @@ export default TaskFormView.extend({
       'user_inputs_members',
       'show_result',
       'arguments_type',
-      'allows_dynamic_settings'
+      'allows_dynamic_settings',
+      'agent_logging'
     ]
 
     this.advancedToggle = new AdvancedToggle({
@@ -320,7 +321,13 @@ export default TaskFormView.extend({
         label: LanguajeLabels.page.task.form.allows_behaviour_change,
         name: 'allows_dynamic_settings',
         value: allowsDynamicSettings
-      })
+      }),
+      new CheckboxView({
+        visible: false,
+        label: 'Agent Execution Logging',
+        name: 'agent_logging',
+        value: this.model.agent_logging
+      }),
     ]
 
     if (this.model.isNew()) {
@@ -372,6 +379,7 @@ export default TaskFormView.extend({
     this.addHelpIcon('user_inputs_members')
     this.addHelpIcon('show_result')
     this.addHelpIcon('arguments_type')
+    this.addHelpIcon('agent_logging')
 
     if (this.model.isNew()) {
       if (App.state.onboarding.onboardingActive) {

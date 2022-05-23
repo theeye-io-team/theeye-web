@@ -49,6 +49,7 @@ const Script = Schema.extend({
     this.type = 'script'
   },
   props: {
+    agent_logging: 'boolean',
     script_id: 'string',
     script_runas: 'string',
     hostname: 'string',
