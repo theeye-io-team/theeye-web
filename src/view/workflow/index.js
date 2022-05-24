@@ -26,7 +26,8 @@ export default View.extend({
     warningToggle: ['boolean', false, false],
     clearBtn: ['boolean', false, false],
     cy: ['object', false],
-    graph: 'object' // Graph (graphlib) instance
+    graph: 'object', // Graph (graphlib) instance
+    node_positions: 'object'
   },
   initialize () {
     View.prototype.initialize.apply(this,arguments)
@@ -116,20 +117,20 @@ export default View.extend({
 
     return false
   },
-  updateCytoscape () {
+  updateCytoscape (positions) {
     if (this.cy) {
       this.cy.destroy()
       this.cy = null
     }
 
-    this.renderCytoscape()
+    this.renderCytoscape(positions)
 
     this.cy.center()
     this.cy.fit()
 
     return this
   },
-  renderCytoscape () {
+  renderCytoscape (positions) {
     if (!this.graph) {
       return this
     }
@@ -144,7 +145,7 @@ export default View.extend({
       // initial zoom
       zoom: 1.1,
       minZoom: 0.5,
-      maxZoom: 1.1,
+      maxZoom: 2.0,
       layout: {
         fit: false,
         name: 'dagre',
@@ -209,8 +210,13 @@ export default View.extend({
         this.trigger('tap:back', event)
       }
     })
+    cy.on('position', () => { this.node_positions = this.getPositions() })
 
     this.cy = cy
+
+    if (positions) {
+      this.setPositions(positions)
+    }
 
     return this
   },
@@ -243,6 +249,19 @@ export default View.extend({
     })
 
     return elems
+  },
+  getPositions () {
+    let positions = {}
+    this.cy.nodes().forEach(node => {
+
+      positions[node.data('id')] = node.position()
+    })
+    return positions
+  },
+  setPositions (positions) {
+    Object.keys(positions).forEach(id => {
+      this.cy.nodes().filter(`[id = "${id}"]`)[0].position(positions[id])
+    })
   }
 })
 

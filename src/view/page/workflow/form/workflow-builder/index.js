@@ -84,8 +84,8 @@ export default View.extend({
     value: {
       cache: false,
       fn () {
-        const { graph, tasks } = this.workflow.serialize()
-        return { graph, tasks }
+        const { graph, tasks, node_positions } = this.workflow.serialize()
+        return { graph, tasks, node_positions }
       }
     },
     valid: {
@@ -132,13 +132,16 @@ export default View.extend({
         this.listenTo(workflowGraph, 'tap:edge', this.onTapEdge)
         this.listenTo(workflowGraph, 'tap:back', this.onTapBackground)
         this.listenTo(workflowGraph, 'click:warning-indicator', this.onClickWarningIndicator)
+        this.listenTo(workflowGraph, 'change:node_positions', () => {
+          this.workflow.node_positions = workflowGraph.node_positions
+        })
         this.listenToAndRun(this, 'change:valid', () => {
           workflowGraph.warningToggle = !this.valid
         })
-
+        
         // initial render
         setTimeout(() => {
-          workflowGraph.updateCytoscape()
+          workflowGraph.updateCytoscape(this.workflow.node_positions)
           workflowGraph.cy.center()
         }, 500)
       })
