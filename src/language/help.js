@@ -140,7 +140,8 @@ export default {
       arguments_type: 'Choose Json formatting to standarize the data received from the UI',
       approval_task_arguments: 'Data submitted by the approval request (from previous task)',
       show_result: 'Show job result popup on finish.',
-      user_inputs: 'Demands a user to fill the input arguments. Cannot be automatilly executed and always required manual intervention.'
+      user_inputs: 'Demands a user to fill the input arguments. Cannot be automatilly executed and always required manual intervention.',
+      agent_logging: 'Keep a server side log of every job execution'
     },
     cannot_schedule: 'A Scheduled Task cannot have dynamic input/select arguments',
     cannot_trigger: 'A Task with dynamic arguments cannot be automatically triggered by Workflow',
