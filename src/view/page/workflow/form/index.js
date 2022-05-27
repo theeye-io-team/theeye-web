@@ -136,6 +136,7 @@ const Form = FormView.extend({
         validityClassSelector: '.control-label',
         value: workflow.name,
       }),
+      workflowBuilder.TaskAdder,
       initialTaskSelect,
       // advanced fields starts visible = false
       new AdvancedToggle({

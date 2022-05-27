@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
+import Collection from 'ampersand-collection'
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import Help from 'language/help'
@@ -23,7 +24,7 @@ import './styles.less'
 //const MODE_EDIT   = 'edit'
 //const MODE_IMPORT = 'import'
 
-export default View.extend({
+const TaskAdderInput = View.extend({
   template: `
     <div data-component="workflow-builder" class="workflow-builder-component form-group">
       <label class="col-sm-3 control-label" data-hook="label">Tasks</label>
@@ -37,11 +38,33 @@ export default View.extend({
           </button>
         </div>
       </div>
-      <div class="workflow-preview col-sm-12" data-hook="graph-preview"></div>
     </div>
+  `,
+  events: {
+    'click [data-hook=add-task]':'onClickAddTask',
+    'click [data-hook=create-task]':'onClickCreateTask'
+  },
+  props: {
+    onClickAddTask: 'function',
+    onClickCreateTask: 'function'
+  },
+  derived: {
+    valid: { fn() { return true }},
+    value: { fn() { return null }}
+  }
+})
+
+export default View.extend({
+  template: `
+      <div class="workflow-preview" data-hook="graph-preview"></div>
   `,
   initialize (options) {
     View.prototype.initialize.apply(this,arguments)
+
+    this.TaskAdder = new TaskAdderInput({
+      onClickAddTask: this.onClickAddTask,
+      onClickCreateTask: this.onClickCreateTask
+    })
 
     let recipe
     let workflow = options.value
@@ -106,10 +129,6 @@ export default View.extend({
         return true
       }
     },
-  },
-  events: {
-    'click [data-hook=add-task]':'onClickAddTask',
-    'click [data-hook=create-task]':'onClickCreateTask'
   },
   render () {
     this.renderWithTemplate(this)
@@ -178,29 +197,70 @@ export default View.extend({
         this.connectingTask = undefined
         this.connectTasks(taskOrigin, task)
       } else {
-        const menu = new TaskContextualMenu({ model: task })
-        menu.render()
+        const menu_items = [
+          {
+            label: 'Edit Task',
+            action: () => {
+              editTask(task, () => {
+                this.updateTaskNode(task)
+              })
+            }
+          },
+          (() => { if (task.type === 'script') return {
+            label: 'Edit Script',
+            action: () => {
+              App.actions.file.edit(task.script_id || task.script)
+            }
+          }})(),
+          {
+            label: 'Remove',
+            action: () => {
+              this.removeNodeDialog(node)
+            }
+          },
+          {
+            label: 'Export',
+            action: () => {
+              const dialog = new ExportDialog({ model: task })
+            }
+          },
+          {
+            label: 'Copy Task',
+            action: () => {
+              this.addTaskNode(task)
+            }
+          },
+          {
+            label: 'Connect to',
+            action: () => {
+              this.connectingTask = task
+            }
+          }
+        ]
         
-        menu.el.style.position = 'absolute'
-        menu.el.style.top = (event.cyRenderedPosition.y + 120) + 'px'
-        menu.el.style.left = event.cyRenderedPosition.x + 'px'
+        const menuView = new ContextualMenu({ menu_items })
+        menuView.render()
+        
+        menuView.el.style.position = 'absolute'
+        menuView.el.style.top = (event.cyRenderedPosition.y + 120) + 'px'
+        menuView.el.style.left = event.cyRenderedPosition.x + 'px'
 
-        this.el.appendChild(menu.el)
-        this.registerSubview(menu)
-        this.contextMenu = menu
+        this.el.appendChild(menuView.el)
+        this.registerSubview(menuView)
+        this.contextMenu = menuView
 
-        menu.on('task:copy', (task) => {
+        menuView.on('task:copy', (task) => {
           this.addTaskNode(task)
         })
-        menu.on('task:edit', (task) => {
+        menuView.on('task:edit', (task) => {
           editTask(task, () => {
             this.updateTaskNode(task)
           })
         })
-        menu.on('task:remove', () => {
+        menuView.on('task:remove', () => {
           this.removeNodeDialog(node)
         })
-        menu.on('task:connect', (connect) => {
+        menuView.on('task:connect', (connect) => {
           this.connectingTask = connect
         })
       }
@@ -431,49 +491,62 @@ const TaskSelectionForm = FormView.extend({
   }
 })
 
-const TaskContextualMenu = View.extend({
+const ContextualMenu = View.extend({
   template: `
     <div class="dropdown">
       <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons">
+      <!--
         <li><a data-hook="edit-task" href="#">Edit Task</a></li>
         <li><a data-hook="edit-script" href="#">Edit Script</a></li>
         <li><a data-hook="remove" href="#">Remove</a></li>
         <li><a data-hook="export" href="#">Export</a></li>
         <li><a data-hook="copy-task" href="#">Copy Task</a></li>
         <li><a data-hook="connect" href="#">Connect to ...</a></li>
+      -->
       </ul>
     </div>
   `,
-  bindings: {
-    'model.id': {
-      hook: 'edit-task',
-      type: 'attribute',
-      name: 'data-task-id'
-    },
-    editScript: {
-      type: 'toggle',
-      hook: 'edit-script'
-    }
-  },
-  derived: {
-    editScript: {
-      deps: ['model.type'],
-      fn () {
-        return Boolean(this.model.type === 'script')
-      }
-    }
-  },
+  // bindings: {
+  //   'model.id': {
+  //     hook: 'edit-task',
+  //     type: 'attribute',
+  //     name: 'data-task-id'
+  //   },
+  //   editScript: {
+  //     type: 'toggle',
+  //     hook: 'edit-script'
+  //   }
+  // },
+  // derived: {
+  //   editScript: {
+  //     deps: ['model.type'],
+  //     fn () {
+  //       return Boolean(this.model.type === 'script')
+  //     }
+  //   }
+  // },
   props: {
+    menu_items: 'array',
     workflow_events: 'collection'
   },
-  events: {
-    'click [data-hook=connect]': 'onClickConnectTasks',
-    'click [data-hook=edit-task]': 'onClickEditTask',
-    'click [data-hook=edit-script]': 'onClickEditScript',
-    'click [data-hook=export]': 'onClickExport',
-    'click [data-hook=remove]': 'onClickRemove',
-    'click [data-hook=copy-task]': 'onClickCopyTask',
+  render () {
+    this.renderWithTemplate(this)
+    this.menu_items.forEach((item) => {
+        this.renderSubview(
+          new ContextualMenuEntry({...item}),
+          this.queryByHook('menu-buttons')
+        )
+      }
+    )
   },
+  // events: {
+  //   'click [data-hook=connect]': 'onClickConnectTasks',
+  //   'click [data-hook=edit-task]': 'onClickEditTask',
+  //   'click [data-hook=edit-script]': 'onClickEditScript',
+  //   'click [data-hook=export]': 'onClickExport',
+  //   'click [data-hook=remove]': 'onClickRemove',
+  //   'click [data-hook=copy-task]': 'onClickCopyTask',
+  // },
   onClickCopyTask (event) {
     const taks = this.model
     this.trigger('task:copy', this.model)
@@ -509,6 +582,29 @@ const TaskContextualMenu = View.extend({
     event.stopPropagation()
     this.trigger('task:connect', { task: this.model })
     this.remove()
+  }
+})
+
+const ContextualMenuEntry = View.extend({
+  props: {
+    label: 'string',
+    action: 'function'
+  },
+  template: `<li><a href="#"></a></li>`,
+  bindings: {
+    label: {
+      type: 'innerHTML',
+      selector: 'a'
+    }
+  },
+  events: {
+    'click a': 'onClick'
+  },
+  onClick (event) {
+    event.stopPropagation()
+    event.preventDefault()
+    this.action()
+    this.parent.remove()
   }
 })
 
