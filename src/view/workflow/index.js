@@ -9,16 +9,17 @@ cydagre(cytoscape)
 export default View.extend({
   template: `
     <div class="workflow-component">
-      <div class="workflow-buttons">
-        <button class="btn btn-default" data-hook="fit">Fit</button>
-        <button class="btn btn-default" data-hook="center">Center</button>
-        <button class="btn btn-default" data-hook="redraw">Re-draw</button>
-        <button class="btn action-required" data-hook="warning-indicator" disabled>
-          <i class="fa fa-warning"></i>
-        </button>
-      </div>
       <div class="workflow-container">
-        <div class="workflow-graph-container" data-hook="graph-container"> </div>
+        <div class="workflow-graph-container" data-hook="graph-container">
+          <div class="workflow-buttons">
+            <button class="btn btn-default" data-hook="fit">Fit</button>
+            <button class="btn btn-default" data-hook="center">Center</button>
+            <button class="btn btn-default" data-hook="rearrange">Rearrange</button>
+            <button class="btn action-required" data-hook="warning-indicator" disabled>
+              <i class="fa fa-warning"></i>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   `,
@@ -73,7 +74,7 @@ export default View.extend({
   events: {
     'click button[data-hook=fit]':'onClickFit',
     'click button[data-hook=center]':'onClickCenter',
-    'click button[data-hook=redraw]':'onClickRedraw',
+    'click button[data-hook=rearrange]':'onClickRearrange',
     'click button[data-hook=clear]':'onClickClear',
     'click button[data-hook=warning-indicator]':'onClickWarningIndicator',
   },
@@ -101,7 +102,7 @@ export default View.extend({
 
     return false
   },
-  onClickRedraw (event) {
+  onClickRearrange (event) {
     event.preventDefault()
     event.stopPropagation()
 
@@ -182,7 +183,7 @@ export default View.extend({
             'target-arrow-shape': 'triangle',
             'line-color': '#9dbaea',
             'target-arrow-color': '#9dbaea',
-            'curve-style': 'bezier',
+            'curve-style': 'taxi',
             'content': function (ele) {
               return ele.data('label') || ''
             },
