@@ -218,7 +218,7 @@ export default View.extend({
   },
   setPositions (positions) {
     Object.keys(positions).forEach(id => {
-      this.cy.nodes().filter(`[id = "${id}"]`)[0].position(positions[id])
+      this.cy.nodes().filter(`[id = "${id}"]`)[0]?.position(positions[id])
     })
   }
 })

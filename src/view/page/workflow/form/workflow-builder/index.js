@@ -62,8 +62,8 @@ export default View.extend({
     View.prototype.initialize.apply(this,arguments)
 
     this.TaskAdder = new TaskAdderInput({
-      onClickAddTask: this.onClickAddTask,
-      onClickCreateTask: this.onClickCreateTask
+      onClickAddTask: (e) => this.onClickAddTask(e),
+      onClickCreateTask: (e) => this.onClickCreateTask(e)
     })
 
     let recipe
@@ -189,11 +189,10 @@ export default View.extend({
     if (/Task$/.test(node.value._type) === true) {
       const id = node.value.id
       const task = this.workflow.tasks.get(id)
-      if (this.connectingTask?.task !== undefined) {
-        const taskOrigin = this.connectingTask.task
+      if (this.connectingTask !== undefined) {
+        const taskOrigin = this.connectingTask
         this.connectingTask = undefined
         this.connectTasks(taskOrigin, task)
-        this.menuView.remove()
       } else {
         if (this.menuView) {
           this.menuView.remove()
