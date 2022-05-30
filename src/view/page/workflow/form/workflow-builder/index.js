@@ -149,7 +149,7 @@ export default View.extend({
 
         this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(workflowGraph, 'tap:edge', this.onTapEdge)
-        this.listenTo(workflowGraph, 'tap:back', this.onTapBackground)
+        this.listenTo(workflowGraph, 'tap:back', (e) => { this.onTapBackground(e, workflowGraph) })
         this.listenTo(workflowGraph, 'click:warning-indicator', this.onClickWarningIndicator)
         this.listenTo(workflowGraph, 'change:node_positions', () => {
           this.workflow.node_positions = workflowGraph.node_positions
@@ -185,9 +185,6 @@ export default View.extend({
   },
   onTapNode (event) {
     var node = event.cyTarget.data()
-    if (this.contextMenu) {
-      this.contextMenu.remove()
-    }
 
     if (/Task$/.test(node.value._type) === true) {
       const id = node.value.id
@@ -196,6 +193,7 @@ export default View.extend({
         const taskOrigin = this.connectingTask.task
         this.connectingTask = undefined
         this.connectTasks(taskOrigin, task)
+        this.menuView.remove()
       } else {
         if (this.menuView) {
           this.menuView.remove()
@@ -245,12 +243,11 @@ export default View.extend({
           this.menuView.render()
           
           this.menuView.el.style.position = 'absolute'
-          this.menuView.el.style.top = (event.cyRenderedPosition.y + 120) + 'px'
-          this.menuView.el.style.left = event.cyRenderedPosition.x + 'px'
+          this.menuView.el.style.top = (event.cyRenderedPosition.y + 15) + 'px'
+          this.menuView.el.style.left = (event.cyRenderedPosition.x + 15) + 'px'
         
           this.el.appendChild(this.menuView.el)
           this.registerSubview(this.menuView)
-          this.contextMenu = this.menuView
         
           this.menuView.on('task:copy', (task) => {
             this.addTaskNode(task)
@@ -282,9 +279,50 @@ export default View.extend({
     var edge = event.cyTarget.data()
     this.removeEdgeDialog(edge)
   },
-  onTapBackground (event) {
-    if (this.contextMenu) {
-      this.contextMenu.remove()
+  onTapBackground (event, graphView) {
+    if (this.menuView) {
+      this.menuView.remove()
+    } else {
+      const menu_items = [
+        {
+          label: 'Fit graph',
+          action: () => { event.cy.fit() }
+        },
+        {
+          label: 'Center graph',
+          action: () => { event.cy.center() }
+        },
+        {
+          label: 'Rearrange nodes',
+          action: () => {
+            graphView.updateCytoscape()
+          }
+        },
+        (()=>{
+          if (graphView.clearBtn === true) return {
+            label: 'Clear graph',
+            action: () => {
+              graphView.trigger('click:clear')
+            }
+          } 
+        })()
+      ]
+
+      this.menuView = new ContextualMenu({ menu_items })
+      this.menuView.render()
+      
+      this.menuView.el.style.position = 'absolute'
+      this.menuView.el.style.top = (event.cyRenderedPosition.y + 15) + 'px'
+      this.menuView.el.style.left = (event.cyRenderedPosition.x + 15) + 'px'
+    
+      this.el.appendChild(this.menuView.el)
+      this.registerSubview(this.menuView)
+
+      this.menuView.on('remove', () => {
+        setTimeout(()=>{
+          this.menuView = null
+        }, 500)
+      })
     }
   },
   removeNodeDialog (node) {
@@ -542,6 +580,7 @@ const ContextualMenu = View.extend({
   render () {
     this.renderWithTemplate(this)
     this.menu_items.forEach((item) => {
+      if (item)
         this.renderSubview(
           new ContextualMenuEntry({...item}),
           this.queryByHook('menu-buttons')
