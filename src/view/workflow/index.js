@@ -12,9 +12,6 @@ export default View.extend({
       <div class="workflow-container">
         <div class="workflow-graph-container" data-hook="graph-container">
           <div class="workflow-buttons">
-            <button class="btn btn-default" data-hook="fit">Fit</button>
-            <button class="btn btn-default" data-hook="center">Center</button>
-            <button class="btn btn-default" data-hook="rearrange">Rearrange</button>
             <button class="btn action-required" data-hook="warning-indicator" disabled>
               <i class="fa fa-warning"></i>
             </button>
@@ -65,17 +62,9 @@ export default View.extend({
         hook: 'warning-indicator',
         invert: true
       }
-    ],
-    clearBtn: {
-      type: 'toggle',
-      hook: 'clear'
-    }
+    ]
   },
   events: {
-    'click button[data-hook=fit]':'onClickFit',
-    'click button[data-hook=center]':'onClickCenter',
-    'click button[data-hook=rearrange]':'onClickRearrange',
-    'click button[data-hook=clear]':'onClickClear',
     'click button[data-hook=warning-indicator]':'onClickWarningIndicator',
   },
   onClickWarningIndicator (event) {
@@ -83,38 +72,6 @@ export default View.extend({
     event.stopPropagation()
 
     this.trigger('click:warning-indicator')
-
-    return false
-  },
-  onClickFit (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.cy.fit()
-
-    return false
-  },
-  onClickCenter (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.cy.center()
-
-    return false
-  },
-  onClickRearrange (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.updateCytoscape()
-
-    return false
-  },
-  onClickClear (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.trigger('click:clear')
 
     return false
   },
