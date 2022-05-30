@@ -197,72 +197,82 @@ export default View.extend({
         this.connectingTask = undefined
         this.connectTasks(taskOrigin, task)
       } else {
-        const menu_items = [
-          {
-            label: 'Edit Task',
-            action: () => {
-              editTask(task, () => {
-                this.updateTaskNode(task)
-              })
+        if (this.menuView) {
+          this.menuView.remove()
+        } else {
+          const menu_items = [
+            {
+              label: 'Edit Task',
+              action: () => {
+                editTask(task, () => {
+                  this.updateTaskNode(task)
+                })
+              }
+            },
+            (() => { if (task.type === 'script') return {
+              label: 'Edit Script',
+              action: () => {
+                App.actions.file.edit(task.script_id || task.script)
+              }
+            }})(),
+            {
+              label: 'Remove',
+              action: () => {
+                this.removeNodeDialog(node)
+              }
+            },
+            {
+              label: 'Export',
+              action: () => {
+                const dialog = new ExportDialog({ model: task })
+              }
+            },
+            {
+              label: 'Copy Task',
+              action: () => {
+                this.addTaskNode(task)
+              }
+            },
+            {
+              label: 'Connect to',
+              action: () => {
+                this.connectingTask = task
+              }
             }
-          },
-          (() => { if (task.type === 'script') return {
-            label: 'Edit Script',
-            action: () => {
-              App.actions.file.edit(task.script_id || task.script)
-            }
-          }})(),
-          {
-            label: 'Remove',
-            action: () => {
-              this.removeNodeDialog(node)
-            }
-          },
-          {
-            label: 'Export',
-            action: () => {
-              const dialog = new ExportDialog({ model: task })
-            }
-          },
-          {
-            label: 'Copy Task',
-            action: () => {
-              this.addTaskNode(task)
-            }
-          },
-          {
-            label: 'Connect to',
-            action: () => {
-              this.connectingTask = task
-            }
-          }
-        ]
+          ]
+          
+          this.menuView = new ContextualMenu({ menu_items })
+          this.menuView.render()
+          
+          this.menuView.el.style.position = 'absolute'
+          this.menuView.el.style.top = (event.cyRenderedPosition.y + 120) + 'px'
+          this.menuView.el.style.left = event.cyRenderedPosition.x + 'px'
         
-        const menuView = new ContextualMenu({ menu_items })
-        menuView.render()
+          this.el.appendChild(this.menuView.el)
+          this.registerSubview(this.menuView)
+          this.contextMenu = this.menuView
         
-        menuView.el.style.position = 'absolute'
-        menuView.el.style.top = (event.cyRenderedPosition.y + 120) + 'px'
-        menuView.el.style.left = event.cyRenderedPosition.x + 'px'
-
-        this.el.appendChild(menuView.el)
-        this.registerSubview(menuView)
-        this.contextMenu = menuView
-
-        menuView.on('task:copy', (task) => {
-          this.addTaskNode(task)
-        })
-        menuView.on('task:edit', (task) => {
-          editTask(task, () => {
-            this.updateTaskNode(task)
+          this.menuView.on('task:copy', (task) => {
+            this.addTaskNode(task)
           })
-        })
-        menuView.on('task:remove', () => {
-          this.removeNodeDialog(node)
-        })
-        menuView.on('task:connect', (connect) => {
-          this.connectingTask = connect
-        })
+          this.menuView.on('task:edit', (task) => {
+            editTask(task, () => {
+              this.updateTaskNode(task)
+            })
+          })
+          this.menuView.on('task:remove', () => {
+            this.removeNodeDialog(node)
+          })
+          this.menuView.on('task:connect', (connect) => {
+            this.connectingTask = connect
+          })
+        
+          this.menuView.on('remove', () => {
+            setTimeout(()=>{
+              this.menuView = null
+            }, 500)
+          })
+        }
       }
     } else {
       this.removeNodeDialog(node)
