@@ -107,6 +107,7 @@ export default View.extend({
     value: {
       cache: false,
       fn () {
+        this.purgeGraph()
         const { graph, tasks, node_positions, start_task_id } = this.workflow.serialize()
         return { graph, tasks, node_positions, start_task_id }
       }
@@ -474,6 +475,10 @@ export default View.extend({
   },
   reportToParent () {
     if (this.parent) { this.parent.update(this) }
+  },
+  purgeGraph () {
+    if(this.graph.nodes().includes('START_NODE')) 
+      this.graph.removeNode('START_NODE')
   }
 })
 

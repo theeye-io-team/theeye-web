@@ -31,7 +31,6 @@ export default View.extend({
   initialize () {
     View.prototype.initialize.apply(this,arguments)
 
-    console.log(this)
     const state = App.state.workflowVisualizer
     const updateState = () => {
       state.graph = this.graph
@@ -224,7 +223,6 @@ export default View.extend({
     })
   },
   setStartNode (start_task_id) {
-    debugger
     if(this.graph.nodes().includes('START_NODE')) {
       this.graph.removeNode('START_NODE')
     }
