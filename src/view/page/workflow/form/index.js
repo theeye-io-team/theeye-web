@@ -61,9 +61,9 @@ export default View.extend({
     this.listenTo(this.form, 'submit', (formData) => { this.submit(formData) })
   },
   submit (data) {
-    const { graph, tasks, node_positions } = this.workflowBuilder.value
+    const { graph, tasks, node_positions, start_task_id } = this.workflowBuilder.value
 
-    const wf = Object.assign({}, data, { graph, tasks, node_positions })
+    const wf = Object.assign({}, data, { graph, tasks, node_positions, start_task_id })
     this.trigger('submit', wf)
   },
   update (field) { this.form.update(field) }
@@ -87,36 +87,6 @@ const Form = FormView.extend({
 
     const workflowBuilder = this.workflowBuilder = options.workflowBuilder
 
-    const initialTaskSelect = new InitialTaskSelectionView({
-      value: workflowBuilder.workflow.start_task_id,
-      options: workflowBuilder.workflow.tasks,
-      onOpenning: (event) => {
-        if (workflowBuilder.graph.nodes().length===0) {
-          event.preventDefault()
-          event.stopPropagation()
-          bootbox.alert('To choose a Starting Task, first you must add a Task')
-          return false
-        }
-      }
-    })
-
-    this.listenTo(workflowBuilder, 'change:graph', () => {
-      if (initialTaskSelect.options.length === 0) {
-        initialTaskSelect.options = [ ...workflowBuilder.workflow.tasks.models ]
-        if (initialTaskSelect.options.length === 1) {
-          initialTaskSelect.setValue( initialTaskSelect.options[0].id )
-        }
-      } else {
-        const selected = initialTaskSelect.selected()
-        initialTaskSelect.options = [ ...workflowBuilder.workflow.tasks.models ]
-        if (initialTaskSelect.options.length === 0) {
-          initialTaskSelect.setValue( null )
-        } else {
-          initialTaskSelect.setValue( selected?.id )
-        }
-      }
-    })
-
     // backward compatibility.
     // new task will be forbidden.
     // old tasks will only be false if it is explicitly false
@@ -137,7 +107,6 @@ const Form = FormView.extend({
         value: workflow.name,
       }),
       workflowBuilder.TaskAdder,
-      initialTaskSelect,
       // advanced fields starts visible = false
       new AdvancedToggle({
         onclick: (event) => {
@@ -275,22 +244,3 @@ const Form = FormView.extend({
     return wf
   }
 })
-
-const InitialTaskSelectionView = TaskSelectView.extend({
-  initialize (specs) {
-    TaskSelectView.prototype.initialize.apply(this,arguments)
-
-    this.required = true
-    this.label = 'Starting Task'
-    this.name = 'start_task_id'
-    this.invalidClass = 'text-danger'
-
-    const emptyFn = function(){}
-    this.onOpenning = specs.onOpenning || emptyFn
-  },
-  render () {
-    TaskSelectView.prototype.render.apply(this, arguments)
-    this.$select.on('select2:opening', this.onOpenning)
-  }
-})
-

@@ -107,8 +107,8 @@ export default View.extend({
     value: {
       cache: false,
       fn () {
-        const { graph, tasks, node_positions } = this.workflow.serialize()
-        return { graph, tasks, node_positions }
+        const { graph, tasks, node_positions, start_task_id } = this.workflow.serialize()
+        return { graph, tasks, node_positions, start_task_id }
       }
     },
     valid: {
@@ -137,7 +137,7 @@ export default View.extend({
   renderWorkflowGraph () {
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
       .then(({ default: WorkflowView }) => {
-        const workflowGraph = new WorkflowView({ graph: this.graph })
+        const workflowGraph = new WorkflowView({ graph: this.graph, start_task_id: this.start_task_id })
         this.renderSubview(workflowGraph, this.queryByHook('graph-preview'))
 
         const updateVisualization = () => {
@@ -154,12 +154,23 @@ export default View.extend({
         this.listenTo(workflowGraph, 'change:node_positions', () => {
           this.workflow.node_positions = workflowGraph.node_positions
         })
+        this.listenTo(workflowGraph, 'change:start_task_id', () => {
+          this.workflow.start_task_id = workflowGraph.start_task_id
+        })
+
+        this.listenTo(this.workflow, 'change:start_task_id', () => {
+          workflowGraph.setStartNode(this.workflow.start_task_id)
+          workflowGraph.updateCytoscape(this.workflow.node_positions)
+        })
+
         this.listenToAndRun(this, 'change:valid', () => {
           workflowGraph.warningToggle = !this.valid
         })
         
         // initial render
         setTimeout(() => {
+          if (this.workflow.start_task_id)
+            workflowGraph.setStartNode(this.workflow.start_task_id)
           workflowGraph.updateCytoscape(this.workflow.node_positions)
           workflowGraph.cy.center()
         }, 500)
@@ -212,6 +223,12 @@ export default View.extend({
                 App.actions.file.edit(task.script_id || task.script)
               }
             }})(),
+            {
+              label: 'Set starting task',
+              action: () => {
+                this.workflow.start_task_id = task.id
+              }
+            },
             {
               label: 'Remove',
               action: () => {

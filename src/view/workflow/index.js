@@ -25,11 +25,13 @@ export default View.extend({
     clearBtn: ['boolean', false, false],
     cy: ['object', false],
     graph: 'object', // Graph (graphlib) instance
+    start_task_id: 'string',
     node_positions: 'object'
   },
   initialize () {
     View.prototype.initialize.apply(this,arguments)
 
+    console.log(this)
     const state = App.state.workflowVisualizer
     const updateState = () => {
       state.graph = this.graph
@@ -220,7 +222,24 @@ export default View.extend({
     Object.keys(positions).forEach(id => {
       this.cy.nodes().filter(`[id = "${id}"]`)[0]?.position(positions[id])
     })
+  },
+  setStartNode (start_task_id) {
+    debugger
+    if(this.graph.nodes().includes('START_NODE')) {
+      this.graph.removeNode('START_NODE')
+    }
+    // TODO: Create the assets for the starting node @facugon
+    this.graph.setNode('START_NODE', {
+      start_task_id,
+      id: 'START_NODE',
+      name: 'Execution',
+      type: 'dummy',
+      _type: 'dummy'
+    })
+    this.graph.setEdge('START_NODE', start_task_id, 'Begin')
+    this.start_task_id = start_task_id
   }
+
 })
 
 function Node (value) {
