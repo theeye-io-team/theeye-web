@@ -10,13 +10,7 @@ export default View.extend({
   template: `
     <div class="workflow-component">
       <div class="workflow-container">
-        <div class="workflow-graph-container" data-hook="graph-container">
-          <div class="workflow-buttons">
-            <button class="btn action-required" data-hook="warning-indicator" disabled>
-              <i class="fa fa-warning"></i>
-            </button>
-          </div>
-        </div>
+        <div class="workflow-graph-container" data-hook="graph-container"></div>
       </div>
     </div>
   `,

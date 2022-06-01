@@ -27,9 +27,63 @@ export default View.extend({
   template: `
     <div class="workflow-editor-container">
       <div class="workflow-graphview-container" data-hook="workflow-graphview-container"></div>
-      <div class="workflow-formview-container" data-hook="workflow-formview-container"></div>
-    </div> 
+      <div class="gui-container">
+        <input type="text" class="name-input" placeholder="Untitled workflow" data-hook="name">
+        <div class="submit-buttons">
+          <button data-hook="cancel" class="btn btn-default">Cancel</button>
+          <button data-hook="submit" class="btn">Submit</button>
+        </div>
+        <i class="advanced-options-toggler fa fa-cog" data-hook="advanced-options-toggler"></i>
+        <div class="task-adder-container" data-hook="task-adder-container">
+          <div class="task-adder" data-hook="task-adder"></div>
+          <i class="fa fa-plus-circle plus-icon task-adder-toggler" data-hook="task-adder-toggler"></i>
+        </div>
+        <div class="advanced-options-container" data-hook="advanced-options-container"></div>
+      </div>
+    </div>
   `,
+  props: {
+    advancedOptionsToggled: ['boolean', true, false],
+    taskAdderToggled: ['boolean', true, false],
+    isValid: ['boolean', true, true]
+  },
+  bindings: {
+    'model.name': {
+      type: 'value',
+      hook: 'name'
+    },
+    advancedOptionsToggled: {
+      type: 'booleanClass',
+      no: 'hidden',
+      hook: 'advanced-options-container'
+    },
+    taskAdderToggled: {
+      type: 'booleanClass',
+      yes: 'toggled',
+      hook: 'task-adder-container'
+    },
+    isValid: {
+      type: 'booleanClass',
+      yes: 'btn-success',
+      no: 'btn-danger',
+      hook: 'submit'
+    }
+  },
+  events: {
+    'click [data-hook=task-adder-toggler]': 'onTaskAdderToggle',
+    'click [data-hook=advanced-options-toggler]': 'onAdvancedOptionsToggle'
+  },
+  onTaskAdderToggle (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.taskAdderToggled = !this.taskAdderToggled
+  },
+  onAdvancedOptionsToggle (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.advancedOptionsToggled = !this.advancedOptionsToggled
+  },
+
   initialize (options) {
     this.workflowBuilder = new WorkflowBuilderView({
       value: this.model,
@@ -54,11 +108,13 @@ export default View.extend({
       this.queryByHook('workflow-graphview-container')
     )
     this.renderSubview(
-      this.form,
-      this.queryByHook('workflow-formview-container')
+      this.workflowBuilder.TaskAdder,
+      this.queryByHook('task-adder')
     )
-
-    this.listenTo(this.form, 'submit', (formData) => { this.submit(formData) })
+    this.renderSubview(
+      this.form,
+      this.queryByHook('advanced-options-container')
+    )
   },
   submit (data) {
     const { graph, tasks, node_positions, start_task_id } = this.workflowBuilder.value
@@ -74,17 +130,6 @@ const Form = FormView.extend({
     const workflow = this.model
     const isNew = (workflow.isNew())
 
-    this.advancedFields = [
-      'acl',
-      'tags',
-      'description',
-      'triggers',
-      'table_view',
-      'empty_viewers',
-      'allows_dynamic_settings',
-      'host'
-    ]
-
     const workflowBuilder = this.workflowBuilder = options.workflowBuilder
 
     // backward compatibility.
@@ -98,28 +143,8 @@ const Form = FormView.extend({
     }
 
     this.fields = [
-      new InputView({
-        label: 'Name *',
-        name: 'name',
-        required: true,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        value: workflow.name,
-      }),
-      workflowBuilder.TaskAdder,
-      // advanced fields starts visible = false
-      new AdvancedToggle({
-        onclick: (event) => {
-          this.advancedFields.forEach(name => {
-            var field = this._fieldViews[name]
-            if (!field) return
-            field.toggle('visible')
-          })
-        }
-      }),
       new HostSelectionComponent({
         value: 'Change the Bot for all tasks',
-        visible: false,
         onSelection: (hostId) => {
           if (options.builder_mode === WorkflowConstants.MODE_EDIT) {
             App.actions.workflow.changeHost(this.model, hostId)
@@ -129,7 +154,6 @@ const Form = FormView.extend({
         }
       }),
       new TextareaView({
-        visible: false,
         label: 'More Info',
         name: 'description',
         required: false,
@@ -139,40 +163,34 @@ const Form = FormView.extend({
       }),
       new EventsSelectView({
         label: 'Triggered by',
-        visible: false,
         name: 'triggers',
         value: workflow.triggers
       }),
       new TagsSelectView({
         required: false,
-        visible: false,
         name: 'tags',
         value: workflow.tags
       }),
       new MembersSelectView({
         required: false,
-        visible: false,
         name: 'acl',
         label: 'ACL\'s',
         value: workflow.acl
       }),
       new CheckboxView({
         required: false,
-        visible: false,
         label: 'Table View',
         name: 'table_view',
         value: workflow.table_view
       }),
       new CheckboxView({
         required: false,
-        visible: false,
         label: 'Only visible to assigned users',
         name: 'empty_viewers',
         value: workflow.empty_viewers
       }),
       new CheckboxView({
         required: false,
-        visible: false,
         label: LanguajeLabels.page.task.form.allows_behaviour_change,
         name: 'allows_dynamic_settings',
         value: allowsDynamicSettings

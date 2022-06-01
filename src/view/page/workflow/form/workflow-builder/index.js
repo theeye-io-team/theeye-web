@@ -27,16 +27,13 @@ import './styles.less'
 const TaskAdderInput = View.extend({
   template: `
     <div data-component="workflow-builder" class="workflow-builder-component form-group">
-      <label class="col-sm-3 control-label" data-hook="label">Tasks</label>
-      <div class="col-sm-9">
-        <div style="padding-bottom: 15px;" data-hook="buttons">
-          <button data-hook="add-task" title="Existent Task" class="btn btn-default">
-            Add Existent Task <i class="fa fa-wrench"></i>
-          </button>
-          <button data-hook="create-task" title="Create Task" class="btn btn-default">
-            Add New Task <i class="fa fa-plus-circle"></i>
-          </button>
-        </div>
+      <div style="padding-bottom: 15px;" data-hook="buttons">
+        <button data-hook="add-task" title="Existent Task" class="btn btn-default">
+          Add Existent Task <i class="fa fa-wrench"></i>
+        </button>
+        <button data-hook="create-task" title="Create Task" class="btn btn-default">
+          Add New Task <i class="fa fa-plus-circle"></i>
+        </button>
       </div>
     </div>
   `,
@@ -371,6 +368,8 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
 
+    this.parent.taskAdderToggled = false
+
     const taskSelection = new TaskSelectionForm()
 
     const modal = new Modalizer({
@@ -397,6 +396,8 @@ export default View.extend({
   onClickCreateTask (event) {
     event.preventDefault()
     event.stopPropagation()
+
+    this.parent.taskAdderToggled = false
 
     const wizard = new CreateTaskWizard({
       submit: taskData => {
