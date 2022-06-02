@@ -71,7 +71,8 @@ export default View.extend({
   },
   events: {
     'click [data-hook=task-adder-toggler]': 'onTaskAdderToggle',
-    'click [data-hook=advanced-options-toggler]': 'onAdvancedOptionsToggle'
+    'click [data-hook=advanced-options-toggler]': 'onAdvancedOptionsToggle',
+    'click [data-hook=submit]': 'beforeSubmit'
   },
   onTaskAdderToggle (event) {
     event.preventDefault()
@@ -116,10 +117,13 @@ export default View.extend({
       this.queryByHook('advanced-options-container')
     )
   },
+  beforeSubmit () {
+    this.form.submit((data) => this.submit(data))
+  },
   submit (data) {
     const { graph, tasks, node_positions, start_task_id } = this.workflowBuilder.value
-
-    const wf = Object.assign({}, data, { graph, tasks, node_positions, start_task_id })
+    const name = this.queryByHook('name').value
+    const wf = Object.assign({}, data, { graph, tasks, node_positions, start_task_id, name })
     this.trigger('submit', wf)
   },
   update (field) { this.form.update(field) }
@@ -206,16 +210,11 @@ const Form = FormView.extend({
     FormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
-    this.addHelpIcon('name')
     this.addHelpIcon('description')
     this.addHelpIcon('tags')
     this.addHelpIcon('acl')
     this.addHelpIcon('table_view')
     this.addHelpIcon('empty_viewers')
-
-    const buttons = new FormButtons()
-    this.renderSubview(buttons)
-    buttons.on('click:confirm', () => { this.submit() })
   },
   addHelpIcon (field) {
     const view = this._fieldViews[field]
@@ -234,31 +233,12 @@ const Form = FormView.extend({
     if (!this.valid) {
       const fields = this.getInvalidFields()
       const invalid = fields[0]
-      if (invalid.name === 'builder') {
-        App.state.alerts.danger('The workflow is not ready.')
-        //const reason = this.
-      } else {
-        invalid.el.scrollIntoView()
-      }
+      this.parent.advancedOptionsToggled = true
+      invalid.el.scrollIntoView()
       return
     }
 
     // id property is the required value, with "numeric" data type
-    let data = this.prepareData(this.data)
-    this.trigger('submit', data)
-    next(null, true)
-  },
-  // prepareData (data) {
-  //   const { graph, tasks, events } = data.builder
-
-  //   const wf = Object.assign({}, data, { graph, tasks, events })
-  //   delete wf['advanced-toggler']
-  //   delete wf['builder']
-  //   return wf
-  // }
-  prepareData (data) {
-    const wf = Object.assign({}, data)
-    delete wf['advance-toggler']
-    return wf
+    next(this.data)
   }
 })
