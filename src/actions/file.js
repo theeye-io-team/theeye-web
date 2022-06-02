@@ -42,6 +42,7 @@ export default {
   update (id, data, next) {
     let formData = new FormData()
 
+    formData.append('acl', data.acl)
     formData.append('filename', data.filename)
     formData.append('description', data.description)
     formData.append('extension', data.filename.split('.').pop())
@@ -72,6 +73,7 @@ export default {
   },
   create (data, next) {
     let formData = new FormData()
+    formData.append('acl', data.acl)
     formData.append('filename', data.filename)
     formData.append('description', data.description)
     formData.append('extension', data.filename.split('.').pop())
