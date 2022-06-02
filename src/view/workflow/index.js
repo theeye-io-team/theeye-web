@@ -135,7 +135,7 @@ export default View.extend({
             'target-arrow-shape': 'triangle',
             'line-color': '#9dbaea',
             'target-arrow-color': '#9dbaea',
-            'curve-style': 'taxi',
+            'curve-style': 'bezier',
             'content': function (ele) {
               return ele.data('label') || ''
             },
