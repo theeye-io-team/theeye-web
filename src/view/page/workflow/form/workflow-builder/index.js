@@ -15,7 +15,6 @@ import CreateTaskWizard from 'view/page/task/creation-wizard'
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 import uuidv4 from 'uuid'
 import isMongoId from 'validator/lib/isMongoId'
-import TasksReviewDialog from './task-review-dialog'
 import * as TaskConstants from 'constants/task'
 import * as WorkflowConstants from 'constants/workflow'
 
@@ -148,7 +147,6 @@ export default View.extend({
         this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(workflowGraph, 'tap:edge', this.onTapEdge)
         this.listenTo(workflowGraph, 'tap:back', (e) => { this.onTapBackground(e, workflowGraph) })
-        this.listenTo(workflowGraph, 'click:warning-indicator', this.onClickWarningIndicator)
         this.listenTo(workflowGraph, 'change:node_positions', () => {
           this.workflow.node_positions = workflowGraph.node_positions
         })
@@ -173,24 +171,6 @@ export default View.extend({
           workflowGraph.cy.center()
         }, 500)
       })
-  },
-  onClickWarningIndicator () {
-    const dialog = new TasksReviewDialog({
-      fade: false,
-      center: true,
-      workflow: this.workflow,
-      buttons: false,
-      title: `Tasks review`,
-    })
-
-    this.registerSubview(dialog)
-    dialog.show()
-    dialog.el.addEventListener('click [data-hook=edit-task]', (event) => {
-      const task = event.detail.task
-      editTask(task, () => {
-        this.updateTaskNode(task)
-      })
-    })
   },
   onTapNode (event) {
     var node = event.cyTarget.data()

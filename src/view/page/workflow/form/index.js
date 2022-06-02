@@ -20,6 +20,7 @@ import bootbox from 'bootbox'
 import { Factory as TaskFactory } from 'models/task'
 import HostSelectionComponent from './host-selection'
 import * as WorkflowConstants from 'constants/workflow'
+import TasksReviewDialog from './task-review-dialog'
 
 import './styles.less'
 
@@ -32,6 +33,9 @@ export default View.extend({
         <div class="submit-buttons">
           <button data-hook="cancel" class="btn btn-default">Cancel</button>
           <button data-hook="submit" class="btn">Submit</button>
+          <button class="btn action-required" data-hook="warning-indicator" disabled>
+            <i class="fa fa-warning"></i>
+          </button>
         </div>
         <i class="advanced-options-toggler fa fa-cog" data-hook="advanced-options-toggler"></i>
         <div class="task-adder-container" data-hook="task-adder-container">
@@ -45,10 +49,22 @@ export default View.extend({
   props: {
     advancedOptionsToggled: ['boolean', true, false],
     taskAdderToggled: ['boolean', true, false],
-    isValid: ['boolean', true, true]
+    name: 'string'
+  },
+  derived: {
+    valid: {
+      required: ['name', 'form', 'workflowBuilder'],
+      cache: false,
+      fn() {
+        console.log(this.name)
+        console.log(this.form.valid)
+        console.log(this.workflowBuilder.valid)
+        return (this.name && this.form.valid && this.workflowBuilder.valid)
+      }
+    }
   },
   bindings: {
-    'model.name': {
+    name: {
       type: 'value',
       hook: 'name'
     },
@@ -62,17 +78,30 @@ export default View.extend({
       yes: 'toggled',
       hook: 'task-adder-container'
     },
-    isValid: {
-      type: 'booleanClass',
-      yes: 'btn-success',
-      no: 'btn-danger',
-      hook: 'submit'
-    }
+    valid: [
+      {
+        type: 'booleanClass',
+        yes: 'btn-success',
+        no: 'btn-danger',
+        hook: 'submit'
+      }, {
+          type: 'booleanClass',
+          name: 'btn-danger',
+          hook: 'warning-indicator',
+          invert: true
+      }, {
+        type: 'booleanAttribute',
+        name: 'disabled',
+        hook: 'warning-indicator'
+      }
+    ]
   },
   events: {
     'click [data-hook=task-adder-toggler]': 'onTaskAdderToggle',
     'click [data-hook=advanced-options-toggler]': 'onAdvancedOptionsToggle',
-    'click [data-hook=submit]': 'beforeSubmit'
+    'click [data-hook=submit]': 'onClickSubmitButton',
+    'click button[data-hook=warning-indicator]':'onClickWarningIndicator',
+
   },
   onTaskAdderToggle (event) {
     event.preventDefault()
@@ -84,8 +113,30 @@ export default View.extend({
     event.stopPropagation()
     this.advancedOptionsToggled = !this.advancedOptionsToggled
   },
+  onClickWarningIndicator (event) {
+    event.preventDefault()
+    event.stopPropagation()
 
+    const dialog = new TasksReviewDialog({
+      fade: false,
+      center: true,
+      workflow: this.model,
+      buttons: false,
+      title: `Tasks review`,
+    })
+
+    this.registerSubview(dialog)
+    dialog.show()
+    dialog.el.addEventListener('click [data-hook=edit-task]', (event) => {
+      const task = event.detail.task
+      editTask(task, () => {
+        this.workflowBuilder.updateTaskNode(task)
+      })
+    })
+  },
   initialize (options) {
+    this.name = this.model.name 
+
     this.workflowBuilder = new WorkflowBuilderView({
       value: this.model,
       mode: options.builder_mode
@@ -104,6 +155,11 @@ export default View.extend({
   render () {
     this.renderWithTemplate(this)
 
+    this.queryByHook('name').addEventListener('input', (event) => {
+      this.name = event.target.value
+      console.log(this.name)
+    })
+
     this.renderSubview(
       this.workflowBuilder,
       this.queryByHook('workflow-graphview-container')
@@ -117,12 +173,18 @@ export default View.extend({
       this.queryByHook('advanced-options-container')
     )
   },
+  onClickSubmitButton(event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    this.valid ? this.beforeSubmit() : this.onClickWarningIndicator()
+  },
   beforeSubmit () {
     this.form.submit((data) => this.submit(data))
   },
   submit (data) {
     const { graph, tasks, node_positions, start_task_id } = this.workflowBuilder.value
-    const name = this.queryByHook('name').value
+    const name = this.name
     const wf = Object.assign({}, data, { graph, tasks, node_positions, start_task_id, name })
     this.trigger('submit', wf)
   },

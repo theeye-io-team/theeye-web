@@ -15,7 +15,6 @@ export default View.extend({
     </div>
   `,
   props: {
-    warningToggle: ['boolean', false, false],
     clearBtn: ['boolean', false, false],
     cy: ['object', false],
     graph: 'object', // Graph (graphlib) instance
@@ -44,31 +43,6 @@ export default View.extend({
       this.cy = null
     }
     View.prototype.remove.apply(this, arguments)
-  },
-  bindings: {
-    warningToggle: [
-      {
-        type: 'booleanClass',
-        name: 'btn-danger',
-        hook: 'warning-indicator'
-      }, {
-        type: 'booleanAttribute',
-        name: 'disabled',
-        hook: 'warning-indicator',
-        invert: true
-      }
-    ]
-  },
-  events: {
-    'click button[data-hook=warning-indicator]':'onClickWarningIndicator',
-  },
-  onClickWarningIndicator (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.trigger('click:warning-indicator')
-
-    return false
   },
   updateCytoscape (positions) {
     if (this.cy) {

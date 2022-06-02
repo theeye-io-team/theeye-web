@@ -2,7 +2,7 @@ import Modalizer from 'components/modalizer'
 import App from 'ampersand-app'
 import Collection from 'ampersand-collection'
 import View from 'ampersand-view'
-import HostSelectionComponent from '../../host-selection'
+import HostSelectionComponent from '../host-selection'
 import './styles.less'
 
 export default Modalizer.extend({
