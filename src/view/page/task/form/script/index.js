@@ -17,6 +17,7 @@ import AdvancedToggle from 'view/advanced-toggle'
 import * as TaskConstants from 'constants/task'
 import TaskSelection from 'view/task-select'
 import Modalizer from 'components/modalizer'
+import FileSaver from 'file-saver'
 
 import ScriptImportView from './file-import'
 import TaskFormView from '../form'
@@ -462,6 +463,11 @@ const EnvView = View.extend({
             class="btn btn-default">
               Copy from another task <i class="fa fa-copy"></i>
           </button>
+          <button data-hook="export"
+            title="export environment"
+            class="btn btn-default">
+              Export to File <i class="fa fa-download"></i>
+          </button>
           <ul data-hook="list-group" class="list-group"></ul>
         </div>
       </div>
@@ -520,7 +526,8 @@ const EnvView = View.extend({
   },
   events: {
     'click [data-hook=add]': 'onClickAddButton',
-    'click [data-hook=copy]': 'onClickCopyFromTaskButton'
+    'click [data-hook=copy]': 'onClickCopyFromTaskButton',
+    'click [data-hook=export]': 'onClickExport',
   },
   onClickAddButton (event) {
     event.preventDefault()
@@ -533,6 +540,18 @@ const EnvView = View.extend({
     })
 
     return false
+  },
+  onClickExport (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    const envs = []
+    for (let prop in this.value) {
+      envs.push(`${prop} = "${this.value[prop]}"`)
+    }
+    const blob = new Blob([ envs.join('\n') ], { type: 'text/plain' })
+    const fileName = this.parent.model?.name?.replace(/ /g, '_')
+    FileSaver.saveAs(blob, `${fileName}.env`)
   },
   onClickCopyFromTaskButton (event) {
     event.preventDefault()
