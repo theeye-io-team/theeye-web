@@ -17,6 +17,7 @@ class FilesRoute extends Route {
   editRoute (options) {
     const id = options.id
 
+    App.state.members.fetch()
     App.state.tags.fetch()
 
     // pre fetch extra file data

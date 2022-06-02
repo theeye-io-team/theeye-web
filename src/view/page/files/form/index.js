@@ -5,6 +5,7 @@ import TextareaView from 'components/input-view/textarea'
 import FormButtons from 'components/form/buttons'
 import FileInputView from 'components/input-view/file'
 import CommonButton from 'components/common-button'
+import MembersSelectView from 'view/members-select'
 import { EditorView } from './editor'
 import ScriptOnBoarding from '../scriptOnboarding'
 import HelpIcon from 'components/help-icon'
@@ -30,6 +31,12 @@ export default FormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.description
       }),
+      new MembersSelectView({
+        required: false,
+        name: 'acl',
+        label: 'ACL\'s',
+        value: this.model.acl
+      }),
       new FileInputView({
         name: 'script',
         label: 'Have a script file?',
@@ -40,7 +47,7 @@ export default FormView.extend({
           // the filename input view needs to use its setter
           this.filenameInput.setValue(file.name)
         }
-      })
+      }),
     ]
 
     FormView.prototype.initialize.apply(this, arguments)
@@ -127,6 +134,7 @@ export default FormView.extend({
     this.el.prepend(tip.el)
   },
   renderHelp () {
+    this.addHelpIcon('acl')
     this.addHelpIcon('filename')
     this.addHelpIcon('description')
     this.addHelpIcon('script')

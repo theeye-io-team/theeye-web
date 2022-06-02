@@ -9,7 +9,7 @@ export default View.extend({
     const form = new FileForm({ model: new FileModel() })
     const modal = new Modalizer({
       buttons: false,
-      title: this.title,
+      title: 'Create New File',
       bodyView: form
     })
 

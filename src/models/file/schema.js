@@ -20,6 +20,7 @@ const LinkedModels = Collection.extend({
 export default AppModel.extend({
   props: {
     id: 'string',
+    acl: 'array',
     customer_id: { type: 'string' },
     customer_name: { type: 'string' },
     filename: { type: 'string' },
@@ -37,7 +38,8 @@ export default AppModel.extend({
     source_model_id: 'string',
     creation_date: { type: 'date', default: () => { return new Date() } },
     last_update: { type: 'date', default: () => { return new Date() } },
-    data: { type: 'string' }
+    data: { type: 'string' },
+    content_schema: { type: 'object' }
 	},
   collections: {
     linked_models: LinkedModels
