@@ -340,6 +340,18 @@ export default View.extend({
         )
 
         App.actions.searchbox.addRowsViews(this.indicatorsRows)
+
+        this.queryByHook('indicator-filter').addEventListener('click', (event) => {
+          if (event.target.checked) {
+            this.indicatorsRows.views.forEach((i) => {
+              i.show = (i.model.state === "failure")
+            })
+          } else {
+            this.indicatorsRows.views.forEach((i) => {
+              i.show = true 
+            })
+          }
+        })
       }
     })
   },
@@ -409,6 +421,7 @@ const pageTemplate = () => {
         <div data-hook="indicators-panel">
           <section class="col-md-12 indicators-panel events-panel">
             <div class="section-header">
+              <span class="filter">Only show failing indicators <input type="checkbox" data-hook="indicator-filter"></span>
             </div>
             <div class="section-container">
               <div class="panel-group" id="indicators-accordion" role="tablist" aria-multiselectable="true">
