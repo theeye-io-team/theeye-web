@@ -74,7 +74,7 @@ export default FormView.extend({
 
     // render order mathers
     this.renderHelp()
-    this.renderTips()
+    //this.renderTips()
     this.boilerplateBtnView = new BoilerplateButtonView({
       onClickButton: this.loadBoilerplate
     })
