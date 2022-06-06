@@ -13,7 +13,7 @@ import CopyTaskSelect from '../copy-task-select'
 export default TaskFormView.extend({
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew())
-
+    
     this.advancedFields = [
       'description',
       'acl',
@@ -55,7 +55,7 @@ export default TaskFormView.extend({
       emailCheckbox,
       desktopCheckbox,
       new TextareaView({
-        visible: (isNewTask ? false : this.model.notificationTypes.email),
+        visible: (this.model.notificationTypes?.email || false),
         label: 'Email body',
         name: 'body',
         required: false,
@@ -130,7 +130,7 @@ export default TaskFormView.extend({
     }
 
     this.listenTo(emailCheckbox, 'change:value', () => {
-      this._fieldViews['body'].toggle('visible')
+      this._fieldViews['body'].visible = emailCheckbox.value
     })
 
     TaskFormView.prototype.initialize.apply(this, arguments)
