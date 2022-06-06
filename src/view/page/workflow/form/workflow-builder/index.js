@@ -139,6 +139,7 @@ export default View.extend({
 
         const updateVisualization = () => {
           workflowGraph.updateCytoscape(this.workflow.graph)
+          this.parent.valid
         }
 
         this.on('change:graph', updateVisualization)

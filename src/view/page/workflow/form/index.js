@@ -49,17 +49,16 @@ export default View.extend({
   props: {
     advancedOptionsToggled: ['boolean', true, false],
     taskAdderToggled: ['boolean', true, false],
-    name: 'string'
+    name: 'string',
+    isValid: ['boolean', true, false]
   },
   derived: {
     valid: {
       required: ['name', 'form', 'workflowBuilder'],
       cache: false,
       fn() {
-        console.log(this.name)
-        console.log(this.form.valid)
-        console.log(this.workflowBuilder.valid)
-        return (this.name && this.form.valid && this.workflowBuilder.valid)
+        this.isValid = Boolean(this.name && this.form.valid && this.workflowBuilder.valid)
+        return this.isValid
       }
     }
   },
@@ -78,7 +77,7 @@ export default View.extend({
       yes: 'toggled',
       hook: 'task-adder-container'
     },
-    valid: [
+    isValid: [
       {
         type: 'booleanClass',
         yes: 'btn-success',
@@ -114,9 +113,11 @@ export default View.extend({
     this.advancedOptionsToggled = !this.advancedOptionsToggled
   },
   onClickWarningIndicator (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
+    if (event) {
+      event.preventDefault()
+      event.stopPropagation()
+    }
+      
     const dialog = new TasksReviewDialog({
       fade: false,
       center: true,
@@ -157,7 +158,6 @@ export default View.extend({
 
     this.queryByHook('name').addEventListener('input', (event) => {
       this.name = event.target.value
-      console.log(this.name)
     })
 
     this.renderSubview(
@@ -172,6 +172,8 @@ export default View.extend({
       this.form,
       this.queryByHook('advanced-options-container')
     )
+
+    this.valid
   },
   onClickSubmitButton(event) {
     event.preventDefault()
@@ -287,6 +289,9 @@ const Form = FormView.extend({
       }),
       view.query('label')
     )
+  },
+  getValid () {
+    return this.valid
   },
   submit (next) {
     next||(next=()=>{})
