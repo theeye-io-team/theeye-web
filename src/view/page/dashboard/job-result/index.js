@@ -311,9 +311,11 @@ const BaseJobView = View.extend({
           </div>
         </div>
         <div class="moreinfo-container" data-hook="log-container">
-          <a class="moreinfo" data-hook="moreinfo-toggle">
-            <i class="fa fa-search"></i> More Info
-          </a>
+          <div class="centered-button-container">
+            <button class="moreinfo btn btn-primary" data-hook="moreinfo-toggle">
+              <i class="fa fa-search"></i> More Info
+            </button>
+          </div>
           <div class="text-block text-block-default" data-hook="moreinfo-container"></div>
         </div>
       </div>
@@ -353,7 +355,7 @@ const BaseJobView = View.extend({
     }
   },
   events: {
-    'click a[data-hook=moreinfo-toggle]':'onClickToggleMoreInfo',
+    'click [data-hook=moreinfo-toggle]':'onClickToggleMoreInfo',
     'click a[data-hook=fetch]':'onClickFetch'
   },
   onClickFetch (event) {
