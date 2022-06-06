@@ -39,6 +39,22 @@ export default {
       }
     })
   },
+  updateContentSchema (id, schema) {
+    const file = App.state.files.get(id)
+    XHR.send({
+      url: `${App.config.supervisor_api_url}/${App.state.session.customer.name}/file/${id}/schema`,
+      method: 'PUT',
+      jsonData: schema,
+      done: (schema, xhr) => {
+        file.content_schema = schema
+        App.state.alerts.success('Success', 'Content schema updated')
+      },
+      fail: (err, xhr) => {
+          console.error(err)
+        App.state.alerts.danger('Something goes wrong')
+      }
+    })
+  },
   update (id, data, next) {
     let formData = new FormData()
 

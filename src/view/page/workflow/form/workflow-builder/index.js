@@ -258,7 +258,7 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    const taskSelection = new TaskSelectionModal()
+    const taskSelection = new TaskSelectionForm()
 
     const modal = new Modalizer({
       fade: false,
@@ -397,7 +397,7 @@ const editTask = (task, done) => {
   modal.show()
 }
 
-const TaskSelectionModal = FormView.extend({
+const TaskSelectionForm = FormView.extend({
   initialize (options) {
     this.fields = [
       //new TaskVersionSelectView

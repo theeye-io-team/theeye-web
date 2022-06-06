@@ -39,7 +39,7 @@ export default AppModel.extend({
     creation_date: { type: 'date', default: () => { return new Date() } },
     last_update: { type: 'date', default: () => { return new Date() } },
     data: { type: 'string' },
-    content_schema: { type: 'object' }
+    content_schema: { type: 'any' }
 	},
   collections: {
     linked_models: LinkedModels
