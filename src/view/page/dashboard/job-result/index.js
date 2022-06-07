@@ -1,5 +1,6 @@
 
 import App from 'ampersand-app'
+import ClipboardButton from 'components/clipboard-button'
 import moment from 'moment'
 import ansi2html from 'ansi-to-html'
 import View from 'ampersand-view'
@@ -545,8 +546,17 @@ const TableRowJSON = View.extend({
   },
   render () {
     this.renderWithTemplate()
+
     if (this.model.value) {
-      this.renderSubview(new JsonViewer({ json: JSON.parse(this.model.value) }), this.queryByHook('value'))
+      this.renderSubview(
+        new ClipboardButton({ value: this.model.value }),
+        this.queryByHook('value')
+      )
+
+      this.renderSubview(
+        new JsonViewer({ json: JSON.parse(this.model.value) }),
+        this.queryByHook('value')
+      )
     }
   }
 })
