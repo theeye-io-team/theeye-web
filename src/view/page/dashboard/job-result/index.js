@@ -529,6 +529,16 @@ const TableRowText = View.extend({
       type: 'text',
       hook: 'value'
     }
+  },
+  render () {
+    this.renderWithTemplate()
+
+    if (this.model.value) {
+      this.renderSubview(
+        new ClipboardButton({ value: this.model.value }),
+        this.queryByHook('value')
+      )
+    }
   }
 })
 const TableRowJSON = View.extend({
