@@ -104,8 +104,9 @@ export default View.extend({
       cache: false,
       fn () {
         this.purgeGraph()
-        const { graph, tasks, node_positions, start_task_id } = this.workflow.serialize()
-        return { graph, tasks, node_positions, start_task_id }
+        debugger
+        const { graph, tasks, start_task_id } = this.workflow.serialize()
+        return { graph, tasks, start_task_id }
       }
     },
     valid: {
@@ -148,16 +149,13 @@ export default View.extend({
         this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(workflowGraph, 'tap:edge', this.onTapEdge)
         this.listenTo(workflowGraph, 'tap:back', (e) => { this.onTapBackground(e, workflowGraph) })
-        this.listenTo(workflowGraph, 'change:node_positions', () => {
-          this.workflow.node_positions = workflowGraph.node_positions
-        })
         this.listenTo(workflowGraph, 'change:start_task_id', () => {
           this.workflow.start_task_id = workflowGraph.start_task_id
         })
 
         this.listenTo(this.workflow, 'change:start_task_id', () => {
           workflowGraph.setStartNode(this.workflow.start_task_id)
-          workflowGraph.updateCytoscape(this.workflow.node_positions)
+          workflowGraph.updateCytoscape()
         })
 
         this.listenToAndRun(this, 'change:valid', () => {
@@ -168,7 +166,7 @@ export default View.extend({
         setTimeout(() => {
           if (this.workflow.start_task_id)
             workflowGraph.setStartNode(this.workflow.start_task_id)
-          workflowGraph.updateCytoscape(this.workflow.node_positions)
+          workflowGraph.updateCytoscape()
           workflowGraph.cy.center()
         }, 500)
       })

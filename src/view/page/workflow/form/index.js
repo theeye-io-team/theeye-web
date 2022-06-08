@@ -185,9 +185,10 @@ export default View.extend({
     this.form.submit((data) => this.submit(data))
   },
   submit (data) {
-    const { graph, tasks, node_positions, start_task_id } = this.workflowBuilder.value
+    const { graph, tasks, start_task_id } = this.workflowBuilder.value
     const name = this.name
-    const wf = Object.assign({}, data, { graph, tasks, node_positions, start_task_id, name })
+    const wf = Object.assign({}, data, { graph, tasks, start_task_id, name })
+    console.log(wf)
     this.trigger('submit', wf)
   },
   update (field) { this.form.update(field) }

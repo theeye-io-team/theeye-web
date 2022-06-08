@@ -120,7 +120,6 @@ const Workflow = AppModel.extend({
     start_task_id: ['string'],
     current_task_id: 'string',
     graph: ['graphlib.Graph', true],
-    node_positions: ['object', false],
     allows_dynamic_settings: ['boolean',false],
     version: 'number'
   },
@@ -257,6 +256,7 @@ const Workflow = AppModel.extend({
         value: {
           name: node.value.name,
           id: node.value.id,
+          position: node.value.position,
           _type: node.value._type,
           type: node.value.type
         }

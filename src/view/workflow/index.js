@@ -19,7 +19,6 @@ export default View.extend({
     cy: ['object', false],
     graph: 'object', // Graph (graphlib) instance
     start_task_id: 'string',
-    node_positions: 'object'
   },
   initialize () {
     View.prototype.initialize.apply(this,arguments)
@@ -44,20 +43,20 @@ export default View.extend({
     }
     View.prototype.remove.apply(this, arguments)
   },
-  updateCytoscape (positions) {
+  updateCytoscape () {
     if (this.cy) {
       this.cy.destroy()
       this.cy = null
     }
 
-    this.renderCytoscape(positions)
+    this.renderCytoscape()
 
     this.cy.center()
     this.cy.fit()
 
     return this
   },
-  renderCytoscape (positions) {
+  renderCytoscape () {
     if (!this.graph) {
       return this
     }
@@ -137,13 +136,10 @@ export default View.extend({
         this.trigger('tap:back', event)
       }
     })
-    cy.on('position', () => { this.node_positions = this.getPositions() })
+    cy.on('position', (e) => this.recordPositions(e))
 
     this.cy = cy
-
-    if (positions) {
-      this.setPositions(positions)
-    }
+    this.setPositions()
 
     return this
   },
@@ -177,17 +173,16 @@ export default View.extend({
 
     return elems
   },
-  getPositions () {
-    let positions = {}
-    this.cy.nodes().forEach(node => {
-
-      positions[node.data('id')] = node.position()
-    })
-    return positions
+  recordPositions(event) {
+    let data = this.graph.node(event.cyTarget.data('id'))
+    data.position = event.cyTarget.position()
+    this.graph.setNode(event.cyTarget.data('id'), data)
   },
-  setPositions (positions) {
-    Object.keys(positions).forEach(id => {
-      this.cy.nodes().filter(`[id = "${id}"]`)[0]?.position(positions[id])
+  setPositions () {
+    this.cy.nodes().forEach(node => {
+      if (node.data('value').position) {
+        node.position(node.data('value').position)
+      }
     })
   },
   setStartNode (start_task_id) {
