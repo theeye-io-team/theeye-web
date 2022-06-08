@@ -3,6 +3,15 @@ import Modalizer from 'components/modalizer'
 import isDataURI from 'validator/lib/isDataURI'
 import isURL from 'validator/lib/isURL'
 
+import CodeMirror from 'codemirror/lib/codemirror'
+window.CodeMirror = CodeMirror
+
+import 'codemirror/mode/meta'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/3024-night.css'
+import 'codemirror/addon/display/fullscreen'
+import 'codemirror/addon/display/fullscreen.css'
+
 import './style.less'
 
 const BodyView = View.extend({
@@ -35,7 +44,6 @@ const BodyView = View.extend({
     <a download class="button" data-hook="file-download">Download</a>
   </div>`,
   renderFile () {
-    console.log('haha jonatan youre banging my daughter')
     let el = this.queryByHook('file-content')
     let download = this.queryByHook('file-download')
     download.href = URL.createObjectURL(this.file)
@@ -43,7 +51,7 @@ const BodyView = View.extend({
     if (this.file.type.includes('image')) {
       el.innerHTML = `<img src=${URL.createObjectURL(this.file)} 
                       style="max-width: 80vw; max-height: 80vh;">`
-    } else if (this.file.type.includes('file')) {
+    } else if (this.file.type.includes('text') || this.file.type.includes('application')) {
       let reader = new FileReader();
 
       let codemirror = CodeMirror(this.queryByHook('file-content'), {
@@ -54,12 +62,36 @@ const BodyView = View.extend({
         tabSize: 2,
         smartIndent: true,
         readOnly: true,
-        mode: 'shell'
+        mode: 'shell',
+        extraKeys: {
+          "F11": function(cm) {
+            if (!cm.getOption("fullScreen")) {
+              cm.setOption("fullScreen", true)
+              container.querySelector('.CodeMirror').style.height = '800px'
+            } else {
+              cm.setOption("fullScreen", false)
+            }
+            cm.focus()
+          },
+          "Esc": function(cm) {
+            if (cm.getOption("fullScreen")) {
+              cm.setOption("fullScreen", false)
+              cm.focus()
+            }
+          }
+        }
       })
+
+      // FIXME: Not yet implemented
+      // let info = codemirror.findModeByMIME(this.file.type)
+
+      // autoLoadMode(codemirror, info.mode, () => {
+      //   codemirror.setOption('mode', info.mime)
+      // })
 
       reader.onload = () => {
         codemirror.setValue(reader.result)
-        setTimeout(() => { this.codemirror.refresh() }, 500)
+        setTimeout(() => { codemirror.refresh() }, 500)
       }
     
       reader.readAsText(this.file)
@@ -116,3 +148,57 @@ export default View.extend({
     }
   }
 })
+
+
+/**
+ *
+ * https://github.com/codemirror/CodeMirror/issues/4838
+ *
+ * Most of the code from this file comes from:
+ * https://github.com/codemirror/CodeMirror/blob/master/addon/mode/loadmode.js
+ *
+ */
+ const modeURL = '/js/codemirror/mode/%N/%N.js'
+ var loading = {}
+ 
+ const splitCallback = (cont, n) => {
+   var countDown = n
+   return function () {
+     if (--countDown === 0) cont()
+   }
+ }
+ 
+ const ensureDeps = (mode, cont) => {
+   var deps = CodeMirror.modes[mode].dependencies
+   if (!deps) return cont()
+   var missing = []
+   for (var i = 0; i < deps.length; ++i) {
+     if (!CodeMirror.modes.hasOwnProperty(deps[i])) missing.push(deps[i])
+   }
+   if (!missing.length) return cont()
+   var split = splitCallback(cont, missing.length)
+   for (i = 0; i < missing.length; ++i) requireMode(missing[i], split)
+ }
+ 
+ const requireMode = (mode, cont) => {
+   if (typeof mode !== 'string') mode = mode.name
+   if (CodeMirror.modes.hasOwnProperty(mode)) return ensureDeps(mode, cont)
+   if (loading.hasOwnProperty(mode)) return loading[mode].push(cont)
+ 
+   var file = modeURL.replace(/%N/g, mode)
+   var script = document.createElement('script')
+   script.src = file
+   var others = document.getElementsByTagName('script')[0]
+   var list = loading[mode] = [cont]
+ 
+   CodeMirror.on(script, 'load', function () {
+     ensureDeps(mode, function () {
+       for (var i = 0; i < list.length; ++i) list[i]()
+     })
+   })
+ 
+   others.parentNode.insertBefore(script, others)
+ }
+ 
+ const autoLoadMode = (instance, mode, callback) => requireMode(mode, callback)
+ 
