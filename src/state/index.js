@@ -158,7 +158,8 @@ const IndicatorTypesCollection = ClearCollection.extend({
       { id: IndicatorConstants.TEXT_TYPE, text: 'Text' },
       { id: IndicatorConstants.PROGRESS_TYPE, text: 'Progress' },
       { id: IndicatorConstants.COUNTER_TYPE, text: 'Counter' },
-      { id: IndicatorConstants.CHART_TYPE, text: 'Chart' }
+      { id: IndicatorConstants.CHART_TYPE, text: 'Chart' },
+      { id: IndicatorConstants.FILE_TYPE, text: 'File'}
     ]
     ClearCollection.prototype.initialize.apply(this, arguments)
   }

@@ -5,6 +5,7 @@ import TagView from 'components/tag'
 import ButtonsMenu from './buttons-menu'
 import * as IndicatorConstants from 'constants/indicator'
 import DOMPurify from 'dompurify'
+import FileView from 'components/file-view'
 
 import './styles.less'
 
@@ -175,6 +176,9 @@ const VisualsFactoryView = function (options) {
     case IndicatorConstants.CHART_TYPE_SHORT:
       visual = new ChartIndicatorView(options)
       break
+    case IndicatorConstants.FILE_TYPE_SHORT:
+      visual = new FileIndicatorView(options)
+      break
     default:
       visual = new IndicatorView(options)
       break
@@ -255,6 +259,42 @@ const TextIndicatorView = View.extend({
       hook: 'value'
     }
   }
+})
+
+const FileIndicatorView = View.extend({
+  template: `
+    <div class="panel-item value" data-hook="value"></div>
+  `,
+  derived: {
+    file: {
+      deps: ['model.value'],
+      fn () {
+        if (this.model.value) {
+          const fileView = new FileView({
+            file: this.model.value,
+            title: this.model.title
+          })
+          return fileView
+        } else {
+          return 'No file uploaded'
+        }
+      }
+    }
+  },
+  bindings: {
+    file: {
+      type: function (el, value) {
+        if (value === 'No file uploaded' || !value) {
+          el.innerHTML = 'No file uploaded'
+        } else {
+          el.innerHTML = ''
+          this.renderSubview(value, el)
+        }
+      },
+      hook: 'value'
+    }
+  },
+  
 })
 
 const IndicatorView = View.extend({

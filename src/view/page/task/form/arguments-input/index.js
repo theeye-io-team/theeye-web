@@ -376,7 +376,7 @@ const AskToOverrideModal = Modalizer.extend({
     this.center = true
     this.fade = false
     this.title = 'Importing arguments'
-    this.buttons = false // disable build-in modals buttons
+    this.buttons = false // disable built-in modals buttons
     Modalizer.prototype.initialize.apply(this, arguments)
   },
   events: Object.assign({}, Modalizer.prototype.events, {

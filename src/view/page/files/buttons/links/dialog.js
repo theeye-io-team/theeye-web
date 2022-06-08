@@ -9,7 +9,7 @@ import './styles.less'
 export default Modalizer.extend({
   initialize () {
     this.title = 'Links'
-    //this.buttons = false // disable build-in modal buttons
+    //this.buttons = false // disable built-in modal buttons
     Modalizer.prototype.initialize.apply(this, arguments)
 
     this.on('hidden', () => { this.remove() })

@@ -139,6 +139,13 @@ const TextIndicator = Indicator.extend({
   }
 })
 
+const FileIndicator = Indicator.extend({
+  props: {
+    value: ['string', false, ''],
+    type: ['string', false, IndicatorConstants.FILE_TYPE_SHORT]
+  }
+})
+
 function IndicatorFactory (attrs, options={}) {
   let store = App.state.indicators
   if (attrs.isCollection) { return attrs }
@@ -172,6 +179,9 @@ function IndicatorFactory (attrs, options={}) {
         break
       case IndicatorConstants.COUNTER_TYPE:
         model = new CounterIndicator(attrs, options)
+        break
+      case IndicatorConstants.FILE_TYPE:
+        model = new FileIndicator(attrs, options)
         break
       default:
         let err = new Error(`unrecognized type ${type}`)
