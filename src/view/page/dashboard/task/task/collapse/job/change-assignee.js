@@ -6,7 +6,7 @@ import SelectView from 'components/select2-view'
 export default Modalizer.extend({
   initialize (options) {
     this.title = 'Change assignees'
-    this.buttons = true // disable build-in modal buttons
+    this.buttons = true // disable built-in modal buttons
     Modalizer.prototype.initialize.apply(this, arguments)
 
     this.bodyView = new SelectView({

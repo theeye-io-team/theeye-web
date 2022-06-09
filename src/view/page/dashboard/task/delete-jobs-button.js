@@ -37,7 +37,7 @@ export default CommonButton.extend({
 const DeleteMessageModalizer = Modalizer.extend({
   initialize () {
     this.title = 'Jobs queue'
-    this.buttons = false // disable build-in modals buttons
+    this.buttons = false // disable built-in modals buttons
     Modalizer.prototype.initialize.apply(this, arguments)
   },
   template: `
