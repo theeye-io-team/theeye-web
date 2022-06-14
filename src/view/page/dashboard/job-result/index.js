@@ -279,8 +279,8 @@ const BaseJobView = View.extend({
     const html = `
       <div class="job-result-component">
         <div data-hook="summary-container">
-          <h4>State <i data-hook="lifecycle_icon" aria-hidden="true" style="color:#304269;"></i></h4>
-          <h4>Lifecycle <b data-hook="lifecycle"></b></h4>
+          <h4>State: <b data-hook="state"></b> <i data-hook="lifecycle_icon" aria-hidden="true" style="color:#304269;"></i></h4>
+          <h4>Lifecycle: <b data-hook="lifecycle"></b></h4>
           <p><i style="font-weight:bold">Owner</i> <span data-hook="owner"></span></p>
           <p><i style="font-weight:bold">Assignee</i> <span data-hook="assignee"></span></p>
           <p><i style="font-weight:bold">Observers (ACL)</i> <span data-hook="observers"></span></p>
@@ -291,6 +291,11 @@ const BaseJobView = View.extend({
           <p>
             <i class="fa fa-hourglass-end"></i>
             <span data-hook="lastupdate"></span>
+          </p>
+          <p>
+          <!-- FIXME: Icon -->
+          <i class="fas fa-stopwatch"></i>
+            Excecuted in <b data-hook="exectime"></b>
           </p>
           <a href="#" data-hook="fetch">Update <i class="fa fa-refresh"></i></a>
           <div>
@@ -328,8 +333,9 @@ const BaseJobView = View.extend({
     },
     'job.lifecycle': { hook:'lifecycle' },
     'job.state': { hook:'state' },
-    lastupdate: { hook:'lastupdate' },
     creationdate: { hook:'creationdate' },
+    lastupdate: { hook:'lastupdate' },
+    exectime: { hook:'exectime' },
     moreinfo_toggle: {
       hook: 'moreinfo-container',
       type: 'toggle'
@@ -339,16 +345,24 @@ const BaseJobView = View.extend({
     observers: { hook: 'observers' }
   },
   derived: {
+    creationdate: {
+      deps: ['job.creation_date'],
+      fn () {
+        return moment(this.job.creation_date).format("dddd, MMMM Do YYYY, h:mm:ss a")
+      }
+    },
     lastupdate: {
       deps: ['job.last_update'],
       fn () {
         return moment(this.job.last_update).format("dddd, MMMM Do YYYY, h:mm:ss a")
       }
     },
-    creationdate: {
-      deps: ['job.creation_date'],
+    exectime: {
+      deps: ['job.creation_date', 'job.last_update'],
       fn () {
-        return moment(this.job.creation_date).format("dddd, MMMM Do YYYY, h:mm:ss a")
+        const creation_date = moment(this.job.creation_date)
+        const last_update = moment(this.job.last_update)
+        return moment.utc(last_update.diff(creation_date)).format("HH:mm:ss.SSS")
       }
     }
   },
@@ -372,6 +386,8 @@ const BaseJobView = View.extend({
       return // this task was never executed?
     }
 
+    console.log(this.job)
+    
     this.renderResultView()
     const inputView = new TableView({ rows: this.job.parsedInput })
     this.renderSubview(inputView, this.queryByHook('input'))
