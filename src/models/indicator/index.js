@@ -139,6 +139,13 @@ const TextIndicator = Indicator.extend({
   }
 })
 
+const HTMLIndicator = Indicator.extend({
+  props: {
+    value: ['string', false, ''],
+    type: ['string', false, IndicatorConstants.HTML_TYPE_SHORT]
+  }
+})
+
 const FileIndicator = Indicator.extend({
   props: {
     value: ['string', false, ''],
@@ -170,6 +177,9 @@ function IndicatorFactory (attrs, options={}) {
         break
       case IndicatorConstants.TEXT_TYPE:
         model = new TextIndicator(attrs, options)
+        break
+      case IndicatorConstants.HTML_TYPE:
+        model = new HTMLIndicator(attrs, options)
         break
       case IndicatorConstants.PROGRESS_TYPE:
         model = new ProgressIndicator(attrs, options)
@@ -222,6 +232,7 @@ export const Collection = AppCollection.extend({
     let isModel = (
       model instanceof ChartIndicator ||
       model instanceof TextIndicator ||
+      model instanceof HTMLIndicator ||
       model instanceof ProgressIndicator ||
       model instanceof CounterIndicator ||
       model instanceof Indicator
@@ -233,5 +244,6 @@ export const Collection = AppCollection.extend({
 export const Counter = CounterIndicator
 export const Progress = ProgressIndicator
 export const Text = TextIndicator
+export const HTML = HTMLIndicator
 export const Chart = ChartIndicator
 export const Factory = IndicatorFactory
