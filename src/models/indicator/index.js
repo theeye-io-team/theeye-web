@@ -27,6 +27,8 @@ const BaseSchema = AppModel.extend({
     state: ['string',false,'normal'],
     acl: ['array', false, () => { return [] }],
     enable: ['boolean',false,true],
+    width: ['number', true, 2],
+    height: ['number', true, 2],
     sticky: ['boolean',false,false],
     read_only: ['boolean',false,false]
   }, baseProperties),

@@ -1,4 +1,5 @@
 import App from 'ampersand-app'
+import Collection from 'ampersand-collection'
 import IndicatorActions from 'actions/indicator'
 import HelpTexts from 'language/help'
 import Buttons from 'view/buttons'
@@ -19,7 +20,7 @@ export default DropableForm.extend({
   initialize (options) {
     const isNew = Boolean(this.model.isNew())
 
-    this.advancedFields = ['acl','tags','description','read_only','value', 'failure_severity']
+    this.advancedFields = ['width','height','acl','tags','description','read_only','value', 'failure_severity']
 
     const typeSelect = new SelectView({
       label: 'Type *',
@@ -109,6 +110,58 @@ export default DropableForm.extend({
           }
         ]
       }),
+      new SelectView({
+        label: 'Width',
+        name: 'width',
+        required: true,
+        visible: false,
+        idAttribute: 'name',
+        textAttribute: 'name',
+        options: new Collection([
+          {
+            id: 1, name: 1
+          },
+          {
+            id: 2, name: 2
+          },
+          {
+            id: 3, name: 3
+          },
+          {
+            id: 4, name: 4
+          },
+          {
+            id: 5, name: 5
+          }
+        ]),
+        value: this.model.width || 2
+      }),
+      new SelectView({
+        label: 'Height',
+        name: 'height',
+        required: true,
+        visible: false,
+        idAttribute: 'name',
+        textAttribute: 'name',
+        options: new Collection([
+          {
+            id: 1, name: 1
+          },
+          {
+            id: 2, name: 2
+          },
+          {
+            id: 3, name: 3
+          },
+          {
+            id: 4, name: 4
+          },
+          {
+            id: 5, name: 5
+          }
+        ]),
+        value: this.model.height || '2'
+      }),
       new TagsSelectView({
         label: 'Tags',
         required: false,
@@ -194,6 +247,9 @@ export default DropableForm.extend({
       const value = f.value || "{}"
       f.value = JSON.parse(value)
     }
+    
+    f['width'] = Number(f['width'])
+    f['height'] = Number(f['height'])
 
     return f
   },
