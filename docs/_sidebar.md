@@ -13,3 +13,7 @@
     - [Introducción](/core-concepts/scripts/)
     - [Ejecutar Scripts y asignar permisos](/core-concepts/scripts/runas.md)
     - [Escribir scripts](/core-concepts/scripts/write.md)
+  - IAM
+    - [Roles y administración de acceso](/core-concepts/iam/user-management.md)
+    - [Gestión de identidades](/core-concepts/iam/logical_access.md)
+
