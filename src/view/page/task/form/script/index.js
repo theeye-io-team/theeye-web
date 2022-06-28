@@ -398,7 +398,7 @@ export default TaskFormView.extend({
 
     if (!this.runners.value) {
       if (this.scriptSelection.selected()) {
-        this.runners.updateState({ scripts: this.scriptSelection })
+        this.runners.updateState({ selector: this.scriptSelection })
       }
     }
   },
@@ -751,7 +751,7 @@ const RunnerSelectionView = SelectView.extend({
   },
   updateState ({ selector }) {
     if (!this.rendered) { return }
-    if (!selector.value) { return }
+    if (!selector?.value) { return }
 
     const script = selector.selected()
     const interpreter = App.state.runners.detectInterpreterByScript(script)
