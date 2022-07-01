@@ -25,6 +25,18 @@
       display: inline-flex;
       flex-direction: row;
       width: fit-content;
+      gap: 2px;
+
+      .btn {
+        height: 100%;
+        padding: 2px;
+        margin: 4px;
+        text-align: center;
+
+        &:hover {
+          background-color: #00000044;
+        }
+      }
     }
   }
   
@@ -45,14 +57,24 @@
     padding: 5px;
   }
 
-  .advanced-options-container {
+  .advanced-options-panel {
     position: absolute;
     width: 480px;
     top: 0;
     right: 0;
     height: 100%;
-    overflow-y: scroll;
-    padding: 2px;
     background-color: white;
+    
+    .top-bar {
+      height: 50px;
+      display: flex;
+      justify-content: end;
+      align-items: center;
+    }
+
+    .advanced-options-container {
+      overflow-y: scroll;
+      padding: 2px;
+    }
   }
 }
