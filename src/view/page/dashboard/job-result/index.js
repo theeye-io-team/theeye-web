@@ -386,7 +386,6 @@ const BaseJobView = View.extend({
       return // this task was never executed?
     }
 
-    
     this.renderResultView()
     const inputView = new TableView({ rows: this.job.parsedInput })
     this.renderSubview(inputView, this.queryByHook('input'))
