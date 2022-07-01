@@ -23,44 +23,12 @@ import './styles.less'
 //const MODE_EDIT   = 'edit'
 //const MODE_IMPORT = 'import'
 
-const TaskAdderInput = View.extend({
-  template: `
-    <div data-component="workflow-builder" class="workflow-builder-component form-group">
-      <div style="padding-bottom: 15px;" data-hook="buttons">
-        <button data-hook="add-task" title="Existent Task" class="btn btn-default">
-          Add Existent Task <i class="fa fa-wrench"></i>
-        </button>
-        <button data-hook="create-task" title="Create Task" class="btn btn-default">
-          Add New Task <i class="fa fa-plus-circle"></i>
-        </button>
-      </div>
-    </div>
-  `,
-  events: {
-    'click [data-hook=add-task]':'onClickAddTask',
-    'click [data-hook=create-task]':'onClickCreateTask'
-  },
-  props: {
-    onClickAddTask: 'function',
-    onClickCreateTask: 'function'
-  },
-  derived: {
-    valid: { fn() { return true }},
-    value: { fn() { return null }}
-  }
-})
-
 export default View.extend({
   template: `
       <div class="workflow-preview" data-hook="graph-preview"></div>
   `,
   initialize (options) {
     View.prototype.initialize.apply(this,arguments)
-
-    this.TaskAdder = new TaskAdderInput({
-      onClickAddTask: (e) => this.onClickAddTask(e),
-      onClickCreateTask: (e) => this.onClickCreateTask(e)
-    })
 
     let recipe
     let workflow = options.value
@@ -135,39 +103,39 @@ export default View.extend({
   renderWorkflowGraph () {
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
       .then(({ default: WorkflowView }) => {
-        const workflowGraph = new WorkflowView({ graph: this.graph, start_task_id: this.start_task_id })
-        this.renderSubview(workflowGraph, this.queryByHook('graph-preview'))
+        this.workflowGraph = new WorkflowView({ graph: this.graph, start_task_id: this.start_task_id })
+        this.renderSubview(this.workflowGraph, this.queryByHook('graph-preview'))
 
         const updateVisualization = () => {
-          workflowGraph.updateCytoscape(this.workflow.graph)
+          this.workflowGraph.updateCytoscape(this.workflow.graph)
           this.parent.valid
         }
 
         this.on('change:graph', updateVisualization)
         this.workflow.tasks.on('change', updateVisualization)
 
-        this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
-        this.listenTo(workflowGraph, 'tap:edge', this.onTapEdge)
-        this.listenTo(workflowGraph, 'tap:back', (e) => { this.onTapBackground(e, workflowGraph) })
-        this.listenTo(workflowGraph, 'change:start_task_id', () => {
-          this.workflow.start_task_id = workflowGraph.start_task_id
+        this.listenTo(this.workflowGraph, 'tap:node', this.onTapNode)
+        this.listenTo(this.workflowGraph, 'tap:edge', this.onTapEdge)
+        this.listenTo(this.workflowGraph, 'tap:back', this.onTapBackground)
+        this.listenTo(this.workflowGraph, 'change:start_task_id', () => {
+          this.workflow.start_task_id = this.workflowGraph.start_task_id
         })
 
         this.listenTo(this.workflow, 'change:start_task_id', () => {
-          workflowGraph.setStartNode(this.workflow.start_task_id)
-          workflowGraph.updateCytoscape()
+          this.workflowGraph.setStartNode(this.workflow.start_task_id)
+          this.workflowGraph.updateCytoscape()
         })
 
         this.listenToAndRun(this, 'change:valid', () => {
-          workflowGraph.warningToggle = !this.valid
+          this.workflowGraph.warningToggle = !this.valid
         })
         
         // initial render
         setTimeout(() => {
           if (this.workflow.start_task_id)
-            workflowGraph.setStartNode(this.workflow.start_task_id)
-          workflowGraph.updateCytoscape()
-          workflowGraph.cy.center()
+            this.workflowGraph.setStartNode(this.workflow.start_task_id)
+          this.workflowGraph.updateCytoscape()
+          this.workflowGraph.cy.center()
         }, 500)
       })
   },
@@ -347,7 +315,6 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    this.parent.taskAdderToggled = false
 
     const taskSelection = new TaskSelectionForm()
 
@@ -375,8 +342,6 @@ export default View.extend({
   onClickCreateTask (event) {
     event.preventDefault()
     event.stopPropagation()
-
-    this.parent.taskAdderToggled = false
 
     const wizard = new CreateTaskWizard({
       submit: taskData => {
