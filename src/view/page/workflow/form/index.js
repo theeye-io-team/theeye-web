@@ -93,7 +93,14 @@ export default View.extend({
           <button data-hook="submit" class="btn">Submit</button>
         </div>
       </div>
-      <div class="advanced-options-container" data-hook="advanced-options-container"></div>
+      <div class="advanced-options-panel" data-hook="advanced-options-panel">
+        <div class="top-bar">
+          <div class="close" data-hook="settings">
+            <i class="fa fa-times"></i>
+          </div>
+        </div>
+        <div class="advanced-options-container" data-hook="advanced-options-container"></div>
+      </div>
     </div>
   `,
   events: {
@@ -131,7 +138,7 @@ export default View.extend({
     advancedOptionsToggled: {
       type: 'booleanClass',
       no: 'hidden',
-      hook: 'advanced-options-container'
+      hook: 'advanced-options-panel'
     },
     isValid: [
       {
