@@ -1,91 +1,50 @@
-
-.input-width-30 input {
-  width: 30%;
-}
-
 .workflow-editor-container {
   width: 100%;
-  height: 80vh;
-  position: relative;
+  height: 100%;
+  display: grid;
+  grid-template-rows: [top-bar] 50px [graph] auto [bottom-bar] 40px [end];
 
-  .gui-container {
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-
-    * {
-      pointer-events: auto;
-    }
-
-    .name-input {
-      border: none;
-      background-color: #00000010;
-      color: #fff;
-      font-size: 1.2em;
-      font-weight: 400;
-      filter: drop-shadow(0px 5px 12px #000) drop-shadow(0px 5px 48px #000);
-      margin: 20px;
-
-      &:placeholder-shown {
-        font-style: italic;
-     }
-    }
-
-    .advanced-options-toggler {
-      color: #fff;
-      font-size: 3em;
-      top: 15px;
-      left: 15px;
-    }
-    .submit-buttons {
-      position: absolute;
-      bottom: 15px;
-      right: 15px;
-      font-size: 1.2em;
-    }
-
-    .task-adder-container {
-      position: absolute;
-      bottom: 25px;
-      left: 25px;
-
-      .task-adder-toggler {
-        color: #fff;
-        font-size: 3em;
-        transition: transform 500ms ease-in-out;
-      }
-
-      .task-adder {
-        display: none;
-        background-color: #fff;
-        padding: 15px;
-        animation: fadein 500ms reverse;
-        border-radius: 10px;
-
-      }
-
-      &.toggled {
-        .task-adder-toggler {
-          transform: rotate(405deg);
-        }
-        .task-adder {
-          animation: fadein 500ms ease-in-out both;
-          display: block;
-        }
-      }
-    }
+  .fa {
+    outline: solid red;
+    min-width: 14px;
+    min-height: 14px;
   }
 
-  .workflow-graphview-container {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+  .top-bar {
+    grid-row-start: top-bar;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+
+    .container {
+      display: inline-flex;
+      flex-direction: row;
+      width: fit-content;
+    }
   }
+  
+  .graph-container {
+    grid-row-start: graph;
+    width: 100%;
+    height: 100%;
+  }
+
+  .bottom-bar {
+    grid-row-start: bottom-bar;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px;
+  }
+
   .advanced-options-container {
     position: absolute;
     width: 480px;
@@ -95,19 +54,5 @@
     overflow-y: scroll;
     padding: 2px;
     background-color: white;
-  }
-}
-
-@keyframes fadein {
-  0% {
-    display: none;
-    opacity: 0;
-  }
-  1% {
-    display: block;
-    opacity: 0;
-  }
-  100% {
-    opacity: 100%;
   }
 }
