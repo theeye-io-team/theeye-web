@@ -43,20 +43,20 @@ export default View.extend({
     }
     View.prototype.remove.apply(this, arguments)
   },
-  updateCytoscape () {
+  updateCytoscape (redraw = false) {
     if (this.cy) {
       this.cy.destroy()
       this.cy = null
     }
 
-    this.renderCytoscape()
+    this.renderCytoscape(redraw)
 
     this.cy.center()
     this.cy.fit()
 
     return this
   },
-  renderCytoscape () {
+  renderCytoscape (redraw) {
     if (!this.graph) {
       return this
     }
@@ -139,7 +139,9 @@ export default View.extend({
     cy.on('position', (e) => this.recordPositions(e))
 
     this.cy = cy
-    this.setPositions()
+    
+    if (!redraw) this.setPositions()
+    // TODO: Record default positions
 
     return this
   },
