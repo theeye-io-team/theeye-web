@@ -16,11 +16,28 @@ import AdvancedToggle from 'view/advanced-toggle'
 
 import * as IndicatorConstants from 'constants/indicator'
 
+const rowColCollection = new Collection([
+  { id: 1 },
+  { id: 2 },
+  { id: 3 },
+  { id: 4 },
+  { id: 5 },
+  { id: 6 },
+  { id: 7 },
+  { id: 8 },
+  { id: 9 },
+  { id: 10 }
+])
+
 export default DropableForm.extend({
   initialize (options) {
     const isNew = Boolean(this.model.isNew())
 
-    this.advancedFields = ['width','height','acl','tags','description','read_only','value', 'failure_severity']
+    this.advancedFields = [
+      'width','height','acl',
+      'tags','description','read_only',
+      'value', 'failure_severity', 'order'
+    ]
 
     const typeSelect = new SelectView({
       label: 'Type *',
@@ -110,30 +127,23 @@ export default DropableForm.extend({
           }
         ]
       }),
+      new InputView({
+        label: 'Order',
+        required: false,
+        visible: false,
+        name: 'order',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.order
+      }),
       new SelectView({
         label: 'Width',
         name: 'width',
-        required: true,
+        required: false,
         visible: false,
-        idAttribute: 'name',
-        textAttribute: 'name',
-        options: new Collection([
-          {
-            id: 1, name: 1
-          },
-          {
-            id: 2, name: 2
-          },
-          {
-            id: 3, name: 3
-          },
-          {
-            id: 4, name: 4
-          },
-          {
-            id: 5, name: 5
-          }
-        ]),
+        idAttribute: 'id',
+        textAttribute: 'id',
+        options: rowColCollection,
         value: this.model.width || 2
       }),
       new SelectView({
@@ -141,25 +151,9 @@ export default DropableForm.extend({
         name: 'height',
         required: true,
         visible: false,
-        idAttribute: 'name',
-        textAttribute: 'name',
-        options: new Collection([
-          {
-            id: 1, name: 1
-          },
-          {
-            id: 2, name: 2
-          },
-          {
-            id: 3, name: 3
-          },
-          {
-            id: 4, name: 4
-          },
-          {
-            id: 5, name: 5
-          }
-        ]),
+        idAttribute: 'id',
+        textAttribute: 'id',
+        options: rowColCollection,
         value: this.model.height || '2'
       }),
       new TagsSelectView({
@@ -235,6 +229,7 @@ export default DropableForm.extend({
   },
   prepareData (data) {
     const f = Object.assign({}, data)
+
     f["severity"] = f["failure_severity"].toLowerCase()
     f.type = f._type.replace('Indicator','').toLowerCase()
 
@@ -250,6 +245,7 @@ export default DropableForm.extend({
     
     f['width'] = Number(f['width'])
     f['height'] = Number(f['height'])
+    f['order'] = Number(f['order'])
 
     return f
   },
