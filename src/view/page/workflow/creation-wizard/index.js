@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import Modalizer from 'components/modalizer'
+import FullPageModal from 'components/full-page-modal'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
 import WorkflowFormView from '../form'
@@ -105,7 +106,7 @@ const renderCreateForm = (workflow = null) => {
 
   const editView = new WorkflowFormView({ model: workflow, builder_mode: 'import' })
 
-  const modal = new Modalizer({
+  const modal = new FullPageModal({
     buttons: false,
     title: 'Create Workflow',
     bodyView: editView 
