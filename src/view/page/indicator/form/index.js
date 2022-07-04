@@ -16,7 +16,7 @@ import AdvancedToggle from 'view/advanced-toggle'
 
 import * as IndicatorConstants from 'constants/indicator'
 
-const rowColCollection = new Collection([
+const rowColsColCollection = new Collection([
   { id: 1 },
   { id: 2 },
   { id: 3 },
@@ -26,7 +26,9 @@ const rowColCollection = new Collection([
   { id: 7 },
   { id: 8 },
   { id: 9 },
-  { id: 10 }
+  { id: 10 },
+  { id: 11 },
+  { id: 12 }
 ])
 
 export default DropableForm.extend({
@@ -143,7 +145,7 @@ export default DropableForm.extend({
         visible: false,
         idAttribute: 'id',
         textAttribute: 'id',
-        options: rowColCollection,
+        options: rowColsColCollection,
         value: this.model.width || 2
       }),
       new SelectView({
@@ -153,7 +155,7 @@ export default DropableForm.extend({
         visible: false,
         idAttribute: 'id',
         textAttribute: 'id',
-        options: rowColCollection,
+        options: rowColsColCollection,
         value: this.model.height || '2'
       }),
       new TagsSelectView({
