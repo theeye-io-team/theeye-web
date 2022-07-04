@@ -41,3 +41,4 @@ webpack-stats.json
 config
 
 versions
+dist/components/

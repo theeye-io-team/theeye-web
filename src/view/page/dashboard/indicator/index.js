@@ -167,6 +167,7 @@ const VisualsFactoryView = function (options) {
   let visual
   switch (model.type) {
     case IndicatorConstants.TEXT_TYPE_SHORT:
+    case IndicatorConstants.HTML_TYPE_SHORT:
     case IndicatorConstants.COUNTER_TYPE_SHORT:
       visual = new TextIndicatorView(options)
       break

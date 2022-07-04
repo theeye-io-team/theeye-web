@@ -197,7 +197,7 @@ export default View.extend({
     // sort by options
     if (this.sort !== false) {
       select2setup.sorter = function (items) {
-        return items.sort((a, b) => a.text < b.text ? -1 : 1)
+        return items.sort((a, b) => Number(a.text) < Number(b.text) ? -1 : 1)
       }
     }
 

@@ -156,6 +156,7 @@ const IndicatorTypesCollection = ClearCollection.extend({
   initialize () {
     this.initialState = [
       { id: IndicatorConstants.TEXT_TYPE, text: 'Text' },
+      { id: IndicatorConstants.HTML_TYPE, text: 'HTML' },
       { id: IndicatorConstants.PROGRESS_TYPE, text: 'Progress' },
       { id: IndicatorConstants.COUNTER_TYPE, text: 'Counter' },
       { id: IndicatorConstants.CHART_TYPE, text: 'Chart' },

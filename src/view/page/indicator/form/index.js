@@ -1,4 +1,5 @@
 import App from 'ampersand-app'
+import Collection from 'ampersand-collection'
 import IndicatorActions from 'actions/indicator'
 import HelpTexts from 'language/help'
 import Buttons from 'view/buttons'
@@ -15,11 +16,30 @@ import AdvancedToggle from 'view/advanced-toggle'
 
 import * as IndicatorConstants from 'constants/indicator'
 
+const rowColsColCollection = new Collection([
+  { id: 1 },
+  { id: 2 },
+  { id: 3 },
+  { id: 4 },
+  { id: 5 },
+  { id: 6 },
+  { id: 7 },
+  { id: 8 },
+  { id: 9 },
+  { id: 10 },
+  { id: 11 },
+  { id: 12 }
+])
+
 export default DropableForm.extend({
   initialize (options) {
     const isNew = Boolean(this.model.isNew())
 
-    this.advancedFields = ['acl','tags','description','read_only','value', 'failure_severity']
+    this.advancedFields = [
+      'width','height','acl',
+      'tags','description','read_only',
+      'value', 'failure_severity', 'order'
+    ]
 
     const typeSelect = new SelectView({
       label: 'Type *',
@@ -109,6 +129,35 @@ export default DropableForm.extend({
           }
         ]
       }),
+      new InputView({
+        label: 'Order',
+        required: false,
+        visible: false,
+        name: 'order',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.order
+      }),
+      new SelectView({
+        label: 'Width',
+        name: 'width',
+        required: false,
+        visible: false,
+        idAttribute: 'id',
+        textAttribute: 'id',
+        options: rowColsColCollection,
+        value: String(this.model.width || 2)
+      }),
+      new SelectView({
+        label: 'Height',
+        name: 'height',
+        required: true,
+        visible: false,
+        idAttribute: 'id',
+        textAttribute: 'id',
+        options: rowColsColCollection,
+        value: String(this.model.height || 2)
+      }),
       new TagsSelectView({
         label: 'Tags',
         required: false,
@@ -182,6 +231,7 @@ export default DropableForm.extend({
   },
   prepareData (data) {
     const f = Object.assign({}, data)
+
     f["severity"] = f["failure_severity"].toLowerCase()
     f.type = f._type.replace('Indicator','').toLowerCase()
 
@@ -194,6 +244,10 @@ export default DropableForm.extend({
       const value = f.value || "{}"
       f.value = JSON.parse(value)
     }
+    
+    f['width'] = Number(f['width'])
+    f['height'] = Number(f['height'])
+    f['order'] = Number(f['order'])
 
     return f
   },
