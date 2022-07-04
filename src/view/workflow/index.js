@@ -85,8 +85,31 @@ export default View.extend({
             'height': 50,
             'width': 50,
             'background-fit': 'cover',
-            'border-color': '#FFF',
-            'border-width': 1,
+            'border-color': function (ele) {
+              /*
+                This garbage code is here to work around a visual bug in which
+                an ugly orange border would render around a node that should
+                render without a border. What this code does is to pick a pre
+                defined color to render a border that looks just like the image
+                background, and is therefore unnoticeable
+              */
+              const colors = {
+                'event':        "#00CCCC",
+                'script':       "#E50580",
+                'scraper':      "#FF00CC",
+                'approval':     "#2200CC",
+                'dummy':        "#FF6482",
+                'notification': "#FFCC00",
+                'process':      "#00AAFF",
+                'webhook':      "#1E7EFB",
+                'host':         "#FC7C00",
+                'dstat':        "#00305B",
+                'psaux':        "#000000" // This should never show up
+              }
+              var node = new Node(ele.data('value'))
+              return colors[node.getFeatureType()] 
+            },
+            'border-width': 3,
             'border-opacity': 1,
             'content': 'data(label)',
             'color': '#FFF',
