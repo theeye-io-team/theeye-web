@@ -51,17 +51,17 @@ export default View.extend({
       <div class="top-bar">
         <div class="name-container container">
           <input type="text" class="name-input" disabled placeholder="Untitled workflow" data-hook="name">
-          <i class="fa fa-pen" data-hook="edit-name"></i>
+          <i class="fa fa-pencil" data-hook="edit-name"></i>
         </div>
         <div class="view-controls-container container">
           <div class="fit-btn btn" data-hook="fit">
             <i class="fa fa-expand"></i> Fit
           </div>
           <div class="center-btn btn" data-hook="center">
-            <i class="fa fa-dot-circle"></i> Center
+            <i class="fa fa-dot-circle-o"></i> Center
           </div>
           <div class="redraw-btn btn" data-hook="redraw">
-            <i class="fa fa-project-diagram"></i> Redraw
+            <i class="fa fa fa-repeat"></i> Redraw
           </div>
         </div>
         <div class="workflow-controls-container container">

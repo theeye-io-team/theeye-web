@@ -5,7 +5,7 @@
   grid-template-rows: [top-bar] 50px [graph] auto [bottom-bar] 40px [end];
 
   .fa {
-    outline: solid red;
+    text-align: center;
     min-width: 14px;
     min-height: 14px;
   }
@@ -26,6 +26,14 @@
       flex-direction: row;
       width: fit-content;
       gap: 2px;
+
+      .name-container {
+        text-align: center;
+
+        .fa {
+          width: 16px;
+        }
+      }
 
       .btn {
         height: 100%;
