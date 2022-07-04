@@ -146,7 +146,7 @@ export default DropableForm.extend({
         idAttribute: 'id',
         textAttribute: 'id',
         options: rowColsColCollection,
-        value: this.model.width || 2
+        value: String(this.model.width || 2)
       }),
       new SelectView({
         label: 'Height',
@@ -156,7 +156,7 @@ export default DropableForm.extend({
         idAttribute: 'id',
         textAttribute: 'id',
         options: rowColsColCollection,
-        value: this.model.height || '2'
+        value: String(this.model.height || 2)
       }),
       new TagsSelectView({
         label: 'Tags',
