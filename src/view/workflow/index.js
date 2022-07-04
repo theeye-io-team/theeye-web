@@ -104,7 +104,7 @@ export default View.extend({
         }, {
           selector: 'edge',
           style: {
-            'width': 5,
+            'width': 3,
             'target-arrow-shape': 'triangle',
             'line-color': '#9dbaea',
             'target-arrow-color': '#9dbaea',
