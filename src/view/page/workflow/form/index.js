@@ -89,7 +89,7 @@ export default View.extend({
           <span>There's nothing to worry about.</span>
         </div>
         <div class="submit-buttons">
-          <button data-hook="cancel" class="btn btn-default">Cancel</button>
+          <button data-hook="close" class="btn btn-default">Cancel</button>
           <button data-hook="submit" class="btn">Submit</button>
         </div>
       </div>

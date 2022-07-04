@@ -68,8 +68,12 @@ export default Modalizer.extend({
       })
     }
 
-    this.bodyView.on('close', this.onClickCancel)
-  }
+    this.bodyView.on('close', () => this.onClickCancel())
+  },
+  hide () {
+    this.$modal.modal('hide')
+    this.visible = false
+  },
 })
 
 // const getRootContainer = () => {
