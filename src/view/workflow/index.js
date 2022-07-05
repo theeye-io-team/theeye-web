@@ -236,7 +236,7 @@ function Node (value) {
     var type = (value.type || value._type).toLowerCase()
     var features = [
       'event', 'script', 'scraper', 'approval', 'home', 'dummy', 'notification', 'process',
-      'webhook', 'host', 'dstat', 'psaux'
+      'webhook', 'host', 'dstat', 's', 'psaux'
     ]
 
     var found = features.find(function (f) {
