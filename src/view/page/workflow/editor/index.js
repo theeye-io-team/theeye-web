@@ -133,6 +133,16 @@ export default View.extend({
       mode: this.builder_mode
     })
 
+    this.warningTasksDialog = new TasksReviewDialog({
+      fade: false,
+      center: true,
+      workflow: this.model,
+      buttons: false,
+      title: `Tasks Review`,
+    })
+
+    this.registerSubview(this.warningTasksDialog)
+
     this.renderSubview(this.form, this.queryByHook('advanced-options-panel'))
   },
   beforeSubmit () {
@@ -145,7 +155,7 @@ export default View.extend({
 
     this.beforeSubmit()
     if (!this.valid) {
-      this.onClickWarningIndicator()
+      this.showWarningTasksDialog()
     } else {
       const data = this.form.data
 
@@ -196,26 +206,17 @@ export default View.extend({
     this.advancedOptionsToggled = !this.advancedOptionsToggled
   },
   onClickWarningIndicator (event) {
-    if (event) {
-      event.preventDefault()
-      event.stopPropagation()
-    }
-      
-    const dialog = new TasksReviewDialog({
-      fade: false,
-      center: true,
-      workflow: this.model,
-      buttons: false,
-      title: `Tasks review`,
-    })
-
-    this.registerSubview(dialog)
-    dialog.show()
-    dialog.el.addEventListener('click [data-hook=edit-task]', (event) => {
+    event.preventDefault()
+    event.stopPropagation()
+    this.showWarningTasksDialog()
+  },
+  showWarningTasksDialog () {
+    this.warningTasksDialog.show()
+    this.warningTasksDialog.el.addEventListener('click [data-hook=edit-task]', (event) => {
       const task = event.detail.task
       EditTask(task, () => {
         this.workflowBuilder.updateTaskNode(task)
       })
     })
-  },
+  }
 })

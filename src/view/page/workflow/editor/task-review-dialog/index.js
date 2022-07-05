@@ -25,7 +25,7 @@ export default Modalizer.extend({
   initialize () {
     this.buttons = false // disable build-in modal buttons
     Modalizer.prototype.initialize.apply(this, arguments)
-    this.on('hidden', () => { this.remove() })
+    //this.on('hidden', () => { this.remove() })
 
     this.invalidTasksCollection = new App.Models.Task.Collection([])
 
