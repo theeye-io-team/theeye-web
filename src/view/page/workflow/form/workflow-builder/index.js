@@ -132,8 +132,9 @@ export default View.extend({
         
         // initial render
         setTimeout(() => {
-          if (this.workflow.start_task_id)
+          if (this.workflow.start_task_id) {
             this.workflowGraph.setStartNode(this.workflow.start_task_id)
+          }
           this.workflowGraph.updateCytoscape()
           this.workflowGraph.cy.center()
         }, 500)
@@ -225,7 +226,7 @@ export default View.extend({
     var edge = event.cyTarget.data()
     this.removeEdgeDialog(edge)
   },
-  onTapBackground (event, graphView) {
+  onTapBackground (event) {
     if (this.menuView) {
       this.menuView.remove()
     } else {
@@ -241,17 +242,15 @@ export default View.extend({
         {
           label: 'Rearrange nodes',
           action: () => {
-            graphView.updateCytoscape()
+            this.workflowGraph.updateCytoscape(/* redraw = */ true)
           }
         },
-        (()=>{
-          if (graphView.clearBtn === true) return {
-            label: 'Clear graph',
-            action: () => {
-              graphView.trigger('click:clear')
-            }
-          } 
-        })()
+        {
+          label: 'Clear graph',
+          action: () => {
+            this.workflowGraph.trigger('click:clear')
+          }
+        }
       ]
 
       this.menuView = new ContextualMenu({ menu_items })
