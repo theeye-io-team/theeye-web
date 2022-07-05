@@ -107,22 +107,5 @@ export default DropableFormView.extend({
       }),
       view.query('label')
     )
-  },
-  getValid () {
-    return this.valid
-  },
-  submit (next) {
-    next||(next=()=>{})
-
-    this.beforeSubmit()
-    if (!this.valid) {
-      const fields = this.getInvalidFields()
-      const invalid = fields[0]
-      invalid.el.scrollIntoView()
-      return
-    }
-
-    // id property is the required value, with "numeric" data type
-    next(this.data)
   }
 })

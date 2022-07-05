@@ -58,16 +58,13 @@ export default View.extend({
             <button data-hook="submit" class="btn">Submit</button>
           </div>
         </div>
-        <div class="advanced-options-panel" data-hook="advanced-options-panel">
-          <div class="top-bar">
-            <div class="close" data-hook="settings">
-              <i class="fa fa-times"></i>
-            </div>
-          </div>
-          <div class="advanced-options-container" data-hook="advanced-options-container"></div>
-        </div>
+        <div class="advanced-options-panel" data-hook="advanced-options-panel"> </div>
       </div>
     `
+  },
+  initialize (options) {
+    View.prototype.initialize.apply(this, arguments)
+    this.name = this.model.name 
   },
   events: {
     'click [data-hook=edit-name]': 'onNameEdit',
@@ -81,19 +78,10 @@ export default View.extend({
     'click button[data-hook=warning-indicator]':'onClickWarningIndicator',
   },
   props: {
+    builder_mode: ['string', true],
     advancedOptionsToggled: ['boolean', true, false],
     name: 'string',
-    isValid: ['boolean', true, false]
-  },
-  derived: {
-    valid: {
-      required: ['name', 'form', 'workflowBuilder'],
-      cache: false,
-      fn() {
-        this.isValid = Boolean(this.name && this.form.valid && this.workflowBuilder.valid)
-        return this.isValid
-      }
-    }
+    valid: ['boolean', true, true]
   },
   bindings: {
     name: {
@@ -105,23 +93,67 @@ export default View.extend({
       no: 'hidden',
       hook: 'advanced-options-panel'
     },
-    isValid: [
+    valid: [
       {
         type: 'booleanClass',
         yes: 'btn-success',
         no: 'btn-danger',
         hook: 'submit'
       }, {
-          type: 'booleanClass',
-          name: 'btn-danger',
-          hook: 'warning-indicator',
-          invert: true
+        type: 'booleanClass',
+        name: 'btn-danger',
+        hook: 'warning-indicator',
+        invert: true
       }, {
         type: 'booleanAttribute',
         name: 'disabled',
         hook: 'warning-indicator'
       }
     ]
+  },
+  render () {
+    this.renderWithTemplate(this)
+
+    this.workflowBuilder = new WorkflowBuilderView({
+      value: this.model,
+      mode: this.builder_mode
+    })
+
+    this.renderSubview(
+      this.workflowBuilder,
+      this.queryByHook('workflow-graphview-container')
+    )
+
+    this.listenTo(this.workflowBuilder, 'change:valid change:value', () => {
+      this.beforeSubmit()
+    })
+
+    this.form = new AdvancedOptionsForm({
+      model: this.model,
+      mode: this.builder_mode
+    })
+
+    this.renderSubview(this.form, this.queryByHook('advanced-options-panel'))
+  },
+  beforeSubmit () {
+    this.form.beforeSubmit()
+    this.valid = Boolean(this.name && this.form.valid && this.workflowBuilder.valid)
+  },
+  onClickSubmitButton (event) {
+    event.preventDefault()
+    event.stopPropagation()
+
+    this.beforeSubmit()
+    if (!this.valid) {
+      this.onClickWarningIndicator()
+    } else {
+      const data = this.form.data
+
+      const { graph, tasks, start_task_id } = this.workflowBuilder.value
+      const name = this.name
+      const wf = Object.assign({}, data, { graph, tasks, start_task_id, name })
+      this.trigger('submit', wf)
+    }
   },
   onNameEdit (event) {
     event.preventDefault()
@@ -186,48 +218,4 @@ export default View.extend({
       })
     })
   },
-  initialize (options) {
-    this.name = this.model.name 
-
-    this.workflowBuilder = new WorkflowBuilderView({
-      value: this.model,
-      mode: options.builder_mode
-    })
-
-    this.form = new AdvancedOptionsForm({
-      model: this.model,
-      mode: options.builder_mode
-    })
-  },
-  render () {
-    this.renderWithTemplate(this)
-
-    this.renderSubview(
-      this.workflowBuilder,
-      this.queryByHook('workflow-graphview-container')
-    )
-    this.renderSubview(
-      this.form,
-      this.queryByHook('advanced-options-container')
-    )
-
-    this.valid
-  },
-  onClickSubmitButton(event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.valid ? this.beforeSubmit() : this.onClickWarningIndicator()
-  },
-  beforeSubmit () {
-    this.form.submit((data) => this.submit(data))
-  },
-  submit (data) {
-    const { graph, tasks, start_task_id } = this.workflowBuilder.value
-    const name = this.name
-    const wf = Object.assign({}, data, { graph, tasks, start_task_id, name })
-    console.log(wf)
-    this.trigger('submit', wf)
-  },
-  update (field) { this.form.update(field) }
 })

@@ -19,9 +19,6 @@ import EditTask from '../edit-task'
 
 import './styles.less'
 
-//const MODE_EDIT   = 'edit'
-//const MODE_IMPORT = 'import'
-
 export default View.extend({
   template: `
       <div class="workflow-preview" data-hook="graph-preview"></div>
@@ -51,8 +48,6 @@ export default View.extend({
 
     // store:false avoid merging the state into the app.state
     this.workflow = new App.Models.Workflow.Workflow(recipe, { store: false })
-
-    this.on('change:valid change:value', this.reportToParent, this)
   },
   props: {
     mode: 'string',
@@ -160,12 +155,16 @@ export default View.extend({
                 })
               }
             },
-            (() => { if (task.type === 'script') return {
-              label: 'Edit Script',
-              action: () => {
-                App.actions.file.edit(task.script_id || task.script)
+            (() => {
+              if (task.type === 'script') {
+                return {
+                  label: 'Edit Script',
+                  action: () => {
+                    App.actions.file.edit(task.script_id || task.script)
+                  }
+                }
               }
-            }})(),
+            })(),
             {
               label: 'Set starting task',
               action: () => {
@@ -242,12 +241,12 @@ export default View.extend({
             this.workflowGraph.updateCytoscape(/* redraw = */ true)
           }
         },
-        {
-          label: 'Clear graph',
-          action: () => {
-            this.workflowGraph.trigger('click:clear')
-          }
-        }
+        //{
+        //  label: 'Clear graph',
+        //  action: () => {
+        //    this.workflowGraph.trigger('click:clear')
+        //  }
+        //}
       ]
 
       this.menuView = new ContextualMenu({ menu_items })
@@ -310,7 +309,6 @@ export default View.extend({
   onClickAddTask (event) {
     event.preventDefault()
     event.stopPropagation()
-
 
     const taskSelection = new TaskSelectionForm()
 
@@ -413,11 +411,6 @@ export default View.extend({
     })
 
     modal.show()
-  },
-  reportToParent () {
-    if (this.parent) {
-      this.parent.update(this)
-    }
   }
 })
 
@@ -497,12 +490,6 @@ const ContextualMenuEntry = View.extend({
     this.parent.remove()
   }
 })
-
-const pointerPosition = (e) => {
-  var posx = e.clientX
-  var posy = e.clientY
-  return { x: posx, y: posy }
-}
 
 const EventNameInputView = FormView.extend({
   props: {
