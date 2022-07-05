@@ -81,8 +81,8 @@ export default View.extend({
         {
           selector: 'node',
           style: {
-            'height': 50,
-            'width': 50,
+            'height': 40,
+            'width': 40,
             'background-fit': 'cover',
             'border-color': function (ele) {
               /*
