@@ -3,7 +3,7 @@ import Modalizer from 'components/modalizer'
 import FullPageModalizer from 'components/fullpagemodalizer'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
-import WorkflowFormView from '../form'
+import WorkflowEditorView from '../editor'
 import View from 'ampersand-view'
 import config from 'config'
 import FileInputView from 'components/input-view/file'
@@ -104,12 +104,12 @@ const renderCreateForm = (workflow = null) => {
     workflow = new Workflow({ version: 2 })
   }
 
-  const editView = new WorkflowFormView({ model: workflow, builder_mode: 'import' })
+  const editorView = new WorkflowEditorView({ model: workflow, builder_mode: 'import' })
 
   const modal = new FullPageModalizer({
     buttons: false,
     title: 'Create Workflow',
-    bodyView: editView 
+    bodyView: editorView 
   })
 
   modal.renderSubview(
@@ -118,11 +118,11 @@ const renderCreateForm = (workflow = null) => {
   )
 
   modal.on('hidden', () => {
-    editView.remove()
+    editorView.remove()
     modal.remove()
   })
 
-  editView.on('submit', (data) => {
+  editorView.on('submit', (data) => {
     App.actions.workflow.create(data)
     modal.hide()
   })

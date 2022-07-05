@@ -1,6 +1,5 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
-//import WorkflowView from 'view/workflow'
 import './style.less'
 
 export default View.extend({

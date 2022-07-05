@@ -72,7 +72,6 @@ export default View.extend({
       cache: false,
       fn () {
         this.purgeGraph()
-        debugger
         const { graph, tasks, start_task_id } = this.workflow.serialize()
         return { graph, tasks, start_task_id }
       }
