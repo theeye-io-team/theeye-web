@@ -1,5 +1,5 @@
 import PanelButton from 'components/list/item/panel-button'
-import Modalizer from 'components/modalizer'
+import FullPageModalizer from 'components/fullpagemodalizer'
 import $ from 'jquery'
 import App from 'ampersand-app'
 import WorkflowFormView from '../form'
@@ -20,11 +20,10 @@ export default PanelButton.extend({
 })
 
 export const copyWorkflow = (model) => {
-
   App.actions.workflow.populate(model)
   const form = new WorkflowFormView({ model })
 
-  const modal = new Modalizer({
+  const modal = new FullPageModalizer({
     buttons: false,
     title: `Copying Workflow ${model.name}`,
     bodyView: form
