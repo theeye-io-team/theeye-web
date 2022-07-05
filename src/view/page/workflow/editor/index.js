@@ -4,6 +4,7 @@ import View from 'ampersand-view'
 import WorkflowBuilderView from './workflow-builder'
 import TasksReviewDialog from './task-review-dialog'
 import AdvancedOptionsForm from './form'
+import EditTask from './edit-task'
 
 import './styles.less'
 
@@ -180,7 +181,7 @@ export default View.extend({
     dialog.show()
     dialog.el.addEventListener('click [data-hook=edit-task]', (event) => {
       const task = event.detail.task
-      editTask(task, () => {
+      EditTask(task, () => {
         this.workflowBuilder.updateTaskNode(task)
       })
     })

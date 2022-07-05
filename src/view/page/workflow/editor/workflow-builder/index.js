@@ -10,13 +10,12 @@ import TaskSelectView from 'view/task-select'
 import bootbox from 'bootbox'
 import graphlib from 'graphlib'
 import FormButtons from 'view/buttons'
-import TaskForm from 'view/page/task/form'
 import CreateTaskWizard from 'view/page/task/creation-wizard'
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 import uuidv4 from 'uuid'
-import isMongoId from 'validator/lib/isMongoId'
 import * as TaskConstants from 'constants/task'
 import * as WorkflowConstants from 'constants/workflow'
+import EditTask from '../edit-task'
 
 import './styles.less'
 
@@ -71,7 +70,6 @@ export default View.extend({
     value: {
       cache: false,
       fn () {
-        this.purgeGraph()
         const { graph, tasks, start_task_id } = this.workflow.serialize()
         return { graph, tasks, start_task_id }
       }
@@ -157,7 +155,7 @@ export default View.extend({
             {
               label: 'Edit Task',
               action: () => {
-                editTask(task, () => {
+                EditTask(task, () => {
                   this.updateTaskNode(task)
                 })
               }
@@ -417,45 +415,11 @@ export default View.extend({
     modal.show()
   },
   reportToParent () {
-    if (this.parent) { this.parent.update(this) }
-  },
-  purgeGraph () {
-    if(this.graph.nodes().includes('START_NODE')) 
-      this.graph.removeNode('START_NODE')
+    if (this.parent) {
+      this.parent.update(this)
+    }
   }
 })
-
-const editTask = (task, done) => {
-  let mode
-  if (!task.script_id) {
-    mode = WorkflowConstants.MODE_IMPORT
-  }
-
-  const form = new TaskForm({ model: task, mode })
-  const modal = new Modalizer({
-    buttons: false,
-    title: `Edit task ${task.name} [${task.id}]`,
-    bodyView: form
-  })
-
-  modal.on('hidden', () => {
-    form.remove()
-    modal.remove()
-  })
-
-  form.on('submit', data => {
-    if (isMongoId(task.id)) {
-      App.actions.task.update(task.id, data)
-    } else {
-      task.set(data)
-    }
-
-    done(task)
-    modal.hide()
-  })
-
-  modal.show()
-}
 
 const TaskSelectionForm = FormView.extend({
   initialize (options) {
