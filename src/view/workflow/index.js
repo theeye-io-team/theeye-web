@@ -109,7 +109,8 @@ export default View.extend({
               var node = new Node(ele.data('value'))
               return colors[node.getFeatureType()] 
             },
-            'border-width': 3,
+            'font-size': 15,
+            'border-width': 2,
             'border-opacity': 1,
             'content': 'data(label)',
             'color': '#FFF',
@@ -139,7 +140,7 @@ export default View.extend({
             'text-rotation': 'autorotate',
             'text-margin-y': 10,
             'color': '#FFF',
-            'font-size': 15,
+            'font-size': 11,
             'text-outline-width': 1,
             'text-outline-color': '#111',
             'text-opacity': 0.8,
