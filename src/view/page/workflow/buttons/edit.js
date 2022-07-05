@@ -1,7 +1,7 @@
 import App from 'ampersand-app'
 import PanelButton from 'components/list/item/panel-button'
 import Modalizer from 'components/modalizer'
-import FullPageModal from 'components/full-page-modal'
+import FullPageModalizer from 'components/fullpagemodalizer'
 import WorkflowFormView from '../form'
 import $ from 'jquery'
 import { copyWorkflow } from './copy'
@@ -127,7 +127,7 @@ export const editWorkflow = (model) => {
   App.actions.workflow.populate(model)
   const editView = new WorkflowFormView({ model, builder_mode: 'edit' })
 
-  const modal = new FullPageModal({
+  const modal = new FullPageModalizer({
     buttons: false,
     title: `Editing Workflow ${model.name}`,
     bodyView: editView

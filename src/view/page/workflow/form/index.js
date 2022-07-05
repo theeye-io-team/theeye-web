@@ -25,84 +25,66 @@ import TasksReviewDialog from './task-review-dialog'
 import './styles.less'
 
 export default View.extend({
-  old_template: `
-    <div class="workflow-editor-container">
-      <div class="workflow-graphview-container" data-hook="workflow-graphview-container"></div>
-      <div class="gui-container">
-        <input type="text" class="name-input" placeholder="Untitled workflow" data-hook="name">
-        <div class="submit-buttons">
-          <button data-hook="cancel" class="btn btn-default">Cancel</button>
-          <button data-hook="submit" class="btn">Submit</button>
-          <button class="btn action-required" data-hook="warning-indicator" disabled>
-            <i class="fa fa-warning"></i>
-          </button>
-        </div>
-        <i class="advanced-options-toggler fa fa-cog" data-hook="advanced-options-toggler"></i>
-        <div class="task-adder-container" data-hook="task-adder-container">
-          <div class="task-adder" data-hook="task-adder"></div>
-          <i class="fa fa-plus-circle plus-icon task-adder-toggler" data-hook="task-adder-toggler"></i>
-        </div>
-        <div class="advanced-options-container" data-hook="advanced-options-container"></div>
-      </div>
-    </div>
-  `,
-  template: `
-    <div class="workflow-editor-container">
-      <div class="top-bar">
-        <div class="name-container container">
-          <input type="text" class="name-input" disabled placeholder="Untitled workflow" data-hook="name">
-          <i class="fa fa-pencil" data-hook="edit-name"></i>
-        </div>
-        <div class="view-controls-container container">
-          <div class="fit-btn btn" data-hook="fit">
-            <i class="fa fa-expand"></i> Fit
+  template () {
+    return `
+      <div data-component="workflow-editor-component" class="workflow-editor-container">
+        <div class="top-block">
+          <div class="controls-block name-block">
+            <input name="name" type="text" class="name-input" disabled placeholder="Untitled workflow" data-hook="name">
+            <i class="fa fa-pencil" data-hook="edit-name"></i>
           </div>
-          <div class="center-btn btn" data-hook="center">
-            <i class="fa fa-dot-circle-o"></i> Center
+          <div class="controls-block view-controls-block">
+            <div class="btn" data-hook="fit">
+              <i class="fa fa-expand"></i> Fit
+            </div>
+            <div class="btn" data-hook="center">
+              <i class="fa fa-dot-circle-o"></i> Center
+            </div>
+            <div class="btn" data-hook="redraw">
+              <i class="fa fa fa-repeat"></i> Redraw
+            </div>
           </div>
-          <div class="redraw-btn btn" data-hook="redraw">
-            <i class="fa fa fa-repeat"></i> Redraw
+          <div class="controls-block workflow-controls">
+            <div class="btn" data-hook="new">
+              <i class="fa fa-plus"></i> Add new task
+            </div>
+            <div class="btn" data-hook="existing">
+              <i class="fa fa-search-plus"></i> Add existing task
+            </div>
+            <div class="btn" data-hook="settings">
+              <i class="fa fa-cog"></i> Settings
+            </div>
+          </div>
+          <div class="btn close" data-hook="close">
+            <button type="button" data-hook="close" class="close" aria-label="Close">
+              <i class="fa fa-times"></i>
+            </button>
           </div>
         </div>
-        <div class="workflow-controls-container container">
-          <div class="new-btn btn" data-hook="new">
-            <i class="fa fa-plus"></i> Add new task
+        <div class="main-block" data-hook="workflow-graphview-container"> </div>
+        <div class="bottom-block">
+          <div class="controls-block">
+            <button class="btn action-required" data-hook="warning-indicator" disabled>
+              <i class="fa fa-warning"></i>
+            </button>
+            <span>There's nothing to worry about.</span>
           </div>
-          <div class="existing-btn btn" data-hook="existing">
-            <i class="fa fa-search-plus"></i> Add existing task
-          </div>
-          <div class="settings-btn btn" data-hook="settings">
-            <i class="fa fa-cog"></i> Settings
+          <div class="submit-buttons controls-block">
+            <button data-hook="cancel" class="btn btn-default">Cancel</button>
+            <button data-hook="submit" class="btn">Submit</button>
           </div>
         </div>
-        <div class="close" data-hook="close">
-          <i class="fa fa-times"></i>
-        </div>
-      </div>
-      <div class="graph-container" data-hook="workflow-graphview-container">
-      </div>
-      <div class="bottom-bar">
-        <div class="action required-container">
-          <button class="btn action-required" data-hook="warning-indicator" disabled>
-            <i class="fa fa-warning"></i>
-          </button>
-          <span>There's nothing to worry about.</span>
-        </div>
-        <div class="submit-buttons">
-          <button data-hook="close" class="btn btn-default">Cancel</button>
-          <button data-hook="submit" class="btn">Submit</button>
+        <div class="advanced-options-panel" data-hook="advanced-options-panel">
+          <div class="top-bar">
+            <div class="close" data-hook="settings">
+              <i class="fa fa-times"></i>
+            </div>
+          </div>
+          <div class="advanced-options-container" data-hook="advanced-options-container"></div>
         </div>
       </div>
-      <div class="advanced-options-panel" data-hook="advanced-options-panel">
-        <div class="top-bar">
-          <div class="close" data-hook="settings">
-            <i class="fa fa-times"></i>
-          </div>
-        </div>
-        <div class="advanced-options-container" data-hook="advanced-options-container"></div>
-      </div>
-    </div>
-  `,
+    `
+  },
   events: {
     'click [data-hook=edit-name]': 'onNameEdit',
     'click [data-hook=fit]': 'onClickFit',
@@ -113,7 +95,6 @@ export default View.extend({
     'click [data-hook=settings]': 'onAdvancedOptionsToggle',
     'click [data-hook=submit]': 'onClickSubmitButton',
     'click button[data-hook=warning-indicator]':'onClickWarningIndicator',
-    'click [data-hook=close]': 'onClickClose'
   },
   props: {
     advancedOptionsToggled: ['boolean', true, false],
@@ -261,12 +242,6 @@ export default View.extend({
     event.stopPropagation()
 
     this.valid ? this.beforeSubmit() : this.onClickWarningIndicator()
-  },
-  onClickClose (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.trigger('close')
   },
   beforeSubmit () {
     this.form.submit((data) => this.submit(data))
