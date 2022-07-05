@@ -96,7 +96,7 @@ export default View.extend({
                 'event':        "#00CCCC",
                 'script':       "#E50580",
                 'scraper':      "#FF00CC",
-                'approval':     "#2200CC",
+                'approval':     "#22C000",
                 'home':         "#FC7C00",
                 'dummy':        "#FF6482",
                 'notification': "#FFCC00",
