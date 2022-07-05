@@ -118,6 +118,7 @@ export default View.extend({
             'text-opacity': 0.8,
             'text-valign': 'top',
             'text-halign': 'center',
+            'text-margin-y': -5,
             'background-color': '#ee8e40',
             'background-image': function (ele) {
               var node = new Node(ele.data('value'))
