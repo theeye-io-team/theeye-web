@@ -136,7 +136,7 @@ export default View.extend({
               return ele.data('label') || ''
             },
             'text-rotation': 'autorotate',
-            'text-margin-y': -10,
+            'text-margin-y': 10,
             'color': '#FFF',
             'font-size': 15,
             'text-outline-width': 1,
