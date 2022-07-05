@@ -17,8 +17,7 @@ export default View.extend({
   props: {
     clearBtn: ['boolean', false, false],
     cy: ['object', false],
-    graph: 'object', // Graph (graphlib) instance
-    start_task_id: 'string',
+    graph: 'object' // Graph (graphlib) instance
   },
   initialize () {
     View.prototype.initialize.apply(this,arguments)
@@ -98,6 +97,7 @@ export default View.extend({
                 'script':       "#E50580",
                 'scraper':      "#FF00CC",
                 'approval':     "#2200CC",
+                'home':         "#FC7C00",
                 'dummy':        "#FF6482",
                 'notification': "#FFCC00",
                 'process':      "#00AAFF",
@@ -159,11 +159,14 @@ export default View.extend({
         this.trigger('tap:back', event)
       }
     })
+
     cy.on('position', (e) => this.recordPositions(e))
 
     this.cy = cy
     
-    if (!redraw) this.setPositions()
+    if (!redraw) {
+      this.setPositions()
+    }
     // TODO: Record default positions
 
     return this
@@ -198,7 +201,7 @@ export default View.extend({
 
     return elems
   },
-  recordPositions(event) {
+  recordPositions (event) {
     let data = this.graph.node(event.cyTarget.data('id'))
     data.position = event.cyTarget.position()
     this.graph.setNode(event.cyTarget.data('id'), data)
@@ -210,22 +213,20 @@ export default View.extend({
       }
     })
   },
-  setStartNode (start_task_id) {
-    if(this.graph.nodes().includes('START_NODE')) {
+  setStartNode (targetNode) {
+    if (this.graph.nodes().includes('START_NODE')) {
       this.graph.removeNode('START_NODE')
     }
-    // TODO: Create the assets for the starting node @facugon
-    this.graph.setNode('START_NODE', {
-      start_task_id,
-      id: 'START_NODE',
-      name: 'Execution',
-      type: 'dummy',
-      _type: 'dummy'
-    })
-    this.graph.setEdge('START_NODE', start_task_id, 'Begin')
-    this.start_task_id = start_task_id
-  }
 
+    this.graph.setNode('START_NODE', {
+      id: 'START_NODE',
+      name: 'Begin',
+      type: 'home',
+      _type: 'home'
+    })
+
+    this.graph.setEdge('START_NODE', targetNode)
+  }
 })
 
 function Node (value) {
@@ -234,7 +235,7 @@ function Node (value) {
   this.getFeatureType = function () {
     var type = (value.type || value._type).toLowerCase()
     var features = [
-      'event', 'script', 'scraper', 'approval', 'dummy', 'notification', 'process',
+      'event', 'script', 'scraper', 'approval', 'home', 'dummy', 'notification', 'process',
       'webhook', 'host', 'dstat', 'psaux'
     ]
 

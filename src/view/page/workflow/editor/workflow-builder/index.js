@@ -20,9 +20,7 @@ import EditTask from '../edit-task'
 import './styles.less'
 
 export default View.extend({
-  template: `
-      <div class="workflow-preview" data-hook="graph-preview"></div>
-  `,
+  template: `<div class="workflow-preview" data-hook="graph-preview"></div>`,
   initialize (options) {
     View.prototype.initialize.apply(this,arguments)
 
@@ -95,7 +93,7 @@ export default View.extend({
   renderWorkflowGraph () {
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
       .then(({ default: WorkflowView }) => {
-        this.workflowGraph = new WorkflowView({ graph: this.graph, start_task_id: this.start_task_id })
+        this.workflowGraph = new WorkflowView({ graph: this.graph })
         this.renderSubview(this.workflowGraph, this.queryByHook('graph-preview'))
 
         const updateVisualization = () => {
@@ -109,9 +107,6 @@ export default View.extend({
         this.listenTo(this.workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(this.workflowGraph, 'tap:edge', this.onTapEdge)
         this.listenTo(this.workflowGraph, 'tap:back', this.onTapBackground)
-        this.listenTo(this.workflowGraph, 'change:start_task_id', () => {
-          this.workflow.start_task_id = this.workflowGraph.start_task_id
-        })
 
         this.listenTo(this.workflow, 'change:start_task_id', () => {
           this.workflowGraph.setStartNode(this.workflow.start_task_id)
