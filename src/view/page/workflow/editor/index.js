@@ -15,31 +15,33 @@ export default View.extend({
         <div class="top-block">
           <div class="controls-block name-block">
             <input name="name" type="text" class="name-input" disabled placeholder="Untitled workflow" data-hook="name">
-            <i class="fa fa-pencil" data-hook="edit-name"></i>
+            <button class="btn" data-hook="edit-name">
+              <i class="fa fa-pencil"></i>
+            </button>
           </div>
           <div class="controls-block view-controls-block">
-            <div class="btn" data-hook="fit">
+            <button class="btn" data-hook="fit">
               <i class="fa fa-expand"></i> Fit
-            </div>
-            <div class="btn" data-hook="center">
+            </button>
+            <button class="btn" data-hook="center">
               <i class="fa fa-dot-circle-o"></i> Center
-            </div>
-            <div class="btn" data-hook="redraw">
+            </button>
+            <button class="btn" data-hook="redraw">
               <i class="fa fa fa-repeat"></i> Redraw
-            </div>
+            </button>
           </div>
           <div class="controls-block workflow-controls">
-            <div class="btn" data-hook="new">
+            <button class="btn" data-hook="create">
               <i class="fa fa-plus"></i> Add new task
-            </div>
-            <div class="btn" data-hook="existing">
+            </button>
+            <button class="btn" data-hook="existing">
               <i class="fa fa-search-plus"></i> Add existing task
-            </div>
-            <div class="btn" data-hook="settings">
+            </button>
+            <button class="btn" data-hook="settings">
               <i class="fa fa-cog"></i> Settings
-            </div>
+            </button>
           </div>
-          <div class="btn close" data-hook="close">
+          <div class="btn close">
             <button type="button" data-hook="close" class="close" aria-label="Close">
               <i class="fa fa-times"></i>
             </button>
@@ -67,15 +69,16 @@ export default View.extend({
     this.name = this.model.name 
   },
   events: {
-    'click [data-hook=edit-name]': 'onNameEdit',
-    'click [data-hook=fit]': 'onClickFit',
-    'click [data-hook=center]': 'onClickCenter',
-    'click [data-hook=redraw]': 'onClickRedraw',
-    'click [data-hook=new]': 'onClickNew',
-    'click [data-hook=existing]': 'onClickExisting',
-    'click [data-hook=settings]': 'onAdvancedOptionsToggle',
-    'click [data-hook=submit]': 'onClickSubmitButton',
-    'click button[data-hook=warning-indicator]':'onClickWarningIndicator',
+    'click input[data-hook=name]': 'onNameEdit',
+    'click button[data-hook=edit-name]': 'onNameEdit',
+    'click button[data-hook=fit]': 'onClickFit',
+    'click button[data-hook=center]': 'onClickCenter',
+    'click button[data-hook=redraw]': 'onClickRedraw',
+    'click button[data-hook=create]': 'onClickCreate',
+    'click button[data-hook=existing]': 'onClickExisting',
+    'click button[data-hook=settings]': 'onAdvancedOptionsToggle',
+    'click button[data-hook=submit]': 'onClickSubmitButton',
+    'click button[data-hook=warning-indicator]': 'onClickWarningIndicator',
   },
   props: {
     builder_mode: ['string', true],
@@ -149,6 +152,8 @@ export default View.extend({
     this.registerSubview(this.warningTasksDialog)
 
     this.renderSubview(this.form, this.queryByHook('advanced-options-panel'))
+
+    this.validate()
   },
   beforeSubmit () {
     this.form.beforeSubmit()
@@ -167,12 +172,13 @@ export default View.extend({
     }
     if (!this.workflowBuilder.valid) {
       this.valid = false
-      const missingConfig = this.model.getInvalidTasks().models[0]
-      this.warningMessage = missingConfig.label
+      const incompleteTask = this.model.getInvalidTasks().models[0]
+      const missingProp = incompleteTask.missingConfiguration[0].label
+      this.warningMessage = `Task <b>${incompleteTask.name}</b> missing definition: <b>${missingProp}</b>`
       return
     }
     this.valid = true
-    this.warningMessage = ''
+    this.warningMessage = 'The Workflow is ready <i class="fa fa-check"></i>'
     return
   },
   onClickSubmitButton (event) {
@@ -220,7 +226,7 @@ export default View.extend({
     event.stopPropagation()
     this.workflowBuilder.workflowGraph.updateCytoscape(true)
   },
-  onClickNew (event) {
+  onClickCreate (event) {
     this.workflowBuilder.onClickCreateTask(event)
   },
   onClickExisting (event) {
