@@ -96,13 +96,12 @@ export default View.extend({
         this.workflowGraph = new WorkflowView({ graph: this.graph })
         this.renderSubview(this.workflowGraph, this.queryByHook('graph-preview'))
 
-        const updateVisualization = () => {
-          this.workflowGraph.updateCytoscape(this.workflow.graph)
-          this.parent.valid
-        }
-
-        this.on('change:graph', updateVisualization)
-        this.workflow.tasks.on('change', updateVisualization)
+        this.on('change:graph', () => {
+          this.workflowGraph.updateCytoscape()
+        })
+        this.workflow.tasks.on('change', () => {
+          this.workflowGraph.updateCytoscape()
+        })
 
         this.listenTo(this.workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(this.workflowGraph, 'tap:edge', this.onTapEdge)

@@ -250,18 +250,19 @@ const Workflow = AppModel.extend({
   },
   serializeGraph () {
     const graph = graphlib.json.write(this.graph)
-    graph.nodes = graph.nodes.map(node => {
-      return {
-        v: node.v,
-        value: {
-          name: node.value.name,
-          id: node.value.id,
-          position: node.value.position,
-          _type: node.value._type,
-          type: node.value.type
+    graph.nodes = graph.nodes
+      .map(node => {
+        return {
+          v: node.v,
+          value: {
+            name: node.value.name,
+            id: node.value.id,
+            position: node.value.position,
+            _type: node.value._type,
+            type: node.value.type
+          }
         }
-      }
-    })
+      })
     return graph
   },
   serializeClone () {
