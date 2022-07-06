@@ -109,14 +109,14 @@ export default View.extend({
               var node = new Node(ele.data('value'))
               return colors[node.getFeatureType()] 
             },
-            'font-size': 15,
+            'font-size': 12,
             'border-width': 2,
             'border-opacity': 1,
             'content': 'data(label)',
             'color': '#FFF',
-            'text-outline-width': 2,
-            'text-outline-color': '#111',
-            'text-opacity': 0.8,
+            //'text-outline-width': 2,
+            //'text-outline-color': '#111',
+            //'text-opacity': 0.8,
             'text-valign': 'top',
             'text-halign': 'center',
             'text-margin-y': -5,
@@ -129,21 +129,23 @@ export default View.extend({
         }, {
           selector: 'edge',
           style: {
-            'width': 3,
+            'width': 2,
             'target-arrow-shape': 'triangle',
-            'line-color': '#9dbaea',
-            'target-arrow-color': '#9dbaea',
             'curve-style': 'bezier',
-            'content': function (ele) {
-              return ele.data('label') || ''
-            },
             'text-rotation': 'autorotate',
             'text-margin-y': 10,
             'color': '#FFF',
-            'font-size': 11,
-            'text-outline-width': 1,
-            'text-outline-color': '#111',
-            'text-opacity': 0.8,
+            'line-color': '#FFF',
+            'target-arrow-color': '#FFF',
+            //'line-color': '#9dbaea',
+            //'target-arrow-color': '#9dbaea',
+            'font-size': 10,
+            //'text-outline-width': 1,
+            //'text-outline-color': '#111',
+            //'text-opacity': 0.8,
+            'content': function (ele) {
+              return ele.data('label') || ''
+            },
           }
         }
       ]
