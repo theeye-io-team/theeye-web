@@ -51,7 +51,7 @@ export default View.extend({
             <button class="btn action-required" data-hook="warning-indicator" disabled>
               <i class="fa fa-warning"></i>
             </button>
-            <span>There's nothing to worry about.</span>
+            <span data-hook="warning-message"></span>
           </div>
           <div class="submit-buttons controls-block">
             <button data-hook="cancel" class="btn btn-default">Cancel</button>
@@ -81,7 +81,8 @@ export default View.extend({
     builder_mode: ['string', true],
     advancedOptionsToggled: ['boolean', true, false],
     name: 'string',
-    valid: ['boolean', true, true]
+    valid: ['boolean', true, true],
+    warningMessage: ['string', false, '']
   },
   bindings: {
     name: {
@@ -92,6 +93,10 @@ export default View.extend({
       type: 'booleanClass',
       no: 'hidden',
       hook: 'advanced-options-panel'
+    },
+    warningMessage: {
+      type: 'innerHTML',
+      hook: 'warning-message'
     },
     valid: [
       {
@@ -147,22 +152,43 @@ export default View.extend({
   },
   beforeSubmit () {
     this.form.beforeSubmit()
-    this.valid = Boolean(this.name && this.form.valid && this.workflowBuilder.valid)
+    this.validate()
+  },
+  validate () {
+    if (!this.name) {
+      this.valid = false
+      this.warningMessage = 'A name is required'
+      return
+    }
+    if (!this.form.valid) {
+      this.valid = false
+      this.warningMessage = 'Check advanced settings'
+      return
+    }
+    if (!this.workflowBuilder.valid) {
+      this.valid = false
+      const missingConfig = this.model.getInvalidTasks().models[0]
+      this.warningMessage = missingConfig.label
+      return
+    }
+    this.valid = true
+    this.warningMessage = ''
+    return
   },
   onClickSubmitButton (event) {
     event.preventDefault()
     event.stopPropagation()
 
     this.beforeSubmit()
-    if (!this.valid) {
-      this.showWarningTasksDialog()
-    } else {
+    if (this.valid) {
       const data = this.form.data
 
       const { graph, tasks, start_task_id } = this.workflowBuilder.value
       const name = this.name
       const wf = Object.assign({}, data, { graph, tasks, start_task_id, name })
       this.trigger('submit', wf)
+    //} else {
+    //  this.showWarningTasksDialog()
     }
   },
   onNameEdit (event) {

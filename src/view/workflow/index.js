@@ -235,13 +235,14 @@ function Node (value) {
   value || (value = {})
 
   this.getFeatureType = function () {
-    var type = (value.type || value._type).toLowerCase()
-    var features = [
-      'event', 'script', 'scraper', 'approval', 'home', 'dummy', 'notification', 'process',
+    const type = (value.type || value._type).toLowerCase()
+    const features = [
+      'event', 'script', 'scraper', 'approval',
+      'home', 'dummy', 'notification', 'process',
       'webhook', 'host', 'dstat', 's', 'psaux'
     ]
 
-    var found = features.find(function (f) {
+    const found = features.find(function (f) {
       var regexp = new RegExp(f, 'i')
       if (regexp.test(type)) return true
     })

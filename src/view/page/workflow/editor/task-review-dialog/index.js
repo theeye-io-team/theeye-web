@@ -60,42 +60,42 @@ export default Modalizer.extend({
   },
   template () {
     return `
-    <div data-component="invalid-tasks-dialog" class="modalizer">
-      <!-- MODALIZER CONTAINER -->
-      <div data-hook="modalizer-class" class="">
-        <div class="modal"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="modal"
-          aria-hidden="true"
-          style="display:none;">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" data-hook="close-${this.cid}" class="close" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-                <h4 data-hook="title" class="modal-title">
-                  Review the following tasks
-                </h4>
-              </div>
-              <div class="modal-body" data-hook="body">
-                <section class="actions" data-hook="actions-container">
-                  <button class="autocomplete" data-hook="autohost">
-                    <i class="fa fa-server"></i> Autocomplete Host
+      <div data-component="invalid-tasks-dialog" class="modalizer">
+        <!-- MODALIZER CONTAINER -->
+        <div data-hook="modalizer-class" class="">
+          <div class="modal"
+            tabindex="-1"
+            role="dialog"
+            aria-labelledby="modal"
+            aria-hidden="true"
+            style="display:none;">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" data-hook="close-${this.cid}" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
                   </button>
-                  <button class="autocomplete" data-hook="autorunner">
-                    <i class="fa fa-script"></i> Autocomplete Interpreter
-                  </button>
-                </section>
-                <ul class="tasks-list" data-hook="tasks-container"></ul>
-              </div>
-            </div><!-- /MODAL-CONTENT -->
-          </div><!-- /MODAL-DIALOG -->
-        </div><!-- /MODAL -->
-      </div><!-- /MODALIZER CONTAINER -->
-    </div>
-  `
+                  <h4 data-hook="title" class="modal-title">
+                    Review the following tasks
+                  </h4>
+                </div>
+                <div class="modal-body" data-hook="body">
+                  <section class="actions" data-hook="actions-container">
+                    <button class="autocomplete" data-hook="autohost">
+                      <i class="fa fa-server"></i> Autocomplete Host
+                    </button>
+                    <button class="autocomplete" data-hook="autorunner">
+                      <i class="fa fa-script"></i> Autocomplete Interpreter
+                    </button>
+                  </section>
+                  <ul class="tasks-list" data-hook="tasks-container"></ul>
+                </div>
+              </div><!-- /MODAL-CONTENT -->
+            </div><!-- /MODAL-DIALOG -->
+          </div><!-- /MODAL -->
+        </div><!-- /MODALIZER CONTAINER -->
+      </div>
+    `
   },
   events: Object.assign({}, Modalizer.prototype.events, {
     'click [data-hook=autohost]': function (event) {
