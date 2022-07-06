@@ -67,6 +67,10 @@ export default View.extend({
   initialize (options) {
     View.prototype.initialize.apply(this, arguments)
     this.name = this.model.name 
+
+    this.on('change:name', () => {
+      this.validate()
+    })
   },
   events: {
     'click input[data-hook=name]': 'onNameEdit',

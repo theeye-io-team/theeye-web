@@ -396,12 +396,10 @@ const EmptyIndicatorsView = View.extend({
 const pageTemplate = () => {
   let html = `
     <div data-component="dashboard-page" class="admin-container dashboard">
-      <div data-hook="tabs-container">
-      </div>
+      <div data-hook="tabs-container" class="tabs-container"></div>
 
       <!-- EMPTY VIEW -->
-      <div data-hook="empty-view">
-      </div>
+      <div data-hook="empty-view"></div>
       <!-- /EMPTY VIEW -->
 
       <!-- INDICATORS -->

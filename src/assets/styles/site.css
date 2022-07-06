@@ -114,25 +114,6 @@ body {
 .white {color:#fff}
 hr {border:none;border-bottom:1px dotted #fff}
 
-/*
-.actionsTasks label { text-align: center; }
-.actions, .actionsTasks {width:50%;display:inline-block;text-align:left;font-size:24px;vertical-align:top;padding-top:1px}
-.actions button{background:none;border:none;outline:none;padding:0}
-.actions .dropdown-menu {color:#38688a;left:inherit;right:0px;top:110%}
-.actions .dropdown-menu a {border-bottom:1px solid #eee}
-.actions .dropdown-menu li:last-child a {border-bottom:none}
-.actions .dropdown-menu span.glyphicon-triangle-top, .inlineDropdown span.glyphicon-triangle-top{color:#fff;position:absolute;top:-8px;right:5px}
-*/
-
-/*
-.page-container {
-}
-.page-container-contract .dashboard .events-panel .section-header {
-}
-.page-container-expand .dashboard .events-panel .section-header {
-}
-*/
-
 .status {width:2.5%;display:inline-block;text-align:left;font-size:24px;vertical-align:top;padding-top:4px}
 .glyphicon-refresh-animate {padding-top:0;margin-top:2px}
 .status.glyphicon-ok-sign, .status.glyphicon-minus-sign, .status.glyphicon-exclamation-sign, .status.glyphicon-info-sign, .status.glyphicon-console, .status.glyphicon-remove-sign, .status.editIcon {border-radius: 14px;border: 2px solid #fff;width: 28px;height: 28px;line-height: 16px;color:#4c9689;background:#fff}
@@ -923,22 +904,15 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 
 /*.dashboard { padding-left: 6%; padding-right: 6%; padding-top: 30px; }*/
 .dashboard .panel-group .monitorRow {background-color: #304269;}
-.dashboard .events-panel { padding-left: 0px; padding-right: 0px; }
-.dashboard .events-panel.indicators-panel,
-.dashboard .events-panel.resources-panel,
-.dashboard .events-panel.tasks-panel,
-.events-panel.notifications-panel {
+.dashboard .events-panel {
+  padding-left: 0px;
+  padding-right: 0px;
   top: 50px;
-  /*
-  padding-bottom: 30px;
-  float: left;
-  width: 100%;
-  */
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  overflow-y: scroll;
 }
-
-/*.dashboard .events-panel.resources-panel { border-.main-container:2px solid #23324C; }*/
-/*.dashboard .events-panel.tasks-panel { border-left:2px solid #23324C; }*/
-/*.dashboard .events-panel.tasks-panel { float: right; }*/
 
 .dashboard .events-panel h4.panel-title {
   padding-left: 50px;
