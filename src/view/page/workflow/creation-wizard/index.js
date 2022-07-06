@@ -49,7 +49,7 @@ const CreationWizard = View.extend({
         <div data-hook="buttons" class="row task-button" style="text-align:center;">
           <div class="col-xs-3">
             <button data-hook="create" class="btn btn-default">
-              <i class="icons icons-script fa fa-code"></i>
+              <i class="icons icons-script fa fa-sitemap"></i>
             </button>
             <h2>Create</h2>
           </div>
@@ -147,7 +147,7 @@ const ImportButton = FileInputView.extend({
     <div class="col-xs-3">
       <div class="upload-btn-wrapper">
         <button for="file-upload" data-hook="button-label" class="btn btn-default">
-          <i class="icons icons-approval fa fa-thumbs-o-up"></i>
+          <i class="icons icons-approval fa fa-file-o"></i>
         </button>
         <input style="display:none;" id="file-upload" type="file">
         <h2>Import<span data-hook="approval-help"></span></h2>

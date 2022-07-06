@@ -224,7 +224,7 @@ export default View.extend({
 
     this.graph.setNode('START_NODE', {
       id: 'START_NODE',
-      name: 'Begin',
+      name: 'Start',
       type: 'home',
       _type: 'home'
     })
