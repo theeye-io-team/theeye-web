@@ -311,11 +311,9 @@ const BaseJobView = View.extend({
           </div>
         </div>
         <div class="moreinfo-container" data-hook="log-container">
-          <div class="centered-button-container">
-            <button class="moreinfo btn btn-primary" data-hook="moreinfo-toggle">
-              <i class="fa fa-search"></i> More Info
-            </button>
-          </div>
+          <button class="moreinfo btn btn-primary" data-hook="moreinfo-toggle">
+            <i class="fa fa-search"></i> More Info
+          </button>
           <div class="text-block text-block-default" data-hook="moreinfo-container"></div>
         </div>
       </div>
