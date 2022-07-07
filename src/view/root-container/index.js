@@ -82,10 +82,6 @@ export default View.extend({
       new Navbar({ el: this.query('nav') })
     )
 
-    //this.registerSubview(
-    //  new Menu({ el: this.queryByHook('menu-container') })
-    //)
-
     this.renderSubview(
       new PopupView({}), this.queryByHook('popup')
     )
@@ -122,6 +118,17 @@ export default View.extend({
       this.menu,
       this.queryByHook('menu-container')
     )
+
+    this.menu.on('mouseenter', () => {
+      if (App.state.navbar.menuSwitch === false) {
+        this.menu_switch = true
+      }
+    })
+    this.menu.on('mouseleave', () => {
+      if (App.state.navbar.menuSwitch === false) {
+        this.menu_switch = false
+      }
+    })
 
     this.queryByHook('page-container').classList.remove('page-container-nomenu')
   },

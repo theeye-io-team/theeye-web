@@ -76,6 +76,12 @@ export default View.extend({
       return false
     },
     'input [data-hook=customers-input]': 'onSearchInput',
+    'mouseenter [data-hook=menu]': function () {
+      this.trigger('mouseenter')
+    },
+    'mouseleave [data-hook=menu]': function () {
+      this.trigger('mouseleave')
+    }
   },
   initialize () {
     this.listenToAndRun(App.state.navbar, 'change:menuSwitch', () => {
