@@ -16,7 +16,11 @@
 }
 
 .navbar-eyemenu .eyemenu-panel-innerlauncher i { color: #fff; padding-left:8px; }
-.navbar-eyemenu .navbar-brand {border:none;height:auto;padding:10px 15px;}
+.navbar-eyemenu .navbar-brand {
+  border: none;
+  height: auto;
+  padding: 0;
+}
 
 .navbar-eyemenu input::-webkit-input-placeholder {color: #23324C}
 .navbar-eyemenu input::-moz-placeholder {color: #23324C}
@@ -46,15 +50,33 @@
 .navbar-eyemenu .navbar-right {margin:0;position:relative}
 .navbar-eyemenu .eyemenu-search-panel-clear {position:absolute;right:0;top:0;font-size:24px;color:#ccc;padding:11px 15px;cursor:pointer;color:#005580;display:none}
 
+.navbar-eyemenu .navbar-buttons>div {
+  display: inline-block;
+}
+
 .license-header {
   position: absolute;
   right: 0px;
   padding: 0px;
 }
 
-.license-header p{
+.license-header p {
   max-width: unset;
   margin-bottom: 0px;
+}
+
+.navbar-eyemenu .navbar-brand {
+  display: inline-block;
+  width: 170px;
+}
+.navbar-eyemenu .navbar-brand>img {
+  display: inline-block;
+}
+.navbar-eyemenu .eyemenu-panel-launcher.burger-button {
+  float: left;
+  display: inline-block;
+  padding-left: 31px;
+  width: 80px;
 }
 
 /* responsiveness */
@@ -75,19 +97,34 @@
     color: #23324C;
   }
 	.navbar-eyemenu .eyemenu-search-icon.hidden-sm {padding:10px 15px 10px 15px;font-size:21px;float:right;top:0;right:0;color:#ccc;cursor:pointer;color:#23324C}
-	.navbar-eyemenu .eyemenu-panel-launcher {padding:10px 15px 10px 15px;font-size:21px;}
+  .navbar-eyemenu .eyemenu-panel-launcher {
+    padding:10px 15px 10px 15px;
+    font-size:21px;
+  }
 	.navbar-eyemenu .eyemenu-panel-launcher.eyemenu-panel-innerlauncher {margin:0;}
 
-  .navbar-eyemenu .navbar-brand {padding:9px 10px;}
-  .navbar-eyemenu .navbar-brand>img {height:32px;}
+  .navbar-eyemenu .navbar-brand {
+    padding-top: 9px;
+    padding-bottom: 9px;
+    padding-right: 50px;
+  }
+  .navbar-eyemenu .navbar-brand>img {
+    width: 100%;
+  }
 }
 
 @media (min-width: 768px) {
-  .navbar-eyemenu .navbar-right {right:20px;}
-	.navbar-eyemenu .eyemenu-panel-launcher {padding:19px;}
-  .navbar-eyemenu .eyemenu-panel-launcher.burger-button {padding-left:31px;}
+  .navbar-eyemenu .eyemenu-panel-launcher {
+    padding:19px;
+  }
 	.navbar-eyemenu .hidden-sm {display:none!important}
 	.navbar-eyemenu .eyemenu-search-panel-clear {right:15%;top:12px}
-  .navbar-eyemenu .navbar-brand>img {height:52px;}
-  .navbar-eyemenu .navbar-buttons {left: 10px;position: relative;}
+  .navbar-eyemenu .navbar-brand {
+    padding-top: 18px;
+    padding-bottom: 18px;
+    padding-right: 35px;
+  }
+  .navbar-eyemenu .navbar-buttons {
+    position: relative;
+  }
 }

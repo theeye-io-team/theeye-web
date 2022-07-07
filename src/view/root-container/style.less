@@ -3,7 +3,6 @@
   top: 0;
   bottom: 0;
   //padding-bottom: 50px;
-  padding-top: 74px;
   width:100%;
   position: absolute;
   margin-bottom: 30px;
@@ -15,6 +14,7 @@
   display:flex;
   z-index:999;
   transition:0.5s;
+  top: 73px;
 }
 
 .menu-container.menu-container-expanded { width: @expanded; }
@@ -27,7 +27,7 @@
   position: fixed;
   right: 0;
   bottom: 30px;
-  top: 74px;
+  top: 73px;
   //left: 0;
   overflow-y: hidden;
 }
@@ -46,5 +46,7 @@
 }
 
 @media (max-width:767px) {
-  .main-container { padding-top:55px; }
+  .page-container, .menu-container {
+    top: 50px;
+  }
 }

@@ -5,20 +5,18 @@ import './styles.less'
 
 export default View.extend({
   template: `
-    <div>
-      <span data-hook="search-button-mobile" class="hidden-sm eyemenu-search-icon">
+    <div data-component="searchbox" class="searchbox">
+      <span data-hook="search-button-mobile" class="hidden-sm search-icon">
         <i class="fa fa-search" aria-hidden="true"></i>
       </span>
-      <div data-hook="search-mobile-container" class="eyemenu-search-panel-mobile hidden-sm">
-        <!--<i class="fa fa-times eyemenu-search-panel-clear" aria-hidden="true"></i>-->
+      <div data-hook="search-mobile-container" class="search-panel-mobile hidden-sm">
         <i data-hook="endsearch-button-mobile" class="fa fa-arrow-left" aria-hidden="true"></i>
         <input autocomplete="off" id="sm-input" data-hook="sm-input" placeholder="Search">
         <i data-hook="endsearch-icon" class="fa fa-times-circle" aria-hidden="true"></i>
       </div>
-      <div class="eyemenu-search-panel-desktop hidden-xs">
-        <!--<i class="fa fa-times eyemenu-search-panel-clear" aria-hidden="true"></i>-->
+      <div class="search-panel-desktop hidden-xs">
         <i class="fa fa-search" aria-hidden="true"></i>
-        <input autocomplete="off" id="xs-input" data-hook="xs-input" placeholder="Search">
+        <input autocomplete="off" data-hook="xs-input" placeholder="Search">
         <i data-hook="endsearch-icon" class="fa fa-times-circle" aria-hidden="true"></i>
       </div>
     </div>
@@ -78,6 +76,7 @@ export default View.extend({
   },
   onClickSearchMobile (event) {
     this.showMobileInput = true
+    this.queryByHook('sm-input').focus()
   },
   onClickEndSearchMobile (event) {
     this.showMobileInput = false

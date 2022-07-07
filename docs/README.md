@@ -1,6 +1,6 @@
 # Introducción a TheEye
 
-[![theeye.io](images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
+[![theeye.io](images/logo-theeye-theOeye-logo.png)](https://theeye.io/en/index.html)
 
 ## ¿Qué es TheEye?
 
@@ -23,16 +23,25 @@ Debido a su versatilidad, se puede utilizar de diversas formas. Entre ellas
 
 ## Vocabulario del Dominio
 
-- [Client Connections](#client-Connections)
-- [Authorization System](#authorization-System)
-- [Host & Agent](#host-amp-agent)
-- [Monitor](#monitor)
-- [Task](#task)
-- [Workflow](#workflow)
-- [Indicator](#wndicator)
-- [File & Script](#file-amp-script)
-- [Webhook (Incoming / Outgoing)](#webhook-incoming-outgoing)
-- [Bot](#bot)
+- [Introducción a TheEye](#introducción-a-theeye)
+  - [¿Qué es TheEye?](#qué-es-theeye)
+  - [Vocabulario del Dominio](#vocabulario-del-dominio)
+    - [Client Connections](#client-connections)
+    - [Authorization System](#authorization-system)
+    - [Host & Agent](#host--agent)
+    - [Monitor](#monitor)
+    - [Task](#task)
+    - [Workflow](#workflow)
+    - [Indicator](#indicator)
+    - [File & Script](#file--script)
+    - [Webhook (Incoming / Outgoing)](#webhook-incoming--outgoing)
+    - [Bot](#bot)
+  - [Internal Micro-Services](#internal-micro-services)
+    - [Event Dispatcher](#event-dispatcher)
+    - [Job Dispatcher](#job-dispatcher)
+    - [Job Scheduler](#job-scheduler)
+    - [Notification System](#notification-system)
+    - [Authentication System](#authentication-system)
 
 ### Client Connections
 
