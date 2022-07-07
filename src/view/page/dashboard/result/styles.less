@@ -1,14 +1,11 @@
 [data-component=result-container] {
-  top: 74px;
+  overflow: unset;
+  top: 72px;
   bottom: 30px;
   background-color: #304269;
-  z-index: 1000;
   transition: 0.5s;
-  overflow-y: auto;
 
   [data-component=dashboard-page] {
-    margin-top: -50px;
-
     .no-result {
       text-align: center;
       padding: 10px;
@@ -17,6 +14,6 @@
     }
   }
   @media (max-width: 767px) {
-    top: 56px;
+    top: 50px;
   }
 }

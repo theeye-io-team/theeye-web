@@ -8,6 +8,8 @@ import validator from 'validator'
 import registerLang from 'language/register'
 import RecaptchaInputView from 'components/input-view/grecaptcha'
 
+import './styles.less'
+
 export default View.extend({
   autoRender: true,
   props: {

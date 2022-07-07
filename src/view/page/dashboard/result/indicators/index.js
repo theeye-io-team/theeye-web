@@ -5,7 +5,7 @@ import IndicatorRowView from '../../indicator'
 
 export default View.extend({
   template: `
-    <section class="col-md-12 indicators-panel events-panel">
+    <section>
       <h3 class="list-title">Indicators</h3>
       <div>
         <div class="panel-group" id="indicators-accordion" role="tablist" aria-multiselectable="true">

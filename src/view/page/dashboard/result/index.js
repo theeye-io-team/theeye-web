@@ -43,9 +43,6 @@ export default FullContainer.extend({
       }
     })
   },
-  render () {
-    FullContainer.prototype.render.apply(this,arguments)
-  },
   updateState (state) {
     if (!state) return
 
