@@ -547,7 +547,8 @@ h3.light { color: #EEE}
   width: 100%;
   height: 100%;
   color: white;
- }
+  overflow-x: hidden;
+}
 .admin-container h3 { margin: 0;padding: 6px;color: #fff;font-size: 16px;font-weight:400;text-align: center; }
 .admin-container h3.list-title { padding: 10px; background-color: #1a2538; }
 .admin-container .admin-panel { position:relative; }
@@ -912,6 +913,7 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
   bottom: 0;
   right: 0;
   overflow-y: scroll;
+  width: 100%;
 }
 
 .dashboard .events-panel h4.panel-title {
