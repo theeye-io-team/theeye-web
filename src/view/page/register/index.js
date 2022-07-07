@@ -76,24 +76,6 @@ export default View.extend({
               </div>
             </div>
           </div>
-          <div class="row">
-            <div class="col-xs-12 clients-title">
-              <h2>${registerLang.getText('clientsTitle1')}</br>${registerLang.getText('clientsTitle2')}</h2>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-xs-12 clients">
-              <img src="/images/register/logo_banco-comafi.png" alt="">
-              <img src="/images/register/logo_colppy.png" alt="">
-              <img src="/images/register/logo_ente.png" alt="">
-              <img src="/images/register/logo_ign.png" alt="">
-              <img src="/images/register/logo_invap.png" alt="">
-              <img src="/images/register/logo_Rappi.png" alt="">
-              <img src="/images/register/logo_frontec.png" alt="">
-              <img src="/images/register/logo_bgh.png" alt="">
-            </div>
-          </div>
-        </div>
         <div class="register-main" data-hook="result-container">
           <div class="result-container">
             <div class="row">

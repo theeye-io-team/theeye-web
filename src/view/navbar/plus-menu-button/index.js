@@ -14,7 +14,7 @@ import './style.less'
 export default View.extend({
   template: `
     <div class="plus-menu-button eyemenu-panel-launcher pull-left">
-      <i data-hook="plus-menu-toggle" class="fa fa-plus-circle plus-icon"></i>
+      <i data-hook="plus-menu-toggle" class="fa fa-plus-circle"></i>
       <div class="plus-menu-popup" data-hook="plus-menu-popup">
         <ul class="plus-menu-links">
           <li><a data-hook="create-task" href="#" class="plus-menu-icon fa-play">Task</a></li>

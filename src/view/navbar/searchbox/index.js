@@ -5,7 +5,7 @@ import './styles.less'
 
 export default View.extend({
   template: `
-    <div>
+    <div data-component="searchbox" class="searchbox">
       <span data-hook="search-button-mobile" class="hidden-sm eyemenu-search-icon">
         <i class="fa fa-search" aria-hidden="true"></i>
       </span>

@@ -6,29 +6,10 @@ import ProfileSettings from 'view/settings/user'
 
 import './style.less'
 
-const UserProfile = View.extend({
-  template: `
-    <div class="profile-data">
-      <div class="user-cred">
-        <span class="username" data-hook="username"></span>
-        <span class="small" data-hook="credential"></span>
-      </div>
-      <span data-hook="name" href="#"></span>
-      <span data-hook="email" href="#"></span>
-    </div>
-  `,
-  bindings: {
-    'model.credential': { hook: 'credential' },
-    'model.username': { hook: 'username' },
-    'model.name': { hook: 'name' },
-    'model.email': { hook: 'email' }
-  }
-})
-
 export default View.extend({
   template: `
     <div class="profile eyemenu-panel-launcher pull-left">
-      <i data-hook="user-menu-toggle" class="fa fa-user-circle-o user-icon"></i>
+      <i data-hook="user-menu-toggle" class="fa fa-user-circle-o"></i>
       <div class="user-menu-popup" data-hook="user-menu-popup">
         <div data-hook="profile-container"></div>
         <ul class="topmenu-links">
@@ -102,5 +83,24 @@ export default View.extend({
     this.on('change:open', () => {
       backdrop.visible = this.open
     })
+  }
+})
+
+const UserProfile = View.extend({
+  template: `
+    <div class="profile-data">
+      <div class="user-cred">
+        <span class="username" data-hook="username"></span>
+        <span class="small" data-hook="credential"></span>
+      </div>
+      <span data-hook="name" href="#"></span>
+      <span data-hook="email" href="#"></span>
+    </div>
+  `,
+  bindings: {
+    'model.credential': { hook: 'credential' },
+    'model.username': { hook: 'username' },
+    'model.name': { hook: 'name' },
+    'model.email': { hook: 'email' }
   }
 })
