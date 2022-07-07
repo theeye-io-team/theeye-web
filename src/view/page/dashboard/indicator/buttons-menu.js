@@ -1,5 +1,5 @@
 import View from 'ampersand-view'
-import { Dismiss, Integration, Edit } from 'view/page/indicator/buttons'
+import { Dismiss, Integration, Edit, Copy } from 'view/page/indicator/buttons'
 
 export default View.extend({
   template: `
@@ -24,6 +24,11 @@ export default View.extend({
 
     this.renderSubview(
       new Edit({ model: this.model }),
+      this.query('ul')
+    )
+
+    this.renderSubview(
+      new Copy({ model: this.model }),
       this.query('ul')
     )
 

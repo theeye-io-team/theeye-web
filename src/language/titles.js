@@ -10,6 +10,7 @@ export default {
     buttons: {
       integrations: 'API',
       edit: 'Edit',
+      copy: 'Copy'
     }
   },
   task: {
