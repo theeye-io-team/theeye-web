@@ -4,13 +4,9 @@ import $ from 'jquery'
 import FilteredCollection from 'ampersand-filtered-subcollection'
 import MonitorRowView from '../../monitor'
 
-const EmptyResultView = View.extend({
-  template: `<div class="no-result">No matches found</div>`
-})
-
 export default View.extend({
   template: `
-    <section class="col-md-12 resources-panel events-panel">
+    <section>
       <h3 class="list-title" data-hook="monitors-panel-header">
         Monitors
       </h3>
@@ -49,3 +45,8 @@ export default View.extend({
     $(rowtooltips).tooltip()
   }
 })
+
+const EmptyResultView = View.extend({
+  template: `<div class="no-result">No matches found</div>`
+})
+

@@ -1,4 +1,3 @@
-'use strict'
 
 import App from 'ampersand-app'
 import config from 'config'
@@ -497,7 +496,7 @@ const pageTemplate = () => {
         </div>
       </div>
       <!-- /NOTIFICATIONS -->
-      <div data-hook="result-view"></div>
+
     </div>
   `
   return html

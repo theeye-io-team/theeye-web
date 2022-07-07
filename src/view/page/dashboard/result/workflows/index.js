@@ -6,7 +6,7 @@ import TaskRowView from '../../task'
 
 export default View.extend({
   template: `
-    <section class="col-md-12 tasks-panel events-panel">
+    <section>
       <h3 class="list-title" data-hook="tasks-panel-header">
         Workflows
       </h3>
