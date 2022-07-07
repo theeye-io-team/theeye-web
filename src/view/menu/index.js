@@ -44,8 +44,7 @@ export default View.extend({
   },
   props: {
     customers_switch: ['boolean', false, false],
-    customerSearch: ['string', false, ''],
-    hovering: ['boolean', true, false]
+    customerSearch: ['string', false, '']
   },
   bindings: {
     customers_switch: [{
@@ -77,8 +76,12 @@ export default View.extend({
       return false
     },
     'input [data-hook=customers-input]': 'onSearchInput',
-    'mouseenter [data-hook=menu]': 'onHoverMenu',
-    'mouseleave [data-hook=menu]': 'onHoverMenu',
+    'mouseenter [data-hook=menu]': function () {
+      this.trigger('mouseenter')
+    },
+    'mouseleave [data-hook=menu]': function () {
+      this.trigger('mouseleave')
+    }
   },
   initialize () {
     this.listenToAndRun(App.state.navbar, 'change:menuSwitch', () => {
@@ -108,27 +111,6 @@ export default View.extend({
     this.listenToAndRun(App.state.session.customer, 'change:config', () => {
       this.setChartsLink()
     })
-  },
-  onHoverMenu(event) {
-    event.stopPropagation()
-    event.preventDefault()
-
-    // Both variables have to either be true or false, but not one true and one false
-    if (this.parent.menu_switch == this.hovering) {
-      switch (event.type) {
-        case 'mouseenter':
-          this.hovering = true
-          this.parent.menu_switch = true
-          break
-        case 'mouseleave':
-          this.hovering = false
-          this.parent.menu_switch = false
-          break
-        default:
-          console.log('error')
-          break
-      }
-    }
   },
   onSearchInput (event) {
     SideMenuActions.customerSearch(event.target.value)
