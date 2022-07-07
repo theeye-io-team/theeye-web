@@ -1,8 +1,9 @@
 import App from 'ampersand-app'
 import Modalizer from 'components/modalizer'
+import FullPageModalizer from 'components/fullpagemodalizer'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
-import FormView from '../form'
+import WorkflowEditorView from '../editor'
 import View from 'ampersand-view'
 import config from 'config'
 import FileInputView from 'components/input-view/file'
@@ -48,7 +49,7 @@ const CreationWizard = View.extend({
         <div data-hook="buttons" class="row task-button" style="text-align:center;">
           <div class="col-xs-3">
             <button data-hook="create" class="btn btn-default">
-              <i class="icons icons-script fa fa-code"></i>
+              <i class="icons icons-script fa fa-sitemap"></i>
             </button>
             <h2>Create</h2>
           </div>
@@ -103,12 +104,12 @@ const renderCreateForm = (workflow = null) => {
     workflow = new Workflow({ version: 2 })
   }
 
-  const form = new FormView({ model: workflow, builder_mode: 'import' })
+  const editorView = new WorkflowEditorView({ model: workflow, builder_mode: 'import' })
 
-  const modal = new Modalizer({
+  const modal = new FullPageModalizer({
     buttons: false,
     title: 'Create Workflow',
-    bodyView: form 
+    bodyView: editorView 
   })
 
   modal.renderSubview(
@@ -117,11 +118,11 @@ const renderCreateForm = (workflow = null) => {
   )
 
   modal.on('hidden', () => {
-    form.remove()
+    editorView.remove()
     modal.remove()
   })
 
-  form.on('submit', (data) => {
+  editorView.on('submit', (data) => {
     App.actions.workflow.create(data)
     modal.hide()
   })
@@ -146,7 +147,7 @@ const ImportButton = FileInputView.extend({
     <div class="col-xs-3">
       <div class="upload-btn-wrapper">
         <button for="file-upload" data-hook="button-label" class="btn btn-default">
-          <i class="icons icons-approval fa fa-thumbs-o-up"></i>
+          <i class="icons icons-approval fa fa-file-o"></i>
         </button>
         <input style="display:none;" id="file-upload" type="file">
         <h2>Import<span data-hook="approval-help"></span></h2>

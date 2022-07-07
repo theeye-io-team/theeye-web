@@ -1,0 +1,56 @@
+@height: 44px;
+
+[data-component=workflow-editor-component] {
+  button.btn {
+  }
+
+  input[data-hook=name] {
+    border: none;
+    border-bottom: 1px solid;
+    cursor: text;
+  }
+
+  .top-block {
+    padding: 5px;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    height: @height;
+  }
+
+  .main-block {
+    position: absolute;
+    top: @height;
+    bottom: @height;
+    left: 0;
+    right: 0;
+  }
+
+  .bottom-block {
+    padding: 5px;
+    position: absolute;
+    width: 100%;
+    height: @height;
+    bottom: 0;
+  }
+
+  .controls-block {
+    display: inline-block;
+  }
+
+  .submit-buttons.controls-block {
+    float: right;
+  }
+
+  .advanced-options-panel {
+    position: absolute;
+    width: 480px;
+    top: 45px;
+    bottom: 45px;
+    right: 0;
+    background-color: white;
+    overflow-y: scroll;
+    padding: 2px;
+  }
+
+}

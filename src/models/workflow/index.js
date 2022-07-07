@@ -9,6 +9,7 @@ import graphlib from 'graphlib'
 import * as JobConstants from 'constants/job'
 import { v4 as uuidv4 } from 'uuid'
 import qs from 'qs'
+import isMongoId from 'validator/lib/isMongoId'
 
 import config from 'config'
 const urlRoot = function () {
@@ -250,17 +251,19 @@ const Workflow = AppModel.extend({
   },
   serializeGraph () {
     const graph = graphlib.json.write(this.graph)
-    graph.nodes = graph.nodes.map(node => {
-      return {
-        v: node.v,
-        value: {
-          name: node.value.name,
-          id: node.value.id,
-          _type: node.value._type,
-          type: node.value.type
+    graph.nodes = graph.nodes
+      .map(node => {
+        return {
+          v: node.v,
+          value: {
+            name: node.value.name,
+            id: node.value.id,
+            position: node.value.position,
+            _type: node.value._type,
+            type: node.value.type
+          }
         }
-      }
-    })
+      })
     return graph
   },
   serializeClone () {
@@ -274,33 +277,33 @@ const Workflow = AppModel.extend({
     const graph = serial.graph
 
     for (let node of graph.nodes) {
-      const uuid = uuidv4()
+      if (isModelNode(node)) {
+        const uuid = uuidv4()
+        let model
+        if (/Event$/.test(node.value._type)) {
+          model = App.state.events.get(node.value.id)
+          model = model.serialize()
+          serial.events.push(model)
+        } else if (/Task$/.test(node.value._type)) {
+          model = App.state.tasks.get(node.value.id)
+          model = model.serialize()
+          serial.tasks.push(model)
 
-      let model
-      if (node && /Event$/.test(node.value._type)) {
-        model = App.state.events.get(node.value.id)
-        model = model.serialize()
-        serial.events.push(model)
-      } else if (node && /Task$/.test(node.value._type)) {
-        model = App.state.tasks.get(node.value.id)
-        model = model.serialize()
-        serial.tasks.push(model)
-
-        if (this.start_task_id === model.id) {
-          serial.start_task_id = uuid
+          if (this.start_task_id === model.id) {
+            serial.start_task_id = uuid
+          }
         }
+        node.v = uuid
+        node.value.id = uuid
+
+        for (let edge of graph.edges) {
+          if (edge.v === model.id) { edge.v = uuid }
+          if (edge.w === model.id) { edge.w = uuid }
+        }
+
+        // update only after mapping edges with nodes
+        model.id = uuid
       }
-
-      node.v = uuid
-      node.value.id = uuid
-
-      for (let edge of graph.edges) {
-        if (edge.v === model.id) { edge.v = uuid }
-        if (edge.w === model.id) { edge.w = uuid }
-      }
-
-      // update only after mapping edges with nodes
-      model.id = uuid
     }
 
     serial.graph = graph
@@ -393,5 +396,19 @@ const Workflows = AppCollection.extend({
   url: urlRoot,
   model: Workflow
 })
+
+const isModelNode = (node) => {
+  if (!node || !node.v || !node.value || !node.value.id || !node.value._type) {
+    return false
+  }
+  if (!isMongoId(node.value.id) || !isMongoId(node.v)) {
+    return false
+  }
+  if (
+    /^.*Event$/.test(node.value._type) === true ||
+    /^.*Task$/.test(node.value._type) === true
+  ) return true
+  return false
+}
 
 export { Workflows, Workflow }

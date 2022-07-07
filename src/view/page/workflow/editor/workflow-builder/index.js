@@ -1,5 +1,6 @@
 import App from 'ampersand-app'
 import View from 'ampersand-view'
+import Collection from 'ampersand-collection'
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import Help from 'language/help'
@@ -9,37 +10,17 @@ import TaskSelectView from 'view/task-select'
 import bootbox from 'bootbox'
 import graphlib from 'graphlib'
 import FormButtons from 'view/buttons'
-import TaskForm from 'view/page/task/form'
 import CreateTaskWizard from 'view/page/task/creation-wizard'
 import ExportDialog from 'view/page/task/buttons/export/dialog'
 import uuidv4 from 'uuid'
-import isMongoId from 'validator/lib/isMongoId'
-import TasksReviewDialog from './task-review-dialog'
 import * as TaskConstants from 'constants/task'
 import * as WorkflowConstants from 'constants/workflow'
+import EditTask from '../edit-task'
 
 import './styles.less'
 
-//const MODE_EDIT   = 'edit'
-//const MODE_IMPORT = 'import'
-
 export default View.extend({
-  template: `
-    <div data-component="workflow-builder" class="workflow-builder-component form-group">
-      <label class="col-sm-3 control-label" data-hook="label">Tasks</label>
-      <div class="col-sm-9">
-        <div style="padding-bottom: 15px;" data-hook="buttons">
-          <button data-hook="add-task" title="Existent Task" class="btn btn-default">
-            Add Existent Task <i class="fa fa-wrench"></i>
-          </button>
-          <button data-hook="create-task" title="Create Task" class="btn btn-default">
-            Add New Task <i class="fa fa-plus-circle"></i>
-          </button>
-        </div>
-      </div>
-      <div class="workflow-preview col-sm-12" data-hook="graph-preview"></div>
-    </div>
-  `,
+  template: `<div class="workflow-preview" data-hook="graph-preview"></div>`,
   initialize (options) {
     View.prototype.initialize.apply(this,arguments)
 
@@ -65,8 +46,6 @@ export default View.extend({
 
     // store:false avoid merging the state into the app.state
     this.workflow = new App.Models.Workflow.Workflow(recipe, { store: false })
-
-    this.on('change:valid change:value', this.reportToParent, this)
   },
   props: {
     mode: 'string',
@@ -84,8 +63,8 @@ export default View.extend({
     value: {
       cache: false,
       fn () {
-        const { graph, tasks } = this.workflow.serialize()
-        return { graph, tasks }
+        const { graph, tasks, start_task_id } = this.workflow.serialize()
+        return { graph, tasks, start_task_id }
       }
     },
     valid: {
@@ -107,10 +86,6 @@ export default View.extend({
       }
     },
   },
-  events: {
-    'click [data-hook=add-task]':'onClickAddTask',
-    'click [data-hook=create-task]':'onClickCreateTask'
-  },
   render () {
     this.renderWithTemplate(this)
     this.renderWorkflowGraph()
@@ -118,88 +93,120 @@ export default View.extend({
   renderWorkflowGraph () {
     import(/* webpackChunkName: "workflow-view" */ 'view/workflow')
       .then(({ default: WorkflowView }) => {
-        const workflowGraph = new WorkflowView({ graph: this.graph })
-        this.renderSubview(workflowGraph, this.queryByHook('graph-preview'))
+        this.workflowGraph = new WorkflowView({ graph: this.graph })
+        this.renderSubview(this.workflowGraph, this.queryByHook('graph-preview'))
 
-        const updateVisualization = () => {
-          workflowGraph.updateCytoscape(this.workflow.graph)
-        }
-
-        this.on('change:graph', updateVisualization)
-        this.workflow.tasks.on('change', updateVisualization)
-
-        this.listenTo(workflowGraph, 'tap:node', this.onTapNode)
-        this.listenTo(workflowGraph, 'tap:edge', this.onTapEdge)
-        this.listenTo(workflowGraph, 'tap:back', this.onTapBackground)
-        this.listenTo(workflowGraph, 'click:warning-indicator', this.onClickWarningIndicator)
-        this.listenToAndRun(this, 'change:valid', () => {
-          workflowGraph.warningToggle = !this.valid
+        this.on('change:graph', () => {
+          this.workflowGraph.updateCytoscape()
+        })
+        this.workflow.tasks.on('change', () => {
+          this.workflowGraph.updateCytoscape()
         })
 
+        this.listenTo(this.workflowGraph, 'tap:node', this.onTapNode)
+        this.listenTo(this.workflowGraph, 'tap:edge', this.onTapEdge)
+        this.listenTo(this.workflowGraph, 'tap:back', this.onTapBackground)
+
+        this.listenTo(this.workflow, 'change:start_task_id', () => {
+          this.workflowGraph.setStartNode(this.workflow.start_task_id)
+          this.workflowGraph.updateCytoscape()
+        })
+
+        this.listenToAndRun(this, 'change:valid', () => {
+          this.workflowGraph.warningToggle = !this.valid
+        })
+        
         // initial render
         setTimeout(() => {
-          workflowGraph.updateCytoscape()
-          workflowGraph.cy.center()
+          if (this.workflow.start_task_id) {
+            this.workflowGraph.setStartNode(this.workflow.start_task_id)
+          }
+          this.workflowGraph.updateCytoscape()
+          this.workflowGraph.cy.center()
         }, 500)
       })
   },
-  onClickWarningIndicator () {
-    const dialog = new TasksReviewDialog({
-      fade: false,
-      center: true,
-      workflow: this.workflow,
-      buttons: false,
-      title: `Tasks review`,
-    })
-
-    this.registerSubview(dialog)
-    dialog.show()
-    dialog.el.addEventListener('click [data-hook=edit-task]', (event) => {
-      const task = event.detail.task
-      editTask(task, () => {
-        this.updateTaskNode(task)
-      })
-    })
-  },
   onTapNode (event) {
     var node = event.cyTarget.data()
-    if (this.contextMenu) {
-      this.contextMenu.remove()
-    }
 
     if (/Task$/.test(node.value._type) === true) {
       const id = node.value.id
       const task = this.workflow.tasks.get(id)
-      if (this.connectingTask?.task !== undefined) {
-        const taskOrigin = this.connectingTask.task
+      if (this.connectingTask !== undefined) {
+        const taskOrigin = this.connectingTask
         this.connectingTask = undefined
         this.connectTasks(taskOrigin, task)
       } else {
-        const menu = new TaskContextualMenu({ model: task })
-        menu.render()
+        if (this.menuView) {
+          this.menuView.remove()
+        } else {
+          const menu_items = [
+            {
+              label: 'Edit Task',
+              action: () => {
+                EditTask(task, () => {
+                  this.updateTaskNode(task)
+                })
+              }
+            },
+            (() => {
+              if (task.type === 'script') {
+                return {
+                  label: 'Edit Script',
+                  action: () => {
+                    App.actions.file.edit(task.script_id || task.script)
+                  }
+                }
+              }
+            })(),
+            {
+              label: 'Set starting task',
+              action: () => {
+                this.workflow.start_task_id = task.id
+              }
+            },
+            {
+              label: 'Remove',
+              action: () => {
+                this.removeNodeDialog(node)
+              }
+            },
+            {
+              label: 'Export',
+              action: () => {
+                const dialog = new ExportDialog({ model: task })
+              }
+            },
+            {
+              label: 'Copy Task',
+              action: () => {
+                this.addTaskNode(task)
+              }
+            },
+            {
+              label: 'Connect to',
+              action: () => {
+                this.connectingTask = task
+              }
+            }
+          ]
+          
+          this.menuView = new ContextualMenu({ menu_items })
+          this.menuView.render()
+          
+          this.menuView.el.style.position = 'absolute'
+          this.menuView.el.style.top = (event.cyRenderedPosition.y + 15) + 'px'
+          this.menuView.el.style.left = (event.cyRenderedPosition.x + 15) + 'px'
         
-        menu.el.style.position = 'absolute'
-        menu.el.style.top = (event.cyRenderedPosition.y + 120) + 'px'
-        menu.el.style.left = event.cyRenderedPosition.x + 'px'
+          this.el.appendChild(this.menuView.el)
+          this.registerSubview(this.menuView)
 
-        this.el.appendChild(menu.el)
-        this.registerSubview(menu)
-        this.contextMenu = menu
-
-        menu.on('task:copy', (task) => {
-          this.addTaskNode(task)
-        })
-        menu.on('task:edit', (task) => {
-          editTask(task, () => {
-            this.updateTaskNode(task)
+          this.menuView.on('remove', () => {
+            setTimeout(()=>{
+              this.menuView = null
+            }, 500)
           })
-        })
-        menu.on('task:remove', () => {
-          this.removeNodeDialog(node)
-        })
-        menu.on('task:connect', (connect) => {
-          this.connectingTask = connect
-        })
+        }
       }
     } else {
       this.removeNodeDialog(node)
@@ -210,8 +217,47 @@ export default View.extend({
     this.removeEdgeDialog(edge)
   },
   onTapBackground (event) {
-    if (this.contextMenu) {
-      this.contextMenu.remove()
+    if (this.menuView) {
+      this.menuView.remove()
+    } else {
+      const menu_items = [
+        {
+          label: 'Fit graph',
+          action: () => { event.cy.fit() }
+        },
+        {
+          label: 'Center graph',
+          action: () => { event.cy.center() }
+        },
+        {
+          label: 'Rearrange nodes',
+          action: () => {
+            this.workflowGraph.updateCytoscape(/* redraw = */ true)
+          }
+        },
+        //{
+        //  label: 'Clear graph',
+        //  action: () => {
+        //    this.workflowGraph.trigger('click:clear')
+        //  }
+        //}
+      ]
+
+      this.menuView = new ContextualMenu({ menu_items })
+      this.menuView.render()
+      
+      this.menuView.el.style.position = 'absolute'
+      this.menuView.el.style.top = (event.cyRenderedPosition.y + 15) + 'px'
+      this.menuView.el.style.left = (event.cyRenderedPosition.x + 15) + 'px'
+    
+      this.el.appendChild(this.menuView.el)
+      this.registerSubview(this.menuView)
+
+      this.menuView.on('remove', () => {
+        setTimeout(()=>{
+          this.menuView = null
+        }, 500)
+      })
     }
   },
   removeNodeDialog (node) {
@@ -359,43 +405,8 @@ export default View.extend({
     })
 
     modal.show()
-  },
-  reportToParent () {
-    if (this.parent) { this.parent.update(this) }
   }
 })
-
-const editTask = (task, done) => {
-  let mode
-  if (!task.script_id) {
-    mode = WorkflowConstants.MODE_IMPORT
-  }
-
-  const form = new TaskForm({ model: task, mode })
-  const modal = new Modalizer({
-    buttons: false,
-    title: `Edit task ${task.name} [${task.id}]`,
-    bodyView: form
-  })
-
-  modal.on('hidden', () => {
-    form.remove()
-    modal.remove()
-  })
-
-  form.on('submit', data => {
-    if (isMongoId(task.id)) {
-      App.actions.task.update(task.id, data)
-    } else {
-      task.set(data)
-    }
-
-    done(task)
-    modal.hide()
-  })
-
-  modal.show()
-}
 
 const TaskSelectionForm = FormView.extend({
   initialize (options) {
@@ -428,92 +439,51 @@ const TaskSelectionForm = FormView.extend({
   }
 })
 
-const TaskContextualMenu = View.extend({
+const ContextualMenu = View.extend({
   template: `
     <div class="dropdown">
-      <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons">
-        <li><a data-hook="edit-task" href="#">Edit Task</a></li>
-        <li><a data-hook="edit-script" href="#">Edit Script</a></li>
-        <li><a data-hook="remove" href="#">Remove</a></li>
-        <li><a data-hook="export" href="#">Export</a></li>
-        <li><a data-hook="copy-task" href="#">Copy Task</a></li>
-        <li><a data-hook="connect" href="#">Connect to ...</a></li>
-      </ul>
+      <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons"></ul>
     </div>
   `,
-  bindings: {
-    'model.id': {
-      hook: 'edit-task',
-      type: 'attribute',
-      name: 'data-task-id'
-    },
-    editScript: {
-      type: 'toggle',
-      hook: 'edit-script'
-    }
-  },
-  derived: {
-    editScript: {
-      deps: ['model.type'],
-      fn () {
-        return Boolean(this.model.type === 'script')
-      }
-    }
-  },
   props: {
+    menu_items: 'array',
     workflow_events: 'collection'
   },
-  events: {
-    'click [data-hook=connect]': 'onClickConnectTasks',
-    'click [data-hook=edit-task]': 'onClickEditTask',
-    'click [data-hook=edit-script]': 'onClickEditScript',
-    'click [data-hook=export]': 'onClickExport',
-    'click [data-hook=remove]': 'onClickRemove',
-    'click [data-hook=copy-task]': 'onClickCopyTask',
-  },
-  onClickCopyTask (event) {
-    const taks = this.model
-    this.trigger('task:copy', this.model)
-    this.remove()
-  },
-  onClickEditTask (event) {
-    this.trigger('task:edit', this.model)
-    this.remove()
-  },
-  onClickEditScript (event) {
-    event.preventDefault()
-    event.stopPropagation()
-    App.actions.file.edit(this.model.script_id || this.model.script)
-    this.trigger('script:edit')
-    this.remove()
-  },
-  onClickRemove (event) {
-    event.preventDefault()
-    event.stopPropagation()
-    this.trigger('task:remove')
-    this.remove()
-  },
-  onClickExport (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    const dialog = new ExportDialog({ model: this.model })
-    dialog.show()
-    this.remove()
-  },
-  onClickConnectTasks (event) {
-    event.preventDefault()
-    event.stopPropagation()
-    this.trigger('task:connect', { task: this.model })
-    this.remove()
+  render () {
+    this.renderWithTemplate(this)
+    this.menu_items.forEach((item) => {
+      if (item)
+        this.renderSubview(
+          new ContextualMenuEntry({...item}),
+          this.queryByHook('menu-buttons')
+        )
+      }
+    )
   }
 })
 
-const pointerPosition = (e) => {
-  var posx = e.clientX
-  var posy = e.clientY
-  return { x: posx, y: posy }
-}
+const ContextualMenuEntry = View.extend({
+  props: {
+    label: 'string',
+    action: 'function'
+  },
+  template: `<li><a href="#"></a></li>`,
+  bindings: {
+    label: {
+      type: 'innerHTML',
+      selector: 'a'
+    }
+  },
+  events: {
+    'click a': 'onClick'
+  },
+  onClick (event) {
+    event.stopPropagation()
+    event.preventDefault()
+    this.action()
+    this.parent.remove()
+  }
+})
 
 const EventNameInputView = FormView.extend({
   props: {

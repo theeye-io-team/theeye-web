@@ -9,21 +9,12 @@ cydagre(cytoscape)
 export default View.extend({
   template: `
     <div class="workflow-component">
-      <div class="workflow-buttons">
-        <button class="btn btn-default" data-hook="fit">Fit</button>
-        <button class="btn btn-default" data-hook="center">Center</button>
-        <button class="btn btn-default" data-hook="redraw">Re-draw</button>
-        <button class="btn action-required" data-hook="warning-indicator" disabled>
-          <i class="fa fa-warning"></i>
-        </button>
-      </div>
       <div class="workflow-container">
-        <div class="workflow-graph-container" data-hook="graph-container"> </div>
+        <div class="workflow-graph-container" data-hook="graph-container"></div>
       </div>
     </div>
   `,
   props: {
-    warningToggle: ['boolean', false, false],
     clearBtn: ['boolean', false, false],
     cy: ['object', false],
     graph: 'object' // Graph (graphlib) instance
@@ -51,85 +42,20 @@ export default View.extend({
     }
     View.prototype.remove.apply(this, arguments)
   },
-  bindings: {
-    warningToggle: [
-      {
-        type: 'booleanClass',
-        name: 'btn-danger',
-        hook: 'warning-indicator'
-      }, {
-        type: 'booleanAttribute',
-        name: 'disabled',
-        hook: 'warning-indicator',
-        invert: true
-      }
-    ],
-    clearBtn: {
-      type: 'toggle',
-      hook: 'clear'
-    }
-  },
-  events: {
-    'click button[data-hook=fit]':'onClickFit',
-    'click button[data-hook=center]':'onClickCenter',
-    'click button[data-hook=redraw]':'onClickRedraw',
-    'click button[data-hook=clear]':'onClickClear',
-    'click button[data-hook=warning-indicator]':'onClickWarningIndicator',
-  },
-  onClickWarningIndicator (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.trigger('click:warning-indicator')
-
-    return false
-  },
-  onClickFit (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.cy.fit()
-
-    return false
-  },
-  onClickCenter (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.cy.center()
-
-    return false
-  },
-  onClickRedraw (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.updateCytoscape()
-
-    return false
-  },
-  onClickClear (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    this.trigger('click:clear')
-
-    return false
-  },
-  updateCytoscape () {
+  updateCytoscape (redraw = false) {
     if (this.cy) {
       this.cy.destroy()
       this.cy = null
     }
 
-    this.renderCytoscape()
+    this.renderCytoscape(redraw)
 
     this.cy.center()
     this.cy.fit()
 
     return this
   },
-  renderCytoscape () {
+  renderCytoscape (redraw) {
     if (!this.graph) {
       return this
     }
@@ -144,7 +70,7 @@ export default View.extend({
       // initial zoom
       zoom: 1.1,
       minZoom: 0.5,
-      maxZoom: 1.1,
+      maxZoom: 2.0,
       layout: {
         fit: false,
         name: 'dagre',
@@ -155,19 +81,45 @@ export default View.extend({
         {
           selector: 'node',
           style: {
-            'height': 50,
-            'width': 50,
+            'height': 40,
+            'width': 40,
             'background-fit': 'cover',
-            'border-color': '#FFF',
-            'border-width': 1,
+            'border-color': function (ele) {
+              /*
+                This garbage code is here to work around a visual bug in which
+                an ugly orange border would render around a node that should
+                render without a border. What this code does is to pick a pre
+                defined color to render a border that looks just like the image
+                background, and is therefore unnoticeable
+              */
+              const colors = {
+                'event':        "#00CCCC",
+                'script':       "#E50580",
+                'scraper':      "#FF00CC",
+                'approval':     "#22C000",
+                'home':         "#FC7C00",
+                'dummy':        "#FF6482",
+                'notification': "#FFCC00",
+                'process':      "#00AAFF",
+                'webhook':      "#1E7EFB",
+                'host':         "#FC7C00",
+                'dstat':        "#00305B",
+                'psaux':        "#000000" // This should never show up
+              }
+              var node = new Node(ele.data('value'))
+              return colors[node.getFeatureType()] 
+            },
+            'font-size': 12,
+            'border-width': 2,
             'border-opacity': 1,
             'content': 'data(label)',
             'color': '#FFF',
-            'text-outline-width': 2,
-            'text-outline-color': '#111',
-            'text-opacity': 0.8,
+            //'text-outline-width': 2,
+            //'text-outline-color': '#111',
+            //'text-opacity': 0.8,
             'text-valign': 'top',
             'text-halign': 'center',
+            'text-margin-y': -5,
             'background-color': '#ee8e40',
             'background-image': function (ele) {
               var node = new Node(ele.data('value'))
@@ -177,21 +129,23 @@ export default View.extend({
         }, {
           selector: 'edge',
           style: {
-            'width': 5,
+            'width': 2,
             'target-arrow-shape': 'triangle',
-            'line-color': '#9dbaea',
-            'target-arrow-color': '#9dbaea',
             'curve-style': 'bezier',
+            'text-rotation': 'autorotate',
+            'text-margin-y': 10,
+            'color': '#FFF',
+            'line-color': '#FFF',
+            'target-arrow-color': '#FFF',
+            //'line-color': '#9dbaea',
+            //'target-arrow-color': '#9dbaea',
+            'font-size': 10,
+            //'text-outline-width': 1,
+            //'text-outline-color': '#111',
+            //'text-opacity': 0.8,
             'content': function (ele) {
               return ele.data('label') || ''
             },
-            'text-rotation': 'autorotate',
-            'text-margin-y': -10,
-            'color': '#FFF',
-            'font-size': 15,
-            'text-outline-width': 1,
-            'text-outline-color': '#111',
-            'text-opacity': 0.8,
           }
         }
       ]
@@ -210,7 +164,14 @@ export default View.extend({
       }
     })
 
+    cy.on('position', (e) => this.recordPositions(e))
+
     this.cy = cy
+    
+    if (!redraw) {
+      this.setPositions()
+    }
+    // TODO: Record default positions
 
     return this
   },
@@ -243,6 +204,32 @@ export default View.extend({
     })
 
     return elems
+  },
+  recordPositions (event) {
+    let data = this.graph.node(event.cyTarget.data('id'))
+    data.position = event.cyTarget.position()
+    this.graph.setNode(event.cyTarget.data('id'), data)
+  },
+  setPositions () {
+    this.cy.nodes().forEach(node => {
+      if (node.data('value').position) {
+        node.position(node.data('value').position)
+      }
+    })
+  },
+  setStartNode (targetNode) {
+    if (this.graph.nodes().includes('START_NODE')) {
+      this.graph.removeNode('START_NODE')
+    }
+
+    this.graph.setNode('START_NODE', {
+      id: 'START_NODE',
+      name: 'Start',
+      type: 'home',
+      _type: 'home'
+    })
+
+    this.graph.setEdge('START_NODE', targetNode)
   }
 })
 
@@ -250,13 +237,14 @@ function Node (value) {
   value || (value = {})
 
   this.getFeatureType = function () {
-    var type = (value.type || value._type).toLowerCase()
-    var features = [
-      'event', 'script', 'scraper', 'approval', 'dummy', 'notification', 'process',
-      'webhook', 'host', 'dstat', 'psaux'
+    const type = (value.type || value._type).toLowerCase()
+    const features = [
+      'event', 'script', 'scraper', 'approval',
+      'home', 'dummy', 'notification', 'process',
+      'webhook', 'host', 'dstat', 's', 'psaux'
     ]
 
-    var found = features.find(function (f) {
+    const found = features.find(function (f) {
       var regexp = new RegExp(f, 'i')
       if (regexp.test(type)) return true
     })

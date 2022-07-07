@@ -3,34 +3,29 @@ import App from 'ampersand-app'
 import './styles.less'
 
 export default View.extend({
-  template: `
-    <div class="dashboard-tabs">
-    </div>`,
-  initialize () {
-    View.prototype.initialize.apply(this, arguments)
-  },
+  template: `<div data-component="dashboard-tabs" class="dashboard-tabs"> </div>`,
   render () {
     this.renderWithTemplate(this)
-    this.renderTabs()
-  },
-  renderTabs () {
-    this.renderCollection(App.state.tabs.tabs, TabButton, this.query('.dashboard-tabs'))
-    this.setTabsWidth()
-  },
-  setTabsWidth () {
-    const tabsViews = this.queryAll('.dashboard-tab')
-    for (const tabView of tabsViews) {
-      tabView.style.width = '25%'
-    }
+    const tabsViews = this.renderCollection(
+      App.state.tabs.tabs,
+      TabButton,
+      this.query('.dashboard-tabs')
+    )
+
+    //const tabsViews = this.queryAll('.dashboard-tab')
+    //for (const tabView of tabsViews) {
+    //  tabView.style.width = '25%'
+    //}
   }
 })
 
 const TabButton = View.extend({
   template: `
-    <div class="dashboard-tab">
+    <div class="dashboard-tab" style="width: 25%">
       <span data-hook="name"></span>
       <span data-hook="showBadge" class="has-notification"></span>
-    </div>`,
+    </div>
+  `,
   bindings: {
     'model.name': { hook: 'name' },
     'model.active': {

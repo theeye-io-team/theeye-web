@@ -396,12 +396,10 @@ const EmptyIndicatorsView = View.extend({
 const pageTemplate = () => {
   let html = `
     <div data-component="dashboard-page" class="admin-container dashboard">
-      <div data-hook="tabs-container">
-      </div>
+      <div data-hook="tabs-container" class="tabs-container"></div>
 
       <!-- EMPTY VIEW -->
-      <div data-hook="empty-view">
-      </div>
+      <div data-hook="empty-view"></div>
       <!-- /EMPTY VIEW -->
 
       <!-- INDICATORS -->
@@ -422,7 +420,7 @@ const pageTemplate = () => {
 
       <!-- MONITORS -->
       <div data-hook="monitors-tabview">
-        <div data-hook="monitors-panel" class="monitors admin-panel">
+        <div data-hook="monitors-panel">
           <section class="col-md-12 resources-panel events-panel">
             <div class="section-header">
               <div data-hook="monitors-panel-header" class="options-container">
@@ -441,17 +439,18 @@ const pageTemplate = () => {
               <h4>Relax, Nothing to worry about</h4>
               <span>Click to see more</span>
             </div>
+            <!-- /ALL UP AND RUNNING -->
 
             <!-- MONITORS LIST -->
             <div class="section-container">
               <div class="panel-group" id="monitor-accordion" role="tablist" aria-multiselectable="true">
-                <section data-hook="monitors-container">
-                  <!-- MONITOR CONTAINER -->
-                </section>
-                <section data-hook="monitors-fold-container">
-                </section>
+                <!-- MONITOR CONTAINER -->
+                <section data-hook="monitors-container"></section>
+                <section data-hook="monitors-fold-container"></section>
               </div>
             </div>
+            <!-- /MONITORS LIST -->
+
           </section>
         </div>
       </div>
@@ -466,12 +465,16 @@ const pageTemplate = () => {
                 <!-- <a data-hook="toggle-hidden-tasks" href="#" class="fa fa-chevron-right rotate section-toggle"></a> -->
               </div>
             </div>
+
+            <!-- TASKS LIST -->
             <div class="section-container">
               <div class="panel-group" id="task-accordion" role="tablist" aria-multiselectable="true">
-                <section data-hook="tasks-container"> </section>
-                <section data-hook="tasks-fold-container"> </section>
+                <section data-hook="tasks-container"></section>
+                <section data-hook="tasks-fold-container"></section>
               </div>
             </div>
+            <!-- /TASKS LIST -->
+
           </section>
         </div>
       </div>

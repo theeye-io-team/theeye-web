@@ -24,14 +24,14 @@ export default View.extend({
     menu_switch: [{
       hook: 'menu-container',
       type: 'booleanClass',
-      no: 'menu-container-expand',
-      yes: 'menu-container-contract'
+      no: 'menu-container-contracted',
+      yes: 'menu-container-expanded'
     },
     {
       hook: 'page-container',
       type: 'booleanClass',
-      no: 'page-container-contract',
-      yes: 'page-container-expand'
+      no: 'page-container-expanded',
+      yes: 'page-container-contracted'
     }]
   },
   template: function () {
@@ -42,11 +42,10 @@ export default View.extend({
         <nav></nav>
         <div data-hook="popup"></div>
         <div data-hook="menu-container" class="menu-container"></div>
-        <div data-hook="page-container" class="page-container">
+        <div data-hook="page-container" class="page-container"></div>
         <footer>
           <a target="_blank" href="https://theeye.io">theeye.io</a> | Copyright © ${year}
         </footer>
-        </div>
       </div>
     `
     return str

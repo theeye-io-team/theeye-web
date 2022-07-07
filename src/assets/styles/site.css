@@ -101,6 +101,7 @@ button {outline:none}
 body {
   margin: 0;
   padding: 0;
+  overflow: hidden;
   font-family: 'Roboto', sans-serif;
   font-size: 14px;
   background-color: #EFEFEF;
@@ -112,20 +113,6 @@ body {
 }
 .white {color:#fff}
 hr {border:none;border-bottom:1px dotted #fff}
-
-/*
-.actionsTasks label { text-align: center; }
-.actions, .actionsTasks {width:50%;display:inline-block;text-align:left;font-size:24px;vertical-align:top;padding-top:1px}
-.actions button{background:none;border:none;outline:none;padding:0}
-.actions .dropdown-menu {color:#38688a;left:inherit;right:0px;top:110%}
-.actions .dropdown-menu a {border-bottom:1px solid #eee}
-.actions .dropdown-menu li:last-child a {border-bottom:none}
-.actions .dropdown-menu span.glyphicon-triangle-top, .inlineDropdown span.glyphicon-triangle-top{color:#fff;position:absolute;top:-8px;right:5px}
-*/
-
-.page-container {
-  margin-left: 250px;
-}
 
 .status {width:2.5%;display:inline-block;text-align:left;font-size:24px;vertical-align:top;padding-top:4px}
 .glyphicon-refresh-animate {padding-top:0;margin-top:2px}
@@ -554,7 +541,13 @@ h3.light { color: #EEE}
 .list-group.tasks h3 { color:#304269; }
 .panel-group .panel+.panel { margin-top:0; }
 
-.admin-container { width:100%; color:white; }
+.admin-container {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  color: white;
+ }
 .admin-container h3 { margin: 0;padding: 6px;color: #fff;font-size: 16px;font-weight:400;text-align: center; }
 .admin-container h3.list-title { padding: 10px; background-color: #1a2538; }
 .admin-container .admin-panel { position:relative; }
@@ -816,21 +809,13 @@ input[type=checkbox].form-control {
   }
 }
 
-.main-container {
-  /*position:absolute; width: 100%;*/
-  padding-bottom: 50px;
-  padding-top: 74px;
-  width:100%;
-  position: absolute;
-  margin-bottom: 30px;
-}
-
 @media (max-width:767px) {
   .main-container { padding-top:55px; }
   .navbar-right li a {height:36px;padding:2px 5px;}
-  #workflow {top: 82px!important;}
+  /*#workflow {top: 82px!important;}*/
 }
 
+/*
 #workflow {
   width: 100%;
   height: 100%;
@@ -840,6 +825,7 @@ input[type=checkbox].form-control {
   top: 103px;
   z-index: 999;
 }
+*/
 
 .tag-grouper {
   border-radius: 10px;
@@ -918,21 +904,15 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
 
 /*.dashboard { padding-left: 6%; padding-right: 6%; padding-top: 30px; }*/
 .dashboard .panel-group .monitorRow {background-color: #304269;}
-.dashboard .events-panel { padding-left: 0px; padding-right: 0px; }
-
-.dashboard .events-panel.indicators-panel,
-.dashboard .events-panel.resources-panel,
-.dashboard .events-panel.tasks-panel,
-.events-panel.notifications-panel {
+.dashboard .events-panel {
+  padding-left: 0px;
+  padding-right: 0px;
   top: 50px;
-  padding-bottom: 30px;
-  float: left;
-  width: 100%;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  overflow-y: scroll;
 }
-
-/*.dashboard .events-panel.resources-panel { border-.main-container:2px solid #23324C; }*/
-/*.dashboard .events-panel.tasks-panel { border-left:2px solid #23324C; }*/
-/*.dashboard .events-panel.tasks-panel { float: right; }*/
 
 .dashboard .events-panel h4.panel-title {
   padding-left: 50px;
@@ -953,10 +933,15 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
   font-size: 14px;
 }
 
-.dashboard .events-panel .section-header { height: 25px; background-color: #1a2538; position: fixed; width: 100%; padding-right: 250px;z-index:1;}
+.dashboard .events-panel .section-header {
+  height: 25px;
+  background-color: #1a2538;
+  position: fixed;
+  width: 100%;
+  right: 0;
+  z-index:1;
+}
 .dashboard .events-panel .section-header .options-container {margin-right: 15px;}
-.page-container-contract .dashboard .events-panel .section-header {padding-right: 250px;}
-.page-container-expand .dashboard .events-panel .section-header {padding-right: 80px;}
 .dashboard .events-panel .section-container {margin-top: 25px;}
 .dashboard .events-panel h3 { height: 50px; line-height: 28px; }
 .dashboard .events-panel h3.collapse-title {font-weight: 500;font-size: 16px;text-align: unset;padding-left: 25px;padding-top: 15px;}
