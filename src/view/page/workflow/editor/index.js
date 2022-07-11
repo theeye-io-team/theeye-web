@@ -178,7 +178,7 @@ export default View.extend({
       this.valid = false
       const incompleteTask = this.model.getInvalidTasks().models[0]
       const missingProp = incompleteTask.missingConfiguration[0].label
-      this.warningMessage = `Task <b>${incompleteTask.name}</b> definition is missing: <b>${missingProp}</b>`
+      this.warningMessage = `Task <b>${incompleteTask.name}</b> to finish: <b>${missingProp}</b>`
       return
     }
     this.valid = true
