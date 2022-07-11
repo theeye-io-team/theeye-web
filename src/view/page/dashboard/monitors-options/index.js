@@ -6,7 +6,7 @@ export default View.extend({
   template: `
     <div data-component="group-options" class="dropdown panel-item icons">
       <button class="dropdown-toggle btn btn-primary"
-        title="group options"
+        title="group by"
         type="button"
         data-toggle="dropdown"
         aria-haspopup="true"

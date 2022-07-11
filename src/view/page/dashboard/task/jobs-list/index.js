@@ -38,7 +38,7 @@ export default View.extend({
     ]
   },
   props: {
-    headerTitle: ['string', false, 'Execution history'],
+    headerTitle: ['string', false, 'Execution History'],
     rowView: 'any',
     renderHeader: ['boolean', false, true ],
     jobs: 'collection',

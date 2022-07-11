@@ -3,10 +3,11 @@
  * @module En/Help
  */
 
-const acl = 'Give permissions to specific users (or user emails) that will be able to execute tasks, see monitors state and receive notifications.'
-const triggers = 'Select a task, monitor or webhook event that will trigger this task automagically.'
+// ACL = access control list.
+const acl = 'Gives permission to specific users to execute tasks, check monitors state and receive notifications.'
+const triggers = 'Select an event that will start the execution automatically.'
 const grace_time = 'If you select to Trigger with an event, you can choose a grace time to delay the execution of this action and have some time to cancel it via email if necessary.'
-const tags = 'Using Tags will help you to find your resources quickly'
+const tags = 'Tags will help you to find your resources quickly and organize them in groups'
 const description = 'A description'
 const timeout = 'How much time to wait the server\'s response before giving up. Default is 5 seconds.'
 const method = 'The HTTP request Method.'
@@ -19,6 +20,7 @@ const pattern = 'Useful for matching a string or regular expression againts the 
 const path = 'A path is where a file is located. It is composed of a dirname (directory) and a basename (filename + extension). Usage of absolute paths is recomended.'
 const permissions = 'Permissions in octal format. Default is 0755'
 const script_runas = 'Script interpreter and custom command. Use special "keyword" \'%script%\', it will be replaced during execution with the script path. In Unix this can be used with "sudo".'
+const table_format = 'Display the Execution History in Table Format'
 
 export default {
   looptime: 'This is the check interval in minutes. The shorter the interval you choose, the more CPU and resource will consume.',

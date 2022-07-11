@@ -30,7 +30,7 @@ export default DropableFormView.extend({
 
     this.fields = [
       new HostSelectionComponent({
-        value: 'Change the Bot of all tasks',
+        value: 'Change the bot for all tasks',
         onSelection: (hostId) => {
           if (options.builder_mode === WorkflowConstants.MODE_EDIT) {
             App.actions.workflow.changeHost(this.model, hostId)
