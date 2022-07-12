@@ -142,7 +142,7 @@ export default View.extend({
       if (this.connectingTask !== undefined) {
         const taskOrigin = this.connectingTask
         this.connectingTask = undefined
-        this.connectTasks(taskOrigin, task)
+        this.connectTaskNodes(taskOrigin.id, task.id)
       } else {
         const menu_items = [
           {
@@ -203,14 +203,15 @@ export default View.extend({
 
     const menu_items = [
       {
-        label: 'Remove Edge',
+        label: 'Remove Connection',
         action: () => {
           this.removeEdgeDialog(edge)
         }
       },
       {
-        label: 'Rename Edge',
+        label: 'Rename Connection',
         action: () => {
+          this.connectTaskNodes(edge.source, edge.target)
         }
       }
     ]
@@ -376,8 +377,8 @@ export default View.extend({
     // force change trigger to redraw
     this.trigger('change:graph')
   },
-  connectTasks (taskOrigin, taskTarget) {
-    const currentEventName = this.graph.edge(taskOrigin.id, taskTarget.id) 
+  connectTaskNodes (sid, tid) {
+    const currentEventName = this.graph.edge(sid, tid) 
     const bodyView = new EventNameInputView({ currentEventName })
 
     const modal = new Modalizer({
@@ -395,7 +396,7 @@ export default View.extend({
 
     bodyView.on('submit', (eventName) => {
       const w = this.graph
-      w.setEdge(taskOrigin.id, taskTarget.id, eventName)
+      w.setEdge(sid, tid, eventName)
       // force change trigger
       this.trigger('change:graph', this.graph)
 
