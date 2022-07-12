@@ -68,7 +68,7 @@ export default View.extend({
       }
     },
     valid: {
-      deps: ['workflow.tasks','workflow.graph'],
+      deps: ['workflow','workflow.tasks','workflow.graph'],
       cache: false,
       fn () {
         const graph = this.workflow.graph
@@ -80,6 +80,9 @@ export default View.extend({
 
         const tasks = this.workflow.getInvalidTasks()
         if (tasks.length > 0) {
+          return false
+        }
+        if (!this.workflow.start_task_id) {
           return false
         }
         return true
@@ -363,6 +366,10 @@ export default View.extend({
 
     const w = this.graph
     w.setNode(clone.id, clone)
+
+    if (this.workflow.tasks.length === 1) {
+      this.workflow.start_task_id = clone.id
+    }
 
     // force change trigger to redraw
     this.trigger('change:graph')

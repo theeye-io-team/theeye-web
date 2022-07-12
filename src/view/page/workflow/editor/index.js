@@ -139,6 +139,10 @@ export default View.extend({
     this.listenTo(this.workflowBuilder, 'change:valid change:value', () => {
       this.beforeSubmit()
     })
+    // builder internal state
+    this.listenTo(this.workflowBuilder.workflow, 'change:start_task_id', () => {
+      this.beforeSubmit()
+    })
 
     this.form = new AdvancedOptionsForm({
       model: this.model,
@@ -157,6 +161,16 @@ export default View.extend({
 
     this.renderSubview(this.form, this.queryByHook('advanced-options-panel'))
 
+    const input = this.queryByHook('name')
+    //input.addEventListener('focusout', () => {
+    //  this.name = input.value
+    //  input.disabled = true
+    //})
+    input.addEventListener('blur', () => {
+      this.name = input.value
+      input.disabled = true
+    })
+
     this.validate()
   },
   beforeSubmit () {
@@ -166,19 +180,33 @@ export default View.extend({
   validate () {
     if (!this.name) {
       this.valid = false
-      this.warningMessage = 'A name is required'
+      this.warningMessage = 'The workflow needs a name'
+      return
+    }
+    if (!this.workflowBuilder.valid) {
+      this.valid = false
+      const builder = this.workflowBuilder.value
+      if (builder.tasks.length === 0) {
+        // no tasks added
+        this.valid = false
+        this.warningMessage = 'Great! Add at least one Task'
+        return
+      } else if (this.workflowBuilder.workflow.getInvalidTasks().length > 0) {
+        // there are invalid tasks
+        const incompleteTask = this.workflowBuilder.workflow.getInvalidTasks().models[0]
+        const missingProp = incompleteTask.missingConfiguration[0].label
+        this.warningMessage = `Task <b>${incompleteTask.name}</b> to finish: <b>${missingProp}</b>`
+      } else if (!builder.start_task_id) {
+        // starting task not defined
+        this.warningMessage = 'The workflow needs a starting task'
+      } else {
+        this.warningMessage = `Ups...something is wrong`
+      }
       return
     }
     if (!this.form.valid) {
       this.valid = false
       this.warningMessage = 'Check advanced settings'
-      return
-    }
-    if (!this.workflowBuilder.valid) {
-      this.valid = false
-      const incompleteTask = this.model.getInvalidTasks().models[0]
-      const missingProp = incompleteTask.missingConfiguration[0].label
-      this.warningMessage = `Task <b>${incompleteTask.name}</b> to finish: <b>${missingProp}</b>`
       return
     }
     this.valid = true
@@ -209,11 +237,6 @@ export default View.extend({
     input.disabled = false
     input.focus()
     input.select()
-
-    input.addEventListener('focusout', () => {
-      this.name = input.value
-      input.disabled = true
-    })
   },
   onClickFit (event) {
     event.preventDefault()
