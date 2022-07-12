@@ -1032,3 +1032,7 @@ form.admin-form .form-group div.buttons { padding-bottom: 5px; }
   bottom: 45px!important;
 }
 
+
+.dropdown-menu>li>a:hover {
+  background-color: #dedede;
+}

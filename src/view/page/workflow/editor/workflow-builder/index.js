@@ -20,7 +20,7 @@ import EditTask from '../edit-task'
 import './styles.less'
 
 export default View.extend({
-  template: `<div class="workflow-preview" data-hook="graph-preview"></div>`,
+  template: `<div data-component="workflow-builder" class="workflow-builder" data-hook="graph-preview"></div>`,
   initialize (options) {
     View.prototype.initialize.apply(this,arguments)
 
@@ -105,7 +105,12 @@ export default View.extend({
 
         this.listenTo(this.workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(this.workflowGraph, 'tap:edge', this.onTapEdge)
-        this.listenTo(this.workflowGraph, 'tap:back', this.onTapBackground)
+        //this.listenTo(this.workflowGraph, 'tap:back', this.onTapBackground)
+        this.listenTo(this.workflowGraph, 'tap:back', () => {
+          if (this.menuView) {
+            this.menuView.remove()
+          }
+        })
 
         this.listenTo(this.workflow, 'change:start_task_id', () => {
           this.workflowGraph.setStartNode(this.workflow.start_task_id)
@@ -126,8 +131,8 @@ export default View.extend({
         }, 500)
       })
   },
-  onTapNode (event) {
-    var node = event.cyTarget.data()
+  onTapNode (cyevent) {
+    var node = cyevent.cyTarget.data()
 
     if (/Task$/.test(node.value._type) === true) {
       const id = node.value.id
@@ -137,128 +142,118 @@ export default View.extend({
         this.connectingTask = undefined
         this.connectTasks(taskOrigin, task)
       } else {
-        if (this.menuView) {
-          this.menuView.remove()
-        } else {
-          const menu_items = [
-            {
-              label: 'Edit Task',
-              action: () => {
-                EditTask(task, () => {
-                  this.updateTaskNode(task)
-                })
-              }
-            },
-            (() => {
-              if (task.type === 'script') {
-                return {
-                  label: 'Edit Script',
-                  action: () => {
-                    App.actions.file.edit(task.script_id || task.script)
-                  }
+        const menu_items = [
+          {
+            label: 'Edit Task',
+            action: () => {
+              EditTask(task, () => {
+                this.updateTaskNode(task)
+              })
+            }
+          },
+          (() => {
+            if (task.type === 'script') {
+              return {
+                label: 'Edit Script',
+                action: () => {
+                  App.actions.file.edit(task.script_id || task.script)
                 }
               }
-            })(),
-            {
-              label: 'Set starting task',
-              action: () => {
-                this.workflow.start_task_id = task.id
-              }
-            },
-            {
-              label: 'Remove',
-              action: () => {
-                this.removeNodeDialog(node)
-              }
-            },
-            {
-              label: 'Export',
-              action: () => {
-                const dialog = new ExportDialog({ model: task })
-              }
-            },
-            {
-              label: 'Copy Task',
-              action: () => {
-                this.addTaskNode(task)
-              }
-            },
-            {
-              label: 'Connect to',
-              action: () => {
-                this.connectingTask = task
-              }
             }
-          ]
-          
-          this.menuView = new ContextualMenu({ menu_items })
-          this.menuView.render()
-          
-          this.menuView.el.style.position = 'absolute'
-          this.menuView.el.style.top = (event.cyRenderedPosition.y + 15) + 'px'
-          this.menuView.el.style.left = (event.cyRenderedPosition.x + 15) + 'px'
-        
-          this.el.appendChild(this.menuView.el)
-          this.registerSubview(this.menuView)
+          })(),
+          {
+            label: 'Set starting task',
+            action: () => {
+              this.workflow.start_task_id = task.id
+            }
+          },
+          {
+            label: 'Remove',
+            action: () => {
+              this.removeNodeDialog(node)
+            }
+          },
+          {
+            label: 'Export',
+            action: () => {
+              const dialog = new ExportDialog({ model: task })
+              dialog.show()
+            }
+          },
+          {
+            label: 'Copy Task',
+            action: () => {
+              this.addTaskNode(task)
+            }
+          },
+          {
+            label: 'Connect to',
+            action: () => {
+              this.connectingTask = task
+            }
+          }
+        ]
 
-          this.menuView.on('remove', () => {
-            setTimeout(()=>{
-              this.menuView = null
-            }, 500)
-          })
+        this.renderContextualMenu(cyevent, menu_items)
+      }
+    }
+  },
+  onTapEdge (cyevent) {
+    const edge = cyevent.cyTarget.data()
+
+    const menu_items = [
+      {
+        label: 'Remove Edge',
+        action: () => {
+          this.removeEdgeDialog(edge)
+        }
+      },
+      {
+        label: 'Rename Edge',
+        action: () => {
         }
       }
-    } else {
-      this.removeNodeDialog(node)
-    }
+    ]
+
+    this.renderContextualMenu(cyevent, menu_items)
   },
-  onTapEdge (event) {
-    var edge = event.cyTarget.data()
-    this.removeEdgeDialog(edge)
+  onTapBackground (cyevent) {
+    const menu_items = [
+      {
+        label: 'Fit graph',
+        action: () => { cyevent.cy.fit() }
+      },
+      {
+        label: 'Center graph',
+        action: () => { cyevent.cy.center() }
+      },
+      {
+        label: 'Rearrange nodes',
+        action: () => {
+          this.workflowGraph.updateCytoscape(/* redraw = */ true)
+        }
+      }
+    ]
+
+    this.renderContextualMenu(cyevent, menu_items)
   },
-  onTapBackground (event) {
+  renderContextualMenu (cyevent, menu_items) {
+    // remove 
     if (this.menuView) {
       this.menuView.remove()
-    } else {
-      const menu_items = [
-        {
-          label: 'Fit graph',
-          action: () => { event.cy.fit() }
-        },
-        {
-          label: 'Center graph',
-          action: () => { event.cy.center() }
-        },
-        {
-          label: 'Rearrange nodes',
-          action: () => {
-            this.workflowGraph.updateCytoscape(/* redraw = */ true)
-          }
-        },
-        //{
-        //  label: 'Clear graph',
-        //  action: () => {
-        //    this.workflowGraph.trigger('click:clear')
-        //  }
-        //}
-      ]
-
-      this.menuView = new ContextualMenu({ menu_items })
-      this.menuView.render()
-      
-      this.menuView.el.style.position = 'absolute'
-      this.menuView.el.style.top = (event.cyRenderedPosition.y + 15) + 'px'
-      this.menuView.el.style.left = (event.cyRenderedPosition.x + 15) + 'px'
-    
-      this.el.appendChild(this.menuView.el)
-      this.registerSubview(this.menuView)
-
-      this.menuView.on('remove', () => {
-        setTimeout(()=>{
-          this.menuView = null
-        }, 500)
-      })
     }
+
+    this.menuView = new ContextualMenu({
+      menu_items,
+      topOffset: (cyevent.cyRenderedPosition.y + 15),
+      leftOffset: (cyevent.cyRenderedPosition.x + 15)
+    })
+
+    this.renderSubview(this.menuView, this.el)
+
+    this.menuView.on('remove', () => {
+      this.menuView = null
+    })
   },
   removeNodeDialog (node) {
     bootbox.confirm({
@@ -442,23 +437,40 @@ const TaskSelectionForm = FormView.extend({
 const ContextualMenu = View.extend({
   template: `
     <div class="dropdown">
-      <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons"></ul>
+      <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons">
+        <li class="dropdown-menu-header" data-hook="hide" style="">
+          <span><i class="fa fa-list"></i></span>
+          <button class="btn"><i class="fa fa-times"></i></button>
+        </li>
+      </ul>
     </div>
   `,
   props: {
     menu_items: 'array',
-    workflow_events: 'collection'
+    workflow_events: 'collection',
+    topOffset: 'number',
+    leftOffset: 'number'
   },
   render () {
     this.renderWithTemplate(this)
+
+    this.el.style.position = 'absolute'
+    this.el.style.top = String(this.topOffset) + 'px'
+    this.el.style.left = String(this.leftOffset) + 'px'
+
     this.menu_items.forEach((item) => {
-      if (item)
+      if (item) {
         this.renderSubview(
           new ContextualMenuEntry({...item}),
           this.queryByHook('menu-buttons')
         )
       }
-    )
+    })
+  },
+  events: {
+    'click [data-hook=hide]': function () {
+      this.remove()
+    }
   }
 })
 
