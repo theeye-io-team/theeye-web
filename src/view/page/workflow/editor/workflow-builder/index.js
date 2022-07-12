@@ -138,8 +138,7 @@ export default View.extend({
     var node = cyevent.cyTarget.data()
 
     if (/Task$/.test(node.value._type) === true) {
-      const id = node.value.id
-      const task = this.workflow.tasks.get(id)
+      const task = this.workflow.tasks.get(node.value.id)
       if (this.connectingTask !== undefined) {
         const taskOrigin = this.connectingTask
         this.connectingTask = undefined
@@ -149,9 +148,7 @@ export default View.extend({
           {
             label: 'Edit Task',
             action: () => {
-              EditTask(task, () => {
-                this.updateTaskNode(task)
-              })
+              EditTask(task, () => this.updateTaskNode(task))
             }
           },
           (() => {
@@ -338,9 +335,8 @@ export default View.extend({
     return false
   },
   removeNode (node) {
-    const id = node.id
     const graph = this.graph
-    const nodes = [ id ]
+    const nodes = [ node.id ]
 
     const type = (node._type || node.value._type)
 
