@@ -1,10 +1,33 @@
-.event-message {
-  section.code-container {
-    padding: 20px;
-    border: 1px solid #e5e5e5
-  }
-}
+[data-component=workflow-builder].workflow-builder {
 
-.workflow-preview {
   height: 100%;
+
+  .event-message {
+    section.code-container {
+      padding: 20px;
+      border: 1px solid #e5e5e5
+    }
+  }
+
+  ul.dropdown-menu {
+    background-color: #23324C;
+    li {
+      background-color: #eee;
+    }
+    li.dropdown-menu-header {
+      border-bottom: 1px solid #000;
+      padding: 0px 10px 6px 10px;
+      background-color: transparent;
+
+      span {
+        color: #fff;
+      }
+      button {
+        float: right;
+        padding: 0px;
+        background-color: transparent;
+        color: #efefef;
+      }
+    }
+  }
 }
