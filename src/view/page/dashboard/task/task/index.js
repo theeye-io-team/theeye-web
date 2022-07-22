@@ -12,14 +12,12 @@ export default function (options) {
     case TaskConstants.TYPE_APPROVAL:
       return new CollapsibleRow.Approval(options)
       break;
-    case TaskConstants.TYPE_DUMMY:
-      return new CollapsibleRow.Dummy(options)
-      break;
     case TaskConstants.TYPE_NOTIFICATION:
       return new CollapsibleRow.Notification(options)
       break;
+    case TaskConstants.TYPE_DUMMY:
     default:
-      throw new Error(`Task Type ${options.model.type} hasn't got a view`)
+      return new CollapsibleRow.Dummy(options)
       break;
   }
 }

@@ -412,8 +412,7 @@ const TaskFactory = function (attrs, options = {}) {
         model = new Notification(attrs, options)
         break;
       default:
-        let err = new Error(`unrecognized type ${type}`)
-        throw err
+        model = new Task(attrs, options)
         break;
     }
     return model
