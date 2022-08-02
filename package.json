@@ -86,6 +86,7 @@
     "moment": "~2.29.3",
     "moment-timezone": "^0.5.14",
     "nprogress": "0.2.0",
+    "plotly.js-dist": "~2.13.3",
     "postcss-loader": "~3.0.0",
     "qs": "^6.5.2",
     "select2": "4.0.7",
