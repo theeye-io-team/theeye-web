@@ -226,7 +226,7 @@ const ProgressIndicatorView = ProgressBar.extend({
 const ChartIndicatorView = View.extend({
   template: `
     <div class="panel-item value" data-hook="value">
-      <button style="width:120px;" class="btn btn-primary" data-hook="render-plot">Render Plot</button>
+      <button style="width:200px;" class="btn btn-primary" data-hook="render-plot">Load a plot preview</button>
     </div>
   `,
   events: {
