@@ -6,6 +6,7 @@ import ButtonsMenu from './buttons-menu'
 import * as IndicatorConstants from 'constants/indicator'
 import DOMPurify from 'dompurify'
 import FileView from 'components/file-view'
+import ViewLoader from 'components/loader/view'
 
 import './styles.less'
 
@@ -224,21 +225,33 @@ const ProgressIndicatorView = ProgressBar.extend({
 
 const ChartIndicatorView = View.extend({
   template: `
-    <div class="panel-item value" data-hook="value"></div>
+    <div class="panel-item value" data-hook="value">
+      <button style="width:200px;" class="btn btn-primary" data-hook="render-plot">Load preview</button>
+    </div>
   `,
-  derived: {
-    json: {
-      deps: ['model.value'],
-      fn () {
-        return JSON.stringify(this.model.value)
-      }
-    }
+  events: {
+    'click button[data-hook=render-plot]': 'renderPlot'
   },
-  bindings: {
-    'json': {
-      type: 'innerHTML',
-      hook: 'value'
-    }
+  renderPlot (event) {
+    const button = this.query('button')
+    button.innerHTML = '<span><i class="fa fa-spin fa-cog"></i></span>'
+
+    const loader = new ViewLoader(this)
+    loader.start()
+    import(/* webpackChunkName: "plotly-js.dist" */ 'plotly.js-dist')
+      .then(({ default: Plotly }) => {
+
+        button.remove()
+        loader.stop()
+        const layout = {
+          height: 400,
+          width: 500,
+          grid: { rows: 2, columns: 2 }
+        }
+
+        const value = this.model.value
+        Plotly.newPlot(this.el, value.data, layout)
+      })
   }
 })
 
@@ -263,39 +276,16 @@ const TextIndicatorView = View.extend({
 })
 
 const FileIndicatorView = View.extend({
-  template: `
-    <div class="panel-item value" data-hook="value"></div>
-  `,
-  derived: {
-    file: {
-      deps: ['model.value'],
-      fn () {
-        if (this.model.value) {
-          const fileView = new FileView({
-            file: this.model.value,
-            title: this.model.title
-          })
-          return fileView
-        } else {
-          return 'No file uploaded'
-        }
-      }
-    }
-  },
-  bindings: {
-    file: {
-      type: function (el, value) {
-        if (value === 'No file uploaded' || !value) {
-          el.innerHTML = 'No file uploaded'
-        } else {
-          el.innerHTML = ''
-          this.renderSubview(value, el)
-        }
-      },
-      hook: 'value'
-    }
-  },
-  
+  template: `<div class="panel-item value" data-hook="value"></div>`,
+  render () {
+    this.renderWithTemplate()
+
+    const fileView = new FileView({
+      file: this.model.value,
+      title: this.model.title
+    })
+    this.renderSubview(fileView, this.el)
+  }
 })
 
 const IndicatorView = View.extend({
