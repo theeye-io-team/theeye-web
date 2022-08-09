@@ -8,6 +8,7 @@ import TaskFormView from '../form'
 import TaskOnBoarding from '../taskOnboarding'
 import FileInputView from 'components/input-view/file'
 import bootbox from 'bootbox'
+import TypeSelectionView from 'components/type-selection-view'
 
 import { Script as ScriptTask } from 'models/task'
 import { Scraper as ScraperTask } from 'models/task'
@@ -63,34 +64,7 @@ const TaskCreationWizard = View.extend({
     <div>
       <section data-hook="type-selection-container" class="task-type-selection">
         <h1>Please, select the task type to continue</h1>
-        <div class="row task-button" style="text-align:center;">
-          <div class="col-xs-3">
-            <button data-hook="script" class="btn btn-default">
-              <i class="icons icons-script fa fa-code"></i>
-            </button>
-            <h2>Script<span data-hook="script-help"></span></h2>
-          </div>
-          <div class="col-xs-3">
-            <button data-hook="scraper" class="btn btn-default">
-              <i class="icons icons-scraper fa fa-cloud"></i>
-            </button>
-            <h2>Outgoing Webhook/<br>HTTP Request
-              <span data-hook="webhook-help"></span>
-            </h2>
-          </div>
-          <div class="col-xs-3">
-            <button data-hook="approval" class="btn btn-default">
-              <i class="icons icons-approval fa fa-thumbs-o-up"></i>
-            </button>
-            <h2>Approval<span data-hook="approval-help"></span></h2>
-          </div>
-          <div class="col-xs-3">
-            <button data-hook="notification" class="btn btn-default">
-              <i class="icons icons-notification fa fa-bell-o"></i>
-            </button>
-            <h2>Notification<span data-hook="notification-help"></span></h2>
-          </div>
-        </div>
+        <div data-hook="type-selection-view-container"></div>
         <div class="import-task-section">
           <h1>Or you can import a task from a file</h1>
           <div data-hook="import-task-container"></div>
@@ -99,34 +73,56 @@ const TaskCreationWizard = View.extend({
       <section data-hook="form-container"></section>
     </div>
   `,
-  events: {
-    'click button[data-hook=script]': 'launchScriptTaskForm',
-    'click button[data-hook=scraper]': function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-      this.renderCreateFormTask( new ScraperTask() )
-    },
-    'click button[data-hook=approval]': function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-      this.renderCreateFormTask( new ApprovalTask() )
-    },
-    'click button[data-hook=notification]': function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-      this.renderCreateFormTask( new NotificationTask() )
-    }
-  },
-  launchScriptTaskForm: function (event) {
-    if (event) {
-      event.preventDefault()
-      event.stopPropagation()
-    }
-    this.renderCreateFormTask(new ScriptTask())
-  },
   render () {
     this.renderWithTemplate(this)
 
+    const buttons = [
+      {
+        title: 'Script',
+        hook: 'script',
+        help: HelpTexts.task.creation.script,
+        callback: () => {
+          this.renderCreateFormTask(new ScriptTask())
+        },
+        icon_class: 'fa-code',
+        color: '#c6639b',
+      }, {
+        title: 'Outgoing Webhook',
+        hook: 'scraper',
+        help: HelpTexts.task.creation.webhook,
+        callback: () => {
+          this.renderCreateFormTask(new ScraperTask())
+        },
+        icon_class: 'fa-cloud',
+        color: '#0080b9',
+      }, {
+        title: 'Approval',
+        hook: 'approval',
+        help: HelpTexts.task.creation.approval,
+        callback: () => {
+          this.renderCreateFormTask(new ApprovalTask())
+        },
+        icon_class: 'fa-thumbs-o-up',
+        color: '#9fbc75'
+      }, {
+        title: 'Notification',
+        hook: 'notification',
+        help: HelpTexts.task.creation.notification,
+        callback: () => {
+          this.renderCreateFormTask(new NotificationTask())
+        },
+        icon_class: 'fa-bell-o',
+        color: '#f4bc4a'
+      }
+    ]
+
+    const wizard = new TypeSelectionView({ buttons })
+
+    this.renderSubview(
+      wizard,
+      this.queryByHook('type-selection-view-container')
+    )
+    
     if (App.state.onboarding.onboardingActive) {
       var taskOnBoarding = new TaskOnBoarding({parent: this})
       this.registerSubview(taskOnBoarding)
@@ -158,59 +154,12 @@ const TaskCreationWizard = View.extend({
       }
     })
 
-    this.renderHelp()
-
     this.renderSubview(
       this.importTaskInput,
       this.queryByHook('import-task-container')
     )
   },
-  renderHelp () {
-    this.renderSubview(
-      new HelpIconView({
-        color: [50,50,50],
-        category: 'task_help',
-        text: HelpTexts.task.creation.script
-      }),
-      this.queryByHook('script-help')
-    )
 
-    this.renderSubview(
-      new HelpIconView({
-        color: [50,50,50],
-        category: 'task_help',
-        text: HelpTexts.task.creation.webhook
-      }),
-      this.queryByHook('webhook-help')
-    )
-
-    this.renderSubview(
-      new HelpIconView({
-        color: [50,50,50],
-        category: 'task_help',
-        text: HelpTexts.task.creation.approval
-      }),
-      this.queryByHook('approval-help')
-    )
-
-    //this.renderSubview(
-    //  new HelpIconView({
-    //    color: [50,50,50],
-    //    category: 'task_help',
-    //    text: HelpTexts.task.creation.dummy
-    //  }),
-    //  this.queryByHook('dummy-help')
-    //)
-
-    this.renderSubview(
-      new HelpIconView({
-        color: [50,50,50],
-        category: 'task_help',
-        text: HelpTexts.task.creation.notification
-      }),
-      this.queryByHook('notification-help')
-    )
-  },
   /**
    * @param {Task} task a models/task instance
    */
