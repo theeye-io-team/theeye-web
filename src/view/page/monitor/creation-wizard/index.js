@@ -140,16 +140,6 @@ const ResourceCreationWizard = View.extend({
       this.queryByHook('type-selection-view-container')
     )
   },
-  addHelpIcon (type) {
-    this.renderSubview(
-      new HelpIconView({
-        color: [50,50,50],
-        category: 'monitor_wizard_help',
-        text: HelpTexts.monitor.wizard[type]
-      }),
-      this.queryByHook(type + '-help')
-    )
-  },
   /**
    * @param {Resource} resource a resource monitor instance
    */

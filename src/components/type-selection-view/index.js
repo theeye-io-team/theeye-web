@@ -29,8 +29,7 @@ const ButtonView = View.extend({
     help: ['string', true, 'Lorem Ipsum dolor sit amet'],
     callback: ['function', true, () => { return () => {} }],
     icon_class: ['string', true, 'fa-code'],
-    color: ['string', true, '#c6639b'],
-    needs_file: ['boolean', true, false]
+    color: ['string', true, '#c6639b']
   },
   template: function () {
     return `
