@@ -6,8 +6,8 @@ import HelpIconView from 'components/help-icon'
 import WorkflowEditorView from '../editor'
 import View from 'ampersand-view'
 import config from 'config'
-import FileInputView from 'components/input-view/file'
-
+import TypeSelectionView from 'components/type-selection-view'
+import bootbox from 'bootbox'
 import { Workflow } from 'models/workflow'
 
 import './styles.less'
@@ -45,33 +45,19 @@ export default function () {
 const CreationWizard = View.extend({
   template: `
     <div>
-      <section data-hook="selection-container" class="task-type-selection">
-        <div data-hook="buttons" class="row task-button" style="text-align:center;">
-          <div class="col-xs-3">
-            <button data-hook="create" class="btn btn-default">
-              <i class="icons icons-script fa fa-sitemap"></i>
-            </button>
-            <h2>Create</h2>
-          </div>
-        </div>
-      </section>
+      <section data-hook="selection-container" class="task-type-selection"></section>
+      <input type="file" data-hook="recipe-upload" style="display: none"/>
     </div>
   `,
-  events: {
-    'click button[data-hook=create]': function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-      renderCreateForm()
-      this.remove()
-    }
-  },
   render () {
     this.renderWithTemplate(this)
-    this.renderImportButton()
-  },
-  renderImportButton () {
-    const importButton = new ImportButton({
-      callback: (file) => {
+
+    this.queryByHook('recipe-upload').addEventListener('change', (e) => {
+      const reader = new window.FileReader()
+      const file = e.target.files[0]
+      
+      reader.onloadend = event => {
+        file.contents = event.target.result
         if (
           file &&
           /json\/*/.test(file.type) === true &&
@@ -81,14 +67,44 @@ const CreationWizard = View.extend({
           const serial = JSON.parse(file.contents)
           const workflow = App.actions.workflow.parseSerialization(serial)
           renderCreateForm(workflow)
-          this.remove()
         } else {
           bootbox.alert('File not supported, please select a JSON file.')
         }
+        this.parent.hide()
       }
-    })
 
-    this.renderSubview(importButton, this.queryByHook('buttons'))
+      reader.readAsText(file)
+    })
+    
+    const buttons = [
+      {
+        title: "Create",
+        hook: "create",
+        help: "Start working on a new Workflow from scratch",
+        callback: () => {
+          renderCreateForm()
+          this.parent.hide()
+        },
+        icon_class: "fa-sitemap",
+        color: "#c6639b"
+      }, {
+        title: "Import",
+        hook: "import",
+        help: "Create a workflow from one of your recipes",
+        callback: () => {
+          this.queryByHook('recipe-upload').click()
+        },
+        icon_class: 'fa-file-o',
+        color: '#9fbc75'
+      }
+    ]
+
+    const wizard = new TypeSelectionView({ buttons })
+
+    this.renderSubview(
+      wizard,
+      this.queryByHook('selection-container')
+    )
   },
   remove () {
     this.trigger('removed')
@@ -130,28 +146,3 @@ const renderCreateForm = (workflow = null) => {
   modal.show()
   return modal
 }
-
-const ImportButton = FileInputView.extend({
-  initialize () {
-    FileInputView.prototype.initialize.apply(this, arguments)
-    this.styles = 'col-xs-3'
-  },
-  events: {
-    'click button': function (event) {
-      event.preventDefault()
-      event.stopPropagation()
-      this.input.click()
-    }
-  },
-  template: `
-    <div class="col-xs-3">
-      <div class="upload-btn-wrapper">
-        <button for="file-upload" data-hook="button-label" class="btn btn-default">
-          <i class="icons icons-approval fa fa-file-o"></i>
-        </button>
-        <input style="display:none;" id="file-upload" type="file">
-        <h2>Import<span data-hook="approval-help"></span></h2>
-      </div>
-    </div>
-  `,
-})
