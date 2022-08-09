@@ -3,6 +3,7 @@ import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
+import TypeSelectionView from 'components/type-selection-view'
 import MonitorFormView from '../form'
 import config from 'config'
 
@@ -43,52 +44,7 @@ const ResourceCreationWizard = View.extend({
     <div>
       <section data-hook="type-selection-container" class="task-type-selection">
         <h1>Please, select the monitor type to continue</h1>
-        <div class="row task-button" style="text-align:center;">
-          <div class="col-xs-3">
-            <button data-hook="monitor-form" data-type="file" class="btn btn-default">
-              <i class="icons icons-file fa fa-file-o"></i>
-            </button>
-            <h2>File <span data-hook="file-help"></span> </h2>
-          </div>
-          <div class="col-xs-3">
-            <button data-hook="monitor-form" data-type="process" class="btn btn-default">
-              <i class="icons icons-process fa fa-cog"></i>
-            </button>
-            <h2>Process <span data-hook="process-help"></span> </h2>
-          </div>
-          <div class="col-xs-3">
-            <button data-hook="monitor-form" data-type="script" class="btn btn-default">
-              <i class="icons icons-script fa fa-code"></i>
-            </button>
-            <h2>Script <span data-hook="script-help"></span> </h2>
-          </div>
-          <div class="col-xs-3">
-            <button data-hook="monitor-form" data-type="scraper" class="btn btn-default">
-              <i class="icons icons-scraper fa fa-cloud"></i>
-            </button>
-            <h2>Web Check <span data-hook="scraper-help"></span> </h2>
-          </div>
-        </div>
-        <div class="row task-button" style="text-align:center;">
-          <div class="col-xs-3">
-            <button data-hook="monitor-form" data-type="nested" class="btn btn-default">
-              <i class="icons icons-nested fa fa-bullseye"></i>
-            </button>
-            <h2>Nested <span data-hook="nested-help"></span> </h2>
-          </div>
-          <div class="col-xs-3">
-            <button data-hook="monitor-form" data-type="dstat" class="btn btn-default">
-              <i class="icons icons-health fa fa-bar-chart"></i>
-            </button>
-            <h2>Bot Host Health <span data-hook="health-help"></span> </h2>
-          </div>
-          <div class="col-xs-3">
-            <button data-hook="monitor-form" data-type="psaux" class="btn btn-default">
-              <i class="icons icons-processes fa fa-cogs"></i>
-            </button>
-            <h2>Bot Host Processes <span data-hook="processes-help"></span> </h2>
-          </div>
-        </div>
+        <div data-hook="type-selection-view-container"></div>
       </section>
       <section data-hook="form-container"></section>
     </div>
@@ -103,14 +59,86 @@ const ResourceCreationWizard = View.extend({
   },
   render () {
     this.renderWithTemplate(this)
+    const buttons = [
+      {
+        title: 'File',
+        hook: 'file',
+        help: HelpTexts.monitor.wizard['file'],
+        callback: () => {
+          let resource = new ResourceFactory({ type: 'file' })
+          this.createForm(resource)
+        },
+        icon_class: 'fa-file-o',
+        color: '#ff8a6d'
+      },{
+        title: 'Process',
+        hook: 'process',
+        help: HelpTexts.monitor.wizard['process'],
+        callback: () => {
+          let resource = new ResourceFactory({ type: 'process' })
+          this.createForm(resource)
+        },
+        icon_class: 'fa-cog',
+        color: '#1c73b9'
+      },{
+        title: 'Script',
+        hook: 'script',
+        help: HelpTexts.monitor.wizard['script'],
+        callback: () => {
+          let resource = new ResourceFactory({ type: 'script' })
+          this.createForm(resource)
+        },
+        icon_class: 'fa-code',
+        color: '#c6639b'
+      },{
+        title: 'Web Check',
+        hook: 'scraper',
+        help: HelpTexts.monitor.wizard['scraper'],
+        callback: () => {
+          let resource = new ResourceFactory({ type: 'scraper' })
+          this.createForm(resource)
+        },
+        icon_class: 'fa-cloud',
+        color: '#158df9'
+      },{
+        title: 'Nested',
+        hook: 'nested',
+        help: HelpTexts.monitor.wizard['nested'],
+        callback: () => {
+          let resource = new ResourceFactory({ type: 'nested' })
+          this.createForm(resource)
+        },
+        icon_class: 'fa-bullseye',
+        color: '#06b777'
+      },{
+        title: 'Bot Host Health',
+        hook: 'health',
+        help: HelpTexts.monitor.wizard['health'],
+        callback: () => {
+          let resource = new ResourceFactory({ type: 'dstat' })
+          this.createForm(resource)
+        },
+        icon_class: 'fa-bar-chart',
+        color: '#00b4bc'
+      },{
+        title: 'Bot Host Processes',
+        hook: 'processes',
+        help: HelpTexts.monitor.wizard['processes'],
+        callback: () => {
+          let resource = new ResourceFactory({ type: 'psaux' })
+          this.createForm(resource)
+        },
+        icon_class: 'fa-cogs',
+        color: '#519194'
+      }
+    ]
 
-    this.addHelpIcon('file')
-    this.addHelpIcon('script')
-    this.addHelpIcon('process')
-    this.addHelpIcon('health')
-    this.addHelpIcon('scraper')
-    this.addHelpIcon('nested')
-    this.addHelpIcon('processes')
+    const wizard = new TypeSelectionView({ buttons })
+
+    this.renderSubview(
+      wizard,
+      this.queryByHook('type-selection-view-container')
+    )
   },
   addHelpIcon (type) {
     this.renderSubview(
