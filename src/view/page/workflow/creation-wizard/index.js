@@ -76,9 +76,9 @@ const CreationWizard = View.extend({
     
     const buttons = [
       {
-        title: "Create",
-        hook: "create",
-        help: "Start working on a new Workflow from scratch",
+        name: "Create",
+        id: "create",
+        description: "Start working on a new Workflow from scratch",
         callback: () => {
           renderCreateForm()
           this.parent.hide()
@@ -86,9 +86,9 @@ const CreationWizard = View.extend({
         icon_class: "fa-sitemap",
         color: "#c6639b"
       }, {
-        title: "Import",
-        hook: "import",
-        help: "Create a workflow from one of your recipes",
+        name: "Import",
+        id: "import",
+        description: "Create a workflow from one of your recipes",
         callback: () => {
           this.queryByHook('recipe-upload').click()
         },

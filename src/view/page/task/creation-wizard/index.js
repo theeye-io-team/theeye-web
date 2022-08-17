@@ -78,36 +78,36 @@ const TaskCreationWizard = View.extend({
 
     const buttons = [
       {
-        title: 'Script',
-        hook: 'script',
-        help: HelpTexts.task.creation.script,
+        name: 'Script',
+        id: 'script',
+        description: HelpTexts.task.creation.script,
         callback: () => {
           this.renderCreateFormTask(new ScriptTask())
         },
         icon_class: 'fa-code',
         color: '#c6639b',
       }, {
-        title: 'Outgoing Webhook',
-        hook: 'scraper',
-        help: HelpTexts.task.creation.webhook,
+        name: 'Outgoing Webhook',
+        id: 'scraper',
+        description: HelpTexts.task.creation.webhook,
         callback: () => {
           this.renderCreateFormTask(new ScraperTask())
         },
         icon_class: 'fa-cloud',
         color: '#0080b9',
       }, {
-        title: 'Approval',
-        hook: 'approval',
-        help: HelpTexts.task.creation.approval,
+        name: 'Approval',
+        id: 'approval',
+        description: HelpTexts.task.creation.approval,
         callback: () => {
           this.renderCreateFormTask(new ApprovalTask())
         },
         icon_class: 'fa-thumbs-o-up',
         color: '#9fbc75'
       }, {
-        title: 'Notification',
-        hook: 'notification',
-        help: HelpTexts.task.creation.notification,
+        name: 'Notification',
+        id: 'notification',
+        description: HelpTexts.task.creation.notification,
         callback: () => {
           this.renderCreateFormTask(new NotificationTask())
         },

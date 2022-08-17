@@ -37,14 +37,20 @@
       padding-left: 10px;
       font-size: 12px;
       width: calc(100% - 64px);
+      overflow: hidden;
+      text-overflow: ellipsis;
       
-      .title {
+      .name {
         font-weight: bold;
-        font-size: 1.2em;
+        font-size: 1.2em; 
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
-      .help {
+      .description {
         white-space: normal;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }

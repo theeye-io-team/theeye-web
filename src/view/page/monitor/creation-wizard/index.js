@@ -61,9 +61,9 @@ const ResourceCreationWizard = View.extend({
     this.renderWithTemplate(this)
     const buttons = [
       {
-        title: 'File',
-        hook: 'file',
-        help: HelpTexts.monitor.wizard['file'],
+        name: 'File',
+        id: 'file',
+        description: HelpTexts.monitor.wizard['file'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'file' })
           this.createForm(resource)
@@ -71,9 +71,9 @@ const ResourceCreationWizard = View.extend({
         icon_class: 'fa-file-o',
         color: '#ff8a6d'
       },{
-        title: 'Process',
-        hook: 'process',
-        help: HelpTexts.monitor.wizard['process'],
+        name: 'Process',
+        id: 'process',
+        description: HelpTexts.monitor.wizard['process'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'process' })
           this.createForm(resource)
@@ -81,9 +81,9 @@ const ResourceCreationWizard = View.extend({
         icon_class: 'fa-cog',
         color: '#1c73b9'
       },{
-        title: 'Script',
-        hook: 'script',
-        help: HelpTexts.monitor.wizard['script'],
+        name: 'Script',
+        id: 'script',
+        description: HelpTexts.monitor.wizard['script'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'script' })
           this.createForm(resource)
@@ -91,9 +91,9 @@ const ResourceCreationWizard = View.extend({
         icon_class: 'fa-code',
         color: '#c6639b'
       },{
-        title: 'Web Check',
-        hook: 'scraper',
-        help: HelpTexts.monitor.wizard['scraper'],
+        name: 'Web Check',
+        id: 'scraper',
+        description: HelpTexts.monitor.wizard['scraper'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'scraper' })
           this.createForm(resource)
@@ -101,9 +101,9 @@ const ResourceCreationWizard = View.extend({
         icon_class: 'fa-cloud',
         color: '#158df9'
       },{
-        title: 'Nested',
-        hook: 'nested',
-        help: HelpTexts.monitor.wizard['nested'],
+        name: 'Nested',
+        id: 'nested',
+        description: HelpTexts.monitor.wizard['nested'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'nested' })
           this.createForm(resource)
@@ -111,9 +111,9 @@ const ResourceCreationWizard = View.extend({
         icon_class: 'fa-bullseye',
         color: '#06b777'
       },{
-        title: 'Bot Host Health',
-        hook: 'health',
-        help: HelpTexts.monitor.wizard['health'],
+        name: 'Bot Host Health',
+        id: 'health',
+        description: HelpTexts.monitor.wizard['health'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'dstat' })
           this.createForm(resource)
@@ -121,9 +121,9 @@ const ResourceCreationWizard = View.extend({
         icon_class: 'fa-bar-chart',
         color: '#00b4bc'
       },{
-        title: 'Bot Host Processes',
-        hook: 'processes',
-        help: HelpTexts.monitor.wizard['processes'],
+        name: 'Bot Host Processes',
+        id: 'processes',
+        description: HelpTexts.monitor.wizard['processes'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'psaux' })
           this.createForm(resource)
