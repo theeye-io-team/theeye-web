@@ -6,6 +6,10 @@ export default {
   api_v3_url: 'http://localhost:6080/api',
   supervisor_api_url: 'http://127.0.0.1:60080',
   supervisor_api_version: '~2',
+  marketplace_api:{
+    url: 'https://supervisor.theeye.io/qatest',
+    bearer: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjJmNmE1YTU5Y2RlMDMwMDE5ZjM2MzI0IiwiaWF0IjoxNjYwMzMxNDI5LCJleHAiOjE2NjA0MTc4Mjl9.8XWZG5xZhLOioYBTA1mVO0C533DgsGEEhtYHUTTDBQE'
+  },
   docs: 'https://documentation.theeye.io',
   request_timeout: 30000,
   landing_page_url: 'https://theeye.io',
