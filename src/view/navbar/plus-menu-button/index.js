@@ -8,6 +8,7 @@ import WorkflowCreationWizard from 'view/page/workflow/creation-wizard'
 import IndicatorCreationWizard from 'view/page/indicator/creation-wizard'
 import WebhookCreationWizard from 'view/page/webhook/creation-wizard'
 import FileCreationWizard from 'view/page/files/creation-wizard'
+import MarketplaceView from 'view/marketplace'
 
 import './style.less'
 
@@ -23,6 +24,7 @@ export default View.extend({
           <li><a data-hook="create-indicator" href="#" class="plus-menu-icon fa-lightbulb-o">Indicator</a></li>
           <li><a data-hook="create-webhook" href="#" class="plus-menu-icon eyeicon eyeicon-webhooks">Webhook</a></li>
           <li><a data-hook="create-file" href="#" class="plus-menu-icon eyeicon eyeicon-scripts">File</a></li>
+          <li><a data-hook="open-marketplace" href="#" class="plus-menu-icon eyeicon eyeicon-marketplace">Marketplace</a></li>
         </ul>
       </div>
     </div>`,
@@ -83,6 +85,13 @@ export default View.extend({
       NavbarActions.togglePlusMenu()
       let wizard = new FileCreationWizard()
       return false
+    },
+    'click a[data-hook=open-marketplace]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      NavbarActions.togglePlusMenu()
+      App.actions.marketplace.menu.show()
+      return false
     }
   },
   initialize () {
@@ -92,6 +101,7 @@ export default View.extend({
   },
   render () {
     this.renderWithTemplate(this)
+    this.registerSubview(new MarketplaceView())
     this.renderBackdrop()
   },
   renderBackdrop () {
