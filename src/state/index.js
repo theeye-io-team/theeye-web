@@ -38,6 +38,7 @@ import LocalSettings from './local-settings'
 import SearchBoxState from './searchbox'
 import TabsState from './tabs'
 import SideMenuState from './sideMenu'
+import MarketplaceState from './marketplace'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
@@ -220,6 +221,7 @@ const AppState = State.extend({
     this.searchbox = new SearchBoxState()
     this.inbox = new InboxState({ appState: this })
     this.popup = new PopupState()
+    this.marketplace = new MarketplaceState()
   },
   appInit () {
     this.localSettings.appInit()
