@@ -4,16 +4,22 @@ import InputView from 'ampersand-input-view'
 import App from 'ampersand-app'
 import Labels from 'language/titles'
 
-import './styles.less'
+import './style.less'
+
+import logo from './logo.svg'
 
 export default View.extend({
   template: () => {
     let html = `
       <div data-component="login" class="login-container">
-        <div class="container">
+        <div class="logo-container">
+          <img src="${logo}" class="theeye-logo" alt="TheEye">
+          <h1 class="title">Sign In to TheEye App</h1>
+        </div>
+        <div class="login-form-container">
           <div class="login-main" data-hook="login-options-container">
             <div data-hook="login-form-container">
-              <h1>Sign In to TheEye App</h1>
+             <h2 class="subtitle">Sign in</h2> 
               <div data-hook="social-login-container" class="row"> </div>
               <div class="row">
                 <div class="col-xs-12">
@@ -24,6 +30,7 @@ export default View.extend({
                 </div>
               </div>
             </div>
+           <div data-hook="links-container"></div> 
           </div>
         </div>
       </div>
@@ -81,7 +88,7 @@ export default View.extend({
 
     this.renderLoginForm()
 
-    const container = this.queryByHook('login-options-container')
+    const container = this.queryByHook('links-container')
     const loginConfig = App.config.components.login
 
     if (loginConfig.password_reset.enabled === true) {
@@ -100,8 +107,8 @@ export default View.extend({
       this.renderGoogleLogin()
     }
 
-    document.getElementsByTagName('body')[0].style.backgroundColor = '#304269'
-    App.actions.navbar.setVisibility(true)
+    // document.getElementsByTagName('body')[0].style.backgroundColor = '#304269'
+    App.actions.navbar.setVisibility(false)
   },
   renderGoogleLogin () {
     const view = new GoogleLogin()
@@ -116,9 +123,7 @@ export default View.extend({
   renderForgotPasswordView (container) {
     const template = `
       <div data-component="password-reset-link">
-        <h2>
-          <a class="login-toggle" data-hook="password-view-toggle">Forgot password?</a>
-        </h2>
+        <a class="login-toggle" data-hook="password-view-toggle">Forgot password?</a>
         <div style="display:none;" data-hook="password-view-container"></div>
       </div>
     `
@@ -134,13 +139,13 @@ export default View.extend({
     el.querySelector('[data-hook=password-view-container]').appendChild(passwordView.el)
   },
   renderEnterpriseButton (container) {
-    const template = '<a href="/enterprise"><h2 class="login-link">Enterprise? Access here</h2></a>'
+    const template = '<h2 class="login-link">Enterprise? <a href="/enterprise">Access here</a></h2>'
     const el = document.createElement('div')
     el.innerHTML = template
     container.appendChild(el)
   },
   renderRegiterButton (container) {
-    const template = '<a href="/register"><h2 class="register-link">Don\'t have an account? Register here</h2></a>'
+    const template = '<h2 class="register-link">Don\'t have an account? <a href="/register">Register here</a></h2>'
     const el = document.createElement('div')
     el.innerHTML = template
     container.appendChild(el)
@@ -254,8 +259,8 @@ const ForgotForm = FormView.extend({
 const GoogleLogin = View.extend({
   template: `
     <div class="col-xs-12">
-      <a href="" class="sign google" data-hook="google-login"><i class="fa"></i>Google</a>
-      <h2 class="or"> - or - </h2>
+      <a href="" class="sign google" data-hook="google-login"><i class="fa fa-google"></i> Google</a>
+      <hr>
     </div>
   `,
   events: {

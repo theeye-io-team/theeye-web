@@ -1,0 +1,97 @@
+.login-container {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-height: 100%;
+
+  @media (max-width: 991px) {
+    margin: 0 auto;
+    overflow-y: scroll;
+  } 
+
+  @media (min-width: 992px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  hr {
+    border-bottom: 1px solid #CCC;
+  }
+
+  .sign.google {
+    padding: 12px;
+  }
+
+  .logo-container {
+    padding: 50px 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #ffffff;
+    gap: 2ch;
+
+    .theeye-logo {
+      @media (max-width: 991px) {
+        width: 40%;
+      } 
+    
+      @media (min-width: 992px) {
+        width: 60%;
+      }
+    }
+
+    .title {
+      font-size: 1.7em;
+      color: #004c97;
+    }
+  }
+
+  .login-form-container {
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #f2f2f2;
+    max-width: unset !important;
+    width: 100%;
+
+    .login-main {
+      width: 260px;      
+      text-align: left;
+
+      .form-wrapper {
+        padding: 0
+      }
+    }
+
+    .subtitle {
+      font-size: 1.6em;
+      color: #004c97;
+    }
+
+    .form-input {
+      background: rgba(0,0,0,0);
+      color: black
+    }
+
+    button[data-hook="start-login"] {
+      background-color: #004e96;
+      font-weight: bold;
+      border-radius: 0;
+    }
+
+    [data-hook="links-container"] {
+      div > * {
+        font-size: 14px;
+        font-weight: 600;
+        color: black;
+
+        a {
+          color: #fc9633;
+        }
+      }
+    }
+  }
+}

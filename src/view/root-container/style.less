@@ -6,6 +6,7 @@
   width:100%;
   position: absolute;
   margin-bottom: 30px;
+  --navbar: 73px;
 }
 
 .menu-container {
@@ -14,7 +15,7 @@
   display:flex;
   z-index:999;
   transition:0.5s;
-  top: 73px;
+  top: var(--navbar);
 }
 
 .menu-container.menu-container-expanded { width: @expanded; }
@@ -27,13 +28,14 @@
   position: fixed;
   right: 0;
   bottom: 30px;
-  top: 73px;
+  top: var(--navbar);
   //left: 0;
   overflow-y: hidden;
 }
 
 @expanded: 250px;
 @contracted: 80px;
+
 
 .page-container-contracted {
   left: @expanded;
@@ -46,7 +48,9 @@
 }
 
 @media (max-width:767px) {
-  .page-container, .menu-container {
-    top: 50px;
-  }
+  --navbar: 50px;
+}
+
+.navbar-hidden {
+  --navbar: 0 !important;
 }

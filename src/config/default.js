@@ -43,7 +43,7 @@ export default {
         enabled: false
       },
       google: {
-        enabled: false
+        enabled: true
       }
     },
     grecaptcha: {

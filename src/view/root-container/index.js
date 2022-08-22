@@ -18,7 +18,8 @@ export default View.extend({
   autoRender: true,
   props: {
     menu_switch: ['boolean', false, false],
-    title: ['string',false,'TheEye']
+    title: ['string',false,'TheEye'],
+    navbar_hidden: 'boolean'
   },
   bindings: {
     menu_switch: [{
@@ -32,19 +33,24 @@ export default View.extend({
       type: 'booleanClass',
       no: 'page-container-expanded',
       yes: 'page-container-contracted'
-    }]
+    }],
+    navbar_hidden: {
+      hook: 'main-container',
+      type: 'booleanClass',
+      yes: 'navbar-hidden'
+    }
   },
   template: function () {
     let url = App.config.landing_page_url
     const year = new Date().getFullYear()
     let str = `
-      <div class="main-container">
+      <div class="main-container" data-hook="main-container">
         <nav></nav>
         <div data-hook="popup"></div>
         <div data-hook="menu-container" class="menu-container"></div>
         <div data-hook="page-container" class="page-container"></div>
         <footer>
-          <a target="_blank" href="https://theeye.io">theeye.io</a> | Copyright © ${year}
+          <a target="_blank" href="${url}">theeye.io</a> | Copyright © ${year}
         </footer>
       </div>
     `
@@ -101,6 +107,10 @@ export default View.extend({
 
     this.listenToAndRun(App.state.navbar, 'change:menuSwitch', () => {
       this.menu_switch = App.state.navbar.menuSwitch
+    })
+
+    this.listenToAndRun(App.state.navbar, 'change:visible', () => {
+      this.navbar_hidden = !App.state.navbar.visible
     })
   },
   updateLoggedInComponents (state) {
