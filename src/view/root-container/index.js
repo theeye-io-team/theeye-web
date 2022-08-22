@@ -19,7 +19,7 @@ export default View.extend({
   props: {
     menu_switch: ['boolean', false, false],
     title: ['string',false,'TheEye'],
-    navbar_hidden: 'boolean'
+    navbar_hidden: ['boolean', false, false]
   },
   bindings: {
     menu_switch: [{
@@ -34,11 +34,19 @@ export default View.extend({
       no: 'page-container-expanded',
       yes: 'page-container-contracted'
     }],
-    navbar_hidden: {
+    navbar_hidden: [{
       hook: 'main-container',
       type: 'booleanClass',
       yes: 'navbar-hidden'
-    }
+    }, {
+      hook: 'page-container',
+      type: 'booleanClass',
+      yes: 'navbar-hidden'
+    },{
+      hook: 'menu-container',
+      type: 'booleanClass',
+      yes: 'navbar-hidden'
+    }]
   },
   template: function () {
     let url = App.config.landing_page_url
