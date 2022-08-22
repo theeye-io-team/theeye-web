@@ -4,7 +4,7 @@ import InputView from 'ampersand-input-view'
 import App from 'ampersand-app'
 import Labels from 'language/titles'
 
-import './style.less'
+import './styles.less'
 
 import logo from './logo.svg'
 
