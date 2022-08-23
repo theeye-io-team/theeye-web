@@ -1,13 +1,63 @@
 .login-container {
+  .form-container {
+    label {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    input  {
+      width: 100%;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      border-bottom: 1px solid #bcbcbc;
+      font-family:'Rubik', sans-serif;
+      font-weight: 100;
+      font-size: 17px;
+      color: #FFF;
+      //margin-bottom: 25px;
+      //padding-bottom: 8px;
+    }
+
+    ::placeholder {
+      color: #bcbcbc;
+    }
+
+    .message p {
+      color: #ee8e40;
+      margin-top: -20px;
+      margin-bottom: 0px;
+      font-weight: 400;
+    }
+  }
+
+
+  .division {
+    height: 30px;
+    margin-bottom: 20px;
+
+    .text {
+      color: #bcbcbc;
+      text-align: center;
+    }
+    .line {
+      padding-top: 10px;
+      border-bottom: 1px solid #bcbcbc;
+    }
+  }
+
+
   background-color: #F0F0F0;
-  position: relative;
+  position: absolute;
+  top: 0;
+  bottom: 0;
   width: 100%;
   max-width: 100%;
   min-height: 100%;
+  overflow-y: scroll;
 
   @media (max-width: 991px) {
     margin: 0 auto;
-    overflow-y: scroll;
   } 
 
   @media (min-width: 992px) {
@@ -15,12 +65,27 @@
     grid-template-columns: 1fr 1fr;
   }
 
+  button {
+    font-family: 'Trebuchet MS', sans-serif;
+    width: 100%;
+    max-width: 450px;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    padding: 6px 0px;
+    background: #ee8e40;
+    color: #FFF;
+    font-size: 18px;
+    letter-spacing: 0.8px;
+    border: none;
+  }
+
   hr {
-    border-bottom: 1px solid #CCC;
+    border-bottom: 1px solid #BCBCBC;
   }
 
   .sign.google {
-    padding: 12px;
+    text-align: center;
+    //padding: 12px;
   }
 
   .logo-container {
@@ -38,14 +103,18 @@
       } 
     
       @media (min-width: 992px) {
-        width: 60%;
+        width: 250px;
       }
     }
 
     .title {
-      font-size: 1.7em;
+      font-size: 1.3em;
       color: #004c97;
     }
+  }
+
+  a.login-toggle {
+    cursor: pointer;
   }
 
   .login-form-container {
@@ -77,10 +146,9 @@
       color: black
     }
 
-    button[data-hook="start-login"] {
+    button.sign-in {
       background-color: #004e96;
       font-weight: bold;
-      border-radius: 0;
     }
 
     [data-hook="links-container"] {
@@ -95,4 +163,30 @@
       }
     }
   }
+
+
+  //.sign {
+  //  padding:12px 0;
+  //  color:#fff;
+  //  width:100%;
+  //  max-width: 450px;
+  //  display:inline-block;
+  //  font-size:22px;
+  //  font-family: 'Trebuchet MS', sans-serif;
+  //  letter-spacing: 0.8px;
+  //  border: none;
+  //}
+  //.sign i {
+  //  font-size:24px;
+  //  margin-right:6px
+  //}
+  //.sign:hover {
+  //  color:#fff
+  //}
+  .google {
+    background: #c32f11;
+  }
+  //.forgotForm {display:none}
+  //.forgotLink, .cancelLink {display:inline-block;cursor:pointer}
+  //.load {cursor:pointer; text-align:center;color:#fff;padding:20px 0 0 0;font-size:20px}
 }

@@ -14,23 +14,30 @@ export default View.extend({
       <div data-component="login" class="login-container">
         <div class="logo-container">
           <img src="${logo}" class="theeye-logo" alt="TheEye">
-          <h1 class="title">Sign In to TheEye App</h1>
+          <h1 class="title">sign in to start automating repetitive tasks</h1>
         </div>
         <div class="login-form-container">
           <div class="login-main" data-hook="login-options-container">
             <div data-hook="login-form-container">
-             <h2 class="subtitle">Sign in</h2> 
-              <div data-hook="social-login-container" class="row"> </div>
+              <h2 class="subtitle">Sign in</h2> 
+              <div class="row" data-hook="social-login-container"></div>
+              <div class="row">
+                <div class="division col-xs-12">
+                  <div class="line col-xs-4"></div>
+                  <div class="text col-xs-4">or</div>
+                  <div class="line col-xs-4"></div>
+                </div>
+              </div>
               <div class="row">
                 <div class="col-xs-12">
                   <div class="form-wrapper">
                     <div data-hook="login-form" class="form-container"></div>
-                    <button data-hook="start-login">Sign in</button>
+                    <button class="sign-in" data-hook="start-login">Sign in</button>
                   </div>
                 </div>
               </div>
             </div>
-           <div data-hook="links-container"></div> 
+            <div data-hook="links-container"></div> 
           </div>
         </div>
       </div>
@@ -259,8 +266,9 @@ const ForgotForm = FormView.extend({
 const GoogleLogin = View.extend({
   template: `
     <div class="col-xs-12">
-      <a href="" class="sign google" data-hook="google-login"><i class="fa fa-google"></i> Google</a>
-      <hr>
+      <button class="sign google" data-hook="google-login">
+        <i class="fa fa-google"></i> Google
+      </a>
     </div>
   `,
   events: {
