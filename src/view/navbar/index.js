@@ -99,6 +99,9 @@ export default View.extend({
     }
   },
   renderLoggedInComponents () {
+    // Check if navbar is hidden and re-enable it if needed
+    if (!this.visible) App.actions.navbar.setVisibility(true)
+
     // search box
     this.searchbox = new Searchbox()
     this.renderSubview(

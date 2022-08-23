@@ -217,12 +217,12 @@ hr {border:none;border-bottom:1px dotted #fff}
   margin-bottom: 40px;
 }
 
-.activate-container .form-container label, .login-container .form-container label {
+.activate-container .form-container label {
   width: 100%;
   margin-bottom: 20px;
 }
 
-.activate-container .form-container input, .login-container .form-container input {
+.activate-container .form-container input {
   width: 100%;
   border: 0;
   outline: 0;
@@ -236,18 +236,18 @@ hr {border:none;border-bottom:1px dotted #fff}
   padding-bottom: 8px;
 }
 
-.activate-container .form-container ::placeholder, .login-container .form-container ::placeholder {
+.activate-container .form-container ::placeholder{
   color: #CCC;
 }
 
-.activate-container .form-container .message p, .login-container .form-container .message p {
+.activate-container .form-container .message p {
   color: #ee8e40;
   margin-top: -20px;
   margin-bottom: 0px;
   font-weight: 400;
 }
 
-.activate-container button, .login-container button {
+.activate-container button {
   font-family: 'Trebuchet MS', sans-serif;
   width: 100%;
   max-width: 450px;
@@ -261,17 +261,6 @@ hr {border:none;border-bottom:1px dotted #fff}
   letter-spacing: 0.8px;
   border: none;
 }
-
-.sign {padding:12px 0;color:#fff;border-radius:36px;width:100%;max-width: 450px;display:inline-block;font-size:22px;font-family: 'Trebuchet MS', sans-serif;letter-spacing: 0.8px;border: none;}
-
-.sign i {font-size:24px;margin-right:6px}
-.sign:hover {color:#fff}
-.sign.facebook {background: #40579a;background: -moz-linear-gradient(top,  #40579a 0%, #34467d 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#40579a), color-stop(100%,#34467d));background: -webkit-linear-gradient(top,  #40579a 0%,#34467d 100%);background: -o-linear-gradient(top,  #40579a 0%,#34467d 100%);background: -ms-linear-gradient(top,  #40579a 0%,#34467d 100%);background: linear-gradient(to bottom,  #40579a 0%,#34467d 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#40579a', endColorstr='#34467d',GradientType=0 );}
-.sign.twitter {background: #02ace6;background: -moz-linear-gradient(top,  #02ace6 0%, #028bbb 100%);background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#02ace6), color-stop(100%,#028bbb));background: -webkit-linear-gradient(top,  #02ace6 0%,#028bbb 100%);background: -o-linear-gradient(top,  #02ace6 0%,#028bbb 100%);background: -ms-linear-gradient(top,  #02ace6 0%,#028bbb 100%);background: linear-gradient(to bottom,  #02ace6 0%,#028bbb 100%);filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#02ace6', endColorstr='#028bbb',GradientType=0 )}
-.sign.google {background: #c32f11;}
-.forgotForm {display:none}
-.forgotLink, .cancelLink {display:inline-block;cursor:pointer}
-.load {cursor:pointer; text-align:center;color:#fff;padding:20px 0 0 0;font-size:20px}
 
 /* footer */
 footer {

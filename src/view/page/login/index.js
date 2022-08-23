@@ -6,24 +6,38 @@ import Labels from 'language/titles'
 
 import './styles.less'
 
+import logo from './logo.svg'
+
 export default View.extend({
   template: () => {
     let html = `
       <div data-component="login" class="login-container">
-        <div class="container">
+        <div class="logo-container">
+          <img src="${logo}" class="theeye-logo" alt="TheEye">
+          <h1 class="title">sign in to start automating repetitive tasks</h1>
+        </div>
+        <div class="login-form-container">
           <div class="login-main" data-hook="login-options-container">
             <div data-hook="login-form-container">
-              <h1>Sign In to TheEye App</h1>
-              <div data-hook="social-login-container" class="row"> </div>
+              <h2 class="subtitle">Sign in</h2> 
+              <div class="row" data-hook="social-login-container"></div>
+              <div class="row">
+                <div class="division col-xs-12">
+                  <div class="line col-xs-4"></div>
+                  <div class="text col-xs-4">or</div>
+                  <div class="line col-xs-4"></div>
+                </div>
+              </div>
               <div class="row">
                 <div class="col-xs-12">
                   <div class="form-wrapper">
                     <div data-hook="login-form" class="form-container"></div>
-                    <button data-hook="start-login">Sign in</button>
+                    <button class="sign-in" data-hook="start-login">Sign in</button>
                   </div>
                 </div>
               </div>
             </div>
+            <div data-hook="links-container"></div> 
           </div>
         </div>
       </div>
@@ -81,7 +95,7 @@ export default View.extend({
 
     this.renderLoginForm()
 
-    const container = this.queryByHook('login-options-container')
+    const container = this.queryByHook('links-container')
     const loginConfig = App.config.components.login
 
     if (loginConfig.password_reset.enabled === true) {
@@ -100,8 +114,8 @@ export default View.extend({
       this.renderGoogleLogin()
     }
 
-    document.getElementsByTagName('body')[0].style.backgroundColor = '#304269'
-    App.actions.navbar.setVisibility(true)
+    // document.getElementsByTagName('body')[0].style.backgroundColor = '#304269'
+    App.actions.navbar.setVisibility(false)
   },
   renderGoogleLogin () {
     const view = new GoogleLogin()
@@ -116,9 +130,7 @@ export default View.extend({
   renderForgotPasswordView (container) {
     const template = `
       <div data-component="password-reset-link">
-        <h2>
-          <a class="login-toggle" data-hook="password-view-toggle">Forgot password?</a>
-        </h2>
+        <a class="login-toggle" data-hook="password-view-toggle">Forgot password?</a>
         <div style="display:none;" data-hook="password-view-container"></div>
       </div>
     `
@@ -134,13 +146,13 @@ export default View.extend({
     el.querySelector('[data-hook=password-view-container]').appendChild(passwordView.el)
   },
   renderEnterpriseButton (container) {
-    const template = '<a href="/enterprise"><h2 class="login-link">Enterprise? Access here</h2></a>'
+    const template = '<h2 class="login-link">Enterprise? <a href="/enterprise">Access here</a></h2>'
     const el = document.createElement('div')
     el.innerHTML = template
     container.appendChild(el)
   },
   renderRegiterButton (container) {
-    const template = '<a href="/register"><h2 class="register-link">Don\'t have an account? Register here</h2></a>'
+    const template = '<h2 class="register-link">Don\'t have an account? <a href="/register">Register here</a></h2>'
     const el = document.createElement('div')
     el.innerHTML = template
     container.appendChild(el)
@@ -254,8 +266,9 @@ const ForgotForm = FormView.extend({
 const GoogleLogin = View.extend({
   template: `
     <div class="col-xs-12">
-      <a href="" class="sign google" data-hook="google-login"><i class="fa"></i>Google</a>
-      <h2 class="or"> - or - </h2>
+      <button class="sign google" data-hook="google-login">
+        <i class="fa fa-google"></i> Google
+      </a>
     </div>
   `,
   events: {
