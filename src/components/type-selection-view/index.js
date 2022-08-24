@@ -25,12 +25,16 @@ export default View.extend({
 
 const ButtonView = View.extend({
   props: {
+    visible: ['boolean', true, true],
     name: ['string', true, 'placeholder'],
     id: ['string', true, 'placeholder'],
     description: ['string', true, 'Lorem Ipsum dolor sit amet'],
     callback: ['function', true, () => { return () => {} }],
     icon_class: ['string', true, 'fa-code'],
     color: ['string', true, '#c6639b']
+  },
+  bindings: {
+    visible: { type: 'toggle' }
   },
   template: function () { return `
     <div class="button-container col-lg-4 col-sm-6 col-xs-12">

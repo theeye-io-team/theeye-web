@@ -6,13 +6,36 @@ import TypeSelectionView from "components/type-selection-view"
 import FileSaver from "file-saver"
 import TaskFormView from 'view/page/task/form'
 
+import './style.less'
+
 export default View.extend({
   template: `
     <div>
-      <h1 class="title">Tasks</h1>
-      <div data-hook="button-container"></div>
+      <div class="row">
+        <h1 class="title">Tasks</h1>
+        <div class="search">
+          <i class="fa fa-search" aria-hidden="true"></i>
+          <input autocomplete="off" data-hook="search-input" class="search-input" placeholder="Search">
+        </div>
+      </div>
+      <div class="row">
+        <div data-hook="button-container"></div>
+      </div>
     </div>
-`,
+  `,
+  props: {
+    search: ['string', false, '']
+  },
+  bindings: {
+    search: {
+      type: 'value',
+      hook: 'search-input'
+    }
+  },
+  events: {
+    'click [data-hook=invite-user]': 'inviteMember',
+    'input [data-hook=search-input]': 'onSearchInput',
+  },
   render () {
     console.log('RENDERING')
     this.renderWithTemplate(this)
@@ -95,6 +118,19 @@ export default View.extend({
       }
     )
   },
+  onSearchInput (event) {
+    event.stopPropagation()
+    event.preventDefault()
+    
+    this._subviews[0]._subviews.forEach(
+      view => {
+        console.log([view.name, view.name.toLowerCase().includes(event.target.value.toLowerCase()), view])
+        view.visible = (
+          view.name.toLowerCase().includes(event.target.value.toLowerCase())
+        )
+      }
+    )
+  }
 })
 
 const renderImportFormTask = (task) => {
