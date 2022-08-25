@@ -6,7 +6,7 @@ import HelpIconView from 'components/help-icon'
 import WorkflowEditorView from '../editor'
 import View from 'ampersand-view'
 import config from 'config'
-import TypeSelectionView from 'components/type-selection-view'
+import Catalogue from 'components/catalogue'
 import bootbox from 'bootbox'
 import { Workflow } from 'models/workflow'
 
@@ -99,10 +99,8 @@ const CreationWizard = View.extend({
       }
     ]
 
-    const wizard = new TypeSelectionView({ buttons })
-
     this.renderSubview(
-      wizard,
+      new Catalogue({ buttons }),
       this.queryByHook('selection-container')
     )
   },

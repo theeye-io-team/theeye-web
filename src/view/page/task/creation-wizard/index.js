@@ -8,7 +8,7 @@ import TaskFormView from '../form'
 import TaskOnBoarding from '../taskOnboarding'
 import FileInputView from 'components/input-view/file'
 import bootbox from 'bootbox'
-import TypeSelectionView from 'components/type-selection-view'
+import CatalogueView from 'components/catalogue'
 
 import { Script as ScriptTask } from 'models/task'
 import { Scraper as ScraperTask } from 'models/task'
@@ -116,12 +116,9 @@ const TaskCreationWizard = View.extend({
       }
     ]
 
-    const wizard = new TypeSelectionView({ buttons })
+    const catalogue = new CatalogueView({ buttons })
 
-    this.renderSubview(
-      wizard,
-      this.queryByHook('type-selection-view-container')
-    )
+    this.renderSubview(catalogue, this.queryByHook('type-selection-view-container'))
     
     if (App.state.onboarding.onboardingActive) {
       var taskOnBoarding = new TaskOnBoarding({parent: this})

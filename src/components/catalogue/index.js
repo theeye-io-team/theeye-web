@@ -6,9 +6,11 @@ export default View.extend({
     buttons: ['array', true, () => []]
   },
   template: `
-    <div class="container">
-      <div class="row buttons-container" data-hook="buttons-container"></div>
-    </div>  
+    <div data-component="catalogue">
+      <div class="container">
+        <div class="row buttons-container" data-hook="buttons-container"></div>
+      </div>  
+    </div>
   `,
   render () {
     this.renderWithTemplate(this)
@@ -33,7 +35,7 @@ const ButtonView = View.extend({
   },
   template: function () {
     return `
-    <div class="button-container col-lg-4 col-sm-6 col-xs-12">
+    <div class="button-container col-xxl-3 col-lg-4 col-sm-6 col-xs-12">
       <button data-hook="${this.hook}" class="btn button-view">
         <div class="icon" style="background-color: ${this.color};">
           <i class="fa ${this.icon_class}"></i>

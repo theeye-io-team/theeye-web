@@ -3,7 +3,7 @@ import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
-import TypeSelectionView from 'components/type-selection-view'
+import Catalogue from 'components/catalogue'
 import MonitorFormView from '../form'
 import config from 'config'
 
@@ -133,12 +133,8 @@ const ResourceCreationWizard = View.extend({
       }
     ]
 
-    const wizard = new TypeSelectionView({ buttons })
-
-    this.renderSubview(
-      wizard,
-      this.queryByHook('type-selection-view-container')
-    )
+    const catalogue = new Catalogue({ buttons })
+    this.renderSubview(catalogue, this.queryByHook('type-selection-view-container'))
   },
   /**
    * @param {Resource} resource a resource monitor instance
