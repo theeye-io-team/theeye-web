@@ -14,7 +14,7 @@ export default View.extend({
       <div data-component="login" class="login-container">
         <div class="logo-container">
           <img src="${logo}" class="theeye-logo" alt="TheEye">
-          <h1 class="title">sign in to start automating repetitive tasks</h1>
+          <h1 class="title">We boost human talent by automating repetitive tasks</h1>
         </div>
         <div class="login-form-container">
           <div class="login-main" data-hook="login-options-container">
@@ -37,7 +37,7 @@ export default View.extend({
                 </div>
               </div>
             </div>
-            <div data-hook="links-container"></div> 
+            <div class"links" data-hook="links-container"></div> 
           </div>
         </div>
       </div>
@@ -83,9 +83,8 @@ export default View.extend({
     }
   },
   initialize() {
-    this.formSwitch = App.state.login.showRecoverForm
-    this.listenTo(App.state.login, 'change:showRecoverForm', () => {
-      this.toggle('formSwitch')
+    this.listenToAndRun(App.state.login, 'change:showRecoverForm', () => {
+      this.formSwitch = App.state.login.showRecoverForm
     })
   },
   render() {
@@ -111,16 +110,11 @@ export default View.extend({
     }
 
     if (loginConfig.google.enabled === true) {
-      this.renderGoogleLogin()
+      this.renderSubview(new GoogleLogin(), this.queryByHook('social-login-container'))
     }
 
     // document.getElementsByTagName('body')[0].style.backgroundColor = '#304269'
     App.actions.navbar.setVisibility(false)
-  },
-  renderGoogleLogin () {
-    const view = new GoogleLogin()
-    view.render()
-    this.renderSubview(view, this.queryByHook('social-login-container'))
   },
   renderLoginForm () {
     this.loginForm = new LoginForm({})
@@ -152,7 +146,10 @@ export default View.extend({
     container.appendChild(el)
   },
   renderRegiterButton (container) {
-    const template = '<h2 class="register-link">Don\'t have an account? <a href="/register">Register here</a></h2>'
+    const template = `
+      <h2 class="register-link">
+        Don\'t have an account? <a href="/register">Register here</a>
+      </h2>`
     const el = document.createElement('div')
     el.innerHTML = template
     container.appendChild(el)
@@ -206,14 +203,9 @@ const LoginForm = FormView.extend({
 const ForgotPasswordView = View.extend({
   template: `
     <div data-component="forgot-password">
+      <h2 class="subtitle">Password recovery</h2> 
       <div class="row">
         <div class="col-xs-12">
-          <h1>Password reset</h1>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-xs-12">
-          <h2>Please enter your account email</h2>
           <div class="form-wrapper">
             <div data-hook="form-container" class="form-container"></div>
             <button data-hook="start-forgot">Send Email</button>

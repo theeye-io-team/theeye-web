@@ -15,6 +15,7 @@ import config from 'config'
 
 class Auth extends Route {
   loginRoute () {
+    App.state.login.showRecoverForm = false
     return new LoginPageView()
   }
 

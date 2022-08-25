@@ -1,3 +1,19 @@
+/* content */
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  /*font-family: 'Montserrat', sans-serif;*/
+  font-family: 'Roboto', sans-serif;
+  font-size: 14px;
+  background-color: #EFEFEF;
+  background:#304269;
+  position:absolute;
+  width:100%;
+  height:100%;
+  color:#FFF;
+}
+
 /* main css */
 .wrapper {
   position: relative;
@@ -95,20 +111,6 @@ button {outline:none}
 .navData .client .dropdown-menu a {border-bottom:1px solid #eee}
 .navData .client .dropdown-menu li:last-child a {border:none}
 
-/* content */
-body {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  font-family: 'Roboto', sans-serif;
-  font-size: 14px;
-  background-color: #EFEFEF;
-  background:#304269;
-  position:absolute;
-  width:100%;
-  height:100%;
-  color:#FFF;
-}
 .white {color:#fff}
 hr {border:none;border-bottom:1px dotted #fff}
 
@@ -139,7 +141,12 @@ hr {border:none;border-bottom:1px dotted #fff}
 .inlineDropdown {position:absolute;top:0;right:0}
 .inlineDropdown .dropdown-menu {left:inherit;right:0;width:300px}
 .inlineDropdown .dropdown-menu h4 {color:#304269;padding:0 10px}
-.inlineDropdown .dropdown-menu p {background:#304269;margin:0 10px;padding:10px;font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New}
+.inlineDropdown .dropdown-menu p {
+  background:#304269;
+  margin:0 10px;
+  padding:10px;
+  font-family:Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New
+}
 
 .mainStatus {width:90%;margin:10% auto;border-top:1px dotted #fff;border-bottom:1px dotted #fff;padding:20px 0;text-align:center;color:#fff;font-size:20px;font-weight:700}
 
@@ -162,7 +169,6 @@ hr {border:none;border-bottom:1px dotted #fff}
 }
 
 .activate-container h1, .login-container h1 {
-  font-family: 'Trebuchet MS', sans-serif;
   font-weight: normal;
 }
 
@@ -189,7 +195,6 @@ hr {border:none;border-bottom:1px dotted #fff}
 }
 
 .activate-container .activate-main h2, .login-container .login-main h2 {
-  font-family:'Montserrat', sans-serif;
   color: #FFF;
   font-size: 20px;
   font-weight: 200;
@@ -228,7 +233,6 @@ hr {border:none;border-bottom:1px dotted #fff}
   outline: 0;
   background: transparent;
   border-bottom: 1px solid #CCC;
-  font-family:'Rubik', sans-serif;
   font-weight: 100;
   font-size: 17px;
   color: #FFF;
@@ -248,7 +252,6 @@ hr {border:none;border-bottom:1px dotted #fff}
 }
 
 .activate-container button {
-  font-family: 'Trebuchet MS', sans-serif;
   width: 100%;
   max-width: 450px;
   margin: 20px auto;
@@ -793,7 +796,6 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
   background-size: 23px;
   background-position: center center;
   color: #FFF;
-  font-family: Arial, Helvetica, sans-serif;
   min-height: 100%;
   width: 31px;
   height: 31px;
