@@ -83,9 +83,8 @@ export default View.extend({
     }
   },
   initialize() {
-    this.formSwitch = App.state.login.showRecoverForm
-    this.listenTo(App.state.login, 'change:showRecoverForm', () => {
-      this.toggle('formSwitch')
+    this.listenToAndRun(App.state.login, 'change:showRecoverForm', () => {
+      this.formSwitch = App.state.login.showRecoverForm
     })
   },
   render() {
@@ -111,16 +110,11 @@ export default View.extend({
     }
 
     if (loginConfig.google.enabled === true) {
-      this.renderGoogleLogin()
+      this.renderSubview(new GoogleLogin(), this.queryByHook('social-login-container'))
     }
 
     // document.getElementsByTagName('body')[0].style.backgroundColor = '#304269'
     App.actions.navbar.setVisibility(false)
-  },
-  renderGoogleLogin () {
-    const view = new GoogleLogin()
-    view.render()
-    this.renderSubview(view, this.queryByHook('social-login-container'))
   },
   renderLoginForm () {
     this.loginForm = new LoginForm({})

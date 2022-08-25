@@ -195,7 +195,7 @@ export default {
       }
     })
   },
-  togglePasswordLoginForm() {
+  togglePasswordLoginForm () {
     App.state.login.toggle('showRecoverForm')
   },
   recoverPassword (data) {
@@ -213,7 +213,7 @@ export default {
           bootbox.alert({
             message: 'Password reset link sent',
             callback: () => {
-              App.state.login.showRecoverForm = !App.state.login.showRecoverForm
+              App.state.login.showRecoverForm = false
            }
           })
         } else {
