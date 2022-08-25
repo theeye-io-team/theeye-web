@@ -169,7 +169,6 @@ hr {border:none;border-bottom:1px dotted #fff}
 }
 
 .activate-container h1, .login-container h1 {
-  font-family: 'Montserrat', sans-serif;
   font-weight: normal;
 }
 
@@ -196,7 +195,6 @@ hr {border:none;border-bottom:1px dotted #fff}
 }
 
 .activate-container .activate-main h2, .login-container .login-main h2 {
-  font-family: 'Montserrat', sans-serif;
   color: #FFF;
   font-size: 20px;
   font-weight: 200;
@@ -235,7 +233,6 @@ hr {border:none;border-bottom:1px dotted #fff}
   outline: 0;
   background: transparent;
   border-bottom: 1px solid #CCC;
-  font-family: 'Montserrat', sans-serif;
   font-weight: 100;
   font-size: 17px;
   color: #FFF;
@@ -255,7 +252,6 @@ hr {border:none;border-bottom:1px dotted #fff}
 }
 
 .activate-container button {
-  font-family: 'Montserrat', sans-serif;
   width: 100%;
   max-width: 450px;
   margin: 20px auto;
@@ -800,7 +796,6 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
   background-size: 23px;
   background-position: center center;
   color: #FFF;
-  font-family: 'Montserrat', sans-serif;
   min-height: 100%;
   width: 31px;
   height: 31px;
