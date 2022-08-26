@@ -61,7 +61,7 @@ const TaskCreationWizard = View.extend({
     submit: 'any'
   },
   template: `
-    <div>
+    <div data-component="task-creation-wizard">
       <section data-hook="type-selection-container" class="task-type-selection">
         <h1>Please, select the task type to continue</h1>
         <div data-hook="type-selection-view-container"></div>

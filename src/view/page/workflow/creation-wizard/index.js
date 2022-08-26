@@ -10,8 +10,6 @@ import Catalogue from 'components/catalogue'
 import bootbox from 'bootbox'
 import { Workflow } from 'models/workflow'
 
-import './styles.less'
-
 const docsLink = 'core-concepts/tasks/tasks_workflows/'
 
 export default function () {
