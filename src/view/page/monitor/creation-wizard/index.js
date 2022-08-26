@@ -41,7 +41,7 @@ export default function () {
 
 const ResourceCreationWizard = View.extend({
   template: `
-    <div>
+    <div data-component="monitor-creation-wizard">
       <section data-hook="type-selection-container" class="task-type-selection">
         <h1>Please, select the monitor type to continue</h1>
         <div data-hook="type-selection-view-container"></div>
