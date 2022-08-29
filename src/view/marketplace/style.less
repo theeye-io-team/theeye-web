@@ -111,23 +111,14 @@
   }
   .marketplace-page .header {
     height: 80px;
+    width: 100%;
     background: #23324C;
     color: #FAFAFA;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
     padding-top: 25px;
     z-index: 2;
     box-shadow: 0 0 15px #666;
   }
-  .marketplace-page .panel-left,
-  .marketplace-page .panel-right {
-    padding-top: 120px!important;
-    padding-bottom: 80px!important;
-  }
   .marketplace-page .panel-left {
-    box-shadow: 8px 0 8px #eee;
     padding: 0;
   }
   .marketplace-page .panel-left h3 {
@@ -171,11 +162,11 @@
   .marketplace-page .panel-right {
     padding: 40px 82px;
   }
-  .marketplace-page .tab-pane h3 {
+  .marketplace-page .tab-content h3 {
     margin-bottom: 30px;
     display: inline-block;
   }
-  .marketplace-page .tab-pane h4 {
+  .marketplace-page .tab-content h4 {
     margin-bottom: 20px;
     font-size: 20px;
   }
@@ -369,5 +360,40 @@
 
   h3.start-onboarding {
     cursor: pointer
+  }
+
+  .search {
+    text-align: center;
+    background: #00000011;
+    border-color: #454545;
+    height: 35px;
+    margin: 8px 20px;
+    border-radius: 25px;
+
+    .fa-search {
+      border-radius: unset;
+      background: none;
+      font-size: 22px;
+      padding-top: 6px;
+      color: #454545;
+      position: relative;
+    }
+
+    .search-input {
+      padding-left: 3ch;
+      color: #454545;
+      border: none;
+      font-size: 14px;
+      width: 200px;
+      outline: none !important;
+      background: none;
+      position: relative;
+      top: -2px;
+    }
+
+    .search-input::-webkit-input-placeholder { color: #b8bdc6 }
+    .search-input::-moz-placeholder { color: #b8bdc6 }
+    .search-input:-ms-input-placeholder { color: #b8bdc6 }
+    .search-input:-moz-placeholder { color: #b8bdc6 }
   }
 }

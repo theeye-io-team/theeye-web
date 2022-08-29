@@ -1,22 +1,24 @@
 import App from 'ampersand-app'
 import XHR from 'lib/xhr'
+import MarketplaceView from 'view/marketplace'
 
 export default {
-  menu: {
-    hide () {
-      App.state.marketplace.menu.visible = false
-    },
-    show () {
-      let state = App.state.marketplace.menu
-      state.current_tab = state.default_tab
-      state.visible = true 
-    },
-    toggle () {
-      App.state.marketplace.menu.toggle('visible')
-    },
-    toggleTab (tabId) {
-      App.state.marketplace.menu.current_tab = tabId
-    }
+  hide () {
+    App.state.marketplace.menu.visible = false
+  },
+  show () {
+    const state = App.state.marketplace.menu
+    state.current_tab = state.default_tab
+    state.visible = true 
+
+    const view = new MarketplaceView()
+    view.render()
+  },
+  toggle () {
+    App.state.marketplace.menu.toggle('visible')
+  },
+  toggleTab (tabId) {
+    App.state.marketplace.menu.current_tab = tabId
   },
   tasks: {
     fetch () {

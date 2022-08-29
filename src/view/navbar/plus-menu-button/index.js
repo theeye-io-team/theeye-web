@@ -8,7 +8,6 @@ import WorkflowCreationWizard from 'view/page/workflow/creation-wizard'
 import IndicatorCreationWizard from 'view/page/indicator/creation-wizard'
 import WebhookCreationWizard from 'view/page/webhook/creation-wizard'
 import FileCreationWizard from 'view/page/files/creation-wizard'
-import MarketplaceView from 'view/marketplace'
 
 import './style.less'
 
@@ -90,7 +89,7 @@ export default View.extend({
       event.preventDefault()
       event.stopPropagation()
       NavbarActions.togglePlusMenu()
-      App.actions.marketplace.menu.show()
+      App.actions.marketplace.show()
       return false
     }
   },
@@ -101,7 +100,6 @@ export default View.extend({
   },
   render () {
     this.renderWithTemplate(this)
-    this.registerSubview(new MarketplaceView())
     this.renderBackdrop()
   },
   renderBackdrop () {
