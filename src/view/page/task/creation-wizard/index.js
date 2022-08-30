@@ -64,7 +64,7 @@ const TaskCreationWizard = View.extend({
     <div data-component="task-creation-wizard">
       <section data-hook="type-selection-container" class="task-type-selection">
         <h1>Please, select the task type to continue</h1>
-        <div data-hook="type-selection-view-container"></div>
+        <div class="container" data-hook="type-selection-view-container"></div>
         <div class="import-task-section">
           <h1>Or you can import a task from a file</h1>
           <div data-hook="import-task-container"></div>
@@ -85,7 +85,7 @@ const TaskCreationWizard = View.extend({
           this.renderCreateFormTask(new ScriptTask())
         },
         icon_class: 'fa-code',
-        color: '#c6639b',
+        icon_color: '#c6639b',
       }, {
         name: 'Outgoing Webhook',
         id: 'scraper',
@@ -94,7 +94,7 @@ const TaskCreationWizard = View.extend({
           this.renderCreateFormTask(new ScraperTask())
         },
         icon_class: 'fa-cloud',
-        color: '#0080b9',
+        icon_color: '#0080b9',
       }, {
         name: 'Approval',
         id: 'approval',
@@ -103,7 +103,7 @@ const TaskCreationWizard = View.extend({
           this.renderCreateFormTask(new ApprovalTask())
         },
         icon_class: 'fa-thumbs-o-up',
-        color: '#9fbc75'
+        icon_color: '#9fbc75'
       }, {
         name: 'Notification',
         id: 'notification',
@@ -112,7 +112,7 @@ const TaskCreationWizard = View.extend({
           this.renderCreateFormTask(new NotificationTask())
         },
         icon_class: 'fa-bell-o',
-        color: '#f4bc4a'
+        icon_color: '#f4bc4a'
       }
     ]
 

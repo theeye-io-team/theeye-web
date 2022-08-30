@@ -4,7 +4,7 @@ import View from "ampersand-view"
 
 import bootbox from "bootbox"
 import Modalizer from "components/modalizer"
-import TypeSelectionView from "components/type-selection-view"
+import Catalogue from "components/catalogue"
 import FileSaver from "file-saver"
 import TaskFormView from 'view/page/task/form'
 
@@ -15,7 +15,7 @@ export default FullContainer.extend({
     <div data-component="marketplace-container" class="full-page-container">
       <div class="marketplace-page">
         <div class="header text-center">
-          <span>TheEye Marketplace</span>
+          <span class="main-title">Marketplace</span>
           <span data-hook="close-button" class="close-button fa fa-remove" style=""></span>
         </div>
         <div class="col-xs-3 panel-left">
@@ -50,9 +50,9 @@ export default FullContainer.extend({
     })
   },
   updateState (state) {
-    if (!state||!state.menu) { return }
-    this.visible = state.menu.visible
-    this.current_tab = state.menu.current_tab
+    if (!state) { return }
+    this.visible = state.visible
+    this.current_tab = state.current_tab
     this.current_content = null
   },
   render () {
@@ -72,7 +72,7 @@ export default FullContainer.extend({
 
     this.on('change:current_tab', () => {
       if (this.current_content !== null) {
-        if (this.current_content.title !== this.current_tab) {
+        if (this.current_content.name !== this.current_tab) {
           if (this.current_content.remove) {
             this.current_content.remove()
           }
@@ -83,7 +83,7 @@ export default FullContainer.extend({
   renderTabs() {
     const tabs = this.queryByHook('tabs-container')
     this.renderSubview(new Tab({ name: 'Tasks' }), tabs)
-    this.renderSubview(new TabContent({ title: 'Tasks' }), this.queryByHook('tab-content-container'))
+    this.renderSubview(new TabContent({ name: 'tasks' }), this.queryByHook('tab-content-container'))
   },
   events: {
     'click [data-hook=close-button]': 'onClickCloseButton',
@@ -124,21 +124,29 @@ const Tab = View.extend({
 })
 
 const TabContent = View.extend({
+  initialize () {
+    View.prototype.initialize.apply(this, arguments)
+    this.listenToAndRun(App.state.marketplace, `change:${this.name}`, this.updateState)
+    App.actions.marketplace.fetch(this.name)
+  },
+  updateState () {
+    this.store = App.state.marketplace[this.name]
+  },
   props: {
     search: ['string', false, ''],
-    title: 'string'
+    name: 'string',
+    store: ['array', false, () => { return [] }]
   },
   template () {
     return `
       <div class="">
-        <div class="row">
-          <h1 class="title">${this.title}</h1>
+        <div>
           <div class="search">
-            <i class="fa fa-search" aria-hidden="true"></i>
+            <i class="search-icon fa fa-search" aria-hidden="true"></i>
             <input autocomplete="off" data-hook="search-input" class="search-input" placeholder="Search">
           </div>
         </div>
-        <div class="row">
+        <div>
           <div data-hook="elems-container"></div>
         </div>
       </div>
@@ -155,55 +163,52 @@ const TabContent = View.extend({
   },
   render () {
     this.renderWithTemplate(this)
-    
-    this.listenToAndRun(App.state.marketplace.tasks, 'change', this.updateState)
 
-    if (!App.state.marketplace.tasks.fetched) {
-      App.actions.marketplace.tasks.fetch()
-    }
-  },
-  updateState () {
-    if (this.visible) {
-      App.state.loader.visible = !App.state.marketplace.tasks.fetched
-    }
-    if (App.state.marketplace.tasks.fetched) {
-      const taskList = new TypeSelectionView({
-        buttons: App.state.marketplace.tasks.list.map(
-          task => Object.assign(
-            task,
-            this.getImageAndColor(task.type),
-            { callback: this.onDownload }
-          )
-        ),
-        inline: true
-      })
-      this.renderSubview(taskList, this.queryByHook('elems-container'))
-    }
+    this.listenToAndRun(this, `change:store`, () => {
+      if (Array.isArray(this.store) && this.store.length > 0) {
+        const catalogue = new Catalogue({
+          buttons: this.store.map( // store is an array
+            data => Object.assign(
+              data,
+              this.getImageAndColor(data.type),
+              { 
+                callback: () => {
+                  this.onDownload(data.id)
+                }
+              }
+            )
+          ),
+          inline: true
+        })
+
+        this.renderSubview(catalogue, this.queryByHook('elems-container'))
+      }
+    })
   },
   getImageAndColor (type) {
     const types = {
       script: {
         icon_class: 'fa-code',
-        color: '#c6639b',
+        icon_color: '#c6639b',
       },
       scraper: {
         icon_class: 'fa-cloud',
-        color: '#0080b9',
+        icon_color: '#0080b9',
       }, 
       approval: {
         icon_class: 'fa-thumbs-o-up',
-        color: '#9fbc75'
+        icon_color: '#9fbc75'
       },
       notification: {
         icon_class: 'fa-bell-o',
-        color: '#f4bc4a'
+        icon_color: '#f4bc4a'
       }
     }
     return types[type]
   },
   onDownload (id) {
     App.state.loader.visible = true
-    App.actions.marketplace.tasks.getRecipe(id).then(
+    App.actions.marketplace.getRecipe(id).then(
       recipe => {
         App.state.loader.visible = false
         const dialog = bootbox.dialog({

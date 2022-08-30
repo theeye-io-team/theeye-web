@@ -43,7 +43,7 @@ export default function () {
 const CreationWizard = View.extend({
   template: `
     <div>
-      <section data-hook="selection-container" class="task-type-selection"></section>
+      <section data-hook="selection-container" class="container"></section>
       <input type="file" data-hook="recipe-upload" style="display: none"/>
     </div>
   `,
@@ -84,7 +84,7 @@ const CreationWizard = View.extend({
           this.parent.hide()
         },
         icon_class: "fa-sitemap",
-        color: "#c6639b"
+        icon_color: "#c6639b"
       }, {
         name: "Import",
         id: "import",
@@ -93,7 +93,7 @@ const CreationWizard = View.extend({
           this.queryByHook('recipe-upload').click()
         },
         icon_class: 'fa-file-o',
-        color: '#9fbc75'
+        icon_color: '#9fbc75'
       }
     ]
 

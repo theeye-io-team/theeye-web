@@ -44,7 +44,7 @@ const ResourceCreationWizard = View.extend({
     <div data-component="monitor-creation-wizard">
       <section data-hook="type-selection-container" class="task-type-selection">
         <h1>Please, select the monitor type to continue</h1>
-        <div data-hook="type-selection-view-container"></div>
+        <div class="container" data-hook="type-selection-view-container"></div>
       </section>
       <section data-hook="form-container"></section>
     </div>
@@ -69,7 +69,7 @@ const ResourceCreationWizard = View.extend({
           this.createForm(resource)
         },
         icon_class: 'fa-file-o',
-        color: '#ff8a6d'
+        icon_color: '#ff8a6d'
       },{
         name: 'Process',
         id: 'process',
@@ -79,7 +79,7 @@ const ResourceCreationWizard = View.extend({
           this.createForm(resource)
         },
         icon_class: 'fa-cog',
-        color: '#1c73b9'
+        icon_color: '#1c73b9'
       },{
         name: 'Script',
         id: 'script',
@@ -89,7 +89,7 @@ const ResourceCreationWizard = View.extend({
           this.createForm(resource)
         },
         icon_class: 'fa-code',
-        color: '#c6639b'
+        icon_color: '#c6639b'
       },{
         name: 'Web Check',
         id: 'scraper',
@@ -99,7 +99,7 @@ const ResourceCreationWizard = View.extend({
           this.createForm(resource)
         },
         icon_class: 'fa-cloud',
-        color: '#158df9'
+        icon_color: '#158df9'
       },{
         name: 'Nested',
         id: 'nested',
@@ -109,7 +109,7 @@ const ResourceCreationWizard = View.extend({
           this.createForm(resource)
         },
         icon_class: 'fa-bullseye',
-        color: '#06b777'
+        icon_color: '#06b777'
       },{
         name: 'Bot Host Health',
         id: 'health',
@@ -119,7 +119,7 @@ const ResourceCreationWizard = View.extend({
           this.createForm(resource)
         },
         icon_class: 'fa-bar-chart',
-        color: '#00b4bc'
+        icon_color: '#00b4bc'
       },{
         name: 'Bot Host Processes',
         id: 'processes',
@@ -129,7 +129,7 @@ const ResourceCreationWizard = View.extend({
           this.createForm(resource)
         },
         icon_class: 'fa-cogs',
-        color: '#519194'
+        icon_color: '#519194'
       }
     ]
 
