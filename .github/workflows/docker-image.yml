@@ -26,7 +26,6 @@ jobs:
             type=ref,event=tag
             type=ref,event=pr
             type=raw,value=latest,enable={{is_default_branch}}
-          build-args: NODE_ENV='production'
     - 
      name: Login to DockerHub
      uses: docker/login-action@v2
@@ -40,3 +39,4 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: NODE_ENV=production
