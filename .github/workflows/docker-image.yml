@@ -39,4 +39,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: NODE_ENV=production
+          build-args: |
+            NODE_ENV=production
