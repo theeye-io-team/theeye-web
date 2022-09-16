@@ -19,6 +19,8 @@ export default FormView.extend({
     document.body.appendChild(this.dropOverlay)
 
     this.addListeners()
+
+    this.el.setAttribute('data-component', 'dropable-form')
   },
   remove () {
     FormView.prototype.remove.apply(this, arguments)
