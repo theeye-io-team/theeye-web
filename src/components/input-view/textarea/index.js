@@ -13,7 +13,13 @@ export default InputView.extend({
     const setValue = InputView.prototype.setValue
     if (this.contentType === 'json' || this.prettyJson === true) {
       if (typeof value === 'object') {
-        const json = JSON.stringify(value, undefined, (this.prettyJson?2:null))
+        let json
+        try {
+          json = JSON.stringify(value, undefined, (this.prettyJson?2:null))
+        } catch (err) {
+          console.error(err)
+          json = String(value)
+        }
         return setValue.call(this, json)
       }
     }
