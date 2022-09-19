@@ -89,7 +89,13 @@ export default FormView.extend({
     Object
       .keys(this._fieldViews)
       .forEach(prop => {
-        this._fieldViews[prop].setValue(data[prop])
+        let value
+        try {
+          value = JSON.parse(data[prop])
+        } catch (err) {
+          value = data[prop]
+        }
+        this._fieldViews[prop].setValue(value)
       })
   },
   getInvalidFields () {
