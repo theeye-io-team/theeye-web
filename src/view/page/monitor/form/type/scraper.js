@@ -62,6 +62,7 @@ export default MonitorFormView.extend({
     })
 
     const bodyTextarea = new TextareaView({
+      contentType: 'json',
       prettyJson: true,
       visible: false,
       label: 'Request Body',

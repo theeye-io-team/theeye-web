@@ -10,6 +10,7 @@ import Modalizer from 'components/modalizer'
 import JsonViewer from 'components/json-viewer'
 import DownloadButton from 'view/buttons/download'
 import isJSON from 'validator/lib/isJSON'
+import FileSaver from 'file-saver'
 
 import './styles.less'
 
@@ -292,13 +293,17 @@ const BaseJobView = View.extend({
             <i class="fa fa-hourglass-end"></i>
             <span data-hook="lastupdate"></span>
           </p>
-          <a href="#" data-hook="fetch">Update <i class="fa fa-refresh"></i></a>
+          <a href="#" data-hook="fetch">
+            Update <i class="fa fa-refresh"></i>
+          </a>
           <div>
-            <i class="fa fa-sign-in"></i> Input
+            <i class="fa fa-sign-in"></i> Input 
+            <button data-hook="download-input"><i class="fa fa-download"></i></button>
             <div data-hook="input"></div>
           </div>
           <div>
             <i class="fa fa-sign-out"></i> Output
+            <button data-hook="download-output"><i class="fa fa-download"></i></button>
             <div data-hook="output"></div>
           </div>
           <div>
@@ -354,7 +359,9 @@ const BaseJobView = View.extend({
   },
   events: {
     'click [data-hook=moreinfo-toggle]':'onClickToggleMoreInfo',
-    'click a[data-hook=fetch]':'onClickFetch'
+    'click a[data-hook=fetch]':'onClickFetch',
+    'click button[data-hook=download-input]':'onClickDownloadInput',
+    'click button[data-hook=download-output]':'onClickDownloadOutput',
   },
   onClickFetch (event) {
     event.preventDefault()
@@ -364,6 +371,20 @@ const BaseJobView = View.extend({
   },
   onClickToggleMoreInfo (event) {
     this.toggle('moreinfo_toggle')
+  },
+  onClickDownloadInput (event) {
+    const date = moment(this.job.creation_date).format("YYYYMMDD")
+    const content = JSON.stringify(this.job.task_arguments_values)
+    const blob = new Blob([ content ], { type: 'application/json' })
+    const filename = `input_${this.job.name.replace(/ /g,'_')}_${date}.json`
+    FileSaver.saveAs(blob, filename)
+  },
+  onClickDownloadOutput (event) {
+    const date = moment(this.job.creation_date).format("YYYYMMDD")
+    const content = JSON.stringify(this.job.output)
+    const blob = new Blob([ content ], { type: 'application/json' })
+    const filename = `output_${this.job.name.replace(/ /g,'_')}_${date}.json`
+    FileSaver.saveAs(blob, filename)
   },
   render () {
     this.renderWithTemplate(this)
@@ -433,6 +454,9 @@ const TableView = View.extend({
 
     // we need a string to display
     const displayValue = (value) => {
+      if (typeof value === 'boolean') {
+        return String(value)
+      }
       if (typeof value === 'number' || typeof value === 'string') {
         return value.toString()
       }
@@ -453,6 +477,21 @@ const TableView = View.extend({
 
       return out
     }
+
+    //const displayValue = (value) => {
+    //  switch (typeof value) {
+    //    case 'number':
+    //    case 'string':
+    //      return value.toString()
+    //    case 'object':
+    //      if (value.toString) {
+    //        return value.toString()
+    //      }
+    //      return JSON.stringify(value)
+    //    default:
+    //      return String(value)
+    //  }
+    //}
 
     for (let index = 0; index < this.rows.length; index++) {
       const row = this.rows[index]

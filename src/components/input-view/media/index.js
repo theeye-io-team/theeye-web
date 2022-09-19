@@ -1,6 +1,9 @@
 import View from 'ampersand-view'
 import InputView from 'components/input-view'
 import bootbox from 'bootbox'
+import dataURLtoBlob from 'lib/dataURLtoBlob'
+import mime from 'mime-types'
+import isDataURL from 'valid-data-url'
 
 export default InputView.extend({
   props: {
@@ -64,6 +67,15 @@ export default InputView.extend({
     this.file.dataUrl = undefined
     this.input.value = ''
   },
+  setValue (dataurl) {
+    if (isDataURL(dataurl)) {
+      const blob = dataURLtoBlob(dataurl)
+      const type = blob.type
+      const ext = mime.extension(type)
+      const file = new File([ blob ], `file.${ext}`, { type })
+      this._loadFile(file)
+    }
+  },
   /**
    *
    * Load an image, validate size and dimension and generate preview
@@ -85,11 +97,10 @@ export default InputView.extend({
       const result = e.target.result
 
       if (allowPreview === true) {
-        var image = new Image()
+        const image = new Image()
         image.onload = function () {
           self.inputValue = file
         }
-
         image.src = result
       } else {
         self.inputValue = file

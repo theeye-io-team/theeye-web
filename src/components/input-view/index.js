@@ -86,5 +86,8 @@ export default InputView.extend({
     this.input.addEventListener('focusout', () => {
       this.trigger('focusout', this)
     })
+  },
+  setValue (value) {
+    InputView.prototype.setValue.call(this, String(value))
   }
 })

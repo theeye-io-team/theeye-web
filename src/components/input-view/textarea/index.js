@@ -4,17 +4,32 @@ import './styles.less'
 
 export default InputView.extend({
   props: {
+    contentType: ['string', 'false', 'text'],
     counter: 'number',
     maxlength: 'number',
     prettyJson: ['boolean', false, false]
   },
+  setValue (value) {
+    const setValue = InputView.prototype.setValue
+    if (this.contentType === 'json' || this.prettyJson === true) {
+      if (typeof value === 'object') {
+        let json
+        try {
+          json = JSON.stringify(value, undefined, (this.prettyJson?2:null))
+        } catch (err) {
+          console.error(err)
+          json = String(value)
+        }
+        return setValue.call(this, json)
+      }
+    }
+
+    setValue.call(this, value)
+  },
   derived: {
     value: {
-      // in you want it re-calculated
-      // when the user changes input
-      // make it dependent on `inputValue`
       deps: ['inputValue'],
-      fn: function () {
+      fn () {
         if (this.prettyJson === true) {
           try {
             return JSON.stringify(JSON.parse(this.inputValue))

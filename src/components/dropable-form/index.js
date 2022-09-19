@@ -19,6 +19,8 @@ export default FormView.extend({
     document.body.appendChild(this.dropOverlay)
 
     this.addListeners()
+
+    this.el.setAttribute('data-component', 'dropable-form')
   },
   remove () {
     FormView.prototype.remove.apply(this, arguments)
@@ -87,7 +89,13 @@ export default FormView.extend({
     Object
       .keys(this._fieldViews)
       .forEach(prop => {
-        this._fieldViews[prop].setValue(data[prop])
+        let value
+        try {
+          value = JSON.parse(data[prop])
+        } catch (err) {
+          value = data[prop]
+        }
+        this._fieldViews[prop].setValue(value)
       })
   },
   getInvalidFields () {

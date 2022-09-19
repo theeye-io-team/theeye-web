@@ -109,6 +109,7 @@ export default DropableForm.extend({
   },
   buildJsonField (spec) {
     return new TextareaView({
+      contentType: 'json',
       prettyJson: true,
       label: spec.label,
       name: spec.order.toString(),

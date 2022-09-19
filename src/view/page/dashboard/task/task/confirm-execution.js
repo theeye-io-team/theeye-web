@@ -77,6 +77,15 @@ const getArgRenderValue = (arg) => {
   return arg.value
 }
 
+const toString = (value) => {
+  switch (typeof value) {
+    case 'boolean': 
+      return String(value)
+    default:
+      return value.toString()
+  }
+}
+
 const ArgRow = View.extend({
   template: `
     <div class="row">
@@ -86,7 +95,7 @@ const ArgRow = View.extend({
   `,
   props: {
     label: ['string', false, ''],
-    renderValue: ['string', false, ''],
+    renderValue: ['any', false, ''],
     masked: ['boolean', false, false]
   },
   bindings: {
@@ -95,7 +104,10 @@ const ArgRow = View.extend({
       hook: 'label'
     },
     renderValue: {
-      type: 'text',
+      type: function (el, value, previousValue) {
+        const str = toString(value)
+        el.innerHTML = str
+      },
       hook: 'render-value'
     },
     className: {
