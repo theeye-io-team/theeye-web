@@ -195,6 +195,7 @@ const TabContent = View.extend({
         })
 
         this.renderSubview(catalogue, this.queryByHook('elems-container'))
+        this.catalogue = catalogue
       }
     })
   },
@@ -261,15 +262,25 @@ const TabContent = View.extend({
   onSearchInput (event) {
     event.stopPropagation()
     event.preventDefault()
+
+    const views = this.catalogue._subviews
+    const search = event.target.value.toLowerCase()
+
+    if (search.length === 0) {
+      views.forEach(v => v.visible = true)
+      return
+    }
+
+    if (search.length < 3) {
+      return
+    }
     
-    this._subviews[0]._subviews.forEach(
-      view => {
-        console.log([view.name, view.name.toLowerCase().includes(event.target.value.toLowerCase()), view])
-        view.visible = (
-          view.name.toLowerCase().includes(event.target.value.toLowerCase())
-        )
-      }
-    )
+    views.forEach(view => {
+      const isVisible = view.name
+        .toLowerCase()
+        .includes(search)
+      view.visible = isVisible
+    })
   }
 })
 

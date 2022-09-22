@@ -24,7 +24,7 @@ export default View.extend({
               aria-controls="unbinded">
               <div class="panel-title-content">
 
-                <div class="panel-item name">
+                <div class="panel-item name col-xs-10">
                   <span data-hook="tags"></span>
                   <span data-hook="name" title=""></span>
                   <span data-hook="help"></span>

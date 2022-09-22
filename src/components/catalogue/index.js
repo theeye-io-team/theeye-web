@@ -20,18 +20,22 @@ export default View.extend({
         new ButtonView({...button}),
         this.queryByHook('buttons-container')
       )
-    });
+    })
   }
 })
 
 const ButtonView = View.extend({
   props: {
+    visible: ['boolean', false, true],
     name: ['string', true, 'placeholder'],
     short_description: ['string', true, ''],
     hook: ['string', true, 'placeholder'],
     callback: ['function', true, () => { return () => {} }],
     icon_class: ['string', true, 'fa fa-code'],
     icon_color: ['string', true, '#ffffff0']
+  },
+  bindings: {
+    visible: { type: 'toggle' }
   },
   template () {
     return `
