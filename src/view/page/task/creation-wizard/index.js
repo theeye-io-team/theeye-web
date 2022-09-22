@@ -64,7 +64,7 @@ const TaskCreationWizard = View.extend({
     <div data-component="task-creation-wizard">
       <section data-hook="type-selection-container" class="task-type-selection">
         <h1>Please, select the task type to continue</h1>
-        <div data-hook="type-selection-view-container"></div>
+        <div class="container" data-hook="type-selection-view-container"></div>
         <div class="import-task-section">
           <h1>Or you can import a task from a file</h1>
           <div data-hook="import-task-container"></div>
@@ -78,41 +78,41 @@ const TaskCreationWizard = View.extend({
 
     const buttons = [
       {
-        title: 'Script',
-        hook: 'script',
-        help: HelpTexts.task.creation.script,
+        name: 'Script',
+        id: 'script',
+        short_description: HelpTexts.task.creation.script,
         callback: () => {
           this.renderCreateFormTask(new ScriptTask())
         },
-        icon_class: 'fa-code',
-        color: '#c6639b',
+        icon_class: 'fa fa-code',
+        icon_color: '#c6639b',
       }, {
-        title: 'Outgoing Webhook',
-        hook: 'scraper',
-        help: HelpTexts.task.creation.webhook,
+        name: 'Outgoing Webhook',
+        id: 'scraper',
+        short_description: HelpTexts.task.creation.webhook,
         callback: () => {
           this.renderCreateFormTask(new ScraperTask())
         },
-        icon_class: 'fa-cloud',
-        color: '#0080b9',
+        icon_class: 'fa fa-cloud',
+        icon_color: '#0080b9',
       }, {
-        title: 'Approval',
-        hook: 'approval',
-        help: HelpTexts.task.creation.approval,
+        name: 'Approval',
+        id: 'approval',
+        short_description: HelpTexts.task.creation.approval,
         callback: () => {
           this.renderCreateFormTask(new ApprovalTask())
         },
-        icon_class: 'fa-thumbs-o-up',
-        color: '#9fbc75'
+        icon_class: 'fa fa-thumbs-o-up',
+        icon_color: '#9fbc75'
       }, {
-        title: 'Notification',
-        hook: 'notification',
-        help: HelpTexts.task.creation.notification,
+        name: 'Notification',
+        id: 'notification',
+        short_description: HelpTexts.task.creation.notification,
         callback: () => {
           this.renderCreateFormTask(new NotificationTask())
         },
-        icon_class: 'fa-bell-o',
-        color: '#f4bc4a'
+        icon_class: 'fa fa-bell-o',
+        icon_color: '#f4bc4a'
       }
     ]
 
@@ -200,15 +200,6 @@ const TaskCreationWizard = View.extend({
         this.submit(data)
       } else {
         App.actions.task.create(data)
-        //if (task.type === 'script' && mode === 'import') {
-        //  App.actions.file.create(script.serialize(), (err, file) => {
-        //    data.script_id = file.id
-        //    delete data.script_name
-        //    App.actions.task.create(data)
-        //  })
-        //} else {
-        //  App.actions.task.create(data)
-        //}
       }
 
       this.trigger('submitted')

@@ -48,6 +48,10 @@ export default {
     },
     grecaptcha: {
       sitekey: ''
+    },
+    marketplace: {
+      enabled: true,
+      url: 'http://localhost:60080/marketplace'
     }
   }
 }

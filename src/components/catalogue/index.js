@@ -7,7 +7,7 @@ export default View.extend({
   },
   template: `
     <div data-component="catalogue">
-      <div class="container">
+      <div class="">
         <div class="row buttons-container" data-hook="buttons-container"></div>
       </div>  
     </div>
@@ -26,27 +26,28 @@ export default View.extend({
 
 const ButtonView = View.extend({
   props: {
-    title: ['string', true, 'placeholder'],
+    name: ['string', true, 'placeholder'],
+    short_description: ['string', true, ''],
     hook: ['string', true, 'placeholder'],
-    help: ['string', true, 'Lorem Ipsum dolor sit amet'],
     callback: ['function', true, () => { return () => {} }],
-    icon_class: ['string', true, 'fa-code'],
-    color: ['string', true, '#c6639b']
+    icon_class: ['string', true, 'fa fa-code'],
+    icon_color: ['string', true, '#ffffff0']
   },
-  template: function () {
+  template () {
     return `
-    <div class="button-container col-xxl-3 col-lg-4 col-sm-6 col-xs-12">
-      <button data-hook="${this.hook}" class="btn button-view">
-        <div class="icon" style="background-color: ${this.color};">
-          <i class="fa ${this.icon_class}"></i>
-        </div>
-        <div class="text">
-          <div class="title">${this.title}</div>
-          <div class="help">${this.help}</div>
-        </div>
-      </button>
-    </div> 
-  ` },
+      <div class="button-container col-xxl-3 col-lg-4 col-sm-6 col-xs-12">
+        <button data-hook="${this.hook}" class="btn button-view">
+          <div class="icon" style="background-color: ${this.icon_color};">
+            <i class="${this.icon_class}"></i>
+          </div>
+          <div class="text">
+            <div class="title">${this.name}</div>
+            <div class="help">${this.short_description}</div>
+          </div>
+        </button>
+      </div> 
+    `
+  },
   events: {
     click:'onclick' 
   },

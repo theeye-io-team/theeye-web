@@ -1,13 +1,4 @@
 [data-component=catalogue] {
-  @media (min-width: 1500px) {
-    .col-xxl-3 {
-      width: 25%;
-    }
-    .container {
-      width: 1400px;
-    }
-  }
-
   .button-container {
     display: flex;
     flex-wrap: wrap;
@@ -21,15 +12,14 @@
       border: 2px solid #dddddd;
       width: 100%;
       height: 100%;
-      margin: 10px;
       padding: 15px;
       text-align: start;
-      vertical-align: middle;
+      vertical-align: top;
 
       .icon {
         border-radius: 5px;
         display: inline-block;
-        vertical-align: middle;
+        vertical-align: top;
         text-align: center;
         font-size: 40px;
         color: white;
@@ -39,8 +29,9 @@
       }
 
       .text {
+        white-space: normal;
         display: inline-block;
-        vertical-align: middle;
+        vertical-align: top;
         padding-left: 10px;
         font-size: 12px;
         width: calc(100% - 64px);
@@ -51,7 +42,6 @@
         }
 
         .help {
-          white-space: normal;
         }
       }
     }

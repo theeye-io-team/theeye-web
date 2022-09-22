@@ -9,6 +9,7 @@ import ScriptActions from 'actions/script'
 import HostActions from 'actions/host'
 import IndicatorActions from 'actions/indicator'
 import JobActions from 'actions/job'
+import MarketplaceActions from 'actions/marketplace'
 import MemberActions from 'actions/member'
 import MonitorActions from 'actions/monitor'
 import NavbarActions from 'actions/navbar'
@@ -39,6 +40,7 @@ export default {
     integrations: IntegrationActions,
     job: JobActions,
     localSettings: LocalSettingsActions,
+    marketplace: MarketplaceActions,
     member: MemberActions,
     monitor: MonitorActions,
     navbar: NavbarActions,

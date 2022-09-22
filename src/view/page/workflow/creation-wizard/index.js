@@ -1,14 +1,12 @@
 import App from 'ampersand-app'
 import Modalizer from 'components/modalizer'
-import FullPageModalizer from 'components/fullpagemodalizer'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
-import WorkflowEditorView from '../editor'
 import View from 'ampersand-view'
 import config from 'config'
 import Catalogue from 'components/catalogue'
 import bootbox from 'bootbox'
-import { Workflow } from 'models/workflow'
+import WorkflowCreateForm from '../create-form'
 
 const docsLink = 'core-concepts/tasks/tasks_workflows/'
 
@@ -43,7 +41,7 @@ export default function () {
 const CreationWizard = View.extend({
   template: `
     <div>
-      <section data-hook="selection-container" class="task-type-selection"></section>
+      <section data-hook="selection-container" class="container"></section>
       <input type="file" data-hook="recipe-upload" style="display: none"/>
     </div>
   `,
@@ -64,7 +62,7 @@ const CreationWizard = View.extend({
         ) {
           const serial = JSON.parse(file.contents)
           const workflow = App.actions.workflow.parseSerialization(serial)
-          renderCreateForm(workflow)
+          WorkflowCreateForm(workflow)
         } else {
           bootbox.alert('File not supported, please select a JSON file.')
         }
@@ -76,24 +74,24 @@ const CreationWizard = View.extend({
     
     const buttons = [
       {
-        title: "Create",
-        hook: "create",
-        help: "Start working on a new Workflow from scratch",
+        name: "Create",
+        id: "create",
+        short_description: "Start working on a new Workflow from scratch",
         callback: () => {
-          renderCreateForm()
+          WorkflowCreateForm()
           this.parent.hide()
         },
-        icon_class: "fa-sitemap",
-        color: "#c6639b"
+        icon_class: "fa fa-sitemap",
+        icon_color: "#c6639b"
       }, {
-        title: "Import",
-        hook: "import",
-        help: "Create a workflow from one of your recipes",
+        name: "Import",
+        id: "import",
+        short_description: "Create a workflow from one of your recipes",
         callback: () => {
           this.queryByHook('recipe-upload').click()
         },
-        icon_class: 'fa-file-o',
-        color: '#9fbc75'
+        icon_class: 'fa fa-file-o',
+        icon_color: '#9fbc75'
       }
     ]
 
@@ -110,35 +108,3 @@ const CreationWizard = View.extend({
     // DO NOT REMOVE. must do nothing
   }
 })
-
-const renderCreateForm = (workflow = null) => {
-  if (workflow === null) {
-    workflow = new Workflow({ version: 2 })
-  }
-
-  const editorView = new WorkflowEditorView({ model: workflow, builder_mode: 'import' })
-
-  const modal = new FullPageModalizer({
-    buttons: false,
-    title: 'Create Workflow',
-    bodyView: editorView 
-  })
-
-  modal.renderSubview(
-    new HelpIconView({ link: `${config.docs}/${docsLink}` }),
-    modal.queryByHook('title')
-  )
-
-  modal.on('hidden', () => {
-    editorView.remove()
-    modal.remove()
-  })
-
-  editorView.on('submit', (data) => {
-    App.actions.workflow.create(data)
-    modal.hide()
-  })
-
-  modal.show()
-  return modal
-}
