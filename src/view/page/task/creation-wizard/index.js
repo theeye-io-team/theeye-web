@@ -84,7 +84,7 @@ const TaskCreationWizard = View.extend({
         callback: () => {
           this.renderCreateFormTask(new ScriptTask())
         },
-        icon_class: 'fa-code',
+        icon_class: 'fa fa-code',
         icon_color: '#c6639b',
       }, {
         name: 'Outgoing Webhook',
@@ -93,7 +93,7 @@ const TaskCreationWizard = View.extend({
         callback: () => {
           this.renderCreateFormTask(new ScraperTask())
         },
-        icon_class: 'fa-cloud',
+        icon_class: 'fa fa-cloud',
         icon_color: '#0080b9',
       }, {
         name: 'Approval',
@@ -102,7 +102,7 @@ const TaskCreationWizard = View.extend({
         callback: () => {
           this.renderCreateFormTask(new ApprovalTask())
         },
-        icon_class: 'fa-thumbs-o-up',
+        icon_class: 'fa fa-thumbs-o-up',
         icon_color: '#9fbc75'
       }, {
         name: 'Notification',
@@ -111,7 +111,7 @@ const TaskCreationWizard = View.extend({
         callback: () => {
           this.renderCreateFormTask(new NotificationTask())
         },
-        icon_class: 'fa-bell-o',
+        icon_class: 'fa fa-bell-o',
         icon_color: '#f4bc4a'
       }
     ]
@@ -200,15 +200,6 @@ const TaskCreationWizard = View.extend({
         this.submit(data)
       } else {
         App.actions.task.create(data)
-        //if (task.type === 'script' && mode === 'import') {
-        //  App.actions.file.create(script.serialize(), (err, file) => {
-        //    data.script_id = file.id
-        //    delete data.script_name
-        //    App.actions.task.create(data)
-        //  })
-        //} else {
-        //  App.actions.task.create(data)
-        //}
       }
 
       this.trigger('submitted')

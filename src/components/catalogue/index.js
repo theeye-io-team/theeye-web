@@ -30,7 +30,7 @@ const ButtonView = View.extend({
     description: ['string', true, 'Lorem Ipsum dolor sit amet'],
     hook: ['string', true, 'placeholder'],
     callback: ['function', true, () => { return () => {} }],
-    icon_class: ['string', true, 'fa-code'],
+    icon_class: ['string', true, 'fa fa-code'],
     icon_color: ['string', true, '#ffffff0']
   },
   template () {
@@ -38,7 +38,7 @@ const ButtonView = View.extend({
       <div class="button-container col-xxl-3 col-lg-4 col-sm-6 col-xs-12">
         <button data-hook="${this.hook}" class="btn button-view">
           <div class="icon" style="background-color: ${this.icon_color};">
-            <i class="fa ${this.icon_class}"></i>
+            <i class="${this.icon_class}"></i>
           </div>
           <div class="text">
             <div class="title">${this.name}</div>

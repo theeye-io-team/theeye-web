@@ -26,10 +26,17 @@ export default {
       return
     }
 
+    if (
+      !App.config.components?.marketplace ||
+      App.config.components.marketplace?.enabled !== true
+    ) {
+      App.state.marketplace[type] = []
+      return
+    }
+
     XHR.send({
       method: 'GET',
-      url: `${App.config.marketplace_api.url}/task?unassigned=true`,
-      authorization: `Bearer ${App.config.marketplace_api.bearer}`,
+      url: marketplaceBaseUrl(type),
       done (list) {
         App.state.marketplace[type] = list.map(data => { 
           return {
@@ -41,25 +48,37 @@ export default {
         })
       },
       fail (err, xhr) {
-        let msg = 'Error retrieving tasks from the Marketplace.'
-        bootbox.alert(msg)
-        return next(new Error(msg))
+        App.state.alerts.danger('Marketplace fetch failed')
+        console.error(err)
       }
     })
   },
-  getRecipe (id) {
+  getSerialization (id, type) {
+    if (
+      !App.config.components?.marketplace ||
+      App.config.components.marketplace?.enabled !== true
+    ) {
+      return null
+    }
+
     return new Promise((resolve, reject) => {
       XHR.send({
         method: 'GET',
-        url: `${App.config.marketplace_api.url}/task/${id}/serialize?mode=shallow`,
-        authorization: `Bearer ${App.config.marketplace_api.bearer}`,
-        done (recipe) {
-          resolve(recipe)
-        },
-        fail (err) {
-          reject(err)
-        }
+        url: `${marketplaceBaseUrl(type)}/${id}/serialize`,
+        done: resolve,
+        fail: reject
       })
     })
   }
+}
+
+const marketplaceBaseUrl = (type) => {
+  const apiModelsMap = {
+    'tasks': 'task',
+    'monitors': 'monitor',
+    'indicators': 'indicator',
+    'workflows': 'workflow'
+  }
+
+  return `${App.config.components.marketplace.url}/${apiModelsMap[type]}`
 }

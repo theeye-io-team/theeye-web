@@ -68,7 +68,7 @@ const ResourceCreationWizard = View.extend({
           let resource = new ResourceFactory({ type: 'file' })
           this.createForm(resource)
         },
-        icon_class: 'fa-file-o',
+        icon_class: 'fa fa-file-o',
         icon_color: '#ff8a6d'
       },{
         name: 'Process',
@@ -78,7 +78,7 @@ const ResourceCreationWizard = View.extend({
           let resource = new ResourceFactory({ type: 'process' })
           this.createForm(resource)
         },
-        icon_class: 'fa-cog',
+        icon_class: 'fa fa-cog',
         icon_color: '#1c73b9'
       },{
         name: 'Script',
@@ -88,7 +88,7 @@ const ResourceCreationWizard = View.extend({
           let resource = new ResourceFactory({ type: 'script' })
           this.createForm(resource)
         },
-        icon_class: 'fa-code',
+        icon_class: 'fa fa-code',
         icon_color: '#c6639b'
       },{
         name: 'Web Check',
@@ -98,7 +98,7 @@ const ResourceCreationWizard = View.extend({
           let resource = new ResourceFactory({ type: 'scraper' })
           this.createForm(resource)
         },
-        icon_class: 'fa-cloud',
+        icon_class: 'fa fa-cloud',
         icon_color: '#158df9'
       },{
         name: 'Nested',
@@ -108,7 +108,7 @@ const ResourceCreationWizard = View.extend({
           let resource = new ResourceFactory({ type: 'nested' })
           this.createForm(resource)
         },
-        icon_class: 'fa-bullseye',
+        icon_class: 'fa fa-bullseye',
         icon_color: '#06b777'
       },{
         name: 'Bot Host Health',
@@ -118,7 +118,7 @@ const ResourceCreationWizard = View.extend({
           let resource = new ResourceFactory({ type: 'dstat' })
           this.createForm(resource)
         },
-        icon_class: 'fa-bar-chart',
+        icon_class: 'fa fa-bar-chart',
         icon_color: '#00b4bc'
       },{
         name: 'Bot Host Processes',
@@ -128,7 +128,7 @@ const ResourceCreationWizard = View.extend({
           let resource = new ResourceFactory({ type: 'psaux' })
           this.createForm(resource)
         },
-        icon_class: 'fa-cogs',
+        icon_class: 'fa fa-cogs',
         icon_color: '#519194'
       }
     ]

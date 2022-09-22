@@ -48,7 +48,7 @@ export default {
         App.state.tags.fetch()
       },
       fail: () => {
-        bootbox.alert('Something goes wrong updating the Task')
+        App.state.alerts.danger('Something goes wrong updating the Task.')
       }
     })
   },
@@ -152,7 +152,7 @@ export default {
         )
       } else {
         App.state.loader.visible = false
-        bootbox.alert('That\'s it, they are gone. Congrats.',() => { })
+        App.state.alerts.success('That\'s it, they are gone. Congrats.')
       }
     })
 
@@ -219,7 +219,7 @@ export default {
       },
       fail (err, xhr) {
         let msg = 'Error retrieving task recipe.'
-        bootbox.alert(msg)
+        App.state.alerts.danger(msg)
         return next(new Error(msg))
       }
     })

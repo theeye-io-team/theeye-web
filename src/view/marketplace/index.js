@@ -3,10 +3,11 @@ import FullContainer from 'components/fullpagecontainer'
 import View from "ampersand-view"
 
 import bootbox from "bootbox"
-import Modalizer from "components/modalizer"
 import Catalogue from "components/catalogue"
 import FileSaver from "file-saver"
-import TaskFormView from 'view/page/task/form'
+
+import WorkflowCreateForm from 'view/page/workflow/create-form'
+import { importForm as TaskImportForm } from 'view/page/task/create-form'
 
 import './style.less'
 
@@ -53,7 +54,6 @@ export default FullContainer.extend({
     if (!state) { return }
     this.visible = state.visible
     this.current_tab = state.current_tab
-    this.current_content = null
   },
   render () {
     FullContainer.prototype.render.apply(this,arguments)
@@ -69,21 +69,33 @@ export default FullContainer.extend({
     })
 
     this.renderTabs()
-
-    this.on('change:current_tab', () => {
-      if (this.current_content !== null) {
-        if (this.current_content.name !== this.current_tab) {
+    this.listenToAndRun(this, 'change:current_tab', () => {
+      if (this.current_content) {
+        if (this.current_content?.name !== this.current_tab) {
           if (this.current_content.remove) {
             this.current_content.remove()
           }
         }
       }
+
+      this.renderTabContent()
     })
   },
-  renderTabs() {
+  renderTabContent () {
+    if (this.current_tab) {
+      const content = new TabContent({ name: this.current_tab })
+      this.current_content = content
+      this.renderSubview(
+        content,
+        this.queryByHook('tab-content-container')
+      )
+    }
+  },
+  renderTabs () {
     const tabs = this.queryByHook('tabs-container')
+
     this.renderSubview(new Tab({ name: 'Tasks' }), tabs)
-    this.renderSubview(new TabContent({ name: 'tasks' }), this.queryByHook('tab-content-container'))
+    this.renderSubview(new Tab({ name: 'Workflows' }), tabs)
   },
   events: {
     'click [data-hook=close-button]': 'onClickCloseButton',
@@ -106,7 +118,8 @@ export default FullContainer.extend({
     }
   },
   setCurrentTab (event) {
-    App.actions.marketplace.toggleTab(event.target.hash.substring(1))
+    const tabName = event.target.hash.substring(1)
+    App.actions.marketplace.toggleTab(tabName.toLowerCase())
   }
 })
 
@@ -139,7 +152,7 @@ const TabContent = View.extend({
   },
   template () {
     return `
-      <div class="">
+      <div data-component="tab-content">
         <div>
           <div class="search">
             <i class="search-icon fa fa-search" aria-hidden="true"></i>
@@ -171,9 +184,9 @@ const TabContent = View.extend({
             data => Object.assign(
               data,
               this.getImageAndColor(data.type),
-              { 
+              {
                 callback: () => {
-                  this.onDownload(data.id)
+                  this.onDownload(data.id, this.name)
                 }
               }
             )
@@ -187,30 +200,36 @@ const TabContent = View.extend({
   },
   getImageAndColor (type) {
     const types = {
+      workflow: {
+        icon_class: 'fa fa-sitemap',
+        icon_color: '#bc9ad6',
+      },
       script: {
-        icon_class: 'fa-code',
+        icon_class: 'fa fa-code',
         icon_color: '#c6639b',
       },
       scraper: {
-        icon_class: 'fa-cloud',
+        icon_class: 'fa fa-cloud',
         icon_color: '#0080b9',
       }, 
       approval: {
-        icon_class: 'fa-thumbs-o-up',
+        icon_class: 'fa fa-thumbs-o-up',
         icon_color: '#9fbc75'
       },
       notification: {
-        icon_class: 'fa-bell-o',
+        icon_class: 'fa fa-bell-o',
         icon_color: '#f4bc4a'
       }
     }
     return types[type]
   },
-  onDownload (id) {
+  onDownload (id, type) {
     App.state.loader.visible = true
-    App.actions.marketplace.getRecipe(id).then(
-      recipe => {
+    App.actions.marketplace
+      .getSerialization(id, type)
+      .then(serialization => {
         App.state.loader.visible = false
+
         const dialog = bootbox.dialog({
           title: "Downloading task",
           message: "Do you want to import this task to your environment, or get the task recipe?",
@@ -219,24 +238,25 @@ const TabContent = View.extend({
               label: 'Import to your environment',
               callback () {
                 App.actions.marketplace.hide()
-                console.log(recipe)
-                const task = App.actions.task.parseSerialization(recipe)
-                renderImportFormTask(task)
+                importSerialization(serialization, type)
               }
             },
             recipe: {
               label: 'Download the task recipe',
               callback () {
-                var jsonContent = JSON.stringify(recipe)
+                var jsonContent = JSON.stringify(serialization)
                 var blob = new Blob([jsonContent], { type: 'application/json' })
-                let fname = recipe.name.replace(/ /g,'_')
+                let fname = serialization.name.replace(/ /g,'_')
                 FileSaver.saveAs(blob, `${fname}.json`)
               }
             }
           }
         })
-      }
-    )
+      })
+      .catch(err => {
+        App.state.loader.visible = false
+        console.error(err)
+      })
   },
   onSearchInput (event) {
     event.stopPropagation()
@@ -253,44 +273,16 @@ const TabContent = View.extend({
   }
 })
 
-const renderImportFormTask = (task) => {
-  let script, mode = 'import'
-  if (task.script_id) {
-    script = App.state.files.get(task.script_id)
-    if (!script) {
-      task.script_id = null
-    } else {
-      mode = null
-    }
+const importSerialization = (serialization, type) => {
+  if (type === 'tasks') {
+    const task = App.actions.task.parseSerialization(serialization)
+    TaskImportForm(task)
+  } else if (type === 'workflows') {
+    const workflow = App.actions.workflow.parseSerialization(serialization)
+    WorkflowCreateForm(workflow)
+  } else {
+    const errMsg = `${type} not handled`
+    console.error(errMsg)
+    throw new Error(errMsg)
   }
-
-  script || (script = task.script)
-
-  const form = new TaskFormView({ model: task, mode })
-  const modal = new Modalizer({
-    title: 'Import task',
-    bodyView: form
-  })
-  
-  form.on('submit', data => {
-    data.script = script.serialize() // data from imported file. was not persisted yet
-    if (this.submit) {
-      this.submit(data)
-    } else {
-      App.actions.task.create(data)
-      //if (task.type === 'script' && mode === 'import') {
-      //  App.actions.file.create(script.serialize(), (err, file) => {
-      //    data.script_id = file.id
-      //    delete data.script_name
-      //    App.actions.task.create(data)
-      //  })
-      //} else {
-      //  App.actions.task.create(data)
-      //}
-    }
-    modal.remove()
-    form.remove()
-  })
-
-  modal.show()
 }
