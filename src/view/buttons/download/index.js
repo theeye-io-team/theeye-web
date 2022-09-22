@@ -5,7 +5,8 @@ export default View.extend({
     value: 'string',
     text: ['string', true, 'Download file'],
     noFileText: ['string', true, 'No file provided'],
-    download: 'string'
+    download: 'string',
+    buttonClass: ['string', false, 'btn btn-primary']
   },
   derived: {
     blob: {
@@ -22,7 +23,7 @@ export default View.extend({
       <a data-hook="download-button"
         href="" 
         download="" 
-        class="btn btn-primary" 
+        class="" 
         target="_blank">
         <i class="fa fa-download"></i>
         <span data-hook="text"></span>
@@ -33,6 +34,11 @@ export default View.extend({
     'click a': 'onClickDownload'
   },
   bindings: {
+    buttonClass: {
+      selector: 'a',
+      type: 'attribute',
+      name: 'class'
+    },
     blob: [
       {
         selector: 'a',

@@ -79,7 +79,7 @@ export default Modalizer.extend({
                     Review the following tasks
                   </h4>
                 </div>
-                <div class="modal-body" data-hook="body">
+                <div class="modal-body" data-hook="body" style="min-height:fit-content">
                   <section class="actions" data-hook="actions-container">
                     <button class="autocomplete" data-hook="autohost">
                       <i class="fa fa-server"></i> Autocomplete Host
@@ -89,6 +89,12 @@ export default Modalizer.extend({
                     </button>
                   </section>
                   <ul class="tasks-list" data-hook="tasks-container"></ul>
+
+                  <div style="display: block; text-align: right;">
+                    <button type="button" class="btn btn-default" data-hook="close">
+                      Close
+                    </button>
+                  </div>
                 </div>
               </div><!-- /MODAL-CONTENT -->
             </div><!-- /MODAL-DIALOG -->

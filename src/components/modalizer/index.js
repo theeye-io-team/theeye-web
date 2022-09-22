@@ -7,6 +7,7 @@
  *
  */
 import View from 'ampersand-view'
+import ModalButtons from 'components/form/buttons'
 import './styles.less'
 
 // http://stackoverflow.com/questions/18487056/select2-doesnt-work-when-embedded-in-a-bootstrap-modal
@@ -144,8 +145,14 @@ const Modalizer = View.extend({
   },
   renderButtons () {
     if (this.buttons) {
+      const buttons = new ModalButtons({
+        confirmText: this.confirmButton,
+        cancelText: this.cancelButton,
+        confirmAction: false
+      })
+
       this.renderSubview(
-        new ButtonsView({ confirmButton: this.confirmButton, cancelButton: this.cancelButton }),
+        buttons,
         this.queryByHook('buttons-container')
       )
     }
@@ -195,50 +202,41 @@ const getRootContainer = () => {
 
 export default Modalizer
 
-//Modalizer.alert = (message) => {
-//  let modal = new Modalizer()
-//}
-
-const ButtonsView = View.extend({
-  template: `
-    <div>
-      <div class="col-xs-12 col-md-6">
-        <button type="button"
-          class="btn btn-default"
-          data-hook="cancel">
-        </button>
-      </div>
-      <div class="col-xs-12 col-md-6">
-        <button type="button"
-          class="btn btn-primary"
-          data-hook="confirm">
-        </button>
-      </div>
-    </div>
-  `,
-  props: {
-    confirmButton: {
-      type: 'string',
-      default: 'Confirm'
-    },
-    cancelButton: {
-      type: 'string',
-      default: 'Cancel'
-    }
-  },
-  bindings: {
-    confirmButton: {
-      hook: 'confirm',
-      type: 'text'
-    },
-    cancelButton: {
-      hook: 'cancel',
-      type: 'text'
-    }
-  },
-  //events: {
-  //  'click button': (event) => {
-  //    event
-  //  }
-  //}
-})
+//const ButtonsView = View.extend({
+//  template: `
+//    <div>
+//      <div class="col-xs-12 col-md-6">
+//        <button type="button"
+//          class="btn btn-default"
+//          data-hook="cancel">
+//        </button>
+//      </div>
+//      <div class="col-xs-12 col-md-6">
+//        <button type="button"
+//          class="btn btn-primary"
+//          data-hook="confirm">
+//        </button>
+//      </div>
+//    </div>
+//  `,
+//  props: {
+//    confirmButton: {
+//      type: 'string',
+//      default: 'Confirm'
+//    },
+//    cancelButton: {
+//      type: 'string',
+//      default: 'Cancel'
+//    }
+//  },
+//  bindings: {
+//    confirmButton: {
+//      hook: 'confirm',
+//      type: 'text'
+//    },
+//    cancelButton: {
+//      hook: 'cancel',
+//      type: 'text'
+//    }
+//  },
+//})

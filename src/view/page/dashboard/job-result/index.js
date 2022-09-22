@@ -534,6 +534,7 @@ const TableRowFile = View.extend({
     <tr>
       <th data-hook="key"></th>
       <td data-hook="value"></td>
+      <td data-hook="options"></td>
     </tr>
   `,
   bindings: {
@@ -546,7 +547,7 @@ const TableRowFile = View.extend({
     this.renderWithTemplate()
     const value = this.model.value
     this.renderSubview(
-      new DownloadButton({ value }),
+      new DownloadButton({ value, buttonClass: '' }),
       this.queryByHook('value')
     )
   }
@@ -557,6 +558,7 @@ const TableRowText = View.extend({
     <tr>
       <th data-hook="key"></th>
       <td data-hook="value"></td>
+      <td data-hook="options"></td>
     </tr>
   `,
   bindings: {
@@ -574,8 +576,8 @@ const TableRowText = View.extend({
 
     if (this.model.value) {
       this.renderSubview(
-        new ClipboardButton({ value: this.model.value }),
-        this.queryByHook('value')
+        new ClipboardButton({ value: this.model.value, styles: '' }),
+        this.queryByHook('options')
       )
     }
   }
@@ -585,6 +587,7 @@ const TableRowJSON = View.extend({
     <tr>
       <th data-hook="key"></th>
       <td data-hook="value"></td>
+      <td data-hook="options"></td>
     </tr>
   `,
   bindings: {
@@ -598,8 +601,8 @@ const TableRowJSON = View.extend({
 
     if (this.model.value) {
       this.renderSubview(
-        new ClipboardButton({ value: this.model.value }),
-        this.queryByHook('value')
+        new ClipboardButton({ value: this.model.value, styles: '' }),
+        this.queryByHook('options')
       )
 
       this.renderSubview(
