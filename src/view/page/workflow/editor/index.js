@@ -56,8 +56,8 @@ export default View.extend({
             <span data-hook="warning-message"></span>
           </div>
           <div class="submit-buttons controls-block">
-            <button data-hook="cancel" class="btn btn-default">Cancel</button>
             <button data-hook="submit" class="btn">Submit</button>
+            <button data-hook="cancel" class="btn btn-default">Cancel</button>
           </div>
         </div>
         <div class="advanced-options-panel" data-hook="advanced-options-panel"> </div>

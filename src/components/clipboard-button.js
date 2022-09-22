@@ -2,7 +2,8 @@ import View from 'ampersand-view'
 import Clipboard from 'clipboard'
 export default View.extend({
   props: {
-    value: 'string'
+    value: 'string',
+    styles: ['string', false, 'float:right;']
   },
   render () {
     this.renderWithTemplate(this)
@@ -10,10 +11,15 @@ export default View.extend({
     new Clipboard(this.query('button'), {
       text: () => this.value
     })
-
+  },
+  bindings: {
+    styles: {
+      type: 'attribute',
+      name: 'style'
+    }
   },
   template: `
-    <div style="float:right;">
+    <div style="">
       <button>
         <i class="fa fa-copy"></i>
       </button>

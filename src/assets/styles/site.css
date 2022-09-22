@@ -493,33 +493,6 @@ ol.list-group.tasks { color:#34495E }
   .loginBox {width:35%}
 }
 
-::-webkit-scrollbar{
-  width:8px;
-  height:8px;
-}
-::-webkit-scrollbar-button:start:decrement,
-#doc ::-webkit-scrollbar-button:end:increment{
-  display:block;
-  height:0;
-  background-color:transparent;
-}
-::-webkit-scrollbar-track-piece{
-  background-color:rgba(255, 255, 255, 0.1);
-  -webkit-border-radius:0;
-  -webkit-border-bottom-right-radius:8px;
-  -webkit-border-bottom-left-radius:8px;
-}
-::-webkit-scrollbar-thumb:vertical{
-  height:50px;
-  background-color:rgba(255, 255, 255, 0.5);
-  -webkit-border-radius:8px;
-}
-::-webkit-scrollbar-thumb:horizontal{
-  width:50px;
-  background-color:rgba(255, 255, 255, 0.5);
-  -webkit-border-radius:8px;
-}
-
 .editor{ min-height: 100px;}
 .btn { text-shadow: none; box-shadow: none; }
 .btn-primary { border-color:#304269;background-color:#304269; }
@@ -733,7 +706,6 @@ div.js-searchable-box button.clean.active {color:#fff;background:#34495E;}
   font-weight: 300;
 }
 
-.dashboard .events-panel h4.panel-title .collapse { display: block;  }
 
 .dashboard .events-panel .job-container h4.panel-title {
   padding-left: 0px;
@@ -1026,4 +998,40 @@ form.admin-form .form-group div.buttons { padding-bottom: 5px; }
 
 .dropdown-menu>li>a:hover {
   background-color: #dedede;
+}
+
+@media (min-width: 1500px) {
+  .col-xxl-3 {
+    width: 25%;
+  }
+  .container {
+    width: 1400px;
+  }
+}
+
+::-webkit-scrollbar {
+  width:8px;
+  height:8px;
+}
+::-webkit-scrollbar-button:start:decrement,
+#doc ::-webkit-scrollbar-button:end:increment {
+  display:block;
+  height:0;
+  background-color:transparent;
+}
+::-webkit-scrollbar-track-piece {
+  background-color:rgba(255, 255, 255, 0.1);
+  -webkit-border-radius:0;
+  -webkit-border-bottom-right-radius:8px;
+  -webkit-border-bottom-left-radius:8px;
+}
+::-webkit-scrollbar-thumb:vertical {
+  height:50px;
+  background-color:rgba(255, 255, 255, 0.5);
+  -webkit-border-radius:8px;
+}
+::-webkit-scrollbar-thumb:horizontal {
+  width:50px;
+  background-color:rgba(255, 255, 255, 0.5);
+  -webkit-border-radius:8px;
 }
