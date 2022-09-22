@@ -45,7 +45,7 @@ const MonitorView = View.extend({
                 aria-controls="unbinded">
                 <div class="panel-title-content">
 
-                  <div class="panel-item name">
+                  <div class="col-xs-10 panel-item name">
                     <span data-hook="tags"></span>
                     <span data-hook="name"></span>
                     <span data-hook="help"></span>
