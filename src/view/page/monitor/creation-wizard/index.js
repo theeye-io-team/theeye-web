@@ -63,7 +63,7 @@ const ResourceCreationWizard = View.extend({
       {
         name: 'File',
         id: 'file',
-        description: HelpTexts.monitor.wizard['file'],
+        short_description: HelpTexts.monitor.wizard['file'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'file' })
           this.createForm(resource)
@@ -73,7 +73,7 @@ const ResourceCreationWizard = View.extend({
       },{
         name: 'Process',
         id: 'process',
-        description: HelpTexts.monitor.wizard['process'],
+        short_description: HelpTexts.monitor.wizard['process'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'process' })
           this.createForm(resource)
@@ -83,7 +83,7 @@ const ResourceCreationWizard = View.extend({
       },{
         name: 'Script',
         id: 'script',
-        description: HelpTexts.monitor.wizard['script'],
+        short_description: HelpTexts.monitor.wizard['script'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'script' })
           this.createForm(resource)
@@ -93,7 +93,7 @@ const ResourceCreationWizard = View.extend({
       },{
         name: 'Web Check',
         id: 'scraper',
-        description: HelpTexts.monitor.wizard['scraper'],
+        short_description: HelpTexts.monitor.wizard['scraper'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'scraper' })
           this.createForm(resource)
@@ -103,7 +103,7 @@ const ResourceCreationWizard = View.extend({
       },{
         name: 'Nested',
         id: 'nested',
-        description: HelpTexts.monitor.wizard['nested'],
+        short_description: HelpTexts.monitor.wizard['nested'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'nested' })
           this.createForm(resource)
@@ -113,7 +113,7 @@ const ResourceCreationWizard = View.extend({
       },{
         name: 'Bot Host Health',
         id: 'health',
-        description: HelpTexts.monitor.wizard['health'],
+        short_description: HelpTexts.monitor.wizard['health'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'dstat' })
           this.createForm(resource)
@@ -123,7 +123,7 @@ const ResourceCreationWizard = View.extend({
       },{
         name: 'Bot Host Processes',
         id: 'processes',
-        description: HelpTexts.monitor.wizard['processes'],
+        short_description: HelpTexts.monitor.wizard['processes'],
         callback: () => {
           let resource = new ResourceFactory({ type: 'psaux' })
           this.createForm(resource)

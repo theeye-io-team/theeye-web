@@ -76,7 +76,7 @@ const CreationWizard = View.extend({
       {
         name: "Create",
         id: "create",
-        description: "Start working on a new Workflow from scratch",
+        short_description: "Start working on a new Workflow from scratch",
         callback: () => {
           WorkflowCreateForm()
           this.parent.hide()
@@ -86,7 +86,7 @@ const CreationWizard = View.extend({
       }, {
         name: "Import",
         id: "import",
-        description: "Create a workflow from one of your recipes",
+        short_description: "Create a workflow from one of your recipes",
         callback: () => {
           this.queryByHook('recipe-upload').click()
         },

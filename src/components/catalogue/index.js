@@ -27,7 +27,7 @@ export default View.extend({
 const ButtonView = View.extend({
   props: {
     name: ['string', true, 'placeholder'],
-    description: ['string', true, 'Lorem Ipsum dolor sit amet'],
+    short_description: ['string', true, ''],
     hook: ['string', true, 'placeholder'],
     callback: ['function', true, () => { return () => {} }],
     icon_class: ['string', true, 'fa fa-code'],
@@ -42,7 +42,7 @@ const ButtonView = View.extend({
           </div>
           <div class="text">
             <div class="title">${this.name}</div>
-            <div class="help">${this.description}</div>
+            <div class="help">${this.short_description}</div>
           </div>
         </button>
       </div> 

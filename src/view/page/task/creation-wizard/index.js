@@ -80,7 +80,7 @@ const TaskCreationWizard = View.extend({
       {
         name: 'Script',
         id: 'script',
-        description: HelpTexts.task.creation.script,
+        short_description: HelpTexts.task.creation.script,
         callback: () => {
           this.renderCreateFormTask(new ScriptTask())
         },
@@ -89,7 +89,7 @@ const TaskCreationWizard = View.extend({
       }, {
         name: 'Outgoing Webhook',
         id: 'scraper',
-        description: HelpTexts.task.creation.webhook,
+        short_description: HelpTexts.task.creation.webhook,
         callback: () => {
           this.renderCreateFormTask(new ScraperTask())
         },
@@ -98,7 +98,7 @@ const TaskCreationWizard = View.extend({
       }, {
         name: 'Approval',
         id: 'approval',
-        description: HelpTexts.task.creation.approval,
+        short_description: HelpTexts.task.creation.approval,
         callback: () => {
           this.renderCreateFormTask(new ApprovalTask())
         },
@@ -107,7 +107,7 @@ const TaskCreationWizard = View.extend({
       }, {
         name: 'Notification',
         id: 'notification',
-        description: HelpTexts.task.creation.notification,
+        short_description: HelpTexts.task.creation.notification,
         callback: () => {
           this.renderCreateFormTask(new NotificationTask())
         },
