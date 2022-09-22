@@ -48,7 +48,8 @@ const Schema = AppModel.extend({
     arguments_type: ['string', false],
     allows_dynamic_settings: ['boolean', false],
     assigned_users: ['array', false, () => { return [] }],
-    cancellable: ['boolean', false, true]
+    cancellable: ['boolean', false, true],
+    image: ['string', false]
   },
   derived: {
     hasWorkflow: {

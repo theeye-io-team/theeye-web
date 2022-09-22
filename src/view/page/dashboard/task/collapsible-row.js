@@ -13,7 +13,7 @@ export default View.extend({
         <div class="panel-heading"
           role="tab"
           data-hook="panel-heading"> <!-- Collapse Heading Container { -->
-          <h4 class="panel-title-icon"><i data-hook="header-icon"></i></h4>
+          <h4 data-hook="header-icon-container" class="panel-title-icon"></h4>
           <h4 class="panel-title">
             <span class="collapsed"
               data-hook="collapse-toggle"
@@ -76,7 +76,7 @@ export default View.extend({
     loadingContent: 'boolean',
     collapsed: ['boolean', false, true],
     show: ['boolean', false, true],
-    hash: ['string', false, () => { return (new Date()).getTime() } ]
+    hash: ['string', false, () => { return (new Date()).getTime() } ],
   },
   derived: {
     row_text: {
@@ -167,10 +167,20 @@ export default View.extend({
       name: 'class',
       hook: 'type-icon'
     },
-    header_type_icon: {
-      type: 'attribute',
-      name: 'class',
-      hook: 'header-icon'
+    'model.image': {
+      hook: 'header-icon-container',
+      type: function (el, value) {
+        console.log({value})
+        if (value) {
+          el.innerHTML = `
+            <img class="image-icon" src="${this.model.image}"></img>
+          `
+        } else {
+          el.innerHTML = `
+            <i class="${this.header_type_icon}" data-hook="header-icon"></i>
+          `
+        }
+      }
     },
     type: { hook: 'type' },
     description: { hook: 'description' },
