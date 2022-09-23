@@ -43,7 +43,15 @@ export default CollapsibleRow.extend({
     },
     header_type_icon: {
       fn: () => 'circle fa fa-sitemap workflow-color'
-    }
+    },
+    /* ------------ TODO: New workflow icon ------------ */
+    // image: {
+    //   deps: ['model.image'],
+    //   fn () {
+    //     if (this.model.image) return this.model.image
+    //     else return '/images/approval.png'
+    //   }
+    // }
   },
   onClickToggleCollapse (event) {
     const workflow = this.model

@@ -11,6 +11,13 @@ export default TaskCollapsibleRow.extend({
     },
     header_type_icon: {
       fn: () => 'circle fa fa-bell-o notification-color'
+    },
+    image: {
+      deps: ['model.image'],
+      fn () {
+        if (this.model.image) return this.model.image
+        else return '/images/notification.png'
+      }
     }
   }
 })

@@ -11,6 +11,14 @@ let taskIcons = {
   dummy: 'fa fa-list-ul'
 }
 
+let taskImages = {
+  script: '/images/script.png',
+  scraper: '/images/web_check.png',
+  approval: '/images/approval.png',
+  notification: '/images/notification.png',
+  dummy: '/images/dummy.png',
+}
+
 export default TaskCollapsibleRow.extend({
   derived: {
     hostname: {
@@ -68,6 +76,15 @@ export default TaskCollapsibleRow.extend({
             break;
           default:
             break;
+        }
+      }
+    },
+    image: {
+      deps: ['model.groupby', 'model.name'],
+      fn () {
+        if (this.model.groupby == 'type') {
+          const type = this.model.name.toLowerCase()
+          return taskImages[type]
         }
       }
     }

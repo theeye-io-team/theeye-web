@@ -19,6 +19,13 @@ export default TaskCollapsibleRow.extend({
     },
     header_type_icon: {
       fn: () => 'circle fa fa-cloud scraper-color'
+    },
+    image: {
+      deps: ['model.image'],
+      fn () {
+        if (this.model.image) return this.model.image
+        else return '/images/web_check.png'
+      }
     }
   },
   renderButtons () {

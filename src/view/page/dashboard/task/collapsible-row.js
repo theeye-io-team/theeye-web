@@ -126,6 +126,12 @@ export default View.extend({
       fn () {
         return 'not defined'
       }
+    },
+    image: {
+      deps: ['model.image'],
+      fn () {
+        return this.model.image
+      }
     }
   },
   bindings: {
@@ -167,13 +173,12 @@ export default View.extend({
       name: 'class',
       hook: 'type-icon'
     },
-    'model.image': {
+    'image': {
       hook: 'header-icon-container',
       type: function (el, value) {
-        console.log({value})
         if (value) {
           el.innerHTML = `
-            <img class="image-icon" src="${this.model.image}"></img>
+            <img class="image-icon" src="${this.image}"></img>
           `
         } else {
           el.innerHTML = `
