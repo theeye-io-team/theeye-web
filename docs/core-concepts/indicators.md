@@ -12,6 +12,8 @@ Hay varios tipos de indicadores, cada uno con su propósito específico:
 * **Counter:** Un valor numérico simple. Ejemplos de uso incluyen un contador de ejecuciones, el resultado de una operación, entre otros. El valor se muestra en la interfaz.
 * **Progress:** Un valor numérico entre 0 y 100, para indicar progreso. El valor se muestra en la interfaz en forma de una barra de progreso, la cual cambia de colr dependiendo el [estado del indicador](#estado).
 * **Text:** Un valor de alfanumérico en el que se puede escribir cualquier palabra o frase. El valor se muestra en la interfaz al igual que el Counter
+* **HTML:** El valor que contenga este indicador va a renderizarse como un elemento HTML dentro de la interfaz. Ideal para indicadores interactivos o tablas.
+* **File:** Un archivo que debe estar codificado en una string en base 64, utilizando el formato de Blob. [Más información](https://es.javascript.info/blob) 
 
 ## Estado
 
@@ -30,13 +32,11 @@ Puede crear un Indicador desde el dashboard haciendo click en el botón **+**.
 ![Dashboard - Crear Indicador](../images/createIndicator.gif)
 
 
-## Indicador tipo Text HTML.
-
-Es posible inyectar templates HTML en el campo value de un indicador tipo text para generar indicadores con información mas compleja en formato de tablas, reportes.
+## Extras
 
 ### Botón Launch Task
 
-Para lanzar una tarea desde un botón se puede utilizar el siguiente template HTML. Tener en cuenta cambiar los valores de arguments y task id de acuerdo a su entorno.
+Puede crear un indicador para disparar una tarea con un botón dentro de la interfáz de TheEye. Para lanzar una tarea desde un botón se puede utilizar el siguiente template HTML. Tener en cuenta cambiar los valores de arguments y task id de acuerdo a su entorno.
 
 ```html
 
