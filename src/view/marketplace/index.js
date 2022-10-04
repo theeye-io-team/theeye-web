@@ -5,6 +5,7 @@ import View from "ampersand-view"
 import bootbox from "bootbox"
 import Catalogue from "components/catalogue"
 import FileSaver from "file-saver"
+import Titles from 'language/titles'
 
 import WorkflowCreateForm from 'view/page/workflow/create-form'
 import { importForm as TaskImportForm } from 'view/page/task/create-form'
@@ -16,7 +17,7 @@ export default FullContainer.extend({
     <div data-component="marketplace-container" class="full-page-container">
       <div class="marketplace-page">
         <div class="header text-center">
-          <span class="main-title">Marketplace</span>
+          <span class="main-title">${Titles.marketplace.main}</span>
           <span data-hook="close-button" class="close-button fa fa-remove" style=""></span>
         </div>
         <div class="col-xs-3 panel-left">
@@ -29,7 +30,7 @@ export default FullContainer.extend({
     </div>
   `,
   props: {
-    visible: ['boolean',false,false],
+    visible: ['boolean', false, false],
     current_tab: 'string'
   },
   bindings: {

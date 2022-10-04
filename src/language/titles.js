@@ -30,5 +30,8 @@ export default {
         password_placeholder: 'Password'
       }
     }
+  },
+  marketplace: {
+    main: 'Recipes'
   }
 }
