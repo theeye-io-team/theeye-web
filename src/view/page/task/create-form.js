@@ -21,16 +21,17 @@ export const importForm = (task) => {
     bodyView: form
   })
   
+  modal.on('hidden',() => {
+    wizard.remove()
+    modal.remove()
+  })
+
   form.on('submit', data => {
     data.script = script.serialize() // data from imported file. was not persisted yet
-    if (this.submit) {
-      this.submit(data)
-    } else {
-      App.actions.task.create(data)
-    }
-    modal.remove()
-    form.remove()
+    App.actions.task.create(data)
+    modal.hide()
   })
 
   modal.show()
+  return modal
 }
