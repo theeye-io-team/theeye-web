@@ -30,6 +30,7 @@ const Schema = AppModel.extend({
     public: 'boolean',
     name: 'string',
     description: 'string',
+    short_description: 'string',
     acl: 'array',
     secret: 'string',
     grace_time: 'number',

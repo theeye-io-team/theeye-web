@@ -8,6 +8,7 @@ import WorkflowCreationWizard from 'view/page/workflow/creation-wizard'
 import IndicatorCreationWizard from 'view/page/indicator/creation-wizard'
 import WebhookCreationWizard from 'view/page/webhook/creation-wizard'
 import FileCreationWizard from 'view/page/files/creation-wizard'
+import Titles from 'language/titles'
 
 import './style.less'
 
@@ -17,13 +18,13 @@ export default View.extend({
       <i data-hook="plus-menu-toggle" class="fa fa-plus-circle"></i>
       <div class="plus-menu-popup" data-hook="plus-menu-popup">
         <ul class="plus-menu-links">
-          <li><a data-hook="create-task" href="#" class="plus-menu-icon fa-play">Task</a></li>
-          <li><a data-hook="create-monitor" href="#" class="plus-menu-icon fa-desktop">Monitor</a></li>
-          <li><a data-hook="create-workflow" href="#" class="plus-menu-icon fa-sitemap">Workflow</a></li>
-          <li><a data-hook="create-indicator" href="#" class="plus-menu-icon fa-lightbulb-o">Indicator</a></li>
-          <li><a data-hook="create-webhook" href="#" class="plus-menu-icon eyeicon eyeicon-webhooks">Webhook</a></li>
-          <li><a data-hook="create-file" href="#" class="plus-menu-icon eyeicon eyeicon-scripts">File</a></li>
-          <li><a data-hook="open-marketplace" href="#" class="plus-menu-icon eyeicon eyeicon-marketplace">Marketplace</a></li>
+          <li><a data-hook="create-task" href="#" class="plus-menu-icon fa-play">${Titles.task.main}</a></li>
+          <li><a data-hook="create-monitor" href="#" class="plus-menu-icon fa-desktop">${Titles.monitor.main}</a></li>
+          <li><a data-hook="create-workflow" href="#" class="plus-menu-icon fa-sitemap">${Titles.workflow.main}</a></li>
+          <li><a data-hook="create-indicator" href="#" class="plus-menu-icon fa-lightbulb-o">${Titles.indicator.main}</a></li>
+          <li><a data-hook="create-webhook" href="#" class="plus-menu-icon eyeicon eyeicon-webhooks">${Titles.webhook.main}</a></li>
+          <li><a data-hook="create-file" href="#" class="plus-menu-icon eyeicon eyeicon-scripts">${Titles.file.main}</a></li>
+          <li><a data-hook="open-marketplace" href="#" class="plus-menu-icon eyeicon eyeicon-marketplace">${Titles.marketplace.main}</a></li>
         </ul>
       </div>
     </div>`,
