@@ -32,6 +32,10 @@ export default Object.assign({}, defaultConfigs, {
     },
     grecaptcha: {
       sitekey: '6LfZMM4cAAAAAImjGgjmOMHXj7p3Yr8JF4yMvkSt'
+    },
+    marketplace: {
+      enabled: true,
+      url: 'https://supervisor.theeye.io/marketplace'
     }
   }
 })

@@ -10,6 +10,10 @@ export default Object.assign({}, defaultConfigs, {
   components: {
     grecaptcha: {
       enabled: true
+    },
+    marketplace: {
+      enabled: true,
+      url: 'https://supervisor-alpha.theeye.io:60080/marketplace'
     }
   }
 })
