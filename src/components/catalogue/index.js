@@ -31,7 +31,7 @@ const ButtonView = View.extend({
     short_description: ['string', true, ''],
     hook: ['string', true, 'placeholder'],
     callback: ['function', true, () => { return () => {} }],
-    image_path: 'string',
+    icon_image: 'string',
     icon_class: ['string', true, 'fa fa-code'],
     icon_color: ['string', true, '#ffffff0']
   },
@@ -62,10 +62,10 @@ const ButtonView = View.extend({
     this.callback()
   },
   getIcon () {
-    if (this.image_path) {
-      return `<img src="${this.image_path}" alt="${this.name} icon"></img>`
+    if (this.icon_image) {
+      return `<img src="${this.icon_image}" alt="${this.name} icon"></img>`
     } else {
-      return `<i class="fa ${this.icon_class}"></i>`
+      return `<i class="${this.icon_class}"></i>`
     }
   }
 })

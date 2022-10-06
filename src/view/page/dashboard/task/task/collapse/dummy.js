@@ -13,10 +13,9 @@ export default TaskCollapsibleRow.extend({
       fn: () => 'circle fa fa-list-ul dummy-color'
     },
     image: {
-      deps: ['model.image'],
+      deps: ['model.icon_image'],
       fn () {
-        if (this.model.image) return this.model.image
-        else return '/images/dummy.png'
+        return (this.model.icon_mage || '/images/dummy.png')
       }
     }
   }

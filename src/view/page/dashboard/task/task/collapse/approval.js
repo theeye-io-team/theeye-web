@@ -13,10 +13,9 @@ export default TaskCollapsibleRow.extend({
       fn: () => 'circle fa fa-thumbs-o-up approval-color'
     },
     image: {
-      deps: ['model.image'],
+      deps: ['model.icon_image'],
       fn () {
-        if (this.model.image) return this.model.image
-        else return '/images/approval.png'
+        return (this.model.icon_image || '/images/approval.png')
       }
     }
   }

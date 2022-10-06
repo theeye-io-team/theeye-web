@@ -84,10 +84,9 @@ const TaskCreationWizard = View.extend({
         callback: () => {
           this.renderCreateFormTask(new ScriptTask())
         },
-        image_path: '/images/script.png',
+        icon_image: '/images/script.png',
         icon_class: 'fa fa-code',
-        icon_color: '#c6639b',
-        //color: '#E50580',
+        icon_color: '#E50580',
       }, {
         name: 'Outgoing Webhook',
         id: 'scraper',
@@ -96,9 +95,8 @@ const TaskCreationWizard = View.extend({
           this.renderCreateFormTask(new ScraperTask())
         },
         icon_class: 'fa fa-cloud',
-        icon_color: '#0080b9',
-        //color: '#1E7EFB',
-        image_path: '/images/web_check.png',
+        icon_color: '#1E7EFB',
+        icon_image: '/images/web_check.png',
       }, {
         name: 'Approval',
         id: 'approval',
@@ -107,9 +105,8 @@ const TaskCreationWizard = View.extend({
           this.renderCreateFormTask(new ApprovalTask())
         },
         icon_class: 'fa fa-thumbs-o-up',
-        icon_color: '#9fbc75',
-        //color: '#22C000'
-        image_path: '/images/approval.png',
+        icon_color: '#22C000',
+        icon_image: '/images/approval.png',
       }, {
         name: 'Notification',
         id: 'notification',
@@ -118,9 +115,8 @@ const TaskCreationWizard = View.extend({
           this.renderCreateFormTask(new NotificationTask())
         },
         icon_class: 'fa fa-bell-o',
-        icon_color: '#f4bc4a',
-        //color: '#FFCC00'
-        image_path: '/images/notification.png',
+        icon_color: '#FFCC00',
+        icon_image: '/images/notification.png',
       }
     ]
 

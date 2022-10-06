@@ -128,9 +128,9 @@ export default View.extend({
       }
     },
     image: {
-      deps: ['model.image'],
+      deps: ['model.icon_image'],
       fn () {
-        return this.model.image
+        return this.model.icon_image
       }
     }
   },
@@ -177,13 +177,9 @@ export default View.extend({
       hook: 'header-icon-container',
       type: function (el, value) {
         if (value) {
-          el.innerHTML = `
-            <img class="image-icon" src="${this.image}"></img>
-          `
+          el.innerHTML = `<img class="image-icon" src="${this.image}"></img>`
         } else {
-          el.innerHTML = `
-            <i class="${this.header_type_icon}" data-hook="header-icon"></i>
-          `
+          el.innerHTML = `<i class="${this.header_type_icon}" data-hook="header-icon"></i>`
         }
       }
     },
