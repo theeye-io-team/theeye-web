@@ -1,4 +1,4 @@
-import View from "ampersand-view";
+import View from 'ampersand-view'
 import './style.less'
 
 export default View.extend({

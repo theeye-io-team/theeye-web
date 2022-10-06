@@ -21,7 +21,9 @@ export default FullContainer.extend({
           <span data-hook="close-button" class="close-button fa fa-remove" style=""></span>
         </div>
         <div class="col-xs-3 panel-left">
-          <ul class="nav nav-tabs tabs-left" data-hook="tabs-container"> </ul>
+          <ul class="nav nav-tabs tabs-left" data-hook="tabs-container">
+            <li class="subtitle"><h3 class="orange">CATEGORY</h3></li>
+          </ul>
         </div>
         <div class="col-xs-9 panel-right">
           <div class="tab-content" data-hook="tab-content-container"> </div>
@@ -95,8 +97,10 @@ export default FullContainer.extend({
   renderTabs () {
     const tabs = this.queryByHook('tabs-container')
 
-    this.renderSubview(new Tab({ name: 'Tasks' }), tabs)
+    this.renderSubview(new Tab({ name: 'Tasks', active: true }), tabs)
     this.renderSubview(new Tab({ name: 'Workflows' }), tabs)
+
+    this.setCurrentTab({ tabName: 'tasks' })
   },
   events: {
     'click [data-hook=close-button]': 'onClickCloseButton',
@@ -119,14 +123,22 @@ export default FullContainer.extend({
     }
   },
   setCurrentTab (event) {
-    const tabName = event.target.hash.substring(1)
+    const tabName = (event.tabName || event.target.hash.substring(1))
     App.actions.marketplace.toggleTab(tabName.toLowerCase())
   }
 })
 
 const Tab = View.extend({
   props: {
+    active: 'boolean',
     name: 'string'
+  },
+  bindings: {
+    active: {
+      type: 'booleanClass',
+      no: '',
+      yes: 'active'
+    }
   },
   template () {
     return `
@@ -204,23 +216,28 @@ const TabContent = View.extend({
     const types = {
       workflow: {
         icon_class: 'fa fa-sitemap',
-        icon_color: '#bc9ad6',
+        icon_color: '#93278f',
+        icon_image: '/images/sq_create-workflows.png',
       },
       script: {
+        icon_image: '/images/script.png',
         icon_class: 'fa fa-code',
-        icon_color: '#c6639b',
+        icon_color: '#E50580',
       },
       scraper: {
         icon_class: 'fa fa-cloud',
-        icon_color: '#0080b9',
+        icon_color: '#1E7EFB',
+        icon_image: '/images/web_check.png',
       }, 
       approval: {
         icon_class: 'fa fa-thumbs-o-up',
-        icon_color: '#9fbc75'
+        icon_color: '#22C000',
+        icon_image: '/images/approval.png',
       },
       notification: {
         icon_class: 'fa fa-bell-o',
-        icon_color: '#f4bc4a'
+        icon_color: '#FFCC00',
+        icon_image: '/images/notification.png',
       }
     }
     return types[type]
