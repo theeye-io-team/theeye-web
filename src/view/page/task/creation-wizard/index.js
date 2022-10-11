@@ -119,6 +119,26 @@ const TaskCreationWizard = View.extend({
         icon_class: 'fa fa-bell-o',
         icon_color: '#FFCC00',
         icon_image: IconsImages.notification,
+      }, {
+        name: 'Node.JS',
+        id: 'nodejs',
+        short_description: HelpTexts.task.creation.nodejs,
+        callback: () => {
+          this.renderCreateFormTask(new Tasks.Nodejs())
+        },
+        icon_class: '',
+        icon_color: '#FFFFFF',
+        icon_image: IconsImages.nodejs,
+      }, {
+        name: 'Placeholder',
+        id: 'dummy',
+        short_description: HelpTexts.task.creation.dummy,
+        callback: () => {
+          this.renderCreateFormTask(new Tasks.Dummy())
+        },
+        icon_class: '',
+        icon_color: '#00AEFA',
+        icon_image: IconsImages.placeholder,
       }
     ]
 
