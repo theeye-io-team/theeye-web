@@ -24,6 +24,7 @@ export default TaskFormView.extend({
 
     this.advancedFields = [
       'description',
+      'short_description',
       'acl',
       'triggers',
       'copy_task',
@@ -193,8 +194,19 @@ export default TaskFormView.extend({
         value: this.model.ignore_label
       }),
       new TextareaView({
+        height: 50,
+        maxlength: 80,
         visible: false,
-        label: 'Description',
+        label: 'Short Description',
+        name: 'short_description',
+        required: false,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.short_description,
+      }),
+      new TextareaView({
+        visible: false,
+        label: 'Detailed Information',
         name: 'description',
         required: false,
         invalidClass: 'text-danger',
@@ -256,6 +268,7 @@ export default TaskFormView.extend({
     this.addHelpIcon('allows_dynamic_settings')
     this.addHelpIcon('name')
     this.addHelpIcon('description')
+    this.addHelpIcon('short_description')
     this.addHelpIcon('tags')
     this.addHelpIcon('acl')
     this.addHelpIcon('triggers')
