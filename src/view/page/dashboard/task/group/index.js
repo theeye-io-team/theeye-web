@@ -1,14 +1,23 @@
 import View from 'ampersand-view'
 import TaskCollapsibleRow from '../collapsible-row'
 import * as TaskConstants from 'constants/task'
+import { Images as IconsImages } from 'constants/icons'
 import TaskRowView from '../task'
 
-let taskIcons = {
-  script: 'fa fa-code',
-  scraper: 'fa fa-cloud',
-  approval: 'fa fa-thumbs-o-up',
-  notification: 'fa fa-bell-o',
-  dummy: 'fa fa-list-ul'
+const TaskIcons = {
+  script       : 'fa fa-code',
+  scraper      : 'fa fa-cloud',
+  approval     : 'fa fa-thumbs-o-up',
+  notification : 'fa fa-bell-o',
+  dummy        : 'fa fa-list-ul'
+}
+
+const TaskImages = {
+  script       : IconsImages.script,
+  scraper      : IconsImages.scraper,
+  approval     : IconsImages.approval,
+  notification : IconsImages.notification,
+  dummy        : IconsImages.dummy,
 }
 
 export default TaskCollapsibleRow.extend({
@@ -26,7 +35,7 @@ export default TaskCollapsibleRow.extend({
         switch (this.model.groupby) {
           case 'type':
             let type = this.model.name.toLowerCase()
-            return taskIcons[type]
+            return TaskIcons[type]
             break;
           case 'name':
             let name = this.model
@@ -52,7 +61,7 @@ export default TaskCollapsibleRow.extend({
         switch (this.model.groupby) {
           case 'type':
             type = this.model.name.toLowerCase()
-            return `circle ${taskIcons[type]} ${type}-color`
+            return `circle ${TaskIcons[type]} ${type}-color`
             break;
           case 'name':
             let name = this.model
@@ -68,6 +77,15 @@ export default TaskCollapsibleRow.extend({
             break;
           default:
             break;
+        }
+      }
+    },
+    image: {
+      deps: ['model.groupby', 'model.name'],
+      fn () {
+        if (this.model.groupby == 'type') {
+          const type = this.model.name.toLowerCase()
+          return TaskImages[type]
         }
       }
     }

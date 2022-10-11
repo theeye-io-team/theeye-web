@@ -22,6 +22,7 @@ import IntegrationsWorkflowButton from 'view/page/workflow/buttons/integrations'
 import ScheduleButton from 'view/buttons/schedule'
 import SchedulesView from 'view/page/task/schedules'
 import { ExecTask as ExecTaskView } from 'view/page/dashboard/task/task/exec-task.js'
+import { Images as IconsImages } from 'constants/icons'
 
 import DownloadButton from 'view/buttons/download'
 
@@ -43,7 +44,13 @@ export default CollapsibleRow.extend({
     },
     header_type_icon: {
       fn: () => 'circle fa fa-sitemap workflow-color'
-    }
+    },
+     image: {
+       deps: ['model.icon_image'],
+       fn () {
+         return (this.model.icon_image || IconsImages.workflow)
+       }
+     }
   },
   onClickToggleCollapse (event) {
     const workflow = this.model

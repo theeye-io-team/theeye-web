@@ -30,7 +30,6 @@ const Schema = AppModel.extend({
     public: 'boolean',
     name: 'string',
     description: 'string',
-    short_description: 'string',
     acl: 'array',
     secret: 'string',
     grace_time: 'number',
@@ -48,7 +47,10 @@ const Schema = AppModel.extend({
     arguments_type: ['string', false],
     allows_dynamic_settings: ['boolean', false],
     assigned_users: ['array', false, () => { return [] }],
-    cancellable: ['boolean', false, true]
+    cancellable: ['boolean', false, true],
+    short_description: 'string',
+    icon_image: 'string',
+    icon_color: 'string'
   },
   derived: {
     hasWorkflow: {

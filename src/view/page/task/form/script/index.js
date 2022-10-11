@@ -77,6 +77,7 @@ export default TaskFormView.extend({
 
     this.advancedFields = [
       'description',
+      'short_description',
       'acl',
       'triggers',
       'grace_time',
@@ -223,6 +224,17 @@ export default TaskFormView.extend({
       this.advancedToggle,
       // advanced fields starts visible = false
       new TextareaView({
+        height: 50,
+        maxlength: 80,
+        visible: false,
+        label: 'Short Description',
+        name: 'short_description',
+        required: false,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.short_description,
+      }),
+      new TextareaView({
         visible: false,
         label: 'Description',
         name: 'description',
@@ -366,6 +378,7 @@ export default TaskFormView.extend({
 
     this.addHelpIcon('name')
     this.addHelpIcon('description')
+    this.addHelpIcon('short_description')
     this.addHelpIcon('tags')
     this.addHelpIcon('script_runas')
     this.addHelpIcon('script_id')

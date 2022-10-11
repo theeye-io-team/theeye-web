@@ -40,7 +40,17 @@ export default DropableFormView.extend({
         }
       }),
       new TextareaView({
-        label: 'More Info',
+        height: 50,
+        maxlength: 80,
+        label: 'Short Description',
+        name: 'short_description',
+        required: false,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: workflow.short_description,
+      }),
+      new TextareaView({
+        label: 'Detailed Information',
         name: 'description',
         required: false,
         invalidClass: 'text-danger',
@@ -92,6 +102,7 @@ export default DropableFormView.extend({
     DropableFormView.prototype.render.apply(this, arguments)
     this.query('form').classList.add('form-horizontal')
 
+    this.addHelpIcon('short_description')
     this.addHelpIcon('description')
     this.addHelpIcon('tags')
     this.addHelpIcon('acl')

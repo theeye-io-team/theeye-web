@@ -38,14 +38,7 @@ export default {
       method: 'GET',
       url: marketplaceBaseUrl(type),
       done (list) {
-        App.state.marketplace[type] = list.map(data => { 
-          return {
-            name: data.name,
-            id: data.id,
-            description: data.description,
-            type: data.type
-          }
-        })
+        App.state.marketplace[type] = list
       },
       fail (err, xhr) {
         App.state.alerts.danger('Marketplace fetch failed')

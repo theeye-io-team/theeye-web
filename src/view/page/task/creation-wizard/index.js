@@ -17,6 +17,8 @@ import { Approval as ApprovalTask } from 'models/task'
 import { Notification as NotificationTask } from 'models/task'
 import { Model as File } from 'models/file'
 
+import { Images as IconsImages } from 'constants/icons'
+
 import './styles.less'
 
 const docsLink = 'core-concepts/tasks/'
@@ -84,8 +86,9 @@ const TaskCreationWizard = View.extend({
         callback: () => {
           this.renderCreateFormTask(new ScriptTask())
         },
+        icon_image: IconsImages.script,
         icon_class: 'fa fa-code',
-        icon_color: '#c6639b',
+        icon_color: '#E50580',
       }, {
         name: 'Outgoing Webhook',
         id: 'scraper',
@@ -94,7 +97,8 @@ const TaskCreationWizard = View.extend({
           this.renderCreateFormTask(new ScraperTask())
         },
         icon_class: 'fa fa-cloud',
-        icon_color: '#0080b9',
+        icon_color: '#1E7EFB',
+        icon_image: IconsImages.scraper,
       }, {
         name: 'Approval',
         id: 'approval',
@@ -103,7 +107,8 @@ const TaskCreationWizard = View.extend({
           this.renderCreateFormTask(new ApprovalTask())
         },
         icon_class: 'fa fa-thumbs-o-up',
-        icon_color: '#9fbc75'
+        icon_color: '#22C000',
+        icon_image: IconsImages.approval,
       }, {
         name: 'Notification',
         id: 'notification',
@@ -112,7 +117,8 @@ const TaskCreationWizard = View.extend({
           this.renderCreateFormTask(new NotificationTask())
         },
         icon_class: 'fa fa-bell-o',
-        icon_color: '#f4bc4a'
+        icon_color: '#FFCC00',
+        icon_image: IconsImages.notification,
       }
     ]
 

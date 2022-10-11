@@ -74,24 +74,26 @@ const CreationWizard = View.extend({
     
     const buttons = [
       {
-        name: "Create",
-        id: "create",
-        short_description: "Start working on a new Workflow from scratch",
+        name: 'Create',
+        id: 'create',
+        short_description: 'Start working on a new Workflow from scratch',
         callback: () => {
           WorkflowCreateForm()
           this.parent.hide()
         },
-        icon_class: "fa fa-sitemap",
-        icon_color: "#c6639b"
+        icon_class: 'fa fa-sitemap',
+        icon_color: '#93278f',
+        icon_image: '/images/svg/sq_create-workflows.svg',
       }, {
-        name: "Import",
-        id: "import",
-        short_description: "Create a workflow from one of your recipes",
+        name: 'Import',
+        id: 'import',
+        short_description: 'Create a workflow from one of your recipes',
         callback: () => {
           this.queryByHook('recipe-upload').click()
         },
         icon_class: 'fa fa-file-o',
-        icon_color: '#9fbc75'
+        icon_color: '#9fbc75',
+        icon_image: undefined,
       }
     ]
 

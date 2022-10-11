@@ -1,4 +1,4 @@
-import View from "ampersand-view";
+import View from 'ampersand-view'
 import './style.less'
 
 export default View.extend({
@@ -31,6 +31,7 @@ const ButtonView = View.extend({
     short_description: ['string', true, ''],
     hook: ['string', true, 'placeholder'],
     callback: ['function', true, () => { return () => {} }],
+    icon_image: 'string',
     icon_class: ['string', true, 'fa fa-code'],
     icon_color: ['string', true, '#ffffff0']
   },
@@ -41,9 +42,7 @@ const ButtonView = View.extend({
     return `
       <div class="button-container col-xxl-3 col-lg-4 col-sm-6 col-xs-12">
         <button data-hook="${this.hook}" class="btn button-view">
-          <div class="icon" style="background-color: ${this.icon_color};">
-            <i class="${this.icon_class}"></i>
-          </div>
+          ${this.getIcon()}
           <div class="text">
             <div class="title">${this.name}</div>
             <div class="help">${this.short_description}</div>
@@ -59,5 +58,23 @@ const ButtonView = View.extend({
     e.stopPropagation()
     e.preventDefault()
     this.callback()
+  },
+  getIcon () {
+    if (this.icon_image) {
+      const html = `
+        <div class="icon" style='
+          background-color: ${this.icon_color};
+          background-image: url("${this.icon_image}");'>
+        </div>
+      `
+      return html
+    } else {
+      const html = `
+        <div class="icon" style="background-color: ${this.icon_color};">
+          <i class="${this.icon_class}"></i>
+        </div>
+        `
+      return html
+    }
   }
 })
