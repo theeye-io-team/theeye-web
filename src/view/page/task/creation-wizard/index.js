@@ -116,24 +116,24 @@ const TaskCreationWizard = View.extend({
         icon_color: '#FFCC00',
         icon_image: IconsImages.notification,
       }, {
-        title: 'Node.JS',
-        hook: 'nodejs',
-        help: HelpTexts.task.creation.nodejs,
+        name: 'Node.JS',
+        id: 'nodejs',
+        short_description: HelpTexts.task.creation.nodejs,
         callback: () => {
           this.renderCreateFormTask(new Tasks.Nodejs())
         },
         icon_class: '',
-        icon_color: '#F4BC4A',
+        icon_color: '#FFFFFF',
         icon_image: IconsImages.nodejs,
       }, {
-        title: 'Placeholder',
-        hook: 'placeholder',
-        help: HelpTexts.task.creation.dummy,
+        name: 'Placeholder',
+        id: 'dummy',
+        short_description: HelpTexts.task.creation.dummy,
         callback: () => {
           this.renderCreateFormTask(new Tasks.Dummy())
         },
         icon_class: '',
-        icon_color: '#F4BC4A',
+        icon_color: '#00AEFA',
         icon_image: IconsImages.placeholder,
       }
     ]

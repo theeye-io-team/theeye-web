@@ -6,4 +6,6 @@ export const Images = {
   notification : '/images/svg/sq_notifications.svg',
   dummy        : '/images/svg/sq_dummy.svg',
   workflow     : '/images/svg/sq_create-workflows.svg',
+  placeholder  : '/images/process.png',
+  nodejs       : '/images/svg/nodejs-icon-logo.svg',
 }
