@@ -152,8 +152,8 @@ export default View.extend({
     })
 
     cy.on('tap', (event) => {
-      const isNode = typeof event.cyTarget.isNode === 'function' && event.cyTarget.isNode() 
-      const isEdge = typeof event.cyTarget.isEdge === 'function' && event.cyTarget.isEdge() 
+      const isNode = typeof event.target.isNode === 'function' && event.target.isNode() 
+      const isEdge = typeof event.target.isEdge === 'function' && event.target.isEdge() 
       
       if (isNode) {
         this.trigger('tap:node', event)
@@ -206,9 +206,9 @@ export default View.extend({
     return elems
   },
   recordPositions (event) {
-    let data = this.graph.node(event.cyTarget.data('id'))
-    data.position = event.cyTarget.position()
-    this.graph.setNode(event.cyTarget.data('id'), data)
+    let data = this.graph.node(event.target.data('id'))
+    data.position = event.target.position()
+    this.graph.setNode(event.target.data('id'), data)
   },
   setPositions () {
     this.cy.nodes().forEach(node => {

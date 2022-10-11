@@ -135,7 +135,7 @@ export default View.extend({
       })
   },
   onTapNode (cyevent) {
-    var node = cyevent.cyTarget.data()
+    var node = cyevent.target.data()
 
     if (/Task$/.test(node.value._type) === true) {
       const task = this.workflow.tasks.get(node.value.id)
@@ -199,7 +199,7 @@ export default View.extend({
     }
   },
   onTapEdge (cyevent) {
-    const edge = cyevent.cyTarget.data()
+    const edge = cyevent.target.data()
 
     const menu_items = [
       {
@@ -243,11 +243,10 @@ export default View.extend({
     if (this.menuView) {
       this.menuView.remove()
     }
-
     this.menuView = new ContextualMenu({
       menu_items,
-      topOffset: (cyevent.cyRenderedPosition.y + 15),
-      leftOffset: (cyevent.cyRenderedPosition.x + 15)
+      topOffset: (cyevent.renderedPosition.y + 15),
+      leftOffset: (cyevent.renderedPosition.x + 15)
     })
 
     this.renderSubview(this.menuView, this.el)
