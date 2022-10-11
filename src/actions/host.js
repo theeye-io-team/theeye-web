@@ -17,40 +17,6 @@ export default {
 
     host.set(data)
   },
-  /**
-   *
-   * @param {String} host_id
-   *
-   */
-  fetchIntegrations (host_id) {
-    let host = App.state.hosts.get(host_id)
-    let integrations = host.integrations
-    if (integrations.ngrok.last_job_id) {
-      integrations.ngrok.last_job.id = integrations.ngrok.last_job_id
-      integrations.ngrok.last_job.fetch({
-        success: () => {
-        },
-        error: () => {
-          integrations.ngrok.last_job.clear()
-        }
-      })
-    }
-  },
-  applyIntegrationJobStateUpdates (jobData) {
-    if (jobData._type == 'NgrokIntegrationJob') {
-      if (/hoststats/.test(window.location.pathname)) { // currently navigating host stats
-        if (jobData.host_id == App.state.hoststatsPage.host.id) {
-          let host = App.state.hosts.get(jobData.host_id)
-          host.integrations.ngrok.last_job.set( jobData )
-          if (jobData.lifecycle == LifecycleConstants.FINISHED) {
-            if (!jobData.result) {
-              host.integrations.ngrok.last_job.result.clear()
-            }
-          }
-        }
-      }
-    }
-  },
   reconfigure (id) {
     const host = App.state.hosts.get(id)
     XHR.send({

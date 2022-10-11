@@ -45,8 +45,6 @@ const fetchHostData = (host_id) => {
       let host = App.state.hosts.get(host_id)
       if (!host) { return }
 
-      App.actions.host.fetchIntegrations(host.id)
-
       let statsHost = App.state.hoststatsPage.host
       statsHost.set(host.serialize())
       //statsHost.listenTo(host, 'change', () => {

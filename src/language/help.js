@@ -106,11 +106,12 @@ export default {
   },
   task: {
     creation: {
-      webhook: 'Select Outgoing Webhook to execute a HTTP requests i.e. to call a remote api method',
-      script: 'Select Script to accomplish your task automation',
-      approval: 'Select Approval to give someone control over Workflow execution',
-      notification: 'Select Notification to send push or email from inside Workflows or triggered by Tasks',
-      dummy: 'Select Input to request for mandatory values before start the Workflow execution'
+      webhook: 'Execute HTTP requests',
+      script: 'A customized task allows to execute scripts with your preferred interpreter',
+      approval: 'Request specific users approval to gain control over Workflows execution',
+      notification: 'Emit custom Notifications to users of the organization',
+      dummy: 'A Placeholder to speed up the Workflows modeling process',
+      nodejs: 'Boots your Workflows by incorporing Nodejs scripts',
     },
     form: {
       name: 'Give this task a name',

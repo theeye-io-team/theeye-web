@@ -1,4 +1,5 @@
 export const AGENT_UPDATE = 'agent:config:update'
+export const NODEJS_TYPE = 'NodejsJob'
 export const SCRIPT_TYPE = 'ScriptJob'
 export const SCRAPER_TYPE = 'ScraperJob'
 export const APPROVAL_TYPE = 'ApprovalJob'

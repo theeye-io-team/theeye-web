@@ -5,7 +5,6 @@ import AppCollection from 'lib/app-collection'
 import config from 'config'
 
 import { Model as Customer } from 'models/customer'
-import Integrations from './integrations'
 
 const urlRoot = function () {
   return `${config.supervisor_api_url}/${App.state.session.customer.name}/host`
@@ -27,8 +26,7 @@ export const Model = AppModel.extend({
 		enable: 'boolean',
 	},
   children: {
-    customer: Customer,
-    integrations: Integrations
+    customer: Customer
   }
 })
 

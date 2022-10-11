@@ -30,11 +30,14 @@ export default Modalizer.extend({
     this.title = `${this.job.name} # ${this.job.id}`
 
     const type = this.job._type
-    if (!SummaryJobsMap.hasOwnProperty(type)) {
-      return console.error('error job type')
+    let summaryView
+    if (SummaryJobsMap.hasOwnProperty(type)) {
+      summaryView = new SummaryJobsMap[type]({ job: this.job })
+    } else {
+      summaryView = new JobSummary({ job: this.job })
     }
-    this.bodyView = new SummaryJobsMap[type]({ job: this.job })
 
+    this.bodyView = summaryView
     this.listenTo(this, 'hidden', () => {
       this.bodyView.remove()
       delete this.bodyView
@@ -42,25 +45,14 @@ export default Modalizer.extend({
   }
 })
 
-const ApprovalJobResult = View.extend({
+const JobResult = View.extend({
   props: {
+    type: 'string',
     result: 'state'
   },
-  template: `<div class="result approval-result"></div>`
-})
-
-const DummyJobResult = View.extend({
-  props: {
-    result: 'state'
-  },
-  template: `<div class="result dummy-result"></div>`
-})
-
-const NotificationJobResult = View.extend({
-  props: {
-    result: 'state'
-  },
-  template: `<div class="result approval-result"></div>`
+  template () {
+    return `<div class="result ${this.type}-result"></div>`
+  }
 })
 
 const ScriptJobResult = View.extend({
@@ -406,18 +398,22 @@ const BaseJobView = View.extend({
       outputView.rows = this.job.parsedOutput
     })
 
-    //this.renderSubview(new JsonViewer({ json: this.output }), this.queryByHook('output'))
-
     this.renderSubview(new JsonViewer({ json: this.job.components }), this.queryByHook('components'))
     this.renderSubview(new JsonViewer({ json: this.job.next }), this.queryByHook('next'))
   },
   renderResultView () {
     const type = this.job._type
-    if (!JobResultClassMap.hasOwnProperty(type)) {
-      return console.error('error job type')
+    let resultView
+    if (JobResultClassMap.hasOwnProperty(type)) {
+      resultView = new JobResultClassMap[type]({ result: this.job.result })
+    } else {
+      resultView = new JobResult({
+        type: this.job.type,
+        result: this.job.result
+      })
     }
 
-    this.result = new JobResultClassMap[type]({ result: this.job.result })
+    this.result = resultView 
     this.renderSubview(
       this.result,
       this.queryByHook('moreinfo-container')
@@ -582,6 +578,7 @@ const TableRowText = View.extend({
     }
   }
 })
+
 const TableRowJSON = View.extend({
   template: `
     <tr>
@@ -615,15 +612,10 @@ const TableRowJSON = View.extend({
 
 const JobResultClassMap = {}
 JobResultClassMap['ScriptJob'] = ScriptJobResult
+JobResultClassMap['NodejsJob'] = ScriptJobResult
 JobResultClassMap['ScraperJob'] = ScraperJobResult
-JobResultClassMap['ApprovalJob'] = ApprovalJobResult
-JobResultClassMap['DummyJob'] = DummyJobResult
-JobResultClassMap['NotificationJob'] = NotificationJobResult
 
-const ScriptJobSummary = BaseJobView.extend({})
-const ScraperJobSummary = BaseJobView.extend({})
-const NotificationJobSummary = BaseJobView.extend({})
-const DummyJobSummary = BaseJobView.extend({})
+const JobSummary = BaseJobView.extend({})
 const ApprovalJobSummary = BaseJobView.extend({
   render () {
     BaseJobView.prototype.render.apply(this, arguments)
@@ -643,10 +635,6 @@ const ApprovalJobSummary = BaseJobView.extend({
 })
 
 const SummaryJobsMap = {}
-SummaryJobsMap['ScriptJob'] = ScriptJobSummary
-SummaryJobsMap['ScraperJob'] = ScraperJobSummary
-SummaryJobsMap['DummyJob'] = DummyJobSummary
-SummaryJobsMap['NotificationJob'] = NotificationJobSummary
 SummaryJobsMap['ApprovalJob'] = ApprovalJobSummary
 
 const escapeHtml = (html) => {

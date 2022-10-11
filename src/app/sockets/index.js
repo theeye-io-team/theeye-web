@@ -96,7 +96,6 @@ const createWrapper = () => {
       event.operation === OperationsConstants.REPLACE
     ) {
       App.actions.job.applyStateUpdate(event)
-      //App.actions.host.applyIntegrationJobStateUpdates(event.model)
       App.actions.tabs.showNotification(TabsConstants.WORKFLOWS)
     }
   }

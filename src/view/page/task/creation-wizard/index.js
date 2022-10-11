@@ -10,11 +10,7 @@ import FileInputView from 'components/input-view/file'
 import bootbox from 'bootbox'
 import CatalogueView from 'components/catalogue'
 
-import { Script as ScriptTask } from 'models/task'
-import { Scraper as ScraperTask } from 'models/task'
-import { Approval as ApprovalTask } from 'models/task'
-//import { Dummy as DummyTask } from 'models/task'
-import { Notification as NotificationTask } from 'models/task'
+import * as Tasks from 'models/task'
 import { Model as File } from 'models/file'
 
 import { Images as IconsImages } from 'constants/icons'
@@ -84,7 +80,7 @@ const TaskCreationWizard = View.extend({
         id: 'script',
         short_description: HelpTexts.task.creation.script,
         callback: () => {
-          this.renderCreateFormTask(new ScriptTask())
+          this.renderCreateFormTask(new Tasks.Script())
         },
         icon_image: IconsImages.script,
         icon_class: 'fa fa-code',
@@ -94,7 +90,7 @@ const TaskCreationWizard = View.extend({
         id: 'scraper',
         short_description: HelpTexts.task.creation.webhook,
         callback: () => {
-          this.renderCreateFormTask(new ScraperTask())
+          this.renderCreateFormTask(new Tasks.Scraper())
         },
         icon_class: 'fa fa-cloud',
         icon_color: '#1E7EFB',
@@ -104,7 +100,7 @@ const TaskCreationWizard = View.extend({
         id: 'approval',
         short_description: HelpTexts.task.creation.approval,
         callback: () => {
-          this.renderCreateFormTask(new ApprovalTask())
+          this.renderCreateFormTask(new Tasks.Approval())
         },
         icon_class: 'fa fa-thumbs-o-up',
         icon_color: '#22C000',
@@ -114,11 +110,31 @@ const TaskCreationWizard = View.extend({
         id: 'notification',
         short_description: HelpTexts.task.creation.notification,
         callback: () => {
-          this.renderCreateFormTask(new NotificationTask())
+          this.renderCreateFormTask(new Tasks.Notification())
         },
         icon_class: 'fa fa-bell-o',
         icon_color: '#FFCC00',
         icon_image: IconsImages.notification,
+      }, {
+        title: 'Node.JS',
+        hook: 'nodejs',
+        help: HelpTexts.task.creation.nodejs,
+        callback: () => {
+          this.renderCreateFormTask(new Tasks.Nodejs())
+        },
+        icon_class: '',
+        icon_color: '#F4BC4A',
+        icon_image: IconsImages.nodejs,
+      }, {
+        title: 'Placeholder',
+        hook: 'placeholder',
+        help: HelpTexts.task.creation.dummy,
+        callback: () => {
+          this.renderCreateFormTask(new Tasks.Dummy())
+        },
+        icon_class: '',
+        icon_color: '#F4BC4A',
+        icon_image: IconsImages.placeholder,
       }
     ]
 

@@ -17,27 +17,6 @@ const urlRoot = function (version) {
 }
 
 const BaseJob = AppModel.extend({
-  // dataTypes: {
-  //  lifecycle: {
-  //    set: function (newVal) {
-  //      return {
-  //        val: newVal,
-  //        type: 'lifecycle'
-  //      }
-  //    },
-  //    compare: function (currentVal, newVal) {
-  //      if (currentVal === newVal) {
-  //        return true
-  //      } else {
-  //        const valid = LifecycleConstants.isValidNewLifecycle(currentVal, newVal)
-  //        if (!valid) {
-  //          logger.warn('invalid lifecycle transition')
-  //        }
-  //        return valid
-  //      }
-  //    }
-  //  }
-  // },
   urlRoot,
   urlV2 () {
     return `${urlRoot('v2')}/${this.id}`
@@ -50,18 +29,12 @@ const BaseJob = AppModel.extend({
     script_id: 'string',
     acl: ['array', false, () => []],
     empty_viewers: ['boolean', false, false],
-    // script_arguments: 'array',
-    //task_arguments: 'array',
     customer_id: 'string',
     customer_name: 'string',
-    // script: 'object', // embedded
-    // task: 'object', // embedded
-    // host: 'object',
     name: 'string',
     notify: 'boolean',
     state: 'string',
     lifecycle: 'string',
-    // result: ['state',false,null],
     creation_date: 'date',
     last_update: 'date',
     event: 'any',
@@ -205,18 +178,6 @@ const BaseJob = AppModel.extend({
         return parsed
       }
     },
-    //parsedComponents: {
-    //  deps: ['components'],
-    //  fn () {
-    //    return this.result?.components||{}
-    //  }
-    //},
-    //parsedNext: {
-    //  deps: ['next'],
-    //  fn () {
-    //    return this.result?.next||{}
-    //  }
-    //},
     inProgress: {
       deps: ['lifecycle'],
       fn () {
@@ -233,10 +194,6 @@ const BaseJob = AppModel.extend({
       deps: ['task'],
       fn () {
         return this.task
-        // if (!this.task) {
-        //  return {}
-        // }
-        // return new App.Models.Task.Factory(this.task, {})
       }
     },
     workflow_job: {
@@ -314,8 +271,6 @@ const ScriptJobResult = State.extend({
     stderr: ['string', false],
     log: ['string', false],
     times: ['object', false, () => { return {} }],
-    //components: ['object', false, () => { return {} }],
-    //next: ['object', false, () => { return {} }]
   }
 })
 
@@ -360,20 +315,8 @@ const ScraperJobResult = State.extend({
 })
 
 const ApprovalJobResult = State.extend({ })
-
-const DummyJobResult = State.extend({ })
-
 const NotificationJobResult = State.extend({ })
-
-const NgrokIntegrationResult = State.extend({
-  props: {
-    url: ['string', false, ''],
-    status_code: ['number', false, 0],
-    error_code: ['number', false, 0],
-    message: ['string', false, ''],
-    details: ['object', false, () => { return {} }]
-  }
-})
+const DummyJobResult = State.extend({ })
 
 /**
  *
@@ -391,6 +334,13 @@ const TaskTypeInitializer = (type) => {
   }
 }
 
+const NodejsJob = BaseJob.extend({
+  children: {
+    result: ScriptJobResult,
+    task: TaskTypeInitializer(TaskConstants.TYPE_NODEJS)
+  }
+})
+
 const ScriptJob = BaseJob.extend({
   children: {
     result: ScriptJobResult,
@@ -402,6 +352,20 @@ const ScraperJob = BaseJob.extend({
   children: {
     result: ScraperJobResult,
     task: TaskTypeInitializer(TaskConstants.TYPE_SCRAPER)
+  }
+})
+
+const DummyJob = BaseJob.extend({
+  children: {
+    result: DummyJobResult,
+    task: TaskTypeInitializer(TaskConstants.TYPE_DUMMY)
+  }
+})
+
+const NotificationJob = BaseJob.extend({
+  children: {
+    result: NotificationJobResult,
+    task: TaskTypeInitializer(TaskConstants.TYPE_NOTIFICATION)
   }
 })
 
@@ -458,32 +422,6 @@ const ApprovalJob = BaseJob.extend({
   }
 })
 
-const DummyJob = BaseJob.extend({
-  children: {
-    result: DummyJobResult,
-    task: TaskTypeInitializer(TaskConstants.TYPE_DUMMY)
-  }
-})
-
-const NotificationJob = BaseJob.extend({
-  children: {
-    result: NotificationJobResult,
-    task: TaskTypeInitializer(TaskConstants.TYPE_NOTIFICATION)
-  }
-})
-
-const NgrokIntegrationJob = BaseJob.extend({
-  props: {
-    address: 'string',
-    protocol: 'string',
-    // authtoken: 'string', // private
-    operation: 'string'
-  },
-  children: {
-    result: NgrokIntegrationResult
-  }
-})
-
 const JobFactory = function (attrs, options = {}) {
   if (attrs.isCollection) { return attrs }
   if (attrs.isState) { return attrs } // already constructed
@@ -508,6 +446,9 @@ const JobFactory = function (attrs, options = {}) {
     const type = attrs._type
     let model
     switch (type) {
+      case JobConstants.NODEJS_TYPE:
+        model = new NodejsJob(attrs, options)
+        break
       case JobConstants.SCRIPT_TYPE:
         model = new ScriptJob(attrs, options)
         break
@@ -553,6 +494,7 @@ export const Collection = AppCollection.extend({
   isModel (model) {
     const isModel = (
       model instanceof ScraperJob ||
+      model instanceof NodejsJob ||
       model instanceof ScriptJob ||
       model instanceof ApprovalJob ||
       model instanceof DummyJob ||
@@ -647,10 +589,10 @@ const WorkflowJob = BaseJob.extend({
 })
 
 export const Approval = ApprovalJob
+export const Nodejs = NodejsJob
 export const Script = ScriptJob
 export const Scraper = ScraperJob
 export const Dummy = DummyJob
 export const Notification = NotificationJob
 export const Workflow = WorkflowJob
-export const NgrokIntegration = NgrokIntegrationJob
 export const Factory = JobFactory

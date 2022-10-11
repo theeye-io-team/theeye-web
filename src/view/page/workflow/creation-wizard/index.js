@@ -7,6 +7,7 @@ import config from 'config'
 import Catalogue from 'components/catalogue'
 import bootbox from 'bootbox'
 import WorkflowCreateForm from '../create-form'
+import { Images as IconsImages } from 'constants/icons'
 
 const docsLink = 'core-concepts/tasks/tasks_workflows/'
 
@@ -83,7 +84,7 @@ const CreationWizard = View.extend({
         },
         icon_class: 'fa fa-sitemap',
         icon_color: '#93278f',
-        icon_image: '/images/svg/sq_create-workflows.svg',
+        icon_image: IconsImages.workflow,
       }, {
         name: 'Import',
         id: 'import',

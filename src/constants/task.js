@@ -1,5 +1,6 @@
 
 export const TYPE_SCRAPER = 'scraper'
+export const TYPE_NODEJS = 'nodejs'
 export const TYPE_SCRIPT = 'script'
 export const TYPE_APPROVAL = 'approval'
 export const TYPE_DUMMY = 'dummy'
