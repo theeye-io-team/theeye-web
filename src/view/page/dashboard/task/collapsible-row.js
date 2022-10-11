@@ -176,11 +176,7 @@ export default View.extend({
     'image': {
       hook: 'header-icon-container',
       type: function (el, value) {
-        if (value) {
-          el.innerHTML = `<img class="image-icon" src="${this.image}"></img>`
-        } else {
-          el.innerHTML = `<i class="${this.header_type_icon}" data-hook="header-icon"></i>`
-        }
+        el.style.backgroundImage = `url(${this.image})`
       }
     },
     type: { hook: 'type' },

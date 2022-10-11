@@ -9,6 +9,7 @@ import Titles from 'language/titles'
 
 import WorkflowCreateForm from 'view/page/workflow/create-form'
 import { importForm as TaskImportForm } from 'view/page/task/create-form'
+import { Images as IconsImages } from 'constants/icons'
 
 import './style.less'
 
@@ -217,27 +218,27 @@ const TabContent = View.extend({
       workflow: {
         icon_class: 'fa fa-sitemap',
         icon_color: '#93278f',
-        icon_image: '/images/sq_create-workflows.png',
+        icon_image: IconsImages.workflow,
       },
       script: {
-        icon_image: '/images/script.png',
+        icon_image: IconsImages.script,
         icon_class: 'fa fa-code',
         icon_color: '#E50580',
       },
       scraper: {
         icon_class: 'fa fa-cloud',
         icon_color: '#1E7EFB',
-        icon_image: '/images/web_check.png',
+        icon_image: IconsImages.scraper,
       }, 
       approval: {
         icon_class: 'fa fa-thumbs-o-up',
         icon_color: '#22C000',
-        icon_image: '/images/approval.png',
+        icon_image: IconsImages.approval,
       },
       notification: {
         icon_class: 'fa fa-bell-o',
         icon_color: '#FFCC00',
-        icon_image: '/images/notification.png',
+        icon_image: IconsImages.notification,
       }
     }
     return types[type]

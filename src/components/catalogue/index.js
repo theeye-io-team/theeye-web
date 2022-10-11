@@ -42,9 +42,7 @@ const ButtonView = View.extend({
     return `
       <div class="button-container col-xxl-3 col-lg-4 col-sm-6 col-xs-12">
         <button data-hook="${this.hook}" class="btn button-view">
-          <div class="icon" style="background-color: ${this.icon_color};">
-            ${this.getIcon()}
-          </div>
+          ${this.getIcon()}
           <div class="text">
             <div class="title">${this.name}</div>
             <div class="help">${this.short_description}</div>
@@ -63,9 +61,20 @@ const ButtonView = View.extend({
   },
   getIcon () {
     if (this.icon_image) {
-      return `<img src="${this.icon_image}" alt="${this.name} icon"></img>`
+      const html = `
+        <div class="icon" style='
+          background-color: ${this.icon_color};
+          background-image: url("${this.icon_image}");'>
+        </div>
+      `
+      return html
     } else {
-      return `<i class="${this.icon_class}"></i>`
+      const html = `
+        <div class="icon" style="background-color: ${this.icon_color};">
+          <i class="${this.icon_class}"></i>
+        </div>
+        `
+      return html
     }
   }
 })

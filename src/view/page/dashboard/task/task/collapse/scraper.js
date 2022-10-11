@@ -2,6 +2,7 @@ import TaskCollapsibleRow from './collapsible-row'
 import * as TaskConstants from 'constants/task'
 import ScheduleButton from 'view/buttons/schedule'
 import acls from 'lib/acls'
+import { Images as IconsImages } from 'constants/icons'
 
 export default TaskCollapsibleRow.extend({
   derived: {
@@ -15,7 +16,7 @@ export default TaskCollapsibleRow.extend({
       fn: () => TaskConstants.TYPE_SCRAPER
     },
     type_icon: {
-      fn: () => 'fa fa-code'
+      fn: () => 'fa fa-cloud'
     },
     header_type_icon: {
       fn: () => 'circle fa fa-cloud scraper-color'
@@ -23,7 +24,7 @@ export default TaskCollapsibleRow.extend({
     image: {
       deps: ['model.icon_image'],
       fn () {
-        return (this.model.icon_image || '/images/web_check.png')
+        return (this.model.icon_image || IconsImages.scraper)
       }
     }
   },

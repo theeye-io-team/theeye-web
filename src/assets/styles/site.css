@@ -829,6 +829,7 @@ a.flowchart-icon {
   line-height: 11px;
 }
 
+/*
 .admin-container.dashboard .tasks-container .panel-heading h4.panel-title-icon ,
 .admin-container.dashboard .inbox-container .panel-heading h4.panel-title-icon ,
 .admin-container.dashboard .row-container .panel-heading h4.panel-title-icon {
@@ -857,6 +858,7 @@ a.flowchart-icon {
   line-height: 32px;
   width: 22px;
 }
+*/
 
 .dashboard .events-panel .panel-default .panel-title-content { padding-left:0; }
 .admin-container.dashboard .tasks-container .workflow-job-row .panel-heading h4.panel-title { padding-left: 0; }

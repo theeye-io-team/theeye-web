@@ -83,7 +83,7 @@ const CreationWizard = View.extend({
         },
         icon_class: 'fa fa-sitemap',
         icon_color: '#93278f',
-        icon_image: '/images/sq_create-workflows.png',
+        icon_image: '/images/svg/sq_create-workflows.svg',
       }, {
         name: 'Import',
         id: 'import',

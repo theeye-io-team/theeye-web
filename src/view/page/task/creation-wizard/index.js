@@ -17,6 +17,8 @@ import { Approval as ApprovalTask } from 'models/task'
 import { Notification as NotificationTask } from 'models/task'
 import { Model as File } from 'models/file'
 
+import { Images as IconsImages } from 'constants/icons'
+
 import './styles.less'
 
 const docsLink = 'core-concepts/tasks/'
@@ -84,7 +86,7 @@ const TaskCreationWizard = View.extend({
         callback: () => {
           this.renderCreateFormTask(new ScriptTask())
         },
-        icon_image: '/images/script.png',
+        icon_image: IconsImages.script,
         icon_class: 'fa fa-code',
         icon_color: '#E50580',
       }, {
@@ -96,7 +98,7 @@ const TaskCreationWizard = View.extend({
         },
         icon_class: 'fa fa-cloud',
         icon_color: '#1E7EFB',
-        icon_image: '/images/web_check.png',
+        icon_image: IconsImages.scraper,
       }, {
         name: 'Approval',
         id: 'approval',
@@ -106,7 +108,7 @@ const TaskCreationWizard = View.extend({
         },
         icon_class: 'fa fa-thumbs-o-up',
         icon_color: '#22C000',
-        icon_image: '/images/approval.png',
+        icon_image: IconsImages.approval,
       }, {
         name: 'Notification',
         id: 'notification',
@@ -116,7 +118,7 @@ const TaskCreationWizard = View.extend({
         },
         icon_class: 'fa fa-bell-o',
         icon_color: '#FFCC00',
-        icon_image: '/images/notification.png',
+        icon_image: IconsImages.notification,
       }
     ]
 

@@ -1,5 +1,6 @@
 import TaskCollapsibleRow from './collapsible-row'
 import * as TaskConstants from 'constants/task'
+import { Images as IconsImages } from 'constants/icons'
 
 export default TaskCollapsibleRow.extend({
   derived: {
@@ -15,7 +16,7 @@ export default TaskCollapsibleRow.extend({
     image: {
       deps: ['model.icon_image'],
       fn () {
-        return (this.model.icon_image || '/images/notification.png')
+        return (this.model.icon_image  || IconsImages.notification)
       }
     }
   }
