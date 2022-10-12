@@ -1,5 +1,3 @@
-'use strict'
-
 import App from 'ampersand-app'
 import SelectView from 'components/select2-view'
 import FileForm from 'view/page/files/form'
@@ -25,8 +23,13 @@ export default SelectView.extend({
       </div>
     </div>
   `,
-  initialize () {
-    this.options = new SubCollection(App.state.files, { where: { _type: 'Script' } })
+  initialize (options = {}) {
+    const filters = { where: { _type: 'Script' } }
+    if (options.extra_filters) {
+      Object.assign(filters, options.extra_filters)
+    }
+
+    this.options = new SubCollection(App.state.files, filters)
     this.multiple = false
     this.tags = false
     this.label = 'Scripts'
