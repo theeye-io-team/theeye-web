@@ -202,23 +202,24 @@ export default View.extend({
   },
   onTapEdge (cyevent) {
     const edge = cyevent.target.data()
-
-    const menu_items = [
-      {
-        label: 'Remove Connection',
-        action: () => {
-          this.removeEdgeDialog(edge)
+    if (edge.source !== 'START_NODE') {
+      const menu_items = [
+        {
+          label: 'Remove Connection',
+          action: () => {
+            this.removeEdgeDialog(edge)
+          }
+        },
+        {
+          label: 'Rename Connection',
+          action: () => {
+            this.connectTaskNodes(edge.source, edge.target, true)
+          }
         }
-      },
-      {
-        label: 'Rename Connection',
-        action: () => {
-          this.connectTaskNodes(edge.source, edge.target, true)
-        }
-      }
-    ]
-
-    this.renderContextualMenu(cyevent, menu_items)
+      ]
+    
+      this.renderContextualMenu(cyevent, menu_items)
+    }
   },
   onTapBackground (cyevent) {
     this.connectingTask = undefined
