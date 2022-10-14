@@ -108,7 +108,7 @@ export default View.extend({
 
         this.listenTo(this.workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(this.workflowGraph, 'tap:edge', this.onTapEdge)
-        //this.listenTo(this.workflowGraph, 'tap:back', this.onTapBackground)
+        this.listenTo(this.workflowGraph, 'tap:back', this.onTapBackground)
         this.listenTo(this.workflowGraph, 'tap:back', () => {
           if (this.menuView) {
             this.menuView.remove()
@@ -135,13 +135,14 @@ export default View.extend({
       })
   },
   onTapNode (cyevent) {
-    var node = cyevent.cyTarget.data()
+    var node = cyevent.target.data()
 
     if (/Task$/.test(node.value._type) === true) {
       const task = this.workflow.tasks.get(node.value.id)
       if (this.connectingTask !== undefined) {
         const taskOrigin = this.connectingTask
         this.connectingTask = undefined
+        this.workflowGraph.removeHandle()
         this.connectTaskNodes(taskOrigin.id, task.id)
       } else {
         const menu_items = [
@@ -190,6 +191,7 @@ export default View.extend({
             label: 'Connect to',
             action: () => {
               this.connectingTask = task
+              this.workflowGraph.createHandle(cyevent.target)
             }
           }
         ]
@@ -199,55 +201,38 @@ export default View.extend({
     }
   },
   onTapEdge (cyevent) {
-    const edge = cyevent.cyTarget.data()
-
-    const menu_items = [
-      {
-        label: 'Remove Connection',
-        action: () => {
-          this.removeEdgeDialog(edge)
+    const edge = cyevent.target.data()
+    if (edge.source !== 'START_NODE') {
+      const menu_items = [
+        {
+          label: 'Remove Connection',
+          action: () => {
+            this.removeEdgeDialog(edge)
+          }
+        },
+        {
+          label: 'Rename Connection',
+          action: () => {
+            this.connectTaskNodes(edge.source, edge.target, true)
+          }
         }
-      },
-      {
-        label: 'Rename Connection',
-        action: () => {
-          this.connectTaskNodes(edge.source, edge.target)
-        }
-      }
-    ]
-
-    this.renderContextualMenu(cyevent, menu_items)
+      ]
+    
+      this.renderContextualMenu(cyevent, menu_items)
+    }
   },
   onTapBackground (cyevent) {
-    const menu_items = [
-      {
-        label: 'Fit graph',
-        action: () => { cyevent.cy.fit() }
-      },
-      {
-        label: 'Center graph',
-        action: () => { cyevent.cy.center() }
-      },
-      {
-        label: 'Rearrange nodes',
-        action: () => {
-          this.workflowGraph.updateCytoscape(/* redraw = */ true)
-        }
-      }
-    ]
-
-    this.renderContextualMenu(cyevent, menu_items)
+    this.connectingTask = undefined
   },
   renderContextualMenu (cyevent, menu_items) {
     // remove 
     if (this.menuView) {
       this.menuView.remove()
     }
-
     this.menuView = new ContextualMenu({
       menu_items,
-      topOffset: (cyevent.cyRenderedPosition.y + 15),
-      leftOffset: (cyevent.cyRenderedPosition.x + 15)
+      topOffset: (cyevent.renderedPosition.y + 15),
+      leftOffset: (cyevent.renderedPosition.x + 15)
     })
 
     this.renderSubview(this.menuView, this.el)
@@ -377,7 +362,7 @@ export default View.extend({
     // force change trigger to redraw
     this.trigger('change:graph')
   },
-  connectTaskNodes (sid, tid) {
+  connectTaskNodes (sid, tid, renaming = false) {
     const currentEventName = this.graph.edge(sid, tid) 
     const bodyView = new EventNameInputView({ currentEventName })
 
@@ -394,9 +379,12 @@ export default View.extend({
       modal.remove()
     })
 
+    if (!renaming) this.listenTo(modal, 'cancel', () => {
+      this.workflowGraph.removeTempEdge()
+    })
+
     bodyView.on('submit', (eventName) => {
-      const w = this.graph
-      w.setEdge(sid, tid, eventName)
+      this.graph.setEdge(sid, tid, eventName)
       // force change trigger
       this.trigger('change:graph', this.graph)
 
