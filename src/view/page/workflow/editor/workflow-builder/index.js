@@ -142,6 +142,7 @@ export default View.extend({
       if (this.connectingTask !== undefined) {
         const taskOrigin = this.connectingTask
         this.connectingTask = undefined
+        this.workflowGraph.removeHandle()
         this.connectTaskNodes(taskOrigin.id, task.id)
       } else {
         const menu_items = [
@@ -190,6 +191,7 @@ export default View.extend({
             label: 'Connect to',
             action: () => {
               this.connectingTask = task
+              this.workflowGraph.createHandle(cyevent.target)
             }
           }
         ]
@@ -211,7 +213,7 @@ export default View.extend({
       {
         label: 'Rename Connection',
         action: () => {
-          this.connectTaskNodes(edge.source, edge.target)
+          this.connectTaskNodes(edge.source, edge.target, true)
         }
       }
     ]
@@ -376,7 +378,7 @@ export default View.extend({
     // force change trigger to redraw
     this.trigger('change:graph')
   },
-  connectTaskNodes (sid, tid) {
+  connectTaskNodes (sid, tid, renaming = false) {
     const currentEventName = this.graph.edge(sid, tid) 
     const bodyView = new EventNameInputView({ currentEventName })
 
@@ -393,9 +395,12 @@ export default View.extend({
       modal.remove()
     })
 
+    if (!renaming) this.listenTo(modal, 'cancel', () => {
+      this.workflowGraph.removeTempEdge()
+    })
+
     bodyView.on('submit', (eventName) => {
-      const w = this.graph
-      w.setEdge(sid, tid, eventName)
+      this.graph.setEdge(sid, tid, eventName)
       // force change trigger
       this.trigger('change:graph', this.graph)
 

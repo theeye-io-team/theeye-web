@@ -4,7 +4,10 @@ import qs from 'qs'
 import './style.less'
 import cytoscape from 'cytoscape'
 import cydagre from 'cytoscape-dagre'
+import edgehandles from 'cytoscape-edgehandles';
+
 cydagre(cytoscape)
+cytoscape.use( edgehandles )
 
 export default View.extend({
   template: `
@@ -17,6 +20,8 @@ export default View.extend({
   props: {
     clearBtn: ['boolean', false, false],
     cy: ['object', false],
+    handles: ['object', false],
+    connecting: ['boolean', true, false],
     graph: 'object' // Graph (graphlib) instance
   },
   initialize () {
@@ -79,7 +84,7 @@ export default View.extend({
       },
       style: [
         {
-          selector: 'node',
+          selector: 'node.not-ghost',
           style: {
             'height': 40,
             'width': 40,
@@ -104,7 +109,7 @@ export default View.extend({
                 'webhook':      "#1E7EFB",
                 'host':         "#FC7C00",
                 'dstat':        "#00305B",
-                'psaux':        "#000000" // This should never show up
+                'psaux':        "#000000", // This should never show up
               }
               var node = new Node(ele.data('value'))
               return colors[node.getFeatureType()] 
@@ -127,7 +132,7 @@ export default View.extend({
             }
           }
         }, {
-          selector: 'edge',
+          selector: 'edge.not-ghost',
           style: {
             'width': 2,
             'target-arrow-shape': 'triangle',
@@ -147,9 +152,50 @@ export default View.extend({
               return ele.data('label') || ''
             },
           }
-        }
+        }, {
+          selector: '.eh-ghost-edge, edge.eh-preview, edge.temp',
+          style: {
+            'width': 1,
+            'target-arrow-shape': 'triangle',
+            'curve-style': 'bezier',
+            'color': '#FFF',
+            'line-color': '#FFF',
+            'target-arrow-color': '#FFF',
+            'opacity': 0.5
+          }
+        }, {
+          selector: '.eh-ghost-edge.eh-preview-active',
+          style: {
+            'opacity': 0
+          }
+        }, 
       ]
     })
+
+    const defaults = {
+      canConnect: function(sourceNode, targetNode){
+        // whether an edge can be created between source and target
+        return (targetNode.data('id') !== "START_NODE")
+      },
+      edgeParams: function( sourceNode, targetNode ){
+        // for edges between the specified source and target
+        // return element object to be passed to cy.add() for edge
+        
+        return({
+          group: 'edges',
+          data: { source: sourceNode.data('id'), target: targetNode.data('id') },
+          classes: ['temp']
+        })
+      },
+      hoverDelay: 150, // time spent hovering over a target node before it is considered selected
+      snap: true, // when enabled, the edge can be drawn by just moving close to a target node (can be confusing on compound graphs)
+      snapThreshold: 15, // the target node must be less than or equal to this many pixels away from the cursor/finger
+      snapFrequency: 15, // the number of times per second (Hz) that snap checks done (lower is less expensive)
+      noEdgeEventsInDraw: true, // set events:no to edges during draws, prevents mouseouts on compounds
+      disableBrowserGestures: false // during an edge drawing gesture, disable browser gestures such as two-finger trackpad swipe and pinch-to-zoom
+    };
+    
+    this.handles = cy.edgehandles( defaults );
 
     cy.on('tap', (event) => {
       const isNode = typeof event.target.isNode === 'function' && event.target.isNode() 
@@ -183,7 +229,8 @@ export default View.extend({
       var node = new Node(graph.node(n))
       elems.push({
         group: 'nodes',
-        data: node.data
+        data: node.data,
+        classes: ['not-ghost']
       })
     })
 
@@ -199,13 +246,15 @@ export default View.extend({
           const label = labels[key]
           delete labels[key]
           return label
-        })(e) }
+        })(e) },
+        classes: ['not-ghost']
       })
     })
 
     return elems
   },
   recordPositions (event) {
+    if (this.connecting) return 
     let data = this.graph.node(event.target.data('id'))
     data.position = event.target.position()
     this.graph.setNode(event.target.data('id'), data)
@@ -230,6 +279,17 @@ export default View.extend({
     })
 
     this.graph.setEdge('START_NODE', targetNode)
+  },
+  createHandle (targetNode) {
+    this.connecting = true
+    this.handles.start(targetNode)
+  },
+  removeHandle () {
+    this.handles.stop()
+    this.connecting = false
+  },
+  removeTempEdge () {
+    this.cy.elements('edge.temp')[0].remove()
   }
 })
 
