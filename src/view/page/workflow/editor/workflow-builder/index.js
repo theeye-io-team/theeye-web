@@ -108,7 +108,7 @@ export default View.extend({
 
         this.listenTo(this.workflowGraph, 'tap:node', this.onTapNode)
         this.listenTo(this.workflowGraph, 'tap:edge', this.onTapEdge)
-        //this.listenTo(this.workflowGraph, 'tap:back', this.onTapBackground)
+        this.listenTo(this.workflowGraph, 'tap:back', this.onTapBackground)
         this.listenTo(this.workflowGraph, 'tap:back', () => {
           if (this.menuView) {
             this.menuView.remove()
@@ -221,24 +221,7 @@ export default View.extend({
     this.renderContextualMenu(cyevent, menu_items)
   },
   onTapBackground (cyevent) {
-    const menu_items = [
-      {
-        label: 'Fit graph',
-        action: () => { cyevent.cy.fit() }
-      },
-      {
-        label: 'Center graph',
-        action: () => { cyevent.cy.center() }
-      },
-      {
-        label: 'Rearrange nodes',
-        action: () => {
-          this.workflowGraph.updateCytoscape(/* redraw = */ true)
-        }
-      }
-    ]
-
-    this.renderContextualMenu(cyevent, menu_items)
+    this.connectingTask = undefined
   },
   renderContextualMenu (cyevent, menu_items) {
     // remove 
