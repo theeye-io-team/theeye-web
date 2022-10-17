@@ -7,11 +7,10 @@ import * as TaskConstants from 'constants/task'
 
 export default function (options) {
   const task = options.model
-  if (task.type === TaskConstants.TYPE_SCRIPT) {
-    return new ScriptForm (options)
-  }
-
-  if (task.type === TaskConstants.TYPE_NODEJS) {
+  if (
+    task.type === TaskConstants.TYPE_SCRIPT ||
+    task.type === TaskConstants.TYPE_NODEJS
+  ) {
     return new ScriptForm (options)
   }
 

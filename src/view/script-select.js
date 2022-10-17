@@ -1,10 +1,11 @@
 import App from 'ampersand-app'
 import SelectView from 'components/select2-view'
-import FileForm from 'view/page/files/form'
+import ScriptForm from 'view/page/files/form'
 import Modalizer from 'components/modalizer'
 import { Model as ScriptModel } from 'models/file/script'
 import OnboardingActions from 'actions/onboarding'
 import SubCollection from 'ampersand-filtered-subcollection'
+import * as TaskConstants from 'constants/task'
 
 export default SelectView.extend({
   template: `
@@ -23,10 +24,14 @@ export default SelectView.extend({
       </div>
     </div>
   `,
+  props: {
+    language: 'string'
+  },
   initialize (options = {}) {
     const filters = { where: { _type: 'Script' } }
-    if (options.extra_filters) {
-      Object.assign(filters, options.extra_filters)
+
+    if (options.language === TaskConstants.TYPE_NODEJS) {
+      Object.assign(filters, { filter: (el) => el.extension === 'js' })
     }
 
     this.options = new SubCollection(App.state.files, filters)
@@ -71,7 +76,8 @@ export default SelectView.extend({
       App.actions.file.get(this.value)
     }
 
-    const form = new FileForm({ model: file })
+    const form = new ScriptForm({ model: file, language: this.language })
+
     const modal = new Modalizer({
       buttons: false,
       title: 'Script Form',
