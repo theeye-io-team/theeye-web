@@ -15,7 +15,7 @@ import AdvancedToggle from 'view/advanced-toggle'
 import * as TaskConstants from 'constants/task'
 
 import HostSelectionView from 'view/host-select'
-import ScriptImportView from './file-import'
+import ScriptPreview from './file-import'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 // import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
@@ -47,7 +47,7 @@ export default TaskFormView.extend({
     }
 
     if (this.mode === 'import') { // imported script
-      this.scriptSelection = new ScriptImportView({
+      this.scriptSelection = new ScriptPreview({
         file: this.model.script.serialize(),
         required: true,
         name: 'script_name',
@@ -55,13 +55,11 @@ export default TaskFormView.extend({
       })
     } else {
       const options = {
+        language: this.model.type,
         value: this.model.script_id,
         required: true
       }
 
-      if (this.model.type === TaskConstants.TYPE_NODEJS) {
-        options.extra_filters = { filter: (el) => el.extension === 'js' }
-      }
       this.scriptSelection = new ScriptSelectView(options)
     }
 
@@ -345,7 +343,7 @@ export default TaskFormView.extend({
 
     if (this.model.isNew()) {
       const copySelect = new CopyTaskSelect({
-        type: TaskConstants.TYPE_SCRIPT,
+        type: this.model.type,
         visible: false
       })
 

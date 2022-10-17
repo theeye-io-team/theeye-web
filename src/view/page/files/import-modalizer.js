@@ -14,7 +14,15 @@ export default Modalizer.extend({
 
     const fileModel = new App.Models.File.Model(this.file, { parse: true })
 
-    this.form = new ImportFileForm({ model: fileModel })
+    this.form = new FileForm({
+      model: fileModel,
+      onsubmit: (data) => {
+        this.file = data
+        this.trigger('submitted', data)
+        this.hide()
+      }
+    })
+
     this.bodyView = this.form
   },
   render () {
@@ -25,18 +33,5 @@ export default Modalizer.extend({
       this.form.remove()
       this.remove()
     })
-
-    this.listenTo(this.form, 'submitted', data => {
-      this.file = data
-      this.trigger('submitted', data)
-      this.hide()
-    })
-  }
-})
-
-const ImportFileForm = FileForm.extend({
-  submitCallback () {
-    let data = this.prepareData(this.data)
-    this.trigger('submitted', data)
   }
 })
