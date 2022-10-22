@@ -156,7 +156,7 @@ const Modalizer = View.extend({
         this.queryByHook('buttons-container')
       )
 
-      this.buttonsView = buttons
+      this.buttonsComponent = buttons
     }
   },
   renderBody () {
