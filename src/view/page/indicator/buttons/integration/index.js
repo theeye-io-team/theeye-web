@@ -27,8 +27,12 @@ export default PanelButton.extend({
       const modal = new Modalizer({
         buttons: false,
         title: this.title,
-        bodyView: view
+        bodyView: view,
+        buttons: true
       })
+
+      modal.buttonsView.confirmEnabled = false
+      modal.buttonsView.cancelText = 'Close'
 
       this.listenTo(modal, 'hidden', () => {
         view.remove()
@@ -72,6 +76,20 @@ const Content = BaseView.extend({
         </div>
       </div>
 
+      <div class="row indicator-curl" style="padding-top:10px;">
+        <div class="col-xs-2">
+          <label>Public Get CURL</label>
+        </div>
+        <div class="col-xs-10">
+          <div class="">
+            <button class="curl-copy btn btn-primary clip" type="button" data-hook="secret-copy">
+              <span class="fa fa-files-o" alt="copy to clipboard"></span>
+            </button>
+            <div class="curl-container" data-hook="secret-curl"></div>
+          </div>
+        </div>
+      </div>
+
     </div>
   `,
   bindings: {
@@ -81,6 +99,10 @@ const Content = BaseView.extend({
     },
     'deleteCurl': {
       hook: 'delete-curl',
+      type: 'innerHTML'
+    },
+    'secretCurl': {
+      hook: 'secret-curl',
       type: 'innerHTML'
     }
   },
@@ -119,6 +141,20 @@ const Content = BaseView.extend({
         let url = this.indicatorUrl
         return `curl -X DELETE ${url}`
       }
+    },
+    secretCurl: {
+      deps: ['model.id', 'model.secret'],
+      fn () {
+        const indicatorsURL = App.config.supervisor_api_url + '/indicator'
+        const url = [
+          "'",
+          indicatorsURL,
+          `/${this.model.id}/secret/${this.model.secret}`,
+          "'"
+        ].join('')
+
+        return `curl -X GET ${url}`
+      }
     }
   },
   render () {
@@ -135,6 +171,13 @@ const Content = BaseView.extend({
       this.queryByHook('delete-copy'),
       {
         text: () => this.deleteCurl
+      }
+    )
+
+    new Clipboard(
+      this.queryByHook('secret-copy'),
+      {
+        text: () => this.secretCurl
       }
     )
   }

@@ -20,11 +20,21 @@ export default View.extend({
     </div>
   `,
   props: {
+    confirmEnabled: ['boolean', false, true],
+    cancelEnabled: ['boolean', false, true],
     confirmText: ['string', false, 'Confirm'],
     cancelText: ['string', false, 'Cancel'],
     confirmAction: ['any', false, null]
   },
   bindings: {
+    confirmEnabled: {
+      type: 'toggle',
+      hook: 'confirm'
+    },
+    cancelEnabled: {
+      type: 'toggle',
+      hook: 'confirm'
+    },
     confirmText: {
       hook: 'confirm'
     },
