@@ -38,10 +38,8 @@ export default AmpersandState.extend({
   groupTasks () {
     const group = () => {
       let models = App.state.tasks.models.filter(m => !m.workflow_id)
-
       //App.state.workflows.models.forEach(model => models.push(model))
       this.groupedTasks.regroup(models, this.tasksGroupBy)
-
       this.groupedTasks.add(App.state.workflows.models)
     }
 

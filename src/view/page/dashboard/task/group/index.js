@@ -37,10 +37,11 @@ export default TaskCollapsibleRow.extend({
             let type = this.model.name.toLowerCase()
             return TaskIcons[type]
             break;
+          case 'tags':
           case 'name':
-            let name = this.model
-              .name
-              .toLowerCase()
+            let name = this.model.name
+            if (!name) { name = '-' }
+            name = name.toLowerCase()
               .replace(/[^a-z ]/g,'')
               .trim()
 
@@ -63,10 +64,11 @@ export default TaskCollapsibleRow.extend({
             type = this.model.name.toLowerCase()
             return `circle ${TaskIcons[type]} ${type}-color`
             break;
+          case 'tags':
           case 'name':
-            let name = this.model
-              .name
-              .toLowerCase()
+            let name = this.model.name
+            if (!name) { name = '-' }
+            name = name.toLowerCase()
               .replace(/[^a-z ]/g,'')
               .trim()
 
