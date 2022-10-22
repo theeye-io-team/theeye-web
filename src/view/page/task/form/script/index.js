@@ -591,8 +591,12 @@ const EnvView = View.extend({
     const modal = new Modalizer({
       buttons: false,
       title: 'Copy Environment from',
-      bodyView: selectView
+      bodyView: selectView,
+      buttons: true
     })
+
+    modal.buttonsComponent.confirmEnabled = false
+    modal.buttonsComponent.cancelText = 'Close'
 
     this.listenTo(modal,'hidden',() => {
       selectView.remove()

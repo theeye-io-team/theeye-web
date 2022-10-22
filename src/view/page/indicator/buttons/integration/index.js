@@ -31,8 +31,8 @@ export default PanelButton.extend({
         buttons: true
       })
 
-      modal.buttonsView.confirmEnabled = false
-      modal.buttonsView.cancelText = 'Close'
+      modal.buttonsComponent.confirmEnabled = false
+      modal.buttonsComponent.cancelText = 'Close'
 
       this.listenTo(modal, 'hidden', () => {
         view.remove()

@@ -90,8 +90,12 @@ export default View.extend({
     const modal = new Modalizer({
       buttons: false,
       title: 'Arguments Creation',
-      bodyView: creator
+      bodyView: creator,
+      buttons: true
     })
+
+    modal.buttonsComponent.confirmEnabled = false
+    modal.buttonsComponent.cancelText = 'Close'
 
     modal.on('hidden', () => {
       creator.remove()
@@ -119,8 +123,12 @@ export default View.extend({
     const modal = new Modalizer({
       buttons: false,
       title: 'Copy arguments from',
-      bodyView: select
+      bodyView: select,
+      buttons: true
     })
+
+    modal.buttonsComponent.confirmEnabled = false
+    modal.buttonsComponent.cancelText = 'Close'
 
     modal.on('hidden', () => {
       select.remove()
