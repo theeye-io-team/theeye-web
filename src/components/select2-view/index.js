@@ -2,10 +2,11 @@ import View from 'ampersand-view'
 import dom from 'ampersand-dom'
 import 'select2'
 import $ from 'jquery'
+import './styles.less'
 
 export default View.extend({
   template: `
-    <div>
+    <div data-component="select2-view">
       <label data-hook="label" class="col-sm-3 control-label"></label>
       <div class="col-sm-9">
         <select class="form-control select" style="width:100%"></select>
@@ -168,11 +169,12 @@ export default View.extend({
     this.listenTo(this,'change:valid',this.reportToParent)
     this.listenTo(this,'change:validityClass',this.validityClassChanged)
 
-    this.$select = $(this.query('select')).first()
     // start select2 component first
     this.renderSelect2Component(this.startingValue)
   },
   renderSelect2Component (value=null) {
+    this.$select = $(this.query('select')).first()
+
     this.$select
       .select2({})
       .select2('destroy')
@@ -180,6 +182,18 @@ export default View.extend({
       .html('<option></option>')
 
     const select2setup = {
+      templateResult: (data, container) => {
+        if (Array.isArray(data.classList)) {
+          data.classList.forEach(cn => container.classList.add(cn))
+        }
+        return data.text;
+      },
+      templateSelection: (data, $container) => {
+        if (Array.isArray(data.classList)) {
+          data.classList.forEach(cn => $container[0].classList.add(cn))
+        }
+        return data.text;
+      },
       allowClear: this.allowClear,
       placeholder: this.unselectedText,
       tags: this.tags,
@@ -202,12 +216,7 @@ export default View.extend({
     }
 
     if (this.options) {
-      select2setup.data = this.options.map(value => {
-        return {
-          text: this.getTextAttribute(value),
-          id: value[this.idAttribute]
-        }
-      })
+      select2setup.data = this.prepareData(this.options)
     }
 
     if (this.ajax !== null) {
@@ -268,6 +277,17 @@ export default View.extend({
       }
     }
   },
+  prepareData () {
+    return this.options.map(value => {
+      return {
+        text: this.getTextAttribute(value),
+        id: value[this.idAttribute],
+        classList: value.classList,
+        disabled: value.disabled,
+        selected: value.selected
+      }
+    })
+  },
   getTextAttribute (attrs) {
     // use a custom user function to build the display text
     if (typeof this.textAttribute == 'function') {
@@ -284,15 +304,7 @@ export default View.extend({
 
     this.$select.append( new Option(this.unselectedText, 0, false, false) )
 
-    var items = []
-    this.options.forEach(option => {
-      items.push({
-        text: this.getTextAttribute(option),
-        id: option[this.idAttribute]
-      })
-    })
-
-    options.data = items
+    options.data = this.prepareData()
     this.$select.select2(options)
     //this.$select.trigger('change')
   },

@@ -11,6 +11,7 @@ class HostGroup extends Route {
     // webhooks collection
     App.state.hostGroups.fetch()
     App.state.hosts.fetch()
+    App.state.resources.fetch()
 
     return new PageView({
       collection: App.state.hostGroups
