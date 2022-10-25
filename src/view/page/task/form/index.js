@@ -19,13 +19,9 @@ export default function (options) {
     return new ApprovalForm (options)
   }
 
-  if (task.type === TaskConstants.TYPE_DUMMY) {
-    return new DummyForm (options)
-  }
-
   if (task.type === TaskConstants.TYPE_NOTIFICATION) {
     return new NotificationForm (options)
   }
 
-  throw new Error(`unrecognized task type ${task.type}`)
+  return new DummyForm (options)
 }

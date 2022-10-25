@@ -517,17 +517,16 @@ const JobFactory = function (attrs, options = {}) {
       case JobConstants.APPROVAL_TYPE:
         model = new ApprovalJob(attrs, options)
         break
-      case JobConstants.DUMMY_TYPE:
-        model = new DummyJob(attrs, options)
-        break
       case JobConstants.NOTIFICATION_TYPE:
         model = new NotificationJob(attrs, options)
         break
       case JobConstants.WORKFLOW_TYPE:
         model = new WorkflowJob(attrs, options)
         break
+      case JobConstants.DUMMY_TYPE:
       default:
-        throw new Error(`unrecognized type ${type}`)
+        model = new DummyJob(attrs, options)
+        break
     }
     return model
   }
