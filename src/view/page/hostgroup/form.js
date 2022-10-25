@@ -12,8 +12,6 @@ import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
 import HelpTexts from 'language/help'
 import HostSelectionView from 'view/host-select'
-//import * as MonitorConstants from 'constants/monitor'
-//import * as StateConstants from 'constants/states'
 
 export default FormView.extend({
   initialize (options) {
@@ -37,39 +35,6 @@ export default FormView.extend({
       ]
     })
 
-    //const selectedHosts = new SelectView({
-    //  label: 'Destination host',
-    //  name: 'hosts',
-    //  multiple: true,
-    //  tags: true,
-    //  options: App.state.hosts.map(host => {
-    //    const monitor = App.state.resources.find(r => {
-    //      return r.type === MonitorConstants.TYPE_HOST && r.host_id === host.id
-    //    })
-
-    //    let classList
-    //    let hostname = host.hostname
-    //    if (monitor?.state===StateConstants.STOPPED) {
-    //      classList = [ 'warning' ]
-    //      hostname += ' (stopped reporting)'
-    //    }
-
-    //    return {
-    //      id: host.id,
-    //      hostname,
-    //      classList
-    //    }
-    //  }),
-    //  value: this.model.hosts,
-    //  styles: 'form-group',
-    //  required: false,
-    //  unselectedText: 'select a host',
-    //  idAttribute: 'id',
-    //  textAttribute: 'hostname',
-    //  requiredMessage: 'Selection required',
-    //  invalidClass: 'text-danger',
-    //  validityClassSelector: '.control-label'
-    //})
     const selectedHosts = new HostSelectionView({
       label: 'Destination host',
       multiple: true,
@@ -123,13 +88,10 @@ export default FormView.extend({
         options: App.state.hosts,
         styles: 'form-group',
         required: false,
-        // value: null,
         unselectedText: 'select a host',
         idAttribute: 'id',
         textAttribute: 'hostname',
         requiredMessage: 'Selection required',
-        //invalidClass: 'text-danger',
-        //validityClassSelector: '.control-label',
         tests: [
           () => {
             if (!App.state.hostGroupPage.configured()) {
@@ -253,7 +215,6 @@ const HostsPreviewModal = Modalizer.extend({
 
     this.list = new HostsListView({
       collection: App.state.hostsByRegex
-      //hosts: this.model.hosts
     })
 
     this.bodyView = this.list
@@ -274,7 +235,6 @@ const HostsPreviewModal = Modalizer.extend({
 
 const HostsListView = View.extend({
   props: {
-    //hosts: 'collection',
     massiveAddButton: ['boolean', false, false]
   },
   template: `
@@ -303,9 +263,6 @@ const HostsListView = View.extend({
     'click a[data-hook=massive-add]': 'onClickMassiveAddButton'
   },
   onClickMassiveAddButton () {
-    //this.collection.forEach((model) => { 
-    //  this.hosts.add(model)
-    //})
     this.trigger('add_all')
   },
   bindings: {
@@ -322,7 +279,6 @@ const HostsListView = View.extend({
       (options) => {
         const view = new ItemView(options)
         view.on('clicked', () => {
-          //this.hosts.add(model)
           this.trigger('add', options.model)
         })
         return view
