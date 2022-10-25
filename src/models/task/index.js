@@ -405,15 +405,12 @@ const TaskFactory = function (attrs, options = {}) {
       case TaskConstants.TYPE_APPROVAL:
         model = new Approval(attrs, options)
         break;
-      case TaskConstants.TYPE_DUMMY:
-        model = new Dummy(attrs, options)
-        break;
       case TaskConstants.TYPE_NOTIFICATION:
         model = new Notification(attrs, options)
         break;
+      case TaskConstants.TYPE_DUMMY:
       default:
-        let err = new Error(`unrecognized type ${type}`)
-        throw err
+        model = new Dummy(attrs, options)
         break;
     }
     return model
