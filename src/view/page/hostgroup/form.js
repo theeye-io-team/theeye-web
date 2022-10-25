@@ -39,6 +39,7 @@ export default FormView.extend({
       label: 'Destination host',
       multiple: true,
       tags: true,
+      value: this.model.hosts,
       name: 'hosts'
     })
 
