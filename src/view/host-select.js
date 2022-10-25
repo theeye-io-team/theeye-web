@@ -36,14 +36,14 @@ export default SelectView.extend({
     //const options = new FilteredCollection(hosts, { filters })
     //this.options = options
     this.options = hosts
-    this.multiple = specs.multiple || false
-    this.tags = specs.tags || false
     this.label = specs.label || 'Host'
     this.name = specs.name || 'host'
     this.styles = 'form-group'
     this.unselectedText = 'select a host'
     this.idAttribute = 'id'
     this.textAttribute = 'hostname'
+    this.invalidClass = 'text-danger'
+    this.validityClassSelector = '.control-label'
 
     SelectView.prototype.initialize.apply(this, arguments)
   }

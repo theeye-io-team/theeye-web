@@ -19,6 +19,7 @@ import TaskSelection from 'view/task-select'
 import Modalizer from 'components/modalizer'
 import FileSaver from 'file-saver'
 
+import HostSelectionView from 'view/host-select'
 import ScriptImportView from './file-import'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
@@ -32,22 +33,13 @@ export default TaskFormView.extend({
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew()) // or is import
 
-    // multiple only if new, allows to create multiple tasks at once
-    const hostsSelection = new SelectView({
+    const hostsSelection = new HostSelectionView({
       label: 'Bot *',
       multiple: false,
-      name: 'host_id',
       tags: false,
-      options: App.state.hosts,
+      name: 'host_id',
       value: this.model.host_id,
-      required: true,
-      unselectedText: 'select a Host',
-      idAttribute: 'id',
-      textAttribute: 'hostname',
-      requiredMessage: 'Selection required',
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label',
-      autoselectSingleOption: true
+      required: true
     })
 
     if (isNewTask) {

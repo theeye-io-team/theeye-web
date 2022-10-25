@@ -14,6 +14,7 @@ import isURL from 'validator/lib/isURL'
 import * as WebhooksConstants from 'constants/webhooks'
 import * as TaskConstants from 'constants/task'
 import HelpTexts from 'language/help'
+import HostSelectionView from 'view/host-select'
 
 import CopyTaskSelect from '../copy-task-select'
 
@@ -21,21 +22,13 @@ export default TaskFormView.extend({
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew())
 
-    const hostsSelection = new SelectView({
+    const hostsSelection = new HostSelectionView({
       label: 'Bot *',
       multiple: false,
-      name: 'host_id',
       tags: false,
-      options: App.state.hosts,
+      name: 'host_id',
       value: this.model.host_id,
-      required: true,
-      unselectedText: 'select a Bot',
-      idAttribute: 'id',
-      textAttribute: 'hostname',
-      requiredMessage: 'Selection required',
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label',
-      autoselectSingleOption: true
+      required: true
     })
 
     const jsonBodyCheckbox = new CheckboxView({
