@@ -339,13 +339,21 @@ const FileCollapsedContent = GenericCollapsedContent.extend({
 const HostCollapsedContent = GenericCollapsedContent.extend({
   template: `
     <div data-component="monitor-collapsed-content">
-      <p>This is <i data-hook="hostname"></i> keep alive.</p>
 
       <div class="host_state col-md-12">
         <h4>
           <i class="fa theeye-robot-solid"></i>
-          Host monitor state:
-          <a href="#" data-hook="host_edit"><i class="fa fa-edit"></i></a>
+          Agent version <span data-hook="version"></span>
+        </h4>
+      </div>
+
+      <div class="host_state col-md-12">
+        <h4>
+          <i class="fa theeye-robot-solid"></i>
+          Host monitor state
+          <a href="#" data-hook="host_edit">
+            <i class="fa fa-edit"></i>
+          </a>
           <i data-hook="host_state"></i>
         </h4>
       </div>
@@ -354,7 +362,7 @@ const HostCollapsedContent = GenericCollapsedContent.extend({
         <section data-hook="psaux_state_section">
           <h4>
             <i class="fa fa-cogs"></i>
-            Processes monitor state: 
+            Processes monitor state
             <a href="#" data-hook="psaux_edit"><i class="fa fa-edit"></i></a>
             <a href="#" data-hook="psaux_remove"><i class="fa fa-trash"></i></a>
             <i data-hook="psaux_state"></i>
@@ -366,7 +374,7 @@ const HostCollapsedContent = GenericCollapsedContent.extend({
         <section data-hook="dstat_state_section">
           <h4>
             <i class="fa fa-bar-chart"></i>
-            Health monitor state:
+            Health monitor state
             <a href="#" data-hook="dstat_edit"><i class="fa fa-edit"></i></a>
             <a href="#" data-hook="dstat_remove"><i class="fa fa-trash"></i></a>
             <i data-hook="dstat_state"></i>

@@ -49,7 +49,11 @@ const MonitorView = View.extend({
                     <span data-hook="tags"></span>
                     <span data-hook="name"></span>
                     <span data-hook="help"></span>
-                    <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
+                    <small>
+                      >
+                      <i data-hook="type"></i>
+                      <i data-hook="hostname"></i>
+                    </small>
                   </div>
 
                   <section data-hook="buttons-block" style="float:right;">
