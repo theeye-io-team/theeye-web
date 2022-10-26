@@ -16,4 +16,5 @@
   - IAM
     - [Roles y administración de acceso](/core-concepts/iam/user-management.md)
     - [Gestión de identidades](/core-concepts/iam/logical_access.md)
-
+- Instalacion
+  - [Configuracion](/installation/config.md)
