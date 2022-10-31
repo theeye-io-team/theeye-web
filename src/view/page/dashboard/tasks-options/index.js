@@ -58,7 +58,9 @@ export default View.extend({
       } else {
         const propItemSelector = `li button[data-prop=${prop}]`
         const item = this.query(propItemSelector)
-        item.style.backgroundColor = '#23324C'
+        if (item) {
+          item.style.backgroundColor = '#23324C'
+        }
       }
     })
 
