@@ -1,8 +1,8 @@
-# Configuración de la interfaz Web
+# Configuración
 
 [![theeye.io](../images/logo-theeye-theOeye-logo2.png)](https://theeye.io/en/index.html)
 
-## Parametros de configuracion de la UI.
+## Parametros de configuracion 
 
 En el siguiente link se puede visualizar el archivo de configuración base con todos los parametros existentes y sus valores por defecto.
 
