@@ -14,7 +14,7 @@
   },
   "scripts": {
     "build": "npx webpack --config webpack.prod.js",
-    "build-dev": "APP_VERSION=$(git describe) NODE_ENV=dev npx webpack --watch --config webpack.dev.js",
+    "build-dev": "APP_VERSION=$(git describe) NODE_ENV=devevelopment npx webpack --watch --config webpack.dev.js",
     "build-prod": "npx webpack --config webpack.prod.js",
     "build-stats": "npx webpack --config webpack.prod.js --profile --json > webpack-stats.json",
     "webserver": "node server"
@@ -62,7 +62,6 @@
     "es6-promise": "^4.0.5",
     "eslint": "^3.8.1",
     "express": "~4.17.1",
-    "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "~6.0.0",
     "file-saver": "1.3.8",
     "flatpickr": "4.3.0",
@@ -83,7 +82,7 @@
     "lodash": "~4.17.21",
     "luxon": "^2.0.1",
     "mime-types": "~2.1.35",
-    "mini-css-extract-plugin": "~0.9.0",
+    "mini-css-extract-plugin": "~1.6.2",
     "moment": "~2.29.4",
     "moment-timezone": "^0.5.14",
     "nprogress": "0.2.0",
