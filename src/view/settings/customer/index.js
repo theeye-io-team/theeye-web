@@ -136,11 +136,11 @@ const Content = View.extend({
           <span>Your preferences for <span data-hook="customer-view_name"></span></span>
           <span data-hook="close-button" class="close-button fa fa-remove" style=""></span>
         </div>
-        <div class="col-xs-3 panel-left">
+        <div class="panel-left">
           <ul class="nav nav-tabs tabs-left" data-hook="settings-links-container">
           </ul>
         </div>
-        <div class="col-xs-9 panel-right">
+        <div class="panel-right">
           <div class="tab-content" data-hook="panes-container">
             <div class="tab-pane fade" id="installer" data-hook="installer-tab"></div>
             <div class="tab-pane fade" id="credentials" data-hook="credentials-tab"></div>
