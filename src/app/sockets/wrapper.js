@@ -58,13 +58,16 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
       url = url ? url.replace(/(\/)$/, '') : undefined
 
       // Initiate a socket connection
-      this.socket = io(url, { query: { access_token } })
+      this.socket = io(url, {
+        auth: (next) => {
+          next({ access_token })
+        }
+      })
       this.bindEvents()
     } else {
       const socket = this.socket
       if (!socket.connected) {
         logger.log('reconnecting socket')
-        socket.io.opts.query.access_token = access_token
         socket.connect()
       }
     }
