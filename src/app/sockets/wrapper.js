@@ -23,7 +23,7 @@
  *  })
  *
  */
-import io from 'socket.io-client'
+import { io } from 'socket.io-client'
 import Events from 'ampersand-events'
 import loggerModule from 'lib/logger'; const logger = loggerModule('eye::sockets')
 
@@ -58,10 +58,8 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
       url = url ? url.replace(/(\/)$/, '') : undefined
 
       // Initiate a socket connection
-      let socket = io(url, { query: { access_token } })
-
-      bindEvents(socket, this, this.events)
-      this.socket = socket
+      this.socket = io(url, { query: { access_token } })
+      this.bindEvents()
     } else {
       const socket = this.socket
       if (!socket.connected) {
@@ -70,6 +68,49 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
         socket.connect()
       }
     }
+  },
+
+  bindEvents () {
+    const socket = this.socket
+    for (let eventName in this.events) {
+      socket.on(eventName, (...args) => {
+        logger.debug(`event name ${eventName} received. %o`, args)
+        this.events[eventName](...args)
+      })
+    }
+
+    socket.onAny((eventName, ...args) => {
+      logger.debug(`${eventName} received with ${args}`)
+    })
+
+    // extend
+    const emit = socket.emit
+    socket.emit = function () {
+      logger.debug('emitting: %o', arguments)
+      emit.apply(socket, arguments)
+    }
+
+    /**
+     * 'connect' event is triggered when the socket establishes a connection
+     *  successfully.
+     */
+    socket.on('connect', () => {
+      this.trigger('connected')
+    })
+
+    socket.on('disconnect', () => {
+      this.trigger('disconnected')
+    })
+
+    socket.on('reconnecting', () => {
+      this.trigger('reconnecting')
+    })
+
+    socket.on('reconnect', () => {
+      this.trigger('reconnect')
+    })
+
+    return this
   },
 
   disconnect (done) {
@@ -151,51 +192,3 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
     }
   }
 })
-
-const bindEvents = (socket, emitter, events) => {
-  for (let eventName in events) {
-    socket.on(eventName, function () {
-      logger.debug(`event name ${eventName} received. %o`, arguments)
-      events[eventName].apply(socket, arguments)
-    })
-  }
-
-  // extend
-  const emit = socket.emit
-  socket.emit = function () {
-    logger.debug('emitting: %o', arguments)
-    emit.apply(socket, arguments)
-  }
-
-  //const $emit = socket.$emit
-  //socket.$emit = function () {
-  //  logger.debug('event received: %s, %o', arguments[0], arguments)
-  //  $emit.apply(socket, arguments)
-  //  emitter.trigger(arguments[0], arguments[1])
-  //}
-
-  /**
-   * 'connect' event is triggered when the socket establishes a connection
-   *  successfully.
-   */
-  socket.on('connect', function () {
-    emitter.trigger('connected')
-  })
-
-  socket.on('disconnect', function () {
-    emitter.trigger('disconnected')
-  })
-
-  socket.on('reconnecting', () => {
-    emitter.trigger('reconnecting')
-  })
-
-  socket.on('reconnect', () => {
-    emitter.trigger('reconnect')
-  })
-
-  return
-}
-
-const _connect = (config) => {
-}
