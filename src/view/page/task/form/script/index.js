@@ -273,6 +273,9 @@ export default TaskFormView.extend({
           }, {
             id: 3600000,
             text: '1 hour'
+          }, {
+            id: 14400000,
+            text: '4 hour'
           }
         ],
         value: this.model.timeout || 600000,
