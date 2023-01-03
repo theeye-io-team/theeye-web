@@ -1,7 +1,6 @@
 import View from 'ampersand-view'
 import InputView from '../index'
 import Flatpickr from 'flatpickr'
-// import FlatpickrI18n from './lang/es'
 import 'flatpickr/dist/flatpickr.css'
 
 const isValidDate = function (date) {
@@ -51,6 +50,7 @@ export default InputView.extend({
     this.options = options || {}
     this.options.defaultDate = options.value
     this.options.utc = true
+    this.options.time_24hr = true
 
     InputView.prototype.initialize.apply(this, arguments)
   },
@@ -63,13 +63,7 @@ export default InputView.extend({
         this.onDateChange()
       }
     ]
-    //options.onReady = [
-    //  (selectedDates, dateStr, instance) => {
-    //    this.onDateChange()
-    //  }
-    //]
 
-    // Flatpickr.localize(FlatpickrI18n.es)
     this.flatpickr = new Flatpickr(input, this.options)
     this.clearBtn = new ClearIcon()
 
@@ -77,7 +71,6 @@ export default InputView.extend({
     this.listenTo(this, 'change:inputValue', this.onInputValueChanged)
 
     this.renderSubview(this.clearBtn, this.queryByHook('input-container'))
-    //this.onDateChange()
   },
   onInputValueChanged (event) {
     if (this.inputValue.length > 0) {

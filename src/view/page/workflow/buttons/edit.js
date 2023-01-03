@@ -63,8 +63,8 @@ const ActionDialog = Modalizer.extend({
               <div class="modal-body" data-hook="body">
                 <p>
                 The Workflow will be upgraded to a new version<br/>
-                In this new version you will see visual changes but workflows will remain unchaged.</br>
-                Before editing a Productive Workflow we recommend to try and test a copy first.<br/>
+                In this new version of the editor you will see mostly visual changes. Existent workflows will remain unchanged.</br>
+                Before editing a Productive Workflow we recommend to modify and test a copy first.<br/>
                 </p>
 
                 <div class="grid-container">

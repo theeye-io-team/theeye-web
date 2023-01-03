@@ -1011,8 +1011,8 @@ form.admin-form .form-group div.buttons { padding-bottom: 5px; }
 }
 
 ::-webkit-scrollbar {
-  width:8px;
-  height:8px;
+  width:10px;
+  height:10px;
 }
 ::-webkit-scrollbar-button:start:decrement,
 #doc ::-webkit-scrollbar-button:end:increment {
