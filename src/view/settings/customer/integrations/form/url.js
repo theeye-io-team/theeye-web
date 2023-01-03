@@ -21,17 +21,21 @@ export default FormView.extend({
         validityClassSelector: '.control-label',
         required: true,
         value: this.model.url,
-        //tests: [
-        //  function (value) {
-        //    if (!isURL(value, {
-        //      protocols: ['http','https'],
-        //      require_protocol: true
-        //    })) {
-        //      return "Must be a valid URL (include protocol)"
-        //    }
-        //  }
-        //]
-      })
+      }),
+      new InputView({
+        name: 'label',
+        label: 'Label',
+        placeholder: 'A label to identify this',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        required: true,
+        value: this.model.label,
+      }),
+      new CheckboxView({
+        name: 'menu',
+        label: 'Menu Shortcut',
+        value: this.model.menu
+      }),
     ]
     FormView.prototype.initialize.apply(this, arguments)
   },

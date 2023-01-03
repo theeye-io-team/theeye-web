@@ -3,6 +3,7 @@ import App from 'ampersand-app'
 import * as FIELD from 'constants/field'
 import DropableForm from 'components/dropable-form'
 import InputView from 'components/input-view'
+import CheckboxView from 'components/checkbox-view'
 import DisabledInputView from 'components/input-view/disabled'
 import TextareaView from 'components/input-view/textarea'
 import SelectView from 'components/select2-view'
@@ -76,7 +77,13 @@ export default DropableForm.extend({
         field = this.buildRegexpField(spec)
         break
       case FIELD.TYPE_INPUT:
+        field = this.buildInputField(spec)
+        break
+      case FIELD.TYPE_TEXT:
         field = this.buildTextField(spec)
+        break
+      case FIELD.TYPE_BOOLEAN:
+        field = this.buildBooleanField(spec)
         break
       case FIELD.TYPE_JSON:
         field = this.buildJsonField(spec)
@@ -130,6 +137,26 @@ export default DropableForm.extend({
     })
   },
   buildTextField (spec) {
+    return new TextareaView({
+      label: spec.label,
+      name: spec.order.toString(),
+      required: spec.required,
+      value: spec.value,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label'
+    })
+  },
+  buildBooleanField (spec) {
+    return new CheckboxView({
+      label: spec.label,
+      name: spec.order.toString(),
+      required: spec.required,
+      value: spec.value,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+    })
+  },
+  buildInputField (spec) {
     return new InputView({
       label: spec.label,
       name: spec.order.toString(),

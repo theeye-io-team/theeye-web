@@ -2,6 +2,9 @@ import View from 'ampersand-view'
 import App from 'ampersand-app'
 import SessionActions from 'actions/session'
 import Modalizer from 'components/modalizer'
+import DynamicForm from 'components/dynamic-form'
+
+import * as FieldsConstants from 'constants/field'
 
 import UrlIntegrationForm from './form/url'
 
@@ -65,7 +68,9 @@ export default View.extend({
 })
 
 const IntegrationView = View.extend({
-  initialize () {
+  initialize (settings) {
+    this.settings = settings
+
     this.listenToAndRun(App.state.session.customer, 'change:config', () => {
       this.updateState(App.state.session.customer.config)
     })
@@ -123,7 +128,27 @@ const IntegrationView = View.extend({
     if (this.type === 'url') {
       form = new UrlIntegrationForm({ model: this })
     } else {
-      form = new BaseIntegrationForm({ model: this })
+      const fields = []
+      for (let name in this.settings) {
+        if (typeof this.settings[name] === 'boolean') {
+          fields.push({
+            type: FieldsConstants.TYPE_BOOLEAN,
+            order: name,
+            value: this.settings[name],
+            label: name,
+            required: false
+          })
+        } else {
+          fields.push({
+            type: FieldsConstants.TYPE_INPUT,
+            order: name,
+            value: this.settings[name],
+            label: name,
+            required: false
+          })
+        }
+      }
+      form = new DynamicForm({ fieldsDefinitions: fields })
     }
 
     const modal = new Modalizer({
@@ -143,12 +168,12 @@ const IntegrationView = View.extend({
       if (!form.valid) return
 
       let data = form.data
+
+      const config = Object.assign(this.settings, data)
+
       App.actions.session.updateCustomerIntegrations({
         integration: this.name,
-        config: {
-          enabled: data.enabled,
-          url: data.url
-        }
+        config
       })
       modal.hide()
     })
@@ -162,7 +187,6 @@ const IntegrationView = View.extend({
 
     if (!settings) { return }
 
-    this.enabled = settings.enabled
-    this.url = settings.url
+    Object.assign(this, settings)
   }
 })
