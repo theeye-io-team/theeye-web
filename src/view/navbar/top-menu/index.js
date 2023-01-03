@@ -2,7 +2,6 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Backdrop from 'components/backdrop'
 import NavbarActions from 'actions/navbar'
-import ProfileSettings from 'view/settings/user'
 
 import './style.less'
 
@@ -58,8 +57,6 @@ export default View.extend({
     this.renderWithTemplate(this)
     this.renderProfile()
     this.renderBackdrop()
-
-    this.registerSubview(new ProfileSettings())
   },
   renderProfile () {
     const profile = new UserProfile({

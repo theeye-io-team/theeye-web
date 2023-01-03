@@ -14,6 +14,11 @@ export default Settings.extend({
     this.content = new Content()
   },
   renderTabs () {
+    this.on('change:visible', () => {
+      if (this.visible === false) {
+        this.remove()
+      }
+    })
     const accountsTab = new AccountsTab()
     this.renderSubview(accountsTab, this.queryByHook('accounts-tab'))
 

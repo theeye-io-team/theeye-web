@@ -3,7 +3,6 @@ import View from 'ampersand-view'
 import SideMenuActions from 'actions/sideMenu'
 import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
-import CustomerSettings from 'view/settings/customer'
 
 import './style.less'
 
@@ -102,40 +101,12 @@ export default View.extend({
     this.renderWithTemplate(this)
     this.renderCustomers()
 
-    this.registerSubview(new CustomerSettings())
-
     this.listenToAndRun(App.state.session.user, 'change:credential', () => {
       this.renderMenuLinks()
-    })
-
-    this.listenToAndRun(App.state.session.customer, 'change:config', () => {
-      this.setChartsLink()
     })
   },
   onSearchInput (event) {
     SideMenuActions.customerSearch(event.target.value)
-  },
-  setChartsLink () {
-    if (!Acls.hasAccessLevel('user')) {
-      return
-    } else {
-      var container = this.query('[data-hook=links-container] span.charts-link')
-
-      const netbrainsConfig = App.state.session.customer.config.netbrains
-      while (container.firstChild) {
-        container.removeChild(container.firstChild)
-      }
-
-      // handle kibana config schema change
-      const { kibana } = App.state.session.customer.config
-      if (kibana && kibana.enabled && kibana.url) {
-        container.appendChild(html2dom(`<li><a href="/admin/charts/kibana" class="eyemenu-ico eyemenu-charts"> Dashboard </a></li>`))
-      }
-
-      if (netbrainsConfig && netbrainsConfig.enabled) {
-        container.appendChild(html2dom(`<li><a href="/admin/charts/netbrains" class="eyemenu-ico eyemenu-charts"> Netbrains </a></li>`))
-      }
-    }
   },
   renderMenuLinks () {
     const container = this.query('[data-hook=links-container] span.default-links')
@@ -155,7 +126,9 @@ export default View.extend({
 
       if (Acls.hasAccessLevel('manager')) {
         let link = html2dom(`<li><a href="" data-hook="settings-menu" class="eyeicon eyemenu-icon eyeicon-settings">Settings</a></li>`)
-        link.onclick = () => App.actions.settingsMenu.show('customer')
+        link.onclick = () => {
+          App.actions.settingsMenu.show('customer')
+        }
         container.appendChild(link)
       }
 
