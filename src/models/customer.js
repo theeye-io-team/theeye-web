@@ -2,32 +2,11 @@ import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import config from 'config'
-import merge from 'lodash/merge'
 
 const urlRoot = function () {
   return `${config.api_url}/admin/customer`
 }
 
-const defaultConfig = {
-  kibana: {
-    enabled: false,
-    url: ''
-  },
-  elasticsearch: {
-    enabled: false,
-    url: ''
-  },
-  ngrok: {
-    enabled: false,
-    address: '',
-    authtoken: '',
-    protocol: ''
-  },
-  enterprise_login: {
-    enabled: false, 
-    url: ''
-  }
-}
 
 const Model = AppModel.extend({
   urlRoot,
@@ -36,9 +15,7 @@ const Model = AppModel.extend({
     name: 'string',
     display_name: 'string',
     description: 'string',
-    config: ['object', true, () => {
-      return Object.assign({}, defaultConfig)
-    }],
+    config: 'object',
     creation_date: 'date',
     last_update: 'date'
   },
@@ -75,22 +52,6 @@ const Model = AppModel.extend({
         return this.name
       }
     }
-  },
-  parse (attrs) {
-    // MUTATE kibana config schema
-    // special `if`: when Factory parses the value, config is empty
-    if (attrs.config) {
-      attrs.config.kibana = attrs.config.kibana || defaultConfig.kibana
-      if (typeof (attrs.config.kibana) === 'string') {
-        attrs.config.kibana = {
-          enabled: true,
-          url: attrs.config.kibana || ''
-        }
-      }
-    }
-
-    attrs.config = merge({}, defaultConfig, attrs.config)
-    return attrs
   }
 })
 
