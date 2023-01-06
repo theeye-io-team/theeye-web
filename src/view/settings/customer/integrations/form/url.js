@@ -11,7 +11,8 @@ export default FormView.extend({
       new CheckboxView({
         name: 'enabled',
         label: 'Enable',
-        value: this.model.enabled
+        value: this.model.enabled,
+        required: false,
       }),
       new InputView({
         name: 'url',
@@ -19,8 +20,8 @@ export default FormView.extend({
         placeholder: 'https/https url',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        required: true,
         value: this.model.url,
+        required: true,
       }),
       new InputView({
         name: 'label',
@@ -28,15 +29,23 @@ export default FormView.extend({
         placeholder: 'A label to identify this',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        required: true,
         value: this.model.label,
+        required: false,
       }),
       new CheckboxView({
         name: 'menu',
         label: 'Menu Shortcut',
-        value: this.model.menu
+        value: this.model.menu,
+        required: false,
       }),
+      new InputView({
+        name: 'icon',
+        label: 'Fontawesome Class',
+        value: this.model.icon,
+        required: false,
+      })
     ]
+
     FormView.prototype.initialize.apply(this, arguments)
   },
   addHelpIcon (field) {

@@ -2,20 +2,23 @@ import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import config from 'config'
+import AmpCollection from 'ampersand-collection'
+
+import State from 'ampersand-state'
 
 const urlRoot = function () {
   return `${config.api_url}/admin/customer`
 }
 
-
-const Model = AppModel.extend({
+export const Model = AppModel.extend({
   urlRoot,
   props: {
     id: 'string',
     name: 'string',
     display_name: 'string',
     description: 'string',
-    config: 'object',
+    config: ['object', false, () => { return {} }],
+    //config: 'state',
     creation_date: 'date',
     last_update: 'date'
   },
@@ -55,11 +58,9 @@ const Model = AppModel.extend({
   }
 })
 
-const Collection = AppCollection.extend({
+export const Collection = AppCollection.extend({
   indexes: ['name','display_name'],
   url: urlRoot,
   model: Model,
   comparator: 'display_name'
 })
-
-export { Model, Collection }

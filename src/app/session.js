@@ -26,9 +26,15 @@ export default () => {
 
     let publicRoute = isPublicRoute(window.location.pathname)
     if (!publicRoute) {
-      if (loggedIn===false) {
-        const enterprise_login = App.state.session.customer.config.enterprise_login
-        if (enterprise_login.enabled) {
+      /**
+       * two scenarios:
+       * 1. a user is closing the session and is no longer logged in
+       * 2. a user has landed in the /logout page and has no session
+       */
+      if (loggedIn === false) {
+        const config = App.state.session.customer.config
+        const enterprise_login = config.enterprise_login
+        if (enterprise_login?.enabled === true) {
           window.location.href = enterprise_login.url
         } else {
           App.Router.redirectTo('login', {replace: true})

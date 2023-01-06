@@ -30,10 +30,16 @@ export default View.extend({
           </ul>
           <!-- LINKS CONTAINER { -->
           <ul data-hook="links-container" class="eyemenu-links eyemenu-actions">
-            <li><a href="/dashboard" class="eyeicon eyemenu-icon eyeicon-dashboard"> Home </a></li>
-            <span class="charts-link"></span>
-            <span class="default-links"></span>
-            <li><a href="/help" class="eyeicon eyemenu-icon eyeicon-help"> Help </a></li>
+            <div>
+              <li><a href="/dashboard" class="eyeicon eyemenu-icon eyeicon-dashboard">Home</a></li>
+            </div>
+            <div data-hook="core-links"></div>
+            <div>
+              <li><a href="/help" class="eyeicon eyemenu-icon eyeicon-help">Help</a></li>
+            </div>
+            <div data-hook="integration-links" class="integrations-links">
+              <section></section>
+              </div>
           </ul>
           <!-- } END LINKS CONTAINER -->
         </div>
@@ -43,7 +49,7 @@ export default View.extend({
   },
   props: {
     customers_switch: ['boolean', false, false],
-    customerSearch: ['string', false, '']
+    customerSearch: ['string', false, ''],
   },
   bindings: {
     customers_switch: [{
@@ -104,12 +110,39 @@ export default View.extend({
     this.listenToAndRun(App.state.session.user, 'change:credential', () => {
       this.renderMenuLinks()
     })
+
+    //this.listenToAndRun(App.state.session.customer, 'change:config', () => {
+    //  this.updateState({ config: App.state.session.customer.config })
+    //})
+
+    //this.renderIntegrationLinks()
   },
+  //updateState ({ config }) {
+  //  const keys = Object.keys(config)
+  //  if (keys.length > 0) {
+  //    this.integrations.reset()
+
+  //    for (let name in config) {
+  //      const settings = Object.assign({name},config[name])
+  //      if (settings?.menu === true) {
+  //        this.integrations.add(new Integration(settings))
+  //      }
+  //    }
+  //  }
+  //},
   onSearchInput (event) {
     SideMenuActions.customerSearch(event.target.value)
   },
+  renderIntegrationLinks () {
+    const container = this.query('[data-hook=integration-links]')
+    this.renderCollection(
+      App.state.session.customer.config.integrations,
+      MenuItem,
+      container
+    )
+  },
   renderMenuLinks () {
-    const container = this.query('[data-hook=links-container] span.default-links')
+    const container = this.query('[data-hook=core-links]')
 
     // empty container
     while (container.hasChildNodes()) {
@@ -180,6 +213,37 @@ export default View.extend({
   showAllViews () {
     this.customersList.views.forEach(view => view.show = true)
   },
+})
+
+const MenuItem = View.extend({
+  template: `
+    <li>
+      <a href="#" class="" target="_blank">
+        <i style="" class=""></i>
+        <span></span>
+      </a>
+    </li>
+  `,
+  bindings: {
+    'model.icon': {
+      selector: 'a > i',
+      type: 'attribute',
+      name: 'class'
+    },
+    'model.url': {
+      selector: 'a',
+      type: 'attribute',
+      name: 'href'
+    },
+    'model.class': {
+      selector: 'a',
+      type: 'attribute',
+      name: 'class'
+    },
+    'model.label': {
+      selector: 'a > span'
+    }
+  }
 })
 
 const CustomerItemList = View.extend({

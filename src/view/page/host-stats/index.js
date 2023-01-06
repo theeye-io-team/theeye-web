@@ -54,14 +54,8 @@ export default View.extend({
   `,
   props: {
     hostId: ['string', true],
-    //host: ['state'],
-    //resource: ['state'],
-    //dstat: ['object'],
-    //psaux: ['object']
   },
   initialize (options) {
-    //this.listenToAndRun(App.state.hoststatsPage, 'change:dstat', this.updateDstat)
-    //this.listenToAndRun(App.state.hoststatsPage, 'change:psaux', this.updatePsaux)
 
     this.on('change:host', () => {
       console.log('host reference changed')
@@ -69,25 +63,12 @@ export default View.extend({
       this.render()
     })
   },
-  //updatePsaux: function () {
-  //  this.psaux = App.state.hoststatsPage.psaux
-  //  this.trigger('change:psaux')
-  //},
-  //updateDstat: function () {
-  //  this.dstat = App.state.hoststatsPage.dstat
-  //  this.trigger('change:dstat')
-  //},
   render: function () {
     this.renderWithTemplate(this)
 
     this.renderSubview(new HostView(), this.queryByHook('host-container'))
     this.renderSubview(new StatsGraphView(), this.queryByHook('stat-graph-container'))
     this.renderSubview(new PsauxView(), this.queryByHook('processes-container'))
-
-    //this.renderSubview(
-    //  new IpsView({parent: this}),
-    //  this.queryByHook('interfaces-container')
-    //)
   }
 })
 
@@ -400,8 +381,6 @@ const HostView = View.extend({
     os_name: 'string',
     last_update: 'date',
     state: 'string',
-    //host: ['state'],
-    //resource: ['state'],
     dstat: ['object'],
     psaux: ['object']
   },
@@ -481,21 +460,7 @@ const HostView = View.extend({
     load1minute: {hook: 'load_average_1'},
     load5minute: {hook: 'load_average_5'},
     load15minute: {hook: 'load_average_15'}
-  },
-  //render () {
-  //  this.renderWithTemplate(this)
-  //  this.renderIntegrations()
-  //},
-  //renderIntegrations () {
-  //  let ngrok = App.state.session.customer.config.ngrok
-  //  if (ngrok && ngrok.enabled === true) {
-  //    let view = new NgrokIntegrationsView({
-  //      model: this.host.integrations.ngrok,
-  //      host: this.host
-  //    })
-  //    this.renderSubview(view, this.queryByHook('integrations'))
-  //  }
-  //}
+  }
 })
 
 const VerticalBarView = View.extend({
@@ -569,135 +534,3 @@ const IpsRowView = View.extend({
     'model.send': {hook: 'send'}
   }
 })
-//const IpsView = View.extend({
-//  template: `
-//    <table class="table">
-//      <thead>
-//        <tr>
-//          <th>Interface</th>
-//          <th>Receive</th>
-//          <th>Send</th>
-//        </tr>
-//      </thead>
-//      <tbody data-hook="items"></tbody>
-//    </table>`,
-//  props: {
-//    dstat: ['object', true, () => { return {} }]
-//  },
-//  initialize: function () {
-//    this.collection = new IpsCollection()
-//    this.listenToAndRun(this.parent, 'change:dstat', this.update)
-//  },
-//  update: function () {
-//    if (!this.parent.dstat) return
-//    this.dstat = this.parent.dstat
-//    const ips = this.dstat.stats && this.dstat.stats.net
-//    if (!ips) return
-//
-//    this.collection.reset(Object.keys(ips).map(iface => {
-//      return new IpsEntry({
-//        name: iface,
-//        receive: ips[iface].receive,
-//        send: ips[iface].send
-//      })
-//    }))
-//  },
-//  render: function () {
-//    this.renderWithTemplate(this)
-//
-//    this.renderCollection(
-//      this.collection,
-//      IpsRowView,
-//      this.queryByHook('items')
-//    )
-//  }
-//})
-
-//import NgrokIntegrationActions from 'actions/integrations/ngrok'
-//
-//const NgrokIntegrationsView = View.extend({
-//  template: `
-//    <div class="ngrok">
-//      <div class="loading-overlay" data-hook="loading-overlay"> </div>
-//      <div class="ngrok-data">
-//        <div>Ngrok tunnel <span data-hook="ngrok-state"></span></div>
-//        <div>
-//          <i class="ngrok-switch fa" data-hook="ngrok-button"></i>
-//          <span data-hook="tunnel_url"></span>
-//          <span data-hook="ngrok_error"></span>
-//        </div>
-//      </div>
-//    </div>
-//  `,
-//  props: {
-//    host: 'state'
-//  },
-//  derived: {
-//    ngrok_switch: {
-//      deps: ['model.active'],
-//      fn () {
-//        return this.model.active
-//      }
-//    },
-//    ngrok_switch_html: {
-//      deps: ['model.active'],
-//      fn () {
-//        return this.model.active ? 'Stop' : 'Start'
-//      }
-//    },
-//    ngrok_state_html: {
-//      deps: ['model.active', 'model.last_job.inProgress'],
-//      fn () {
-//        if (this.model.last_job.inProgress) {
-//          return this.model.active ?
-//            ' shutting down...wait <i class="fa fa-spin fa-cog"></i>' :
-//            ' establishing tunnel...wait <i class="fa fa-spin fa-cog"></i>'
-//        }
-//        return this.model.active ? ' is established' : 'is down'
-//      }
-//    }
-//  },
-//  bindings: {
-//    'model.last_job.inProgress': {
-//      hook: 'loading-overlay',
-//      type: 'toggle'
-//    },
-//    ngrok_switch: [{
-//      hook: 'ngrok-button',
-//      type: 'booleanClass',
-//      yes: 'fa-stop',
-//      no: 'fa-play'
-//    }, {
-//      hook: 'ngrok-button',
-//      type: 'booleanClass',
-//      yes: 'red',
-//      no: 'green'
-//    }],
-//    ngrok_switch_html: {
-//      hook: 'ngrok-button',
-//      type: 'innerHTML'
-//    },
-//    ngrok_state_html: {
-//      hook: 'ngrok-state',
-//      type: 'innerHTML'
-//    },
-//    'model.tunnel_url': { hook: 'tunnel_url' },
-//    'model.ngrok_error': { hook: 'ngrok_error' },
-//  },
-//  events: {
-//    'click [data-hook=ngrok-button]': 'onClickNgrokButton',
-//    'click [data-hook=ngrok-settings]': function (event) {
-//      event.preventDefault()
-//      event.stopPropagation()
-//      App.actions.settingsMenu.show('customer')
-//      App.actions.settingsMenu.toggleTab('customer','integrations')
-//    }
-//  },
-//  onClickNgrokButton (event) {
-//    if (this.model.active === true) {
-//      NgrokIntegrationActions.stopTunnel(this.host.id)
-//    } else {
-//      NgrokIntegrationActions.startTunnel(this.host.id)
-//    }
-//  }
-//})
