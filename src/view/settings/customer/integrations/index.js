@@ -57,7 +57,7 @@ export default View.extend({
     const integrations = Object.assign({}, DefaultIntegrations, config)
 
     for (let name in integrations) {
-      let settings = DefaultIntegrations[name] || {}
+      let settings = Object.assign({}, DefaultIntegrations[name])
 
       // extend default values
       if (config[name]) {

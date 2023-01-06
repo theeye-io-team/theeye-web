@@ -4,6 +4,8 @@ import SideMenuActions from 'actions/sideMenu'
 import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
 
+import { Integrations } from 'models/integration'
+
 import './style.less'
 
 export default View.extend({
@@ -37,9 +39,7 @@ export default View.extend({
             <div>
               <li><a href="/help" class="eyeicon eyemenu-icon eyeicon-help">Help</a></li>
             </div>
-            <div data-hook="integration-links" class="integrations-links">
-              <section></section>
-              </div>
+            <div data-hook="integration-links" class="integrations-links"></div>
           </ul>
           <!-- } END LINKS CONTAINER -->
         </div>
@@ -50,6 +50,9 @@ export default View.extend({
   props: {
     customers_switch: ['boolean', false, false],
     customerSearch: ['string', false, ''],
+  },
+  collections: {
+    integrations: Integrations
   },
   bindings: {
     customers_switch: [{
@@ -111,35 +114,35 @@ export default View.extend({
       this.renderMenuLinks()
     })
 
-    //this.listenToAndRun(App.state.session.customer, 'change:config', () => {
-    //  this.updateState({ config: App.state.session.customer.config })
-    //})
-
-    //this.renderIntegrationLinks()
-  },
-  //updateState ({ config }) {
-  //  const keys = Object.keys(config)
-  //  if (keys.length > 0) {
-  //    this.integrations.reset()
-
-  //    for (let name in config) {
-  //      const settings = Object.assign({name},config[name])
-  //      if (settings?.menu === true) {
-  //        this.integrations.add(new Integration(settings))
-  //      }
-  //    }
-  //  }
-  //},
-  onSearchInput (event) {
-    SideMenuActions.customerSearch(event.target.value)
+    // config is a key:value hash.
+    // cannot use renderCollection
+    this.listenToAndRun(App.state.session.customer, 'change:config', () => {
+      this.updateState(App.state.session.customer)
+    })
+    this.renderIntegrationLinks()
   },
   renderIntegrationLinks () {
     const container = this.query('[data-hook=integration-links]')
     this.renderCollection(
-      App.state.session.customer.config.integrations,
+      this.integrations,
       MenuItem,
       container
     )
+  },
+  updateState ({ config }) {
+    this.integrations.reset()
+
+    if (Object.keys(config).length > 0) {
+      for (let name in config) {
+        const settings = Object.assign({name},config[name])
+        if (settings?.menu === true && settings?.enabled === true) {
+          this.integrations.add(settings)
+        }
+      }
+    }
+  },
+  onSearchInput (event) {
+    SideMenuActions.customerSearch(event.target.value)
   },
   renderMenuLinks () {
     const container = this.query('[data-hook=core-links]')

@@ -1,7 +1,10 @@
 
+import Collection from 'ampersand-collection'
 import State from 'ampersand-state'
+
 export const Integration = State.extend({
   props: {
+    id: 'string',
     type: 'string',
     enabled: 'boolean',
     menu: 'boolean',
@@ -13,3 +16,6 @@ export const Integration = State.extend({
   }
 })
 
+export const Integrations = Collection.extend({
+  model: Integration
+})
