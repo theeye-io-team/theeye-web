@@ -10,38 +10,53 @@ export default FormView.extend({
     this.fields = [
       new CheckboxView({
         name: 'enabled',
-        label: 'Enable Logger',
-        value: this.model.enabled
+        label: 'Enable',
+        value: this.model.enabled,
+        required: false,
       }),
       new InputView({
         name: 'url',
-        label: 'Remote Logger URL',
-        placeholder: 'remote url to submit generated information',
+        label: 'URL',
+        placeholder: 'https/https url',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
-        required: true,
         value: this.model.url,
-        //tests: [
-        //  function (value) {
-        //    if (!isURL(value, {
-        //      protocols: ['http','https'],
-        //      require_protocol: true
-        //    })) {
-        //      return "Must be a valid URL (include protocol)"
-        //    }
-        //  }
-        //]
+        required: true,
+      }),
+      new InputView({
+        name: 'label',
+        label: 'Label',
+        placeholder: 'A label to identify this',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.label,
+        required: false,
+      }),
+      new CheckboxView({
+        name: 'menu',
+        label: 'Menu Shortcut',
+        value: this.model.menu,
+        required: false,
+      }),
+      new InputView({
+        name: 'icon',
+        label: 'Fontawesome Class',
+        value: this.model.icon,
+        required: false,
       })
     ]
+
     FormView.prototype.initialize.apply(this, arguments)
   },
   addHelpIcon (field) {
     const view = this._fieldViews[field]
     if (!view) return
+
+    const text = HelpTexts.integrations[this.model.name]
+    if (!text) { return }
+
     view.renderSubview(
-      new HelpIcon({
-        text: HelpTexts.integrations.logger[field]
-      }),
+      new HelpIcon({ text: text[field] }),
       view.query('label')
     )
   },

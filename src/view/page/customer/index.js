@@ -5,7 +5,6 @@
  */
 import App from 'ampersand-app'
 import HelpTexts from 'language/help'
-import CustomerActions from 'actions/customer'
 import List from 'components/list'
 import HelpIconView from 'components/help-icon'
 import { Model as CustomerModel } from 'models/customer'
@@ -47,7 +46,8 @@ const CreateButton = CommonButton.extend({
       if (!form.valid) {
         return
       }
-      CustomerActions.create(form.data, modal)
+      App.actions.customer.create(form.data)
+      modal.hide()
     })
     modal.show()
   }
@@ -60,7 +60,7 @@ const MassDelete = MassiveDeleteButton.extend({
     this.displayProperty = 'name'
   },
   deleteItems (customers) {
-    CustomerActions.massiveDelete(customers)
+    App.actions.customer.massiveDelete(customers)
   }
 })
 

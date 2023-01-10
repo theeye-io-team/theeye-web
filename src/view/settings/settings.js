@@ -1,6 +1,6 @@
 import App from 'ampersand-app'
 import FullContainer from 'components/fullpagecontainer'
-import './settings.less'
+import './styles.less'
 
 export default FullContainer.extend({
   template: `<div data-component="settings-container" class="full-page-container"></div>`,
@@ -31,11 +31,15 @@ export default FullContainer.extend({
 
     this.renderTabs()
 
-    this.on('change:current_tab', () => {
+    const selectCurrentTab = () => {
       let tab = this.current_tab
       let selector = `[data-hook=settings-links-container] a[href="#${tab}"]`
       $( this.query(selector) ).tab('show')
-    })
+    }
+
+    this.on('change:current_tab', () => { selectCurrentTab() })
+
+    selectCurrentTab()
   },
   updateState (state) {
     if (!state) { return }

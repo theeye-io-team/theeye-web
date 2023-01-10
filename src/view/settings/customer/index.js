@@ -24,6 +24,12 @@ export default Settings.extend({
     this.content = new Content()
   },
   renderTabs () {
+
+    this.on('change:visible', () => {
+      if (this.visible === false) {
+        this.remove()
+      }
+    })
     const settingsLinks = this.queryByHook('settings-links-container')
 
     if (Acls.hasAccessLevel('manager')) {

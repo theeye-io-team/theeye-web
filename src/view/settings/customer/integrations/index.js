@@ -2,316 +2,237 @@ import View from 'ampersand-view'
 import App from 'ampersand-app'
 import SessionActions from 'actions/session'
 import Modalizer from 'components/modalizer'
+import DynamicForm from 'components/dynamic-form'
 
-import ElasticsearchFormView from './elasticsearch-form'
-import NetbrainsFormView from './netbrains-form'
-import KibanaFormView from './kibana-form'
-import EnterpriseLoginFormView from './enterprise-login-form'
-//import Ngrok from './ngrok'
-import Logger from './logger'
+import { Integration } from 'models/integration'
+
+import * as FieldsConstants from 'constants/field'
+
+import UrlIntegrationForm from './form/url'
+
+const DefaultIntegrations = {
+  'remote_logger': {
+    label: 'Remote Logger',
+    type: 'url',
+    name: 'remote_logger'
+  },
+  'kibana': {
+    label: 'Dashboard',
+    type: 'url',
+    name: 'kibana'
+  },
+  'elasticsearch': {
+    label: 'Elasticsearch',
+    type: 'url',
+    name: 'elasticsearch'
+  },
+  'netbrains': {
+    label: 'Netbraings',
+    type: 'url',
+    name: 'netbrains'
+  },
+  'enterprise_login': {
+    label: 'Enterprise Login',
+    type: 'url',
+    name: 'enterprise_login'
+  }
+}
 
 export default View.extend({
   template: `
     <div>
       <div data-hook="agent-set">
-        <h3 class="blue bold">INTEGRATIONS</h3>
+        <div class="row">
+          <h3 class="col-xs-2 blue bold">INTEGRATIONS</h3>
+        </div>
         <section data-hook="integrations-container">
-    
-          <div class="row border">
-            <div class="col-xs-6">
-              <span>Kibana</span>
-            </div>
-            <div class="col-xs-4">
-              <span class="orange" data-hook="kibana-enabled"><a href="/admin/charts">Enabled</a></span>
-              <span data-hook="kibana-disabled">Disabled</span>
-            </div>
-            <div class="col-xs-2">
-              <div class="pull-right action-icons">
-                <span><i class="fa fa-edit blue" data-hook="edit-kibana"></i></span>
-              </div>
-            </div>
-          </div>
-    
-          <div class="row border">
-            <div class="col-xs-6">
-              <span>Elasticsearch</span>
-            </div>
-            <div class="col-xs-4">
-              <span class="orange" data-hook="elasticsearch-enabled">Enabled</span>
-              <span data-hook="elasticsearch-disabled">Disabled</span>
-            </div>
-            <div class="col-xs-2">
-              <div class="pull-right action-icons">
-                <span><i class="fa fa-edit blue" data-hook="edit-elasticsearch-url"></i></span>
-              </div>
-            </div>
-          </div>
-    
-          <div class="row border">
-            <div class="col-xs-6">
-              <span>Netbrains</span>
-            </div>
-            <div class="col-xs-4">
-              <span class="orange" data-hook="netbrains-enabled">Enabled</span>
-              <span data-hook="netbrains-disabled">Disabled</span>
-            </div>
-            <div class="col-xs-2">
-              <div class="pull-right action-icons">
-                <span><i class="fa fa-edit blue" data-hook="edit-netbrains"></i></span>
-              </div>
-            </div>
-          </div>
-
-          <div class="row border">
-            <div class="col-xs-6">
-              <span>Enterprise Login</span>
-            </div>
-            <div class="col-xs-4">
-              <span class="orange" data-hook="enterprise-login-enabled">Enabled</span>
-              <span data-hook="enterprise-login-disabled">Disabled</span>
-            </div>
-            <div class="col-xs-2">
-              <div class="pull-right action-icons">
-                <span><i class="fa fa-edit blue" data-hook="edit-enterprise-login"></i></span>
-              </div>
-            </div>
-          </div>
-    
         </section>
       </div>
     </div>
   `,
+  render () {
+    this.renderWithTemplate()
+
+    const config = this.model.config
+    const integrations = Object.assign({}, DefaultIntegrations, config)
+
+    for (let name in integrations) {
+      let settings = Object.assign({}, DefaultIntegrations[name])
+
+      // extend default values
+      if (config[name]) {
+        settings = Object.assign(settings, config[name])
+      }
+
+      this.renderIntegration(settings)
+    }
+  },
+  renderIntegration (settings) {
+    const integration = new Integration(settings)
+    const view = new IntegrationView({ model: integration })
+
+    this.renderSubview(view, this.queryByHook('integrations-container'))
+  }
+})
+
+const IntegrationView = View.extend({
+  template: `
+    <div class="row border">
+      <div class="col-xs-6">
+        <span data-hook="label"></span>
+      </div>
+      <div class="col-xs-4">
+        <span data-hook="enabled"></span>
+      </div>
+      <div class="col-xs-2">
+        <div class="pull-right action-icons">
+          <span><i class="fa fa-edit blue" data-hook="edit"></i></span>
+        </div>
+        <div class="pull-right action-icons">
+          <span>
+            <a href="#" data-hook="link" target="">
+              <i data-hook="link-icon" class="fa fa-link"></i>
+            </a>
+          </span>
+        </div>
+      </div>
+    </div>
+  `,
+  initialize () {
+    this.listenToAndRun(App.state.session.customer, 'change:config', () => {
+      this.updateState(App.state.session.customer.config)
+    })
+  },
+  updateState (state = {}) {
+    let settings = {}
+    if (state[this.model.name]) {
+      settings = state[this.model.name]
+    }
+    this.model.set(settings)
+  },
+  //props: {
+  //  label: 'string',
+  //  enabled: 'boolean',
+  //  type: 'string',
+  //  name: 'string',
+  //  url: 'string'
+  //},
   derived: {
-    netbrainsEnabled: {
-      deps: ['model.config'],
+    enabledText: {
+      deps: ['model.enabled'],
       fn () {
-        let cfg = this.model.config.netbrains
-        return cfg && cfg.enabled === true
+        return this.model.enabled ? 'Enabled' : 'Disabled'
       }
     },
-    elasticsearchEnabled: {
-      deps: ['model.config'],
+    activeLink: {
+      deps:['model.url','model.enabled'],
       fn () {
-        let cfg = this.model.config.elasticsearch
-        return cfg && cfg.enabled === true
+        return (this.model.url && this.model.enabled ? this.model.url : null)
       }
     },
-    kibanaEnabled: {
-      deps: ['model.config'],
+    parsedLink: {
+      deps:['model.url','model.enabled'],
       fn () {
-        let cfg = this.model.config.kibana
-        return cfg && cfg.enabled === true
+        return (this.model.url && this.model.enabled ? this.model.url : '#')
       }
     },
-    enterpriseLoginEnabled: {
-      deps: ['model.config'],
+    linkTarget: {
+      deps:['model.url'],
       fn () {
-        let cfg = this.model.config.enterprise_login
-        return cfg && cfg.enabled === true
+        return (this.model.url ? '_black' : '')
       }
     }
   },
   bindings: {
-    'netbrainsEnabled': [
-      {
-        type: 'toggle',
-        hook: 'netbrains-enabled'
-      }, {
-        type: 'toggle',
-        hook: 'netbrains-disabled',
-        invert: true
-      }
-    ],
-    'elasticsearchEnabled': [
-      {
-        type: 'toggle',
-        hook: 'elasticsearch-enabled'
-      }, {
-        type: 'toggle',
-        hook: 'elasticsearch-disabled',
-        invert: true
-      }
-    ],
-    'kibanaEnabled': [
-      {
-        type: 'toggle',
-        hook: 'kibana-enabled'
-      }, {
-        type: 'toggle',
-        hook: 'kibana-disabled',
-        invert: true
-      }
-    ],
-    'enterpriseLoginEnabled': [
-      {
-        type: 'toggle',
-        hook: 'enterprise-login-enabled'
-      }, {
-        type: 'toggle',
-        hook: 'enterprise-login-disabled',
-        invert: true
-      }
-    ]
+    'model.label': {
+      hook: 'label'
+    },
+    'model.enabled': {
+      type: 'booleanClass',
+      name: 'orange',
+      hook: 'enabled'
+    },
+    parsedLink: {
+      hook: 'link',
+      type: 'attribute',
+      name: 'href'
+    },
+    activeLink: {
+      hook: 'link-icon',
+      type: 'booleanClass',
+      yes: 'blue',
+      no: 'gray'
+    },
+    linkTarget: {
+      hook: 'link',
+      type: 'attribute',
+      name: 'target'
+    },
+    enabledText: {
+      hook: 'enabled'
+    }
   },
   events: {
-    'click [data-hook=edit-elasticsearch-url]': 'editElasticsearchUrl',
-    'click [data-hook=edit-netbrains]': 'editNetbrains',
-    'click [data-hook=edit-kibana]': 'editKibana',
-    'click [data-hook=edit-enterprise-login]': 'editEnterpriseLogin'
+    'click [data-hook=edit]':'onClickEdit'
   },
-  editNetbrains: function (event) {
+  onClickEdit (event) {
     event.stopPropagation()
-
-    const form = new NetbrainsFormView({
-      model: App.state.session.customer
-    })
-
-    const modal = new Modalizer({
-      confirmButton: 'Save',
-      buttons: true,
-      title: 'Edit netbrains url',
-      bodyView: form
-    })
-
-    this.listenTo(modal, 'shown', function () { form.focus() })
-    this.listenTo(modal, 'hidden', function () {
-      form.remove()
-      modal.remove()
-    })
-    this.listenTo(modal, 'confirm', function () {
-      form.beforeSubmit()
-      if (!form.valid) return
-
-      let data = form.data
-      SessionActions.updateCustomerIntegrations({
-        integration: 'netbrains',
-        config: {
-          enabled: data.netbrains_enabled,
-          url: data.netbrains_url
-        }
-      })
-      modal.hide()
-    })
-    modal.show()
-  },
-  editElasticsearchUrl: function (event) {
-    event.stopPropagation()
-
-    const form = new ElasticsearchFormView({
-      model: App.state.session.customer
-    })
-
-    const modal = new Modalizer({
-      confirmButton: 'Save',
-      buttons: true,
-      title: 'Edit elastichsearch url',
-      bodyView: form
-    })
-
-    this.listenTo(modal, 'shown', function () { form.focus() })
-    this.listenTo(modal, 'hidden', function () {
-      form.remove()
-      modal.remove()
-    })
-    this.listenTo(modal, 'confirm', function () {
-      form.beforeSubmit()
-      if (!form.valid) return
-
-      let data = form.data
-      SessionActions.updateCustomerIntegrations({
-        integration: 'elasticsearch',
-        config: {
-          enabled: data.elasticsearch_enabled,
-          url: data.elasticsearch_url
-        }
-      })
-      modal.hide()
-    })
-    modal.show()
-  },
-  editKibana: function (event) {
-    event.stopPropagation()
-
-    const form = new KibanaFormView({
-      model: App.state.session.customer
-    })
-
-    const modal = new Modalizer({
-      confirmButton: 'Save',
-      buttons: true,
-      title: 'Edit kibana iframe',
-      bodyView: form
-    })
-
-    this.listenTo(modal, 'shown', function () { form.focus() })
-    this.listenTo(modal, 'hidden', function () {
-      form.remove()
-      modal.remove()
-    })
-    this.listenTo(modal, 'confirm', function () {
-      form.beforeSubmit()
-      if (!form.valid) return
-
-      SessionActions.updateCustomerIntegrations({
-        integration: 'kibana',
-        config: {
-          enabled: form.data.kibana_enabled,
-          url: form.data.kibana_url
-        }
-      })
-      modal.hide()
-    })
-    modal.show()
-  },
-  editEnterpriseLogin: function (event) {
-    event.stopPropagation()
-
-    const form = new EnterpriseLoginFormView({
-      model: App.state.session.customer
-    })
-
-    const modal = new Modalizer({
-      confirmButton: 'Save',
-      buttons: true,
-      title: 'Edit enterprise login iframe',
-      bodyView: form
-    })
-
-    this.listenTo(modal, 'shown', function () { form.focus() })
-    this.listenTo(modal, 'hidden', function () {
-      form.remove()
-      modal.remove()
-    })
-    this.listenTo(modal, 'confirm', function () {
-      form.beforeSubmit()
-      if (!form.valid) return
-
-      SessionActions.updateCustomerIntegrations({
-        integration: 'enterprise_login',
-        config: {
-          enabled: form.data.enterprise_login_enabled,
-          url: form.data.enterprise_login_url
-        }
-      })
-      modal.hide()
-    })
-    modal.show()
-  },
-  render () {
-    this.renderWithTemplate()
-    this.renderIntegrations()
-  },
-  renderIntegrations () {
-    //const ngrok = new Ngrok()
-    //this.listenToAndRun(App.state.session.customer, 'change:config', () => {
-    //  ngrok.updateState(App.state.session.customer.config)
-    //})
-    //this.renderSubview(ngrok, this.queryByHook('integrations-container'))
-
-    const logger = new Logger()
-    this.listenToAndRun(App.state.session.customer, 'change:config', () => {
-      logger.updateState(App.state.session.customer.config)
-    })
-    this.renderSubview(logger, this.queryByHook('integrations-container'))
+    openForm(this.model)
   }
 })
+
+const openForm = (model) => {
+  let form
+  const settings = model.serialize()
+  if (model.type === 'url') {
+    form = new UrlIntegrationForm({ model })
+  } else {
+    const fields = []
+    for (let name in settings) {
+      if (typeof model[name] === 'boolean') {
+        fields.push({
+          type: FieldsConstants.TYPE_BOOLEAN,
+          order: name,
+          value: settings[name],
+          label: name,
+          required: false
+        })
+      } else {
+        fields.push({
+          type: FieldsConstants.TYPE_INPUT,
+          order: name,
+          value: settings[name],
+          label: name,
+          required: false
+        })
+      }
+    }
+    form = new DynamicForm({ fieldsDefinitions: fields })
+  }
+
+  const modal = new Modalizer({
+    confirmButton: 'Save',
+    buttons: true,
+    title: 'Edit',
+    bodyView: form
+  })
+
+  modal.on('shown',() => { form.focus() })
+  modal.on('hidden',() => {
+    form.remove()
+    modal.remove()
+  })
+  modal.on('confirm',() => {
+    form.beforeSubmit()
+    if (!form.valid) return
+
+    const config = Object.assign(settings, form.data)
+
+    App.actions.session.updateCustomerIntegrations({
+      integration: model.name,
+      config
+    })
+    modal.hide()
+  })
+  modal.show()
+}
