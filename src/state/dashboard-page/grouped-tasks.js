@@ -176,6 +176,10 @@ const groupByTags = (models, tags) => {
 }
 
 const jsUcfirst = (text) => {
+  if (typeof text !== 'string') {
+    return ''
+  }
+
   return (
     text
       .split(' ')
