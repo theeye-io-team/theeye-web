@@ -78,11 +78,9 @@ const CredentialsView = View.extend({
         <label>curl sample using unix shell</label>
         <pre data-hook="sample-code">
           <code class="bash">
-task="<span data-hook="task_id"></span>"
-secret="<span data-hook="task_secret"></span>"
 <span data-hook="args-vars"></span>
 
-curl -i -sS -X POST "${config.supervisor_api_url}/task/\$\{task\}/secret/\$\{secret\}/job" \\
+curl -i -sS -X POST "${config.supervisor_api_url}/task/<span data-hook="task_id"></span>/secret/<span data-hook="task_secret"></span>/job" \\
   --header 'Content-Type: application/json' \\
   --data '{"task_arguments":[<span data-hook="task_args"></span>]}'
           </code>
@@ -142,15 +140,17 @@ curl -i -sS -X POST "${config.supervisor_api_url}/task/\$\{task\}/secret/\$\{sec
     }
 
     if (this.model.task_arguments.models.length > 0) {
-      this.args = this.model
-        .task_arguments
-        .models.map(arg => `\"'\$\{${arg.label.replace(/ /g,'_')}\}'\"`)
-        .join(',')
+      this.args = ''
+      this.argsVars = ''
+      const args = this.model.task_arguments.models
+      for (let index = 0; index < args.length; index++) {
+        const label = args[index].label.toLowerCase().replace(/ /g,'_').replace(/[^a-z0-9]/g, '')
+        this.args += `\"'\$\{${label}\}'\",`
+        this.argsVars += `${label}=""\n`
+      }
 
-      this.argsVars = this.model
-        .task_arguments
-        .models.map(arg => `${arg.label.replace(/ /g,'_')}=""`)
-        .join('\n')
+      this.args = this.args.slice(0, -1) // last coma
+      this.argsVars = this.argsVars.slice(0, -1) // last eol
     }
   },
   bindings: {

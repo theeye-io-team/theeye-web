@@ -15,6 +15,7 @@
   "scripts": {
     "build": "npx webpack --config webpack.prod.js",
     "build-dev": "APP_VERSION=$(git describe) NODE_ENV=dev npx webpack --watch --config webpack.dev.js",
+    "build-prod-dev": "APP_VERSION=$(git describe) NODE_ENV=production npx webpack --watch --config webpack.prod.js",
     "build-prod": "npx webpack --config webpack.prod.js",
     "build-stats": "npx webpack --config webpack.prod.js --profile --json > webpack-stats.json",
     "webserver": "node server"
