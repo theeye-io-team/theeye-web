@@ -12,6 +12,7 @@ import HelpTexts from 'language/help'
 import EventsSelectView from 'view/events-select'
 import * as WorkflowConstants from 'constants/workflow'
 import HostSelectionComponent from './host-selection'
+import ConstantsView from 'view/constants'
 
 export default DropableFormView.extend({
   initialize (options) {
@@ -90,6 +91,11 @@ export default DropableFormView.extend({
         label: LanguajeLabels.page.task.form.allows_behaviour_change,
         name: 'allows_dynamic_settings',
         value: allowsDynamicSettings
+      }),
+      new ConstantsView({
+        name: 'global_constants',
+        visible: true,
+        values: (workflow.global_constants||{}),
       })
     ]
 
