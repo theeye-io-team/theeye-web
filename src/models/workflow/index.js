@@ -108,6 +108,7 @@ const Workflow = AppModel.extend({
     _type: 'string',
     id: 'string',
     name: 'string',
+    global_constants: 'object',
     user_id: 'string', // owner/creator
     customer_id: 'string',
     description: 'string',
