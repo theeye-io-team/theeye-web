@@ -1,7 +1,7 @@
 {
   "name": "theeye-web",
   "private": true,
-  "version": "3.8.6",
+  "version": "3.8.7",
   "description": "theeye web - spa interface",
   "keywords": [],
   "main": "src/main.js",
