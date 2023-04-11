@@ -249,7 +249,8 @@ export default View.extend({
     // then set value
     this.setValue(value||this.value)
 
-    // the change:options will trigger only when the options object is completelly replaced
+    // the change:options event will be triggered when
+    // the options object is completelly replaced
     this.listenTo(this, 'change:options', this.updateOptions)
 
     this.listenToAndRun(this, 'change:enabled', () => {
@@ -298,7 +299,8 @@ export default View.extend({
   },
   updateOptions () {
     // get current config. options
-    var options = this.$select.data('select2').options.options;
+    const options = this.$select.data('select2').options.options;
+
     // delete all items of the native select element
     this.$select.html('')
 
