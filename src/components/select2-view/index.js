@@ -224,13 +224,16 @@ export default View.extend({
       select2setup.ajax = Object.assign({
         dataType: 'json',
         processResults: function (data) {
-          self.options = data // change options
-          const options = data.map(value => {
-            return {
-              text: self.getTextAttribute(value),
-              id: value[self.idAttribute]
-            }
-          })
+          // set options reference
+          self.set('options', data, { silent: true })
+          const options = self.prepareData(data)
+          //const options = data.map(value => {
+          //  return {
+          //    text: this.getTextAttribute(value),
+          //    id: value[this.idAttribute]
+          //  }
+          //})
+
           return {
             results: options
           }
@@ -251,7 +254,7 @@ export default View.extend({
 
     // the change:options event will be triggered when
     // the options object is completelly replaced
-    this.listenTo(this, 'change:options', this.updateOptions)
+    this.listenTo(this, 'change:options', this.rerenderSelect2)
 
     this.listenToAndRun(this, 'change:enabled', () => {
       if (typeof this.enabled !== 'boolean') return
@@ -278,8 +281,8 @@ export default View.extend({
       }
     }
   },
-  prepareData () {
-    return this.options.map(value => {
+  prepareData (data) {
+    return data.map(value => {
       return {
         text: this.getTextAttribute(value),
         id: value[this.idAttribute],
@@ -297,17 +300,16 @@ export default View.extend({
       return attrs[this.textAttribute]
     }
   },
-  updateOptions () {
+  rerenderSelect2 () {
     // get current config. options
-    const options = this.$select.data('select2').options.options;
-
+    const select2Config = this.$select.data('select2').options.options
     // delete all items of the native select element
     this.$select.html('')
-
-    this.$select.append( new Option(this.unselectedText, 0, false, false) )
-
-    options.data = this.prepareData()
-    this.$select.select2(options)
+    this.$select.append(
+      new Option(this.unselectedText, 0, false, false)
+    )
+    select2Config.data = this.prepareData(this.options)
+    this.$select.select2(select2Config)
     //this.$select.trigger('change')
   },
   setValue (items) {
