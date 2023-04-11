@@ -224,19 +224,9 @@ export default View.extend({
       select2setup.ajax = Object.assign({
         dataType: 'json',
         processResults: function (data) {
-          // set options reference
+          // set internal options reference
           self.set('options', data, { silent: true })
-          const options = self.prepareData(data)
-          //const options = data.map(value => {
-          //  return {
-          //    text: this.getTextAttribute(value),
-          //    id: value[this.idAttribute]
-          //  }
-          //})
-
-          return {
-            results: options
-          }
+          return { results: self.prepareData(data) }
         }
       }, this.ajax)
     }
