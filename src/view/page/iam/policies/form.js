@@ -3,7 +3,7 @@ import FormView from 'ampersand-form-view'
 import View from 'ampersand-view'
 import InputView from 'components/input-view'
 import SelectView from 'components/select2-view'
-import { RuleModel, RulesCollection } from 'models/policy'
+import { Rule, RulesCollection } from 'models/policy'
 import './style.less'
 
 export default FormView.extend({
@@ -14,7 +14,7 @@ export default FormView.extend({
     this.fields = [
       new InputView({
         name: 'name',
-        label: 'Policy name',
+        label: 'Role name',
         value: this.model.name,
         required: true,
         invalidClass: 'text-danger',
@@ -109,7 +109,7 @@ const RulesInput = View.extend({
   addRule(event) {
     event.stopPropagation()
     event.preventDefault()
-    let rule = new RuleModel()
+    let rule = new Rule()
     this.rules.add(rule)
   }
 })

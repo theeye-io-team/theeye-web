@@ -1,6 +1,6 @@
 import App from 'ampersand-app'
 import AmpersandState from 'ampersand-state'
-import Collection from 'ampersand-collection'
+import ClearableCollection from 'lib/clearable-collection'
 import { Collection as Indicators } from 'models/indicator'
 import { Collection as Webhooks } from 'models/webhook'
 import { Collection as HostGroups } from 'models/hostgroup'
@@ -17,7 +17,6 @@ import { Collection as Files } from 'models/file'
 import { Collection as Events } from 'models/event'
 import { Workflows } from 'models/workflow'
 import { Collection as Groups } from 'models/group'
-import { Collection as Policies, RulesCollection as Rules } from 'models/policy'
 //import { EmitterCollection as Emitters } from 'models/event'
 import { Collection as Notifications } from 'models/notification'
 import Alerts from 'components/alerts'
@@ -30,7 +29,6 @@ import DashboardPageState from './dashboard-page'
 import SessionState from './session'
 import NavbarState from './navbar'
 import SettingsMenuState from './settings-menu'
-import IamMenuState from './iam-menu'
 import HostStatsPageState from './hoststats-page'
 import InboxState from './inbox'
 import OnboardingState from './onboarding'
@@ -42,28 +40,11 @@ import SearchBoxState from './searchbox'
 import TabsState from './tabs'
 import SideMenuState from './sideMenu'
 import MarketplaceState from './marketplace'
+import * as IAMState from './iam'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
-const ClearCollection = Collection.extend({
-  initialize () {
-    Collection.prototype.initialize.apply(this, arguments)
-    this.reset()
-  },
-  reset (models) {
-    const reset = Collection.prototype.reset
-    if (!models) {
-      reset.call(this, this.initialState) // reset to original state
-    } else {
-      reset.call(this, models)
-    }
-  },
-  clear () {
-    this.reset([])
-  }
-})
-
-const RunnersCollection = ClearCollection.extend({
+const RunnersCollection = ClearableCollection.extend({
   initialize () {
       //getHash('node', console.log)
       //getHash('node %script%', console.log)
@@ -84,7 +65,7 @@ const RunnersCollection = ClearCollection.extend({
         binary: 'powershell.exe'
       }
     ]
-    ClearCollection.prototype.initialize.apply(this, arguments)
+    ClearableCollection.prototype.initialize.apply(this, arguments)
   },
   isDefaultRunner (runner) {
     return Boolean(
@@ -126,20 +107,7 @@ const RunnersCollection = ClearCollection.extend({
   mainIndex: 'runner'
 })
 
-const CredentialsCollection = ClearCollection.extend({
-  initialize () {
-    this.initialState = [
-      { order: 1, id: 'viewer', name: 'viewer', description: 'Viewer' },
-      { order: 2, id: 'user', name: 'user', description: 'User' },
-      { order: 3, id: 'manager', name: 'manager', description: 'Manager' },
-      { order: 4, id: 'admin', name: 'admin', description: 'Admin' },
-      { order: 5, id: 'owner', name: 'owner', description: 'Owner' }
-    ]
-    ClearCollection.prototype.initialize.apply(this, arguments)
-  }
-})
-
-const LooptimesCollection = ClearCollection.extend({
+const LooptimesCollection = ClearableCollection.extend({
   initialize () {
     this.initialState = [
       { pos:1, id: 10000, text: '10 seconds' },
@@ -152,11 +120,11 @@ const LooptimesCollection = ClearCollection.extend({
       { pos:8, id: 1800000, text: '30 minutes' },
       { pos:9, id: 3600000, text: '60 minutes' }
     ]
-    ClearCollection.prototype.initialize.apply(this, arguments)
+    ClearableCollection.prototype.initialize.apply(this, arguments)
   }
 })
 
-const IndicatorTypesCollection = ClearCollection.extend({
+const IndicatorTypesCollection = ClearableCollection.extend({
   initialize () {
     this.initialState = [
       { id: IndicatorConstants.TEXT_TYPE, text: 'Text' },
@@ -166,18 +134,18 @@ const IndicatorTypesCollection = ClearCollection.extend({
       { id: IndicatorConstants.CHART_TYPE, text: 'Chart' },
       { id: IndicatorConstants.FILE_TYPE, text: 'File'}
     ]
-    ClearCollection.prototype.initialize.apply(this, arguments)
+    ClearableCollection.prototype.initialize.apply(this, arguments)
   }
 })
 
-const SeveritiesCollection = ClearCollection.extend({
+const SeveritiesCollection = ClearableCollection.extend({
   initialize () {
     this.initialState = [
       { id: 'LOW', text: 'LOW' },
       { id: 'HIGH', text: 'HIGH' },
       { id: 'CRITICAL', text: 'CRITICAL' }
     ]
-    ClearCollection.prototype.initialize.apply(this, arguments)
+    ClearableCollection.prototype.initialize.apply(this, arguments)
   }
 })
 
@@ -220,7 +188,6 @@ const AppState = State.extend({
     this.localSettings = new LocalSettings()
     this.navbar = new NavbarState()
     this.settingsMenu = new SettingsMenuState()
-    this.iamMenu = new IamMenuState()
     this.sideMenu = new SideMenuState()
     this.searchbox = new SearchBoxState()
     this.inbox = new InboxState({ appState: this })
@@ -350,31 +317,6 @@ const EnterpriseState = State.extend({
   }
 })
 
-// FIXME: This is hardcoded, but it shouldn't
-
-const rules = {
-  Task: new Rules([
-    { service: 'Task', text: 'FetchTasks', id: 'FetchTasks', method: 'get', path: '/task' },
-    { service: 'Task', text: 'GetTasks', id: 'GetTasks', method: 'get', path: '/task/:task' }
-  ]),
-  Workflow: new Rules([]),
-  Webhook: new Rules([]),
-  Indicator: new Rules([])
-} 
-
-// const policies = new Policies([
-//   { 
-//     id: '1', builtin: false, name: 'Task fetcher', rules: [
-//       rules.Task.get('FetchTasks')
-//     ]
-//   },
-//   {
-//     id: '2', builtin: true, name: 'Task getter', rules: [
-//       rules.Task.get('GetTasks')
-//     ]
-//   }
-// ])
-
 const _initCollections = function () {
   Object.assign(this, {
     hostGroups: new HostGroups([]),
@@ -394,8 +336,8 @@ const _initCollections = function () {
     workflows: new Workflows([]),
     groups: new Groups([]),
     // FIXME: This references the hardcoded stuff from earlier
-    rules: rules,
-    policies: new Policies([]),
+    openapi: IAMState.OpenAPI,
+    policies: IAMState.Policies,
     admin: {
       users: new Users([]),
       customers: new Customers([]),
@@ -403,7 +345,8 @@ const _initCollections = function () {
     }
   })
 
-  this.credentials = new CredentialsCollection()
+  this.credentials = IAMState.Roles
+
   this.looptimes = new LooptimesCollection()
   this.severities = new SeveritiesCollection()
   this.indicatorTypes = new IndicatorTypesCollection()

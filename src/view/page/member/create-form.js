@@ -3,7 +3,7 @@ import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import isEmail from 'validator/lib/isEmail'
 import SelectView from 'components/select2-view'
-import PolicySelectView from 'view/iam-menu/policy-selector'
+import PolicySelectView from 'view/page/iam/policy-selector'
 
 export default FormView.extend({
   initialize (options) {

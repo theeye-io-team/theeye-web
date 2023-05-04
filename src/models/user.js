@@ -6,8 +6,6 @@ import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
 import config from 'config'
 
-import { Collection as PolicyCollection } from './policy'
-
 const urlRoot = `${config.api_url}/admin/user`
 
 const NotificationSettings = State.extend({
@@ -62,12 +60,6 @@ const Model = AppModel.extend({
   session: {
     show: ['boolean', false, true],
     selected: ['boolean', false, false]
-  },
-  collections: {
-    // customers: function (models, options) {
-    //   return new App.Models.Customer.Collection(models, options)
-    // },
-    policies: PolicyCollection
   }
 })
 

@@ -5,7 +5,6 @@ import config from 'config'
 
 import { Model as User } from './user'
 //import { Model as Customer } from './customer'
-import { Collection as PolicyCollection } from './policy'
 
 const urlRoot = `${config.api_url}/member`
 const adminUrlRoot = `${config.api_url}/admin/member`
@@ -46,9 +45,6 @@ export const Model = BaseModel.extend({
         return this.user.username
       }
     }
-  },
-  collections: {
-    policies: PolicyCollection
   }
 })
 

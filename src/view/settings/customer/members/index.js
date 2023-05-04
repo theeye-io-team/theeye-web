@@ -17,7 +17,8 @@ export default View.extend({
     'click button': () => {
       App.actions.settingsMenu.hide('customer')
       App.actions.iamMenu.toggleTab('users')
-      App.actions.iamMenu.show()
+      App.navigate('/admin/iam')
+      //App.actions.iamMenu.show()
     }
   }
 })

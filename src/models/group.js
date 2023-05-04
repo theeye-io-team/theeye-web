@@ -1,7 +1,6 @@
 import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AppCollection from 'lib/app-collection'
-import { Collection as PolicyCollection } from './policy'
 
 const urlRoot = function () {
   return `${App.config.api_url}/group`
@@ -15,9 +14,6 @@ const Model = AppModel.extend({
     customer: 'string',
     customer_id: 'string',
     members: 'array'
-  },
-  collections: {
-    policies: PolicyCollection
   }
 })
 

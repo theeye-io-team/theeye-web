@@ -10,7 +10,7 @@ import './style.less'
 export default View.extend({
   template: `
     <div>
-      <h3 class="bold blue">Policies</h3>
+      <h3 class="bold blue">Roles</h3>
       <div class="row">
         <div class="col-xs-6">
           <div class="policy-search">
@@ -20,14 +20,14 @@ export default View.extend({
         </div>
         <div class="col-xs-3">
           <div class="toggle-container">
-            <span>Show built in policies</span>
+            <span>Show built in Roles</span>
             <span data-hook="toggle"></span>
           </div>
         </div>
         <div class="col-xs-3">
           <h4 class="pull-right cursor-pointer">
             <a class="blue" data-hook="create-policy">
-              <i class="fa fa-plus"></i> Create policy
+              <i class="fa fa-plus"></i> Create Role
             </a>
           </h4>
         </div>
@@ -71,10 +71,10 @@ export default View.extend({
   createPolicy () {
     const form = new Form({ model: new App.Models.Policy.Model() })
     const modal = new Modalizer({
-      title: 'Create Policy',
+      title: 'Create Role',
       bodyView: form,
       buttons: true,
-      confirmButton: 'Create Policy'
+      confirmButton: 'Create'
     })
     // this.listenTo(modal, 'shown', function () { form.focus() })
     this.listenTo(modal, 'hidden', function () {

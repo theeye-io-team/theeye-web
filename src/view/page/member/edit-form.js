@@ -1,7 +1,7 @@
 import App from 'ampersand-app'
 import FormView from 'ampersand-form-view'
 import SelectView from 'components/select2-view'
-import PolicySelectView from 'view/iam-menu/policy-selector'
+import PolicySelectView from 'view/page/iam/policy-selector'
 
 export default FormView.extend({
   initialize: function (options) {

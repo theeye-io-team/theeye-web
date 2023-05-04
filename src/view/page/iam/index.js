@@ -25,7 +25,7 @@ export default FullContainer.extend({
       <div class="col-xs-3 panel-left">
         <ul class="nav nav-tabs tabs-left" data-hook="iam-menu-links-container">
           <li class="tab-item"><a href="#groups" data-toggle="tab">Groups</a></li>
-          <li class="tab-item"><a href="#policies" data-toggle="tab">Policies</a></li>
+          <li class="tab-item"><a href="#policies" data-toggle="tab">Roles</a></li>
           <li class="tab-item"><a href="#users" data-toggle="tab">Users</a></li>
         </ul>
       </div>
@@ -40,46 +40,28 @@ export default FullContainer.extend({
   `,
   autoRender: true,
   props: {
-    visible: ['boolean',false,false],
-    current_tab: 'string',
+    current_tab: ['string',false, 'groups'],
     name: 'string'
   },
   bindings: {
-    visible: { type: 'toggle' }
   },
   initialize () {
     FullContainer.prototype.initialize.apply(this,arguments)
     this.autoAppend = true
-    this.listenToAndRun(App.state.iamMenu,'change',() => {
-      this.updateState(App.state.iamMenu)
-    })
     this.name = 'customer'
   },
   render () {
     FullContainer.prototype.render.apply(this,arguments)
-
-    this.on('change:visible', () => {
-      if (this.visible === true) {
-        window.scrollTo(0,0)
-        document.body.style.overflow = 'hidden'
-      } else {
-        App.state.groups.fetch()
-        document.body.style.overflow = 'auto'
-      }
-    })
+    window.scrollTo(0,0)
+    document.body.style.overflow = 'auto'
 
     this.renderTabs()
 
-    this.on('change:current_tab', () => {
+    this.listenToAndRun(this, 'change:current_tab', () => {
       let tab = this.current_tab
       let selector = `[data-hook=iam-menu-links-container] a[href="#${tab}"]`
       $( this.query(selector) ).tab('show')
     })
-  },
-  updateState (state) {
-    if (!state) { return }
-    this.visible = state.visible
-    this.current_tab = state.current_tab
   },
   events: {
     'click [data-hook=close-button]': 'onClickCloseButton',
@@ -90,19 +72,20 @@ export default FullContainer.extend({
   onClickCloseButton (event) {
     event.preventDefault()
     event.stopPropagation()
-    App.actions.iamMenu.hide()
+    this.remove()
+    App.navigate('home')
     return false
   },
   onKeyEvent (event) {
     if (event.keyCode === 27) {
       event.preventDefault()
       event.stopPropagation()
-      App.actions.iamMenu.hide()
+      this.remove()
       return false
     }
   },
   setCurrentTab (event) {
-    App.actions.iamMenu.toggleTab(event.target.hash.substring(1))
+    this.current_tab = event.target.hash.substring(1)
   },
   renderTabs () {
     const groupsTab = new GroupsTab()
