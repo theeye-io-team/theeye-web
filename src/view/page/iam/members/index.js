@@ -1,15 +1,19 @@
 import View from 'ampersand-view'
 import App from 'ampersand-app'
-import InviteUserFormView from './invite-form'
+import UserForm from './form'
 import Modalizer from 'components/modalizer'
-import UserRow from './user-row'
+import MemberRow from './user-row'
 
 import "./style.less"
 
 export default View.extend({
+  initialize () {
+    View.prototype.initialize.apply(this, arguments)
+    App.state.members.fetch()
+  },
   template: `
     <div>
-      <h3 class="blue bold">Users</h3>
+      <h3 class="blue bold">Members</h3>
       <div class="row">
         <div class="col-xs-6">
           <div class="users-search">
@@ -20,7 +24,7 @@ export default View.extend({
         <div class="col-xs-6">
           <h4 class="pull-right cursor-pointer">
             <a class="blue" data-hook="invite-user">
-              <i class="fa fa-plus"></i> Invite user
+              <i class="fa fa-plus"></i> Add Member
             </a>
           </h4>
         </div>
@@ -42,18 +46,20 @@ export default View.extend({
     }
   },
   events: {
-    'click [data-hook=invite-user]': 'inviteUser',
+    'click [data-hook=invite-user]': 'addUser',
     'input [data-hook=users-input]': 'onSearchInput',
   },
-  inviteUser: function (event) {
+  addUser: function (event) {
     event.stopPropagation()
 
-    const form = new InviteUserFormView()
+    const form = new UserForm({
+      model: new App.Models.Member.Model()
+    })
 
     const modal = new Modalizer({
       confirmButton: 'Send',
       buttons: true,
-      title: 'Invite user',
+      title: 'Invite',
       bodyView: form,
       class: 'settings-modal'
     })
@@ -87,7 +93,7 @@ export default View.extend({
     this.renderWithTemplate(this)
     this.renderCollection(
       App.state.members,
-      UserRow,
+      MemberRow,
       this.queryByHook('list-container'),
       {}
     )

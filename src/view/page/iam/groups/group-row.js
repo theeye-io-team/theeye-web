@@ -14,10 +14,11 @@ export default View.extend({
         </div>
       </div>
       <div class="col-xs-2">
-        <i class="fa fa-user"></i>
-        <span data-hook="count"></span>
+        <i class="fa fa-credential"></i>
+        <span data-hook="credential"></span>
       </div>
       <div class="col-xs-2">
+        <span><i class="fa fa-lock blue" data-hook="builtin-group"></i></span>
         <div data-hook="group-icons" class="pull-right action-icons">
           <span><i class="fa fa-edit blue" data-hook="edit-group"></i></span>
           <span><i class="fa fa-trash blue" data-hook="remove-group"></i></span>
@@ -29,11 +30,33 @@ export default View.extend({
     visible: ['boolean', true, true]
   },
   bindings: {
+    'model.builtIn': [{
+      hook: 'edit-group',
+      type: 'booleanClass',
+      yes: '',
+      no: 'blue'
+    },{
+      hook: 'remove-group',
+      type: 'booleanClass',
+      yes: '',
+      no: 'blue'
+    },{
+      hook: 'edit-group',
+      type: 'toggle',
+      invert: true
+    },{
+      hook: 'remove-group',
+      type: 'toggle',
+      invert: true
+    },{
+      hook: 'builtin-group',
+      type: 'toggle'
+    }],
     'model.name': {
       hook:'name'
     },
-    'model.members.length': {
-      hook:'count'
+    'model.credential': {
+      hook:'credential'
     },
     'visible': {
       type: 'toggle'
@@ -43,17 +66,27 @@ export default View.extend({
     'click [data-hook=remove-group]': 'removeGroup',
     'click [data-hook=edit-group]': 'editGroup'
   },
-  removeGroup: function (event) {
+  removeGroup (event) {
+    event.preventDefault()
     event.stopPropagation()
-    bootbox.confirm(`Are you sure you want to remove the group "${this.model.user.username}"?`,
+    if (this.model.builtIn === true) {
+      return false 
+    }
+
+    bootbox.confirm(`Are you sure you want to remove the group "${this.model.name}"?`,
       (confirmed) => {
         if (!confirmed) { return }
-        console.log("TODO")
+        App.actions.groups.remove(this.model.id)
       }
     )
   },
-  editGroup: function (event) {
+  editGroup (event) {
+    event.preventDefault()
     event.stopPropagation()
+    if (this.model.builtIn === true) {
+      return false 
+    }
+
     const form = new Form({ model: this.model })
     const modal = new Modalizer({
       title: 'Edit group' + this.model.name,

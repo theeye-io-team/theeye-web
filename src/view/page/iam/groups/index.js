@@ -3,6 +3,7 @@ import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import Form from './form'
 import GroupRow from './group-row'
+import SimpleSwitch from 'components/simple-switch'
 
 import './style.less'
 
@@ -17,7 +18,15 @@ export default View.extend({
             <input autocomplete="off" data-hook="groups-input" class="groups-input" placeholder="Search">
           </div>
         </div>
-        <div class="col-xs-6">
+        <div class="col-xs-3">
+          <h4 class="pull-right">
+            <div class="toggle-container">
+              <span>Show built-in Roles</span>
+              <span data-hook="toggle"></span>
+            </div>
+          </h4>
+        </div>
+        <div class="col-xs-3">
           <h4 class="pull-right cursor-pointer">
             <a class="blue" data-hook="create-group">
               <i class="fa fa-plus"></i> Create group
@@ -32,11 +41,22 @@ export default View.extend({
       </div>
     </div>
   `,
+  initialize () {
+    View.prototype.initialize.apply(this, arguments)
+    App.state.groups.fetch({
+      success () {
+        for (let group of App.state.iam.groups) {
+          App.state.groups.add(group)
+        }
+      }
+    })
+  },
   props: {
-    groupSearch: ['string', false, '']
+    searchValue: ['string', false, ''],
+    builtinVisible: ['boolean', true, true]
   },
   bindings: {
-    groupSearch: {
+    searchValue: {
       type: 'value',
       hook: 'groups-input'
     }
@@ -53,6 +73,12 @@ export default View.extend({
       this.queryByHook('list-container'),
       {}
     )
+    const toggler = new SimpleSwitch({ value: this.builtinVisible })
+    toggler.on('change:value', () => {
+      this.builtinVisible = toggler.value
+      this.filterList()
+    })
+    this.renderSubview(toggler, this.queryByHook('toggle'))
   },
   createGroup () {
     const form = new Form({ model: new App.Models.Group.Model() })
@@ -81,10 +107,17 @@ export default View.extend({
     modal.show()
   },
   onSearchInput (event) {
+    this.searchValue = event.target.value.toLowerCase()
+    this.filterList()
+  },
+  filterList () {
     this._subviews[0].views.forEach(
       view => {
         view.visible = (
-          view.model.name.toLowerCase().includes(event.target.value.toLowerCase())
+          view.model.name
+            .toLowerCase()
+            .includes(this.searchValue) &&
+            (this.builtinVisible || !view.model.builtIn)
         )
       }
     )

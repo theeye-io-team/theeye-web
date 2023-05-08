@@ -59,7 +59,6 @@ App.extend(actions, {
 
     const root = new RootContainer({ el: document.getElementById('root') })
     state.on('change:currentPage', () => {
-      //this.listenToAndRun(App.state.currentPage, 'change:rendered', this.togglePageLoader)
       root.updateState({ currentPage: state.currentPage })
     })
     root.on('click:localPath', (event) => {
@@ -69,11 +68,6 @@ App.extend(actions, {
       App.navigate(event.localPath)
     })
   },
-  //togglePageLoader: function (state, prevValue) {
-  //  App.state.loader.visible = App.state.currentPage
-  //    ? !App.state.currentPage.rendered
-  //    : false
-  //},
   bindDocumentEvents () {
     const oninput = (event) => {
       //logger.log('document input')

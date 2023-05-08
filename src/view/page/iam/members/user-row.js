@@ -2,7 +2,7 @@ import View from 'ampersand-view'
 import App from 'ampersand-app'
 import bootbox from 'bootbox'
 import Modalizer from 'components/modalizer'
-import EditUserFormView from 'view/page/member/edit-form'
+import UserForm from './form'
 
 export default View.extend({
   template: `
@@ -76,7 +76,7 @@ export default View.extend({
   editUser: function (event) {
     event.stopPropagation()
 
-    const form = new EditUserFormView({ model: this.model })
+    const form = new UserForm({ model: this.model })
 
     const modal = new Modalizer({
       confirmButton: 'Save',

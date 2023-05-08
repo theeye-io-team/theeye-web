@@ -1,11 +1,10 @@
 
-import { PoliciesCollection, CredentialsCollection } from 'models/policy'
 
 /**
  * this is going to be separated and fetched from the api
  * ideally from swagger/openapi
  */
-const OpenAPI = {
+const openAPI = {
   task: [
     {
       name: 'fetch tasks',
@@ -30,13 +29,13 @@ const OpenAPI = {
  * policies armadas a medida.
  *
  */
-const Policies = new PoliciesCollection([
+const policies = [
   { 
     id: '1',
     builtin: false,
     name: 'Query All Tasks Definitions',
     rules: [
-      OpenAPI.task[0]
+      openAPI.task[0]
     ]
   },
   {
@@ -47,19 +46,54 @@ const Policies = new PoliciesCollection([
       openAPI.task[1]
     ]
   }
-])
+]
 
 /**
  *
  * default roles
  *
  */
-const Roles = new CredentialsCollection([
-  { order: 1, id: 'viewer', name: 'viewer', description: 'Viewer' },
-  { order: 2, id: 'user', name: 'user', description: 'User' },
-  { order: 3, id: 'manager', name: 'manager', description: 'Manager' },
-  { order: 4, id: 'admin', name: 'admin', description: 'Admin' },
-  { order: 5, id: 'owner', name: 'owner', description: 'Owner' }
-])
+const groups = [
+  {
+    builtIn: true,
+    order: 1,
+    id: 'viewer',
+    name: 'Viewers',
+    credential: 'viewer',
+    description: 'Viewers'
+  },
+  {
+    builtIn: true,
+    order: 2,
+    id: 'user',
+    name: 'Users',
+    credential: 'user',
+    description: 'Users'
+  },
+  { 
+    builtIn: true,
+    order: 3,
+    id: 'manager',
+    name: 'Managers',
+    credential: 'manager',
+    description: 'Managers' 
+  },
+  { 
+    builtIn: true,
+    order: 4,
+    id: 'admin',
+    name: 'Administrators',
+    credential: 'admin',
+    description: 'Administrators' 
+  },
+  { 
+    builtIn: true,
+    order: 5,
+    id: 'owner',
+    name: 'Owners',
+    credential: 'owner',
+    description: 'Owners'
+  }
+]
 
-export { OpenAPI, Policies, Roles }
+export { openAPI, policies, groups }

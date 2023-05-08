@@ -16,15 +16,17 @@ export default SelectView.extend({
         </div>
       </div>
       <div class="col-sm-3">
-        <button data-hook="create-button" class="btn btn-block btn-primary">Create a policy</button>
+        <button data-hook="create-button" class="btn btn-block btn-primary">
+          Create
+        </button>
       </div>
     </div>
   `,
   initialize (specs) {
-    this.options = App.state.policies.models
+    this.options = App.state.policies
     this.multiple = true
     this.tags = false
-    this.label = 'Policy Selection'
+    this.label = 'Policy'
     this.name = 'policies'
     this.styles = 'form-group'
     this.unselectedText = 'select a policy'

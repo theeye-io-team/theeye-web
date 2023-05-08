@@ -1,6 +1,7 @@
 import App from 'ampersand-app'
 import AmpersandState from 'ampersand-state'
 import ClearableCollection from 'lib/clearable-collection'
+import { Role, PoliciesCollection } from 'models/policy'
 import { Collection as Indicators } from 'models/indicator'
 import { Collection as Webhooks } from 'models/webhook'
 import { Collection as HostGroups } from 'models/hostgroup'
@@ -15,10 +16,10 @@ import { Collection as Jobs } from 'models/job'
 import { Collection as Tags } from 'models/tag'
 import { Collection as Files } from 'models/file'
 import { Collection as Events } from 'models/event'
-import { Workflows } from 'models/workflow'
 import { Collection as Groups } from 'models/group'
-//import { EmitterCollection as Emitters } from 'models/event'
 import { Collection as Notifications } from 'models/notification'
+import { Workflows } from 'models/workflow'
+//import { EmitterCollection as Emitters } from 'models/event'
 import Alerts from 'components/alerts'
 
 import * as IndicatorConstants from 'constants/indicator'
@@ -134,6 +135,13 @@ const IndicatorTypesCollection = ClearableCollection.extend({
       { id: IndicatorConstants.CHART_TYPE, text: 'Chart' },
       { id: IndicatorConstants.FILE_TYPE, text: 'File'}
     ]
+    ClearableCollection.prototype.initialize.apply(this, arguments)
+  }
+})
+
+const CredentialsCollection = ClearableCollection.extend({
+  initialize () {
+    this.initialState = IAMState.groups
     ClearableCollection.prototype.initialize.apply(this, arguments)
   }
 })
@@ -336,17 +344,16 @@ const _initCollections = function () {
     workflows: new Workflows([]),
     groups: new Groups([]),
     // FIXME: This references the hardcoded stuff from earlier
-    openapi: IAMState.OpenAPI,
-    policies: IAMState.Policies,
+    policies: new PoliciesCollection(IAMState.policies),
     admin: {
       users: new Users([]),
       customers: new Customers([]),
       members: new AdminMembers([])
-    }
+    },
+    iam: IAMState
   })
 
-  this.credentials = IAMState.Roles
-
+  this.credentials = new CredentialsCollection()
   this.looptimes = new LooptimesCollection()
   this.severities = new SeveritiesCollection()
   this.indicatorTypes = new IndicatorTypesCollection()

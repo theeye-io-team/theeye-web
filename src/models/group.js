@@ -9,11 +9,13 @@ const urlRoot = function () {
 const Model = AppModel.extend({
   urlRoot,
   props: {
+    builtIn: ['boolean', false, false],
     id: 'string',
     name: 'string',
+    description: 'string',
     customer: 'string',
     customer_id: 'string',
-    members: 'array'
+    credential: 'string'
   }
 })
 

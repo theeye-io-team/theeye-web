@@ -1,9 +1,6 @@
-'use strict'
-
 import App from 'ampersand-app'
 import SelectView from 'components/select2-view'
 import FilteredCollection from 'ampersand-filtered-subcollection'
-//import isEmail from 'validator/lib/isEmail'
 
 export default SelectView.extend({
   initialize (specs) {

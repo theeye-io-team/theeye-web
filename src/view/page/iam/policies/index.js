@@ -20,7 +20,7 @@ export default View.extend({
         </div>
         <div class="col-xs-3">
           <div class="toggle-container">
-            <span>Show built in Roles</span>
+            <span>Show built-in Roles</span>
             <span data-hook="toggle"></span>
           </div>
         </div>
@@ -40,11 +40,11 @@ export default View.extend({
     </div>
   `,
   props: {
-    policySearch: ['string', false, ''],
+    searchValue: ['string', false, ''],
     builtinVisible: ['boolean', true, true]
   },
   bindings: {
-    policySearch: {
+    searchValue: {
       type: 'value',
       hook: 'policy-input'
     }
@@ -92,15 +92,17 @@ export default View.extend({
     modal.show()
   },
   onSearchInput (event) {
-    this.policySearch = event.target.value.toLowerCase()
+    this.searchValue = event.target.value.toLowerCase()
     this.filterList()
   },
   filterList () {
     this._subviews[0].views.forEach(
       view => {
         view.visible = (
-          view.model.name.toLowerCase().includes(this.policySearch) && 
-          (this.builtinVisible || !view.model.builtin)
+          view.model.name
+            .toLowerCase()
+            .includes(this.searchValue) && 
+            (this.builtinVisible || !view.model.builtin)
         )
       }
     )

@@ -75,13 +75,10 @@ const Role = State.extend({
   }
 })
 
-const CredentialsCollection = Collection.extend({ model: Role })
-
 export {
   Policy,
   PoliciesCollection,
   Rule,
   RulesCollection,
-  CredentialsCollection,
   Role
 }
