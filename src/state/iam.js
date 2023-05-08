@@ -26,14 +26,14 @@ const openAPI = {
 
 /**
  *
- * policies armadas a medida.
+ * permisos de la app
  *
  */
-const policies = [
-  { 
+const permissions = [
+  {
     id: '1',
-    builtin: false,
-    name: 'Query All Tasks Definitions',
+    builtin: true,
+    name: 'get all tasks definitions',
     rules: [
       openAPI.task[0]
     ]
@@ -41,7 +41,7 @@ const policies = [
   {
     id: '2',
     builtin: true,
-    name: 'View Task Definition',
+    name: 'get task',
     rules: [
       openAPI.task[1]
     ]
@@ -53,47 +53,42 @@ const policies = [
  * default roles
  *
  */
-const groups = [
+const roles = [
   {
     builtIn: true,
-    order: 1,
     id: 'viewer',
-    name: 'Viewers',
-    credential: 'viewer',
-    description: 'Viewers'
+    name: 'viewer',
+    description: 'Viewers',
+    permissions: []
   },
   {
     builtIn: true,
-    order: 2,
     id: 'user',
-    name: 'Users',
-    credential: 'user',
-    description: 'Users'
+    name: 'user',
+    description: 'Users',
+    permissions: []
   },
-  { 
+  {
     builtIn: true,
-    order: 3,
     id: 'manager',
-    name: 'Managers',
-    credential: 'manager',
-    description: 'Managers' 
+    name: 'manager',
+    description: 'Managers', 
+    permissions: []
   },
-  { 
+  {
     builtIn: true,
-    order: 4,
     id: 'admin',
-    name: 'Administrators',
-    credential: 'admin',
-    description: 'Administrators' 
+    name: 'admin',
+    description: 'Administrators' ,
+    permissions: []
   },
-  { 
+  {
     builtIn: true,
-    order: 5,
     id: 'owner',
-    name: 'Owners',
-    credential: 'owner',
-    description: 'Owners'
+    name: 'owner',
+    description: 'Owners',
+    permissions: []
   }
 ]
 
-export { openAPI, policies, groups }
+export { openAPI, permissions, roles }

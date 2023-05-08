@@ -37,5 +37,5 @@ export default {
         App.state.alerts.danger('Group removal failed')
       }
     })
-  }
+  },
 }

@@ -2,8 +2,9 @@ import App from 'ampersand-app'
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import isEmail from 'validator/lib/isEmail'
-import CredentialsSelector from 'view/credentials-selector'
-//import PolicySelector from '../policy-selector'
+import CredentialSelector from 'view/credentials-selector'
+import RolesSelector from '../roles-selector'
+//import SimpleSwitch from 'components/simple-switch'
 
 export default FormView.extend({
   initialize (options) {
@@ -17,11 +18,17 @@ export default FormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.name
       }),
-      new CredentialsSelector({
-        lable: 'Role',
+      new CredentialSelector({
+        label: 'Credential',
+        name: 'credential',
         value: this.model.credential
+      }),
+      new RolesSelector({
+        label: 'Roles',
+        name: 'roles',
+        multiple: true,
+        value: this.model.roles
       })
-      //new PolicySelector()
     ]
     
     if (this.model.isNew()) {

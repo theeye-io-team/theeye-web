@@ -3,7 +3,7 @@ import SelectView from 'components/select2-view'
 
 export default SelectView.extend({
   initialize (specs) {
-    const credentials = App.state.credentials.filter(e => {
+    const credentials = App.state.roles.filter(e => {
       const notIn = ['root']
       if (App.state.session.user.credential === 'manager') {
         notIn.push('admin')
@@ -17,7 +17,7 @@ export default SelectView.extend({
     this.required = true
     this.label = specs.label || 'Role (credential)'
     this.unselectedText = 'credential'
-    this.idAttribute = 'name'
+    this.idAttribute = 'id'
     this.textAttribute = 'name'
     this.invalidClass = 'text-danger'
     this.validityClassSelector = '.control-label'

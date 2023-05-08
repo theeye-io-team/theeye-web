@@ -139,9 +139,9 @@ const IndicatorTypesCollection = ClearableCollection.extend({
   }
 })
 
-const CredentialsCollection = ClearableCollection.extend({
+const RolesCollection = ClearableCollection.extend({
   initialize () {
-    this.initialState = IAMState.groups
+    this.initialState = IAMState.roles
     ClearableCollection.prototype.initialize.apply(this, arguments)
   }
 })
@@ -338,13 +338,12 @@ const _initCollections = function () {
     files: new Files([]),
     webhooks: new Webhooks([]),
     indicators: new Indicators([]),
+    groups: new Groups([]),
     members: new Members([]),
     events: new Events([]),
     notifications: new Notifications([]),
     workflows: new Workflows([]),
-    groups: new Groups([]),
-    // FIXME: This references the hardcoded stuff from earlier
-    policies: new PoliciesCollection(IAMState.policies),
+    //policies: new PoliciesCollection(IAMState.policies),
     admin: {
       users: new Users([]),
       customers: new Customers([]),
@@ -353,7 +352,8 @@ const _initCollections = function () {
     iam: IAMState
   })
 
-  this.credentials = new CredentialsCollection()
+  this.credentials = new RolesCollection()
+  this.roles = new RolesCollection()
   this.looptimes = new LooptimesCollection()
   this.severities = new SeveritiesCollection()
   this.indicatorTypes = new IndicatorTypesCollection()

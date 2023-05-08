@@ -1,7 +1,7 @@
 import App from 'ampersand-app'
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
-import CredentialsSelector from 'view/credentials-selector'
+import RolesSelector from '../roles-selector'
 //import PolicySelector from '../policy-selector'
 
 export default FormView.extend({
@@ -17,10 +17,11 @@ export default FormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label',
       }),
-      new CredentialsSelector({
+      new RolesSelector({
         required: true,
-        name: 'credential',
-        value: this.model.credential
+        label: 'Roles',
+        name: 'roles',
+        value: this.model.roles
       })
     ]
     FormView.prototype.initialize.apply(this, arguments)

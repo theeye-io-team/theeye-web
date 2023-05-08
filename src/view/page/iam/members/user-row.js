@@ -73,7 +73,7 @@ export default View.extend({
       }
     )
   },
-  editUser: function (event) {
+  editUser (event) {
     event.stopPropagation()
 
     const form = new UserForm({ model: this.model })
@@ -96,7 +96,7 @@ export default View.extend({
       if (!form.valid) {
         return
       }
-      App.actions.member.updateCredential(this.model, form.data)
+      App.actions.member.updateCredential(this.model.id, form.data)
       modal.hide()
     })
     modal.show()

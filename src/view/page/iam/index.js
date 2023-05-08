@@ -10,7 +10,7 @@ import bootbox from 'bootbox'
 
 // tabs
 import GroupsTab from './groups'
-import PolicyTab from './policies'
+//import PermissionsTab from './permissions'
 import MembersTab from './members'
 
 import './styes.less'
@@ -26,14 +26,14 @@ export default FullContainer.extend({
       <div class="col-xs-3 panel-left">
         <ul class="nav nav-tabs tabs-left" data-hook="iam-menu-links-container">
           <li class="tab-item"><a href="#members" data-toggle="tab">Members</a></li>
-          <li class="tab-item"><a href="#groups" data-toggle="tab">Groups</a></li>
-          <!--<li class="tab-item"><a href="#policies" data-toggle="tab">Roles</a></li>-->
+          <!--<li class="tab-item"><a href="#groups" data-toggle="tab">Groups</a></li>-->
+          <!--<li class="tab-item"><a href="#permissions" data-toggle="tab">Roles</a></li>-->
         </ul>
       </div>
       <div class="col-xs-9 panel-right">
         <div class="tab-content" data-hook="panes-container">
           <div class="tab-pane fade" id="groups" data-hook="groups-tab"></div>
-          <div class="tab-pane fade" id="policies" data-hook="policy-tab"></div>
+          <div class="tab-pane fade" id="permissions" data-hook="permissions-tab"></div>
           <div class="tab-pane fade" id="members" data-hook="members-tab"></div>
         </div>
       </div>
@@ -97,8 +97,8 @@ export default FullContainer.extend({
     const groupsTab = new GroupsTab()
     this.renderSubview(groupsTab, this.queryByHook('groups-tab'))
 
-    const policyTab = new PolicyTab()
-    this.renderSubview(policyTab, this.queryByHook('policy-tab'))
+    //const permissionsTab = new PermissionsTab()
+    //this.renderSubview(permissionsTab, this.queryByHook('permissions-tab'))
 
     const membersTab = new MembersTab()
     this.renderSubview(membersTab, this.queryByHook('members-tab'))
