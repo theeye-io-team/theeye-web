@@ -165,13 +165,13 @@ export default View.extend({
         link.onclick = () => { App.actions.settingsMenu.show('customer') }
         container.appendChild(link)
 
-        container.appendChild(html2dom(`<li><a href="/admin/iam" class="eyeicon eyemenu-icon eyeicon-users">IAM</a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/iam" class="eyeicon eyemenu-icon eyeicon-lock">IAM</a></li>`))
       }
 
       if (Acls.hasAccessLevel('root')) {
         container.appendChild(html2dom(`<li><a href="/admin/user" class="eyeicon eyemenu-icon eyeicon-users">Users</a></li>`))
         container.appendChild(html2dom(`<li><a href="/admin/customer" class="eyeicon eyemenu-icon eyeicon-organizations">Organizations</a></li>`))
-        container.appendChild(html2dom(`<li><a href="/admin/member" class="eyeicon eyemenu-icon eyeicon-users">Members</a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/member" class="eyeicon eyemenu-icon eyeicon-credential">Members</a></li>`))
       }
     }
   },

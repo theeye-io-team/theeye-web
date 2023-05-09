@@ -2,7 +2,7 @@ import View from 'ampersand-view'
 import App from 'ampersand-app'
 import UserForm from './form'
 import Modalizer from 'components/modalizer'
-import MemberRow from './user-row'
+import MemberRow from './list-row'
 
 import "./style.less"
 

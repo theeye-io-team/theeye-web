@@ -101,17 +101,19 @@ export default View.extend({
     })
     modal.show()
   },
+  /**
   render () {
     this.renderWithTemplate(this)
 
-    if ( this.model.user.id == App.state.session.user.id || ['root'].includes(this.model.credential) ) {
-      this.queryByHook('member-icons').remove()
-    }
+    //if ( this.model.user.id == App.state.session.user.id || ['root'].includes(this.model.credential) ) {
+    //  this.queryByHook('member-icons').remove()
+    //}
 
-    if (App.state.session.user.credential === 'manager') {
-      if (this.model.user.credential === 'admin') {
-        this.queryByHook('member-icons').remove()
-      }
-    }
+    //if (App.state.session.user.credential === 'manager') {
+    //  if (this.model.user.credential === 'admin') {
+    //    this.queryByHook('member-icons').remove()
+    //  }
+    //}
   }
+  */
 })
