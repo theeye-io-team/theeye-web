@@ -5,6 +5,7 @@ import qs from 'qs'
 
 class IAM extends Route {
   indexRoute () {
+    App.state.supcatalog.fetch()
     const iam = new IAMPageView({
       current_tab: qs.parse(window.location.search, {ignoreQueryPrefix: true}).tab
     })

@@ -342,6 +342,7 @@ const _initCollections = function () {
     }
   })
 
+  this.supcatalog = new IAM.SupervisorActionsCatalog()
   this.credentials = new IAM.RolesCollection()
   this.roles = new IAM.RolesCollection()
   this.looptimes = new LooptimesCollection()

@@ -6,8 +6,8 @@ import ClearableCollection from 'lib/clearable-collection'
 
 import Roles from './roles'
 
-const urlRoot = function () {
-  return `${App.config.api_url}/roles`
+const actionsUrlRoot = function () {
+  return `${App.config.api_url}/actions`
 }
 
 /**
@@ -16,6 +16,7 @@ const urlRoot = function () {
  *
  */
 const Action = AppModel.extend({
+  urlRoot: actionsUrlRoot,
   props: {
     name: 'string',
     method: 'string',
@@ -27,30 +28,11 @@ const Action = AppModel.extend({
 
 // this is the collection of all actions
 const ActionsCollection = AppCollection.extend({
+  url: actionsUrlRoot,
   indexes: ['id'],
   mainIndex: 'text',
   model: Action
 })
-
-//const Policy = AppModel.extend({
-//  urlRoot,
-//  props: {
-//    name: 'string',
-//    id: 'string',
-//    customer: 'string',
-//    customer_id: 'string',
-//    builtin: ['boolean', true, false]
-//  },
-//  collections: {
-//    rules: RulesCollection
-//  }
-//})
-
-//const PoliciesCollection = AppCollection.extend({
-//  url: urlRoot,
-//  indexes: ['id'],
-//  model: Policy
-//})
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
@@ -80,11 +62,18 @@ const RolesCollection = ClearableCollection.extend({
   sort: 'level'
 })
 
+const SupervisorActionsCatalog = ActionsCollection.extend({
+  url: function () {
+    return `${App.config.supervisor_api_url}/api/catalog`
+  },
+})
+
 export {
   //Policy,
   //PoliciesCollection,
   Action,
   ActionsCollection,
   Role,
-  RolesCollection
+  RolesCollection,
+  SupervisorActionsCatalog
 }

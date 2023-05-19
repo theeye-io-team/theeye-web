@@ -111,8 +111,7 @@ const ActionsInput = View.extend({
   addAction(event) {
     event.stopPropagation()
     event.preventDefault()
-    let rule = new Rule()
-    this.actions.add(rule)
+    this.actions.add(new Action())
   }
 })
 
@@ -140,9 +139,9 @@ const ActionView = View.extend({
     }
   },
   template: `
-    <div class="rule-view">
+    <div class="action-view">
       <div class="input" data-hook="service-input"></div>
-      <div class="input" data-hook="rule-input"></div>
+      <div class="input" data-hook="action-input"></div>
     </div>
   `,
   inputTemplate: `
@@ -168,7 +167,7 @@ const ActionView = View.extend({
       label: 'Service',
       required: true,
       multiple: false, 
-      options: Object.keys(App.state.rules).map(r => {
+      options: Object.keys(App.state.supcatalog).map(r => {
         return { id: r, text: r }
       }),
       value: this.model.service,
@@ -179,9 +178,9 @@ const ActionView = View.extend({
       validityClassSelector: '.control-label'
     })
     this.ruleInput = new SelectView({
-      name: 'rule',
-      placeholder: 'Rule',
-      label: 'Rule',
+      name: 'action',
+      placeholder: 'Action',
+      label: 'Action',
       required: true,
       multiple: false,
       options: [],
