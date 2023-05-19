@@ -18,7 +18,7 @@ import * as User from 'models/user'
 import * as Webhook from 'models/webhook'
 import * as Workflow from 'models/workflow'
 import * as Group from 'models/group'
-import * as Policy from 'models/policy'
+import * as IAM from 'models/iam'
 
 App.extend({
   Models: {
@@ -32,7 +32,7 @@ App.extend({
     Job,
     Member,
     Monitor,
-    Policy,
+    IAM,
     Resource,
     Script,
     Tag,

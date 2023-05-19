@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import Form from './form'
-import PolicyRow from './policy-row'
+import Row from './row'
 import SimpleSwitch from 'components/simple-switch'
 
 import './style.less'
@@ -56,8 +56,8 @@ export default View.extend({
   render () {
     this.renderWithTemplate(this)
     this.renderCollection(
-      App.state.policies,
-      PolicyRow,
+      App.state.roles,
+      Row,
       this.queryByHook('list-container'),
       {}
     )
@@ -69,7 +69,7 @@ export default View.extend({
     this.renderSubview(toggler, this.queryByHook('toggle'))
   },
   createPolicy () {
-    const form = new Form({ model: new App.Models.Policy.Model() })
+    const form = new Form({ model: new App.Models.IAM.Role() })
     const modal = new Modalizer({
       title: 'Create Role',
       bodyView: form,

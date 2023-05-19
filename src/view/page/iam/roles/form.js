@@ -3,7 +3,7 @@ import FormView from 'ampersand-form-view'
 import View from 'ampersand-view'
 import InputView from 'components/input-view'
 import SelectView from 'components/select2-view'
-import { Rule, RulesCollection } from 'models/policy'
+import { Action, ActionsCollection } from 'models/iam'
 import './style.less'
 
 export default FormView.extend({
@@ -21,41 +21,39 @@ export default FormView.extend({
         validityClassSelector: '.control-label',
         readonly: this.readonly
       }),
-      new RulesInput({
-        name: 'rules',
-        label: 'Rules',
-        value: this.model.rules,
+      new ActionsInput({
+        name: 'actions',
+        label: 'Actions',
+        value: this.model.actions,
         readonly: this.readonly,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       })
     ]
     FormView.prototype.initialize.apply(this, arguments)
-
-    // options: App.state.rules.filter(r => r.service === this._fieldViews['service'].value)
   },
-  prepareData() {
+  prepareData () {
     let data = Object.assign({}, this.data)
     data.customer = App.state.session.customer.id
     return data
   }
 })
 
-const RulesInput = View.extend({
+const ActionsInput = View.extend({
   collections: {
-    rules: RulesCollection
+    actions: ActionsCollection
   },
   template: `
     <div class="form-group">
       <label class="col-sm-3 control-label" data-hook="label"></label>
       <div class="col-sm-9">
         <div data-hook="container" class="policy-container"></div>
-        <button data-hook="add-rule" class="btn">Add another rule</button>
+        <button data-hook="add-action" class="btn">Add another action</button>
       </div>
     </div>
   `,
   events: {
-    'click [data-hook=add-rule]':'addRule'
+    'click [data-hook=add-action]':'addAction'
   },
   props: {
     name: 'string',
@@ -65,16 +63,16 @@ const RulesInput = View.extend({
   bindings: {
     'label': [
       {
-          hook: 'label'
+        hook: 'label'
       },
       {
-          type: 'toggle',
-          hook: 'label'
+        type: 'toggle',
+        hook: 'label'
       }
     ],
     'readonly': {
       type: 'toggle',
-      hook: 'add-rule',
+      hook: 'add-action',
       invert: true
     }
   },
@@ -94,36 +92,44 @@ const RulesInput = View.extend({
   },
   initialize (options) {
     View.prototype.initialize.apply(this, arguments)
-    this.rules.set(options.value.serialize())
+    this.actions.set(options.value.serialize())
   },
   render () {
     this.renderWithTemplate(this)
     this.renderCollection(
-      this.rules,
-      RuleView,
+      this.actions,
+      ActionView,
       this.queryByHook('container'),
-      { viewOptions: { readonly: this.readonly } }
+      {
+        viewOptions: {
+          readonly: this.readonly
+        }
+      }
     )
     console.log(this)
   },
-  addRule(event) {
+  addAction(event) {
     event.stopPropagation()
     event.preventDefault()
     let rule = new Rule()
-    this.rules.add(rule)
+    this.actions.add(rule)
   }
 })
 
-const RuleView = View.extend({
+const ActionView = View.extend({
   props: {
     readonly: ['boolean', true, false]
   },
   derived: {
     value: {
       cache: false,
-      fn() {
-        if (this.serviceInput.value !== null && this.ruleInput.value !== null)
-          return App.state.rules[this.serviceInput.value].get(this.ruleInput.value).serialize()
+      fn () {
+        if (this.serviceInput.value !== null && this.ruleInput.value !== null) {
+          return App.state
+            .rules[this.serviceInput.value]
+            .get(this.ruleInput.value)
+            .serialize()
+        }
       }
     },
     valid: {

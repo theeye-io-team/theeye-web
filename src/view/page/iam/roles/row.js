@@ -97,7 +97,7 @@ export default View.extend({
     })
     modal.show()
   },
-  viewPolicy: function (event) {
+  viewPolicy (event) {
     event.stopPropagation()
     const form = new Form({ model: this.model, readonly: true })
     const modal = new Modalizer({
@@ -106,7 +106,7 @@ export default View.extend({
       buttons: false,
     })
     modal.on('hidden', () => {
-      content.remove()
+      form.remove()
       modal.remove()
     })
     modal.show()

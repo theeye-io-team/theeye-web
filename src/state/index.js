@@ -1,7 +1,7 @@
 import App from 'ampersand-app'
 import AmpersandState from 'ampersand-state'
 import ClearableCollection from 'lib/clearable-collection'
-import { Role, PoliciesCollection } from 'models/policy'
+import * as IAM from 'models/iam'
 import { Collection as Indicators } from 'models/indicator'
 import { Collection as Webhooks } from 'models/webhook'
 import { Collection as HostGroups } from 'models/hostgroup'
@@ -41,7 +41,6 @@ import SearchBoxState from './searchbox'
 import TabsState from './tabs'
 import SideMenuState from './sideMenu'
 import MarketplaceState from './marketplace'
-import * as IAMState from './iam'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
@@ -135,13 +134,6 @@ const IndicatorTypesCollection = ClearableCollection.extend({
       { id: IndicatorConstants.CHART_TYPE, text: 'Chart' },
       { id: IndicatorConstants.FILE_TYPE, text: 'File'}
     ]
-    ClearableCollection.prototype.initialize.apply(this, arguments)
-  }
-})
-
-const RolesCollection = ClearableCollection.extend({
-  initialize () {
-    this.initialState = IAMState.roles
     ClearableCollection.prototype.initialize.apply(this, arguments)
   }
 })
@@ -343,17 +335,15 @@ const _initCollections = function () {
     events: new Events([]),
     notifications: new Notifications([]),
     workflows: new Workflows([]),
-    //policies: new PoliciesCollection(IAMState.policies),
     admin: {
       users: new Users([]),
       customers: new Customers([]),
       members: new AdminMembers([])
-    },
-    iam: IAMState
+    }
   })
 
-  this.credentials = new RolesCollection()
-  this.roles = new RolesCollection()
+  this.credentials = new IAM.RolesCollection()
+  this.roles = new IAM.RolesCollection()
   this.looptimes = new LooptimesCollection()
   this.severities = new SeveritiesCollection()
   this.indicatorTypes = new IndicatorTypesCollection()
