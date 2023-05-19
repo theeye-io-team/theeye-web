@@ -49,7 +49,7 @@ export default View.extend({
   },
   props: {
     customers_switch: ['boolean', false, false],
-    customerSearch: ['string', false, ''],
+    customerSearch: ['string', false, '']
   },
   collections: {
     integrations: Integrations
@@ -161,17 +161,17 @@ export default View.extend({
       }
 
       if (Acls.hasAccessLevel('manager')) {
-        let link = html2dom(`<li><a href="" data-hook="settings-menu" class="eyeicon eyemenu-icon eyeicon-settings">Settings</a></li>`)
-        link.onclick = () => {
-          App.actions.settingsMenu.show('customer')
-        }
+        const link = html2dom(`<li><a href="" data-hook="settings-menu" class="eyeicon eyemenu-icon eyeicon-settings">Settings</a></li>`)
+        link.onclick = () => { App.actions.settingsMenu.show('customer') }
         container.appendChild(link)
+
+        container.appendChild(html2dom(`<li><a href="/admin/iam" class="eyeicon eyemenu-icon eyeicon-lock">IAM</a></li>`))
       }
 
       if (Acls.hasAccessLevel('root')) {
         container.appendChild(html2dom(`<li><a href="/admin/user" class="eyeicon eyemenu-icon eyeicon-users">Users</a></li>`))
         container.appendChild(html2dom(`<li><a href="/admin/customer" class="eyeicon eyemenu-icon eyeicon-organizations">Organizations</a></li>`))
-        container.appendChild(html2dom(`<li><a href="/admin/member" class="eyeicon eyemenu-icon eyeicon-users">Members</a></li>`))
+        container.appendChild(html2dom(`<li><a href="/admin/member" class="eyeicon eyemenu-icon eyeicon-credential">Members</a></li>`))
       }
     }
   },

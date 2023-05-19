@@ -1,6 +1,7 @@
 import App from 'ampersand-app'
 import AmpersandState from 'ampersand-state'
-import Collection from 'ampersand-collection'
+import ClearableCollection from 'lib/clearable-collection'
+import * as IAM from 'models/iam'
 import { Collection as Indicators } from 'models/indicator'
 import { Collection as Webhooks } from 'models/webhook'
 import { Collection as HostGroups } from 'models/hostgroup'
@@ -15,9 +16,10 @@ import { Collection as Jobs } from 'models/job'
 import { Collection as Tags } from 'models/tag'
 import { Collection as Files } from 'models/file'
 import { Collection as Events } from 'models/event'
+import { Collection as Groups } from 'models/group'
+import { Collection as Notifications } from 'models/notification'
 import { Workflows } from 'models/workflow'
 //import { EmitterCollection as Emitters } from 'models/event'
-import { Collection as Notifications } from 'models/notification'
 import Alerts from 'components/alerts'
 
 import * as IndicatorConstants from 'constants/indicator'
@@ -42,25 +44,7 @@ import MarketplaceState from './marketplace'
 
 const State = AmpersandState.extend({ extraProperties: 'allow' })
 
-const ClearCollection = Collection.extend({
-  initialize () {
-    Collection.prototype.initialize.apply(this, arguments)
-    this.reset()
-  },
-  reset (models) {
-    const reset = Collection.prototype.reset
-    if (!models) {
-      reset.call(this, this.initialState) // reset to original state
-    } else {
-      reset.call(this, models)
-    }
-  },
-  clear () {
-    this.reset([])
-  }
-})
-
-const RunnersCollection = ClearCollection.extend({
+const RunnersCollection = ClearableCollection.extend({
   initialize () {
       //getHash('node', console.log)
       //getHash('node %script%', console.log)
@@ -81,7 +65,7 @@ const RunnersCollection = ClearCollection.extend({
         binary: 'powershell.exe'
       }
     ]
-    ClearCollection.prototype.initialize.apply(this, arguments)
+    ClearableCollection.prototype.initialize.apply(this, arguments)
   },
   isDefaultRunner (runner) {
     return Boolean(
@@ -123,20 +107,7 @@ const RunnersCollection = ClearCollection.extend({
   mainIndex: 'runner'
 })
 
-const CredentialsCollection = ClearCollection.extend({
-  initialize () {
-    this.initialState = [
-      { order: 1, id: 'viewer', name: 'viewer', description: 'Viewer' },
-      { order: 2, id: 'user', name: 'user', description: 'User' },
-      { order: 3, id: 'manager', name: 'manager', description: 'Manager' },
-      { order: 4, id: 'admin', name: 'admin', description: 'Admin' },
-      { order: 5, id: 'owner', name: 'owner', description: 'Owner' }
-    ]
-    ClearCollection.prototype.initialize.apply(this, arguments)
-  }
-})
-
-const LooptimesCollection = ClearCollection.extend({
+const LooptimesCollection = ClearableCollection.extend({
   initialize () {
     this.initialState = [
       { pos:1, id: 10000, text: '10 seconds' },
@@ -149,11 +120,11 @@ const LooptimesCollection = ClearCollection.extend({
       { pos:8, id: 1800000, text: '30 minutes' },
       { pos:9, id: 3600000, text: '60 minutes' }
     ]
-    ClearCollection.prototype.initialize.apply(this, arguments)
+    ClearableCollection.prototype.initialize.apply(this, arguments)
   }
 })
 
-const IndicatorTypesCollection = ClearCollection.extend({
+const IndicatorTypesCollection = ClearableCollection.extend({
   initialize () {
     this.initialState = [
       { id: IndicatorConstants.TEXT_TYPE, text: 'Text' },
@@ -163,18 +134,18 @@ const IndicatorTypesCollection = ClearCollection.extend({
       { id: IndicatorConstants.CHART_TYPE, text: 'Chart' },
       { id: IndicatorConstants.FILE_TYPE, text: 'File'}
     ]
-    ClearCollection.prototype.initialize.apply(this, arguments)
+    ClearableCollection.prototype.initialize.apply(this, arguments)
   }
 })
 
-const SeveritiesCollection = ClearCollection.extend({
+const SeveritiesCollection = ClearableCollection.extend({
   initialize () {
     this.initialState = [
       { id: 'LOW', text: 'LOW' },
       { id: 'HIGH', text: 'HIGH' },
       { id: 'CRITICAL', text: 'CRITICAL' }
     ]
-    ClearCollection.prototype.initialize.apply(this, arguments)
+    ClearableCollection.prototype.initialize.apply(this, arguments)
   }
 })
 
@@ -359,6 +330,7 @@ const _initCollections = function () {
     files: new Files([]),
     webhooks: new Webhooks([]),
     indicators: new Indicators([]),
+    groups: new Groups([]),
     members: new Members([]),
     events: new Events([]),
     notifications: new Notifications([]),
@@ -370,7 +342,11 @@ const _initCollections = function () {
     }
   })
 
-  this.credentials = new CredentialsCollection()
+  this.supcatalog = new IAM.SupervisorServicesCatalog()
+  // legacy credentials and basic roles
+  this.credentials = new IAM.CredentialsCollection()
+  // new RBAC system & organization roles 
+  this.roles = new IAM.RolesCollection()
   this.looptimes = new LooptimesCollection()
   this.severities = new SeveritiesCollection()
   this.indicatorTypes = new IndicatorTypesCollection()

@@ -2,14 +2,16 @@ import View from 'ampersand-view'
 import App from 'ampersand-app'
 import bootbox from 'bootbox'
 import Modalizer from 'components/modalizer'
-import EditUserFormView from 'view/page/member/edit-form'
+import UserForm from './form'
 
 export default View.extend({
   template: `
     <div class="row border social">
       <div class="col-xs-6">
         <div class="social-container">
-          <span class="circle" style="background:#073666"></span>
+          <span class="circle" style="">
+            <i class="fa fa-user-circle-o"></i>
+          </span>
           <span class="legend" data-hook="username"></span>
           <span class="legend email" data-hook="email"></span>
         </div>
@@ -73,10 +75,10 @@ export default View.extend({
       }
     )
   },
-  editUser: function (event) {
+  editUser (event) {
     event.stopPropagation()
 
-    const form = new EditUserFormView({ model: this.model })
+    const form = new UserForm({ model: this.model })
 
     const modal = new Modalizer({
       confirmButton: 'Save',
@@ -96,22 +98,24 @@ export default View.extend({
       if (!form.valid) {
         return
       }
-      App.actions.member.updateCredential(this.model, form.data)
+      App.actions.member.updateCredential(this.model.id, form.data)
       modal.hide()
     })
     modal.show()
   },
+  /**
   render () {
     this.renderWithTemplate(this)
 
-    if ( this.model.user.id == App.state.session.user.id || ['root'].includes(this.model.credential) ) {
-      this.queryByHook('member-icons').remove()
-    }
+    //if ( this.model.user.id == App.state.session.user.id || ['root'].includes(this.model.credential) ) {
+    //  this.queryByHook('member-icons').remove()
+    //}
 
-    if (App.state.session.user.credential === 'manager') {
-      if (this.model.user.credential === 'admin') {
-        this.queryByHook('member-icons').remove()
-      }
-    }
+    //if (App.state.session.user.credential === 'manager') {
+    //  if (this.model.user.credential === 'admin') {
+    //    this.queryByHook('member-icons').remove()
+    //  }
+    //}
   }
+  */
 })

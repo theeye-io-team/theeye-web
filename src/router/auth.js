@@ -1,4 +1,3 @@
-'use strict'
 
 import LoginPageView from 'view/page/login'
 import RegisterPageView from 'view/page/register'

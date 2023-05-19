@@ -23,13 +23,9 @@ class Route {
 
     const page = this[routeName](options)
 
-    if (!page) {
-      if (!App.state.currentPage) {
-        let errmsg = 'the route should return a valid page view'
-        throw new Error(errmsg)
-      } else return
-    }
+    if (!page) { return }
 
+      // render the page into the root page container
     App.state.set('currentPage', page)
   }
 }

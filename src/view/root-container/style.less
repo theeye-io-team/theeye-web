@@ -9,11 +9,11 @@
 
   .menu-container {
     position:fixed;
-    height:100%;
     display:flex;
     z-index:999;
     transition:0.5s;
     top: 73px;
+    bottom: 30px;
   }
 
   .menu-container.menu-container-expanded { width: @expanded; }
@@ -23,9 +23,9 @@
 
   .page-container {
     transition: 0.5s;
-    position: fixed;
+    position: absolute;
     right: 0;
-    bottom: 30px;
+    bottom: 0;
     top: 73px;
     //left: 0;
     overflow-y: hidden;

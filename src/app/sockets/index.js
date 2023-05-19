@@ -48,7 +48,8 @@ export default () => {
       timeUnit = 'hours'
     }
 
-    App.state.alerts.success(`sockets reconnected! you were offline ${endSecs} ${timeUnit}`)
+    App.state.alerts.success(`sockets reconnected. you were offline ${endSecs} ${timeUnit}`)
+    App.actions.session.refreshAccessToken()
   })
 }
 

@@ -15,6 +15,7 @@ export const Model = BaseModel.extend({
     id: 'string',
     user_id: 'string',
     credential: 'string',
+    roles: 'array',
     customer_id: 'string'
   },
   children: {

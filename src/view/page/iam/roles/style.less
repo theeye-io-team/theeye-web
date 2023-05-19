@@ -1,0 +1,68 @@
+.policy-search {
+  text-align: center;
+  background: #00000011;
+  border-color: #454545;
+  height: 35px;
+  margin: 8px 20px;
+  border-radius: 25px;
+
+  .fa-search {
+    border-radius: unset;
+    background: none;
+    font-size: 22px;
+    padding-top: 6px;
+    color: #454545;
+    position: relative;
+  }
+
+  .policy-input {
+    padding-left: 3ch;
+    color: #454545;
+    border: none;
+    font-size: 14px;
+    width: 200px;
+    outline: none !important;
+    background: none;
+    position: relative;
+    top: -2px;
+  }
+
+  .policy-input::-webkit-input-placeholder { color: #b8bdc6 }
+
+  .policy-input::-moz-placeholder { color: #b8bdc6 }
+
+  .policy-input:-ms-input-placeholder { color: #b8bdc6 }
+
+  .policy-input:-moz-placeholder { color: #b8bdc6 }
+}
+
+.toggle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.modal-body {
+  height: auto;
+}
+
+.rule-view {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  flex-grow: 1;
+  gap: 10px;
+
+  .label {
+    color: #000;
+  }
+
+  > .input {
+    width: 50%;
+  }
+
+  > .form-control {
+    margin: 6px;
+  }
+}

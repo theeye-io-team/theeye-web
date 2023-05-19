@@ -7,6 +7,7 @@ import loggerModule from 'lib/logger'; const logger = loggerModule('router')
 
 // routes
 import AuthRoute from './auth'
+import IAMRoute from './iam'
 import UserRoute from './user'
 import CustomerRoute from './customer'
 import MemberRoute from './member'
@@ -69,6 +70,10 @@ export default Router.extend({
     },
     'help': () => {
       const route = new HelpRoute()
+      route.route('index')
+    },
+    'admin/iam': () => {
+      const route = new IAMRoute()
       route.route('index')
     },
     'admin/user': () => {

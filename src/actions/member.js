@@ -27,14 +27,15 @@ export default {
       }
     });
   },
-  updateCredential: function(member, data) {
+  updateCredential (id, data) {
     App.state.loader.visible = true
+    const member = App.state.members.get(id)
 
     member.set(data)
     member.save(data,{
       patch: true,
       collection: App.state.members,
-      success: function(result, response){
+      success (result, response) {
         App.state.loader.visible = false
         bootbox.alert({
           title: 'Success',
@@ -60,6 +61,7 @@ export default {
     data.user.email = data.email
     data.user.name = data.name
     data.user.credential = data.credential
+    data.user.policies = data.policies
     delete data.email
 
     member.set(data)
@@ -155,7 +157,6 @@ export default {
     },
     updateCredential: (id, data) => {
       App.state.loader.visible = true
-      console.log(data)
       XHR.send({
         url: `${config.api_url}/admin/member/${id}`,
         method: 'PATCH',
