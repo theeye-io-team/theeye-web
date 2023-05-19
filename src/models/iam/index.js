@@ -1,68 +1,74 @@
 import App from 'ampersand-app'
-import AmpersandState from 'ampersand-state'
 import AppModel from 'lib/app-model'
+import Collection from 'ampersand-collection'
 import AppCollection from 'lib/app-collection'
 import ClearableCollection from 'lib/clearable-collection'
-
-import Roles from './roles'
-
-const actionsUrlRoot = function () {
-  return `${App.config.api_url}/actions`
-}
+import State from 'ampersand-state'
+//const State = AmpersandState.extend({ extraProperties: 'allow' })
+import BasicRoles from './roles'
 
 /**
  *
  * actions can be built-in or re-defined to match specific access control
  *
  */
-const Action = AppModel.extend({
-  urlRoot: actionsUrlRoot,
+const Action = State.extend({
   props: {
+    service: 'string',
     name: 'string',
     method: 'string',
     path: 'string',
-    params: 'object',
-    role: 'string'
+    params: 'object'
   }
 })
 
 // this is the collection of all actions
-const ActionsCollection = AppCollection.extend({
-  url: actionsUrlRoot,
-  indexes: ['id'],
-  mainIndex: 'text',
-  model: Action
+const ActionsCollection = Collection.extend({
+  indexes: ['name'],
+  mainIndex: 'name',
+  model: Action,
+  comparator: (model) => model.name
 })
-
-const State = AmpersandState.extend({ extraProperties: 'allow' })
 
 /** 
  * this is a state, not a model.
  * there is no api endpoint available for roles yet
  */
-const Role = State.extend({
+const roleUrlRoot = function () {
+  return `${App.config.api_url}/role`
+}
+
+const Role = AppModel.extend({
+  urlRoot: roleUrlRoot,
   props: {
-    builtin: ['boolean', true, false],
+    id: 'string',
+    builtin: [ 'boolean', true, false ],
     name: 'string',
-    level: 'number',
     description: 'string',
-    id: 'string'
   },
   collections: {
     actions: ActionsCollection
   }
 })
 
-const RolesCollection = ClearableCollection.extend({
+const CredentialsCollection = ClearableCollection.extend({
   model: Role,
   initialize () {
-    this.initialState = Roles
+    this.initialState = BasicRoles
     ClearableCollection.prototype.initialize.apply(this, arguments)
-  },
-  sort: 'level'
+  }
 })
 
-const SupervisorActionsCatalog = ActionsCollection.extend({
+const RolesCollection = AppCollection.extend({ url: roleUrlRoot, model: Role })
+
+const SupervisorServicesCatalog = AppCollection.extend({
+  model: State.extend({
+    props: {
+      name: 'string',
+      actions: 'array'
+    }
+  }),
+  comparator: (model) => model.name,
   url: function () {
     return `${App.config.supervisor_api_url}/api/catalog`
   },
@@ -74,6 +80,8 @@ export {
   Action,
   ActionsCollection,
   Role,
+  CredentialsCollection,
   RolesCollection,
-  SupervisorActionsCatalog
+  SupervisorServicesCatalog,
+  //GatewayServicesCatalog
 }

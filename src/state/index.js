@@ -342,8 +342,10 @@ const _initCollections = function () {
     }
   })
 
-  this.supcatalog = new IAM.SupervisorActionsCatalog()
-  this.credentials = new IAM.RolesCollection()
+  this.supcatalog = new IAM.SupervisorServicesCatalog()
+  // legacy credentials and basic roles
+  this.credentials = new IAM.CredentialsCollection()
+  // new RBAC system & organization roles 
   this.roles = new IAM.RolesCollection()
   this.looptimes = new LooptimesCollection()
   this.severities = new SeveritiesCollection()

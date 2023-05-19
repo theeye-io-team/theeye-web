@@ -9,7 +9,9 @@ export default View.extend({
     <div class="row border social">
       <div class="col-xs-6">
         <div class="social-container">
-          <span class="circle" style="background:#073666"></span>
+          <span class="circle" style="">
+            <i class="fa fa-user-circle-o"></i>
+          </span>
           <span class="legend" data-hook="username"></span>
           <span class="legend email" data-hook="email"></span>
         </div>

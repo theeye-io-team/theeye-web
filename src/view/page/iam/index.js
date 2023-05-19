@@ -13,7 +13,7 @@ import bootbox from 'bootbox'
 import RolesTab from './roles'
 import MembersTab from './members'
 
-import './styes.less'
+import './styles.less'
 
 export default FullContainer.extend({
   template: `

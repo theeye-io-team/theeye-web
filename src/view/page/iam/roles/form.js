@@ -36,6 +36,10 @@ export default FormView.extend({
     let data = Object.assign({}, this.data)
     data.customer = App.state.session.customer.id
     return data
+  },
+  render () {
+    FormView.prototype.render.apply(this, arguments)
+    this.query('form').classList.add('form-horizontal')
   }
 })
 
@@ -47,13 +51,15 @@ const ActionsInput = View.extend({
     <div class="form-group">
       <label class="col-sm-3 control-label" data-hook="label"></label>
       <div class="col-sm-9">
+        <button data-hook="add-action" class="btn">
+          <i class="fa fa-plus"></i>Add action
+        </button>
         <div data-hook="container" class="policy-container"></div>
-        <button data-hook="add-action" class="btn">Add another action</button>
       </div>
     </div>
   `,
   events: {
-    'click [data-hook=add-action]':'addAction'
+    'click [data-hook=add-action]':'onAddAction'
   },
   props: {
     name: 'string',
@@ -108,7 +114,7 @@ const ActionsInput = View.extend({
     )
     console.log(this)
   },
-  addAction(event) {
+  onAddAction(event) {
     event.stopPropagation()
     event.preventDefault()
     this.actions.add(new Action())
@@ -123,34 +129,23 @@ const ActionView = View.extend({
     value: {
       cache: false,
       fn () {
-        if (this.serviceInput.value !== null && this.ruleInput.value !== null) {
-          return App.state
-            .rules[this.serviceInput.value]
-            .get(this.ruleInput.value)
-            .serialize()
+        return {
+          service: this.serviceInput?.value,
+          action: this.ruleInput?.value
         }
       }
     },
     valid: {
       cache: false,
-      fn() {
+      fn () {
         return (this.serviceInput.value !== null && this.ruleInput.value !== null)
       }
     }
   },
   template: `
-    <div class="action-view">
-      <div class="input" data-hook="service-input"></div>
-      <div class="input" data-hook="action-input"></div>
-    </div>
-  `,
-  inputTemplate: `
-    <div>
-      <p class="label" data-hook="label"></p>
-      <select class="form-control select" style="width:100%"></select>
-      <div data-hook="message-container" class="message message-below message-error">
-        <p data-hook="message-text"></p>
-      </div>
+    <div class="row action-view">
+      <div class="col-sm-6 input" data-hook="service-input"></div>
+      <div class="col-sm-6 input" data-hook="rule-input"></div>
     </div>
   `,
   initialize (options) {
@@ -167,16 +162,17 @@ const ActionView = View.extend({
       label: 'Service',
       required: true,
       multiple: false, 
-      options: Object.keys(App.state.supcatalog).map(r => {
-        return { id: r, text: r }
+      options: App.state.supcatalog.map(serv => {
+        return { text: ucfirst(serv.name), id: serv.name }
       }),
       value: this.model.service,
-      template: this.inputTemplate,
+      template: inputTemplate,
       styles: null,
       enabled: !this.readonly,
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label'
     })
+
     this.ruleInput = new SelectView({
       name: 'action',
       placeholder: 'Action',
@@ -184,8 +180,8 @@ const ActionView = View.extend({
       required: true,
       multiple: false,
       options: [],
-      visible: false,
-      template: this.inputTemplate,
+      //visible: false,
+      template: inputTemplate,
       styles: null,
       enabled: !this.readonly,
       invalidClass: 'text-danger',
@@ -193,26 +189,38 @@ const ActionView = View.extend({
     })
 
     this.serviceInput.on('change:value', () => {
-      this.ruleInput.options = App.state.rules[this.serviceInput.value]
-        .serialize()
-        .map(r => {
-          return { id: r.id, text: r.text }
-        })
-        if (this.ruleInput.value === null)
-          this.ruleInput.setValue(this.model.id)
-        else
-          this.ruleInput.setValue(null)
-        this.ruleInput.visible = true
+      const serviceName = this.serviceInput.value
+      const service = App.state.supcatalog
+        .models
+        .find(c => c.name === serviceName)
+
+      this.ruleInput.options = service.actions.map(a => {
+        const key = `${a.method}_${a.path}`
+        return { text: a.name || key, id: key }
+      })
+
+      if (this.ruleInput.value === null) {
+        this.ruleInput.setValue(this.model.id)
+      } else {
+        this.ruleInput.setValue(null)
+      }
+      this.ruleInput.visible = true
     })
 
-    this.renderSubview(
-      this.serviceInput,
-      this.queryByHook('service-input')
-    )
-
-    this.renderSubview(
-      this.ruleInput,
-      this.queryByHook('rule-input')
-    )
+    this.renderSubview(this.serviceInput, this.queryByHook('service-input'))
+    this.renderSubview(this.ruleInput, this.queryByHook('rule-input'))
   }
 })
+
+const inputTemplate = `
+  <div>
+    <p class="label" data-hook="label"></p>
+    <select class="form-control select" style="width:100%"></select>
+    <div data-hook="message-container" class="message message-below message-error">
+      <p data-hook="message-text"></p>
+    </div>
+  </div>
+`
+const ucfirst = (string) => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}

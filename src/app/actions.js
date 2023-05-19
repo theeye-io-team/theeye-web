@@ -29,6 +29,7 @@ import WorkflowActions from 'actions/workflow'
 import UserActions from 'actions/user'
 import OnboardingActions from 'actions/onboarding'
 import LocalSettingsActions from 'actions/local-settings'
+import RoleActions from 'actions/role'
 
 export default {
   actions: {
@@ -50,6 +51,7 @@ export default {
     onHold: OnHoldActions,
     popup: PopupActions,
     resource: ResourceActions,
+    role: RoleActions,
     scheduler: SchedulerActions,
     script: ScriptActions,
     searchbox: SearchBoxActions,

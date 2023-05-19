@@ -69,24 +69,29 @@ export default View.extend({
     this.renderSubview(toggler, this.queryByHook('toggle'))
   },
   createPolicy () {
-    const form = new Form({ model: new App.Models.IAM.Role() })
+    const form = new Form({
+      model: new App.Models.IAM.Role()
+    })
+
     const modal = new Modalizer({
       title: 'Create Role',
       bodyView: form,
       buttons: true,
       confirmButton: 'Create'
     })
+
     // this.listenTo(modal, 'shown', function () { form.focus() })
     this.listenTo(modal, 'hidden', function () {
       form.remove()
       modal.remove()
     })
+
     this.listenTo(modal, 'confirm', function () {
       form.beforeSubmit()
       if (!form.valid) return
 
-      let data = form.prepareData()
-      App.state.policies.create(data)
+      const data = form.prepareData()
+      App.actions.role.create(data)
       modal.hide()
     })
     modal.show()
