@@ -54,11 +54,13 @@ export default View.extend({
     //$alert.slideDown()
     $alert.show()
 
-    window.setTimeout(() => {
-      $alert.slideUp({
-        complete: () => $alert.trigger('closed.bs.alert')
-      })
-    }, this.timeout * 1000)
+    if (typeof this.timeout === 'number' && this.timeout !== 0) {
+      window.setTimeout(() => {
+        $alert.slideUp({
+          complete: () => $alert.trigger('closed.bs.alert')
+        })
+      }, this.timeout * 1000)
+    }
   },
   remove () {
     View.prototype.remove.call(this)
