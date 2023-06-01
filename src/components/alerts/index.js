@@ -120,6 +120,16 @@ export default State.extend({
       this.set('serverError', error)
     }
   },
+  notice (title, message, options) {
+    this._renderAlert(
+      new AlertView({
+        timeout: false,
+        title: title || undefined,
+        message: message || undefined,
+        type: 'alert-info'
+      })
+    )
+  },
   success (title, message, options) {
     this._renderAlert(
       new AlertView({
