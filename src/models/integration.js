@@ -3,6 +3,7 @@ import Collection from 'ampersand-collection'
 import State from 'ampersand-state'
 
 export const Integration = State.extend({
+  extraProperties: 'allow',
   props: {
     id: 'string',
     type: 'string',
