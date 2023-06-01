@@ -35,6 +35,16 @@ const DefaultIntegrations = {
     label: 'Enterprise Login',
     type: 'url',
     name: 'enterprise_login'
+  },
+  'digitize': {
+    label: 'Digitize',
+    name: 'digitize',
+    key: {
+      label: 'Api Key',
+      value: '',
+      required: true
+    },
+    enabled: false
   }
 }
 
@@ -198,12 +208,16 @@ const openForm = (model) => {
           required: false
         })
       } else {
+        const sets = typeof settings[name] !== 'string' ?
+          settings[name] :
+          { value: settings[name], label: name }
+
         fields.push({
           type: FieldsConstants.TYPE_INPUT,
           order: name,
-          value: settings[name],
-          label: name,
-          required: false
+          value: sets.value,
+          label: sets.label,
+          required: sets.required || false
         })
       }
     }
