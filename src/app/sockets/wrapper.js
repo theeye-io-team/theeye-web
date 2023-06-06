@@ -40,7 +40,8 @@ function SocketsWrapper (options) {
 
   // get a socket and wait connected event
   this.on('connected', () => {
-    this.autosubscribe({})
+    this.authorize()
+    //this.autosubscribe({})
   })
 
   return this
@@ -157,6 +158,20 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
     socket.emit('post:subscribe', query, function (data, jwt) {
       logger.debug(data, jwt)
       done && done(data, jwt)
+    })
+  },
+
+  authorize () {
+    let socket = this.socket
+    if (!this.connected()) {
+      throw new Error('socket is disconnected')
+    }
+
+    socket.emit('post:authorize', {}, (data) => {
+      if (data.status === 200) {
+        logger.log(`authorized %j`, data)
+        this.autosubscribe()
+      }
     })
   },
 
