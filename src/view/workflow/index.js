@@ -48,20 +48,28 @@ export default View.extend({
       this.cy = null
     }
 
-    this.renderCytoscape(redraw)
+    this.renderCytoscape()
+
+    if (redraw === true) {
+      this.recordNodesPositions()
+    } else {
+      // set stored nodes positions
+      this.setNodesPositions()
+    }
 
     this.cy.center()
     this.cy.fit()
 
     return this
   },
-  renderCytoscape (redraw) {
+  renderCytoscape () {
     if (!this.graph) {
       return this
     }
+
     const elems = this.getCytoscapeElements()
 
-    const cy = cytoscape({
+    const cy = this.cy = cytoscape({
       container: this.queryByHook('graph-container'),
       elements: elems,
       boxSelectionEnabled: false,
@@ -164,14 +172,7 @@ export default View.extend({
       }
     })
 
-    cy.on('position', (e) => this.recordPositions(e))
-
-    this.cy = cy
-    
-    if (!redraw) {
-      this.setPositions()
-    }
-    // TODO: Record default positions
+    cy.on('position', (e) => this.recordNodePosition(e))
 
     return this
   },
@@ -205,17 +206,34 @@ export default View.extend({
 
     return elems
   },
-  recordPositions (event) {
-    let data = this.graph.node(event.cyTarget.data('id'))
-    data.position = event.cyTarget.position()
-    this.graph.setNode(event.cyTarget.data('id'), data)
-  },
-  setPositions () {
+  setNodesPositions () {
     this.cy.nodes().forEach(node => {
       if (node.data('value').position) {
         node.position(node.data('value').position)
       }
     })
+  },
+  recordNodePosition (event) {
+    const position = event.cyTarget.position()
+    const nodeId = event.cyTarget.data('id')
+
+    // update node data in graph
+    const data = this.graph.node(nodeId)
+    data.position = position
+    this.graph.setNode(nodeId, data)
+  },
+  recordNodesPositions () {
+    this.cy
+      .nodes()
+      .forEach(node => {
+        const position = node.position()
+        const nodeId = node.data('id')
+
+        // update node data in graph
+        const data = this.graph.node(nodeId)
+        data.position = position
+        this.graph.setNode(nodeId, data)
+      })
   },
   setStartNode (targetNode) {
     if (this.graph.nodes().includes('START_NODE')) {

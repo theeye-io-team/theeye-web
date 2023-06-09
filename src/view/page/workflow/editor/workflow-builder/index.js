@@ -162,7 +162,7 @@ export default View.extend({
             }
           })(),
           {
-            label: 'Set starting task',
+            label: '<li class="fa fa-home"></li>&nbsp;Starting task',
             action: () => {
               this.workflow.start_task_id = task.id
             }
@@ -181,13 +181,13 @@ export default View.extend({
             }
           },
           {
-            label: 'Copy Task',
+            label: 'Copy',
             action: () => {
               this.addTaskNode(task)
             }
           },
           {
-            label: 'Connect to',
+            label: 'Connect to ...',
             action: () => {
               this.connectingTask = task
             }
@@ -203,13 +203,13 @@ export default View.extend({
 
     const menu_items = [
       {
-        label: 'Remove Connection',
+        label: 'Remove',
         action: () => {
           this.removeEdgeDialog(edge)
         }
       },
       {
-        label: 'Rename Connection',
+        label: 'Edit',
         action: () => {
           this.connectTaskNodes(edge.source, edge.target)
         }
