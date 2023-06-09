@@ -39,8 +39,12 @@ export default () => {
 
     let secondsElapsed = (new Date().getTime() - disconnectTime) / 1000
     if (secondsElapsed > 900) {
-      App.state.alerts.notice('You were offline for more than 15 minutes. Refresh the App to receive all the updates')
+      App.state.alerts.notice('You were offline for more than 15 minutes', 'Refresh the App to receive all the updates')
     }
+  })
+
+  App.sockets.on('server_disconnected', () => {
+    App.state.alerts.danger('Your are offline!', 'Connection closed by remote and must relogin', { timeout: 0 })
   })
 }
 

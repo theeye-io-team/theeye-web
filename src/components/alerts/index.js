@@ -120,46 +120,50 @@ export default State.extend({
       this.set('serverError', error)
     }
   },
-  notice (title, message, options) {
+  notice (title, message, options = {}) {
     this._renderAlert(
       new AlertView({
-        timeout: false,
+        timeout: options?.timeout,
         title: title || undefined,
         message: message || undefined,
         type: 'alert-info'
       })
     )
   },
-  success (title, message, options) {
+  success (title, message, options = {}) {
     this._renderAlert(
       new AlertView({
+        timeout: options?.timeout,
         title: title || undefined,
         message: message || undefined,
         type: 'alert-success'
       })
     )
   },
-  danger (title, message, options) {
+  danger (title, message, options = {}) {
     this._renderAlert(
       new AlertView({
+        timeout: options?.timeout,
         title: title || undefined,
         message: message || undefined,
         type: 'alert-danger'
       })
     )
   },
-  warning (title, message, options) {
+  warning (title, message, options = {}) {
     this._renderAlert(
       new AlertView({
+        timeout: options?.timeout,
         title: title || undefined,
         message: message || undefined,
         type: 'alert-warning'
       })
     )
   },
-  info (title, message, options) {
+  info (title, message, options = {}) {
     this._renderAlert(
       new AlertView({
+        timeout: options?.timeout,
         title: title || undefined,
         message: message || undefined,
         type: 'alert-info'

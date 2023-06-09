@@ -52,6 +52,7 @@ export default SocketsWrapper
 SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
   connect ({ access_token }) {
     this.access_token = access_token // set or replace
+
     if (!this.socket) {
       logger.log('connecting socket client')
       let url = this.config.url
@@ -108,6 +109,7 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
         logger.error('socket server disonnected. need to reconnect')
         // the disconnection was initiated by the server, you need to reconnect manually
         //socket.connect()
+        this.trigger('server_disconnected')
       }
       // else the socket will automatically try to reconnect
       this.trigger('disconnected', reason)
