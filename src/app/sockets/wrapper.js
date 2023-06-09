@@ -40,7 +40,8 @@ function SocketsWrapper (options) {
 
   // get a socket and wait connected event
   this.on('connected', () => {
-    this.autosubscribe({})
+    this.authorize()
+    //this.autosubscribe({})
   })
 
   return this
@@ -50,6 +51,8 @@ export default SocketsWrapper
 
 SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
   connect ({ access_token }) {
+    this.access_token = access_token // set or replace
+
     if (!this.socket) {
       logger.log('connecting socket client')
       let url = this.config.url
@@ -60,7 +63,7 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
       // Initiate a socket connection
       this.socket = io(url, {
         auth: (next) => {
-          next({ access_token })
+          next({ access_token: this.access_token })
         }
       })
       this.bindEvents()
@@ -101,16 +104,23 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
       this.trigger('connected')
     })
 
-    socket.on('disconnect', () => {
-      this.trigger('disconnected')
+    socket.on('disconnect', (reason) => {
+      if (reason === "io server disconnect") {
+        logger.error('socket server disonnected. need to reconnect')
+        // the disconnection was initiated by the server, you need to reconnect manually
+        //socket.connect()
+        this.trigger('server_disconnected')
+      }
+      // else the socket will automatically try to reconnect
+      this.trigger('disconnected', reason)
     })
 
-    socket.on('reconnecting', () => {
-      this.trigger('reconnecting')
+    socket.io.on('reconnect', (attempt) => {
+      this.trigger('reconnect', attempt)
     })
 
-    socket.on('reconnect', () => {
-      this.trigger('reconnect')
+    socket.io.on('reconnect_attempt', (attempt) => {
+      this.trigger('reconnect_attempt', attempt)
     })
 
     return this
@@ -126,6 +136,7 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
       this.trigger('disconnected')
       return
     }
+
     if (!socket.connected) {
       this.trigger('disconnected')
       return
@@ -149,6 +160,20 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
     socket.emit('post:subscribe', query, function (data, jwt) {
       logger.debug(data, jwt)
       done && done(data, jwt)
+    })
+  },
+
+  authorize () {
+    let socket = this.socket
+    if (!this.connected()) {
+      throw new Error('socket is disconnected')
+    }
+
+    socket.emit('post:authorize', {}, (data) => {
+      if (data.status === 200) {
+        logger.log(`authorized %j`, data)
+        this.autosubscribe()
+      }
     })
   },
 

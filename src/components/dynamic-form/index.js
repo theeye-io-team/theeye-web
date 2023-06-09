@@ -335,5 +335,11 @@ export default DropableForm.extend({
     //}
 
     return new SelectView(options)
+  },
+  focus () {
+    const eles = this.queryAll('.form-control')
+    if (eles.length==0) { return }
+    eles[0].autofocus = true
+    eles[0].focus()
   }
 })

@@ -37,7 +37,7 @@ export default DropableForm.extend({
 
     this.advancedFields = [
       'width','height','acl',
-      'tags','description','read_only',
+      'description','read_only',
       'value', 'failure_severity', 'order'
     ]
 
@@ -85,6 +85,13 @@ export default DropableForm.extend({
           {id: 'failure', text: 'failure'}
         ],
         value: this.model.state
+      }),
+      new TagsSelectView({
+        label: 'Tags',
+        required: false,
+        visible: true,
+        name: 'tags',
+        value: this.model.tags
       }),
       // advanced fields starts visible = false
       new AdvancedToggle({
@@ -157,13 +164,6 @@ export default DropableForm.extend({
         textAttribute: 'id',
         options: rowColsColCollection,
         value: String(this.model.height || 2)
-      }),
-      new TagsSelectView({
-        label: 'Tags',
-        required: false,
-        visible: false,
-        name: 'tags',
-        value: this.model.tags
       }),
       new MembersSelectView({
         label: 'ACL\'s',
