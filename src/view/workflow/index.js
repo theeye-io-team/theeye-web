@@ -100,6 +100,7 @@ export default View.extend({
                 defined color to render a border that looks just like the image
                 background, and is therefore unnoticeable
               */
+              const dangerColor = "#d43f3a"
               const colors = {
                 'event':        "#00CCCC",
                 'script':       "#E50580",
@@ -114,8 +115,10 @@ export default View.extend({
                 'dstat':        "#00305B",
                 'psaux':        "#000000" // This should never show up
               }
-              var node = new Node(ele.data('value'))
-              return colors[node.getFeatureType()] 
+              const node = new Node(ele.data('value'))
+              const color = colors[node.getFeatureType()] 
+
+              return color || dangerColor
             },
             'font-size': 12,
             'border-width': 2,
@@ -259,11 +262,11 @@ function Node (value) {
     const features = [
       'event', 'script', 'scraper', 'approval',
       'home', 'dummy', 'notification', 'process',
-      'webhook', 'host', 'dstat', 's', 'psaux'
+      'webhook', 'host', 'dstat', 'psaux'
     ]
 
     const found = features.find(function (f) {
-      var regexp = new RegExp(f, 'i')
+      const regexp = new RegExp(f, 'i')
       if (regexp.test(type)) return true
     })
 
@@ -280,7 +283,8 @@ function Node (value) {
   }
 
   this.getImgUrl = function () {
-    return '/images/' + (this.getFeatureType()) + '.png'
+    const type = this.getFeatureType()
+    return '/images/' + type + '.png'
   }
 
   this.getResourceUrl = function () {

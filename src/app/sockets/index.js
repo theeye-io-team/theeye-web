@@ -44,7 +44,7 @@ export default () => {
   })
 
   App.sockets.on('server_disconnected', () => {
-    App.state.alerts.danger('Your are offline!', 'Connection closed by remote and must relogin', { timeout: 0 })
+    App.state.alerts.danger('Your are offline!', 'Your session expired and must relogin', { timeout: 0 })
   })
 }
 
