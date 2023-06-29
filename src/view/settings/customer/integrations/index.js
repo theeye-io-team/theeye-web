@@ -3,11 +3,9 @@ import App from 'ampersand-app'
 import SessionActions from 'actions/session'
 import Modalizer from 'components/modalizer'
 import DynamicForm from 'components/dynamic-form'
-
+import SimpleSwitch from 'components/simple-switch'
 import { Integration } from 'models/integration'
-
 import * as FieldsConstants from 'constants/field'
-
 import UrlIntegrationForm from './form/url'
 
 const DefaultIntegrations = {
@@ -88,13 +86,13 @@ export default View.extend({
 const IntegrationView = View.extend({
   template: `
     <div class="row border">
-      <div class="col-xs-6">
+      <div class="col-xs-7">
         <span data-hook="label"></span>
       </div>
-      <div class="col-xs-4">
-        <span data-hook="enabled"></span>
-      </div>
       <div class="col-xs-2">
+        <div data-hook="enabled"></div>
+      </div>
+      <div class="col-xs-3">
         <div class="pull-right action-icons">
           <span><i class="fa fa-edit blue" data-hook="edit"></i></span>
         </div>
@@ -113,6 +111,23 @@ const IntegrationView = View.extend({
       this.updateState(App.state.session.customer.config)
     })
   },
+  render () {
+    this.renderWithTemplate()
+
+    const btn = new SimpleSwitch({ value: this.model.enabled || false })
+    btn.on('change:value', () => {
+
+      const config = this.model.serialize()
+      config.enabled = btn.value
+
+      App.actions.session.updateCustomerIntegrations({
+        integration: config.name,
+        config
+      })
+    })  
+    this.renderSubview(btn, this.queryByHook('enabled'))
+    
+  },
   updateState (state = {}) {
     let settings = {}
     if (state[this.model.name]) {
@@ -128,12 +143,12 @@ const IntegrationView = View.extend({
   //  url: 'string'
   //},
   derived: {
-    enabledText: {
-      deps: ['model.enabled'],
-      fn () {
-        return this.model.enabled ? 'Enabled' : 'Disabled'
-      }
-    },
+    //enabledText: {
+    //  deps: ['model.enabled'],
+    //  fn () {
+    //    return this.model.enabled ? 'Enabled' : 'Disabled'
+    //  }
+    //},
     activeLink: {
       deps:['model.url','model.enabled'],
       fn () {

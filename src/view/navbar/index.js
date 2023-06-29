@@ -58,7 +58,7 @@ export default View.extend({
       if (App.state.session.logged_in) {
         App.Router.navigate('dashboard')
       } else {
-        window.location.href = 'https://theeye.io'
+        window.location.href = 'https://app.theeye.io'
       }
     },
     'click [data-hook=menu-toggle]': function (event) {
@@ -91,7 +91,7 @@ export default View.extend({
   },
   updateState (state) {
     const logged_in = state.logged_in
-    if (logged_in === undefined) return
+    if (logged_in === undefined) { return }
     if (logged_in === true) {
       this.renderLoggedInComponents()
     } else {
