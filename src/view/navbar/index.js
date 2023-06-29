@@ -18,7 +18,7 @@ export default View.extend({
           <span data-hook="menu-toggle" class="eyemenu-panel-launcher burger-button">
             <i class="fa fa-bars" aria-hidden="true"></i>
           </span>
-          <a class="navbar-brand" data-hook="theeye-logo">
+          <a class="navbar-brand" data-hook="theeye-logo" style="cursor:pointer;">
             <img src="${logo}" alt="TheEye">
           </a>
           <div data-hook="buttons-container" class="navbar-buttons navbar-right"></div>
@@ -55,11 +55,7 @@ export default View.extend({
   },
   events: {
     'click a[data-hook=theeye-logo]': function (event) {
-      if (App.state.session.logged_in) {
-        App.Router.navigate('dashboard')
-      } else {
-        window.location.href = 'https://app.theeye.io'
-      }
+      App.Router.navigate('dashboard')
     },
     'click [data-hook=menu-toggle]': function (event) {
       event.preventDefault()
