@@ -13,9 +13,8 @@ export default () => {
   App.sockets = createWrapper()
 
   App.listenToAndRun(session, 'change:logged_in', () => {
-    const logged_in = session.logged_in
-    if (logged_in === undefined) { return }
-    if (logged_in === true) {
+    if (session.logged_in === undefined) { return }
+    if (session.logged_in === true) {
       App.sockets.connect({ access_token: session.access_token })
     } else {
       App.sockets.disconnect()
