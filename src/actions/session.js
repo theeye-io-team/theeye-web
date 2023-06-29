@@ -4,21 +4,43 @@ import loggerModule from 'lib/logger'; const logger = loggerModule('actions:sess
 import bootbox from 'bootbox'
 
 const actions = {
+  logoutNavigate () {
+    if (App.state.session.landing_url) {
+      window.location.href = App.state.session.landing_url
+    } else {
+      App.Router.redirectTo('login', {replace: true})
+    }
+  },
+
   logout () {
+    // disconnect socket first.
+    App.sockets.disconnect()
+
     // destroy the session, server side
-    XHR.send({
+    const request = XHR.send({
       url: `${App.config.app_url}/api/session/logout`,
       method: 'get',
       headers: {
         Accept: 'application/json;charset=UTF-8'
+      },
+      done: () => {
+        // destroy the session, client side
+        App.state.alerts.success('Logged Out.','See you soon')
+
+        this.destroyClientSession()
       }
     })
-
-    // destroy the session, client side
-    App.state.reset() // reset the application state
-    App.state.session.clear() // force session destroy
-    App.state.alerts.success('Logged Out.','See you soon')
   },
+
+  destroyClientSession () {
+    // reset the application state
+    App.state.reset()
+    // force session destroy
+    App.state.session.clear(/** silent **/true)
+    // unset
+    App.state.session.set('logged_in', false)
+  },
+
   changeCustomer (id) {
     const customer = App.state.session.customers.get(id)
     if (customer.id === App.state.session.customer.id) {
@@ -122,26 +144,6 @@ const actions = {
       }
     })
   },
-  //reFetchProfile (next) {
-  //  const sessionState = App.state.session
-  //  XHR.send({
-  //    method: 'get',
-  //    url: `${App.config.api_url}/session/profile`,
-  //    done: (profile) => {
-  //      logger.log('profile data fetch success')
-  //      sessionReset(profile)
-  //      //const customer = new App.Models.Customer.Model(profile.current_customer, { parse: true })
-  //      //sessionState.customer.set( customer.serialize() )
-  //      //sessionState.user.set(profile)
-  //      next()
-  //    },
-  //    fail: (err,xhr) => {
-  //      logger.log('user data fetch failure')
-  //      sessionEnd()
-  //      next(err)
-  //    }
-  //  })
-  //},
   getPassports () {
     XHR.send({
       url: `${App.config.api_url}/session/passports`,
@@ -221,6 +223,7 @@ const actions = {
   },
   updateCustomerIntegrations (data) {
     App.state.loader.visible = true
+
     XHR.send({
       url: `${App.config.api_url}/customer/config`,
       method: 'put',
@@ -231,8 +234,13 @@ const actions = {
       done (response, xhr) {
         App.state.loader.visible = false
         if (xhr.status == 200) {
-          bootbox.alert('Integrations updated.')
-          App.state.session.customer.config = Object.assign({}, App.state.session.customer.config, response)
+          App.state.alerts.success('Integration settings updated')
+          const config = Object.assign(
+            {},
+            App.state.session.customer.config,
+            response
+          )
+          App.state.session.customer.config = config
         } else {
           bootbox.alert('Error updating integrations.')
         }
@@ -268,8 +276,8 @@ const sessionReset = (profile) => {
 
 const sessionEnd = () => {
   const sessionState = App.state.session
-  sessionState.access_token = null
-  sessionState.logged_in = false
+  sessionState.set('logged_in', false)
+  sessionState.unset('access_token')
 }
 
 const buildExcludeMap = (exclude) => {

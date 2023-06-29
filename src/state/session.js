@@ -10,9 +10,9 @@ export default AmpersandState.extend({
     last_access: ['number', false],
     access_token: ['string', false],
     protocol: 'string',
-    //showMembersTab: true
   },
   session: {
+    landing_url: 'string',
     member_id: 'string',
     storage: 'object',
     user: ['state', false, () => {
@@ -44,13 +44,22 @@ export default AmpersandState.extend({
   },
   appInit () {
     this.storage = localforage.createInstance({
-      driver: [localforage.INDEXEDDB, localforage.WEBSQL],
+      driver: [ localforage.INDEXEDDB, localforage.WEBSQL ],
       name: 'theeye',
       storeName: 'session'
     })
 
     this.customer.on('change:name', checkLicense)
     this.on('change:logged_in', checkLicense)
+
+    this.customer.on('change:config', () => {
+      const el = this.customer.config.enterprise_login
+      if (el?.enabled===true) {
+        this.landing_url = el.url
+      } else {
+        this.landing_url = ''
+      }
+    })
 
     this.restoreFromStorage(() => {
       this.verifyAccessToken(() => {
@@ -100,12 +109,16 @@ export default AmpersandState.extend({
         next(err, {})
       })
   },
-  clear () {
-    this.unset('access_token') // this triggers session unset
-
+  clear (silent) {
     this.customers.reset()
-    this.user.clear()
-    this.customer.clear()
+    this.user.clear({silent})
+    this.customer.clear({silent})
+    // session unset events
+    this.unset('access_token', {silent})
+    this.unset('authorization', {silent})
+    this.unset('member_id', {silent})
+    //AmpersandState.prototype.clear.call(this, {silent})
+    this.persist()
   },
   /**
    * @param {Object} data
@@ -113,20 +126,22 @@ export default AmpersandState.extend({
    */
   persist (data) {
     this.last_access = Date.now()
-    if (data) this.set(data)
+    if (data) {
+      this.set(data)
+    }
+
+    const {
+      last_access,
+      access_token,
+      protocol
+    } = this.serialize()
 
     this.storage
-      .setItem('session', this.toJSON())
+      .setItem('session', { last_access, access_token, protocol })
       .catch(err => {
         console.error('ERROR %j', err)
       })
   },
-  //destroy (done) {
-  //  done || (done = ()=>{})
-  //  this.clear()
-  //  //this.persist()
-  //  return done()
-  //}
 })
 
 const isValidAccessToken = (token) => {
