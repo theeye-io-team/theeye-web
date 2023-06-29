@@ -37,7 +37,7 @@ const actions = {
     App.state.reset()
     // force session destroy
     App.state.session.clear(/** silent **/true)
-    // unset
+    // unset and trigger logged_in events flow
     App.state.session.set('logged_in', false)
   },
 
