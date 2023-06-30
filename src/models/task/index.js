@@ -34,7 +34,8 @@ const formattedTags = () => {
         (this.hostname || undefined),
         (this.canExecute ? 'valid' : 'invalid'),
         (this.hasSchedules ? 'scheduled' : undefined),
-        (this.inProgressJobs ? 'running' : undefined)
+        (this.inProgressJobs ? 'running' : undefined),
+        (this.hasTemplate ? `template ${this.template_id}` : undefined),
       ].concat(this.acl, this.tags)
     }
   }
