@@ -47,6 +47,7 @@ const MonitorView = View.extend({
 
                   <div class="col-xs-10 panel-item name">
                     <span data-hook="tags"></span>
+                    <span data-hook="badges"></span>
                     <span data-hook="name"></span>
                     <span data-hook="help"></span>
                     <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
@@ -90,6 +91,22 @@ const MonitorView = View.extend({
     hash: ['string', false, () => { return (new Date()).getTime() } ]
   },
   derived: {
+    templateBadge: {
+      deps: ['model.hasTemplate'],
+      fn () {
+        if (this.model.hasTemplate) {
+          return 'fa fa-files-o visible-badge'
+        }
+      }
+    },
+    templateBadgeTip: {
+      deps: ['model.hasTemplate'],
+      fn () {
+        if (this.model.hasTemplate) {
+          return 'This monitor is linked to a Template'
+        }
+      }
+    },
     collapse_header_id: {
       deps: ['model.id'],
       fn () {
@@ -162,6 +179,17 @@ const MonitorView = View.extend({
     },
     show: {
       type: 'toggle'
+    },
+
+    templateBadge: {
+      hook: 'badges',
+      type: 'attribute',
+      name: 'class'
+    },
+    templateBadgeTip: {
+      hook: 'badges',
+      type: 'attribute',
+      name: 'title'
     }
   },
   render () {
