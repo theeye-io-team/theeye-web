@@ -44,7 +44,7 @@ const Schema = AppModel.extend({
     show_result: 'boolean',
     user_inputs: 'boolean',
     user_inputs_members: 'array',
-    arguments_type: ['string', false],
+    arguments_type: ['string', false, TaskConstants.ARGUMENT_TYPE_LEGACY],
     allows_dynamic_settings: ['boolean', false],
     assigned_users: ['array', false, () => { return [] }],
     cancellable: ['boolean', false, true],

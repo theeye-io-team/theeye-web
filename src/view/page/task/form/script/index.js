@@ -77,7 +77,7 @@ export default TaskFormView.extend({
       'user_inputs',
       'user_inputs_members',
       'show_result',
-      'arguments_type',
+      //'arguments_type',
       'allows_dynamic_settings',
       'agent_logging'
     ]
@@ -177,16 +177,7 @@ export default TaskFormView.extend({
     // backward compatibility.
     // new task will be forbidden.
     // old tasks will only be false if it is explicitly false
-    let allowsDynamicSettings
-    let argumentsType
-    if (isNewTask) {
-      allowsDynamicSettings = false
-      //argumentsType = TaskConstants.ARGUMENT_TYPE_TEXT
-      argumentsType = TaskConstants.ARGUMENT_TYPE_LEGACY
-    } else {
-      allowsDynamicSettings = (this.model.allows_dynamic_settings !== false)
-      argumentsType = (this.model.arguments_type || TaskConstants.ARGUMENT_TYPE_LEGACY)
-    }
+    const allowsDynamicSettings = isNewTask ? false : (this.model.allows_dynamic_settings !== false)
 
     this.fields = [
       new InputView({
@@ -304,23 +295,23 @@ export default TaskFormView.extend({
       new ConstantsView({
         values: (this.model.env||{})
       }),
-      new SelectView({
-        label: 'Arguments Type (experimental)',
-        name: 'arguments_type',
-        visible: false,
-        required: false,
-        options: [
-          { id: TaskConstants.ARGUMENT_TYPE_LEGACY, value: `${TaskConstants.ARGUMENT_TYPE_LEGACY} (Deprecated)` },
-          { id: TaskConstants.ARGUMENT_TYPE_TEXT, value: `${TaskConstants.ARGUMENT_TYPE_TEXT} (Default)` },
-          { id: TaskConstants.ARGUMENT_TYPE_JSON, value: `${TaskConstants.ARGUMENT_TYPE_JSON} (SDK Default)` }
-        ],
-        value: argumentsType,
-        unselectedText: '',
-        idAttribute: 'id',
-        textAttribute: 'value',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
-      }),
+      //new SelectView({
+      //  label: 'Arguments Type (experimental)',
+      //  name: 'arguments_type',
+      //  visible: false,
+      //  required: false,
+      //  options: [
+      //    { id: TaskConstants.ARGUMENT_TYPE_LEGACY, value: `${TaskConstants.ARGUMENT_TYPE_LEGACY} (Deprecated)` },
+      //    { id: TaskConstants.ARGUMENT_TYPE_TEXT, value: `${TaskConstants.ARGUMENT_TYPE_TEXT} (Default)` },
+      //    { id: TaskConstants.ARGUMENT_TYPE_JSON, value: `${TaskConstants.ARGUMENT_TYPE_JSON} (SDK Default)` }
+      //  ],
+      //  value: argumentsType,
+      //  unselectedText: '',
+      //  idAttribute: 'id',
+      //  textAttribute: 'value',
+      //  invalidClass: 'text-danger',
+      //  validityClassSelector: '.control-label'
+      //}),
       new CheckboxView({
         required: false,
         visible: false,
@@ -385,7 +376,7 @@ export default TaskFormView.extend({
     this.addHelpIcon('user_inputs')
     this.addHelpIcon('user_inputs_members')
     this.addHelpIcon('show_result')
-    this.addHelpIcon('arguments_type')
+    //this.addHelpIcon('arguments_type')
     this.addHelpIcon('agent_logging')
 
     if (this.model.isNew()) {

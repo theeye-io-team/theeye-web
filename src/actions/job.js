@@ -439,8 +439,11 @@ const addTaskJobToState = (props) => {
 const parseArgumentsValues = (task, args) => {
   if (!args) { return [] }
 
-  // new legacy behaviour
-  if (task.arguments_type === TaskConstants.ARGUMENT_TYPE_LEGACY) {
+  // default legacy behaviour
+  if (
+    !task.arguments_type ||
+    task.arguments_type === TaskConstants.ARGUMENT_TYPE_LEGACY
+  ) {
     return args.map(arg => getValue(arg)) // API behaviour
   }
 
