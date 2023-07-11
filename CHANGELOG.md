@@ -1,8 +1,27 @@
-# CHANGELOG
+# Changelog
 
-### force build 1
-### force build 2
-### force build 3
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [3.9.0](https://github.com/theeye/theeye-web/compare/3.8.7...3.9.0) (2023-07-11)
+
+
+### Features
+
+* draggable ([#124](https://github.com/theeye/theeye-web/issues/124)) ([0ea556d](https://github.com/theeye/theeye-web/commit/0ea556d1ab9f0f95d9d73f2bbcc7f658e033fb69))
+* show tasks and monitores that belongs to template ([#139](https://github.com/theeye/theeye-web/issues/139)) ([f29fd92](https://github.com/theeye/theeye-web/commit/f29fd92ecfc0d07dbce96800564e74b3b63ef40b))
+* standard version ([0b96e46](https://github.com/theeye/theeye-web/commit/0b96e46c5b3160f9f5c0ec372c8f953234213235))
+* workflow/task constants ([#132](https://github.com/theeye/theeye-web/issues/132)) ([c8b8a35](https://github.com/theeye/theeye-web/commit/c8b8a352311b9b1795972b2e3c410e499121d875))
+
+
+### Bug Fixes
+
+* better session logout handler ([f43be13](https://github.com/theeye/theeye-web/commit/f43be13105b073b1590b283f2ebb33a5f7b28301))
+* docker repo ([8238936](https://github.com/theeye/theeye-web/commit/8238936e1de03ab2a9f1630d8b63de127800b2b4))
+* messages and styles ([#137](https://github.com/theeye/theeye-web/issues/137)) ([0c43fb9](https://github.com/theeye/theeye-web/commit/0c43fb9221a77f017f8ac8cfab9193e7681e921f))
+* rollback docker team credential ([4e1ee3f](https://github.com/theeye/theeye-web/commit/4e1ee3fcef7f798baa3cb0b2268e942ebef85d09))
+* session logout control ([#138](https://github.com/theeye/theeye-web/issues/138)) ([56f9c43](https://github.com/theeye/theeye-web/commit/56f9c43a0796a7881e5c59f37d09c1ab35d1c7f6))
+* sockets + SSO integrations initial ([#134](https://github.com/theeye/theeye-web/issues/134)) ([c29d444](https://github.com/theeye/theeye-web/commit/c29d44482d1c82042476fffa135e3615f8de58a8)), closes [#135](https://github.com/theeye/theeye-web/issues/135)
+* workflow editor remember nodes positions ([#136](https://github.com/theeye/theeye-web/issues/136)) ([3589c42](https://github.com/theeye/theeye-web/commit/3589c4218a19bb20bba61129252e39bec2dcd058))
 
 ### 0.8.2 - 2017-02-28
 
