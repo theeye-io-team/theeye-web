@@ -19,7 +19,7 @@ jobs:
         uses: docker/metadata-action@v4
         id: meta
         with:
-          images: theeyeteam/theeye-web
+          images: theeye/theeye-web
           tags: |
             type=schedule
             type=ref,event=branch
