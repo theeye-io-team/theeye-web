@@ -35,10 +35,14 @@ const actions = {
   destroyClientSession () {
     // reset the application state
     App.state.reset()
+
     // force session destroy
-    App.state.session.clear(/** silent **/true)
-    // unset and trigger logged_in events flow
-    App.state.session.set('logged_in', false)
+    App.state.session
+      .clear(/** silent **/true)
+      .then(() => {
+        // unset and trigger logged_in events flow
+        App.state.session.set('logged_in', false)
+      })
   },
 
   changeCustomer (id) {

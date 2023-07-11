@@ -95,6 +95,17 @@ export default AmpersandState.extend({
       }
     }
   },
+  clear (silent) {
+    this.customers.reset()
+    this.user.clear({silent})
+    this.customer.clear({silent})
+    // session unset events
+    this.unset('access_token', {silent})
+    this.unset('authorization', {silent})
+    this.unset('member_id', {silent})
+    //AmpersandState.prototype.clear.call(this, {silent})
+    return this.persist()
+  },
   restoreFromStorage (next) {
     return this.storage
       .getItem('session')
@@ -108,17 +119,6 @@ export default AmpersandState.extend({
         console.error('ERROR %j', err)
         next(err, {})
       })
-  },
-  clear (silent) {
-    this.customers.reset()
-    this.user.clear({silent})
-    this.customer.clear({silent})
-    // session unset events
-    this.unset('access_token', {silent})
-    this.unset('authorization', {silent})
-    this.unset('member_id', {silent})
-    //AmpersandState.prototype.clear.call(this, {silent})
-    this.persist()
   },
   /**
    * @param {Object} data
@@ -136,12 +136,13 @@ export default AmpersandState.extend({
       protocol
     } = this.serialize()
 
-    this.storage
+    return this.storage
       .setItem('session', { last_access, access_token, protocol })
       .catch(err => {
         console.error('ERROR %j', err)
+        return err
       })
-  },
+  }
 })
 
 const isValidAccessToken = (token) => {
