@@ -25,8 +25,8 @@ export default View.extend({
               <div class="panel-title-content">
 
                 <div class="panel-item name col-xs-10">
-                  <span data-hook="tags"></span>
                   <span data-hook="badges"></span>
+                  <span data-hook="tags"></span>
                   <span data-hook="name" title=""></span>
                   <span data-hook="help"></span>
                   <small> > <i data-hook="type"></i> <i data-hook="hostname"></i></small>
