@@ -29,12 +29,12 @@ jobs:
       - name: Login to DockerHub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_TEAM_USERNAME }}
-          password: ${{ secrets.DOCKER_TEAM_PASSWORD }}
-      #- name: Set APP_VERSION env
-      #  run: echo "APP_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-      #  run: echo "APP_VERSION=$(git describe)" >> $GITHUB_ENV
-      - name: Test Env
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          #- name: Set APP_VERSION env
+          #  run: echo "APP_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          #  run: echo "APP_VERSION=$(git describe)" >> $GITHUB_ENV
+      - name: Env
         run: |
           echo App Version
           echo $APP_VERSION
