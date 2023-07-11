@@ -20,14 +20,7 @@ export default View.extend({
           <div class="login-main" data-hook="login-options-container">
             <div data-hook="login-form-container">
               <h2 class="subtitle">Sign in</h2> 
-              <div class="row" data-hook="social-login-container"></div>
-              <div class="row">
-                <div class="division col-xs-12">
-                  <div class="line col-xs-4"></div>
-                  <div class="text col-xs-4">or</div>
-                  <div class="line col-xs-4"></div>
-                </div>
-              </div>
+              <div data-hook="social-login-container"></div>
               <div class="row">
                 <div class="col-xs-12">
                   <div class="form-wrapper">
@@ -257,10 +250,17 @@ const ForgotForm = FormView.extend({
 
 const GoogleLogin = View.extend({
   template: `
-    <div class="col-xs-12">
-      <button class="sign google" data-hook="google-login">
-        <i class="fa fa-google"></i> Google
-      </a>
+    <div class="row">
+      <div class="col-xs-12">
+        <button class="sign google" data-hook="google-login">
+          <i class="fa fa-google"></i> Google
+        </a>
+      </div>
+      <div class="division col-xs-12">
+        <div class="line col-xs-4"></div>
+        <div class="text col-xs-4">or</div>
+        <div class="line col-xs-4"></div>
+      </div>
     </div>
   `,
   events: {

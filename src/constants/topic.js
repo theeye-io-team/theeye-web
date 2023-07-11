@@ -2,7 +2,6 @@
 export const HOST_STATS             = 'host-stats'
 export const HOST_PROCESSES         = 'host-processes'
 export const MONITOR_STATE          = 'monitor-state'
-export const JOB_RESULT_RENDER      = 'job-result-render'
 export const HOST_INTEGRATIONS_CRUD = 'host-integrations-crud'
 export const HOST_REGISTERED        = 'host-registered'
 export const NOTIFICATION_CRUD      = 'notification-crud'
