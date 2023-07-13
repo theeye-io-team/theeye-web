@@ -24,11 +24,11 @@ const DefaultIntegrations = {
     type: 'url',
     name: 'elasticsearch'
   },
-  'netbrains': {
-    label: 'Netbraings',
-    type: 'url',
-    name: 'netbrains'
-  },
+  //'netbrains': {
+  //  label: 'Netbrains',
+  //  type: 'url',
+  //  name: 'netbrains'
+  //},
   'enterprise_login': {
     label: 'Enterprise Login',
     type: 'url',
