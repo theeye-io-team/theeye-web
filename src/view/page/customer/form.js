@@ -27,6 +27,20 @@ export default FormView.extend({
       })
     ]
 
+    if (isNew) {
+      this.fields.push(
+        new InputView({
+          name: 'name',
+          label: 'Name',
+          value: this.model.name,
+          required: false,
+          invalidClass: 'text-danger',
+          validityClassSelector: '.control-label',
+          autofocus: true
+        })
+      )
+    }
+
     FormView.prototype.initialize.apply(this, arguments)
   },
   render () {

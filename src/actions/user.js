@@ -31,8 +31,7 @@ export default {
         let user = new App.Models.User.Model(response)
         App.state.admin.users.add(user)
         App.state.alerts.info('success')
-        App.navigate('admin/member')
-        alert('This is the Members Admin Page! The new user you have created does not belong to any organization, yet. Assign it NOW or it will not be able to login!')
+        alert('The user you created does not belong to any organization. Assign it now to an organization using the members panel. Until then the user won\'t be able to login')
       },
       fail: (err,xhr) => {
         App.state.loader.visible = false
