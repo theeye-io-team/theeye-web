@@ -137,6 +137,7 @@ export default View.extend({
         const cmd = lines
           .join("\n")
           .replace('localhost:60080', 'host.docker.internal:60080')
+          .replace('127.0.0.1:60080', 'host.docker.internal:60080')
 
         return cmd
       }
