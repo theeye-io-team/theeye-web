@@ -24,8 +24,8 @@
  *
  */
 import { io } from 'socket.io-client'
-import Events from 'ampersand-events'
 import loggerModule from 'lib/logger'; const logger = loggerModule('eye::sockets')
+import Events from 'ampersand-events'
 
 function SocketsWrapper (options) {
   // only instances can extended its own prototype
@@ -66,6 +66,7 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
           next({ access_token: this.access_token })
         }
       })
+
       this.bindEvents()
     } else {
       const socket = this.socket

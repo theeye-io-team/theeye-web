@@ -15,6 +15,9 @@ export const Model = AppModel.extend({
   props: {
     id: 'string',
     name: 'string',
+    alias: 'string',
+    logo: 'string',
+    http_origins: 'array',
     display_name: 'string',
     description: 'string',
     config: ['object', false, () => { return {} }],

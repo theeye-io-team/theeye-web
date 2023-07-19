@@ -73,8 +73,8 @@ export default {
         App.state.alerts.success(`Customer ${customer.view_name} created`)
         App.state.admin.customers.add(customer)
       },
-      error: function (err) {
-        App.state.alerts.danger(`Failed to create customer ${customer.view_name}`)
+      error: function (model, resp) {
+        App.state.alerts.danger(`Failed to create customer`, resp.body?.message)
       }
     })
   },
