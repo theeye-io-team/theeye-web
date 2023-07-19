@@ -10,17 +10,26 @@ import './styles.less'
 export default InputView.extend({
   template: `
     <div>
-      <label class="col-sm-3 control-label" data-hook="label"></label>
-      <div data-hook="input-container" class="col-sm-9">
-        <input class="form-control form-input">
-        <span data-hook="mask-toggle" class="fa form-control-feedback"></span>
-        <div data-hook="message-container" class="message message-below message-error">
-          <p data-hook="message-text"></p>
+      <div>
+        <div data-hook="picker" class="col-sm-3">
+          <button class="btn btn-default"></button>
+        </div>
+      </div>
+      <div data-hook="pickable">
+        <label class="col-sm-3 control-label" data-hook="label"></label>
+        <div data-hook="input-container" class="col-sm-9">
+          <input class="form-control form-input">
+          <span data-hook="mask-toggle" class="fa form-control-feedback"></span>
+          <div data-hook="message-container" class="message message-below message-error">
+            <p data-hook="message-text"></p>
+          </div>
         </div>
       </div>
     </div>
   `,
   props: {
+    pickerText: ['string', false, 'pick one'],
+    pickable: ['boolean', false, false],
     visible: ['boolean',false,true],
     styles: ['string',false,'form-group'],
     maskToggle: ['boolean',false,true],
@@ -28,6 +37,18 @@ export default InputView.extend({
     readonly: ['boolean',false,false],
   },
   bindings: Object.assign({}, InputView.prototype.bindings, {
+    pickerText: { selector: '[data-hook=picker] button' },
+    pickable: [
+      {
+        hook: 'picker',
+        type: 'toggle'
+      },
+      {
+        hook: 'pickable',
+        type: 'toggle',
+        invert: true
+      }
+    ],
     visible: {
       type: 'toggle'
     },
@@ -61,7 +82,13 @@ export default InputView.extend({
     }
   }),
   events: {
-    'click [data-hook=mask-toggle]':'onclickMaskToggle'
+    'click [data-hook=mask-toggle]':'onclickMaskToggle',
+    'click [data-hook=picker] button':'onclickPickerButton',
+  },
+  onclickPickerButton (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.toggle('pickable')
   },
   onclickMaskToggle (event) {
     event.preventDefault()

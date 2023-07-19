@@ -1,5 +1,6 @@
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
+import SelectView from 'components/select2-view'
 
 import App from 'ampersand-app'
 
@@ -24,6 +25,34 @@ export default FormView.extend({
         required: false,
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
+      }),
+      new InputView({
+        name: 'alias',
+        label: 'Alias (unique)',
+        value: this.model.alias,
+        required: false,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+      }),
+      new InputView({
+        name: 'logo',
+        label: 'Logo URL',
+        value: this.model.logo,
+        required: false,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+      }),
+      new SelectView({
+        label: 'HTTP Origins',
+        name: 'http_origins',
+        multiple: true,
+        tags: true,
+        allowCreateTags: true,
+        value: this.model.http_origins,
+        required: false,
+        unselectedText: 'Allowed http origins',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label'
       })
     ]
 
@@ -36,7 +65,8 @@ export default FormView.extend({
           required: false,
           invalidClass: 'text-danger',
           validityClassSelector: '.control-label',
-          autofocus: true
+          pickable: true,
+          pickerText: 'Name will be autogenerate. Click to choose'
         })
       )
     }
