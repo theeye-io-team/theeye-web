@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.9.1](https://github.com/theeye/theeye-web/compare/3.9.0...3.9.1) (2023-07-19)
+
+
+### Bug Fixes
+
+* customer name opcional + error messages ([#141](https://github.com/theeye/theeye-web/issues/141)) ([970b8e2](https://github.com/theeye/theeye-web/commit/970b8e2845d4b19f021487a333c8e33ff79db59c))
+* remove netbrains from integration menu ([2121181](https://github.com/theeye/theeye-web/commit/21211814f332076d116fd50f5c052a56a2bf5584))
+
 ## [3.9.0](https://github.com/theeye/theeye-web/compare/3.8.7...3.9.0) (2023-07-11)
 
 
