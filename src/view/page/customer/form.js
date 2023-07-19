@@ -27,14 +27,6 @@ export default FormView.extend({
         validityClassSelector: '.control-label'
       }),
       new InputView({
-        name: 'alias',
-        label: 'Alias (unique)',
-        value: this.model.alias,
-        required: false,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-      }),
-      new InputView({
         name: 'logo',
         label: 'Logo URL',
         value: this.model.logo,
@@ -53,10 +45,23 @@ export default FormView.extend({
         unselectedText: 'Allowed http origins',
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
-      })
+      }),
     ]
 
     if (isNew) {
+
+      this.fields.push(
+        new InputView({
+          name: 'alias',
+          label: 'Alias (unique)',
+          value: this.model.alias,
+          required: false,
+          invalidClass: 'text-danger',
+          validityClassSelector: '.control-label',
+          pickable: true,
+          pickerText: 'Alias will be auto assigned. Click to choose'
+        })
+      )
       this.fields.push(
         new InputView({
           name: 'name',
@@ -69,7 +74,19 @@ export default FormView.extend({
           pickerText: 'Name will be autogenerate. Click to choose'
         })
       )
+    } else {
+      this.fields.push(
+        new InputView({
+          name: 'alias',
+          label: 'Alias (unique)',
+          value: this.model.alias,
+          required: false,
+          invalidClass: 'text-danger',
+          validityClassSelector: '.control-label'
+        })
+      )
     }
+
 
     FormView.prototype.initialize.apply(this, arguments)
   },

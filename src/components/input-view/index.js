@@ -11,7 +11,7 @@ export default InputView.extend({
   template: `
     <div>
       <div>
-        <div data-hook="picker" class="col-sm-3">
+        <div data-hook="picker" class="col-sm-3 col-sm-offset-3">
           <button class="btn btn-default"></button>
         </div>
       </div>
