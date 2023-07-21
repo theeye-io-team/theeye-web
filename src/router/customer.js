@@ -10,6 +10,7 @@ class Customer extends Route {
         bootbox.alert('Something goes wrong. Please refresh')
       }
     })
+
     const page = new CustomerPage({
       collection: App.state.admin.customers
     })
