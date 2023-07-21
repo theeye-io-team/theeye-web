@@ -293,6 +293,8 @@ export default TaskFormView.extend({
         value: this.model.show_result
       }),
       new ConstantsView({
+        label: 'Environment Constants',
+        visible: false,
         values: (this.model.env||{})
       }),
       //new SelectView({

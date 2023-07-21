@@ -23,7 +23,8 @@ export const Model = AppModel.extend({
     config: ['object', false, () => { return {} }],
     //config: 'state',
     creation_date: 'date',
-    last_update: 'date'
+    last_update: 'date',
+    tags: ['array', false, () => { return [] }],
   },
   collections: {
     tokens: function (models, options) {

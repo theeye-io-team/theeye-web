@@ -1,6 +1,8 @@
 import FormView from 'ampersand-form-view'
 import InputView from 'components/input-view'
 import SelectView from 'components/select2-view'
+import TagsSelectView from 'view/tags-select'
+import ConstantsView from 'view/constants'
 
 import App from 'ampersand-app'
 
@@ -46,6 +48,14 @@ export default FormView.extend({
         invalidClass: 'text-danger',
         validityClassSelector: '.control-label'
       }),
+      new ConstantsView({
+        outputFormat: 'array',
+        name: 'tags',
+        copyButton: false,
+        exportButton: false,
+        label: 'Tags',
+        values: this.model.tags
+      })
     ]
 
     if (isNew) {

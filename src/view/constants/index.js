@@ -37,22 +37,21 @@ export default View.extend({
   template: `
     <div class="form-group" data-component="constants-view-component">
       <label class="col-sm-3 control-label" data-hook="label">
-        Environment Constants
       </label>
       <div class="col-sm-9">
         <div>
           <button data-hook="add" class="btn btn-default">
-            Add new constant <i class="fa fa-plus"></i>
+            Add <i class="fa fa-plus"></i>
           </button>
           <button data-hook="copy"
             title="copy contants"
             class="btn btn-default">
-              Copy from task <i class="fa fa-copy"></i>
+              Copy <i class="fa fa-copy"></i>
           </button>
           <button data-hook="export"
             title="export constants"
             class="btn btn-default">
-              Export to File <i class="fa fa-download"></i>
+              Export <i class="fa fa-download"></i>
           </button>
           <ul data-hook="list-group" class="list-group"></ul>
         </div>
@@ -60,12 +59,16 @@ export default View.extend({
     </div>
   `,
   props: {
+    outputFormat: ['string', false, 'object'],
+    label: ['string',false,'constants'],
     name: ['string',false,'env'],
     required: ['boolean', false, false],
-    visible: ['boolean', false, false],
+    visible: ['boolean', false, true],
     values: ['object', true, () => { return {} }],
     validValues: ['boolean', false],
-    variablesLength: ['number', false, 0]
+    variablesLength: ['number', false, 0],
+    copyButton: ['boolean', false, true],
+    exportButton: ['boolean', false, true],
   },
   collections: {
     constants: ConstantsCollection
@@ -78,6 +81,7 @@ export default View.extend({
     this.constants.on('add remove reset sync', () => {
       this.variablesLength = this.constants.length
     })
+    this.variablesLength = this.constants.length
   },
   derived: {
     hasVariables: {
@@ -89,15 +93,21 @@ export default View.extend({
     value: {
       cache: false,
       fn () {
-        const value = {}
+        const values = (this.outputFormat === 'array') ? [] : {}
 
         this.variableViews
           .views
           .forEach(v => {
-            value[v.key] = v.label
+            if (Array.isArray(values)) {
+              const elem = {}
+              elem[v.key] = v.label
+              values.push(elem)
+            } else {
+              values[v.key] = v.label
+            }
           })
 
-        return value
+        return values
       }
     },
     valid: {
@@ -108,16 +118,31 @@ export default View.extend({
     }
   },
   bindings: {
+    hasVariables: {
+      hook: 'list-group',
+      type: 'toggle',
+    },
+    copyButton: {
+      hook: 'copy',
+      type: 'toggle',
+    },
+    exportButton: {
+      hook: 'export',
+      type: 'toggle',
+    },
+    label: {
+      hook: 'label'
+    },
     visible: {
       type: 'toggle'
     }
   },
   events: {
-    'click [data-hook=add]': 'onClickAddButton',
-    'click [data-hook=copy]': 'onClickCopyFromTaskButton',
+    'click [data-hook=add]': 'onClickAdd',
+    'click [data-hook=copy]': 'onClickCopyFrom',
     'click [data-hook=export]': 'onClickExport',
   },
-  onClickAddButton (event) {
+  onClickAdd (event) {
     event.preventDefault()
     event.stopPropagation()
 
@@ -141,7 +166,7 @@ export default View.extend({
     const fileName = this.parent.model?.name?.replace(/ /g, '_')
     FileSaver.saveAs(blob, `${fileName}.env`)
   },
-  onClickCopyFromTaskButton (event) {
+  onClickCopyFrom (event) {
     event.preventDefault()
     event.stopPropagation()
 
@@ -170,8 +195,26 @@ export default View.extend({
     modal.show()
     return false
   },
-  setValue (value) {
-    this.constants.reset(value)
+  setValue (values) {
+
+    // need an object with key , values
+    if (this.outputFormat === 'array') {
+      // we need to remap the array of maps into a map
+      const vmap = {}
+      values.forEach((el, index) => {
+        if (typeof el === 'string') {
+          vmap[index] = el
+        } else {
+          for (let key in el) {
+            vmap[key] = el[key]
+          }
+        }
+      })
+
+      this.constants.reset(vmap)
+    } else {
+      this.constants.reset(values)
+    }
   },
   render () {
     this.renderWithTemplate(this)
@@ -213,10 +256,10 @@ const EnvVarView = View.extend({
       <div class="row">
         <span class="col-xs-5" data-hook="key"> </span>
         <span class="col-xs-5" data-hook="label"> </span>
-        <span class="col-xs-2">
-          <span class="btn" data-hook="remove-option">
-            <i class="fa fa-remove"></i>
-          </span>
+        <span class="col-xs-2 form-group">
+          <button data-hook="remove-option" class="btn btn-default">
+            Remove
+          </button>
         </span>
       </div>
     </li>
@@ -248,7 +291,12 @@ const EnvVarView = View.extend({
     valid: {
       deps: ['key', 'label'],
       fn () {
-        return Boolean(this.key && this.label)
+        return (
+          this.key !== '' &&
+          this.label !== '' &&
+          this.key !== undefined &&
+          this.label !== undefined
+        )
       }
     }
   },
