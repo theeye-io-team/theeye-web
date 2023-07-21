@@ -43,6 +43,9 @@ export default FormView.extend({
         tags: true,
         allowCreateTags: true,
         value: this.model.http_origins,
+        options: this.model.http_origins.map(el => {
+          return { id: el, text: el }
+        }),
         required: false,
         unselectedText: 'Allowed http origins',
         invalidClass: 'text-danger',
