@@ -93,7 +93,7 @@ export default FormView.extend({
           name: 'alias',
           label: 'Alias (unique)',
           value: this.model.alias,
-          required: false,
+          required: true,
           invalidClass: 'text-danger',
           validityClassSelector: '.control-label'
         })
