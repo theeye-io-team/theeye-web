@@ -100,7 +100,8 @@ export default View.extend({
           .forEach(v => {
             if (Array.isArray(values)) {
               const elem = {}
-              elem[v.key] = v.label
+              elem.k = v.key
+              elem.v = v.label
               values.push(elem)
             } else {
               values[v.key] = v.label
@@ -196,7 +197,6 @@ export default View.extend({
     return false
   },
   setValue (values) {
-
     // need an object with key , values
     if (this.outputFormat === 'array') {
       // we need to remap the array of maps into a map
@@ -205,9 +205,8 @@ export default View.extend({
         if (typeof el === 'string') {
           vmap[index] = el
         } else {
-          for (let key in el) {
-            vmap[key] = el[key]
-          }
+          // is an object
+          vmap[el.k] = el.v
         }
       })
 
