@@ -19,17 +19,24 @@ const ConstantsCollection = Collection.extend({
   }),
   /**
    * Convert an Object of { key: value } into and Array [ { key, value } ]
+   *
    * @param {Object} models
    */
   reset (models) {
     const values = []
-    for (let key in models) {
-      const elem = {}
-      elem["key"] = key
-      elem["value"] = models[key]
-      values.push(elem)
+    if (Array.isArray(models)) {
+      return Collection.prototype.reset.call(this, models)
+    } else {
+      // remap into array
+      for (let key in models) {
+        const elem = {}
+        elem["key"] = key
+        elem["value"] = models[key]
+        values.push(elem)
+      }
+
+      return Collection.prototype.reset.call(this, values)
     }
-    return Collection.prototype.reset.call(this, values)
   }
 })
 
@@ -200,13 +207,13 @@ export default View.extend({
     // need an object with key , values
     if (this.outputFormat === 'array') {
       // we need to remap the array of maps into a map
-      const vmap = {}
+      const vmap = []
       values.forEach((el, index) => {
         if (typeof el === 'string') {
-          vmap[index] = el
+          vmap.push({ id: index, key: index, value: el })
         } else {
-          // is an object
-          vmap[el.k] = el.v
+          // internal key, value representation
+          vmap.push({ id: index, key: el.k, value: el.v })
         }
       })
 
