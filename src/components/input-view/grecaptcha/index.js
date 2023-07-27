@@ -7,8 +7,8 @@ const logger = loggerModule('components:input:grecaptcha')
 let grecaptcha
 try {
   if (
-    config.components.grecaptcha.enabled === false ||
-    config.components.grecaptcha.disabled === true
+    App.config.components.grecaptcha.enabled === false ||
+    App.config.components.grecaptcha.disabled === true
   ) {
     throw new Error('grecaptcha disabled by config.')
   }
