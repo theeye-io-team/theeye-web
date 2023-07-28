@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.10.0](https://github.com/theeye/theeye-web/compare/3.9.1...3.10.0) (2023-07-28)
+
+
+### Features
+
+* user, members and customers with key:value tags ([#142](https://github.com/theeye/theeye-web/issues/142)) ([89562e8](https://github.com/theeye/theeye-web/commit/89562e89c6edb1018968bdb17b3faf1494cd7ea2))
+
+
+### Bug Fixes
+
+* **constants:** { id, key, value } tuple ([#146](https://github.com/theeye/theeye-web/issues/146)) ([a03c441](https://github.com/theeye/theeye-web/commit/a03c441deeb9baf7c7e18c62ffb6c13488b7ddfe))
+* default values. ([#144](https://github.com/theeye/theeye-web/issues/144)) ([f5b9d03](https://github.com/theeye/theeye-web/commit/f5b9d031e8b8744d20e1c0cb16992125c8293244))
+* **member:** message. bootbox removed ([f14d7cd](https://github.com/theeye/theeye-web/commit/f14d7cd22cf98a4cfb723cc0a8e5da2071b6aeea))
+* origins options ([#143](https://github.com/theeye/theeye-web/issues/143)) ([13e69d6](https://github.com/theeye/theeye-web/commit/13e69d6238fb7fb81516ecc750d8a3ef0389085a))
+
 ### [3.9.1](https://github.com/theeye/theeye-web/compare/3.9.0...3.9.1) (2023-07-19)
 
 
