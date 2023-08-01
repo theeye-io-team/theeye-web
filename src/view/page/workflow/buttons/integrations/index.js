@@ -13,7 +13,7 @@ import hljs from 'highlight.js'
 import bash from 'highlight.js/lib/languages/bash'
 hljs.registerLanguage('bash', bash)
 
-const docsLink = 'integrations/api/api_resources_task/#2-using-the-task-secret-key-40recommended41'
+const docsLink = ''
 
 export default PanelButton.extend({
   initialize (options) {
@@ -52,7 +52,7 @@ const CredentialsView = View.extend({
 			<div class="form-group">
 		  	<label>Integration ID (Workflow ID)</label>
         <div class="input-group">
-      	  <input class="form-control form-input blurry-text" id="integrationId" readonly type="text" data-hook="id" value="">
+      	  <input class="form-control form-input " id="integrationId" readonly type="text" data-hook="id" value="">
           <span class="input-group-btn">
             <button class="btn btn-primary" type="button" data-clipboard-target="#integrationId">
               <span class="fa fa-copy" alt="copy to clipboard"></span>
@@ -63,7 +63,7 @@ const CredentialsView = View.extend({
 			<div class="form-group">
 		  	<label>Integration Secret</label>
         <div class="input-group">
-      	  <input class="form-control form-input blurry-text" id="integrationSecret" readonly type="text" data-hook="secret" value="">
+      	  <input class="form-control form-input " id="integrationSecret" readonly type="text" data-hook="secret" value="">
           <span class="input-group-btn">
             <button class="btn btn-primary" type="button" data-clipboard-target="#integrationSecret">
               <span class="fa fa-copy" alt="copy to clipboard"></span>
@@ -71,29 +71,45 @@ const CredentialsView = View.extend({
           </span>
 			  </div>
 			</div>
+			<div class="form-group">
+		  	<label>Full URL</label>
+        <div class="input-group">
+      	  <input class="form-control form-input" id="api_url" readonly type="text" data-hook="api_url" value="">
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" data-clipboard-target="#api_url">
+              <span class="fa fa-copy" alt="copy to clipboard"></span>
+            </button>
+          </span>
+			  </div>
+			</div>
       <div class="form-group">
-        <a class="toggle" href="javascript:void(0)" data-hook="toggle-trigger">sample curl</a>
-      </div>
-      <div class="hidden-data form-group" data-hook="toggle-target">
-        <label>curl sample using unix shell</label>
-        <pre data-hook="sample-code">
-          <code class="bash">
-workflow="<span data-hook="workflow_id"></span>"
-secret="<span data-hook="workflow_secret"></span>"
+        <ul class="nav nav-tabs" href="javascript:void(0)">
+          <li role="presentation" class="active">
+            <a style="cursor:pointer;" data-hook="toggle-trigger" href="#">Shell Curl</a>
+          </li>
+        </ul>
+
+        <div class="hidden-data form-group" data-hook="toggle-target">
+          <label>curl sample using unix shell</label>
+          <pre data-hook="sample-code">
+            <code class="bash">
 <span data-hook="args-vars"></span>
 
-curl -i -sS -X POST "${config.supervisor_api_url}/workflows/\$\{workflow\}/secret/\$\{secret\}/job" \\
+curl -i -sS -X POST '<span data-hook="curl_api_url"></span>' \\
   --header 'Content-Type: application/json' \\
   --data '{"task_arguments":[<span data-hook="task_args"></span>]}'
-          </code>
-        </pre>
-        <a href="${config.docs}/${docsLink}" target="_blank">Find more info in the docs</a>
+           </code>
+          </pre>
+          <a href="${config.docs}/${docsLink}" target="_blank">Find more info in the docs</a>
+        </div>
+
       </div>
     </div>
   `,
   props: {
     id: 'string',
     secret: 'string',
+    url: 'string',
     customer: 'string',
     args: 'string',
     argsVar: 'string'
@@ -104,6 +120,7 @@ curl -i -sS -X POST "${config.supervisor_api_url}/workflows/\$\{workflow\}/secre
     this.customer = App.state.session.customer.name
     this.id = ''
     this.secret = ''
+    this.url = ''
     this.args = ''
     this.argsVars = ''
 
@@ -121,6 +138,7 @@ curl -i -sS -X POST "${config.supervisor_api_url}/workflows/\$\{workflow\}/secre
 
     this.clipId = new Clipboard( this.query('[data-hook=id]') )
     this.clipSecret = new Clipboard( this.query('[data-hook=secret]') )
+    this.clipURL = new Clipboard( this.query('[data-hook=api_url]') )
   },
   events: {
     'click [data-hook=toggle-trigger]':'onClickToggle'
@@ -139,6 +157,8 @@ curl -i -sS -X POST "${config.supervisor_api_url}/workflows/\$\{workflow\}/secre
     ) {
       this.id = credentials.id
       this.secret = credentials.secret
+
+      this.url = `${config.supervisor_api_url}/workflow/${this.id}/secret/${this.secret}/job`
     }
 
     if (this.model.start_task.task_arguments.models.length > 0) {
@@ -160,15 +180,18 @@ curl -i -sS -X POST "${config.supervisor_api_url}/workflows/\$\{workflow\}/secre
       hook: 'id',
       type: 'attribute',
       name: 'value'
-    },{
-      hook: 'workflow_id'
     }],
     secret: [{
       hook: 'secret',
       type: 'attribute',
       name: 'value'
+    }],
+    url: [{
+      hook: 'api_url',
+      type: 'attribute',
+      name: 'value'
     },{
-      hook: 'workflow_secret'
+      hook: 'curl_api_url'
     }],
     customer: {
       hook: 'workflow_customer'
