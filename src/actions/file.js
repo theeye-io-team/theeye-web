@@ -58,7 +58,13 @@ export default {
   update (id, data, next) {
     let formData = new FormData()
 
-    formData.append('acl', data.acl)
+    //if (Array.isArray(data.acl)) {
+    //  for (let i=0; i<data.acl.length; i++) {
+    //    formData.append('acl[]', data.acl[i])
+    //  }
+    //}
+    formData.append('acl', JSON.stringify(data.acl))
+
     formData.append('filename', data.filename)
     formData.append('description', data.description)
     formData.append('extension', data.filename.split('.').pop())
