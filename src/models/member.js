@@ -40,6 +40,12 @@ export const Model = BaseModel.extend({
         return this.user.email
       }
     },
+    key: {
+      deps: ['user'],
+      fn () {
+        return this.user.email
+      }
+    },
     username: {
       deps: ['user'],
       fn () {

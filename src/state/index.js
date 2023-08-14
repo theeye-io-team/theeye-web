@@ -126,12 +126,48 @@ const RunnersCollection = ClearCollection.extend({
 const CredentialsCollection = ClearCollection.extend({
   initialize () {
     this.initialState = [
-      { order: 1, id: 'viewer', name: 'viewer', description: 'Viewer' },
-      { order: 2, id: 'user', name: 'user', description: 'User' },
-      { order: 3, id: 'manager', name: 'manager', description: 'Manager' },
-      { order: 4, id: 'admin', name: 'admin', description: 'Admin' },
-      { order: 5, id: 'owner', name: 'owner', description: 'Owner' }
+      {
+        order: 1,
+        id: 'viewer',
+        name: 'viewer',
+        description: 'Viewer',
+        label: 'Viewers Group',
+        key: 'viewer'
+      },
+      {
+        order: 2,
+        id: 'user',
+        name: 'user',
+        description: 'User',
+        label: 'Users Group',
+        key: 'user'
+      },
+      {
+        order: 3,
+        id: 'manager',
+        name: 'manager',
+        description: 'Manager',
+        label: 'Managers Group',
+        key: 'manager'
+      },
+      {
+        order: 4,
+        id: 'admin',
+        name: 'admin',
+        description: 'Admin',
+        label: 'Admins Group',
+        key: 'admin'
+      },
+      {
+        order: 5,
+        id: 'owner',
+        name: 'owner',
+        description: 'Owner',
+        label: 'Owners Group',
+        key: 'owner'
+      }
     ]
+
     ClearCollection.prototype.initialize.apply(this, arguments)
   }
 })
