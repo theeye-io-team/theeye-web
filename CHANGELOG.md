@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.11.0](https://github.com/theeye/theeye-web/compare/3.10.0...3.11.0) (2023-08-15)
+
+
+### Features
+
+* improved integration api keys dialog ([952dd86](https://github.com/theeye/theeye-web/commit/952dd86f418f530347c6bd52d158db4ae7a0e60d))
+
+
+### Bug Fixes
+
+* bug grecaptcha disable via config ([#145](https://github.com/theeye/theeye-web/issues/145)) ([4dff116](https://github.com/theeye/theeye-web/commit/4dff116c5e585322d5e3930b29f23ebf29a5fa7d))
+* **file:** acl update multipart not supported. ([#148](https://github.com/theeye/theeye-web/issues/148)) ([0706962](https://github.com/theeye/theeye-web/commit/0706962ccafe3e39c8570cd525bd3523f0e1cdb0))
+
 ## [3.10.0](https://github.com/theeye/theeye-web/compare/3.9.1...3.10.0) (2023-07-28)
 
 
