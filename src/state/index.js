@@ -280,9 +280,12 @@ const AppState = State.extend({
     this.credentials.on('reset',() => {
       if (this.session.user.credential === 'root') {
         this.credentials.add({
+          order: 6,
           id: 'root',
           name: 'root',
-          description: 'Root'
+          description: 'Root',
+          label: 'Roots Group',
+          key: 'root'
         })
       }
     })
