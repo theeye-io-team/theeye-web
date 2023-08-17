@@ -31,16 +31,19 @@ export default SelectView.extend({
 
     this.options = new Collection([])
     this.options.add(App.state.members.models)
-    this.options.add(App.state.credentials.models)
-    //this.options.add(App.state.extendedTags.tags.models.filter(m => /.*:.*/.test(m.name) ))
 
-    if (Array.isArray(specs.value) && specs.value.length>0) {
-      for (let i = 0; i < specs.value.length; i++) {
-        const val = specs.value[i]
+    if (!specs.onlyUsers) {
+      this.options.add(App.state.credentials.models)
+      //this.options.add(App.state.extendedTags.tags.models.filter(m => /.*:.*/.test(m.name) ))
+
+      if (Array.isArray(specs.value) && specs.value.length>0) {
+        for (let i = 0; i < specs.value.length; i++) {
+          const val = specs.value[i]
+          this.setOptionValue(val)
+        }
+      } else if (!Array.isArray(specs.value) && specs.value) { // single value
         this.setOptionValue(val)
       }
-    } else if (!Array.isArray(specs.value) && specs.value) { // single value
-        this.setOptionValue(val)
     }
 
     SelectView.prototype.initialize.apply(this,arguments)

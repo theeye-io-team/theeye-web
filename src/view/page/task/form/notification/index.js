@@ -64,6 +64,7 @@ export default TaskFormView.extend({
         value: this.model.body
       }),
       new MembersSelectView({
+        onlyUsers: true,
         required: true,
         visible: true,
         name: 'recipients',
