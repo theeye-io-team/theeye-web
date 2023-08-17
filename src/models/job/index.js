@@ -273,11 +273,12 @@ const BaseJob = AppModel.extend({
             return 'fa fa-clock-o remark-alert'
           }
 
-          if (
-            state === StateConstants.FAILURE ||
-            state === StateConstants.CANCELED
-          ) {
+          if (state === StateConstants.FAILURE) {
             return 'fa fa-exclamation remark-alert'
+          }
+
+          if (state === StateConstants.CANCELED) {
+            return 'fa fa-cancel remark-alert'
           }
 
           if (state === StateConstants.ERROR) {
@@ -296,6 +297,14 @@ const BaseJob = AppModel.extend({
           lifecycle === LifecycleConstants.ASSIGNED
         ) {
           return 'fa fa-stop remark-alert'
+        }
+
+        if (lifecycle === LifecycleConstants.SYNCING) {
+          return 'fa fa-pause'
+        }
+
+        if (lifecycle === LifecycleConstants.LOCKED) {
+          return 'fa fa-lock'
         }
 
         return 'fa fa-play'
