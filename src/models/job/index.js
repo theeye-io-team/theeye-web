@@ -278,7 +278,7 @@ const BaseJob = AppModel.extend({
           }
 
           if (state === StateConstants.CANCELED) {
-            return 'fa fa-cancel remark-alert'
+            return 'fa fa-ban remark-alert'
           }
 
           if (state === StateConstants.ERROR) {
