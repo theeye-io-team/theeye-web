@@ -5,14 +5,19 @@
  * https://en.wikipedia.org/wiki/Task_management
  *
  **/
-export const READY = 'ready'
+// IN PROGRESS LIFECYCLE
 export const ASSIGNED = 'assigned'
+export const LOCKED = 'locked'
 export const ONHOLD = 'onhold'
+export const READY = 'ready'
+export const SYNCING = 'syncing'
+
+// FINISHED LIFECYCLE
+export const CANCELED = 'canceled'
+export const COMPLETED = 'completed'
+export const EXPIRED = 'expired'
 export const FINISHED = 'finished'
 export const TERMINATED = 'terminated'
-export const CANCELED = 'canceled'
-export const EXPIRED = 'expired'
-export const COMPLETED = 'completed'
 
 export const inProgress = (lifecycle) => {
   if (!lifecycle) return false
