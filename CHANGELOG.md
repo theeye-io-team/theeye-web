@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.11.1](https://github.com/theeye/theeye-web/compare/3.11.0...3.11.1) (2023-08-18)
+
+
+### Bug Fixes
+
+* missing lifecycles icons ([#151](https://github.com/theeye/theeye-web/issues/151)) ([70bdec5](https://github.com/theeye/theeye-web/commit/70bdec52761b62243b64002bed06e77a6608cee1))
+
 ## [3.11.0](https://github.com/theeye/theeye-web/compare/3.10.0...3.11.0) (2023-08-15)
 
 
