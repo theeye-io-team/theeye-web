@@ -92,6 +92,12 @@ export default DropableFormView.extend({
         name: 'allows_dynamic_settings',
         value: allowsDynamicSettings
       }),
+      new CheckboxView({
+        required: false,
+        label: 'Multitasking',
+        name: 'multitasking',
+        value: workflow.multitasking
+      }),
       new ConstantsView({
         name: 'global_constants',
         visible: true,
