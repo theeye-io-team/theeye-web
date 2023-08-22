@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.12.0](https://github.com/theeye/theeye-web/compare/3.11.1...3.12.0) (2023-08-22)
+
+
+### Features
+
+* workflow multitasking control checkbox ([#152](https://github.com/theeye/theeye-web/issues/152)) ([defd55e](https://github.com/theeye/theeye-web/commit/defd55e92195d79da1b6a3a36d383391f9279639))
+
 ### [3.11.1](https://github.com/theeye/theeye-web/compare/3.11.0...3.11.1) (2023-08-18)
 
 
