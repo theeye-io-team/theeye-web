@@ -158,7 +158,7 @@ curl -i -sS -X POST '<span data-hook="curl_api_url"></span>' \\
       this.id = credentials.id
       this.secret = credentials.secret
 
-      this.url = `${config.supervisor_api_url}/workflow/${this.id}/secret/${this.secret}/job`
+      this.url = `${config.supervisor_api_url}/workflows/${this.id}/secret/${this.secret}/job`
     }
 
     if (this.model.start_task.task_arguments.models.length > 0) {
