@@ -8,6 +8,7 @@ import 'highlight.js/styles/github.css'
 import Clipboard from 'clipboard'
 import config from 'config'
 import Titles from 'language/titles'
+import qs from 'qs'
 
 import hljs from 'highlight.js'
 import bash from 'highlight.js/lib/languages/bash'
@@ -54,7 +55,7 @@ const CredentialsView = View.extend({
         <div class="input-group">
       	  <input class="form-control form-input " id="integrationId" readonly type="text" data-hook="id" value="">
           <span class="input-group-btn">
-            <button class="btn btn-primary" type="button" data-clipboard-target="#integrationId">
+            <button class="btn btn-primary" type="button" data-hook="copy_id">
               <span class="fa fa-copy" alt="copy to clipboard"></span>
             </button>
           </span>
@@ -65,7 +66,7 @@ const CredentialsView = View.extend({
         <div class="input-group">
       	  <input class="form-control form-input " id="integrationSecret" readonly type="text" data-hook="secret" value="">
           <span class="input-group-btn">
-            <button class="btn btn-primary" type="button" data-clipboard-target="#integrationSecret">
+            <button class="btn btn-primary" type="button" data-hook="copy_secret">
               <span class="fa fa-copy" alt="copy to clipboard"></span>
             </button>
           </span>
@@ -75,17 +76,34 @@ const CredentialsView = View.extend({
 		  	<label>Full URL</label>
         <div class="input-group">
       	  <input class="form-control form-input" id="api_url" readonly type="text" data-hook="api_url" value="">
+
+          <!--<span class="input-group-btn">
+            <button class="btn btn-default" style="border-radius:0;" data-hook="sync-toggle">
+              <label style="margin: 0px;" >Async</label>
+            </button>
+          </span>-->
+
           <span class="input-group-btn">
-            <button class="btn btn-primary" type="button" data-clipboard-target="#api_url">
+            <button class="btn btn-default" style="border-radius:0;" data-hook="secret-toggle">
+              <label style="margin: 0px;" >Secret</label>
+            </button>
+          </span>
+
+          <span class="input-group-btn">
+            <button class="btn btn-primary" type="button" data-hook="copy_url">
               <span class="fa fa-copy" alt="copy to clipboard"></span>
             </button>
           </span>
 			  </div>
 			</div>
       <div class="form-group">
-        <ul class="nav nav-tabs" href="javascript:void(0)">
+        <ul class="nav nav-pills" href="javascript:void(0)">
           <li role="presentation" class="active">
-            <a style="cursor:pointer;" data-hook="toggle-trigger" href="#">Shell Curl</a>
+            <a style="cursor:pointer;padding: 7px 15px;"
+              data-hook="toggle-trigger"
+              href="#">
+              Shell Curl
+            </a>
           </li>
         </ul>
 
@@ -112,7 +130,9 @@ curl -i -sS -X POST '<span data-hook="curl_api_url"></span>' \\
     url: 'string',
     customer: 'string',
     args: 'string',
-    argsVar: 'string'
+    argsVar: 'string',
+    //syncToggle: ['boolean', false, false], // not support yet
+    secretToggle: ['boolean', false, true]
   },
   initialize () {
     View.prototype.initialize.apply(this, arguments)
@@ -129,6 +149,8 @@ curl -i -sS -X POST '<span data-hook="curl_api_url"></span>' \\
       'change:credentials change:task_arguments',
       this.updateState
     )
+
+    this.on('change:syncToggle change:secretToggle', this.updateState)
   },
   render () {
     View.prototype.render.apply(this,arguments)
@@ -136,30 +158,59 @@ curl -i -sS -X POST '<span data-hook="curl_api_url"></span>' \\
     let el = this.el.querySelector('[data-hook=sample-code]')
     hljs.highlightElement(el, {language: 'bash'})
 
-    this.clipId = new Clipboard( this.query('[data-hook=id]') )
-    this.clipSecret = new Clipboard( this.query('[data-hook=secret]') )
-    this.clipURL = new Clipboard( this.query('[data-hook=api_url]') )
+    this.configureClipboards()
   },
-  events: {
-    'click [data-hook=toggle-trigger]':'onClickToggle'
+  configureClipboards () {
+    $(this.el).on('shown.bs.tooltip', function (e) {
+      setTimeout(function () {
+        $(e.target).tooltip('hide')
+      }, 2000)
+    })
+
+    const copyTooltip = (e) => {
+      $(e.trigger)
+        .attr('data-original-title', 'Copied!')
+        .tooltip('show')
+    }
+
+    const idel = this.query('[data-hook=copy_id]')
+    $(idel).tooltip({ trigger: 'click', placement: 'bottom' })
+    this.clipId = new Clipboard(idel, { text: () => this.id })
+    this.clipId.on('success', copyTooltip)
+
+    const secretel = this.query('[data-hook=copy_secret]')
+    $(secretel).tooltip({ trigger: 'click', placement: 'bottom' })
+    this.clipSecret = new Clipboard(secretel, { text: () => this.secret })
+    this.clipSecret.on('success', copyTooltip)
+
+    const urlel = this.query('[data-hook=copy_url]')
+    $(urlel).tooltip({ trigger: 'click', placement: 'bottom' })
+    this.clipURL = new Clipboard(urlel, { text: () => this.url })
+    this.clipURL.on('success', copyTooltip)
   },
   onClickToggle () {
     this.el.querySelector('.hidden-data').classList.toggle('visible')
   },
   updateState () {
     let credentials = this.model.credentials
+    this.id = credentials?.id
+    this.secret = credentials?.secret
 
-    if (
-      credentials &&
-      typeof credentials == 'object' &&
-      credentials.hasOwnProperty('id') &&
-      credentials.hasOwnProperty('secret')
-    ) {
-      this.id = credentials.id
-      this.secret = credentials.secret
+    const baseUrl = `${config.supervisor_api_url}/workflows/${this.id}`
+    const query = { }
 
-      this.url = `${config.supervisor_api_url}/workflows/${this.id}/secret/${this.secret}/job`
+    if (this.secretToggle === true) {
+      this.url = `${baseUrl}/secret/${this.secret}/job`
+    } else {
+      query.access_token = '__theAccessToken__'
+      this.url = `${baseUrl}/job`
     }
+
+    if (this.syncToggle === true) {
+      query.wait_result = "true"
+    }
+
+    this.url += '?' + qs.stringify(query)
 
     if (this.model.start_task.task_arguments.models.length > 0) {
       this.args = this.model
@@ -201,11 +252,50 @@ curl -i -sS -X POST '<span data-hook="curl_api_url"></span>' \\
     },
     argsVars: {
       hook: 'args-vars'
-    }
+    },
+    //syncToggle: [
+    //  {
+    //    selector: '[data-hook=sync-toggle] label',
+    //    type: (el, value) => {
+    //      if (value === true) {
+    //        el.innerText = 'Sync / Wait'
+    //      } else {
+    //        el.innerText = 'Async / No Wait'
+    //      }
+    //    }
+    //  }
+    //],
+    secretToggle: [
+      {
+        selector: '[data-hook=secret-toggle] label',
+        type: (el, value) => {
+          if (value === true) {
+            el.innerText = 'Secret'
+          } else {
+            el.innerText = 'Access Token'
+          }
+        }
+      }
+    ]
   },
   remove () {
     this.clipId.destroy()
     this.clipSecret.destroy()
     View.prototype.remove.apply(this, arguments)
+  },
+  events: {
+    'click [data-hook=toggle-trigger]':'onClickToggle',
+    'click button[data-hook=sync-toggle]':'onClickToggleSyncParams',
+    'click button[data-hook=secret-toggle]':'onClickToggleSecretToken',
+  },
+  onClickToggleSyncParams (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.toggle('syncToggle')
+  },
+  onClickToggleSecretToken (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.toggle('secretToggle')
   }
 })
