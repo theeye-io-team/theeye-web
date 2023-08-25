@@ -16,12 +16,6 @@ hljs.registerLanguage('bash', bash)
 
 const docsLink = ''
 
-const copyTooltip = (e) => {
-  $(e.trigger)
-    .attr('data-original-title', 'Copied!')
-    .tooltip('show')
-}
-
 export default PanelButton.extend({
   initialize (options) {
     this.title = Titles.task.buttons.integrations
@@ -105,7 +99,9 @@ const CredentialsView = View.extend({
       <div class="form-group">
         <ul class="nav nav-pills">
           <li role="presentation" class="active">
-            <a style="cursor:pointer;" data-hook="toggle-trigger" href="#">
+            <a style="cursor:pointer;padding: 7px 15px;"
+              data-hook="toggle-trigger"
+              href="#">
               Shell Curl
             </a>
           </li>
@@ -227,18 +223,25 @@ curl -i -sS -X POST '<span data-hook="curl_api_url"></span>' \\
       }, 2000)
     })
 
+    const copyTooltip = (e) => {
+      $(e.trigger)
+        .attr('data-original-title', 'Copied!')
+        .tooltip('show')
+    }
+
+
     const idel = this.query('[data-hook=copy_task_id]')
-    $(idel).tooltip({ trigger: 'click', placement: this.bottom })
+    $(idel).tooltip({ trigger: 'click', placement: 'bottom' })
     this.clipId = new Clipboard(idel, { text: () => this.id })
     this.clipId.on('success', copyTooltip)
 
     const secretel = this.query('[data-hook=copy_task_secret]')
-    $(secretel).tooltip({ trigger: 'click', placement: this.bottom })
+    $(secretel).tooltip({ trigger: 'click', placement: 'bottom' })
     this.clipSecret = new Clipboard(secretel, { text: () => this.secret })
     this.clipSecret.on('success', copyTooltip)
 
     const urlel = this.query('[data-hook=copy_task_url]')
-    $(urlel).tooltip({ trigger: 'click', placement: this.bottom })
+    $(urlel).tooltip({ trigger: 'click', placement: 'bottom' })
     this.clipURL = new Clipboard(urlel, { text: () => this.url })
     this.clipURL.on('success', copyTooltip)
   },
