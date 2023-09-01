@@ -58,6 +58,11 @@ export default DropableFormView.extend({
         validityClassSelector: '.control-label',
         value: workflow.description,
       }),
+      new CheckboxView({
+        label: 'Multitasking',
+        name: 'multitasking',
+        value: workflow.multitasking
+      }),
       new EventsSelectView({
         label: 'Triggered by',
         name: 'triggers',

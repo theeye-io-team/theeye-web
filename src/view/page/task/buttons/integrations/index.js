@@ -270,15 +270,21 @@ curl -i -sS -X POST '<span data-hook="curl_api_url"></span>' \\
     this.url += '?' + qs.stringify(query)
 
     if (this.model.task_arguments.models.length > 0) {
-      this.args = this.model
-        .task_arguments
-        .models.map(arg => `\"'\$\{${arg.label.replace(/ /g,'_')}\}'\"`)
-        .join(',')
+      this.args = ''
+      this.argsVars = ''
 
-      this.argsVars = this.model
-        .task_arguments
-        .models.map(arg => `${arg.label.replace(/ /g,'_')}=""`)
-        .join('\n')
+      const args = this.model.task_arguments.models
+      for (let index = 0; index < args.length; index++) {
+        const label = args[index].label
+          .toLowerCase()
+          .replace(/\s+/g,'_')
+          .replace(/[^a-z0-9_]/g, '')
+        this.args += `\"'\$\{${label}\}'\",`
+        this.argsVars += `${label}=""\n`
+      }
+
+      this.args = this.args.slice(0, -1) // last coma
+      this.argsVars = this.argsVars.slice(0, -1) // last eol
     }
   },
   remove () {
