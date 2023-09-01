@@ -13,20 +13,24 @@ const urlRoot = function () {
 
 export const Model = AppModel.extend({
   urlRoot,
-	props: {
+  props: {
     id: 'string',
-		customer_name: 'string',
-		customer_id: 'string',
-		hostname: 'string',
-		creation_date: 'date',
-		last_update: 'date',
-		enable: 'boolean',
+    customer_name: 'string',
+    customer_id: 'string',
+    hostname: 'string',
+    ip: 'string',
+    os_name: 'string',
+    os_version: 'string',
+    agent_version: 'string',
+    creation_date: 'date',
+    last_update: 'date',
+    enable: 'boolean',
     fingerprints: 'array',
     current_fingerprint: 'string',
     creation_date: 'date',
     last_update: 'date',
     order: 'number'
-	},
+  },
   children: {
     customer: Customer,
     integrations: Integrations
@@ -53,7 +57,7 @@ export const Model = AppModel.extend({
     agent_version: {
       deps: ['fingerprint'],
       fn () {
-        return this.fingerprint?.agent_version
+        return this.fingerprint?.agent_version || this.agent_version
       }
     }
   }
