@@ -226,8 +226,8 @@ const CronFormat = View.extend({
         /   step values
 
         </pre>
-        <details class="col-sm-6">
-          <summary class="btn btn-primary">Examples</summary> <br>
+        <div class="col-sm-6">
+          <h3>CRON Examples - click to use</h3>
           <table data-hook="example">
             <tr><th>* * * * *</th> <td>Every minute </td></tr>
             <tr><th>15 */2 * * *</th> <td>Every 2 hours past 15 minutes </td></tr>
@@ -238,7 +238,7 @@ const CronFormat = View.extend({
             <tr><th>0 0 L * *</th> <td>Every last day of the month at midnight </td></tr>
             <tr><th>*/15 13-18 * * fri</th> <td>Every 15 minutes from 13 to 18 on Fridays </td></tr>
           </table>
-        </details>
+        </div>
       </div>
     </div>
   `

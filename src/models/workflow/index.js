@@ -127,7 +127,7 @@ const Workflow = AppModel.extend({
     short_description: 'string',
     icon_image: 'string',
     icon_color: 'string',
-    multitasking: 'boolean'
+    multitasking: ['boolean', false, true]
   },
   collections: {
     schedules: ScheduleCollection,
