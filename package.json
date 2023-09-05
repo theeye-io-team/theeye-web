@@ -1,7 +1,7 @@
 {
   "name": "theeye-web",
   "private": true,
-  "version": "3.8.1",
+  "version": "3.12.0",
   "description": "theeye web - spa interface",
   "keywords": [],
   "main": "src/main.js",
@@ -15,9 +15,11 @@
   "scripts": {
     "build": "npx webpack --config webpack.prod.js",
     "build-dev": "APP_VERSION=$(git describe) NODE_ENV=devevelopment npx webpack --watch --config webpack.dev.js",
+    "build-prod-dev": "APP_VERSION=$(git describe) NODE_ENV=production npx webpack --watch --config webpack.prod.js",
     "build-prod": "npx webpack --config webpack.prod.js",
     "build-stats": "npx webpack --config webpack.prod.js --profile --json > webpack-stats.json",
-    "webserver": "node server"
+    "webserver": "node server",
+    "release": "npx standard-version -t ''"
   },
   "dependencies": {
     "@babel/core": "~7.9.6",
@@ -90,8 +92,9 @@
     "postcss-loader": "~3.0.0",
     "qs": "^6.5.2",
     "select2": "4.0.7",
-    "socket.io-client": "~2.3.0",
+    "socket.io-client": "^4.5.3",
     "source-map-loader": "~0.2.4",
+    "standard-version": "~9.5.0",
     "style-loader": "~1.2.1",
     "terser-webpack-plugin": "~3.0.1",
     "url-loader": "~4.1.0",

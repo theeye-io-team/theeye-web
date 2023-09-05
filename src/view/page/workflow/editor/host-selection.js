@@ -3,7 +3,7 @@ import InputView from 'components/input-view'
 import Modalizer from 'components/modalizer'
 import FormView from 'ampersand-form-view'
 import FormButtons from 'view/buttons'
-import SelectView from 'components/select2-view'
+import HostSelectView from 'view/host-select'
 
 export default InputView.extend({
   initialize (options) {
@@ -42,20 +42,13 @@ export default InputView.extend({
 const HostSelectionInput = FormView.extend({
   initialize (options) {
     this.fields = [
-      new SelectView({
+      new HostSelectView({
         label: 'Select the new Bot',
         multiple: false,
         name: 'host',
         tags: false,
-        options: App.state.hosts,
-        value: null,
         required: true,
-        unselectedText: 'change the bot',
-        idAttribute: 'id',
-        textAttribute: 'hostname',
-        requiredMessage: 'Selection required',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
+        unselectedText: 'change the bot'
       })
     ]
     FormView.prototype.initialize.apply(this, arguments)

@@ -42,3 +42,4 @@ config
 
 versions
 dist/components/
+dist/downloads/

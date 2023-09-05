@@ -5,6 +5,7 @@ import Collection from 'ampersand-collection'
 import CheckboxView from 'components/checkbox-view'
 import App from 'ampersand-app'
 import isEmail from 'validator/lib/isEmail'
+import ConstantsView from 'view/constants'
 
 export default FormView.extend({
   initialize: function (options) {
@@ -51,6 +52,14 @@ export default FormView.extend({
         name: 'enabled',
         label: 'Enabled',
         value: this.model.enabled
+      }),
+      new ConstantsView({
+        outputFormat: 'array',
+        name: 'tags',
+        copyButton: false,
+        exportButton: false,
+        label: 'Tags',
+        values: this.model.tags
       })
     ]
     FormView.prototype.initialize.apply(this, arguments)

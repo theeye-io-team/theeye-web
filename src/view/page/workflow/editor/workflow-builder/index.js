@@ -162,7 +162,7 @@ export default View.extend({
             }
           })(),
           {
-            label: 'Set starting task',
+            label: '<li class="fa fa-home"></li>&nbsp;Starting task',
             action: () => {
               this.workflow.start_task_id = task.id
             }
@@ -181,13 +181,13 @@ export default View.extend({
             }
           },
           {
-            label: 'Copy Task',
+            label: 'Copy',
             action: () => {
               this.addTaskNode(task)
             }
           },
           {
-            label: 'Connect to',
+            label: 'Connect to ...',
             action: () => {
               this.connectingTask = task
             }
@@ -203,13 +203,13 @@ export default View.extend({
 
     const menu_items = [
       {
-        label: 'Remove Connection',
+        label: 'Remove',
         action: () => {
           this.removeEdgeDialog(edge)
         }
       },
       {
-        label: 'Rename Connection',
+        label: 'Edit',
         action: () => {
           this.connectTaskNodes(edge.source, edge.target)
         }
@@ -442,9 +442,9 @@ const ContextualMenu = View.extend({
   template: `
     <div class="dropdown">
       <ul class="dropdown-menu" style="display: block;" data-hook="menu-buttons">
-        <li class="dropdown-menu-header" data-hook="hide" style="">
+        <li class="dropdown-menu-header" data-hook="header" style="">
           <span><i class="fa fa-list"></i></span>
-          <button class="btn"><i class="fa fa-times"></i></button>
+          <button class="btn"><i class="fa fa-times" data-hook="hide"></i></button>
         </li>
       </ul>
     </div>
@@ -474,7 +474,35 @@ const ContextualMenu = View.extend({
   events: {
     'click [data-hook=hide]': function () {
       this.remove()
-    }
+    },
+    'mousedown [data-hook=header]': 'dragStart',
+    'mouseup [data-hook=header]': 'dragStop'
+  },
+  dragStart (event) {
+    event.stopPropagation()
+    event.preventDefault()
+
+    event.target.style.cursor = "grabbing"
+    document.onmousemove = (e) => { this.drag(e) }
+  },
+  dragStop (event) {
+    event.stopPropagation()
+    event.preventDefault()
+
+    event.target.style.cursor = "grab"
+    document.onmousemove = null
+  },
+  drag (event) {
+    event.stopPropagation()
+    event.preventDefault()
+
+    this.pos1 = this.pos3 - event.clientX;
+    this.pos2 = this.pos4 - event.clientY;
+    this.pos3 = event.clientX;
+    this.pos4 = event.clientY;
+
+    this.el.style.top = (this.el.offsetTop - this.pos2) + "px";
+    this.el.style.left = (this.el.offsetLeft - this.pos1) + "px";
   }
 })
 

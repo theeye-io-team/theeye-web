@@ -8,7 +8,7 @@ import disableScroll from 'disable-scroll'
 var showPlatformOnboarding = function(platform) {
   var steps = []
   if(platform === 'linux') {
-    var el = document.getElementById("linux-installer");
+    var el = document.getElementById("linux-installer-onboarding");
     el.scrollIntoView();
 
     steps = [
@@ -55,7 +55,7 @@ var showPlatformOnboarding = function(platform) {
     ]
   } else if (platform === 'windows') {
 
-    var el = document.getElementById("windows-installer");
+    var el = document.getElementById("windows-installer-onboarding");
     el.scrollIntoView();
 
     steps = [
@@ -102,7 +102,7 @@ var showPlatformOnboarding = function(platform) {
     ]
   } else if (platform === 'docker') {
 
-    var el = document.getElementById("docker-installer");
+    var el = document.getElementById("docker-installer-onboarding");
     el.scrollIntoView();
 
     steps = [
@@ -148,7 +148,7 @@ var showPlatformOnboarding = function(platform) {
       },
     ]
   } else if (platform === 'aws') {
-    var el = document.getElementById("aws-installer");
+    var el = document.getElementById("aws-installer-onboarding");
     el.scrollIntoView();
 
     steps = [

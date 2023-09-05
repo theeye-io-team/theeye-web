@@ -14,6 +14,11 @@ export default Settings.extend({
     this.content = new Content()
   },
   renderTabs () {
+    this.on('change:visible', () => {
+      if (this.visible === false) {
+        this.remove()
+      }
+    })
     const accountsTab = new AccountsTab()
     this.renderSubview(accountsTab, this.queryByHook('accounts-tab'))
 
@@ -30,14 +35,14 @@ const Content = View.extend({
           <span>Your profile preferences</span>
           <span data-hook="close-button" class="close-button fa fa-remove" style=""></span>
         </div>
-        <div class="col-xs-3 panel-left">
+        <div class="panel-left">
           <ul class="nav nav-tabs tabs-left" data-hook="settings-links-container">
             <li class="subtitle"><h3 class="orange">MY PROFILE</h3></li>
             <li class="tab-item"><a href="#accounts" data-toggle="tab">Accounts</a></li>
             <li class="tab-item"><a href="#notifications" data-toggle="tab">Notifications</a></li>
           </ul>
         </div>
-        <div class="col-xs-9 panel-right">
+        <div class="panel-right">
           <div class="tab-content" data-hook="panes-container">
             <div class="tab-pane fade" id="accounts" data-hook="accounts-tab"></div>
             <div class="tab-pane fade" id="notifications" data-hook="notifications-tab"></div>

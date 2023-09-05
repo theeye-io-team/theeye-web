@@ -2,7 +2,7 @@ name: Docker Image CI
 
 on:
   push:
-    #branches: [ "master" ]
+    branches: [ "development" ]
     tags:
       - '*'
 
@@ -31,10 +31,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      #- name: Set APP_VERSION env
-      #  run: echo "APP_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-      #  run: echo "APP_VERSION=$(git describe)" >> $GITHUB_ENV
-      - name: Test Env
+          #- name: Set APP_VERSION env
+          #  run: echo "APP_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+          #  run: echo "APP_VERSION=$(git describe)" >> $GITHUB_ENV
+      - name: Env
         run: |
           echo App Version
           echo $APP_VERSION

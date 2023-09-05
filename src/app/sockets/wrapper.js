@@ -23,9 +23,9 @@
  *  })
  *
  */
-import io from 'socket.io-client'
-import Events from 'ampersand-events'
+import { io } from 'socket.io-client'
 import loggerModule from 'lib/logger'; const logger = loggerModule('eye::sockets')
+import Events from 'ampersand-events'
 
 function SocketsWrapper (options) {
   // only instances can extended its own prototype
@@ -40,7 +40,8 @@ function SocketsWrapper (options) {
 
   // get a socket and wait connected event
   this.on('connected', () => {
-    this.autosubscribe({})
+    this.authorize()
+    //this.autosubscribe({})
   })
 
   return this
@@ -50,6 +51,8 @@ export default SocketsWrapper
 
 SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
   connect ({ access_token }) {
+    this.access_token = access_token // set or replace
+
     if (!this.socket) {
       logger.log('connecting socket client')
       let url = this.config.url
@@ -58,18 +61,70 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
       url = url ? url.replace(/(\/)$/, '') : undefined
 
       // Initiate a socket connection
-      let socket = io(url, { query: { access_token } })
+      this.socket = io(url, {
+        auth: (next) => {
+          next({ access_token: this.access_token })
+        }
+      })
 
-      bindEvents(socket, this, this.events)
-      this.socket = socket
+      this.bindEvents()
     } else {
       const socket = this.socket
       if (!socket.connected) {
         logger.log('reconnecting socket')
-        socket.io.opts.query.access_token = access_token
         socket.connect()
       }
     }
+  },
+
+  bindEvents () {
+    const socket = this.socket
+    for (let eventName in this.events) {
+      socket.on(eventName, (...args) => {
+        logger.debug(`event name ${eventName} received. %o`, args)
+        this.events[eventName](...args)
+      })
+    }
+
+    socket.onAny((eventName, ...args) => {
+      logger.debug(`${eventName} received with ${args}`)
+    })
+
+    // extend
+    const emit = socket.emit
+    socket.emit = function () {
+      logger.debug('emitting: %o', arguments)
+      emit.apply(socket, arguments)
+    }
+
+    /**
+     * 'connect' event is triggered when the socket establishes a connection
+     *  successfully.
+     */
+    socket.on('connect', () => {
+      this.trigger('connected')
+    })
+
+    socket.on('disconnect', (reason) => {
+      if (reason === "io server disconnect") {
+        logger.error('socket server disonnected. need to reconnect')
+        // the disconnection was initiated by the server, you need to reconnect manually
+        //socket.connect()
+        this.trigger('server_disconnected')
+      }
+      // else the socket will automatically try to reconnect
+      this.trigger('disconnected', reason)
+    })
+
+    socket.io.on('reconnect', (attempt) => {
+      this.trigger('reconnect', attempt)
+    })
+
+    socket.io.on('reconnect_attempt', (attempt) => {
+      this.trigger('reconnect_attempt', attempt)
+    })
+
+    return this
   },
 
   disconnect (done) {
@@ -82,6 +137,7 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
       this.trigger('disconnected')
       return
     }
+
     if (!socket.connected) {
       this.trigger('disconnected')
       return
@@ -105,6 +161,20 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
     socket.emit('post:subscribe', query, function (data, jwt) {
       logger.debug(data, jwt)
       done && done(data, jwt)
+    })
+  },
+
+  authorize () {
+    let socket = this.socket
+    if (!this.connected()) {
+      throw new Error('socket is disconnected')
+    }
+
+    socket.emit('post:authorize', {}, (data) => {
+      if (data.status === 200) {
+        logger.log(`authorized %j`, data)
+        this.autosubscribe()
+      }
     })
   },
 
@@ -151,51 +221,3 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
     }
   }
 })
-
-const bindEvents = (socket, emitter, events) => {
-  for (let eventName in events) {
-    socket.on(eventName, function () {
-      logger.debug(`event name ${eventName} received. %o`, arguments)
-      events[eventName].apply(socket, arguments)
-    })
-  }
-
-  // extend
-  const emit = socket.emit
-  socket.emit = function () {
-    logger.debug('emitting: %o', arguments)
-    emit.apply(socket, arguments)
-  }
-
-  //const $emit = socket.$emit
-  //socket.$emit = function () {
-  //  logger.debug('event received: %s, %o', arguments[0], arguments)
-  //  $emit.apply(socket, arguments)
-  //  emitter.trigger(arguments[0], arguments[1])
-  //}
-
-  /**
-   * 'connect' event is triggered when the socket establishes a connection
-   *  successfully.
-   */
-  socket.on('connect', function () {
-    emitter.trigger('connected')
-  })
-
-  socket.on('disconnect', function () {
-    emitter.trigger('disconnected')
-  })
-
-  socket.on('reconnecting', () => {
-    emitter.trigger('reconnecting')
-  })
-
-  socket.on('reconnect', () => {
-    emitter.trigger('reconnect')
-  })
-
-  return
-}
-
-const _connect = (config) => {
-}

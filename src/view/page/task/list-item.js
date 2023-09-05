@@ -23,13 +23,10 @@ function Factory (options) {
   if (model.type===TaskConstants.TYPE_APPROVAL) {
     return new ApprovalItem(options)
   }
-  if (model.type===TaskConstants.TYPE_DUMMY) {
-    return new DummyItem(options)
-  }
   if (model.type===TaskConstants.TYPE_NOTIFICATION) {
     return new NotificationItem(options)
   }
-  throw new Error(`unrecognized type ${model.type}`)
+  return new DummyItem(options)
 }
 
 export default Factory

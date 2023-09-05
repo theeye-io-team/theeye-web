@@ -1,8 +1,77 @@
-# CHANGELOG
+# Changelog
 
-### force build 1
-### force build 2
-### force build 3
+All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+
+## [3.12.0](https://github.com/theeye/theeye-web/compare/3.11.1...3.12.0) (2023-08-22)
+
+
+### Features
+
+* workflow multitasking control checkbox ([#152](https://github.com/theeye/theeye-web/issues/152)) ([defd55e](https://github.com/theeye/theeye-web/commit/defd55e92195d79da1b6a3a36d383391f9279639))
+
+### [3.11.1](https://github.com/theeye/theeye-web/compare/3.11.0...3.11.1) (2023-08-18)
+
+
+### Bug Fixes
+
+* missing lifecycles icons ([#151](https://github.com/theeye/theeye-web/issues/151)) ([70bdec5](https://github.com/theeye/theeye-web/commit/70bdec52761b62243b64002bed06e77a6608cee1))
+
+## [3.11.0](https://github.com/theeye/theeye-web/compare/3.10.0...3.11.0) (2023-08-15)
+
+
+### Features
+
+* improved integration api keys dialog ([952dd86](https://github.com/theeye/theeye-web/commit/952dd86f418f530347c6bd52d158db4ae7a0e60d))
+
+
+### Bug Fixes
+
+* bug grecaptcha disable via config ([#145](https://github.com/theeye/theeye-web/issues/145)) ([4dff116](https://github.com/theeye/theeye-web/commit/4dff116c5e585322d5e3930b29f23ebf29a5fa7d))
+* **file:** acl update multipart not supported. ([#148](https://github.com/theeye/theeye-web/issues/148)) ([0706962](https://github.com/theeye/theeye-web/commit/0706962ccafe3e39c8570cd525bd3523f0e1cdb0))
+
+## [3.10.0](https://github.com/theeye/theeye-web/compare/3.9.1...3.10.0) (2023-07-28)
+
+
+### Features
+
+* user, members and customers with key:value tags ([#142](https://github.com/theeye/theeye-web/issues/142)) ([89562e8](https://github.com/theeye/theeye-web/commit/89562e89c6edb1018968bdb17b3faf1494cd7ea2))
+
+
+### Bug Fixes
+
+* **constants:** { id, key, value } tuple ([#146](https://github.com/theeye/theeye-web/issues/146)) ([a03c441](https://github.com/theeye/theeye-web/commit/a03c441deeb9baf7c7e18c62ffb6c13488b7ddfe))
+* default values. ([#144](https://github.com/theeye/theeye-web/issues/144)) ([f5b9d03](https://github.com/theeye/theeye-web/commit/f5b9d031e8b8744d20e1c0cb16992125c8293244))
+* **member:** message. bootbox removed ([f14d7cd](https://github.com/theeye/theeye-web/commit/f14d7cd22cf98a4cfb723cc0a8e5da2071b6aeea))
+* origins options ([#143](https://github.com/theeye/theeye-web/issues/143)) ([13e69d6](https://github.com/theeye/theeye-web/commit/13e69d6238fb7fb81516ecc750d8a3ef0389085a))
+
+### [3.9.1](https://github.com/theeye/theeye-web/compare/3.9.0...3.9.1) (2023-07-19)
+
+
+### Bug Fixes
+
+* customer name opcional + error messages ([#141](https://github.com/theeye/theeye-web/issues/141)) ([970b8e2](https://github.com/theeye/theeye-web/commit/970b8e2845d4b19f021487a333c8e33ff79db59c))
+* remove netbrains from integration menu ([2121181](https://github.com/theeye/theeye-web/commit/21211814f332076d116fd50f5c052a56a2bf5584))
+
+## [3.9.0](https://github.com/theeye/theeye-web/compare/3.8.7...3.9.0) (2023-07-11)
+
+
+### Features
+
+* draggable ([#124](https://github.com/theeye/theeye-web/issues/124)) ([0ea556d](https://github.com/theeye/theeye-web/commit/0ea556d1ab9f0f95d9d73f2bbcc7f658e033fb69))
+* show tasks and monitores that belongs to template ([#139](https://github.com/theeye/theeye-web/issues/139)) ([f29fd92](https://github.com/theeye/theeye-web/commit/f29fd92ecfc0d07dbce96800564e74b3b63ef40b))
+* standard version ([0b96e46](https://github.com/theeye/theeye-web/commit/0b96e46c5b3160f9f5c0ec372c8f953234213235))
+* workflow/task constants ([#132](https://github.com/theeye/theeye-web/issues/132)) ([c8b8a35](https://github.com/theeye/theeye-web/commit/c8b8a352311b9b1795972b2e3c410e499121d875))
+
+
+### Bug Fixes
+
+* better session logout handler ([f43be13](https://github.com/theeye/theeye-web/commit/f43be13105b073b1590b283f2ebb33a5f7b28301))
+* docker repo ([8238936](https://github.com/theeye/theeye-web/commit/8238936e1de03ab2a9f1630d8b63de127800b2b4))
+* messages and styles ([#137](https://github.com/theeye/theeye-web/issues/137)) ([0c43fb9](https://github.com/theeye/theeye-web/commit/0c43fb9221a77f017f8ac8cfab9193e7681e921f))
+* rollback docker team credential ([4e1ee3f](https://github.com/theeye/theeye-web/commit/4e1ee3fcef7f798baa3cb0b2268e942ebef85d09))
+* session logout control ([#138](https://github.com/theeye/theeye-web/issues/138)) ([56f9c43](https://github.com/theeye/theeye-web/commit/56f9c43a0796a7881e5c59f37d09c1ab35d1c7f6))
+* sockets + SSO integrations initial ([#134](https://github.com/theeye/theeye-web/issues/134)) ([c29d444](https://github.com/theeye/theeye-web/commit/c29d44482d1c82042476fffa135e3615f8de58a8)), closes [#135](https://github.com/theeye/theeye-web/issues/135)
+* workflow editor remember nodes positions ([#136](https://github.com/theeye/theeye-web/issues/136)) ([3589c42](https://github.com/theeye/theeye-web/commit/3589c4218a19bb20bba61129252e39bec2dcd058))
 
 ### 0.8.2 - 2017-02-28
 

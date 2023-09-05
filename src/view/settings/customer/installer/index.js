@@ -6,7 +6,6 @@ import hopscotch from 'hopscotch'
 import HelpTexts from 'language/help'
 import HelpIconView from 'components/help-icon'
 import acls from 'lib/acls'
-import config from 'config'
 import SelfProvidedBotView from './self-provided-bot'
 import './styles.less'
 
@@ -18,7 +17,6 @@ hljs.registerLanguage('bash', bash)
 export default View.extend({
   initialize() {
     this.customerName = App.state.session.customer.name
-    this.agentBinary = config.agentBinary
 
     this.listenToAndRun(App.state.settingsMenu.customer, 'change:agent', () => {
       this.updateState(App.state.settingsMenu.customer)
@@ -35,6 +33,10 @@ export default View.extend({
       'change:onboardingActive',
       () => { this.startOnboarding() }
     )
+
+    this.listenToAndRun(App.state.session, 'change:access_token', () => {
+      this.accessToken = App.state.session.access_token
+    })
   },
   startOnboarding () {
     if (hopscotch.getCurrTour()) {
@@ -57,15 +59,152 @@ export default View.extend({
     return template(this)
   },
   props: {
+    accessToken: 'string',
     customerName: ['string',false,''],
-    agentBinary: ['object',false,() => { return {} }],
     agent: ['object',false,() => { return {} }]
   },
+  derived:{
+    linuxInstaller: {
+      deps: ['agent'],
+      fn () {
+        if (!this.agent) { return }
+
+        const creds = this.agent
+        const downloads = this.agent.downloads
+
+        // ensure to maintain format hereunder
+        const script = `curl -s "${downloads.base_url}${downloads.linux_installer}" | bash -s \\
+  "${creds.client_id}" \\
+  "${creds.client_secret}" \\
+  "${creds.customer_name}" \\
+  "${App.config.supervisor_api_url}"`
+
+        return script
+      }
+    },
+    windowsInstaller: {
+      deps: ['agent'],
+      fn () {
+        if (!this.agent) { return }
+        const creds = this.agent
+        const downloads = this.agent.downloads
+
+        const script = `powershell -command "&{&"Invoke-WebRequest" -uri "${downloads.base_url}${downloads.windows_installer}" -outFile agent-installer.ps1}" && powershell.exe -ExecutionPolicy ByPass -File agent-installer.ps1 "${creds.client_id}" "${creds.client_secret}" "${creds.customer_name}" "${App.config.supervisor_api_url}"`
+        return script
+      }
+    },
+    windowsInstallerSchtask: {
+      deps: ['agent'],
+      fn () {
+        if (!this.agent) { return }
+        const creds = this.agent
+        const downloads = this.agent.downloads
+
+        const cmd = `powershell -command "&{&"Invoke-WebRequest" -uri "${downloads.base_url}${downloads.windows_schtask_installer}" -outFile agent-installer.ps1}" && powershell.exe -ExecutionPolicy ByPass -File agent-installer.ps1 "${creds.client_id}" "${creds.client_secret}" "${creds.customer_name}" "${App.config.supervisor_api_url}"`
+        return cmd
+      }
+    },
+    dockerInstaller: {
+      deps: ['agent'],
+      fn(){
+        if (!this.agent) { return '' }
+        const creds = this.agent
+
+        const cmd = `docker run -d --name "${creds.customer_name}" -e NODE_ENV="production" \\
+  -e DEBUG="*eye*err*" \\
+  -e THEEYE_SUPERVISOR_CLIENT_ID="${creds.client_id}" \\
+  -e THEEYE_SUPERVISOR_CLIENT_SECRET="${creds.client_secret}" \\
+  -e THEEYE_SUPERVISOR_CLIENT_CUSTOMER="${creds.customer_name}" \\
+  -e THEEYE_SUPERVISOR_API_URL="${App.config.supervisor_api_url}" \\
+  -e THEEYE_CLIENT_HOSTNAME="${creds.customer_name}" \\
+  theeye/theeye-agent`
+
+        return cmd
+      }
+    },
+    dockerInstallerLocalhost: {
+      deps: ['agent', 'dockerInstaller'],
+      fn () {
+        if (!this.agent) { return '' }
+        if (/localhost:60080|127.0.0.1:60080/.test(App.config.supervisor_api_url) === false) {
+          return ''
+        }
+
+        // theeye is running localhost. dev or test env
+        const lines = this.dockerInstaller.split("\n")
+        lines.splice(1, 0, "  --add-host host.docker.internal:host-gateway \\")
+
+        const cmd = lines
+          .join("\n")
+          .replace('localhost:60080', 'host.docker.internal:60080')
+          .replace('127.0.0.1:60080', 'host.docker.internal:60080')
+
+        return cmd
+      }
+    },
+    awsInstaller: {
+      deps: ['agent'],
+      fn(){
+        if (!this.agent) { return }
+        const creds = this.agent
+
+        const script = `#!/bin/bash
+hostnamectl set-hostname ${creds.customer_name}-aws
+curl -s "" | bash -s \\
+  "${creds.client_id}" \\
+  "${creds.client_secret}" \\
+  "${creds.customer_name}" \\
+  "${App.config.supervisor_api_url}"`
+
+        return script
+      }
+    },
+    manualExecution: {
+      deps: ['agent'],
+      fn () {
+        if (!this.agent) { return }
+
+        const creds = this.agent
+        const downloads = this.agent.downloads
+
+        return `THEEYE_CLIENT_HOSTNAME="${creds.customer_name}" DEBUG="*eye*" NODE_ENV="${creds.customer_name}" node .`
+      }
+    },
+    linuxBinaryUrl: {
+      deps: ['agent'],
+      fn () {
+        if (!this.agent) { return }
+
+        const creds = this.agent
+        const downloads = this.agent.downloads
+
+        return `${downloads.base_url}${downloads.linux_binary}`
+      }
+    },
+    windowsBinaryUrl: {
+      deps: ['agent'],
+      fn () {
+        if (!this.agent) { return }
+
+        const creds = this.agent
+        const downloads = this.agent.downloads
+
+        return `${downloads.base_url}${downloads.windows_binary}`
+      }
+    },
+    credentialsUrl: {
+      deps: ['accessToken'],
+      fn () {
+        return `${App.config.app_url}/api/bot/credentials?access_token=${this.accessToken}`
+      }
+    }
+  },
   bindings: {
-    //'formatedCustomerName': {
-    //  type: 'text',
-    //  hook: 'customer-name'
-    //},
+    credentialsUrl: {
+      type: 'attribute',
+      name: 'href',
+      hook: 'credentials-file-download'
+    },
     'customerName': [
       {
         type: 'text',
@@ -76,7 +215,7 @@ export default View.extend({
         hook: 'credentials-file-download'
       }
     ],
-    'curlAgent': [
+    'linuxInstaller': [
       {
         type: 'toggle',
         hook: 'agent-set'
@@ -88,149 +227,55 @@ export default View.extend({
       },
       {
         type: 'innerHTML',
-        hook: 'curl-agent'
+        hook: 'linux-installer'
       }
     ],
-    'localLinux': {
+    'manualExecution': {
       type: 'innerHTML',
-      hook: 'local-linux'
+      hook: 'manual-execution'
     },
-    'windowsCurlAgent': {
+    'windowsInstaller': {
       type: 'innerHTML',
-      hook: 'windows-curl-agent'
+      hook: 'windows-installer'
     },
-    'windowsAgentSchtask': {
+    'windowsInstallerSchtask': {
       type: 'innerHTML',
-      hook: 'windows-agent-schtask'
+      hook: 'windows-installer-schtask'
     },
-    'dockerAgent': {
+    'dockerInstaller': {
       type: 'innerHTML',
-      hook: 'docker-curl-agent'
+      hook: 'docker-installer'
     },
-    'dockerAgentLocalhost': [
+    'dockerInstallerLocalhost': [
       {
         type: 'toggle',
-        selector: 'section[data-hook=docker-agent-local]',
+        hook: 'docker-installer-localhost-section',
         reverse: true,
       }, {
         type: 'innerHTML',
-        hook: 'docker-agent-localhost'
+        hook: 'docker-installer-localhost'
       }
     ],
-    'awsCurlAgent': {
+    'awsInstaller': {
       type: 'innerHTML',
-      hook: 'aws-curl-agent'
+      hook: 'aws-installer'
     },
-    'agentBinaryUrl': {
+    'linuxBinaryUrl': [{
       type: 'attribute',
       name: 'href',
-      hook: 'agent-binary-download'
-    },
-    'agentBinaryName': {
+      hook: 'linux-binary-download'
+    },{
+      type: 'toggle',
+      hook: 'linux-binary-download'
+    }],
+    'windowsBinaryUrl': [{
       type: 'attribute',
-      name: 'download',
-      hook: 'agent-binary-download'
-    },
-    'agentBinaryHTML': {
-      type: 'innerHTML',
-      hook: 'agent-binary-html'
-    },
-    'agentBinaryRoute': {
-      type: 'innerHTML',
-      hook: 'agent-binary-route'
-    }
-  },
-  derived:{
-    formatedCustomerName: {
-      deps: ['customerName'],
-      fn: function(){
-        if(this.customerName && this.customerName.length)
-          return this.customerName[0].toUpperCase() + this.customerName.slice(1,this.customerName.length)
-        return ''
-      }
-    },
-    curlAgent: {
-      deps: ['agent'],
-      fn: function(){
-        if (!this.agent) { return }
-        return this.agent.curl
-      }
-    },
-    windowsCurlAgent: {
-      deps: ['agent'],
-      fn: function(){
-        if (!this.agent) { return }
-        return this.agent.windowsCurl
-      }
-    },
-    windowsAgentSchtask: {
-      deps: ['agent'],
-      fn: function(){
-        if (!this.agent) { return }
-        return this.agent.windowsSchtask
-      }
-    },
-    dockerAgent: {
-      deps: ['agent'],
-      fn: function(){
-        if (!this.agent) { return }
-        return this.agent.dockerCurl
-      }
-    },
-    dockerAgentLocalhost: {
-      deps: ['agent'],
-      fn: function () {
-        if (!this.agent) { return }
-        if (/localhost:60080/.test(this.agent.dockerCurl) === false) {
-          return
-        }
-
-        // theeye running localhost. dev or test env
-        const lines = this.agent.dockerCurl.split('\\')
-        lines.splice(1, 0, `\n  --add-host host.docker.internal:host-gateway `)
-        let curl = lines.join('\\')
-        curl = curl.replace('localhost:60080', 'host.docker.internal:60080')
-        return curl
-      }
-    },
-    awsCurlAgent: {
-      deps: ['agent'],
-      fn: function(){
-        if (!this.agent) { return }
-        return this.agent.awsCurl
-      }
-    },
-    localLinux: {
-      deps: ['agent'],
-      fn: function(){
-        if (!this.agent) { return }
-        return this.agent.localLinux
-      }
-    },
-    agentBinaryUrl : {
-      deps: ['agentBinary'],
-      fn: function() {
-        return this.agentBinary.url
-      }
-    },
-    agentBinaryName : {
-      deps: ['agentBinary'],
-      fn: function() {
-        return this.agentBinary.name
-      }
-    },
-    agentBinaryHTML : {
-      deps: ['agentBinary'],
-      fn: function() {
-        return this.agentBinary.name+'<i class="fa fa-download"></i>'
-      }
-    },
-    agentBinaryRoute : {
-      deps: ['agentBinary'],
-      fn: function() {
-        return "./"+this.agentBinary.name
-      }
-    }
+      name: 'href',
+      hook: 'windows-binary-download'
+    },{
+      type: 'toggle',
+      hook: 'windows-binary-download'
+    }],
   },
   events: {
     'click [data-hook=go-to-dashboard]':'onClickGoToDashboard',
@@ -250,13 +295,13 @@ export default View.extend({
        this.customerName = App.state.session.customer.name
     })
 
-    new Clipboard( this.queryByHook('clipboard-curl') )
-    new Clipboard( this.queryByHook('clipboard-windows') )
-    new Clipboard( this.queryByHook('clipboard-docker') )
-    new Clipboard( this.queryByHook('clipboard-docker-localhost') )
-    new Clipboard( this.queryByHook('clipboard-aws-curl') )
-    new Clipboard( this.queryByHook('clipboard-local-linux') )
-    new Clipboard( this.queryByHook('clipboard-curl') )
+    new Clipboard( this.queryByHook('linux-installer-clipboard') )
+    new Clipboard( this.queryByHook('manual-execution-clipboard') )
+    new Clipboard( this.queryByHook('windows-installer-clipboard') )
+    new Clipboard( this.queryByHook('windows-installer-schtask-clipboard') )
+    new Clipboard( this.queryByHook('docker-installer-clipboard') )
+    new Clipboard( this.queryByHook('docker-installer-localhost-clipboard') )
+    new Clipboard( this.queryByHook('aws-installer-clipboard') )
 
     for (let el of this.queryAll('[data-hook=installer-sample]')) {
       hljs.highlightElement(el, {language: 'bash'})
@@ -291,7 +336,6 @@ export default View.extend({
 })
 
 const template = (state) => {
-  const accessToken = App.state.session.access_token
   let html = `
     <div data-component="settings-installer">
       <div data-hook="agent-set">
@@ -299,9 +343,9 @@ const template = (state) => {
         <section> <!-- INSTALLER SECTION -->
           <h3 class="blue bold start-onboarding">INSTALLER</h3>
           <i class="start-onboarding" data-hook="start-onboarding"></i>
-          <div id="linux-installer" class="row border">
+          <div id="linux-installer-onboarding" class="row border">
             <div class="col-xs-12">
-              <h4 class="blue"><i class="fa fa-linux"></i> Linux Installer</h4>
+              <h4 class="blue"><i class="fa fa-linux"></i> Linux Agent</h4>
               <div class="alert" style="background:#EEEEEE">The Agent is fully funtional in Redhat/Centos 6+, Ubuntu 12+. It should works out of the box on every Linux with a kernel version 3.x+. For Linux with Kernel 2.x could require aditional actions.</div>
               <h4 class="blue">To install on Linux</h4>
               <ol>
@@ -309,19 +353,23 @@ const template = (state) => {
                 <li data-tutorial="linux-onboarding">Become root. <i>NOTE: The installation script assumes that root access is granted.</i></li>
                 <li data-tutorial="linux-onboarding">
                   Copy and paste the following line into the console to begin the installation
-                    <button class="btn btn-primary container-clipboard" type="button" data-hook="clipboard-curl" data-clipboard-target="#agentCurl">
+                    <button class="btn btn-primary container-clipboard" type="button" data-hook="linux-installer-clipboard" data-clipboard-target="#linux-installer">
                       <span class="fa fa-files-o" alt="copy to clipboard"></span>
                     </button>
-                    <div id="agentCurl" class="bash installer-script" data-hook="installer-sample curl-agent"></div>
+                    <div
+                      id="linux-installer"
+                      class="bash installer-script"
+                      data-hook="installer-sample linux-installer">
+                    </div>
                 </li>
                 <li data-tutorial="linux-onboarding">Wait until Spock appears telling you are done</li>
                 <li data-tutorial="linux-onboarding">Check your <a data-hook="go-to-dashboard">Dashboard<i class="fa fa-dashboard"></i></a>, you should see the installed Agent.</li>
               </ol>
             </div>
           </div>
-          <div id="windows-installer" class="row border">
+          <div id="windows-installer-onboarding" class="row border">
             <div class="col-xs-12">
-              <h4 class="blue"><i class="fa fa-windows"></i> Windows Installer</h4>
+              <h4 class="blue"><i class="fa fa-windows"></i> Windows Agent</h4>
               <h4 class="blue">To install on Windows</h4>
               <ol>
                 <li data-tutorial="windows-onboarding">
@@ -339,47 +387,47 @@ const template = (state) => {
                     <i class="fa fa-angle-right"></i>
                     To Install the agent as a background service to run background process and automations that doesn't need visual interaction
                   </span>
-                  <button class="btn btn-primary container-clipboard" type="button" data-hook="clipboard-windows" data-clipboard-target="#windowsAgentCurl">
+                  <button class="btn btn-primary container-clipboard" type="button" data-hook="windows-installer-clipboard" data-clipboard-target="#windows-installer">
                     <span class="fa fa-files-o" alt="copy to clipboard"></span>
                   </button>
-                  <div id="windowsAgentCurl" class="bash installer-script" data-hook="installer-sample windows-curl-agent"></div>
+                  <div id="windows-installer" class="bash installer-script" data-hook="installer-sample windows-installer"></div>
                   <span>
                     <i class="fa fa-angle-right"></i>
                     <i class="fa fa-angle-right"></i>
                     To Install the agent in your user space as a Windows scheduled task. This is recommended to run Desktop Bots and Web Bots that may need a screen
                   </span>
-                  <button class="btn btn-primary container-clipboard" type="button" data-hook="clipboard-windows" data-clipboard-target="#windowsAgentCurl">
+                  <button class="btn btn-primary container-clipboard" type="button" data-hook="windows-installer-schtask-clipboard" data-clipboard-target="#windows-installer-schtask">
                     <span class="fa fa-files-o" alt="copy to clipboard"></span>
                   </button>
-                  <div id="windowsAgentCurl" class="bash installer-script" data-hook="installer-sample windows-agent-schtask"></div>
+                  <div id="windows-installer-schtask" class="bash installer-script" data-hook="installer-sample windows-installer-schtask"></div>
                 </li>
                 <li data-tutorial="windows-onboarding">Wait for the installer to complete all actions.</li>
                 <li data-tutorial="windows-onboarding">Check you Dashboard, you should see the host reporting.</li>
               </ol>
             </div>
           </div>
-          <div id="docker-installer" class="row border">
+          <div id="docker-installer-onboarding" class="row border">
             <div class="col-xs-12">
-              <h4 class="blue">Docker Installer</h4>
-              <h4 class="blue">To run a Docker version of the Agent</h4>
+              <h4 class="blue">Docker Agent</h4>
+              <h4 class="blue">To launch a Docker version of the Agent</h4>
               <ol>
                 <li data-tutorial="docker-onboarding">Open a Console</li>
                 <li data-tutorial="docker-onboarding">Become root. <i>NOTE: The installation script assumes that root access is granted.</i></li>
                 <li data-tutorial="docker-onboarding">
                   Copy and paste the following line into the console to begin the installation
-                    <button class="btn btn-primary container-clipboard" data-hook="clipboard-docker" type="button" data-clipboard-target="#dockerAgentCurl">
+                    <button class="btn btn-primary container-clipboard" data-hook="docker-installer-clipboard" type="button" data-clipboard-target="#docker-installer">
                       <span class="fa fa-files-o" alt="copy to clipboard"></span>
                     </button>
-                    <div id="dockerAgentCurl" class="bash installer-script" data-hook="installer-sample docker-curl-agent"></div>
+                    <div id="docker-installer" class="bash installer-script" data-hook="installer-sample docker-installer"></div>
 
-                    <section data-hook="docker-agent-local">
+                    <section data-hook="docker-installer-localhost-section">
                       It seems that you are running a local development or test version of TheEye.
                       Docker containers are not able to connect to the host machine without extra configuration.
                       If your are using Docker +20 you may find useful the following <code>docker run</code> command.
-                      <button class="btn btn-primary container-clipboard" data-hook="clipboard-docker-localhost" type="button" data-clipboard-target="#dockerAgentLocalhost">
+                      <button class="btn btn-primary container-clipboard" data-hook="docker-installer-localhost-clipboard" type="button" data-clipboard-target="#docker-installer-localhost">
                         <span class="fa fa-files-o" alt="copy to clipboard"></span>
                       </button>
-                      <div id="dockerAgentLocalhost" class="bash installer-script" data-hook="installer-sample docker-agent-localhost"></div>
+                      <div id="docker-installer-localhost" class="bash installer-script" data-hook="installer-sample docker-installer-localhost"></div>
                     </section>
                 </li>
                 <li data-tutorial="docker-onboarding">Wait for the installer to complete all actions.</li>
@@ -387,17 +435,17 @@ const template = (state) => {
               </ol>
             </div>
           </div>
-          <div id="aws-installer" class="row border">
+          <div id="aws-installer-onboarding" class="row border">
             <div class="col-xs-12">
-              <h4 class="blue">AWS Installer</h4>
+              <h4 class="blue">AWS ES2 user data</h4>
               <ol>
                 <li data-tutorial="aws-onboarding">Open the AWS Console</li>
                 <li data-tutorial="aws-onboarding">
                   Copy and paste the following user-data:
-                  <button class="btn btn-primary container-clipboard" type="button" data-hook="clipboard-aws-curl" data-clipboard-target="#awsAgentCurl">
+                  <button class="btn btn-primary container-clipboard" type="button" data-hook="aws-installer-clipboard" data-clipboard-target="#aws-installer">
                     <span class="fa fa-files-o" alt="copy to clipboard"></span>
                   </button>
-                  <div id="awsAgentCurl" class="bash installer-script" data-hook="installer-sample aws-curl-agent"></div>
+                  <div id="aws-installer" class="bash installer-script" data-hook="installer-sample aws-installer"></div>
                 </li>
                 <li data-tutorial="aws-onboarding">Launch your instances.</li>
                 <li data-tutorial="aws-onboarding">Wait until the agent starts reporting.</li>
@@ -412,7 +460,7 @@ const template = (state) => {
           </div>
           <div class="row border">
             <div class="col-xs-12">
-              <h4 class="blue">Manual Execution - Linux DEBUG</h4>
+              <h4 class="blue">Manual Execution</h4>
               <p>This are the steps to start the Agent using the source code.
     Also if the service does not started automatically using the installation script.
     Using this method the binary can be execute manually in DEBUG mode.
@@ -423,7 +471,7 @@ const template = (state) => {
                 <li>Change directory to the installation path. For example, the installation script uses /opt/theeye </li>
                 <li>
                     Download the
-                    <a data-hook="credentials-file-download" download="credentials.json" target="_blank" href="/api/bot/credentials?access_token=${accessToken}">
+                    <a data-hook="credentials-file-download" download="credentials.json" target="_blank">
                       <span data-hook="customer-name"></span>
                       agent credentials file
                     </a>
@@ -432,24 +480,29 @@ const template = (state) => {
                 </li>
                 <li>
                   Execute the following command
-                  <button class="btn btn-primary container-clipboard" type="button" data-hook="clipboard-local-linux" data-clipboard-target="#local-linux">
+                  <button class="btn btn-primary container-clipboard"
+                    type="button"
+                    data-hook="manual-execution-clipboard"
+                    data-clipboard-target="#manual-execution-debug">
                     <span class="fa fa-files-o" alt="copy to clipboard"></span>
                   </button>
-                  <div id="local-linux" class="bash installer-script" data-hook="installer-sample local-linux"></div>
+                  <div id="manual-execution"
+                    class="bash installer-script"
+                    data-hook="installer-sample manual-execution">
+                  </div>
                 </li>
-                <li>If you are debuggin the Binary use the command <code>bin/theeye</code> instead</li>
+                <li>If you are debuggin the Binary replace the <code>node</code> command to <code>bin/theeye</code></li>
               </ol>
             </div>
           </div>
           <div class="row border">
             <div class="col-xs-12">
               <h4 class="blue"><i class="fa fa-download"></i> Downloads Section</h4>
-              <p> <a download="theeye-agent-linux.tar.gz" target="_blank" href="https://theeye-agent.s3.amazonaws.com/linux/theeye-agent64.tar.gz">Linux Binary</a> </p>
-              <p> <a download="theeye-agent-windows.zip" target="_blank" href="https://theeye-agent.s3.amazonaws.com/windows/theeye-agent.zip">Windows Binary</a> </p>
+              <p> <a target="_blank" href="" data-hook="linux-binary-download">Linux Binary</a> </p>
+              <p> <a target="_blank" href="" data-hook="windows-binary-download">Windows Binary</a> </p>
               <p>
-                <a data-hook="credentials-file-download" target="_blank" href="/api/bot/credentials?access_token=${accessToken}">
-                  <span data-hook="customer-name"></span>
-                  Agent Credentials
+                <a target="_blank" data-hook="credentials-file-download">
+                  <span data-hook="customer-name"></span> Agent Credentials
                 </a>
               </p>
             </div>

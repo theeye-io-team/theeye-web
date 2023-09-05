@@ -143,10 +143,17 @@ const CustomerTokensPanel = View.extend({
   template: `
     <div class="row border">
       <div class="col-xs-12">
-        <h4 class="blue"><i class="fa fa-lock"></i> Integration Tokens</h4>
+        <h4 class="blue">
+          <i class="fa fa-lock"></i>
+          API Access Tokens
+        </h4>
         <div class="row">
           <div class="col-xs-12">
-            <div>Need an Integration Access Token? <a data-hook="create" href="#">Create Token</a></div>
+            <div>
+              <a class="btn btn-primary" data-hook="create" href="#">
+                <i class="fa fa-plus"></i>
+                Create Token</a>
+            </div>
           </div>
         </div>
         </br>
@@ -215,7 +222,9 @@ const TokensView = View.extend({
       </div>
       <div class="col-xs-1">
         <div data-hook="member-icons" class="pull-right action-icons">
-          <span style="display:none;"><i class="fa fa-edit blue" data-hook="edit-token"></i></span>
+          <span style="display:none;">
+            <i class="fa fa-edit blue" data-hook="edit-token"></i>
+          </span>
           <span><i class="fa fa-times blue" data-hook="remove-token"></i></span>
         </div>
       </div>
@@ -238,10 +247,6 @@ const TokensView = View.extend({
       }
     )
   },
-  remove () {
-    this.clipboard.destroy()
-    View.prototype.remove.apply(this, arguments)
-  },
   events: {
     'click .blurry-input': 'onCLickBlurry',
     'click [data-hook=remove-token]': 'removeToken',
@@ -257,8 +262,13 @@ const TokensView = View.extend({
       }
     )
   },
+  remove () {
+    this.clipboard.destroy()
+    View.prototype.remove.apply(this, arguments)
+  },
   editToken (event) {
     // to do
+    TokenActions.remove(this.model.id)
   },
   onCLickBlurry(event) {
     event.preventDefault()

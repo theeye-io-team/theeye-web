@@ -18,10 +18,6 @@ export default {
   dashboard: {
     upandrunningSign: true
   },
-  agentBinary: {
-    url: 'https://s3.amazonaws.com/theeye.agent/TheEyeWinServiceInstaller.zip',
-    name: 'TheEyeWinServiceInstaller.zip'
-  },
   lc_url: 'https://assets.theeye.io/production/bugtracking',
   components: {
     dynamic_form: {

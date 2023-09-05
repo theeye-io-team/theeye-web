@@ -87,6 +87,8 @@ const CustomerButtons = BaseView.extend({
   edit () {
     event.stopPropagation()
 
+    this.model.fetch()
+
     const form = new CustomerForm({ model: this.model })
 
     const modal = new Modalizer({

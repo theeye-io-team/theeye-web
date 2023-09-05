@@ -25,6 +25,7 @@ export default View.extend({
               <div class="panel-title-content">
 
                 <div class="panel-item name col-xs-10">
+                  <span data-hook="badges"></span>
                   <span data-hook="tags"></span>
                   <span data-hook="name" title=""></span>
                   <span data-hook="help"></span>
@@ -79,6 +80,23 @@ export default View.extend({
     hash: ['string', false, () => { return (new Date()).getTime() } ],
   },
   derived: {
+    templateBadge: {
+      deps: ['model.hasTemplate'],
+      fn () {
+        if (this.model.hasTemplate) {
+          return 'fa fa-files-o visible-badge'
+        }
+      }
+    },
+    templateBadgeTip: {
+      deps: ['model.hasTemplate'],
+      fn () {
+        if (this.model.hasTemplate) {
+          return 'This task is linked to a Template'
+        }
+      }
+    },
+
     row_text: {
       deps: ['model.name'],
       fn () {
@@ -196,7 +214,19 @@ export default View.extend({
       hook: 'has-schedule',
       yes: 'red',
       no: ''
+    },
+
+    templateBadge: {
+      hook: 'badges',
+      type: 'attribute',
+      name: 'class'
+    },
+    templateBadgeTip: {
+      hook: 'badges',
+      type: 'attribute',
+      name: 'title'
     }
+
   },
   events: {
     'click .collapsed[data-hook=collapse-toggle]': function (event) {
@@ -212,19 +242,6 @@ export default View.extend({
     this.renderButtons()
     this.renderTags()
     this.renderHelp()
-
-    //this.on('change:loadingContent', () => {
-    //  const loader = this.queryByHook('collapse-container-body-loader')
-    //  const content = this.queryByHook('collapse-container-body')
-
-    //  if (this.loadingContent === true) {
-    //    loader.style.display = 'block'
-    //    content.style.display = 'none'
-    //  } else {
-    //    loader.style.display = 'none'
-    //    content.style.display = 'block'
-    //  }
-    //})
 
     const $collapse = $(this.el)
 

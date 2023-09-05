@@ -230,11 +230,12 @@ const BaseJob = AppModel.extend({
             return 'fa fa-clock-o remark-alert'
           }
 
-          if (
-            state === StateConstants.FAILURE ||
-            state === StateConstants.CANCELED
-          ) {
+          if (state === StateConstants.FAILURE) {
             return 'fa fa-exclamation remark-alert'
+          }
+
+          if (state === StateConstants.CANCELED) {
+            return 'fa fa-ban remark-alert'
           }
 
           if (state === StateConstants.ERROR) {
@@ -253,6 +254,14 @@ const BaseJob = AppModel.extend({
           lifecycle === LifecycleConstants.ASSIGNED
         ) {
           return 'fa fa-stop remark-alert'
+        }
+
+        if (lifecycle === LifecycleConstants.SYNCING) {
+          return 'fa fa-pause'
+        }
+
+        if (lifecycle === LifecycleConstants.LOCKED) {
+          return 'fa fa-lock'
         }
 
         return 'fa fa-play'
@@ -458,17 +467,16 @@ const JobFactory = function (attrs, options = {}) {
       case JobConstants.APPROVAL_TYPE:
         model = new ApprovalJob(attrs, options)
         break
-      case JobConstants.DUMMY_TYPE:
-        model = new DummyJob(attrs, options)
-        break
       case JobConstants.NOTIFICATION_TYPE:
         model = new NotificationJob(attrs, options)
         break
       case JobConstants.WORKFLOW_TYPE:
         model = new WorkflowJob(attrs, options)
         break
+      case JobConstants.DUMMY_TYPE:
       default:
-        throw new Error(`unrecognized type ${type}`)
+        model = new DummyJob(attrs, options)
+        break
     }
     return model
   }

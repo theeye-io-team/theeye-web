@@ -108,6 +108,7 @@ const Workflow = AppModel.extend({
     _type: 'string',
     id: 'string',
     name: 'string',
+    global_constants: 'object',
     user_id: 'string', // owner/creator
     customer_id: 'string',
     description: 'string',
@@ -125,7 +126,8 @@ const Workflow = AppModel.extend({
     version: 'number',
     short_description: 'string',
     icon_image: 'string',
-    icon_color: 'string'
+    icon_color: 'string',
+    multitasking: ['boolean', false, true]
   },
   collections: {
     schedules: ScheduleCollection,

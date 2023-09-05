@@ -1,5 +1,3 @@
-//import jquery from 'jquery'
-import bootbox from 'bootbox'
 import App from 'ampersand-app'
 import Acls from 'lib/acls'
 import config from 'config'
@@ -12,18 +10,12 @@ export default {
     member.destroy({
       success: function() {
         App.state.loader.visible = false
-        bootbox.alert({
-          title: 'Success',
-          message: 'Member permissions revoked.'
-        })
+        App.state.alerts.success('Member permissions revoked.')
         App.state.members.remove( member )
       },
       error (member, response) {
         App.state.loader.visible = false
-        bootbox.alert({
-          title: 'Error',
-          message: 'Error updating member access.'
-        })
+        App.state.alerts.danger('Error updating member access.')
       }
     });
   },
@@ -36,18 +28,12 @@ export default {
       collection: App.state.members,
       success: function(result, response){
         App.state.loader.visible = false
-        bootbox.alert({
-          title: 'Success',
-          message: 'Member credentials updated.'
-        })
+        App.state.alerts.success('Member credentials updated.')
         App.state.members.add(response, {merge: true})
       },
       error (member, response) {
         App.state.loader.visible = false
-        bootbox.alert({
-          title: 'Error',
-          message: 'Error updating member credentials.'
-        })
+        App.state.alerts.danger('Error')
       }
     })
   },
@@ -66,18 +52,18 @@ export default {
     member.save({},{
       success: (result, newMember) => {
         App.state.loader.visible = false
-        var message = 'Invitation sent.'
         member.set({user_id: newMember.id})
         App.state.members.add(member)
-        bootbox.alert({ title: 'Success', message })
+        App.state.alerts.success('Member addedd.')
       },
       error (member, response) {
         App.state.loader.visible = false
-        var message = 'Error sending user invitation.'
+        var message = 'Error addind the new member.'
         if (response[0].body.code === 'AlreadyActiveMember') {
           message = 'The user is already a member of the organization.'
         }
-        bootbox.alert({ title: 'Error', message })
+        App.state.alerts.success('Member permissions revoked.')
+        App.state.alerts.danger(message)
       }
     });
   },
@@ -88,7 +74,8 @@ export default {
     ) {
       App.state.members.fetch({
         error (err,xhr) {
-          bootbox.alert('Something goes wrong fetching members. Please refresh')
+          App.state.alerts.success('Member permissions revoked.')
+          App.state.alerts.danger('Something goes wrong fetching members. Please refresh')
         }
       })
     }
@@ -113,17 +100,16 @@ export default {
         },
         done (member, xhr) {
           App.state.loader.visible = false
-          var message = 'Invitation sent.'
           App.state.admin.members.add(member)
-          bootbox.alert({ title: 'Success', message })
+          App.state.alerts.success('Member added.')
         },
         fail (err, xhr) {
           App.state.loader.visible = false
-          var message = 'Error sending user invitation.'
+          var message = 'Error addind the new member.'
           if (err.code === 'AlreadyActiveMember') {
             message = 'The user is already a member of the organization.'
           }
-          bootbox.alert({ title: 'Error', message })
+          App.state.alerts.danger(message)
         }
       })
     },
@@ -139,17 +125,11 @@ export default {
         done (response,xhr) {
           App.state.loader.visible = false
           App.state.admin.members.remove(id)
-          bootbox.alert({
-            title: 'Success',
-            message: 'Member removed.'
-          })
+          App.state.alerts.success('Access revoked')
         },
         fail (err,xhr) {
           App.state.loader.visible = false
-          bootbox.alert({
-            title: 'Error',
-            message: 'Error updating member access.'
-          })
+          App.state.alerts.danger('Error updating member access.')
         }
       })
     },
@@ -163,20 +143,14 @@ export default {
         headers: { Accept: 'application/json;charset=UTF-8' },
         done (response,xhr) {
           App.state.loader.visible = false
-          bootbox.alert({
-            title: 'Success',
-            message: 'Member updated.'
-          })
+          App.state.alerts.success('Updated')
           App.state.admin.members.add(response, {merge: true})
         },
         fail (err,xhr) {
           console.log(err)
           console.log(xhr.response)
           App.state.loader.visible = false
-          bootbox.alert({
-            title: 'Error',
-            message: 'Error updating member.'
-          })
+          App.state.alerts.danger('Error updating member.')
         }
       })
     }

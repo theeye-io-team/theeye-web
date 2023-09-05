@@ -136,6 +136,12 @@ const ResourceBaseModel = ResourceSchema.extend({
     last_check: 'date'
   },
   derived: {
+    hasTemplate: {
+      deps: ['template_id'],
+      fn () {
+        return Boolean(this.template_id) === true
+      }
+    },
     last_update_formatted: {
       deps: ['last_update'],
       fn () {
@@ -163,14 +169,18 @@ const ResourceBaseModel = ResourceSchema.extend({
       }
     },
     formatted_tags: {
-      deps: ['name','hostname','type','state','failure_severity','tags','acl'],
+      deps: [
+        'name','hostname','type','state','failure_severity',
+        'tags', 'acl', 'hasTemplate'
+      ],
       fn () {
         return [
           this.name,
           this.state,
           this.hostname,
           this.type,
-          this.failure_severity
+          this.failure_severity,
+          (this.hasTemplate ? `template ${this.template_id}` : undefined),
         ].concat(this.acl, this.tags)
       }
     },

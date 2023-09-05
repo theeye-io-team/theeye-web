@@ -113,7 +113,9 @@ XHR.send = (options, callback) => {
     xhr.setRequestHeader('Authorization', XHR.authorization)
   }
 
-  xhr.withCredentials = (typeof options.withCredentials === 'boolean') ? options.withCredentials : XHR.defaults.withCredentials
+  xhr.withCredentials = (typeof options.withCredentials === 'boolean') ?
+    options.withCredentials :
+    XHR.defaults.withCredentials
   xhr.timeout = options.timeout || XHR.defaults.timeout
   xhr.send(data)
   return xhr

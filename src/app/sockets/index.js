@@ -13,42 +13,37 @@ export default () => {
   App.sockets = createWrapper()
 
   App.listenToAndRun(session, 'change:logged_in', () => {
-    const logged_in = session.logged_in
-    if (logged_in === undefined) { return }
-    if (logged_in === true) {
+    if (session.logged_in === undefined) { return }
+    if (session.logged_in === true) {
       App.sockets.connect({ access_token: session.access_token })
     } else {
       App.sockets.disconnect()
     }
   })
 
-  let numAttempts = 0
   let disconnectTime
+
   App.sockets.on('disconnected', () => {
     logger.log('socket disconnected')
     disconnectTime = new Date().getTime()
   })
 
-  App.sockets.on('reconnecting', (attempt) => {
-    logger.log('reconnecting')
-    numAttempts++
-    App.state.alerts.danger(`sockets disconnected, reconnecting #attemp ${numAttempts}...`)
+  App.sockets.on('reconnect_attempt', (attempt) => {
+    logger.log(`reconnecting attempt ${attempt}`)
+    App.state.alerts.danger(`reconnecting socket #attemp ${attempt}...`)
   })
 
-  App.sockets.on('reconnect', () => {
-    numAttempts = 0
-    let timeUnit = 'seconds'
-    let endSecs = (new Date().getTime() - disconnectTime) / 1000
-    if (endSecs > 60) {
-      endSecs = endSecs / 60
-      timeUnit = 'minutes'
-    }
-    if (endSecs > 60) {
-      endSecs = endSecs / 60
-      timeUnit = 'hours'
-    }
+  App.sockets.on('reconnect', (attempt) => {
+    App.state.alerts.success('sockets reconnected')
 
-    App.state.alerts.success(`sockets reconnected! you were offline ${endSecs} ${timeUnit}`)
+    let secondsElapsed = (new Date().getTime() - disconnectTime) / 1000
+    if (secondsElapsed > 900) {
+      App.state.alerts.notice('You were offline for more than 15 minutes', 'Refresh the App to receive all the updates')
+    }
+  })
+
+  App.sockets.on('server_disconnected', () => {
+    App.state.alerts.danger('Your are offline!', 'Your session expired and must relogin', { timeout: 0 })
   })
 }
 
@@ -69,11 +64,6 @@ const createWrapper = () => {
     App.actions.resource.applyStateUpdate(event.model.id, event.model)
     App.actions.tabs.showNotification(TabsConstants.MONITORS)
   }
-
-  // deprecated
-  //events[ TopicConstants.JOB_RESULT_RENDER ] = (event) => {
-  //  App.actions.notification.handleResultNotification(event.model)
-  //}
 
   events[ TopicConstants.HOST_INTEGRATIONS_CRUD ] = (event) => {
     App.actions.host.applyStateUpdate(event.model.id, event.model)

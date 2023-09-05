@@ -149,6 +149,10 @@ const addModelToGroup = (model, groups, prop, value) => {
 }
 
 const jsUcfirst = (text) => {
+  if (typeof text !== 'string') {
+    return ''
+  }
+
   return (
     text
       .split(' ')

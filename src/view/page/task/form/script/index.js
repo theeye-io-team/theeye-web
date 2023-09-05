@@ -1,7 +1,5 @@
 import isDataUrl from 'valid-data-url'
 import App from 'ampersand-app'
-import State from 'ampersand-state'
-import Collection from 'ampersand-collection'
 import bootbox from 'bootbox'
 import View from 'ampersand-view'
 import InputView from 'components/input-view'
@@ -15,39 +13,29 @@ import EventsSelectView from 'view/events-select'
 import CheckboxView from 'components/checkbox-view'
 import AdvancedToggle from 'view/advanced-toggle'
 import * as TaskConstants from 'constants/task'
-import TaskSelection from 'view/task-select'
-import Modalizer from 'components/modalizer'
-import FileSaver from 'file-saver'
 
+import HostSelectionView from 'view/host-select'
 import ScriptPreview from './file-import'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 // import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
 import CopyTaskSelect from '../copy-task-select'
 import TaskOnBoarding from '../../taskOnboarding'
+import ConstantsView from 'view/constants'
 
-import './styles.less'
+//import './styles.less'
 
 export default TaskFormView.extend({
   initialize (options) {
     const isNewTask = Boolean(this.model.isNew()) // or is import
 
-    // multiple only if new, allows to create multiple tasks at once
-    const hostsSelection = new SelectView({
+    const hostsSelection = new HostSelectionView({
       label: 'Bot *',
       multiple: false,
-      name: 'host_id',
       tags: false,
-      options: App.state.hosts,
+      name: 'host_id',
       value: this.model.host_id,
-      required: true,
-      unselectedText: 'select a Host',
-      idAttribute: 'id',
-      textAttribute: 'hostname',
-      requiredMessage: 'Selection required',
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label',
-      autoselectSingleOption: true
+      required: true
     })
 
     if (isNewTask) {
@@ -89,7 +77,7 @@ export default TaskFormView.extend({
       'user_inputs',
       'user_inputs_members',
       'show_result',
-      'arguments_type',
+      //'arguments_type',
       'allows_dynamic_settings',
       'agent_logging'
     ]
@@ -201,16 +189,7 @@ export default TaskFormView.extend({
     // backward compatibility.
     // new task will be forbidden.
     // old tasks will only be false if it is explicitly false
-    let allowsDynamicSettings
-    let argumentsType
-    if (isNewTask) {
-      allowsDynamicSettings = false
-      //argumentsType = TaskConstants.ARGUMENT_TYPE_TEXT
-      argumentsType = TaskConstants.ARGUMENT_TYPE_LEGACY
-    } else {
-      allowsDynamicSettings = (this.model.allows_dynamic_settings !== false)
-      argumentsType = (this.model.arguments_type || TaskConstants.ARGUMENT_TYPE_LEGACY)
-    }
+    const allowsDynamicSettings = isNewTask ? false : (this.model.allows_dynamic_settings !== false)
 
     this.fields = [
       new InputView({
@@ -293,6 +272,9 @@ export default TaskFormView.extend({
           }, {
             id: 3600000,
             text: '1 hour'
+          }, {
+            id: 14400000,
+            text: '4 hour'
           }
         ],
         value: this.model.timeout || 600000,
@@ -322,24 +304,28 @@ export default TaskFormView.extend({
         name: 'show_result',
         value: this.model.show_result
       }),
-      new EnvView({ values: (this.model.env||{}) }),
-      new SelectView({
-        label: 'Arguments Type (experimental)',
-        name: 'arguments_type',
+      new ConstantsView({
+        label: 'Environment Constants',
         visible: false,
-        required: false,
-        options: [
-          { id: TaskConstants.ARGUMENT_TYPE_LEGACY, value: `${TaskConstants.ARGUMENT_TYPE_LEGACY} (Deprecated)` },
-          { id: TaskConstants.ARGUMENT_TYPE_TEXT, value: `${TaskConstants.ARGUMENT_TYPE_TEXT} (Default)` },
-          { id: TaskConstants.ARGUMENT_TYPE_JSON, value: `${TaskConstants.ARGUMENT_TYPE_JSON} (SDK Default)` }
-        ],
-        value: argumentsType,
-        unselectedText: '',
-        idAttribute: 'id',
-        textAttribute: 'value',
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label'
+        values: (this.model.env||{})
       }),
+      //new SelectView({
+      //  label: 'Arguments Type (experimental)',
+      //  name: 'arguments_type',
+      //  visible: false,
+      //  required: false,
+      //  options: [
+      //    { id: TaskConstants.ARGUMENT_TYPE_LEGACY, value: `${TaskConstants.ARGUMENT_TYPE_LEGACY} (Deprecated)` },
+      //    { id: TaskConstants.ARGUMENT_TYPE_TEXT, value: `${TaskConstants.ARGUMENT_TYPE_TEXT} (Default)` },
+      //    { id: TaskConstants.ARGUMENT_TYPE_JSON, value: `${TaskConstants.ARGUMENT_TYPE_JSON} (SDK Default)` }
+      //  ],
+      //  value: argumentsType,
+      //  unselectedText: '',
+      //  idAttribute: 'id',
+      //  textAttribute: 'value',
+      //  invalidClass: 'text-danger',
+      //  validityClassSelector: '.control-label'
+      //}),
       new CheckboxView({
         required: false,
         visible: false,
@@ -404,7 +390,7 @@ export default TaskFormView.extend({
     this.addHelpIcon('user_inputs')
     this.addHelpIcon('user_inputs_members')
     this.addHelpIcon('show_result')
-    this.addHelpIcon('arguments_type')
+    //this.addHelpIcon('arguments_type')
     this.addHelpIcon('agent_logging')
 
     if (this.model.isNew()) {

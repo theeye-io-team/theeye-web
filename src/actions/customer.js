@@ -51,43 +51,11 @@ export default {
   update (id,data, modal) {
     var customer = new App.Models.Customer.Model({ id: id })
 
-    data.config = {}
-    if (data.elasticsearch_enabled) {
-      if(!data.elasticsearch_url) {
-        bootbox.alert('Please provide an elasticsearch url',function(){})
-        return
-      }
-      data.config.elasticsearch = {
-        enabled: true,
-        url: data.elasticsearch_url
-      }
-    } else {
-      data.config.elasticsearch = {
-        enabled: false,
-        url: ''
-      }
-    }
-
-    if (data.kibana_enabled && !data.kibana_url) {
-      bootbox.alert('Please provide a kibana url')
-      return
-    }
-    data.config.kibana = {
-      enabled: data.kibana_enabled,
-      url: data.kibana_url
-    }
-
-    delete data.elasticsearch_enabled
-    delete data.elasticsearch_url
-    delete data.kibana_enabled
-    delete data.kibana_url
-
     customer.set(data)
     customer.save({}, {
       collection: App.state.admin.customers,
       success: function () {
         bootbox.alert('Customer Updated')
-        customer.set({ config: data.config })
         App.state.admin.customers.add(customer, {merge: true})
       },
       error: function (err) {
@@ -97,38 +65,7 @@ export default {
     modal.hide()
   },
   create (data, modal) {
-    var customer = new App.Models.Customer.Model({})
-
-    data.config = {}
-    if (data.elasticsearch_enabled) {
-      if (!data.elasticsearch_url) {
-        bootbox.alert('Please provide an elasticsearch url',function(){})
-        return
-      }
-      data.config.elasticsearch = {
-        enabled: true,
-        url: data.elasticsearch_url
-      }
-    } else {
-      data.config.elasticsearch = {
-        enabled: false,
-        url: ''
-      }
-    }
-
-    if (data.kibana_enabled && !data.kibana_url) {
-      bootbox.alert('Please provide a kibana url')
-      return
-    }
-
-    data.config.kibana = {
-      enabled: data.kibana_enabled,
-      url: data.kibana_url
-    }
-
-    delete data.elasticsearch_enabled
-    delete data.elasticsearch_url
-    delete data.kibana
+    const customer = new App.Models.Customer.Model({})
 
     customer.set(data)
     customer.save({}, {
@@ -136,11 +73,10 @@ export default {
         App.state.alerts.success(`Customer ${customer.view_name} created`)
         App.state.admin.customers.add(customer)
       },
-      error: function (err) {
-        App.state.alerts.danger(`Failed to create customer ${customer.view_name}`)
+      error: function (model, resp) {
+        App.state.alerts.danger(`Failed to create customer`, resp.body?.message)
       }
     })
-    modal.hide()
   },
   getAgentCredentials () {
     if (Acls.hasAccessLevel('admin')) {

@@ -3,7 +3,8 @@ import View from 'ampersand-view'
 import SideMenuActions from 'actions/sideMenu'
 import Acls from 'lib/acls'
 import html2dom from 'lib/html2dom'
-import CustomerSettings from 'view/settings/customer'
+
+import { Integrations } from 'models/integration'
 
 import './style.less'
 
@@ -31,10 +32,14 @@ export default View.extend({
           </ul>
           <!-- LINKS CONTAINER { -->
           <ul data-hook="links-container" class="eyemenu-links eyemenu-actions">
-            <li><a href="/dashboard" class="eyeicon eyemenu-icon eyeicon-dashboard"> Home </a></li>
-            <span class="charts-link"></span>
-            <span class="default-links"></span>
-            <li><a href="/help" class="eyeicon eyemenu-icon eyeicon-help"> Help </a></li>
+            <div>
+              <li><a href="/dashboard" class="eyeicon eyemenu-icon eyeicon-dashboard">Home</a></li>
+            </div>
+            <div data-hook="core-links"></div>
+            <div>
+              <li><a href="/help" class="eyeicon eyemenu-icon eyeicon-help">Help</a></li>
+            </div>
+            <div data-hook="integration-links" class="integrations-links"></div>
           </ul>
           <!-- } END LINKS CONTAINER -->
         </div>
@@ -44,7 +49,10 @@ export default View.extend({
   },
   props: {
     customers_switch: ['boolean', false, false],
-    customerSearch: ['string', false, '']
+    customerSearch: ['string', false, ''],
+  },
+  collections: {
+    integrations: Integrations
   },
   bindings: {
     customers_switch: [{
@@ -102,43 +110,42 @@ export default View.extend({
     this.renderWithTemplate(this)
     this.renderCustomers()
 
-    this.registerSubview(new CustomerSettings())
-
     this.listenToAndRun(App.state.session.user, 'change:credential', () => {
       this.renderMenuLinks()
     })
 
+    // config is a key:value hash.
+    // cannot use renderCollection
     this.listenToAndRun(App.state.session.customer, 'change:config', () => {
-      this.setChartsLink()
+      this.updateState(App.state.session.customer)
     })
+    this.renderIntegrationLinks()
+  },
+  renderIntegrationLinks () {
+    const container = this.query('[data-hook=integration-links]')
+    this.renderCollection(
+      this.integrations,
+      MenuItem,
+      container
+    )
+  },
+  updateState ({ config }) {
+    this.integrations.reset()
+
+    if (Object.keys(config).length > 0) {
+      for (let name in config) {
+        const settings = Object.assign({name},config[name])
+        if (settings?.menu === true && settings?.enabled === true) {
+          this.integrations.add(settings)
+        }
+      }
+    }
   },
   onSearchInput (event) {
     SideMenuActions.customerSearch(event.target.value)
   },
-  setChartsLink () {
-    if (!Acls.hasAccessLevel('user')) {
-      return
-    } else {
-      var container = this.query('[data-hook=links-container] span.charts-link')
-
-      const netbrainsConfig = App.state.session.customer.config.netbrains
-      while (container.firstChild) {
-        container.removeChild(container.firstChild)
-      }
-
-      // handle kibana config schema change
-      const { kibana } = App.state.session.customer.config
-      if (kibana && kibana.enabled && kibana.url) {
-        container.appendChild(html2dom(`<li><a href="/admin/charts/kibana" class="eyemenu-ico eyemenu-charts"> Dashboard </a></li>`))
-      }
-
-      if (netbrainsConfig && netbrainsConfig.enabled) {
-        container.appendChild(html2dom(`<li><a href="/admin/charts/netbrains" class="eyemenu-ico eyemenu-charts"> Netbrains </a></li>`))
-      }
-    }
-  },
   renderMenuLinks () {
-    const container = this.query('[data-hook=links-container] span.default-links')
+    const container = this.query('[data-hook=core-links]')
 
     // empty container
     while (container.hasChildNodes()) {
@@ -155,7 +162,9 @@ export default View.extend({
 
       if (Acls.hasAccessLevel('manager')) {
         let link = html2dom(`<li><a href="" data-hook="settings-menu" class="eyeicon eyemenu-icon eyeicon-settings">Settings</a></li>`)
-        link.onclick = () => App.actions.settingsMenu.show('customer')
+        link.onclick = () => {
+          App.actions.settingsMenu.show('customer')
+        }
         container.appendChild(link)
       }
 
@@ -207,6 +216,37 @@ export default View.extend({
   showAllViews () {
     this.customersList.views.forEach(view => view.show = true)
   },
+})
+
+const MenuItem = View.extend({
+  template: `
+    <li>
+      <a href="#" class="" target="_blank">
+        <i style="" class=""></i>
+        <span></span>
+      </a>
+    </li>
+  `,
+  bindings: {
+    'model.icon': {
+      selector: 'a > i',
+      type: 'attribute',
+      name: 'class'
+    },
+    'model.url': {
+      selector: 'a',
+      type: 'attribute',
+      name: 'href'
+    },
+    'model.class': {
+      selector: 'a',
+      type: 'attribute',
+      name: 'class'
+    },
+    'model.label': {
+      selector: 'a > span'
+    }
+  }
 })
 
 const CustomerItemList = View.extend({

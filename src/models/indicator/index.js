@@ -177,9 +177,6 @@ function IndicatorFactory (attrs, options={}) {
       case IndicatorConstants.CHART_TYPE:
         model = new ChartIndicator(attrs, options)
         break
-      case IndicatorConstants.TEXT_TYPE:
-        model = new TextIndicator(attrs, options)
-        break
       case IndicatorConstants.HTML_TYPE:
         model = new HTMLIndicator(attrs, options)
         break
@@ -195,9 +192,9 @@ function IndicatorFactory (attrs, options={}) {
       case IndicatorConstants.FILE_TYPE:
         model = new FileIndicator(attrs, options)
         break
+      case IndicatorConstants.TEXT_TYPE:
       default:
-        let err = new Error(`unrecognized type ${type}`)
-        throw err
+        model = new TextIndicator(attrs, options)
         break
     }
     return model

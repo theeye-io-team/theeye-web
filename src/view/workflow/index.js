@@ -49,20 +49,28 @@ export default View.extend({
       this.cy = null
     }
 
-    this.renderCytoscape(redraw)
+    this.renderCytoscape()
+
+    if (redraw === true) {
+      this.recordNodesPositions()
+    } else {
+      // set stored nodes positions
+      this.setNodesPositions()
+    }
 
     this.cy.center()
     this.cy.fit()
 
     return this
   },
-  renderCytoscape (redraw) {
+  renderCytoscape () {
     if (!this.graph) {
       return this
     }
+
     const elems = this.getCytoscapeElements()
 
-    const cy = cytoscape({
+    const cy = this.cy = cytoscape({
       container: this.queryByHook('graph-container'),
       elements: elems,
       boxSelectionEnabled: false,
@@ -85,15 +93,6 @@ export default View.extend({
             'height': 40,
             'width': 40,
             'background-fit': 'cover',
-            'background-color': '#ee8e40',
-            'border-color': function (ele) {
-              const node = new Node(ele.data('value'))
-              return IconsColors[node.getFeatureType()] 
-            },
-            'background-image': function (ele) {
-              const node = new Node(ele.data('value'))
-              return IconsImages[node.getFeatureType()]
-            },
             'font-size': 12,
             'border-width': 2,
             'border-opacity': 1,
@@ -102,6 +101,46 @@ export default View.extend({
             'text-valign': 'top',
             'text-halign': 'center',
             'text-margin-y': -5,
+            'background-color': '#ee8e40',
+            //'border-color': function (ele) {
+            //  /*
+            //    This garbage code is here to work around a visual bug in which
+            //    an ugly orange border would render around a node that should
+            //    render without a border. What this code does is to pick a pre
+            //    defined color to render a border that looks just like the image
+            //    background, and is therefore unnoticeable
+            //  */
+            //  const dangerColor = "#d43f3a"
+            //  const colors = {
+            //    'event':        "#00CCCC",
+            //    'script':       "#E50580",
+            //    'scraper':      "#FF00CC",
+            //    'approval':     "#22C000",
+            //    'home':         "#FC7C00",
+            //    'dummy':        "#FF6482",
+            //    'notification': "#FFCC00",
+            //    'process':      "#00AAFF",
+            //    'webhook':      "#1E7EFB",
+            //    'host':         "#FC7C00",
+            //    'dstat':        "#00305B",
+            //    'psaux':        "#000000" // This should never show up
+            //  }
+            //  const node = new Node(ele.data('value'))
+            //  const color = colors[node.getFeatureType()] 
+            //  return color || dangerColor
+            //},
+            //'background-image': function (ele) {
+            //  var node = new Node(ele.data('value'))
+            //  return node.getImgUrl()
+            //}
+            'border-color': function (ele) {
+              const node = new Node(ele.data('value'))
+              return IconsColors[node.getFeatureType()] 
+            },
+            'background-image': function (ele) {
+              const node = new Node(ele.data('value'))
+              return IconsImages[node.getFeatureType()]
+            },
           }
         }, {
           selector: 'edge',
@@ -136,14 +175,7 @@ export default View.extend({
       }
     })
 
-    cy.on('position', (e) => this.recordPositions(e))
-
-    this.cy = cy
-    
-    if (!redraw) {
-      this.setPositions()
-    }
-    // TODO: Record default positions
+    cy.on('position', (e) => this.recordNodePosition(e))
 
     return this
   },
@@ -177,17 +209,34 @@ export default View.extend({
 
     return elems
   },
-  recordPositions (event) {
-    let data = this.graph.node(event.cyTarget.data('id'))
-    data.position = event.cyTarget.position()
-    this.graph.setNode(event.cyTarget.data('id'), data)
-  },
-  setPositions () {
+  setNodesPositions () {
     this.cy.nodes().forEach(node => {
       if (node.data('value').position) {
         node.position(node.data('value').position)
       }
     })
+  },
+  recordNodePosition (event) {
+    const position = event.cyTarget.position()
+    const nodeId = event.cyTarget.data('id')
+
+    // update node data in graph
+    const data = this.graph.node(nodeId)
+    data.position = position
+    this.graph.setNode(nodeId, data)
+  },
+  recordNodesPositions () {
+    this.cy
+      .nodes()
+      .forEach(node => {
+        const position = node.position()
+        const nodeId = node.data('id')
+
+        // update node data in graph
+        const data = this.graph.node(nodeId)
+        data.position = position
+        this.graph.setNode(nodeId, data)
+      })
   },
   setStartNode (targetNode) {
     if (this.graph.nodes().includes('START_NODE')) {
@@ -213,11 +262,11 @@ function Node (value) {
     const features = [
       'event', 'script', 'nodejs', 'scraper', 'approval',
       'home', 'dummy', 'notification', 'process',
-      'webhook', 'host', 'dstat', 's', 'psaux'
+      'webhook', 'host', 'dstat', 'psaux'
     ]
 
     const found = features.find(function (f) {
-      var regexp = new RegExp(f, 'i')
+      const regexp = new RegExp(f, 'i')
       if (regexp.test(type)) return true
     })
 
@@ -234,7 +283,8 @@ function Node (value) {
   }
 
   //this.getImgUrl = function () {
-  //  return '/images/' + (this.getFeatureType()) + '.png'
+  //  const type = this.getFeatureType()
+  //  return '/images/' + type + '.png'
   //}
 
   this.getResourceUrl = function () {
