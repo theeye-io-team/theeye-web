@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.13.0](https://github.com/theeye/theeye-web/compare/3.12.0...3.13.0) (2023-09-07)
+
+
+### Features
+
+* workflow multitasking on/off ([#149](https://github.com/theeye/theeye-web/issues/149)) ([297e2c2](https://github.com/theeye/theeye-web/commit/297e2c24d953563eb6319cc4a2c2bff27019d804))
+
+
+### Bug Fixes
+
+* task/wf api call - clipboard working ([#153](https://github.com/theeye/theeye-web/issues/153)) ([b15b554](https://github.com/theeye/theeye-web/commit/b15b554cf552e2bd6fd131e037e5f93532d7e580))
+
 ## [3.12.0](https://github.com/theeye/theeye-web/compare/3.11.1...3.12.0) (2023-08-22)
 
 
