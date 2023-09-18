@@ -131,8 +131,6 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
     const socket = this.socket
     //this.off() // shutdown all event listeners
 
-    this.once('disconnected', done)
-
     if (!socket) {
       this.trigger('disconnected')
       return
@@ -143,6 +141,7 @@ SocketsWrapper.prototype = Object.assign({}, SocketsWrapper.prototype, {
       return
     }
 
+    this.once('disconnected', done)
     //this.unsubscribe({}, socket.disconnect)
     socket.disconnect()
   },
