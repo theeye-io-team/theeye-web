@@ -50,9 +50,9 @@ export default {
 
     member.set(data)
     member.save({},{
-      success: (result, newMember) => {
+      success: (result) => {
         App.state.loader.visible = false
-        member.set({user_id: newMember.id})
+        member.set({ user_id: result?.id })
         App.state.members.add(member)
         App.state.alerts.success('Member addedd.')
       },

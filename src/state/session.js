@@ -96,6 +96,7 @@ export default AmpersandState.extend({
     }
   },
   clear (silent) {
+    XHR.authorization = this.authorization = ''
     this.customers.reset()
     this.user.clear({silent})
     this.customer.clear({silent})

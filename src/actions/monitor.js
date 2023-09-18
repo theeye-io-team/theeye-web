@@ -58,11 +58,14 @@ const callPopulateByType = (model) => {
 const populateMethods = {
   script: (model) => {
     // on-demand initialization
-    if (!model.monitor.script.id) {
-    }
+    if (!model.monitor.script.id) { }
 
-    let file = App.state.files.get(model.monitor.script_id)
-    model.monitor.script.set( file.serialize() )
+    const file = App.state.files.get(model.monitor.script_id)
+    if (file) {
+      model.monitor
+        .script
+        .set( file.serialize() )
+    }
   },
   host: (model) => {
     model.submonitors.models.forEach(function(submonitor){
