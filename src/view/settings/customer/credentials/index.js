@@ -25,7 +25,7 @@ const AgentPanel = View.extend({
         <div class="col-xs-12">
           <h4 class="blue"><i class="fa theeye-robot-solid"></i> Agent Credentials</h4>
           <div class="row input-row">
-            <div class="col-xs-3"><label>Customer</label></div>
+            <div class="col-xs-3"><label>Customer UUID</label></div>
             <div class="input-group col-xs-9">
               <input readonly type="text" id="customerName" class="form-control" data-hook="agent-customer-name">
               <span class="input-group-btn">
