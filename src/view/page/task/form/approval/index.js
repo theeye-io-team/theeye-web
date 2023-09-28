@@ -64,6 +64,7 @@ export default TaskFormView.extend({
     })
 
     const approverSelectView = new MembersSelectView({
+      onlyUsers: true,
       required: (this.model.approvals_target === 'fixed'),
       visible: true,
       name: 'approvers',
