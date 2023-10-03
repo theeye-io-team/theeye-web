@@ -3,6 +3,8 @@ const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
+
 //const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 
 const NODE_ENV = process.env['NODE_ENV'] || 'default'
@@ -30,6 +32,11 @@ module.exports = {
     ]
   },
   plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: 'static' }
+      ]
+    }),
     new webpack.DefinePlugin({
       'process.env': {
         'APP_VERSION': JSON.stringify(process.env.APP_VERSION),
@@ -52,7 +59,7 @@ module.exports = {
       inject: 'body',
       filename: 'index.html'
     }),
-    //new CleanWebpackPlugin(),
+    new CleanWebpackPlugin(),
     //new BundleAnalyzerPlugin()
   ],
   module: {

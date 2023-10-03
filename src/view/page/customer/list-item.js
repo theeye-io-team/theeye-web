@@ -115,7 +115,7 @@ const Collapsed = View.extend({
   template: `
   <div class="row">
       <div class="col-sm-12">
-        <h4>Name</h4>
+        <h4>UUID</h4>
         <span data-hook="name"></span>
       </div>
 
