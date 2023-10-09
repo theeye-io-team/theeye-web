@@ -36,23 +36,6 @@ export default Settings.extend({
       settingsLinks.appendChild( html2dom(`<li class="subtitle"><h3 class="blue">SETTINGS</h3></li>`))
     }
 
-    if (Acls.hasAccessLevel('admin')) {
-      settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#installer" data-toggle="tab">Installer</a></li>`))
-      settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#credentials" data-toggle="tab">Credentials</a></li>`))
-      settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#integrations" data-toggle="tab">Integrations</a></li>`))
-
-      const installerTab = new InstallerTab()
-      this.renderSubview(installerTab, this.queryByHook('installer-tab'))
-
-      settingsLinks.appendChild( html2dom(`<li data-hook="start-tutorial"><a href="#">Tutorial</a></li>`))
-
-      const credentialsTab = new CredentialsTab()
-      this.renderSubview(credentialsTab, this.queryByHook('credentials-tab'))
-
-      const integrationsTab = new IntegrationsTab({ model: App.state.session.customer })
-      this.renderSubview(integrationsTab, this.queryByHook('integrations-tab'))
-    }
-
     this.listenToAndRun(App.state.session.user, 'change:credential', () => {
       let hook = this.queryByHook('members-tab')
       if (
@@ -75,6 +58,23 @@ export default Settings.extend({
         }
       }
     })
+
+    if (Acls.hasAccessLevel('admin')) {
+      settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#installer" data-toggle="tab">Installer</a></li>`))
+      settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#credentials" data-toggle="tab">Credentials</a></li>`))
+      settingsLinks.appendChild( html2dom(`<li class="tab-item"><a href="#integrations" data-toggle="tab">Integrations</a></li>`))
+
+      const installerTab = new InstallerTab()
+      this.renderSubview(installerTab, this.queryByHook('installer-tab'))
+
+      const credentialsTab = new CredentialsTab()
+      this.renderSubview(credentialsTab, this.queryByHook('credentials-tab'))
+
+      const integrationsTab = new IntegrationsTab({ model: App.state.session.customer })
+      this.renderSubview(integrationsTab, this.queryByHook('integrations-tab'))
+
+      settingsLinks.appendChild( html2dom(`<li data-hook="start-tutorial"><a href="#">Tutorial</a></li>`))
+    }
 
     this.listenToAndRun(App.state.session.customer, 'change:view_name', () => {
       this.queryByHook('customer-view_name').innerHTML = App.state.session.customer.view_name
