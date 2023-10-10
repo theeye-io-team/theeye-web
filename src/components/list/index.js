@@ -2,6 +2,8 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import ListItem from 'components/list/item'
 import ListHeader from 'components/list/header'
+import { CollectionPaginator } from 'view/page/paginator/footer'
+import Collection from 'ampersand-collection'
 
 export default View.extend({
   autoRender: true,
@@ -14,6 +16,7 @@ export default View.extend({
           <div id="new-accordion" data-hook="list-container"
             class="panel-group" role="tablist" aria-multiselectable="true">
           </div>
+          <div data-hook="paginator-container"></div>
         </div>
       </div>
     </div>
@@ -55,13 +58,22 @@ export default View.extend({
    * based on collection provided.
    */
   renderList (ViewClass, options) {
-    const View = (ViewClass || ListItem)
+    this.View = (ViewClass || ListItem)
+    this.options = options
+    this.paginator = new CollectionPaginator({ length: this.collection.models.length })
+    this.renderSubview(this.paginator, this.queryByHook('paginator-container'))
+    this.subCollection = new Collection(
+      this.collection.models.slice(
+        this.paginator.page * this.paginator.pageLenght,
+        (this.paginator.page * this.paginator.pageLenght) + this.paginator.pageLenght
+      )
+    )
 
     this.list = this.renderCollection( // CollectionView
-      this.collection,
-      View,
+      this.subCollection,
+      this.View,
       this.queryByHook('list-container'),
-      options || {}
+      this.options || {}
     )
 
     this.listenTo(App.state.searchbox, 'onrow', (data) => {
@@ -76,8 +88,31 @@ export default View.extend({
     })
 
     this.listenToAndRun(this.collection, 'sync', function () {
+      this.updateList(true)
       App.actions.searchbox.resetRowsViews(this.list.views)
     })
+  },
+  updateList (isNewList = false) {
+    this.paginator.length = this.collection.models.length
+
+    this.subCollection = new Collection(
+      this.collection.models.slice(
+        this.paginator.page * this.paginator.pageLength,
+        (this.paginator.page * this.paginator.pageLength) + this.paginator.pageLength
+      )
+    )
+
+    isNewList && (this.paginator.page = 0)
+    this.paginator.trigger('changeList')
+
+    this.list.remove()
+
+    this.list = this.renderCollection( // CollectionView
+      this.subCollection,
+      this.View,
+      this.queryByHook('list-container'),
+      this.options || {}
+    )
   },
   selectAllRows () {
     this.list.views.forEach(row => {
