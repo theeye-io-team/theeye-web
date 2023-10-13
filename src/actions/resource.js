@@ -39,10 +39,14 @@ export default {
     })
 
     if (resource.type === 'host') {
-      // dashboard model. host is grouped
-      const groupedHost = App.state.dashboard.groupedResources.get(id)
-      groupedHost.set(data)
-      groupedHost.monitor.set(data)
+      if (App.state.dashboard.monitorGroupBy?.prop === '') {
+        // dashboard model. host resources are grouped into host
+        const groupedHost = App.state.dashboard.groupedResources.get(id)
+        groupedHost.set(data)
+        groupedHost.monitor.set(data)
+      } else {
+        // if groupby other criteria...
+      }
     }
   },
   remove (id) {

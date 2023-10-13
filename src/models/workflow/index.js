@@ -19,7 +19,7 @@ const urlRoot = function () {
 
 const formattedTags = () => {
   return {
-    deps: ['name','hostname','tags','graph','hasSchedules'],
+    deps: ['acl','name','hostname','tags','graph','hasSchedules'],
     /**
      * @return {Array}
      */
@@ -40,7 +40,7 @@ const formattedTags = () => {
         (this.hasSchedules ? 'scheduled' : undefined),
         'name=' + this.name,
         'hostname=' + this.hostname
-      ].concat(this.tags).concat(tasksNames)
+      ].concat(this.acl).concat(tasksNames).concat(this.tags)
     }
   }
 }
