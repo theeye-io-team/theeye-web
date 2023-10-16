@@ -1,6 +1,6 @@
 
 export default {
-  env: 'Environment Variable',
+  env: 'Environment Constants',
   task_arguments: 'Input Arguments',
   host_id: 'Host',
   remote_url: 'URL',

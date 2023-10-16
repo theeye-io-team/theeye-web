@@ -204,7 +204,7 @@ export default View.extend({
       }
       return
     }
-    if (!this.form.valid) {
+    if (!this.form.isValid()) {
       this.valid = false
       this.warningMessage = 'Check advanced settings'
       return
