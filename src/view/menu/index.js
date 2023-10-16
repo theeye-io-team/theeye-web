@@ -36,6 +36,16 @@ export default View.extend({
               <li><a href="/dashboard" class="eyeicon eyemenu-icon eyeicon-dashboard">Home</a></li>
             </div>
             <div data-hook="core-links"></div>
+            <div class="iam-menu">
+              <li>
+                <a href="#"
+                  class="eyeicon eyemenu-icon eyeicon-users"
+                  data-hook="iam-menu-toggle">
+                  IAM <span style="margin-left: 50px;" class="fa fa-angle-down"></span>
+                </a>
+              </li>
+              <ul data-hook="iam-menu-container" class=""></ul>
+            </div>
             <div>
               <li><a href="/help" class="eyeicon eyemenu-icon eyeicon-help">Help</a></li>
             </div>
@@ -89,6 +99,21 @@ export default View.extend({
     },
     'mouseleave [data-hook=menu]': function () {
       this.trigger('mouseleave')
+    },
+    'click [data-hook=iam-menu-toggle]': function () {
+      const container = this.query('[data-hook=iam-menu-container]')
+      const toggleIcon = this.query('[data-hook=iam-menu-toggle] span')
+      if (!container.classList.contains('expanded')) {
+        container.style.display = 'block'
+        container.classList.add('expanded')
+        toggleIcon.classList.remove('fa-angle-down')
+        toggleIcon.classList.add('fa-angle-up')
+      } else {
+        container.style.display = 'none'
+        container.classList.remove('expanded')
+        toggleIcon.classList.remove('fa-angle-up')
+        toggleIcon.classList.add('fa-angle-down')
+      }
     }
   },
   initialize () {
@@ -112,6 +137,7 @@ export default View.extend({
 
     this.listenToAndRun(App.state.session.user, 'change:credential', () => {
       this.renderMenuLinks()
+      this.renderIAMMenuLinks()
     })
 
     // config is a key:value hash.
@@ -167,7 +193,17 @@ export default View.extend({
         }
         container.appendChild(link)
       }
+    }
+  },
+  renderIAMMenuLinks () {
+    const container = this.query('[data-hook=iam-menu-container]')
 
+    // empty container
+    while (container.hasChildNodes()) {
+      container.removeChild(container.lastChild)
+    }
+
+    if (App.state.session.user.credential) {
       if (Acls.hasAccessLevel('root')) {
         container.appendChild(html2dom(`<li><a href="/admin/user" class="eyeicon eyemenu-icon eyeicon-users">Users</a></li>`))
         container.appendChild(html2dom(`<li><a href="/admin/customer" class="eyeicon eyemenu-icon eyeicon-organizations">Organizations</a></li>`))
