@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.14.0](https://github.com/theeye/theeye-web/compare/3.13.0...3.14.0) (2023-10-25)
+
+
+### Features
+
+* acl by tags/credential ([#150](https://github.com/theeye/theeye-web/issues/150)) ([b63e794](https://github.com/theeye/theeye-web/commit/b63e794863643ee3633cc7414dc14d2be5cc15de))
+* iam menu group ([25de61d](https://github.com/theeye/theeye-web/commit/25de61d93f19ea5317322aec9b8459ba3384293e))
+
+
+### Bug Fixes
+
+* acls ([#156](https://github.com/theeye/theeye-web/issues/156)) ([2afad82](https://github.com/theeye/theeye-web/commit/2afad826152017bd2447812b4f13d103b2539114))
+* workflow editor form validator ([b65e39b](https://github.com/theeye/theeye-web/commit/b65e39b866611a15d0295829a3d1fe170aa4eb8d))
+
 ## [3.13.0](https://github.com/theeye/theeye-web/compare/3.12.0...3.13.0) (2023-09-07)
 
 
