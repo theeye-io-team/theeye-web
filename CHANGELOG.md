@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.14.1](https://github.com/theeye/theeye-web/compare/3.14.0...3.14.1) (2023-10-25)
+
+
+### Bug Fixes
+
+* only root can see IAM menu ([4f3867e](https://github.com/theeye/theeye-web/commit/4f3867ebb3b0519057b761a6d2642b6d1702214b))
+
 ## [3.14.0](https://github.com/theeye/theeye-web/compare/3.13.0...3.14.0) (2023-10-25)
 
 
