@@ -36,15 +36,15 @@ export default View.extend({
               <li><a href="/dashboard" class="eyeicon eyemenu-icon eyeicon-dashboard">Home</a></li>
             </div>
             <div data-hook="core-links"></div>
-            <div class="iam-menu">
+            <div class="iam-menu" data-hook="iam-menu">
               <li>
                 <a href="#"
                   class="eyeicon eyemenu-icon eyeicon-users"
-                  data-hook="iam-menu-toggle">
+                  data-hook="iam-menu-links-toggle">
                   IAM <span style="margin-left: 50px;" class="fa fa-angle-down"></span>
                 </a>
               </li>
-              <ul data-hook="iam-menu-container" class=""></ul>
+              <ul data-hook="iam-menu-links-container" class=""></ul>
             </div>
             <div>
               <li><a href="/help" class="eyeicon eyemenu-icon eyeicon-help">Help</a></li>
@@ -60,6 +60,7 @@ export default View.extend({
   props: {
     customers_switch: ['boolean', false, false],
     customerSearch: ['string', false, ''],
+    iAmGroot: ['boolean', false, false]
   },
   collections: {
     integrations: Integrations
@@ -81,6 +82,10 @@ export default View.extend({
     customerSearch: {
       type: 'value',
       hook: 'customers-input'
+    },
+    iAmGroot: {
+      type: 'toggle',
+      hook: 'iam-menu'
     }
   },
   events: {
@@ -100,9 +105,9 @@ export default View.extend({
     'mouseleave [data-hook=menu]': function () {
       this.trigger('mouseleave')
     },
-    'click [data-hook=iam-menu-toggle]': function () {
-      const container = this.query('[data-hook=iam-menu-container]')
-      const toggleIcon = this.query('[data-hook=iam-menu-toggle] span')
+    'click [data-hook=iam-menu-links-toggle]': function () {
+      const container = this.query('[data-hook=iam-menu-links-container]')
+      const toggleIcon = this.query('[data-hook=iam-menu-links-toggle] span')
       if (!container.classList.contains('expanded')) {
         container.style.display = 'block'
         container.classList.add('expanded')
@@ -136,6 +141,7 @@ export default View.extend({
     this.renderCustomers()
 
     this.listenToAndRun(App.state.session.user, 'change:credential', () => {
+      this.iAmGroot = App.state.session.user.credential === 'root'
       this.renderMenuLinks()
       this.renderIAMMenuLinks()
     })
@@ -196,7 +202,7 @@ export default View.extend({
     }
   },
   renderIAMMenuLinks () {
-    const container = this.query('[data-hook=iam-menu-container]')
+    const container = this.query('[data-hook=iam-menu-links-container]')
 
     // empty container
     while (container.hasChildNodes()) {
@@ -204,7 +210,7 @@ export default View.extend({
     }
 
     if (App.state.session.user.credential) {
-      if (Acls.hasAccessLevel('root')) {
+      if (this.iAmGroot) {
         container.appendChild(html2dom(`<li><a href="/admin/user" class="eyeicon eyemenu-icon eyeicon-users">Users</a></li>`))
         container.appendChild(html2dom(`<li><a href="/admin/customer" class="eyeicon eyemenu-icon eyeicon-organizations">Organizations</a></li>`))
         container.appendChild(html2dom(`<li><a href="/admin/member" class="eyeicon eyemenu-icon eyeicon-users">Members</a></li>`))
