@@ -42,3 +42,4 @@ config
 
 versions
 dist
+s3Deploy.sh
