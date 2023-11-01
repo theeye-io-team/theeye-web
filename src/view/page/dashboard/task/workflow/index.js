@@ -164,6 +164,19 @@ const WorkflowJobsListView = JobsList.extend({
           const jobs = workflowJob.jobs
 
           const matchedJobs = jobs.filter(job => {
+            const [ mdate, mtime ] = moment(job.creation_date)
+              .format('DD-MM-YYYY HH:mm:ss')
+              .split(' ')
+
+            const datePattern = new RegExp(value)
+            if (datePattern.test(mdate)) { return true }
+
+            const timePattern = new RegExp(value)
+            if (timePattern.test(mtime)) { return true }
+
+            if (!job.task_arguments_values) {
+              return false
+            }
             const matchedArgs = job.task_arguments_values.filter(arg => {
               const pattern = new RegExp(value,'i')
               return pattern.test(arg)
