@@ -50,7 +50,8 @@ const Schema = AppModel.extend({
     cancellable: ['boolean', false, true],
     short_description: 'string',
     icon_image: 'string',
-    icon_color: 'string'
+    icon_color: 'string',
+    default_state_evaluation: ['string', false, 'false']
   },
   derived: {
     hasWorkflow: {

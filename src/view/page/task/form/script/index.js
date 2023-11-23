@@ -64,6 +64,7 @@ export default TaskFormView.extend({
     }
 
     this.advancedFields = [
+      'default_state_evaluation',
       'description',
       'short_description',
       'acl',
@@ -326,6 +327,16 @@ export default TaskFormView.extend({
         label: 'Agent Execution Logging',
         name: 'agent_logging',
         value: this.model.agent_logging
+      }),
+      new SelectView({
+        visible: false,
+        label: 'Default final state evaluation',
+        name: 'default_state_evaluation',
+        value: this.model.default_state_evaluation,
+        options: [
+          { id: 'success', value: 'success' },
+          { id: 'failure', value: 'failure' },
+        ]
       }),
     ]
 
