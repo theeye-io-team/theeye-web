@@ -66,7 +66,7 @@ const checkWorkflow = (workflow) => {
     if (workflowJob.requiresInteraction()) {
       // if workflow job requires interaction,
       // we only need to know the active job
-      jobs.push(workflowJob.current_job)
+      jobs.push(workflowJob.currentJob)
     }
   }
 

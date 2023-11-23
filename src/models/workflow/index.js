@@ -127,7 +127,8 @@ const Workflow = AppModel.extend({
     short_description: 'string',
     icon_image: 'string',
     icon_color: 'string',
-    multitasking: ['boolean', false, true]
+    multitasking: ['boolean', false, true],
+    default_state_evaluation: ['string', false, 'false']
   },
   collections: {
     schedules: ScheduleCollection,
@@ -154,7 +155,8 @@ const Workflow = AppModel.extend({
     tagsCollection: 'collection',
     credentials: ['object', false, null],
     hasSchedules: ['boolean', true, false],
-    hasDisabledSchedules: ['boolean', true, false]
+    hasDisabledSchedules: ['boolean', true, false],
+    inputs_fetched: ['boolean', false, false]
   },
   derived: {
     type: {
@@ -382,6 +384,7 @@ const groupJobs = (workflow, jobs) => {
           wJob = {
             id: tJob.workflow_job_id,
             _type: JobConstants.WORKFLOW_TYPE,
+            startTaskId: workflow.start_task_id,
             jobs: []
           }
 

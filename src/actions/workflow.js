@@ -71,7 +71,7 @@ export default {
     })
   },
   fetchJobs (workflow) {
-    workflow.fetchJobs()
+    return workflow.fetchJobs()
   },
   fetchJobsInputs (workflow) {
     workflow.is_loading = true
@@ -84,8 +84,6 @@ export default {
       done (jobs, xhr) {
         workflow.mergeJobs(jobs)
         workflow.is_loading = false
-        //job.task.task_arguments.set(data.task.task_arguments)
-        //job.task_arguments_values = data.task_arguments_values
       }
     })
   },

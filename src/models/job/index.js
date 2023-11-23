@@ -583,72 +583,66 @@ const WorkflowJob = BaseJob.extend({
   session: {
     jobsLength: 'number',
     lifecycle: 'string',
-    startTaskId: 'string'
+    startTaskId: 'string',
+    firstJob: 'state',
+    currentJob: 'state',
+    previousJob: 'state'
   },
   initialize () {
     BaseJob.prototype.initialize.apply(this, arguments)
 
     this.listenToAndRun(this.jobs, 'add change sync reset remove', function () {
-      if (this.jobs.length) {
+      if (this.jobs?.length) {
         this.jobsLength = this.jobs.length
-        const currentJob = this.jobs.at(this.jobs.length - 1) // last
-        this.lifecycle = currentJob.lifecycle
-        this.state = currentJob.state
+        this.setFirstJob()
+        this.setCurrentJob()
       } else {
+        this.jobsLength = 0
         this.lifecycle = undefined
         this.state = undefined
       }
     })
   },
+  setFirstJob () {
+    if (this.jobs.length !== 0) {
+      const job = this.jobs.at(0)
+      if (job.task_id === this.startTaskId) {
+        this.firstJob = job
+      }
+    }
+  },
+  setCurrentJob () {
+    this.currentJob = this.jobs.at(this.jobs.length - 1) // last
+    this.lifecycle = this.currentJob.lifecycle
+    this.state = this.currentJob.state
+  },
+  setPreviousJob () {
+    if (this.jobs.length === 0) { return }
+    if ((this.jobs.length - 2) < 0) { return }
+    this.previousJob = this.jobs.models[this.jobs.length - 2]
+  },
   isOwner (user) {
     return this.verifyOwnerUser(user)
   },
   requiresInteraction() {
-    return this.current_job.requiresInteraction() 
+    return this.currentJob.requiresInteraction() 
   },
   derived: {
-    first_job: {
-      deps: ['jobsLength'],
-      fn () {
-        if (this.jobs.length === 0) { return null }
-        const job = this.jobs.at(0)
-        if (job.task_id === this.startTaskId) { return job }
-        return null
-      }
-    },
-    previous_job: {
-      deps: ['jobsLength'],
-      fn () {
-        if (this.jobs.length === 0) { return null }
-        if ((this.jobs.length - 2) < 0) { return null }
-
-        return this.jobs.models[this.jobs.length - 2]
-      }
-    },
-    current_job: { // the last
-      deps: ['jobsLength'],
-      fn () {
-        if (this.jobs.length === 0) { return null }
-        if ((this.jobs.length - 1) < 0) { return null }
-
-        return this.jobs.at(this.jobs.length - 1)
-      }
-    },
     parsedInput: {
       cache: false,
-      deps: ['first_job'],
+      deps: ['firstJob'],
       fn () {
-        if (this.first_job === null) {
+        if (this.firstJob === null) {
           return null
         }
-        return this.first_job.parsedInput
+        return this.firstJob.parsedInput
       }
     },
     parsedOutput: {
       cache: false,
-      deps: ['current_job'],
+      deps: ['currentJob'],
       fn () {
-        return this.current_job.parsedOutput
+        return this.currentJob.parsedOutput
       }
     },
   }
