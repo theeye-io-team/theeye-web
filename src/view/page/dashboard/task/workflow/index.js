@@ -29,9 +29,6 @@ import DownloadButton from 'view/buttons/download'
 import './styles.less'
 
 export default CollapsibleRow.extend({
-  props: {
-    inputs_fetched: 'boolean'
-  },
   derived: {
     hostname: {
       fn: () => ''
@@ -63,7 +60,7 @@ export default CollapsibleRow.extend({
   tableViewDataFetch () {
     const workflow = this.model
 
-    if (this.inputs_fetched === true) { return }
+    if (workflow.inputs_fetched === true) { return }
 
     const loader = this.queryByHook('collapse-container-body-loader')
     const content = this.queryByHook('collapse-container-body')
@@ -86,7 +83,7 @@ export default CollapsibleRow.extend({
         this.loadingContent = true
         this.listenTo(workflow, 'change:is_loading', () => {
           if (workflow.is_loading === false) {
-            this.inputs_fetched = true
+            workflow.inputs_fetched = true
             this.loadingContent = false
             this.stopListening(workflow, 'change:is_loading')
           }
@@ -379,8 +376,8 @@ const InputsView = View.extend({
   render () {
     let contentView
     this.renderWithTemplate(this)
-    this.listenToAndRun(this.model, 'change:first_job', () => {
-      const job = this.model.first_job
+    this.listenToAndRun(this.model, 'change:firstJob', () => {
+      const job = this.model.firstJob
       if (!job) { return }
       this.listenToAndRun(job, 'change:task change:task_arguments_values', () => {
         // render a new one
@@ -399,7 +396,7 @@ const InputsContentView = View.extend({
     this.renderWithTemplate(this)
 
     const wfJob = this.model
-    const job = this.model.first_job
+    const job = this.model.firstJob
 
     if (job.task?.task_arguments && Array.isArray(job.task_arguments_values)) {
 
