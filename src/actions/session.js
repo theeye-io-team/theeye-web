@@ -260,6 +260,8 @@ const actions = {
 export default actions
 
 const sessionReset = (profile) => {
+  if (!profile) { return }
+
   logger.log('updating session')
   const sessionState = App.state.session
 
