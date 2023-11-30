@@ -34,7 +34,7 @@ export default TasksCollection.extend({
       else if (m2IsWf) { return 1 }
     }
   },
-  model (attrs, options={}) {
+  model: function (attrs, options={}) {
     const taskModel = TasksCollection.prototype.model
 
     if (attrs._type == ModelConstants.TYPE_WORKFLOW) {
