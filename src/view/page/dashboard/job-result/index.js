@@ -514,7 +514,7 @@ const TableView = View.extend({
 
     this.renderCollection(
       this.collection,
-      (specs) => {
+      function (specs) {
         const type = specs.model.type
         if (type === 'file') {
           return new TableRowFile(specs)

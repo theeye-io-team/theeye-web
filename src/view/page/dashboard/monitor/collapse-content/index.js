@@ -585,7 +585,7 @@ CollapsedContentViewMap[ MonitorConstants.TYPE_FILE    ] = FileCollapsedContent
 CollapsedContentViewMap[ MonitorConstants.TYPE_HOST    ] = HostCollapsedContent
 CollapsedContentViewMap[ MonitorConstants.TYPE_NESTED  ] = NestedCollapsedContent
 
-const Factory = (input) => {
+function Factory (input) {
   const type = input.model.type
 
   // re-assign to internal properties

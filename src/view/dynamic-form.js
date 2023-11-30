@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import DynamicForm from 'components/dynamic-form'
 import * as FIELD from 'constants/field'
 
-export default (options) => {
+export default function (options) {
 
   const fieldsDefinitions = []
 
