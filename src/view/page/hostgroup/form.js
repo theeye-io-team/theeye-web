@@ -277,7 +277,7 @@ const HostsListView = View.extend({
 
     this.renderCollection(
       this.collection,
-      (options) => {
+      function (options) {
         const view = new ItemView(options)
         view.on('clicked', () => {
           this.trigger('add', options.model)

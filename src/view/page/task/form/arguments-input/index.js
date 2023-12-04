@@ -137,6 +137,8 @@ export default View.extend({
     return false
   },
   exportArgumentsToArgumentsRecipe () {
+    event.preventDefault()
+    event.stopPropagation()
     // App.actions.task.exportArguments(this.parent.model.id)
     let warn = false
     let args = this.taskArguments.serialize()

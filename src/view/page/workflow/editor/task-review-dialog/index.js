@@ -219,7 +219,7 @@ const InvalidTaskView = View.extend({
 
     this.renderCollection(
       this.missingConfiguration,
-      ({ model }) => {
+      function ({ model }) {
         return new MissingConfigurationView({ label: model.label })
       },
       this.queryByHook('tasks-missconfiguration'),

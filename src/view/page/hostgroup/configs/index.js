@@ -94,7 +94,7 @@ export default View.extend({
 
     this.renderCollection(
       App.state.hostGroupPage.resources,
-      (options) => {
+      function (options) {
         options.readonly = ! this.edit_mode
         return new ItemView(options)
       },
@@ -103,7 +103,7 @@ export default View.extend({
 
     this.renderCollection(
       App.state.hostGroupPage.tasks,
-      (options) => {
+      function (options) {
         options.readonly = ! this.edit_mode
         return new ItemView(options)
       },
@@ -112,7 +112,7 @@ export default View.extend({
 
     this.renderCollection(
       App.state.hostGroupPage.files,
-      (options) => {
+      function (options) {
         options.readonly = ! this.edit_mode
         return new FileItemView(options)
       },
@@ -121,7 +121,7 @@ export default View.extend({
 
     this.renderCollection(
       App.state.hostGroupPage.triggers,
-      (options) => {
+      function (options) {
         const trigger = options.model
         const task = App.state.hostGroupPage.tasks
           .models // tasks array

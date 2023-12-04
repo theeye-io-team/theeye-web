@@ -390,7 +390,7 @@ const NgrokIntegrationResult = State.extend({
  *
  */
 const TaskTypeInitializer = (type) => {
-  return (attrs, opts) => {
+  return function (attrs, opts) {
     if (!attrs || !attrs._type) {
       attrs._type = type
       attrs.type = type
@@ -550,7 +550,7 @@ const JobFactory = function (attrs, options = {}) {
 export const Collection = AppCollection.extend({
   comparator: 'creation_date',
   url: urlRoot,
-  model: (attrs, options) => {
+  model: function (attrs, options) {
     const model = new JobFactory(attrs, options)
     if (options.collection.child_of) {
       const task = options.collection.child_of

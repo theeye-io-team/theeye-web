@@ -3,7 +3,7 @@ import WorkflowRowView from './workflow'
 import TaskRowView from './task'
 import GroupRowView from './group'
 
-export default (specs) => {
+export default function (specs) {
   const type = specs.model._type || specs.model.type
 
   if (type == TYPE_WORKFLOW) {
