@@ -3,10 +3,6 @@ import InboxRowFactory from './item/factory'
 
 import './style.less'
 
-const EmptyView = View.extend({
-  template: `<div class="no-notifications" data-hook="no-notifications">No notifications</div>`
-})
-
 export default View.extend({
   template: `
     <div class="inbox-container">
@@ -25,3 +21,8 @@ export default View.extend({
     )
   }
 })
+
+const EmptyView = View.extend({
+  template: `<div class="no-notifications" data-hook="no-notifications">No notifications</div>`
+})
+

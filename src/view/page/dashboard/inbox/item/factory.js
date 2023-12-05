@@ -5,7 +5,7 @@ import NotificationTaskItem from './notification-job'
 import WebhookItem from './webhook'
 import DefaultItem from './default'
 
-const Factory = (options) => {
+const Factory = function (options) {
   const type = options.model.data.model._type
 
   if (type === 'NotificationJob' && options.model.topic === 'notification-task') {
