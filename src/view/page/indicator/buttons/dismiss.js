@@ -3,7 +3,7 @@ import IndicatorActions from 'actions/indicator'
 
 export default ButtonView.extend({
   initialize (options) {
-    this.title = 'Dismiss'
+    this.title = 'Delete'
     this.className = (options && options.className) || 'btn btn-primary'
     this.iconClass = 'fa fa-trash-o dropdown-icon'
   },

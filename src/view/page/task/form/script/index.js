@@ -12,7 +12,9 @@ import MembersSelectView from 'view/members-select'
 import EventsSelectView from 'view/events-select'
 import CheckboxView from 'components/checkbox-view'
 import AdvancedToggle from 'view/advanced-toggle'
+
 import * as TaskConstants from 'constants/task'
+import { SUCCESS, FAILURE } from 'constants/states'
 
 import HostSelectionView from 'view/host-select'
 import ScriptImportView from './file-import'
@@ -64,6 +66,7 @@ export default TaskFormView.extend({
     }
 
     this.advancedFields = [
+      'default_state_evaluation',
       'description',
       'short_description',
       'acl',
@@ -326,6 +329,16 @@ export default TaskFormView.extend({
         label: 'Agent Execution Logging',
         name: 'agent_logging',
         value: this.model.agent_logging
+      }),
+      new SelectView({
+        visible: false,
+        label: 'Default final state evaluation',
+        name: 'default_state_evaluation',
+        value: this.model.default_state_evaluation || FAILURE,
+        options: [
+          { id: SUCCESS, text: SUCCESS },
+          { id: FAILURE, text: FAILURE },
+        ]
       }),
     ]
 
