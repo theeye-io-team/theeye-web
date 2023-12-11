@@ -64,7 +64,6 @@ export default TaskFormView.extend({
     })
 
     this.advancedFields = [
-      'default_state_evaluation',
       'json',
       'body',
       'description',
@@ -259,17 +258,7 @@ export default TaskFormView.extend({
         label: 'Multitasking',
         name: 'multitasking',
         value: this.model.multitasking
-      }),
-      new SelectView({
-        visible: false,
-        label: 'Default final state evaluation',
-        name: 'default_state_evaluation',
-        value: this.model.default_state_evaluation,
-        options: [
-          { id: 'success', value: 'success' },
-          { id: 'failure', value: 'failure' },
-        ]
-      }),
+      })
     ]
 
     if (this.model.isNew()) {
