@@ -7,6 +7,7 @@ import { Collection as TagCollection } from 'models/tag'
 
 import * as FIELD from 'constants/field'
 import * as TaskConstants from 'constants/task'
+import { SUCCESS, FAILURE } from 'constants/states'
 
 const TaskArguments = AmpersandCollection.extend({
   mainIndex: 'id',
@@ -51,7 +52,7 @@ const Schema = AppModel.extend({
     short_description: 'string',
     icon_image: 'string',
     icon_color: 'string',
-    default_state_evaluation: ['string', false, 'false']
+    default_state_evaluation: ['string', false, FAILURE]
   },
   derived: {
     hasWorkflow: {

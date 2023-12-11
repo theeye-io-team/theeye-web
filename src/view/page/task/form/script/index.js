@@ -12,7 +12,9 @@ import MembersSelectView from 'view/members-select'
 import EventsSelectView from 'view/events-select'
 import CheckboxView from 'components/checkbox-view'
 import AdvancedToggle from 'view/advanced-toggle'
+
 import * as TaskConstants from 'constants/task'
+import { SUCCESS, FAILURE } from 'constants/states'
 
 import HostSelectionView from 'view/host-select'
 import ScriptImportView from './file-import'
@@ -332,10 +334,10 @@ export default TaskFormView.extend({
         visible: false,
         label: 'Default final state evaluation',
         name: 'default_state_evaluation',
-        value: this.model.default_state_evaluation,
+        value: this.model.default_state_evaluation || FAILURE,
         options: [
-          { id: 'success', value: 'success' },
-          { id: 'failure', value: 'failure' },
+          { id: SUCCESS, text: SUCCESS },
+          { id: FAILURE, text: FAILURE },
         ]
       }),
     ]
