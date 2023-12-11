@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.15.0](https://github.com/theeye/theeye-web/compare/3.14.1...3.15.0) (2023-12-11)
+
+
+### Features
+
+* filter workflows jobs by date and time ([f0e9cd2](https://github.com/theeye/theeye-web/commit/f0e9cd2b576717d3aac792a23ea7b8d1f4de1c49))
+* final state evaluation ([#157](https://github.com/theeye/theeye-web/issues/157)) ([73b3bf4](https://github.com/theeye/theeye-web/commit/73b3bf4291fae530445bca9c1e3ce6f9efc6974b))
+
+
+### Bug Fixes
+
+* **inbox:** view must be a function ([5c2752f](https://github.com/theeye/theeye-web/commit/5c2752f9fad19f5314beb8408306c13651f956d7))
+* lib upgrade breaks models definitions  ([#159](https://github.com/theeye/theeye-web/issues/159)) ([ae5ca7b](https://github.com/theeye/theeye-web/commit/ae5ca7b834e355e82d35f72ac88e98eb8f9e8606))
+* table_view. adds provisional workflow job ([#158](https://github.com/theeye/theeye-web/issues/158)) ([010ca96](https://github.com/theeye/theeye-web/commit/010ca96c8cef2d3997702f6c024569d352023d29))
+
 ### [3.14.1](https://github.com/theeye/theeye-web/compare/3.14.0...3.14.1) (2023-10-25)
 
 
