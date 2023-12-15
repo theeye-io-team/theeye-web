@@ -5,98 +5,6 @@ import App from 'ampersand-app'
 import validator from 'validator'
 import activationLang from 'language/activation'
 
-const ActivateForm = FormView.extend({
-  autoRender: true,
-  initialize () {
-    const passwordInput = new InputView({
-      type: 'password',
-      placeholder: activationLang.getText('password'),
-      name: 'password',
-      required: true,
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label',
-      tests: [
-        function (value) {
-          if (value.length < 8) {
-            return activationLang.getText('passwordLengthError')
-          }
-        }
-      ]
-    })
-
-    const usernameInput = new InputView({
-      placeholder: activationLang.getText('username'),
-      name: 'username',
-      required: true,
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label',
-      autofocus: true,
-      requiredMessage: activationLang.getText('usernameMissing'),
-      tests: [
-        function (value) {
-          if (validator.isEmpty(value)) {
-            return activationLang.getText('usernameMissing')
-          }
-        }
-      ]
-    })
-
-    this.fields = [
-      usernameInput,
-      passwordInput,
-      new InputView({
-        type: 'password',
-        placeholder: activationLang.getText('confirmPassword'),
-        name: 'confirmPassword',
-        required: true,
-        invalidClass: 'text-danger',
-        validityClassSelector: '.control-label',
-        tests: [
-          function (value) {
-            if (value !== passwordInput.value) {
-              return activationLang.getText('passwordMatchError')
-            }
-          },
-          function (value) {
-            if (value.length < 8) {
-              return activationLang.getText('passwordLengthError')
-            }
-          }
-        ]
-      })
-    ]
-
-    this.listenTo(App.state.activate, 'change:username', () => {
-      usernameInput.setValue(App.state.activate.username)
-    })
-
-    FormView.prototype.initialize.apply(this, arguments)
-  }
-})
-
-const SetCustomerForm = FormView.extend({
-  autoRender: true,
-  initialize () {
-    const customerInput = new InputView({
-      placeholder: activationLang.getText('organization'),
-      name: 'customer',
-      required: true,
-      invalidClass: 'text-danger',
-      validityClassSelector: '.control-label',
-      value: App.state.activate.username
-    })
-    this.fields = [
-      customerInput
-    ]
-
-    this.listenTo(App.state.activate, 'change:username', () => {
-      customerInput.setValue(App.state.activate.username)
-    })
-
-    FormView.prototype.initialize.apply(this, arguments)
-  }
-})
-
 export default View.extend({
   initialize () {
     View.prototype.initialize.apply(this, arguments)
@@ -209,3 +117,96 @@ export default View.extend({
     App.actions.navbar.setVisibility(false)
   }
 })
+
+const ActivateForm = FormView.extend({
+  autoRender: true,
+  initialize () {
+    const passwordInput = new InputView({
+      type: 'password',
+      placeholder: activationLang.getText('password'),
+      name: 'password',
+      required: true,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      tests: [
+        function (value) {
+          if (value.length < 8) {
+            return activationLang.getText('passwordLengthError')
+          }
+        }
+      ]
+    })
+
+    const usernameInput = new InputView({
+      placeholder: activationLang.getText('username'),
+      name: 'username',
+      required: true,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      autofocus: true,
+      requiredMessage: activationLang.getText('usernameMissing'),
+      tests: [
+        function (value) {
+          if (validator.isEmpty(value)) {
+            return activationLang.getText('usernameMissing')
+          }
+        }
+      ]
+    })
+
+    this.fields = [
+      usernameInput,
+      passwordInput,
+      new InputView({
+        type: 'password',
+        placeholder: activationLang.getText('confirmPassword'),
+        name: 'confirmPassword',
+        required: true,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        tests: [
+          function (value) {
+            if (value !== passwordInput.value) {
+              return activationLang.getText('passwordMatchError')
+            }
+          },
+          function (value) {
+            if (value.length < 8) {
+              return activationLang.getText('passwordLengthError')
+            }
+          }
+        ]
+      })
+    ]
+
+    this.listenTo(App.state.activate, 'change:username', () => {
+      usernameInput.setValue(App.state.activate.username)
+    })
+
+    FormView.prototype.initialize.apply(this, arguments)
+  }
+})
+
+const SetCustomerForm = FormView.extend({
+  autoRender: true,
+  initialize () {
+    const customerInput = new InputView({
+      placeholder: activationLang.getText('organization'),
+      name: 'customer',
+      required: true,
+      invalidClass: 'text-danger',
+      validityClassSelector: '.control-label',
+      value: App.state.activate.username
+    })
+    this.fields = [
+      customerInput
+    ]
+
+    this.listenTo(App.state.activate, 'change:username', () => {
+      customerInput.setValue(App.state.activate.username)
+    })
+
+    FormView.prototype.initialize.apply(this, arguments)
+  }
+})
+
