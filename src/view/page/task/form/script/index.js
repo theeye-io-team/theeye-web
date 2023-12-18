@@ -334,7 +334,7 @@ export default TaskFormView.extend({
         visible: false,
         label: 'Default final state evaluation',
         name: 'default_state_evaluation',
-        value: this.model.default_state_evaluation || FAILURE,
+        value: this.model.default_state_evaluation || SUCCESS,
         options: [
           { id: SUCCESS, text: SUCCESS },
           { id: FAILURE, text: FAILURE },
