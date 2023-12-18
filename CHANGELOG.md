@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.15.1](https://github.com/theeye/theeye-web/compare/3.15.0...3.15.1) (2023-12-18)
+
+
+### Bug Fixes
+
+* success state evaluation ([5ace558](https://github.com/theeye/theeye-web/commit/5ace558cd82c883c50748eb82f1e7dac598986e7))
+
 ## [3.15.0](https://github.com/theeye/theeye-web/compare/3.14.1...3.15.0) (2023-12-11)
 
 
