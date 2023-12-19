@@ -596,6 +596,7 @@ const WorkflowJob = BaseJob.extend({
         this.jobsLength = this.jobs.length
         this.setFirstJob()
         this.setCurrentJob()
+        this.setPreviousJob()
       } else {
         this.jobsLength = 0
         this.lifecycle = undefined
