@@ -52,7 +52,7 @@ const Schema = AppModel.extend({
     short_description: 'string',
     icon_image: 'string',
     icon_color: 'string',
-    default_state_evaluation: ['string', false, FAILURE]
+    default_state_evaluation: ['string', false, SUCCESS]
   },
   derived: {
     hasWorkflow: {
