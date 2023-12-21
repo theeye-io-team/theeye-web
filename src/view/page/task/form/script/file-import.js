@@ -55,34 +55,30 @@ export default DisabledInputView.extend({
       //file = new FileModel( App.state.taskForm.file )
     }
 
-    const form = new ImportFileForm({ model: fileModel })
+    const form = new FileForm({
+      model: fileModel,
+      onsubmit: (data) => {
+        this.file = data
+        modal.hide()
+      }
+    })
+
     const modal = new Modalizer({
       buttons: false,
       title: 'Script Form',
       bodyView: form
     })
 
-    this.listenTo(modal, 'shown', () => { form.focus() })
+    this.listenTo(modal, 'shown', () => {
+      form.focus()
+    })
+
     this.listenTo(modal, 'hidden', () => {
       form.remove()
       modal.remove()
-    })
-
-    this.listenTo(form, 'submitted', data => {
-      this.file = data
-      this.trigger('submitted', data)
-      modal.hide()
     })
 
     modal.show()
     return false
   }
 })
-
-const ImportFileForm = FileForm.extend({
-  submitCallback () {
-    let data = this.prepareData(this.data)
-    this.trigger('submitted', data)
-  }
-})
-

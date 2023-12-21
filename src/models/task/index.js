@@ -156,6 +156,18 @@ const Script = Schema.extend({
   }
 })
 
+const Nodejs = Script.extend({
+  initialize (attrs) {
+    Script.prototype.initialize.apply(this, arguments)
+    this.type = 'nodejs'
+    this.script_runas = 'node'
+  },
+  props: {
+    script_runas: ['string', false, 'node'],
+    _type: ['string', false, 'NodejsTask']
+  },
+})
+
 const Scraper = Schema.extend({
   urlRoot,
   initialize () {
@@ -397,6 +409,9 @@ const TaskFactory = function (attrs, options = {}) {
     let type = attrs.type
     let model
     switch (type) {
+      case TaskConstants.TYPE_NODEJS:
+        model = new Nodejs(attrs, options)
+        break;
       case TaskConstants.TYPE_SCRIPT:
         model = new Script(attrs, options)
         break;
@@ -479,4 +494,4 @@ const Group = Schema.extend({
   }
 })
 
-export { Scraper, Script, Approval, Dummy, Notification, Collection, TaskFactory as Factory, Group }
+export { Scraper, Script, Nodejs, Approval, Dummy, Notification, Collection, TaskFactory as Factory, Group }

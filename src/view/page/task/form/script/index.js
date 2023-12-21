@@ -17,7 +17,7 @@ import * as TaskConstants from 'constants/task'
 import { SUCCESS, FAILURE } from 'constants/states'
 
 import HostSelectionView from 'view/host-select'
-import ScriptImportView from './file-import'
+import ScriptPreview from './file-import'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
 // import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
@@ -48,21 +48,21 @@ export default TaskFormView.extend({
       }
     }
 
-    if (
-      this.mode === 'import'
-      //|| isDataUrl(this.model.script.data)
-    ) { // imported script
-      this.scriptSelection = new ScriptImportView({
+    if (this.mode === 'import') { // imported script
+      this.scriptSelection = new ScriptPreview({
         file: this.model.script.serialize(),
         required: true,
         name: 'script_name',
         label: 'Script'
       })
     } else {
-      this.scriptSelection = new ScriptSelectView({
+      const options = {
+        language: this.model.type,
         value: this.model.script_id,
         required: true
-      })
+      }
+
+      this.scriptSelection = new ScriptSelectView(options)
     }
 
     this.advancedFields = [
@@ -169,13 +169,25 @@ export default TaskFormView.extend({
       }
     })
 
-    const runners = this.runners = new RunnerSelectionView({
-      value: this.model.script_runas
-    })
+    let runners
+    if (this.model.type === TaskConstants.TYPE_NODEJS) {
+      runners = new InputView({
+        visible: false,
+        name: 'script_runas',
+        required: false,
+        value: 'node'
+      })
+    } else {
+      runners = new RunnerSelectionView({
+        value: this.model.script_runas
+      })
 
-    runners.listenToAndRun(this.scriptSelection, 'change', () => {
-      runners.updateState({ selector: this.scriptSelection })
-    })
+      runners.listenToAndRun(this.scriptSelection, 'change', () => {
+        runners.updateState({ selector: this.scriptSelection })
+      })
+    }
+
+    this.runners = runners
 
     // backward compatibility.
     // new task will be forbidden.
@@ -344,7 +356,7 @@ export default TaskFormView.extend({
 
     if (this.model.isNew()) {
       const copySelect = new CopyTaskSelect({
-        type: TaskConstants.TYPE_SCRIPT,
+        type: this.model.type,
         visible: false
       })
 
@@ -416,7 +428,7 @@ export default TaskFormView.extend({
   },
   prepareData (data) {
     let f = Object.assign({}, data)
-    f.type = TaskConstants.TYPE_SCRIPT
+    f.type = this.model.type
     f.grace_time = Number(data.grace_time)
     f.timeout = Number(data.timeout)
     return f
