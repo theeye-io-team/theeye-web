@@ -5,6 +5,7 @@ import './style.less'
 import cytoscape from 'cytoscape'
 import cydagre from 'cytoscape-dagre'
 cydagre(cytoscape)
+import { Images as IconsImages, Colors as IconsColors } from 'constants/icons'
 
 export default View.extend({
   template: `
@@ -92,50 +93,55 @@ export default View.extend({
             'height': 40,
             'width': 40,
             'background-fit': 'cover',
-            'border-color': function (ele) {
-              /*
-                This garbage code is here to work around a visual bug in which
-                an ugly orange border would render around a node that should
-                render without a border. What this code does is to pick a pre
-                defined color to render a border that looks just like the image
-                background, and is therefore unnoticeable
-              */
-              const dangerColor = "#d43f3a"
-              const colors = {
-                'event':        "#00CCCC",
-                'script':       "#E50580",
-                'scraper':      "#FF00CC",
-                'approval':     "#22C000",
-                'home':         "#FC7C00",
-                'dummy':        "#FF6482",
-                'notification': "#FFCC00",
-                'process':      "#00AAFF",
-                'webhook':      "#1E7EFB",
-                'host':         "#FC7C00",
-                'dstat':        "#00305B",
-                'psaux':        "#000000" // This should never show up
-              }
-              const node = new Node(ele.data('value'))
-              const color = colors[node.getFeatureType()] 
-
-              return color || dangerColor
-            },
             'font-size': 12,
             'border-width': 2,
             'border-opacity': 1,
             'content': 'data(label)',
             'color': '#FFF',
-            //'text-outline-width': 2,
-            //'text-outline-color': '#111',
-            //'text-opacity': 0.8,
             'text-valign': 'top',
             'text-halign': 'center',
             'text-margin-y': -5,
             'background-color': '#ee8e40',
+            //'border-color': function (ele) {
+            //  /*
+            //    This garbage code is here to work around a visual bug in which
+            //    an ugly orange border would render around a node that should
+            //    render without a border. What this code does is to pick a pre
+            //    defined color to render a border that looks just like the image
+            //    background, and is therefore unnoticeable
+            //  */
+            //  const dangerColor = "#d43f3a"
+            //  const colors = {
+            //    'event':        "#00CCCC",
+            //    'script':       "#E50580",
+            //    'scraper':      "#FF00CC",
+            //    'approval':     "#22C000",
+            //    'home':         "#FC7C00",
+            //    'dummy':        "#FF6482",
+            //    'notification': "#FFCC00",
+            //    'process':      "#00AAFF",
+            //    'webhook':      "#1E7EFB",
+            //    'host':         "#FC7C00",
+            //    'dstat':        "#00305B",
+            //    'psaux':        "#000000" // This should never show up
+            //  }
+            //  const node = new Node(ele.data('value'))
+            //  const color = colors[node.getFeatureType()] 
+
+            //  return color || dangerColor
+            //},
+            //'background-image': function (ele) {
+            //  var node = new Node(ele.data('value'))
+            //  return node.getImgUrl()
+            //}
+            'border-color': function (ele) {
+              const node = new Node(ele.data('value'))
+              return IconsColors[node.getFeatureType()] 
+            },
             'background-image': function (ele) {
-              var node = new Node(ele.data('value'))
-              return node.getImgUrl()
-            }
+              const node = new Node(ele.data('value'))
+              return IconsImages[node.getFeatureType()]
+            },
           }
         }, {
           selector: 'edge',
@@ -148,12 +154,7 @@ export default View.extend({
             'color': '#FFF',
             'line-color': '#FFF',
             'target-arrow-color': '#FFF',
-            //'line-color': '#9dbaea',
-            //'target-arrow-color': '#9dbaea',
             'font-size': 10,
-            //'text-outline-width': 1,
-            //'text-outline-color': '#111',
-            //'text-opacity': 0.8,
             'content': function (ele) {
               return ele.data('label') || ''
             },
@@ -260,7 +261,7 @@ function Node (value) {
   this.getFeatureType = function () {
     const type = (value.type || value._type).toLowerCase()
     const features = [
-      'event', 'script', 'scraper', 'approval',
+      'event', 'script', 'nodejs', 'scraper', 'approval',
       'home', 'dummy', 'notification', 'process',
       'webhook', 'host', 'dstat', 'psaux'
     ]
@@ -282,10 +283,10 @@ function Node (value) {
     return undefined
   }
 
-  this.getImgUrl = function () {
-    const type = this.getFeatureType()
-    return '/images/' + type + '.png'
-  }
+  //this.getImgUrl = function () {
+  //  const type = this.getFeatureType()
+  //  return '/images/' + type + '.png'
+  //}
 
   this.getResourceUrl = function () {
     var type = this.getModelType()
