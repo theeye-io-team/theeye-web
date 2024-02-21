@@ -12,6 +12,10 @@
     "type": "git",
     "url": "https://github.com/theeye/theeye-web.git"
   },
+  "engines": {
+    "npm": ">=8.0.0 <9.0.0",
+    "node": ">=16.0.0 <17.0.0"
+  },
   "scripts": {
     "build": "npx webpack --config webpack.prod.js",
     "build-dev": "npx update-browserslist-db@latest && APP_VERSION=$(git describe) NODE_ENV=dev npx webpack --watch --config webpack.dev.js",

@@ -3,6 +3,9 @@ import * as CollapsibleRow from './collapse'
 
 export default function (options) {
   switch (options.model.type) {
+    case TaskConstants.TYPE_NODEJS:
+      return new CollapsibleRow.Nodejs(options)
+      break;
     case TaskConstants.TYPE_SCRIPT:
       return new CollapsibleRow.Script(options)
       break;

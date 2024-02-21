@@ -26,6 +26,9 @@ function Factory (options) {
   if (model.type===TaskConstants.TYPE_NOTIFICATION) {
     return new NotificationItem(options)
   }
+  if (model.type===TaskConstants.TYPE_NODEJS) {
+    return new NodejsItem(options)
+  }
   return new DummyItem(options)
 }
 
@@ -122,6 +125,8 @@ const ScriptItem = Item.extend({
     }
   }
 })
+
+const NodejsItem = ScriptItem.extend({ })
 
 const ScraperItem = Item.extend({
   derived: {
