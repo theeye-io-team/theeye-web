@@ -70,11 +70,14 @@ export default DropableForm.extend({
   },
   submit () {
     this.beforeSubmit()
+    this.checkValid()
     if (!this.valid) {
       App.state.alerts.danger('The task is not ready.', 'Complete the required fields')
       const fields = this.getInvalidFields()
-      fields[0].el.scrollIntoView()
-      fields[0].input?.focus()
+      if (fields.length > 0) {
+        fields[0].el.scrollIntoView()
+        fields[0].input?.focus()
+      }
       return
     }
 
