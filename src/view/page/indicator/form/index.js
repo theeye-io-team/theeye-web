@@ -37,7 +37,7 @@ export default DropableForm.extend({
 
     this.advancedFields = [
       'width','height','acl',
-      'description','read_only',
+      'description','read_only','name',
       'value', 'failure_severity', 'order'
     ]
 
@@ -183,6 +183,15 @@ export default DropableForm.extend({
         required: false,
         visible: false,
         value: this.model.severity.toUpperCase()
+      }),
+      new InputView({
+        label: 'Alternative Name',
+        required: false,
+        visible: false,
+        name: 'name',
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.name,
       }),
       new TextareaView({
         label: 'More Info',

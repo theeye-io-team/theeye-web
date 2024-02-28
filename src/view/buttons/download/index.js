@@ -13,7 +13,7 @@ export default View.extend({
       deps: ['value'],
       fn () {
         const value = this.value
-        const blob = (value.indexOf('data:') === 0) ? value : undefined
+        const blob = (value?.indexOf('data:') === 0) ? value : undefined
         return blob
       }
     }

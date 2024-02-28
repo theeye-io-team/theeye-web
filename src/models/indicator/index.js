@@ -22,6 +22,7 @@ const BaseSchema = AppModel.extend({
     alerts: 'boolean',
     secret: 'string',
     title: ['string'],
+    name: ['string'],
     tags: ['array',false, () => { return [] }],
     severity: ['string',false,'low'],
     state: ['string',false,'normal'],
