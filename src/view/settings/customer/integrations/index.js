@@ -161,20 +161,7 @@ const IntegrationView = View.extend({
     }
     this.model.set(settings)
   },
-  //props: {
-  //  label: 'string',
-  //  enabled: 'boolean',
-  //  type: 'string',
-  //  name: 'string',
-  //  url: 'string'
-  //},
   derived: {
-    //enabledText: {
-    //  deps: ['model.enabled'],
-    //  fn () {
-    //    return this.model.enabled ? 'Enabled' : 'Disabled'
-    //  }
-    //},
     activeLink: {
       deps:['model.url','model.enabled'],
       fn () {
