@@ -50,7 +50,7 @@ export default FormView.extend({
   },
   addHelpIcon (field) {
     const view = this._fieldViews[field]
-    if (!view) return
+    if (!view) { return }
 
     const text = HelpTexts.integrations[this.model.name]
     if (!text) { return }

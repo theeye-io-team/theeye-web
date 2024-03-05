@@ -43,3 +43,7 @@ config
 versions
 dist
 s3Deploy.sh
+static/components/
+# deploy
+deploy.*.sh
+static/config.*.js
