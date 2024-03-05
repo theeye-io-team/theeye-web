@@ -48,7 +48,7 @@ const DefaultIntegrations = {
     label: 'Enterprise Components',
     //name: 'enterprise_components',
     files_upload_component: {
-      label: 'Files Upload Component',
+      label: 'Uploads Component',
       value: false,
       required: false,
       type: FieldsConstants.TYPE_BOOLEAN
