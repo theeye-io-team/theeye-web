@@ -2,7 +2,7 @@
 // add your own env settings
 //
 //
-window.config = undefined
+window.config = null;
   //{
   //app_url: "http://gateway url",
   //socket_url: "http://gateway url",

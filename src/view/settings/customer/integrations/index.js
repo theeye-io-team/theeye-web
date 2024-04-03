@@ -37,10 +37,33 @@ const DefaultIntegrations = {
   'digitize': {
     label: 'Digitize',
     name: 'digitize',
-    key: {
-      label: 'Api Key',
-      value: '',
-      required: true
+    //key: {
+    //  label: 'Api Key',
+    //  value: '',
+    //  required: true
+    //},
+    enabled: false
+  },
+  'enterprise_components': {
+    label: 'Enterprise Components',
+    //name: 'enterprise_components',
+    files_upload_component: {
+      label: 'Uploads Component',
+      value: false,
+      required: false,
+      type: FieldsConstants.TYPE_BOOLEAN
+    },
+    indicators_component: {
+      label: 'Indicators Component',
+      value: false,
+      required: false,
+      type: FieldsConstants.TYPE_BOOLEAN
+    },
+    files_component: {
+      label: 'Files Component',
+      value: false,
+      required: false,
+      type: FieldsConstants.TYPE_BOOLEAN
     },
     enabled: false
   }
@@ -66,6 +89,9 @@ export default View.extend({
 
     for (let name in integrations) {
       let settings = Object.assign({}, DefaultIntegrations[name])
+      if (!settings.name) {
+        settings.name = name
+      }
 
       // extend default values
       if (config[name]) {
@@ -135,20 +161,7 @@ const IntegrationView = View.extend({
     }
     this.model.set(settings)
   },
-  //props: {
-  //  label: 'string',
-  //  enabled: 'boolean',
-  //  type: 'string',
-  //  name: 'string',
-  //  url: 'string'
-  //},
   derived: {
-    //enabledText: {
-    //  deps: ['model.enabled'],
-    //  fn () {
-    //    return this.model.enabled ? 'Enabled' : 'Disabled'
-    //  }
-    //},
     activeLink: {
       deps:['model.url','model.enabled'],
       fn () {
@@ -213,26 +226,36 @@ const openForm = (model) => {
     form = new UrlIntegrationForm({ model })
   } else {
     const fields = []
-    for (let name in settings) {
-      if (typeof model[name] === 'boolean') {
+    for (let prop in settings) {
+
+      if (prop === 'name') {
+        fields.push({
+          type: FieldsConstants.TYPE_FIXED,
+          order: prop,
+          value: settings[prop],
+          label: prop,
+          required: false,
+          disabled:true
+        })
+      } else if (typeof model[prop] === 'boolean') {
         fields.push({
           type: FieldsConstants.TYPE_BOOLEAN,
-          order: name,
-          value: settings[name],
-          label: name,
+          order: prop,
+          value: settings[prop],
+          label: prop,
           required: false
         })
       } else {
-        const sets = typeof settings[name] !== 'string' ?
-          settings[name] :
-          { value: settings[name], label: name }
+        const sets = typeof settings[prop] !== 'string' ?
+          settings[prop] :
+          { value: settings[prop], label: prop }
 
         fields.push({
-          type: FieldsConstants.TYPE_INPUT,
-          order: name,
+          type: (sets.type || FieldsConstants.TYPE_INPUT),
+          order: prop,
           value: sets.value,
           label: sets.label,
-          required: sets.required || false
+          required: (sets.required || false)
         })
       }
     }

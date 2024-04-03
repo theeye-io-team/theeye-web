@@ -158,8 +158,8 @@ export default {
   job: {
     repeat: 'Start a new job using the same inputs',
     repeat_edit: 'Start a new job like this, but allow me to edit the arguments',
-    restart: 'Retry this job keeping the inputs and the environment',
-    restart_edit: 'Retry this job, but allow me to edit the arguments',
+    restart: 'Restart this job keeping the inputs and the environment',
+    restart_edit: 'Restart this job, but allow me to edit the arguments',
     change_assignee: 'Change this job\'s assignees'
   },
   file: {
