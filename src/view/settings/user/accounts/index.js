@@ -109,11 +109,21 @@ export default View.extend({
   },
   render () {
     this.renderWithTemplate(this)
+    const loginConfig = App.config.components.login
 
-    this.renderSubview(
-      new SocialConnection({ name: 'Google', provider: 'google' }),
-      this.queryByHook('connection-container')
-    )
+    if (loginConfig.google?.enabled === true) {
+      this.renderSubview(
+        new SocialConnection({ name: 'Google', provider: 'google' }),
+        this.queryByHook('connection-container')
+      )
+    }
+
+    if (loginConfig.microsoft?.enabled === true) {
+      this.renderSubview(
+        new SocialConnection({ name: 'Microsoft', provider: 'azuread-openidconnect' }),
+        this.queryByHook('connection-container')
+      )
+    }
   }
 })
 
@@ -129,10 +139,14 @@ const SocialConnection = View.extend({
       <div class="col-xs-6">
         <div data-hook="social-connection-status-connected">
           <span class="gray">CONNECTED</span>
-          <a data-hook="disconnect-button" class="blue pull-right">DISCONNECT</a>
+          <a data-hook="disconnect-button" class="btn btn-primary pull-right">
+            DISCONNECT
+          </a>
         </div>
         <div data-hook="social-connection-status-disconnected">
-          <a data-hook="connect-button" class="blue pull-right">CONNECT</a>
+          <a data-hook="connect-button" class="btn btn-primary pull-right">
+            CONNECT
+          </a>
           <span class="gray">DISCONNECTED</span>
         </div>
       </div>

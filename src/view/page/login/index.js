@@ -19,13 +19,20 @@ export default View.extend({
         <div class="login-form-container">
           <div class="login-main" data-hook="login-options-container">
             <div data-hook="login-form-container">
-              <h2 class="subtitle">Sign in</h2> 
-              <div data-hook="social-login-container"></div>
+              <h2 class="subtitle">Signin</h2> 
+              <div data-hook="auth-providers-container"></div>
+
+      <div class="division col-xs-12">
+        <div class="line col-xs-4"></div>
+        <div class="text col-xs-4">or</div>
+        <div class="line col-xs-4"></div>
+      </div>
+
               <div class="row">
                 <div class="col-xs-12">
                   <div class="form-wrapper">
                     <div data-hook="login-form" class="form-container"></div>
-                    <button class="sign-in" data-hook="start-login">Sign in</button>
+                    <button class="sign-in" data-hook="start-login">Signin</button>
                   </div>
                 </div>
               </div>
@@ -98,12 +105,16 @@ export default View.extend({
       this.renderRegiterButton(container)
     }
 
-    if (loginConfig.enterprise.enabled === true) {
+    if (loginConfig.enterprise?.enabled === true) {
       this.renderEnterpriseButton(container)
     }
 
-    if (loginConfig.google.enabled === true) {
-      this.renderSubview(new GoogleLogin(), this.queryByHook('social-login-container'))
+    if (loginConfig.google?.enabled === true) {
+      this.renderSubview(new GoogleLogin(), this.queryByHook('auth-providers-container'))
+    }
+
+    if (loginConfig.microsoft?.enabled === true) {
+      this.renderSubview(new MicrosoftLogin(), this.queryByHook('auth-providers-container'))
     }
 
     // document.getElementsByTagName('body')[0].style.backgroundColor = '#304269'
@@ -252,14 +263,9 @@ const GoogleLogin = View.extend({
   template: `
     <div class="row">
       <div class="col-xs-12">
-        <button class="sign google" data-hook="google-login">
-          <i class="fa fa-google"></i> Google
+        <button class="google signin" data-hook="google-login">
+          <i class=""></i> Google
         </a>
-      </div>
-      <div class="division col-xs-12">
-        <div class="line col-xs-4"></div>
-        <div class="text col-xs-4">or</div>
-        <div class="line col-xs-4"></div>
       </div>
     </div>
   `,
@@ -268,6 +274,25 @@ const GoogleLogin = View.extend({
       event.preventDefault()
       event.stopPropagation()
       App.actions.auth.loginProvider('google')
+    },
+  }
+})
+
+const MicrosoftLogin = View.extend({
+  template: `
+    <div class="row">
+      <div class="col-xs-12">
+        <button class="microsoft signin" data-hook="microsoft-login">
+          <i class="fa fa-microsoft"></i> Office 365
+        </a>
+      </div>
+    </div>
+  `,
+  events: {
+    'click [data-hook=microsoft-login]': function (event) {
+      event.preventDefault()
+      event.stopPropagation()
+      App.actions.auth.loginProvider('microsoft')
     },
   }
 })
