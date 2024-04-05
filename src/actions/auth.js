@@ -348,13 +348,21 @@ export default {
    * @param {String} provider
    */
   loginProvider (provider) {
-    window.location.replace(`${App.config.api_url}/auth/social/${provider}`)
+    if (provider === 'google') {
+      window.location.replace(`${App.config.api_url}/auth/social/${provider}`)
+    } else if (provider === 'microsoft') {
+      window.location.replace(`${App.config.auth_url}/api/msauth/signin`)
+    }
   },
   /**
    * @param {String} provider
    */
   connectProvider (provider) {
-    window.location.replace(`${App.config.api_url}/auth/social/${provider}`)
+    if (provider === 'google') {
+      window.location.replace(`${App.config.api_url}/auth/social/${provider}`)
+    } else if (provider === 'azuread-openidconnect') {
+      window.location.replace(`${App.config.auth_url}/api/msauth/connect?session_state=${App.state.session.access_token}`)
+    }
   },
   /**
    * @param {Object} Passport
