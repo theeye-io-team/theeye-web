@@ -10,7 +10,6 @@ import TagsSelectView from 'view/tags-select'
 import ScriptSelectView from 'view/script-select'
 import MembersSelectView from 'view/members-select'
 import EventsSelectView from 'view/events-select'
-import TriggerSelectView from 'view/trigger-select'
 import CheckboxView from 'components/checkbox-view'
 import AdvancedToggle from 'view/advanced-toggle'
 
@@ -24,6 +23,7 @@ import ArgumentsView from 'view/arguments-input'
 import CopyTaskSelect from '../copy-task-select'
 import TaskOnBoarding from '../../taskOnboarding'
 import ConstantsView from 'view/constants'
+import EmittersView from 'view/emitters'
 
 //import './styles.less'
 
@@ -71,6 +71,7 @@ export default TaskFormView.extend({
       'short_description',
       'acl',
       'triggers',
+      'emitters',
       'grace_time',
       'copy_task',
       'timeout',
@@ -127,8 +128,6 @@ export default TaskFormView.extend({
     requireUserInputs.on('change:value', (elem) => {
       userInputsMembers.enabled = (elem.value === true)
     })
-
-    const triggers = new TriggerSelectView()
 
     const triggeredBy = new EventsSelectView({
       label: 'Triggered by',
@@ -235,7 +234,11 @@ export default TaskFormView.extend({
         value: this.model.acl
       }),
       //triggeredBy,
-      triggers,
+      new EmittersView({
+        label: 'Triggered by',
+        nbame: 'triggers',
+        visible: false
+      }),
       triggerOnHold,
       new SelectView({
         sort: false,
@@ -303,23 +306,6 @@ export default TaskFormView.extend({
         visible: false,
         values: (this.model.env||{})
       }),
-      //new SelectView({
-      //  label: 'Arguments Type (experimental)',
-      //  name: 'arguments_type',
-      //  visible: false,
-      //  required: false,
-      //  options: [
-      //    { id: TaskConstants.ARGUMENT_TYPE_LEGACY, value: `${TaskConstants.ARGUMENT_TYPE_LEGACY} (Deprecated)` },
-      //    { id: TaskConstants.ARGUMENT_TYPE_TEXT, value: `${TaskConstants.ARGUMENT_TYPE_TEXT} (Default)` },
-      //    { id: TaskConstants.ARGUMENT_TYPE_JSON, value: `${TaskConstants.ARGUMENT_TYPE_JSON} (SDK Default)` }
-      //  ],
-      //  value: argumentsType,
-      //  unselectedText: '',
-      //  idAttribute: 'id',
-      //  textAttribute: 'value',
-      //  invalidClass: 'text-danger',
-      //  validityClassSelector: '.control-label'
-      //}),
       new CheckboxView({
         required: false,
         visible: false,

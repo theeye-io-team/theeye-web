@@ -121,6 +121,21 @@ XHR.send = (options, callback) => {
   return xhr
 }
 
+XHR.sendPromise = (options) => {
+  return new Promise( (resolve, reject) => {
+    XHR.send(
+      Object.assign(options, {
+        done: (response, xhr) => {
+          resolve({ response, xhr })
+        },
+        fail: (error, xhr) => {
+          reject({ error, xhr })
+        }
+      })
+    )
+  })
+}
+
 // set global authentication token
 XHR.authorization = null
 
