@@ -10,6 +10,15 @@ import TaskSelection from 'view/task-select'
 import FileSaver from 'file-saver'
 import './styles.less'
 
+const EventProps = State.extend({
+  props: {
+    id: 'number',
+    type: 'string',
+    emitter_id: 'string',
+    event_name: 'string',
+    value: 'any'
+  }
+})
 const EventCollection = Collection.extend({
   indexes: ['id', 'type', 'value', 'emitter_id','event_name'],
   model: State.extend({
@@ -144,12 +153,27 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    this.constants.add({
-      id: new Date().getTime(),
-      key: '',
-      value: ''
+    const emitterView = new EmitterView({
+      model: new EventProps()
     })
 
+    const modal = new Modalizer({
+      buttons: false,
+      title: 'Copy Environment from',
+      bodyView: emitterView
+    })
+
+    this.listenTo(modal,'hidden',() => {
+      emitterView.remove()
+      modal.remove()
+    })
+
+    this.listenTo(emitterView, 'change:value', () => {
+      //const task = App.state.tasks.get(emitterView.value)
+      //this.setValue(task.env)
+    })
+
+    modal.show()
     return false
   },
   onClickExport (event) {
@@ -226,12 +250,12 @@ export default View.extend({
       //view.typeView.input.focus()
     })
   },
-  update () {
-    this.reportToParent()
-  },
-  reportToParent () {
-    if (this.parent) { this.parent.update(this) }
-  },
+  //update () {
+  //  this.reportToParent()
+  //},
+  //reportToParent () {
+  //  if (this.parent) { this.parent.update(this) }
+  //},
   beforeSubmit () {
     this.variableViews.views.forEach(vu => vu.beforeSubmit())
     this.runTests()
@@ -269,7 +293,7 @@ const EmitterView = View.extend({
   initialize () {
     View.prototype.initialize.apply(this,arguments)
     this.updateState(this.model)
-    this.on('change:valid change:value', this.reportToParent, this)
+    //this.on('change:valid change:value', this.reportToParent, this)
   },
   updateState (state) {
     this.type = state.type
