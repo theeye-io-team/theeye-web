@@ -6,6 +6,7 @@ import AdvancedToggle from 'view/advanced-toggle'
 import TextareaView from 'components/input-view/textarea'
 import TagsSelectView from 'view/tags-select'
 import EventsSelectView from 'view/events-select'
+import CheckboxView from 'components/checkbox-view'
 import * as TaskConstants from 'constants/task'
 import TaskFormView from '../form'
 import ArgumentsView from '../arguments-input'
@@ -21,8 +22,38 @@ export default TaskFormView.extend({
       'short_description',
       'acl',
       'triggers',
-      'copy_task'
+      'copy_task',
+      'user_inputs',
+      'user_inputs_members'
     ]
+
+    const requireUserInputs = new CheckboxView({
+      visible: false,
+      label: 'Require user interaction',
+      name: 'user_inputs',
+      value: this.model.user_inputs
+    })
+
+    //const userInputsMembers = new MembersSelectView({
+    //  // multiple: true,
+    //  required: false,
+    //  visible: false,
+    //  name: 'user_inputs_members',
+    //  value: this.model.user_inputs_members,
+    //  label: 'Specific users interaction',
+    //  idAttribute: 'id',
+    //  textAttribute: 'label',
+    //  filterOptions: [
+    //    item => {
+    //      return item.credential !== 'viewer'
+    //    }
+    //  ],
+    //  enabled: (this.model.user_inputs === true)
+    //})
+
+    //requireUserInputs.on('change:value', (elem) => {
+    //  userInputsMembers.enabled = (elem.value === true)
+    //})
 
     this.fields = [
       new InputView({
@@ -91,7 +122,9 @@ export default TaskFormView.extend({
         ],
         visible: false,
         value: this.model.triggers
-      })
+      }),
+      requireUserInputs,
+      //userInputsMembers,
     ]
 
     if (this.model.isNew()) {
@@ -129,14 +162,5 @@ export default TaskFormView.extend({
     let f = Object.assign({}, data)
     f.type = TaskConstants.TYPE_DUMMY
     return f
-  },
-  //setWithTask (task) {
-  //  this.setValues({
-  //    name: task.name,
-  //    description: task.description,
-  //    tags: task.tags,
-  //    triggers: task.trigger || [],
-  //    task_arguments: task.task_arguments || []
-  //  })
-  //}
+  }
 })

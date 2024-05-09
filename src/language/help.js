@@ -110,7 +110,8 @@ export default {
       script: 'Select Script to accomplish your task automation',
       approval: 'Select Approval to give someone control over Workflow execution',
       notification: 'Select Notification to send push or email from inside Workflows or triggered by Tasks',
-      dummy: 'Select Input to request for mandatory values before start the Workflow execution'
+      dummy: 'Select Input to request for mandatory values before start the Workflow execution',
+      nodejs: 'NodeJs scripts boilerplate with improved result handler, error reporting, integrations, built-in features and more'
     },
     form: {
       name: 'Give this task a name',

@@ -615,6 +615,7 @@ const TableRowJSON = View.extend({
 
 const JobResultClassMap = {}
 JobResultClassMap['ScriptJob'] = ScriptJobResult
+JobResultClassMap['NodejsJob'] = ScriptJobResult
 JobResultClassMap['ScraperJob'] = ScraperJobResult
 JobResultClassMap['ApprovalJob'] = ApprovalJobResult
 JobResultClassMap['DummyJob'] = DummyJobResult
@@ -644,6 +645,7 @@ const ApprovalJobSummary = BaseJobView.extend({
 
 const SummaryJobsMap = {}
 SummaryJobsMap['ScriptJob'] = ScriptJobSummary
+SummaryJobsMap['NodejsJob'] = ScriptJobSummary
 SummaryJobsMap['ScraperJob'] = ScraperJobSummary
 SummaryJobsMap['DummyJob'] = DummyJobSummary
 SummaryJobsMap['NotificationJob'] = NotificationJobSummary

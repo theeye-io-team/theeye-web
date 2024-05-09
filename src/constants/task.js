@@ -5,6 +5,7 @@ export const TYPE_APPROVAL = 'approval'
 export const TYPE_DUMMY = 'dummy'
 export const TYPE_NOTIFICATION = 'notification'
 export const TYPE_GROUP = 'group'
+export const TYPE_NODEJS = 'nodejs'
 
 export const APPROVALS_TARGET_FIXED = 'fixed'
 export const APPROVALS_TARGET_ASSIGNEES = 'assignees'
