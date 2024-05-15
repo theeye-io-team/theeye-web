@@ -96,7 +96,7 @@ export default View.extend({
   initialize (options) {
     View.prototype.initialize.apply(this, arguments)
     this.setValue(this.values)
-    this.on('change:valid change:value', this.reportToParent, this)
+    //this.on('change:valid change:value', this.reportToParent, this)
 
     this.constants.on('add remove reset sync', () => {
       this.variablesLength = this.constants.length
@@ -158,20 +158,34 @@ export default View.extend({
     })
 
     const modal = new Modalizer({
-      buttons: false,
-      title: 'Copy Environment from',
+      buttons: true,
+      title: 'Select the trigger',
       bodyView: emitterView
     })
 
-    this.listenTo(modal,'hidden',() => {
+    this.listenTo(modal, 'hidden', () => {
       emitterView.remove()
       modal.remove()
     })
 
-    this.listenTo(emitterView, 'change:value', () => {
-      //const task = App.state.tasks.get(emitterView.value)
-      //this.setValue(task.env)
+    this.listenTo(modal, 'confirm', () => {
+      form.beforeSubmit()
+      if (!form.valid) { return }
+
+      if (this.deletedHosts(form.data)) {
+        const dialog = new Dialog({ model, form })
+        dialog.show()
+     } else {
+        HostGroupActions.update(model.id, form.data, false)
+      }
+
+      modal.hide()
     })
+
+    //this.listenTo(emitterView, 'change:value', () => {
+    //  const task = App.state.tasks.get(emitterView.value)
+    //  this.setValue(task.env)
+    //})
 
     modal.show()
     return false
@@ -272,23 +286,18 @@ export default View.extend({
 
 const EmitterView = View.extend({
   template: `
-    <li class="list-group-item">
+    <div>
+      <div class="" style="">
+        <span class="col-xs-4">Type</span>
+        <span class="col-xs-4">Emitter</span>
+        <span class="col-xs-4">Event Name</span>
+      </div>
       <div class="" style="">
         <span class="col-xs-4" data-hook="type"></span>
         <span class="col-xs-4" data-hook="emitter_id"></span>
         <span class="col-xs-4" data-hook="event_name"></span>
       </div>
-      <div class="" style="">
-        <span class="form-group">
-          <button data-hook="remove-option" class="btn btn-default">
-            <i class="fa fa-trash"></i>
-          </button>
-          <button data-hook="add-option" class="btn btn-default">
-            <i class="fa fa-plus"></i>
-          </button>
-        </span>
-      </div>
-    </li>
+    </div>
   `,
   initialize () {
     View.prototype.initialize.apply(this,arguments)
@@ -412,12 +421,12 @@ const EmitterView = View.extend({
     })
     return view
   },
-  update () {
-    this.reportToParent()
-  },
-  reportToParent () {
-    if (this.parent) { this.parent.update(this) }
-  },
+  //update () {
+  //  this.reportToParent()
+  //},
+  //reportToParent () {
+  //  if (this.parent) { this.parent.update(this) }
+  //},
   beforeSubmit () {
     this.typeView.beforeSubmit()
     this.emitterView.beforeSubmit()
