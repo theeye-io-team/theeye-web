@@ -213,17 +213,17 @@ curl -i -sS -X POST '<span data-hook="curl_api_url"></span>' \\
     this.url += '?' + qs.stringify(query)
 
     if (this.model.start_task.task_arguments.models.length > 0) {
-      this.args = this.model
-        .start_task
-        .task_arguments
-        .models.map(arg => `\"'\$\{${arg.label.replace(/ /g,'_')}\}'\"`)
-        .join(',')
+      const args = this.model.start_task.task_arguments.models
+      for (let index = 0; index < args.length; index++) {
+        const label = args[index].label
+          .normalize("NFD")
+          .toLowerCase()
+          .replace(/\s+/g,'_')
+          .replace(/[^a-z0-9_]/g, '')
 
-      this.argsVars = this.model
-        .start_task
-        .task_arguments
-        .models.map(arg => `${arg.label.replace(/ /g,'_')}=""`)
-        .join('\n')
+        this.args += `\"'\$\{${label}\}'\",`
+        this.argsVars += `${label}=""\n`
+      }
     }
   },
   bindings: {
