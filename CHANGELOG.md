@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.16.0](https://github.com/theeye/theeye-web/compare/3.15.3...3.16.0) (2024-05-23)
+
+
+### Features
+
+* azure/ms/office connect options ([#164](https://github.com/theeye/theeye-web/issues/164)) ([bd98370](https://github.com/theeye/theeye-web/commit/bd983703b5a93ce432e4a4e4f1c46aad3ad27a7d))
+* enterprise components ([#163](https://github.com/theeye/theeye-web/issues/163)) ([4dbfcb3](https://github.com/theeye/theeye-web/commit/4dbfcb3aa1994a95c51a5d832b60a8a5fcc50981))
+* gateway azure connect ([#165](https://github.com/theeye/theeye-web/issues/165)) ([223e6de](https://github.com/theeye/theeye-web/commit/223e6de6e454c9bee558737f37ef0d4a26ded24c))
+* **indicator:** name property added ([#161](https://github.com/theeye/theeye-web/issues/161)) ([cd1aaf3](https://github.com/theeye/theeye-web/commit/cd1aaf349ede08c948087d8823cfddcb781bcc97))
+
 ### [3.15.3](https://github.com/theeye/theeye-web/compare/3.15.2...3.15.3) (2023-12-20)
 
 
