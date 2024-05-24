@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.16.1](https://github.com/theeye/theeye-web/compare/3.16.0...3.16.1) (2024-05-24)
+
+
+### Bug Fixes
+
+* prod config ([c7013e4](https://github.com/theeye/theeye-web/commit/c7013e40ede48a66e2d5b9b8bcc5d4da3cb780af))
+
 ## [3.16.0](https://github.com/theeye/theeye-web/compare/3.15.3...3.16.0) (2024-05-23)
 
 
