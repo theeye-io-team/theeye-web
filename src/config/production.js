@@ -28,6 +28,9 @@ export default Object.assign({}, defaultConfigs, {
       },
       google: {
         enabled: true
+      },
+      microsoft: {
+        enabled: true
       }
     },
     grecaptcha: {
