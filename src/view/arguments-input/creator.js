@@ -63,6 +63,12 @@ export default View.extend({
           </button>
           <h2>File Input <span data-hook="webhook-help"></span></h2>
         </div>
+        <div class="col-xs-2">
+          <button data-hook="boolean" class="btn btn-default">
+            <i class="fa fa-check-square-o"></i>
+          </button>
+          <h2>Boolean Input <span data-hook="boolean-help"></span></h2>
+        </div>
       </div>
     </section>
     <section data-hook="form-container">
@@ -89,6 +95,7 @@ export default View.extend({
     'click [data-hook=select]':'onClickSelect',
     'click [data-hook=date]':'onClickDate',
     'click [data-hook=file]':'onClickFile',
+    'click [data-hook=boolean]':'onClickBoolean',
     'click [data-hook=remote-options]':'onClickRemoteOptions',
     //keydown: 'onKeyEvent',
     //keypress: 'onKeyEvent'
@@ -146,6 +153,11 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
     this.renderArgumentForm(FIELD.TYPE_FILE)
+  },
+  onClickBoolean (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.renderArgumentForm(FIELD.TYPE_BOOLEAN)
   },
   /**
    *
