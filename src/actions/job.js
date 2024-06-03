@@ -456,6 +456,12 @@ const parseArgumentsValues = (task, args) => {
 }
 
 const getValue = (arg) => {
+  if (arg.type === FieldConstants.TYPE_BOOLEAN) {
+    if (typeof arg.value === 'boolean') {
+      return arg.value
+    }
+  }
+
   if (arg.type === FieldConstants.TYPE_FILE) {
     if (arg.value) {
       if (arg.value.dataUrl) {
