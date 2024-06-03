@@ -28,6 +28,7 @@ export default InputView.extend({
     </div>
   `,
   props: {
+    id: ['number', false],
     pickerText: ['string', false, 'pick one'],
     pickable: ['boolean', false, false],
     visible: ['boolean',false,true],

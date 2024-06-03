@@ -60,6 +60,7 @@ export default View.extend({
     }
   },
   props: {
+    id: ['number', false],
     sort: ['boolean',false,true],
     visible: ['boolean',false,true ],
     styles: ['string',false,'form-group'],

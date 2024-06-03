@@ -1,6 +1,6 @@
 import View from 'ampersand-view'
-import ArgumentForm from './form'
-import { DynamicArgument as TaskArgument } from 'models/task/dynamic-argument'
+import ArgumentFormView from './form'
+import { DynamicArgument as ArgumentModel } from 'models/dynamic-argument'
 import * as FIELD from 'constants/field'
 
 export default View.extend({
@@ -63,6 +63,12 @@ export default View.extend({
           </button>
           <h2>File Input <span data-hook="webhook-help"></span></h2>
         </div>
+        <div class="col-xs-2">
+          <button data-hook="boolean" class="btn btn-default">
+            <i class="fa fa-check-square-o"></i>
+          </button>
+          <h2>Boolean Input <span data-hook="boolean-help"></span></h2>
+        </div>
       </div>
     </section>
     <section data-hook="form-container">
@@ -89,19 +95,9 @@ export default View.extend({
     'click [data-hook=select]':'onClickSelect',
     'click [data-hook=date]':'onClickDate',
     'click [data-hook=file]':'onClickFile',
+    'click [data-hook=boolean]':'onClickBoolean',
     'click [data-hook=remote-options]':'onClickRemoteOptions',
-    //keydown: 'onKeyEvent',
-    //keypress: 'onKeyEvent'
   },
-  //onKeyEvent (event) {
-  //  if (event.target.nodeName.toUpperCase() == 'INPUT') {
-  //    if (event.keyCode == 13) {
-  //      event.preventDefault()
-  //      event.stopPropagation()
-  //      return false
-  //    }
-  //  }
-  //},
   onClickRegexp (event) {
     event.preventDefault()
     event.stopPropagation()
@@ -147,6 +143,11 @@ export default View.extend({
     event.stopPropagation()
     this.renderArgumentForm(FIELD.TYPE_FILE)
   },
+  onClickBoolean (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    this.renderArgumentForm(FIELD.TYPE_BOOLEAN)
+  },
   /**
    *
    * @param {String} type argument type
@@ -160,16 +161,20 @@ export default View.extend({
     }
 
     this.current_type = type
-    const argument = new TaskArgument({ type: this.current_type })
-
-    var form = new ArgumentForm({ model: argument })
+    const argument = new ArgumentModel({ type: this.current_type })
+    const form = new ArgumentFormView({
+      model: argument,
+      taskArguments: this.parent.taskArguments
+    })
     this.renderSubview(form, this.queryByHook('form-container'))
 
-    form.focus()
-    this.listenTo(form,'submitted',() => { // form submit event
-      this.trigger('added',form.data)
+    this.listenTo(form, 'submitted', () => {
+      // form submit event
+      this.trigger('added', form.data)
       form.reset()
     })
+
+    form.focus()
     this.form = form
   },
   initialize () {
@@ -182,7 +187,9 @@ export default View.extend({
     })
   },
   remove () {
-    if (this.form) this.form.remove()
+    if (this.form) {
+      this.form.remove()
+    }
     View.prototype.remove.apply(this,arguments)
   }
 })
