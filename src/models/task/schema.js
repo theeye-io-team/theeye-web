@@ -1,7 +1,7 @@
 import App from 'ampersand-app'
 import AppModel from 'lib/app-model'
 import AmpersandCollection from 'ampersand-collection'
-import { DynamicArgument } from './dynamic-argument'
+import { DynamicArgument } from '../dynamic-argument'
 import { Collection as ScheduleCollection } from 'models/schedule'
 import { Collection as TagCollection } from 'models/tag'
 

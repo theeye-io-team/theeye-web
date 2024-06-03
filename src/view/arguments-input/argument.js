@@ -1,5 +1,5 @@
 import View from 'ampersand-view'
-import ArgumentForm from './form'
+import ArgumentFormView from './form'
 import Modalizer from 'components/modalizer'
 import SelectView from 'ampersand-select-view'
 import * as FIELD from 'constants/field'
@@ -7,6 +7,13 @@ import * as FIELD from 'constants/field'
 import './style.less'
 
 export default View.extend({
+  initialize () {
+    View.prototype.initialize.apply(this, arguments)
+
+    this.on('change:valid', () => {
+      this.toggleValidity(this.valid)
+    })
+  },
   template: `
     <li data-component="argument-item" class="list-group-item">
       <div class="row" style="line-height: 30px;">
@@ -21,10 +28,10 @@ export default View.extend({
         </span>
         <span class="col-xs-2">
           <div class="fright">
-            <button class="btn btn-default btn-sm" data-hook="edit-script-argument">
+            <button class="btn btn-default btn-sm" data-hook="edit-argument">
               <i class="fa fa-edit"></i>
             </button>
-            <button class="btn btn-default btn-sm" data-hook="remove-script-argument">
+            <button class="btn btn-default btn-sm" data-hook="remove-argument">
               <i class="fa fa-trash"></i>
             </button>
           </div>
@@ -77,8 +84,8 @@ export default View.extend({
     }
   },
   events: {
-    'click [data-hook=edit-script-argument]': 'onClickEditScriptArgument',
-    'click [data-hook=remove-script-argument]': 'onClickRemoveScriptArgument',
+    'click [data-hook=edit-argument]': 'onClickEditArgument',
+    'click [data-hook=remove-argument]': 'onClickRemoveArgument',
     'click [data-hook=order]': 'onClickOrder',
     'blur [data-hook=value]': 'onDirectValueChanged',
     'focus [data-hook=value]': 'unmaskValue'
@@ -137,11 +144,14 @@ export default View.extend({
     this.model.order = order
     this.model.collection.sort() // sort collection by new orders
   },
-  onClickEditScriptArgument (event) {
+  onClickEditArgument (event) {
     event.preventDefault()
     event.stopPropagation()
 
-    const form = new ArgumentForm({ model: this.model })
+    const form = new ArgumentFormView({
+      model: this.model,
+      taskArguments: this.collection
+    })
     const modal = new Modalizer({
       buttons: false,
       title: 'Edit Argument',
@@ -162,7 +172,7 @@ export default View.extend({
 
     return false
   },
-  onClickRemoveScriptArgument (event) {
+  onClickRemoveArgument (event) {
     event.preventDefault()
     event.stopPropagation()
     this.model.collection.remove(this.model.id)
@@ -201,11 +211,4 @@ export default View.extend({
       input.nextElementSibling.classList.remove('fa','fa-warning','text-danger')
     }
   },
-  initialize () {
-    View.prototype.initialize.apply(this, arguments)
-
-    this.on('change:valid', () => {
-      this.toggleValidity(this.valid)
-    })
-  }
 })

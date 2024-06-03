@@ -10,7 +10,7 @@ import moment from 'moment'
 import isURL from 'validator/lib/isURL'
 import * as JobConstants from 'constants/job'
 import * as LifecycleConstants from 'constants/lifecycle'
-import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
+import { ValueOption as ArgumentValueOption } from 'models/dynamic-argument'
 import ConfirmExecution from '../../confirm-execution'
 
 export const RepeatCompletedJob = BaseExec.extend({

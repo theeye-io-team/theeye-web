@@ -2,7 +2,7 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import Modalizer from 'components/modalizer'
 import Collection from 'ampersand-collection'
-import { DynamicArgument as TaskArgument } from 'models/task/dynamic-argument'
+import { DynamicArgument as TaskArgument } from 'models/dynamic-argument'
 import * as FieldConstants from 'constants/field'
 import HelpIcon from 'components/help-icon'
 import TaskSelection from 'view/task-select'
@@ -85,7 +85,7 @@ export default View.extend({
     event.preventDefault()
     event.stopPropagation()
 
-    const creator = new ArgumentsCreator()
+    const creator = new ArgumentsCreator({ parent: this })
 
     const modal = new Modalizer({
       buttons: false,

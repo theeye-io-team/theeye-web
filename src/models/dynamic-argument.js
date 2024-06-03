@@ -39,7 +39,8 @@ const DynamicArgument = Model.extend({
     charsmax: ['number',false],
     charset: ['string',false],
     pattern: ['string',false],
-    version: ['string',false]
+    version: ['string',false],
+    dependencies: ['array', false, () => { return [] }]
   },
   collections: {
     options: OptionsCollection
