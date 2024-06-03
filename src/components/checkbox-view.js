@@ -14,6 +14,7 @@ export default CheckboxView.extend({
     </div>
   `,
   props: {
+    id: ['number', false],
     visible: ['boolean',false,true],
     value: 'boolean'
   },
