@@ -1,5 +1,3 @@
-'use strict'
-
 import View from 'ampersand-view'
 import State from 'ampersand-state'
 import FormView from 'ampersand-form-view'
@@ -7,7 +5,7 @@ import InputView from 'components/input-view'
 import SelectView from 'components/select2-view'
 import CheckboxView from 'components/checkbox-view'
 import * as FIELD from 'constants/field'
-import { ValueOption as ArgumentValueOption } from 'models/task/dynamic-argument'
+import { ValueOption as ArgumentValueOption } from 'models/dynamic-argument'
 import isURL from 'validator/lib/isURL'
 import bootbox from 'bootbox'
 
@@ -68,11 +66,10 @@ export default FormView.extend({
       }))
 
       switch (this.model.type) {
-
         case FIELD.TYPE_JSON:
           break
-        case FIELD.TYPE_INPUT:
 
+        case FIELD.TYPE_INPUT:
           this.fields.push(
             new SelectView({
               label: 'Accepted Characters',
@@ -127,11 +124,9 @@ export default FormView.extend({
               value: this.model.masked
             })
           )
-
           break
 
         case FIELD.TYPE_SELECT:
-
           this.fields.push(new SelectOptionsView({
             value: this.model.options
           }))
@@ -143,11 +138,9 @@ export default FormView.extend({
               value: this.model.multiple,
             })
           )
-
           break
 
         case FIELD.TYPE_REMOTE_OPTIONS:
-
           this.fields.push(
             new InputView({
               label: 'Endpoint URL *',
@@ -191,7 +184,6 @@ export default FormView.extend({
               value: this.model.multiple,
             })
           )
-
           break
       }
 
@@ -200,6 +192,16 @@ export default FormView.extend({
           label: 'Required',
           name: 'required',
           value: this.model.required,
+        })
+      )
+
+      this.fields.push(
+        new CurrentFormInputs({
+          value: this.model.dependencies,
+          options: options
+            .taskArguments
+            .models
+            .filter(arg => arg.label !== this.model.label)
         })
       )
     }
@@ -224,8 +226,8 @@ export default FormView.extend({
   },
   submit (next) {
     const done = () => {
-      if (!this.valid) return
-      if (next) next(true)
+      if (!this.valid) { return }
+      if (next) { next(true) }
       this.trigger('submitted')
     }
 
@@ -514,5 +516,23 @@ const SelectOptionsView = View.extend({
   },
   reset () {
     this.options.reset([])
+  }
+})
+
+const CurrentFormInputs = SelectView.extend({
+  initialize (settings) {
+    this.label = 'Dependency'
+    this.name = 'dependencies'
+    this.required = false
+    this.initialValue = settings.value
+    this.unselectedText = 'select input dependency'
+    this.idAttribute = 'id'
+    this.textAttribute = 'label'
+    this.invalidClass = 'text-danger'
+    this.validityClassSelector = '.control-label'
+    this.options = settings.options
+    this.multiple = true
+
+    SelectView.prototype.initialize.apply(this,arguments)
   }
 })

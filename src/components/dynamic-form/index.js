@@ -2,17 +2,19 @@ import App from 'ampersand-app'
 
 import * as FIELD from 'constants/field'
 import DropableForm from 'components/dropable-form'
-import InputView from 'components/input-view'
-import CheckboxView from 'components/checkbox-view'
-import DisabledInputView from 'components/input-view/disabled'
-import TextareaView from 'components/input-view/textarea'
-import SelectView from 'components/select2-view'
 import HelpIcon from 'components/help-icon'
-import Datepicker from 'components/input-view/datepicker'
-import OneLineMediaInputView from 'components/input-view/media/oneline'
-import MediaFileModel from './media-file'
 import isURL from 'validator/lib/isURL'
 import isEmail from 'validator/lib/isEmail'
+
+// inputs
+import InputView from 'components/input-view'
+import DisabledInputView from 'components/input-view/disabled'
+import TextareaView from 'components/input-view/textarea'
+import Datepicker from 'components/input-view/datepicker'
+import OneLineMediaInputView from 'components/input-view/media/oneline'
+import CheckboxView from 'components/checkbox-view'
+import SelectView from 'components/select2-view'
+import MediaFileModel from './media-file'
 
 export default DropableForm.extend({
   props: {
@@ -22,12 +24,33 @@ export default DropableForm.extend({
     const fieldsSpecs = options.fieldsDefinitions
     this.fields = []
 
+    const deps = []
     fieldsSpecs.forEach(spec => {
       let field = this.fieldFactory(spec)
       if (field !== null) {
         this.fields.push(field)
+
+        if (spec.dependencies?.length > 0) {
+          deps.push({ field, spec })
+        }
       }
     })
+
+    // after all inputs are created dependencies can be set
+    for (let { field, spec } of deps) {
+      for (let dep of spec.dependencies) {
+        for (let depField of this.fields) {
+          // strings
+          if (depField.id === Number(dep)) {
+            field.listenToAndRun(depField, 'change:value', () => {
+              const filled = depField.value
+              field.readonly = !filled
+              field.required = filled
+            })
+          }
+        }
+      }
+    }
 
     DropableForm.prototype.initialize.apply(this,arguments)
   },
@@ -116,6 +139,7 @@ export default DropableForm.extend({
   },
   buildJsonField (spec) {
     return new TextareaView({
+      id: spec.id,
       contentType: 'json',
       prettyJson: true,
       label: spec.label,
@@ -138,6 +162,7 @@ export default DropableForm.extend({
   },
   buildTextField (spec) {
     return new TextareaView({
+      id: spec.id,
       label: spec.label,
       name: spec.order.toString(),
       required: spec.required,
@@ -148,16 +173,18 @@ export default DropableForm.extend({
   },
   buildBooleanField (spec) {
     return new CheckboxView({
+      id: spec.id,
       label: spec.label,
       name: spec.order.toString(),
       required: spec.required,
-      value: spec.value,
+      value: Boolean(spec.value),
       invalidClass: 'text-danger',
       validityClassSelector: '.control-label',
     })
   },
   buildInputField (spec) {
     return new InputView({
+      id: spec.id,
       label: spec.label,
       name: spec.order.toString(),
       required: spec.required,
@@ -216,6 +243,7 @@ export default DropableForm.extend({
   },
   buildEmailField (spec) {
     return new InputView({
+      id: spec.id,
       label: spec.label,
       name: spec.order.toString(),
       required: spec.required,
@@ -235,6 +263,7 @@ export default DropableForm.extend({
   },
   buildRegexpField (spec) {
     return new InputView({
+      id: spec.id,
       label: spec.label,
       name: spec.order.toString(),
       required: spec.required,
@@ -255,6 +284,7 @@ export default DropableForm.extend({
   },
   buildDateField (spec) {
     return new Datepicker({
+      id: spec.id,
       label: spec.label,
       name: spec.order.toString(),
       required: spec.required,
@@ -278,6 +308,7 @@ export default DropableForm.extend({
   },
   buildFileField (spec) {
     return new OneLineMediaInputView({
+      id: spec.id,
       type: 'file',
       label: spec.label,
       name: spec.order.toString(),
@@ -288,6 +319,7 @@ export default DropableForm.extend({
   },
   buildOptionsField (spec) {
     return new SelectView({
+      id: spec.id,
       label: spec.label,
       name: spec.order.toString(),
       multiple: spec.multiple,
@@ -306,6 +338,7 @@ export default DropableForm.extend({
   },
   buildRemoteOptionsField (spec) {
     const options = {
+      id: spec.id,
       label: spec.label,
       name: spec.order.toString(),
       multiple: spec.multiple,

@@ -1,6 +1,6 @@
 import View from 'ampersand-view'
-import ArgumentForm from './form'
-import { DynamicArgument as TaskArgument } from 'models/task/dynamic-argument'
+import ArgumentFormView from './form'
+import { DynamicArgument as ArgumentModel } from 'models/dynamic-argument'
 import * as FIELD from 'constants/field'
 
 export default View.extend({
@@ -97,18 +97,7 @@ export default View.extend({
     'click [data-hook=file]':'onClickFile',
     'click [data-hook=boolean]':'onClickBoolean',
     'click [data-hook=remote-options]':'onClickRemoteOptions',
-    //keydown: 'onKeyEvent',
-    //keypress: 'onKeyEvent'
   },
-  //onKeyEvent (event) {
-  //  if (event.target.nodeName.toUpperCase() == 'INPUT') {
-  //    if (event.keyCode == 13) {
-  //      event.preventDefault()
-  //      event.stopPropagation()
-  //      return false
-  //    }
-  //  }
-  //},
   onClickRegexp (event) {
     event.preventDefault()
     event.stopPropagation()
@@ -172,16 +161,20 @@ export default View.extend({
     }
 
     this.current_type = type
-    const argument = new TaskArgument({ type: this.current_type })
-
-    var form = new ArgumentForm({ model: argument })
+    const argument = new ArgumentModel({ type: this.current_type })
+    const form = new ArgumentFormView({
+      model: argument,
+      taskArguments: this.parent.taskArguments
+    })
     this.renderSubview(form, this.queryByHook('form-container'))
 
-    form.focus()
-    this.listenTo(form,'submitted',() => { // form submit event
-      this.trigger('added',form.data)
+    this.listenTo(form, 'submitted', () => {
+      // form submit event
+      this.trigger('added', form.data)
       form.reset()
     })
+
+    form.focus()
     this.form = form
   },
   initialize () {
@@ -194,7 +187,9 @@ export default View.extend({
     })
   },
   remove () {
-    if (this.form) this.form.remove()
+    if (this.form) {
+      this.form.remove()
+    }
     View.prototype.remove.apply(this,arguments)
   }
 })
