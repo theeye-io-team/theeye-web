@@ -43,7 +43,7 @@ export default DropableForm.extend({
           // strings
           if (depField.id === Number(dep)) {
             field.listenToAndRun(depField, 'change:value', () => {
-              const filled = depField.value
+              const filled = Boolean(depField.value)
               field.readonly = !filled
               field.required = filled
             })
