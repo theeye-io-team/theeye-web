@@ -125,8 +125,8 @@ XHR.sendPromise = (options) => {
   return new Promise( (resolve, reject) => {
     XHR.send(
       Object.assign(options, {
-        done: (response, xhr) => {
-          resolve({ response, xhr })
+        done: (data, xhr) => {
+          resolve({ data, xhr })
         },
         fail: (error, xhr) => {
           reject({ error, xhr })

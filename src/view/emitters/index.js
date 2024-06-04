@@ -11,12 +11,12 @@ import FileSaver from 'file-saver'
 import './styles.less'
 
 const EventCollection = Collection.extend({
-  indexes: ['id', 'key', 'value'],
+  indexes: ['id', 'type', 'value', 'emitter_id','event_name'],
   model: State.extend({
     props: {
       id: 'number',
       type: 'string',
-      emitter: 'string',
+      emitter_id: 'string',
       event_name: 'string',
       value: 'any'
     }
@@ -46,7 +46,7 @@ const EventCollection = Collection.extend({
 
 export default View.extend({
   template: `
-    <div class="form-group" data-component="constants-view-component">
+    <div class="form-group" data-component="emitters-view-component">
       <label class="col-sm-3 control-label" data-hook="label">
       </label>
       <div class="col-sm-9">
@@ -55,12 +55,12 @@ export default View.extend({
             Add <i class="fa fa-plus"></i>
           </button>
           <button data-hook="copy"
-            title="copy contants"
+            title="copy from"
             class="btn btn-default">
               Copy <i class="fa fa-copy"></i>
           </button>
           <button data-hook="export"
-            title="export constants"
+            title="export to json"
             class="btn btn-default">
               Export <i class="fa fa-download"></i>
           </button>
@@ -104,21 +104,7 @@ export default View.extend({
     value: {
       cache: false,
       fn () {
-        const values = (this.outputFormat === 'array') ? [] : {}
-
-        this.variableViews
-          .views
-          .forEach(v => {
-            if (Array.isArray(values)) {
-              const elem = {}
-              elem.k = v.key
-              elem.v = v.label
-              values.push(elem)
-            } else {
-              values[v.key] = v.label
-            }
-          })
-
+        const values = this.variableViews.views.map(v => v.value)
         return values
       }
     },
@@ -263,15 +249,18 @@ export default View.extend({
 const EmitterView = View.extend({
   template: `
     <li class="list-group-item">
-      <div class="">
+      <div class="" style="">
         <span class="col-xs-4" data-hook="type"></span>
         <span class="col-xs-4" data-hook="emitter_id"></span>
         <span class="col-xs-4" data-hook="event_name"></span>
       </div>
-      <div class="">
+      <div class="" style="">
         <span class="form-group">
           <button data-hook="remove-option" class="btn btn-default">
             <i class="fa fa-trash"></i>
+          </button>
+          <button data-hook="add-option" class="btn btn-default">
+            <i class="fa fa-plus"></i>
           </button>
         </span>
       </div>
@@ -295,14 +284,14 @@ const EmitterView = View.extend({
   },
   derived: {
     value: {
-      deps: ['type', 'emitter', 'event_name'],
+      deps: ['type', 'emitter_id', 'event_name'],
       fn () {
         const { type, emitter_id, event_name } = this
         return { type, emitter_id, event_name }
       }
     },
     valid: {
-      deps: ['type', 'emitter', 'event_name'],
+      deps: ['type', 'emitter_id', 'event_name'],
       fn () {
         const { type, emitter_id, event_name } = this
         // cannot be empty
@@ -311,7 +300,8 @@ const EmitterView = View.extend({
     }
   },
   events: {
-    'click [data-hook=remove-option]': 'onClickRemoveButton'
+    'click [data-hook=remove-option]': 'onClickRemoveButton',
+    'click [data-hook=add-option]': 'onClickAddButton'
   },
   onClickRemoveButton (event) {
     event.preventDefault()
@@ -319,17 +309,29 @@ const EmitterView = View.extend({
     // mmmmm...
     this.model.collection.remove(this.model)
   },
+  async onClickAddButton (event) {
+    event.preventDefault()
+    event.stopPropagation()
+    //this.model.collection.remove(this.model)
+    const { type, emitter_id, event_name } = this
+    const emitter = await App.actions
+      .events.create({ type, emitter_id, event_name })
+  },
   render () {
     this.renderWithTemplate(this)
 
-    const type = this.renderTypesView()
-    const emitter = this.renderEmittersView()
-    const eventName = this.renderEvenNameView()
+    const typeView = this.renderTypesView()
+    const emitterView = this.renderEmittersView()
+    const eventNameView = this.renderEvenNameView()
 
-    type.on('change:value', (ev) => {
-
-      ev.value
-      
+    this.on('change:type', async (eve) => {
+      const emitters = await App.actions.events.fetchEmitters(this.type)
+      emitterView.options = emitters[this.type]
+      eventNameView.options = []
+    })
+    this.on('change:emitter_id', async (eve) => {
+      const events = await App.actions.events.getEmitterEvents(this.type, this.emitter_id)
+      eventNameView.options = events
     })
   },
   renderTypesView () {
@@ -394,14 +396,16 @@ const EmitterView = View.extend({
   },
   beforeSubmit () {
     this.typeView.beforeSubmit()
-    this.valueInputView.beforeSubmit()
+    this.emitterView.beforeSubmit()
+    this.eventNameView.beforeSubmit()
     this.validityCheck()
   },
   validityCheck () {
     const type = this.typeView
     const emitter = this.emitterView
+    const eventName = this.eventNameView
 
-    if (!type.valid || !emitter.valid) {
+    if (!type.valid || !emitter.valid || !eventName.valid) {
       this.el.classList.add('box-danger')
     } else {
       this.el.classList.remove('box-danger')
@@ -424,7 +428,7 @@ const CustomSelectView = SelectView.extend({
   template: `
     <div data-component="select2-view">
       <label data-hook="label" style="display:none; visibility:hidden;"></label>
-      <div class="col-sm-12">
+      <div>
         <select class="form-control select" style="width:100%"></select>
         <div data-hook="message-container" class="message message-below message-error">
           <p data-hook="message-text"></p>
@@ -441,7 +445,7 @@ const EmitterTypeSelect = CustomSelectView.extend({
       { id: 'monitor', name: 'Monitor' },
       { id: 'task', name: 'Task' },
       { id: 'webhook', name: 'Webhook' }, 
-      { id: 'workflow', name: 'Workflow' }, 
+      //{ id: 'workflow', name: 'Workflow' }, 
     ]
 
     this.visible = true
@@ -457,9 +461,6 @@ const EmitterTypeSelect = CustomSelectView.extend({
 })
 
 const EmitterSelect = CustomSelectView.extend({
-  props: {
-    emitter_type: 'string'
-  },
   initialize (options = {}) {
     this.options = [ ]
 
@@ -468,11 +469,12 @@ const EmitterSelect = CustomSelectView.extend({
     this.styles = 'form-group'
     this.unselectedText = 'Select the event emitter'
     this.idAttribute = 'id'
-    this.textAttribute = 'name'
-
-    this.on('change:emitter_type', () => {
-      //const emitters = 
-    })
+    this.textAttribute = (attrs) => {
+      const type = attrs.type ? `${attrs.type.toUpperCase()} -` : ''
+      const label = (attrs.title||attrs.name)
+      const tags = attrs.tags?.length ? ` [${attrs.tags}]` : ''
+      return `${type} ${label} ${tags}`
+    }
 
     CustomSelectView.prototype.initialize.apply(this,arguments)
   }
@@ -486,8 +488,8 @@ const EventNameSelect = CustomSelectView.extend({
     this.name = options.name || 'event_name'
     this.styles = 'form-group'
     this.unselectedText = 'Select the event name'
-    this.idAttribute = 'id'
-    this.textAttribute = 'name'
+    this.idAttribute = 'name'
+    this.textAttribute = 'label'
 
     CustomSelectView.prototype.initialize.apply(this,arguments)
   }

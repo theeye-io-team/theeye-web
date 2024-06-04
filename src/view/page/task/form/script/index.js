@@ -161,14 +161,14 @@ export default TaskFormView.extend({
       validityClassSelector: '.control-label'
     })
 
-    triggerOnHold.listenTo(triggeredBy, 'change:value', () => {
-      if (triggeredBy.value.length > 0) {
-        triggerOnHold.enabled = true
-      } else {
-        triggerOnHold.enabled = false
-        triggerOnHold.clear()
-      }
-    })
+    //triggerOnHold.listenTo(triggeredBy, 'change:value', () => {
+    //  if (triggeredBy.value.length > 0) {
+    //    triggerOnHold.enabled = true
+    //  } else {
+    //    triggerOnHold.enabled = false
+    //    triggerOnHold.clear()
+    //  }
+    //})
 
     const runners = this.runners = new RunnerSelectionView({
       value: this.model.script_runas
@@ -233,12 +233,12 @@ export default TaskFormView.extend({
         label: 'ACL\'s',
         value: this.model.acl
       }),
-      //triggeredBy,
       new EmittersView({
-        label: 'Triggered by',
-        nbame: 'triggers',
+        label: 'Event selector',
+        name: 'emitters',
         visible: false
       }),
+      triggeredBy,
       triggerOnHold,
       new SelectView({
         sort: false,
