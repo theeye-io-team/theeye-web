@@ -2,7 +2,12 @@ import App from 'ampersand-app'
 import View from 'ampersand-view'
 import SimpleSwitch from 'components/simple-switch'
 
-import { JOB_CRUD_NOTIFICATION_FILTER, WEBHOOK_NOTIFICATION_FILTER, MONITOR_STATE_NOTIFICATION_FILTER } from 'constants/notifications'
+import {
+  JOB_CRUD_NOTIFICATION_FILTER,
+  WEBHOOK_NOTIFICATION_FILTER,
+  MONITOR_STATE_NOTIFICATION_FILTER,
+  INDICATOR_CRUD_NOTIFICATION_FILTER
+} from 'constants/notifications'
 
 export default View.extend({
   template: `
@@ -83,6 +88,19 @@ export default View.extend({
         </div>
         <div class="col-sm-4 text-right" data-hook="monitor-state"></div>
       </div>
+
+      <div class="row border">
+        <div class="col-xs-4">
+          <div class="check-container">
+            <label for="check2">Notify me about Indicators</label>
+          </div>
+        </div>
+        <div class="col-xs-4">
+          <small class="gray">Enable/Disable Indicator Events Notifications</small>
+        </div>
+        <div class="col-sm-4 text-right" data-hook="indicator-crud"></div>
+      </div>
+    </div>
   `,
   render () {
     this.renderWithTemplate(this)
@@ -93,14 +111,21 @@ export default View.extend({
     this.renderSwitch('email', notify.email)
     // this.renderSwitch('mute', notify.mute)
 
-    const filterJobs = App.state.session.user.notifications.getExclusionFilter(JOB_CRUD_NOTIFICATION_FILTER)
+    const filterJobs = App.state.session.user.notifications.getExclusionFilter(
+      JOB_CRUD_NOTIFICATION_FILTER)
     this.renderExclusionSwitch(JOB_CRUD_NOTIFICATION_FILTER, !filterJobs)
 
-    const filterWebhooks = App.state.session.user.notifications.getExclusionFilter(WEBHOOK_NOTIFICATION_FILTER)
+    const filterWebhooks = App.state.session.user.notifications.getExclusionFilter(
+      WEBHOOK_NOTIFICATION_FILTER)
     this.renderExclusionSwitch(WEBHOOK_NOTIFICATION_FILTER, !filterWebhooks)
 
-    const filterMonitors = App.state.session.user.notifications.getExclusionFilter(MONITOR_STATE_NOTIFICATION_FILTER)
+    const filterMonitors = App.state.session.user.notifications.getExclusionFilter(
+      MONITOR_STATE_NOTIFICATION_FILTER)
     this.renderExclusionSwitch(MONITOR_STATE_NOTIFICATION_FILTER, !filterMonitors)
+
+    const filterIndicators = App.state.session.user.notifications.getExclusionFilter(
+      INDICATOR_CRUD_NOTIFICATION_FILTER)
+    this.renderExclusionSwitch(INDICATOR_CRUD_NOTIFICATION_FILTER, !filterIndicators)
   },
   renderSwitch (name, value) {
     const btn = new SimpleSwitch({ value: value || false })

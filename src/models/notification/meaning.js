@@ -17,5 +17,9 @@ export default {
   'host:stats:disk:high': 'Bot disk high',
   'host:stats:cache:high': 'Bot cache high',
   'webhook': 'Triggered',
-  'job:create': 'Started'
+  'job:create': 'Started',
+  'indicator:create': 'created',
+  'indicator:replace': 'changed',
+  'indicator:update': 'changed',
+  'indicator:delete': 'deleted'
 }

@@ -883,7 +883,7 @@ a.flowchart-icon {
 .admin-container.dashboard i.file-color { background-color: #ff8a6d }
 .admin-container.dashboard i.dstat-color { background-color: #338412 }
 .admin-container.dashboard i.psaux-color { background-color: #c69c6d }
-.admin-container.dashboard i.indicator-color { background-color: #bd5e5c }
+.admin-container.dashboard i.indicator-color { background-color: rgb(6, 213, 180); }
 
 
 .admin-container .table-header.admin div.icons { float: right; }

@@ -30,7 +30,14 @@ export default AppModel.extend({
       fn () {
         // _type is the Model schema Document
         // type in Resource is the class type script, scraper, process, dstat, etc
-        return (this.target_model._type || this.target_model.type)
+        const type = (this.target_model._type || this.target_model.type)
+        if (/Indicator/.test(type) === true) {
+          return 'Indicator'
+        }
+        if (/Job/.test(type) === true) {
+          return 'Job'
+        }
+        return type
       }
     },
     target_model_subtype: {
@@ -39,8 +46,11 @@ export default AppModel.extend({
         if (this.target_model_type === 'Resource') {
           return this.target_model.type
         }
-        if (/Job/.test(this.target_model_type) === true) {
+        if (this.target_model_type === 'Job') {
           return this.target_model.task.type
+        }
+        if (this.target_model_type === 'Indicator') {
+          return this.target_model.type
         }
         return ''
       }
@@ -77,6 +87,9 @@ export default AppModel.extend({
       return meaning[eventIndex] || meaning[data.monitor_event]
     } else if (/WorkflowJob/.test(type) === true) {
       return meaning['job:' + data.operation] || ''
+    } else if (/Indicator/.test(type) === true) {
+      const name = (this.target_model.name || this.target_model.title)
+      return meaning['indicator:' + data.operation]
     } else if (/Job/.test(type) === true) {
       let lifecycle = this.target_model.lifecycle
       return meaning['lifecycle:' + lifecycle] || `${lifecycle}:${state}`
@@ -99,6 +112,8 @@ export default AppModel.extend({
       return 'Workflow ' + model.name
     } else if (/Job/.test(type) === true) {
       return 'Task ' + model.name
+    } else if (/Indicator/.test(type) === true) {
+      return 'Indicator ' + (model.name||model.title)
     } else if (type === 'Webhook') {
       return 'Webhook ' + model.name
     } else {
@@ -132,6 +147,10 @@ export default AppModel.extend({
         icon = eventIcons['lifecycle:' + lifecycle]
       }
       return icon
+    } else if (/Indicator/.test(type) === true) {
+      if (this.data.operation === 'delete') { return eventIcons['indicator:delete'] }
+      if (this.data.operation === 'create') { return eventIcons['indicator:create'] }
+      return eventIcons[`indicator:${this.target_model.state}`]
     } else if (type === 'Webhook') {
       return eventIcons[StateConstants.SUCCESS]
     } else {

@@ -3,6 +3,7 @@ import WorkflowJobItem from './workflow-job'
 import ResourceItem from './resource'
 import NotificationTaskItem from './notification-job'
 import WebhookItem from './webhook'
+import IndicatorItem from './indicator'
 import DefaultItem from './default'
 
 const Factory = function (options) {
@@ -12,6 +13,8 @@ const Factory = function (options) {
     return new NotificationTaskItem(options)
   } else if (type === 'Resource') {
     return new ResourceItem(options)
+  } else if (/Indicator/.test(type)) {
+    return new IndicatorItem(options)
   } else if (/WorkflowJob/.test(type) === true) {
     return new WorkflowJobItem(options)
   } else if (/Job/.test(type) === true) {
