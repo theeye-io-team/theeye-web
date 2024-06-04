@@ -10,6 +10,7 @@ import TagsSelectView from 'view/tags-select'
 import ScriptSelectView from 'view/script-select'
 import MembersSelectView from 'view/members-select'
 import EventsSelectView from 'view/events-select'
+import TriggerSelectView from 'view/trigger-select'
 import CheckboxView from 'components/checkbox-view'
 import AdvancedToggle from 'view/advanced-toggle'
 
@@ -127,6 +128,8 @@ export default TaskFormView.extend({
       userInputsMembers.enabled = (elem.value === true)
     })
 
+    const triggers = new TriggerSelectView()
+
     const triggeredBy = new EventsSelectView({
       label: 'Triggered by',
       name: 'triggers',
@@ -231,7 +234,8 @@ export default TaskFormView.extend({
         label: 'ACL\'s',
         value: this.model.acl
       }),
-      triggeredBy,
+      //triggeredBy,
+      triggers,
       triggerOnHold,
       new SelectView({
         sort: false,
