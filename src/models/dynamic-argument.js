@@ -29,7 +29,7 @@ const DynamicArgument = Model.extend({
     help: ['string',true],
     readonly: ['boolean',false,false],
     //options: ['array',false,() => { return [] }],
-    required: ['boolean',false,true],
+    required: ['boolean',false],
     multiple: ['boolean',false,false],
     endpoint_url: ['string',false],
     id_attribute: ['string',false],

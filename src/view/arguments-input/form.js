@@ -187,11 +187,13 @@ export default FormView.extend({
           break
       }
 
+      const defaultRequired = (this.model.type !== FIELD.TYPE_BOOLEAN)
+
       this.fields.push(
         new CheckboxView({
           label: 'Required',
           name: 'required',
-          value: this.model.required,
+          value: this.model.required || defaultRequired,
         })
       )
 
