@@ -1,155 +1,65 @@
 import App from 'ampersand-app'
-import View from 'ampersand-view'
-import Collection from 'ampersand-collection'
-import InputView from 'components/input-view'
-import SelectView from 'components/select2-view'
-
 import State from 'ampersand-state'
+import FilteredCollection from 'ampersand-filtered-subcollection'
+import View from 'ampersand-view'
+import SelectView from 'components/select2-view'
+import FileForm from 'view/page/files/form'
 import Modalizer from 'components/modalizer'
-import TaskSelection from 'view/task-select'
-import FileSaver from 'file-saver'
-import './styles.less'
+import { Model as ScriptModel } from 'models/file/script'
+import OnboardingActions from 'actions/onboarding'
 
-const EventProps = State.extend({
-  props: {
-    id: 'number',
-    type: 'string',
-    emitter_id: 'string',
-    event_name: 'string',
-    value: 'any'
-  }
-})
-const EventCollection = Collection.extend({
-  indexes: ['id', 'type', 'value', 'emitter_id','event_name'],
-  model: State.extend({
-    props: {
-      id: 'number',
-      type: 'string',
-      emitter_id: 'string',
-      event_name: 'string',
-      value: 'any'
-    }
-  }),
-  /**
-   * Convert an Object of { key: value } into and Array [ { key, value } ]
-   *
-   * @param {Object} models
-   */
-  reset (models) {
-    const values = []
-    if (Array.isArray(models)) {
-      return Collection.prototype.reset.call(this, models)
-    } else {
-      // remap into array
-      for (let key in models) {
-        const elem = {}
-        elem["key"] = key
-        elem["value"] = models[key]
-        values.push(elem)
-      }
-
-      return Collection.prototype.reset.call(this, values)
-    }
-  }
-})
-
-export default View.extend({
+export default SelectView.extend({
   template: `
-    <div class="form-group" data-component="emitters-view-component">
-      <label class="col-sm-3 control-label" data-hook="label">
-      </label>
-      <div class="col-sm-9">
-        <div>
-          <button data-hook="add" class="btn btn-default">
-            Add <i class="fa fa-plus"></i>
-          </button>
-          <button data-hook="copy"
-            title="copy from"
-            class="btn btn-default">
-              Copy <i class="fa fa-copy"></i>
-          </button>
-          <button data-hook="export"
-            title="export to json"
-            class="btn btn-default">
-              Export <i class="fa fa-download"></i>
-          </button>
-          <ul data-hook="list-group" class="list-group"></ul>
+    <div>
+      <div>
+        <label data-hook="label" class="col-sm-3 control-label"></label>
+        <div class="col-sm-6">
+          <select class="form-control select" style="width:100%"></select>
+          <div data-hook="message-container" class="message message-below message-error">
+            <p data-hook="message-text"></p>
+          </div>
         </div>
+      </div>
+      <div class="col-sm-3">
+        <button data-hook="mode-button" class="btn btn-block btn-primary">Search Event</button>
       </div>
     </div>
   `,
-  props: {
-    outputFormat: ['string', false, 'object'],
-    label: ['string',false,'Emitters'],
-    name: ['string',false,'emitters'],
-    required: ['boolean', false, false],
-    visible: ['boolean', false, true],
-    values: ['object', true, () => { return {} }],
-    validValues: ['boolean', false],
-    variablesLength: ['number', false, 0],
-    copyButton: ['boolean', false, true],
-    exportButton: ['boolean', false, true],
-  },
-  collections: {
-    constants: EventCollection
-  },
   initialize (options) {
-    View.prototype.initialize.apply(this, arguments)
-    this.setValue(this.values)
-    //this.on('change:valid change:value', this.reportToParent, this)
+    let filters = [ item => item.displayable == true ]
+    if (Array.isArray(options.filterOptions) && options.filterOptions.length) {
+      filters = filters.concat(options.filterOptions)
+    }
 
-    this.constants.on('add remove reset sync', () => {
-      this.variablesLength = this.constants.length
-    })
-    this.variablesLength = this.constants.length
+    this.options = new FilteredCollection(App.state.events, { filters })
+    this.multiple = true 
+    this.tags = true
+    this.label = options.label || 'Emitters'
+    this.name = options.name || 'emitters'
+    this.styles = 'form-group'
+    this.unselectedText = 'select event emitters'
+    this.idAttribute = 'id'
+    this.textAttribute = 'summary'
+
+    this.allowCreateTags = false
+    this.allowClear = true
+    this.requiredMessage = 'Selection required'
+    this.invalidClass = 'text-danger'
+    this.validityClassSelector = '.control-label'
+
+    SelectView.prototype.initialize.apply(this,arguments)
   },
-  derived: {
-    hasVariables: {
-      deps: ['variablesLength'],
-      fn () {
-        return Boolean(this.variablesLength > 0)
-      }
-    },
-    value: {
-      cache: false,
-      fn () {
-        const values = this.variableViews.views.map(v => v.value)
-        return values
-      }
-    },
-    valid: {
-      deps: ['validValues'],
-      fn () {
-        return this.validValues
-      }
-    }
-  },
-  bindings: {
-    hasVariables: {
-      hook: 'list-group',
-      type: 'toggle',
-    },
-    copyButton: {
-      hook: 'copy',
-      type: 'toggle',
-    },
-    exportButton: {
-      hook: 'export',
-      type: 'toggle',
-    },
-    label: {
-      hook: 'label'
-    },
-    visible: {
-      type: 'toggle'
-    }
-  },
+  //render () {
+  //  SelectView.prototype.render.apply(this,arguments)
+  //  this.listenToAndRun(this,'change:value', () => {
+  //    let btnTxt = (!this.value) ? 'Create Script' : 'Update Script'
+  //    this.queryByHook('mode-button').innerHTML = btnTxt
+  //  })
+  //},
   events: {
-    'click [data-hook=add]': 'onClickAdd',
-    'click [data-hook=copy]': 'onClickCopyFrom',
-    'click [data-hook=export]': 'onClickExport',
+    'click button[data-hook=mode-button]':'onClickModeButton'
   },
-  onClickAdd (event) {
+  onClickModeButton (event) {
     event.preventDefault()
     event.stopPropagation()
 
@@ -172,7 +82,17 @@ export default View.extend({
       emitterView.beforeSubmit()
       if (!emitterView.valid) { return }
 
-      App.actions.events.create(emitterView.value)
+      const selections = this.value
+      App.actions.events
+        .create(emitterView.value)
+        .then(ev => {
+          if (!ev?.id) {
+            return
+          }
+
+          selections.push(ev.id)
+          this.renderSelect2Component(selections)
+        })
       modal.hide()
     })
 
@@ -183,98 +103,6 @@ export default View.extend({
 
     modal.show()
     return false
-  },
-  onClickExport (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    const envs = []
-    for (let prop in this.value) {
-      envs.push(`${prop} = "${this.value[prop]}"`)
-    }
-    const blob = new Blob([ envs.join('\n') ], { type: 'text/plain' })
-    const fileName = this.parent.model?.name?.replace(/ /g, '_')
-    FileSaver.saveAs(blob, `${fileName}.env`)
-  },
-  onClickCopyFrom (event) {
-    event.preventDefault()
-    event.stopPropagation()
-
-    const selectView = new TaskSelection({
-      filterOptions: [
-        item => item.env && Object.keys(item.env).length > 0
-      ]
-    })
-
-    const modal = new Modalizer({
-      buttons: false,
-      title: 'Copy Environment from',
-      bodyView: selectView
-    })
-
-    this.listenTo(modal,'hidden',() => {
-      selectView.remove()
-      modal.remove()
-    })
-
-    this.listenTo(selectView, 'change:value', () => {
-      const task = App.state.tasks.get(selectView.value)
-      this.setValue(task.env)
-    })
-
-    modal.show()
-    return false
-  },
-  setValue (values) {
-    // need an object with key , values
-    if (this.outputFormat === 'array') {
-      // we need to remap the array of maps into a map
-      const vmap = []
-      values.forEach((el, index) => {
-        if (typeof el === 'string') {
-          vmap.push({ id: index, key: index, value: el })
-        } else {
-          // internal key, value representation
-          vmap.push({ id: index, key: el.k, value: el.v })
-        }
-      })
-
-      this.constants.reset(vmap)
-    } else {
-      this.constants.reset(values)
-    }
-  },
-  render () {
-    this.renderWithTemplate(this)
-
-    const collVu = this.variableViews = this.renderCollection(
-      this.constants,
-      EmitterView,
-      this.queryByHook('list-group')
-    )
-
-    collVu.collection.on('add', child => {
-      const view = collVu.views.find(vu => vu.model === child)
-      //view.typeView.input.focus()
-    })
-  },
-  //update () {
-  //  this.reportToParent()
-  //},
-  //reportToParent () {
-  //  if (this.parent) { this.parent.update(this) }
-  //},
-  beforeSubmit () {
-    this.variableViews.views.forEach(vu => vu.beforeSubmit())
-    this.runTests()
-  },
-  runTests () {
-    if (this.variableViews.views.length === 0) {
-      this.validValues = true
-      return
-    }
-
-    this.validValues = this.variableViews.views.every(view => view.valid)
   }
 })
 
@@ -440,15 +268,14 @@ const EmitterView = View.extend({
   }
 })
 
-const SimpleInputView = InputView.extend({
-  template: `
-    <div style="margin:0;">
-      <input class="form-control form-input">
-      <div data-hook="message-container" class="message message-below message-error">
-        <p data-hook="message-text"></p>
-      </div>
-    </div>
-  `
+const EventProps = State.extend({
+  props: {
+    id: 'number',
+    type: 'string',
+    emitter_id: 'string',
+    event_name: 'string',
+    value: 'any'
+  }
 })
 
 const CustomSelectView = SelectView.extend({

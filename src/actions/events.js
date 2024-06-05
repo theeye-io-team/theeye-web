@@ -59,7 +59,7 @@ export default {
     }
   },
   async create (props) {
-    const urlRoot = `${App.config.supervisor_api_url}/event`
+    const urlRoot = `${App.config.supervisor_api_url}/event/ensure`
     try {
       const { data } = await XHR.sendPromise({
         url: `${urlRoot}`,
@@ -69,6 +69,7 @@ export default {
           Accept: 'application/json;charset=UTF-8'
         }
       })
+      App.state.events.add(data)
       return data
     } catch (err) {
       console.error(err)

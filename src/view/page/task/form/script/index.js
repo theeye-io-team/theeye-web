@@ -23,7 +23,7 @@ import ArgumentsView from 'view/arguments-input'
 import CopyTaskSelect from '../copy-task-select'
 import TaskOnBoarding from '../../taskOnboarding'
 import ConstantsView from 'view/constants'
-import EmittersView from 'view/emitters'
+import EmitterSelectView from 'view/emitters/select'
 
 //import './styles.less'
 
@@ -129,17 +129,28 @@ export default TaskFormView.extend({
       userInputsMembers.enabled = (elem.value === true)
     })
 
-    const triggeredBy = new EventsSelectView({
+    const triggeredBy = new EmitterSelectView({
       label: 'Triggered by',
       name: 'triggers',
+      visible: false,
+      value: this.model.triggers,
       filterOptions: [
         item => {
           return item.emitter_id !== this.model.id
         }
       ],
-      visible: false,
-      value: this.model.triggers,
     })
+    //const triggeredBy = new EventsSelectView({
+    //  label: 'Triggered by',
+    //  name: 'triggers',
+    //  filterOptions: [
+    //    item => {
+    //      return item.emitter_id !== this.model.id
+    //    }
+    //  ],
+    //  visible: false,
+    //  value: this.model.triggers,
+    //})
 
     const triggerOnHold = new SelectView({
       sort: false,
@@ -232,11 +243,6 @@ export default TaskFormView.extend({
         name: 'acl',
         label: 'ACL\'s',
         value: this.model.acl
-      }),
-      new EmittersView({
-        label: 'Event selector',
-        name: 'emitters',
-        visible: false
       }),
       triggeredBy,
       triggerOnHold,

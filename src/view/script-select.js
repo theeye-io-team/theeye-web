@@ -1,5 +1,3 @@
-'use strict'
-
 import App from 'ampersand-app'
 import SelectView from 'components/select2-view'
 import FileForm from 'view/page/files/form'
