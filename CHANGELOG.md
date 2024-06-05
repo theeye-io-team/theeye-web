@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.17.0](https://github.com/theeye/theeye-web/compare/3.16.1...3.17.0) (2024-06-05)
+
+
+### Features
+
+* form inputs relations ([#166](https://github.com/theeye/theeye-web/issues/166)) ([0a32005](https://github.com/theeye/theeye-web/commit/0a32005c021d161457b272910e1af4def9785238))
+
+
+### Bug Fixes
+
+* boolean input definition - default required ([91859b6](https://github.com/theeye/theeye-web/commit/91859b6382e6f844a6607feec9eed56f114f262f))
+* value must evaluated as boolean ([46933cb](https://github.com/theeye/theeye-web/commit/46933cbfceb25616e534f31581b593bad9be185d))
+
 ### [3.16.1](https://github.com/theeye/theeye-web/compare/3.16.0...3.16.1) (2024-05-24)
 
 
