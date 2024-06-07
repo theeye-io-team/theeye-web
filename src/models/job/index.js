@@ -257,7 +257,7 @@ const BaseJob = AppModel.extend({
           }
 
           if (lifecycle === LifecycleConstants.ASSIGNED) {
-            return 'fa fa-spin fa-refresh remark-success'
+            return 'fa fa-spin fa-refresh remark-active'
           }
         }
 
@@ -295,7 +295,7 @@ const BaseJob = AppModel.extend({
         }
 
         if (lifecycle === LifecycleConstants.STARTED) {
-          return 'fa fa-spin fa-refresh remark-success'
+          return 'fa fa-spin fa-refresh remark-active'
         }
 
         if (
