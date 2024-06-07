@@ -79,7 +79,7 @@ const createWrapper = () => {
     App.actions.tabs.showNotification(TabsConstants.NOTIFICATIONS)
   }
 
-  events[ TopicConstants.JOB_CRUD ] = (event) => {
+  const jobsCrudHandler = (event) => {
     if (
       event.operation === OperationsConstants.UPDATE ||
       event.operation === OperationsConstants.CREATE ||
@@ -89,6 +89,8 @@ const createWrapper = () => {
       App.actions.tabs.showNotification(TabsConstants.WORKFLOWS)
     }
   }
+  events[ TopicConstants.WORKFLOW_JOB_CRUD ] = jobsCrudHandler
+  events[ TopicConstants.JOB_CRUD ] = jobsCrudHandler
 
   events[ TopicConstants.SCHEDULE_CRUD ] = (event) => {
     // something was added to the scheduler

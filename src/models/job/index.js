@@ -251,12 +251,14 @@ const BaseJob = AppModel.extend({
       fn () {
         const lifecycle = this.lifecycle
 
-        if (lifecycle === LifecycleConstants.READY) {
-          return 'fa fa-spin fa-refresh'
-        }
+        if (this._type !== JobConstants.WORKFLOW_TYPE) {
+          if (lifecycle === LifecycleConstants.READY) {
+            return 'fa fa-spin fa-refresh'
+          }
 
-        if (lifecycle === LifecycleConstants.ASSIGNED) {
-          return 'fa fa-spin fa-refresh remark-success'
+          if (lifecycle === LifecycleConstants.ASSIGNED) {
+            return 'fa fa-spin fa-refresh remark-success'
+          }
         }
 
         return ''
@@ -292,11 +294,19 @@ const BaseJob = AppModel.extend({
           return 'fa fa-clock-o remark-warning'
         }
 
+        if (lifecycle === LifecycleConstants.STARTED) {
+          return 'fa fa-spin fa-refresh remark-success'
+        }
+
         if (
           lifecycle === LifecycleConstants.READY ||
           lifecycle === LifecycleConstants.ASSIGNED
         ) {
-          return 'fa fa-stop remark-alert'
+          if (this._type === JobConstants.WORKFLOW_TYPE) {
+            return 'fa fa-spin fa-refresh'
+          } else {
+            return 'fa fa-stop remark-alert'
+          }
         }
 
         if (lifecycle === LifecycleConstants.SYNCING) {
@@ -461,7 +471,9 @@ const ApprovalJob = BaseJob.extend({
   },
   requiresInteraction () {
     const session = App.state.session
-    if (this.lifecycle !== LifecycleConstants.ONHOLD) { return false }
+    if (this.lifecycle !== LifecycleConstants.ONHOLD) {
+      return false 
+    }
 
     return this.isApprover(session.user)
   }
@@ -599,8 +611,8 @@ const WorkflowJob = BaseJob.extend({
         this.setPreviousJob()
       } else {
         this.jobsLength = 0
-        this.lifecycle = undefined
-        this.state = undefined
+        //this.lifecycle = undefined
+        //this.state = undefined
       }
     })
   },
@@ -614,8 +626,8 @@ const WorkflowJob = BaseJob.extend({
   },
   setCurrentJob () {
     this.currentJob = this.jobs.at(this.jobs.length - 1) // last
-    this.lifecycle = this.currentJob.lifecycle
-    this.state = this.currentJob.state
+    //this.lifecycle = this.currentJob.lifecycle
+    //this.state = this.currentJob.state
   },
   setPreviousJob () {
     if (this.jobs.length === 0) { return }
@@ -629,6 +641,14 @@ const WorkflowJob = BaseJob.extend({
     return this.currentJob.requiresInteraction() 
   },
   derived: {
+    progress_icon: {
+      cache: true,
+      deps: ['lifecycle'],
+      fn () {
+        const lifecycle = this.lifecycle
+        return ''
+      }
+    },
     parsedInput: {
       cache: false,
       deps: ['firstJob'],
