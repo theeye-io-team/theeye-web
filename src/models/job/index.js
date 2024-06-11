@@ -251,14 +251,12 @@ const BaseJob = AppModel.extend({
       fn () {
         const lifecycle = this.lifecycle
 
-        if (this._type !== JobConstants.WORKFLOW_TYPE) {
-          if (lifecycle === LifecycleConstants.READY) {
-            return 'fa fa-spin fa-refresh'
-          }
+        if (lifecycle === LifecycleConstants.READY) {
+          return 'fa fa-spin fa-refresh'
+        }
 
-          if (lifecycle === LifecycleConstants.ASSIGNED) {
-            return 'fa fa-spin fa-refresh remark-active'
-          }
+        if (lifecycle === LifecycleConstants.ASSIGNED) {
+          return 'fa fa-spin fa-refresh remark-active'
         }
 
         return ''
@@ -294,19 +292,15 @@ const BaseJob = AppModel.extend({
           return 'fa fa-clock-o remark-warning'
         }
 
-        if (lifecycle === LifecycleConstants.STARTED) {
-          return 'fa fa-spin fa-refresh remark-active'
-        }
+        //if (lifecycle === LifecycleConstants.STARTED) {
+        //  return 'fa fa-spin fa-refresh remark-active'
+        //}
 
         if (
           lifecycle === LifecycleConstants.READY ||
           lifecycle === LifecycleConstants.ASSIGNED
         ) {
-          if (this._type === JobConstants.WORKFLOW_TYPE) {
-            return 'fa fa-spin fa-refresh'
-          } else {
-            return 'fa fa-stop remark-alert'
-          }
+          return 'fa fa-stop remark-alert'
         }
 
         if (lifecycle === LifecycleConstants.SYNCING) {
@@ -594,7 +588,7 @@ const WorkflowJob = BaseJob.extend({
   },
   session: {
     jobsLength: 'number',
-    lifecycle: 'string',
+    //lifecycle: 'string',
     startTaskId: 'string',
     firstJob: 'state',
     currentJob: 'state',
@@ -642,11 +636,17 @@ const WorkflowJob = BaseJob.extend({
   },
   derived: {
     progress_icon: {
-      cache: true,
-      deps: ['lifecycle'],
+      cache: false,
+      deps: ['currentJob', 'lifecycle'],
       fn () {
-        const lifecycle = this.lifecycle
-        return ''
+        return this.currentJob?.progress_icon || ''
+      }
+    },
+    lifecycle_icon: {
+      cache: false,
+      deps: ['currentJob', 'lifecycle', 'state'],
+      fn () {
+        return this.currentJob?.lifecycle_icon || ''
       }
     },
     parsedInput: {
