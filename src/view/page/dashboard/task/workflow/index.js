@@ -23,6 +23,7 @@ import ScheduleButton from 'view/buttons/schedule'
 import SchedulesView from 'view/page/task/schedules'
 import { ExecTask as ExecTaskView } from 'view/page/dashboard/task/task/exec-task.js'
 import { Images as IconsImages } from 'constants/icons'
+import * as LifecycleConstants from 'constants/lifecycle'
 
 import DownloadButton from 'view/buttons/download'
 
@@ -273,6 +274,11 @@ const WorkflowJobRowView = CollapsibleRow.extend({
     return
   },
   bindings: Object.assign({}, CollapsibleRow.prototype.bindings, {
+    'lifecycleTitle': {
+      hook: 'root',
+      type: 'attribute',
+      name: 'title'
+    },
     'model.id': {
       hook: 'root',
       type: 'attribute',
@@ -370,11 +376,43 @@ const WorkflowButtonsView = View.extend({
 
 const WorkflowJobStatus = JobExecButton.extend({
   template: `
-    <div data-component="workflow-job-exec-button">
+    <div title="" 
+      data-hook="action_button"
+      data-component="workflow-job-exec-button">
       <i data-hook="lifecycle_icon"></i>
       <i data-hook="progress_icon"></i>
     </div>
-  `
+  `,
+  derived: {
+    action_button_title: {
+      deps: ['model.lifecycle'],
+      fn () {
+        const lifecycle = this.model.lifecycle
+        const subjobLifecycle = this.model.currentJob?.lifecycle
+        switch (lifecycle) {
+          case LifecycleConstants.FINISHED:
+          case LifecycleConstants.TERMINATED:
+          case LifecycleConstants.COMPLETED:
+          case LifecycleConstants.EXPIRED:
+          case LifecycleConstants.CANCELED:
+            return `Workflow execution ${lifecycle}`
+            break
+          case LifecycleConstants.READY:
+            return 'Waiting for a free agent'
+            break
+          case LifecycleConstants.ONHOLD:
+            return 'This job will start after previous jobs are finished.'
+            break
+          case LifecycleConstants.STARTED:
+            return 'Workflow in progress'
+            break
+          default:
+            return '...'
+            break
+        }
+      }
+    },
+  },
 })
 
 const InputsView = View.extend({

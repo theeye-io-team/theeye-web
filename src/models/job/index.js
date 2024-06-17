@@ -17,27 +17,6 @@ const urlRoot = function (version) {
 }
 
 const BaseJob = AppModel.extend({
-  // dataTypes: {
-  //  lifecycle: {
-  //    set: function (newVal) {
-  //      return {
-  //        val: newVal,
-  //        type: 'lifecycle'
-  //      }
-  //    },
-  //    compare: function (currentVal, newVal) {
-  //      if (currentVal === newVal) {
-  //        return true
-  //      } else {
-  //        const valid = LifecycleConstants.isValidNewLifecycle(currentVal, newVal)
-  //        if (!valid) {
-  //          logger.warn('invalid lifecycle transition')
-  //        }
-  //        return valid
-  //      }
-  //    }
-  //  }
-  // },
   urlRoot,
   urlV2 () {
     return `${urlRoot('v2')}/${this.id}`
@@ -50,18 +29,12 @@ const BaseJob = AppModel.extend({
     script_id: 'string',
     acl: ['array', false, () => []],
     empty_viewers: ['boolean', false, false],
-    // script_arguments: 'array',
-    //task_arguments: 'array',
     customer_id: 'string',
     customer_name: 'string',
-    // script: 'object', // embedded
-    // task: 'object', // embedded
-    // host: 'object',
     name: 'string',
     notify: 'boolean',
     state: 'string',
     lifecycle: 'string',
-    // result: ['state',false,null],
     creation_date: 'date',
     last_update: 'date',
     event: 'any',
@@ -246,6 +219,7 @@ const BaseJob = AppModel.extend({
         return App.state.jobs.get(this.workflow_job_id)
       }
     },
+    // secondary icon
     progress_icon: {
       deps: ['lifecycle'],
       fn () {
@@ -262,29 +236,27 @@ const BaseJob = AppModel.extend({
         return ''
       }
     },
+    // primary icon
     lifecycle_icon: {
       deps: ['lifecycle', 'state'],
       fn () {
         const lifecycle = this.lifecycle
         const state = this.state
 
+        // the job has finished.
         if (LifecycleConstants.isCompleted(lifecycle)) {
           if (state === StateConstants.TIMEOUT) {
             return 'fa fa-clock-o remark-alert'
           }
-
           if (state === StateConstants.FAILURE) {
             return 'fa fa-exclamation remark-alert'
           }
-
           if (state === StateConstants.CANCELED) {
             return 'fa fa-ban remark-alert'
           }
-
           if (state === StateConstants.ERROR) {
             return 'fa fa-question remark-warning'
           }
-
           return 'fa fa-check remark-success'
         }
 
@@ -311,7 +283,7 @@ const BaseJob = AppModel.extend({
           return 'fa fa-lock'
         }
 
-        return 'fa fa-play'
+        return 'fa fa-spinner fa-spin unknown'
       }
     }
   }
@@ -639,14 +611,28 @@ const WorkflowJob = BaseJob.extend({
       cache: false,
       deps: ['currentJob', 'lifecycle'],
       fn () {
-        return this.currentJob?.progress_icon || ''
+        return ''
       }
     },
     lifecycle_icon: {
       cache: false,
-      deps: ['currentJob', 'lifecycle', 'state'],
+      deps: ['currentJob.lifecycle', 'lifecycle', 'state'],
       fn () {
-        return this.currentJob?.lifecycle_icon || ''
+        if (this.lifecycle === LifecycleConstants.ONHOLD) { 
+          return 'fa fa-pause remark-onhold'
+        }
+        if (!this.currentJob ||
+          this.currentJob.lifecycle === LifecycleConstants.READY) { 
+          return 'fa fa-spin fa-refresh'
+        }
+        if (this.currentJob.lifecycle === LifecycleConstants.ASSIGNED) { 
+          return 'fa fa-spin fa-refresh remark-active'
+        }
+        const icon = this.currentJob.lifecycle_icon
+        if (/unknown/.test(icon)) {
+          console.warn('lifecycle unknown')
+        }
+        return icon
       }
     },
     parsedInput: {
