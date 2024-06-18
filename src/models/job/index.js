@@ -285,6 +285,39 @@ const BaseJob = AppModel.extend({
 
         return 'fa fa-spinner fa-spin unknown'
       }
+    },
+    lifecycle_description: {
+      deps: ['lifecycle','state'],
+      fn () {
+        const lifecycle = this.lifecycle
+        switch (lifecycle) {
+          case LifecycleConstants.TERMINATED:
+          case LifecycleConstants.EXPIRED:
+            return 'Job execution terminated abnormally'
+            break
+          case LifecycleConstants.FINISHED:
+          case LifecycleConstants.COMPLETED:
+            if (this.state === StateConstants.FAILURE) {
+              return 'Job execution completed with errors'
+            } else {
+              return 'Job execution completed successfully'
+            }
+            break
+          case LifecycleConstants.CANCELED:
+            return 'Job execution was canceled'
+            break
+          case LifecycleConstants.READY:
+          case LifecycleConstants.ASSIGNED:
+            return 'Task running, click to Cancel execution'
+            break
+          case LifecycleConstants.ONHOLD:
+            return 'Waiting for action'
+            break
+          default:
+            return 'Job execution'
+            break
+        }
+      }
     }
   }
 })
@@ -652,6 +685,34 @@ const WorkflowJob = BaseJob.extend({
         return this.currentJob.parsedOutput
       }
     },
+    lifecycle_description: {
+      deps: ['lifecycle'],
+      fn () {
+        const lifecycle = this.lifecycle
+        const subjobLifecycle = this.currentJob?.lifecycle_description
+        switch (lifecycle) {
+          case LifecycleConstants.READY:
+            return 'Waiting for a free agent'
+            break;
+          case LifecycleConstants.ONHOLD:
+            return 'This job will start after previous jobs are finished.'
+            break;
+          case LifecycleConstants.FINISHED:
+          case LifecycleConstants.TERMINATED:
+          case LifecycleConstants.COMPLETED:
+          case LifecycleConstants.EXPIRED:
+          case LifecycleConstants.CANCELED:
+            return `Workflow finished. Last job say: ${subjobLifecycle}`
+            break;
+          case LifecycleConstants.STARTED:
+            return `Workflow in progress. Current job say: ${subjobLifecycle}`
+            break;
+          default:
+            return '...'
+            break;
+        }
+      }
+    }
   }
 })
 

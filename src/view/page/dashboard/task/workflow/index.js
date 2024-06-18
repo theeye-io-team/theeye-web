@@ -383,36 +383,6 @@ const WorkflowJobStatus = JobExecButton.extend({
       <i data-hook="progress_icon"></i>
     </div>
   `,
-  derived: {
-    action_button_title: {
-      deps: ['model.lifecycle'],
-      fn () {
-        const lifecycle = this.model.lifecycle
-        const subjobLifecycle = this.model.currentJob?.lifecycle
-        switch (lifecycle) {
-          case LifecycleConstants.FINISHED:
-          case LifecycleConstants.TERMINATED:
-          case LifecycleConstants.COMPLETED:
-          case LifecycleConstants.EXPIRED:
-          case LifecycleConstants.CANCELED:
-            return `Workflow execution ${lifecycle}`
-            break
-          case LifecycleConstants.READY:
-            return 'Waiting for a free agent'
-            break
-          case LifecycleConstants.ONHOLD:
-            return 'This job will start after previous jobs are finished.'
-            break
-          case LifecycleConstants.STARTED:
-            return 'Workflow in progress'
-            break
-          default:
-            return '...'
-            break
-        }
-      }
-    },
-  },
 })
 
 const InputsView = View.extend({
