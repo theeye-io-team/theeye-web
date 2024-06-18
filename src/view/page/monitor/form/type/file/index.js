@@ -294,6 +294,9 @@ const preparePath = ({ path, is_manual_path }) => {
       parts.pop()
       path = parts.join('/')
     }
+  } else {
+    // default value
+    path = '/opt/theeye'
   }
   return { path, is_manual_path }
 }

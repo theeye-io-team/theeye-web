@@ -17,9 +17,7 @@ export default View.extend({
     </div>
   `,
   bindings: {
-    visible: {
-      type: 'toggle'
-    },
+    visible: { type: 'toggle' },
     styles: {
       type: 'attribute',
       name: 'class'

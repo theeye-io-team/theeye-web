@@ -1,8 +1,27 @@
+[data-component="workflow-collapsible-row"].workflow-job-row, 
+[data-component="workflow-collapsible-row"].workflow-job-row.ready {
+  border-left: 2px solid #eee;
+  background-color: #304269;
+  cursor: pointer;
+}
+//[data-component="workflow-collapsible-row"].workflow-job-row.ready {
+//  border-left: 2px solid #ff8640;
+//}
+[data-component="workflow-collapsible-row"].workflow-job-row.terminated,
+[data-component="workflow-collapsible-row"].workflow-job-row.canceled {
+  border-left: 2px solid #ee4c5a;
+}
+[data-component="workflow-collapsible-row"].workflow-job-row.started {
+  border-left: 2px solid #0080b9;
+}
+[data-component="workflow-collapsible-row"].workflow-job-row.finished {
+  border-left: 2px solid #70ff00;
+}
+[data-component="workflow-collapsible-row"].workflow-job-row.onhold {
+  border-left: 2px solid #ff8a6d;
+}
+
 [data-component="workflow-collapsible-row"] {
-  .workflow-job-row {
-    background-color: #304269;
-    cursor: pointer;
-  }
 
   .status-icons {
     width: 30px;

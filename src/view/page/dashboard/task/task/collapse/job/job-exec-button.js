@@ -45,38 +45,11 @@ export default View.extend({
       type: 'attribute',
       name: 'class'
     },
-    action_button_title: {
+    'model.lifecycle_description': {
       hook: 'action_button',
       type: 'attribute',
       name: 'title'
     }
-  },
-  derived: {
-    action_button_title: {
-      deps: ['model.lifecycle'],
-      fn () {
-        const lifecycle = this.model.lifecycle
-        switch (lifecycle) {
-          case LifecycleConstants.FINISHED:
-          case LifecycleConstants.TERMINATED:
-          case LifecycleConstants.COMPLETED:
-          case LifecycleConstants.EXPIRED:
-          case LifecycleConstants.CANCELED:
-            return 'Job execution completed'
-            break
-          case LifecycleConstants.READY:
-          case LifecycleConstants.ASSIGNED:
-            return 'Task running, click to Cancel execution'
-            break
-          case LifecycleConstants.ONHOLD:
-            return 'Waiting for action'
-            break
-          default:
-            return 'Job execution'
-            break
-        }
-      }
-    },
   },
   onClickActionButton (event) {
     event.stopPropagation()

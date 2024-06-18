@@ -180,7 +180,6 @@ const MonitorView = View.extend({
     show: {
       type: 'toggle'
     },
-
     templateBadge: {
       hook: 'badges',
       type: 'attribute',

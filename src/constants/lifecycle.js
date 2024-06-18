@@ -11,6 +11,7 @@ export const LOCKED = 'locked'
 export const ONHOLD = 'onhold'
 export const READY = 'ready'
 export const SYNCING = 'syncing'
+export const STARTED = 'started'
 
 // FINISHED LIFECYCLE
 export const CANCELED = 'canceled'

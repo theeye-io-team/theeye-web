@@ -23,6 +23,7 @@ import ScheduleButton from 'view/buttons/schedule'
 import SchedulesView from 'view/page/task/schedules'
 import { ExecTask as ExecTaskView } from 'view/page/dashboard/task/task/exec-task.js'
 import { Images as IconsImages } from 'constants/icons'
+import * as LifecycleConstants from 'constants/lifecycle'
 
 import DownloadButton from 'view/buttons/download'
 
@@ -195,7 +196,10 @@ const WorkflowJobsListView = JobsList.extend({
 
 const WorkflowJobRowView = CollapsibleRow.extend({
   template: `
-    <div title="" data-hook="root" data-component="workflow-collapsible-row" class="workflow-job-row">
+    <div title=""
+      data-hook="root"
+      data-component="workflow-collapsible-row"
+      class="workflow-job-row">
       <div class="panel panel-default">
         <div class="panel-heading"
           role="tab"
@@ -270,10 +274,18 @@ const WorkflowJobRowView = CollapsibleRow.extend({
     return
   },
   bindings: Object.assign({}, CollapsibleRow.prototype.bindings, {
+    'lifecycleTitle': {
+      hook: 'root',
+      type: 'attribute',
+      name: 'title'
+    },
     'model.id': {
       hook: 'root',
       type: 'attribute',
       name: 'title'
+    },
+    'model.lifecycle': {
+      type: 'class'
     }
   })
 })
@@ -364,11 +376,13 @@ const WorkflowButtonsView = View.extend({
 
 const WorkflowJobStatus = JobExecButton.extend({
   template: `
-    <div data-component="workflow-job-exec-button">
+    <div title="" 
+      data-hook="action_button"
+      data-component="workflow-job-exec-button">
       <i data-hook="lifecycle_icon"></i>
       <i data-hook="progress_icon"></i>
     </div>
-  `
+  `,
 })
 
 const InputsView = View.extend({

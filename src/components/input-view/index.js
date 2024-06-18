@@ -50,9 +50,7 @@ export default InputView.extend({
         invert: true
       }
     ],
-    visible: {
-      type: 'toggle'
-    },
+    visible: { type: 'toggle' },
     styles: {
       type: 'attribute',
       name: 'class'

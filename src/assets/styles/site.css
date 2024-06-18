@@ -508,7 +508,10 @@ ol.list-group.tasks { color:#34495E }
 
 .remark-alert { color: #ee4c5a; }
 .remark-success { color: #70ff00; }
+.remark-active { color: #70ff00; }
+/*.remark-active { color: #5bc4e8; }*/
 .remark-warning { color: #ffff00; }
+.remark-onhold { color: #ff8a6d; }
 .remark-default { color: #ffffff; }
 
 .main-status { width: 100%; padding: 40px 10px; cursor: pointer; text-align: center;}
