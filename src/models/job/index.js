@@ -698,21 +698,21 @@ const WorkflowJob = BaseJob.extend({
         const lifecycle = this.lifecycle
         const subjobLifecycle = this.currentJob?.lifecycle_description
         switch (lifecycle) {
-          case LifecycleConstants.READY:
-            return 'Waiting for a free agent'
-            break;
           case LifecycleConstants.ONHOLD:
-            return 'This job will start after previous jobs are finished.'
+            return 'Multitasking is disabled: This job will start after previously started jobs are finished.'
+            break;
+          case LifecycleConstants.READY:
+            return `Workflow ready to start. ${subjobLifecycle}`
             break;
           case LifecycleConstants.FINISHED:
           case LifecycleConstants.TERMINATED:
           case LifecycleConstants.COMPLETED:
           case LifecycleConstants.EXPIRED:
           case LifecycleConstants.CANCELED:
-            return `Workflow finished. Last job say: ${subjobLifecycle}`
+            return `Workflow finished. ${subjobLifecycle}`
             break;
           case LifecycleConstants.STARTED:
-            return `Workflow in progress. Current job say: ${subjobLifecycle}`
+            return `Workflow in progress. ${subjobLifecycle}`
             break;
           default:
             return '...'
