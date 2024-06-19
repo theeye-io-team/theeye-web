@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.18.0](https://github.com/theeye/theeye-web/compare/3.17.0...3.18.0) (2024-06-19)
+
+
+### Features
+
+* **workflow:** jobs has its own lifecycle ([#167](https://github.com/theeye/theeye-web/issues/167)) ([9435cd2](https://github.com/theeye/theeye-web/commit/9435cd2b1aa297c858a5900ed9a5a34199d88303))
+
+
+### Bug Fixes
+
+* **workflow:** active jobs counter calculation ([#168](https://github.com/theeye/theeye-web/issues/168)) ([196733a](https://github.com/theeye/theeye-web/commit/196733a6e59d92acb29eeed6f693887f27552645))
+
 ## [3.17.0](https://github.com/theeye/theeye-web/compare/3.16.1...3.17.0) (2024-06-05)
 
 
