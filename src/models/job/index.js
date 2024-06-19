@@ -261,7 +261,7 @@ const BaseJob = AppModel.extend({
         }
 
         if (lifecycle === LifecycleConstants.ONHOLD) {
-          return 'fa fa-clock-o remark-warning'
+          return 'fa fa-clock-o fa-spin remark-warning'
         }
 
         //if (lifecycle === LifecycleConstants.STARTED) {
@@ -624,9 +624,10 @@ const WorkflowJob = BaseJob.extend({
     }
   },
   setCurrentJob () {
-    this.currentJob = this.jobs.at(this.jobs.length - 1) // last
-    //this.lifecycle = this.currentJob.lifecycle
-    //this.state = this.currentJob.state
+    const jobs = this.jobs.models.find(job => job.inProgress)
+    const activeJob = (jobs?.length>0) ? jobs[0] : null
+
+    this.currentJob = activeJob || this.jobs.at(this.jobs.length - 1) // last
   },
   setPreviousJob () {
     if (this.jobs.length === 0) { return }
@@ -637,7 +638,7 @@ const WorkflowJob = BaseJob.extend({
     return this.verifyOwnerUser(user)
   },
   requiresInteraction() {
-    return this.currentJob.requiresInteraction() 
+    return this.currentJob?.requiresInteraction() 
   },
   derived: {
     progress_icon: {
@@ -647,12 +648,18 @@ const WorkflowJob = BaseJob.extend({
         return ''
       }
     },
+    inProgress: {
+      deps: ['currentJob.lifecycle'],
+      fn () {
+        return this.currentJob?.inProgress
+      }
+    },
     lifecycle_icon: {
       cache: false,
       deps: ['currentJob.lifecycle', 'lifecycle', 'state'],
       fn () {
         if (this.lifecycle === LifecycleConstants.ONHOLD) { 
-          return 'fa fa-pause remark-onhold'
+          return 'fa fa-pause remark-warning'
         }
         if (!this.currentJob ||
           this.currentJob.lifecycle === LifecycleConstants.READY) { 
@@ -682,7 +689,7 @@ const WorkflowJob = BaseJob.extend({
       cache: false,
       deps: ['currentJob'],
       fn () {
-        return this.currentJob.parsedOutput
+        return this.currentJob?.parsedOutput
       }
     },
     lifecycle_description: {
