@@ -7,31 +7,6 @@ import * as EventConstants from 'constants/event'
 import * as EmitterConstants from 'constants/emitter'
 import * as MonitorConstants from 'constants/monitor'
 
-class EmitterFactory {
-  constructor (attrs, options) {
-    var EmitterClass
-    const type = attrs._type
-
-    if (!type) {
-      throw new Error(`Cannot build an Emitter without a type`)
-    }
-
-    if (/Task/.test(type) === true) {
-      EmitterClass = App.Models.Task.Factory
-    } else if (EmitterConstants.RESOURCE === type) {
-      EmitterClass = App.Models.Resource.Model
-    } else if (EmitterConstants.WEBHOOK === type) {
-      EmitterClass = App.Models.Webhook.Model
-    }
-
-    if (!EmitterClass) {
-      throw new Error(`Cannot build an Emitter for type ${type}`)
-    }
-
-    return new EmitterClass (attrs, options)
-  }
-}
-
 const urlRoot = function () {
   return `${config.supervisor_api_url}/${App.state.session.customer.name}/event`
 }
@@ -65,7 +40,7 @@ const Model = AppModel.extend({
 
         let eventName = this.name
         let emitterType = emitter._type
-        let summary = 'summary unset'
+        let summary = 'summary cannot be determined'
 
         if (EmitterConstants.WEBHOOK === emitterType) {
           summary = `Incoming Webhook ${emitter.name} trigger`
@@ -73,6 +48,10 @@ const Model = AppModel.extend({
           summary = monitorEventSummary(emitter, eventName)
         } else if (/Task/.test(emitterType) === true) {
           summary = taskEventSummary(emitter, eventName)
+        } else if (/Indicator/.test(emitterType) === true) {
+          summary = `${emitterType} ${emitter.title} > ${eventName}`
+        } else {
+          summary = `${emitterType} ${emitter.name || emitter.title} > ${eventName}`
         }
 
         return summary
@@ -231,19 +210,47 @@ const isDisplayableMonitorEmitter = (emitter, eventName) => {
   }
 }
 
-const EmitterCollection = Collection.extend({
-  model: EmitterFactory,
-  isModel: function (model) {
-    const isModel =
-      model instanceof App.Models.Task.Dummy ||
-      model instanceof App.Models.Task.Approval ||
-      model instanceof App.Models.Task.Script ||
-      model instanceof App.Models.Task.Scraper ||
-      model instanceof App.Models.Resource.Model ||
-      model instanceof App.Models.Webhook.Model
-    return isModel
-  }
-})
+//class EmitterFactory {
+//  constructor (attrs, options) {
+//    let EmitterClass
+//    const type = attrs._type
+//
+//    if (!type) {
+//      throw new Error(`Cannot build an Emitter without a type`)
+//    }
+//
+//    if (/Task/.test(type) === true) {
+//      EmitterClass = App.Models.Task.Factory
+//    } else if (EmitterConstants.RESOURCE === type) {
+//      EmitterClass = App.Models.Resource.Model
+//    } else if (EmitterConstants.WEBHOOK === type) {
+//      EmitterClass = App.Models.Webhook.Model
+//    }
+//
+//    if (!EmitterClass) {
+//      throw new Error(`Cannot build an Emitter for type ${type}`)
+//    }
+//
+//    return new EmitterClass (attrs, options)
+//  }
+//}
+
+//const EmitterCollection = Collection.extend({
+//  model: EmitterFactory,
+//  isModel: function (model) {
+//    return true
+//  }
+//  isModel: function (model) {
+//    const isModel =
+//      model instanceof App.Models.Task.Dummy ||
+//      model instanceof App.Models.Task.Approval ||
+//      model instanceof App.Models.Task.Script ||
+//      model instanceof App.Models.Task.Scraper ||
+//      model instanceof App.Models.Resource.Model ||
+//      model instanceof App.Models.Webhook.Model
+//    return isModel
+//  }
+//})
 
 const EventsCollection = AppCollection.extend({
   url: urlRoot,
@@ -277,4 +284,9 @@ const EventsCollection = AppCollection.extend({
   }
 })
 
-export { EmitterFactory, Model, EmitterCollection, EventsCollection as Collection }
+export {
+  //EmitterFactory,
+  //EmitterCollection,
+  Model,
+  EventsCollection as Collection
+}

@@ -9,6 +9,10 @@ export const MONITOR_STATE_NOTIFICATION_FILTER = {
   topic: 'monitor-state'
 }
 
+export const INDICATOR_CRUD_NOTIFICATION_FILTER = {
+  topic: 'indicator-crud'
+}
+
 export const JOB_CRUD_NOTIFICATION_FILTER = {
   topic: 'job-crud'
 }

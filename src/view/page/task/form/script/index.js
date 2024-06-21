@@ -23,6 +23,7 @@ import ArgumentsView from 'view/arguments-input'
 import CopyTaskSelect from '../copy-task-select'
 import TaskOnBoarding from '../../taskOnboarding'
 import ConstantsView from 'view/constants'
+import EmitterSelectView from 'view/emitters/select'
 
 //import './styles.less'
 
@@ -70,6 +71,7 @@ export default TaskFormView.extend({
       'short_description',
       'acl',
       'triggers',
+      'emitters',
       'grace_time',
       'copy_task',
       'timeout',
@@ -127,17 +129,28 @@ export default TaskFormView.extend({
       userInputsMembers.enabled = (elem.value === true)
     })
 
-    const triggeredBy = new EventsSelectView({
+    const triggeredBy = new EmitterSelectView({
       label: 'Triggered by',
       name: 'triggers',
+      visible: false,
+      value: this.model.triggers,
       filterOptions: [
         item => {
           return item.emitter_id !== this.model.id
         }
       ],
-      visible: false,
-      value: this.model.triggers,
     })
+    //const triggeredBy = new EventsSelectView({
+    //  label: 'Triggered by',
+    //  name: 'triggers',
+    //  filterOptions: [
+    //    item => {
+    //      return item.emitter_id !== this.model.id
+    //    }
+    //  ],
+    //  visible: false,
+    //  value: this.model.triggers,
+    //})
 
     const triggerOnHold = new SelectView({
       sort: false,
@@ -159,14 +172,14 @@ export default TaskFormView.extend({
       validityClassSelector: '.control-label'
     })
 
-    triggerOnHold.listenTo(triggeredBy, 'change:value', () => {
-      if (triggeredBy.value.length > 0) {
-        triggerOnHold.enabled = true
-      } else {
-        triggerOnHold.enabled = false
-        triggerOnHold.clear()
-      }
-    })
+    //triggerOnHold.listenTo(triggeredBy, 'change:value', () => {
+    //  if (triggeredBy.value.length > 0) {
+    //    triggerOnHold.enabled = true
+    //  } else {
+    //    triggerOnHold.enabled = false
+    //    triggerOnHold.clear()
+    //  }
+    //})
 
     const runners = this.runners = new RunnerSelectionView({
       value: this.model.script_runas
@@ -299,23 +312,6 @@ export default TaskFormView.extend({
         visible: false,
         values: (this.model.env||{})
       }),
-      //new SelectView({
-      //  label: 'Arguments Type (experimental)',
-      //  name: 'arguments_type',
-      //  visible: false,
-      //  required: false,
-      //  options: [
-      //    { id: TaskConstants.ARGUMENT_TYPE_LEGACY, value: `${TaskConstants.ARGUMENT_TYPE_LEGACY} (Deprecated)` },
-      //    { id: TaskConstants.ARGUMENT_TYPE_TEXT, value: `${TaskConstants.ARGUMENT_TYPE_TEXT} (Default)` },
-      //    { id: TaskConstants.ARGUMENT_TYPE_JSON, value: `${TaskConstants.ARGUMENT_TYPE_JSON} (SDK Default)` }
-      //  ],
-      //  value: argumentsType,
-      //  unselectedText: '',
-      //  idAttribute: 'id',
-      //  textAttribute: 'value',
-      //  invalidClass: 'text-danger',
-      //  validityClassSelector: '.control-label'
-      //}),
       new CheckboxView({
         required: false,
         visible: false,

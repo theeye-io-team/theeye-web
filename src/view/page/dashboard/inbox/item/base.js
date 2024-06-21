@@ -12,11 +12,13 @@ const iconByType = {
   nested: 'fa-bullseye',
   approval: 'fa-thumbs-o-up',
   webhook: 'fa-exchange',
+  indicator: 'fa-lightbulb-o',
   workflow: 'fa-sitemap',
   notification: 'fa-bell'
 }
 
 const resourceType = {
+  Indicator: 'Indicator',
   Resource: 'Monitor',
   ScriptJob: 'ScriptTask',
   Webhook: 'Webhook',
@@ -79,7 +81,7 @@ export default View.extend({
     this.time = moment(this.model.creation_date).format(format)
     this.modelName = this.model.data.model.name
     this.modelType = resourceType[this.model.target_model_type]
-    this.modelSubType = ''
+    this.modelSubType = this.model.target_model_subtype
     this.icon = ''
 
     this.customizeItem()
@@ -94,6 +96,8 @@ export default View.extend({
     let iconClass = 'circle fa'
     if (modelType === 'NotificationJob') {
       iconClass += ` ${iconByType['notification']} notification-color`
+    } else if (/Indicator/.test(modelType) === true) {
+      iconClass += ` ${iconByType['indicator']} indicator-color`
     } else if (modelType === 'Webhook') {
       iconClass += ` ${iconByType['webhook']} webhook-color`
     } else if (modelType === 'Workflow') {

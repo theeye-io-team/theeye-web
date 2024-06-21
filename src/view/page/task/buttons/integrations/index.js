@@ -276,6 +276,7 @@ curl -i -sS -X POST '<span data-hook="curl_api_url"></span>' \\
       const args = this.model.task_arguments.models
       for (let index = 0; index < args.length; index++) {
         const label = args[index].label
+          .normalize("NFD")
           .toLowerCase()
           .replace(/\s+/g,'_')
           .replace(/[^a-z0-9_]/g, '')

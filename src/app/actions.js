@@ -5,6 +5,7 @@ import IntegrationActions from 'actions/integrations'
 import CustomerActions from 'actions/customer'
 import DashboardActions from 'actions/dashboard'
 import FileActions from 'actions/file'
+import EventActions from 'actions/events'
 import ScriptActions from 'actions/script'
 import HostActions from 'actions/host'
 import IndicatorActions from 'actions/indicator'
@@ -34,6 +35,7 @@ export default {
     auth: AuthActions,
     customer: CustomerActions,
     dashboard: DashboardActions,
+    events: EventActions,
     file: FileActions,
     host: HostActions,
     indicator: IndicatorActions,

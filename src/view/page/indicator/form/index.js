@@ -51,7 +51,7 @@ export default DropableForm.extend({
       multiple: false,
       tags: false,
       options: App.state.indicatorTypes,
-      value: this.model._type
+      value: this.model._type || IndicatorConstants.TEXT_TYPE 
     })
 
     let modelValue
@@ -173,7 +173,7 @@ export default DropableForm.extend({
         value: this.model.acl
       }),
       new CheckboxView({
-        label: 'Read Only (Sticky)',
+        label: 'Read Only',
         required: false,
         visible: false,
         name: 'read_only',
