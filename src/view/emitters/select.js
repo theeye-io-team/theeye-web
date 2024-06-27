@@ -7,6 +7,7 @@ import FileForm from 'view/page/files/form'
 import Modalizer from 'components/modalizer'
 import { Model as ScriptModel } from 'models/file/script'
 import OnboardingActions from 'actions/onboarding'
+import CheckboxView from 'components/checkbox-view'
 
 export default SelectView.extend({
   template: `
@@ -181,7 +182,8 @@ const EmitterView = View.extend({
 
     this.on('change:type', async (eve) => {
       const emitters = await App.actions.events.fetchEmitters(this.type)
-      emitterView.options = emitters[this.type]
+      const opts = emitters[this.type]
+      emitterView.resetOpts(this.type, opts)
       eventNameView.options = []
     })
     this.on('change:emitter_id', async (eve) => {
@@ -294,6 +296,7 @@ const CustomSelectView = SelectView.extend({
 
 const EmitterTypeSelect = CustomSelectView.extend({
   initialize (options = {}) {
+    // name must be a valid key in App.Models
     this.options = [
       { id: 'indicator', name: 'Indicator' },
       { id: 'monitor', name: 'Monitor' },
@@ -314,7 +317,98 @@ const EmitterTypeSelect = CustomSelectView.extend({
   }
 })
 
-const EmitterSelect = CustomSelectView.extend({
+
+const ToggleSelectView = SelectView.extend({
+  props: {
+    type: 'string',
+    emitter_selected: 'boolean'
+  },
+  template: `
+    <div data-component="select2-view">
+      <label data-hook="label" style="display:none; visibility:hidden;"></label>
+      <div class="input-group">
+        <label class="input-group-addon">
+          <input data-hook="global"
+            type="checkbox" 
+            name="global" 
+            value="global" 
+            title="toggle match by emitter property">
+        </label>
+        <select class="form-control select" style="width:100%"></select>
+        <div data-hook="message-container" class="message message-below message-error">
+          <p data-hook="message-text"></p>
+        </div>
+      </div>
+      <div data-hook="prop-value-container"
+        class="input-group"
+        style="display: none; visibility: hidden; padding-top: 10px;">
+        <label class="input-group-addon" for="value">
+          <span data-hook="selected-prop"></span>
+        </label>
+        <input class="form-input form-control" 
+          style="width:100%;"
+          data-hook="emitter-prop-value" 
+          type="text"
+          name="value">
+      </div>
+    </div>
+  `,
+  render () {
+    SelectView.prototype.render.apply(this, arguments)
+
+    const propValue = this.queryByHook('prop-value')
+    const propValueContainer = this.queryByHook('prop-value-container')
+
+    this.check = this.queryByHook('global')
+    this.check.addEventListener("change", (e) => {
+      if (this.check.checked === true) {
+        this.tempOptions = this.options
+        this.unselectedText = 'Select the emitter property name'
+        this.options = [
+          { id: 'tags', name: 'tags' },
+          { id: 'name', name: 'name' },
+          { id: 'title', name: 'title' },
+          { id: 'type', name: 'type' },
+          { id: '_type', name: '_type' },
+        ]
+      } else {
+        if (this.tempOptions) {
+          this.unselectedText = 'Select the event emitter'
+          this.options = this.tempOptions
+        }
+        // hide data 
+        propValueContainer.style.display = 'none'
+        propValueContainer.style.visibility = 'hidden'
+      }
+    })
+
+    this.on('change:value', () => {
+      if (this.check.checked) {
+        propValueContainer.style.display = 'table'
+        propValueContainer.style.visibility = 'visible'
+
+        const selval = this.value === '0' ? 'Not Ready?' : `Tell a ${this.value}`
+        this.queryByHook('selected-prop').innerHTML = selval
+      } else {
+        propValueContainer.style.display = 'none'
+        propValueContainer.style.visibility = 'hidden'
+      }
+    })
+  },
+  resetOpts (type, opts) {
+    this.type = type
+    this.check.checked = false
+    this.unselectedText = 'Select the event emitter'
+    this.options = opts
+
+    const propValueContainer = this.queryByHook('prop-value-container')
+    // hide data 
+    propValueContainer.style.display = 'none'
+    propValueContainer.style.visibility = 'hidden'
+  }
+})
+
+const EmitterSelect = ToggleSelectView.extend({
   initialize (options = {}) {
     this.options = [ ]
 
