@@ -105,6 +105,10 @@ export default InputView.extend({
     }
 
     InputView.prototype.initialize.apply(this, arguments)
+
+    if (!this.parent) {
+      this.parent = { update () {} }
+    }
   },
   render () {
     InputView.prototype.render.apply(this, arguments)

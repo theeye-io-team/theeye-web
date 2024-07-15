@@ -149,7 +149,7 @@ export default View.extend({
       }
     }
   },
-  initialize: function (spec) {
+  initialize (spec) {
     spec || (spec = {})
     this.tests = spec.tests || []
     var value = spec.value
@@ -157,10 +157,10 @@ export default View.extend({
     this.handleChange = this.handleChange.bind(this)
     this.handleInputChanged = this.handleInputChanged.bind(this)
   },
-  reset: function () {
+  reset (value = null) {
     // this will reset the value to the original value and
     // trigger change on the select2 element for proper UI update
-    this.$select.val(this.startingValue).trigger('change')
+    this.$select.val(value || this.startingValue).trigger('change')
   },
   render () {
     this.renderWithTemplate(this)
