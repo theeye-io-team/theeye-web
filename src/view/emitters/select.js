@@ -355,14 +355,17 @@ const ToggleSelectView = SelectView.extend({
   props: {
     type: 'string',
     emitter_selected: 'boolean',
-    prop: ['string', false, 'id']
+    emitter_prop: ['string', false, 'id'], // default
+    emitter_value: 'string'
   },
   derived: {
     selection: {
-      deps: ['value','prop'],
+      deps: ['emitter_value','emitter_prop'],
       fn () {
-        const { value, prop } = this
-        return { value, prop }
+        if (!this.emitter_value || !this.emitter_prop) {
+          return {}
+        }
+        return { prop: this.emitter_prop, value: this.emitter_value }
       }
     }
   },
@@ -377,12 +380,12 @@ const ToggleSelectView = SelectView.extend({
 
     this.check = this.queryByHook('global')
     this.check.addEventListener("change", (e) => {
-      // RESET
+      // reset values
       this.propValueInput.setValue("")
       this.reset(null) // empty select
-      this.prop = null
 
       if (this.check.checked === true) {
+        this.emitter_prop = null
         this.tempOptions = this.options
         this.unselectedText = 'Select the emitter property name'
         this.options = [
@@ -396,8 +399,7 @@ const ToggleSelectView = SelectView.extend({
         propValueContainer.style.display = 'table'
         propValueContainer.style.visibility = 'visible'
       } else {
-        this.prop = 'id'
-
+        this.emitter_prop = 'id'
         if (this.tempOptions) {
           this.unselectedText = 'Select the event emitter'
           this.options = this.tempOptions
@@ -408,26 +410,33 @@ const ToggleSelectView = SelectView.extend({
       }
     })
 
-    // selected value
-    this.propValueInput.on('change:value', () => {
-      if (this.check.checked && this.propValueInput.value) {
-        this.prop = this.propValueInput.value
+    // hidden input value 
+    this.propValueInput.el.addEventListener("focusout", (e) => {
+      if (this.check.checked === true) {
+        this.emitter_value = this.propValueInput.value
       }
     })
 
     this.on('change:value', () => {
-      if (this.check.checked) {
+      if (this.check.checked === true) {
+        this.emitter_value = ""
+        this.emitter_prop = this.value
         const selval = this.value === '0' ? 'Tell me' : `Tell a ${this.value}`
         this.queryByHook('selected-prop').innerHTML = selval
       } else {
-        //this.reset(null)
+        this.emitter_value = this.value
+        this.emitter_prop = 'id'
       }
     })
   },
   resetOpts (type, opts) {
     this.reset(null)
     this.type = type
+    // changing check property manually doesn't trigger js events
     this.check.checked = false
+    // force change event
+    this.check.dispatchEvent(new Event('change'))
+
     this.unselectedText = 'Select the event emitter'
     this.options = opts
 
@@ -454,7 +463,7 @@ const EmitterSelect = ToggleSelectView.extend({
       return `${type} ${label} ${tags}`
     }
 
-    CustomSelectView.prototype.initialize.apply(this,arguments)
+    ToggleSelectView.prototype.initialize.apply(this,arguments)
   }
 })
 
