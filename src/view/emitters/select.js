@@ -335,18 +335,19 @@ const ToggleSelectView = SelectView.extend({
     <div data-component="select2-view">
       <label data-hook="label" style="display:none; visibility:hidden;"></label>
       <div class="input-group">
+        <select class="form-control select" style="width:100%"></select>
         <label class="input-group-addon">
           <input data-hook="global"
+            disabled="disabled"
             type="checkbox" 
             name="global" 
             value="global" 
             title="toggle match by emitter property">
         </label>
-        <select class="form-control select" style="width:100%"></select>
+      </div>
         <div data-hook="message-container" class="message message-below message-error">
           <p data-hook="message-text"></p>
         </div>
-      </div>
       <div data-hook="prop-value-container"
         style="display: none; visibility: hidden; padding-top: 10px; width: 100%;">
       </div>
@@ -407,6 +408,14 @@ const ToggleSelectView = SelectView.extend({
         // hide data 
         propValueContainer.style.display = 'none'
         propValueContainer.style.visibility = 'hidden'
+      }
+    })
+
+    this.on('change:type', () => {
+      if (this.type === 'indicator') {
+        this.check.disabled = false
+      } else {
+        this.check.disabled = true
       }
     })
 
