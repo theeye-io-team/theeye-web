@@ -51,13 +51,6 @@ export default SelectView.extend({
 
     SelectView.prototype.initialize.apply(this,arguments)
   },
-  //render () {
-  //  SelectView.prototype.render.apply(this,arguments)
-  //  this.listenToAndRun(this,'change:value', () => {
-  //    let btnTxt = (!this.value) ? 'Create Script' : 'Update Script'
-  //    this.queryByHook('mode-button').innerHTML = btnTxt
-  //  })
-  //},
   events: {
     'click button[data-hook=mode-button]':'onClickModeButton'
   },
