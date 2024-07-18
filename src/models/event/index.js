@@ -15,8 +15,10 @@ const Model = AppModel.extend({
   urlRoot,
   props: {
     id: 'string',
-    emitter_id: 'string',
     emitter: 'object',
+    emitter_id: 'string',
+    emitter_prop: 'string',
+    emitter_value: 'string',
 		name: 'string',
     creation_date: 'date',
     last_update: 'date',
@@ -26,64 +28,61 @@ const Model = AppModel.extend({
     _type: 'string' // schema internal type
   },
   derived: {
-    emitter_type: {
-      deps: ['emitter'],
-      fn () {
-        return this.emitter._type
-      }
-    },
     summary: {
-      deps: ['emitter'],
+      deps: ['emitter', 'emitter_prop', 'emitter_value'],
       fn () {
-        let emitter = this.emitter
-        if (!emitter) { return 'Event definition error' }
+        if (this.emitter_prop && this.emitter_value) {
+          return `${this._type} ${this.name} if "${this.emitter_prop}" is "${this.emitter_value}"`
+        } else if (this.emitter) {
+          const emitter = this.emitter
+          const eventName = this.name
+          const emitterType = emitter._type
 
-        let eventName = this.name
-        let emitterType = emitter._type
-        let summary = 'summary cannot be determined'
-
-        if (EmitterConstants.WEBHOOK === emitterType) {
-          summary = `Incoming Webhook ${emitter.name} trigger`
-        } else if (EmitterConstants.MONITOR === emitterType) {
-          summary = monitorEventSummary(emitter, eventName)
-        } else if (/Task/.test(emitterType) === true) {
-          summary = taskEventSummary(emitter, eventName)
-        } else if (/Indicator/.test(emitterType) === true) {
-          summary = `${emitterType} ${emitter.title} > ${eventName}`
+          let summary = ''
+          if (EmitterConstants.WEBHOOK === emitterType) {
+            summary = `Incoming Webhook ${emitter.name} trigger`
+          } else if (EmitterConstants.MONITOR === emitterType) {
+            summary = monitorEventSummary(emitter, eventName)
+          } else if (/Task/.test(emitterType) === true) {
+            summary = taskEventSummary(emitter, eventName)
+          } else if (/Indicator/.test(emitterType) === true) {
+            summary = `${emitterType} ${emitter.title} > ${eventName}`
+          } else {
+            summary = `${emitterType} ${emitter.name || emitter.title} > ${eventName}`
+          }
+          return summary
         } else {
-          summary = `${emitterType} ${emitter.name || emitter.title} > ${eventName}`
+          return 'summary not available'
         }
-
-        return summary
       }
     },
     displayable: {
-      deps: ['emitter','name'],
+      deps: ['emitter', 'name', 'emitter_prop', 'emitter_value'],
       fn () {
-        let emitter = this.emitter
-        if (!emitter) { return false }
-
-        let eventName = this.name
-        let emitterType = emitter._type
-        let displayable = true
-
-        switch (emitterType) {
-          case EmitterConstants.MONITOR:
-            displayable = isDisplayableMonitorEmitter(emitter, eventName)
-            break
-          case EmitterConstants.TASK_SCRIPT:
-          case EmitterConstants.TASK_SCRAPER:
-          case EmitterConstants.TASK_DUMMY:
-            displayable = true
-            break
-          case EmitterConstants.TASK_APPROVAL:
-          case EmitterConstants.WEBHOOK:
-          default:
-            displayable = true
-            break
+        // custom events
+        if (this.emitter_prop && this.emitter_value) {
+          return true
+        } else if (this.emitter) {
+          let displayable = true
+          switch (this.emitter._type) {
+            case EmitterConstants.MONITOR:
+              displayable = isDisplayableMonitorEmitter(this.emitter, this.name)
+              break
+            case EmitterConstants.TASK_SCRIPT:
+            case EmitterConstants.TASK_SCRAPER:
+            case EmitterConstants.TASK_DUMMY:
+              displayable = true
+              break
+            case EmitterConstants.TASK_APPROVAL:
+            case EmitterConstants.WEBHOOK:
+            default:
+              displayable = true
+              break
+          }
+          return displayable
+        } else {
+          return false
         }
-
-        return displayable
       }
     }
   }

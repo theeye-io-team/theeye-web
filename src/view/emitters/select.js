@@ -7,6 +7,8 @@ import FileForm from 'view/page/files/form'
 import Modalizer from 'components/modalizer'
 import { Model as ScriptModel } from 'models/file/script'
 import OnboardingActions from 'actions/onboarding'
+import CheckboxView from 'components/checkbox-view'
+import InputView from 'components/input-view'
 
 export default SelectView.extend({
   template: `
@@ -49,13 +51,6 @@ export default SelectView.extend({
 
     SelectView.prototype.initialize.apply(this,arguments)
   },
-  //render () {
-  //  SelectView.prototype.render.apply(this,arguments)
-  //  this.listenToAndRun(this,'change:value', () => {
-  //    let btnTxt = (!this.value) ? 'Create Script' : 'Update Script'
-  //    this.queryByHook('mode-button').innerHTML = btnTxt
-  //  })
-  //},
   events: {
     'click button[data-hook=mode-button]':'onClickModeButton'
   },
@@ -116,76 +111,90 @@ const EmitterView = View.extend({
       </div>
       <div class="" style="">
         <span class="col-xs-4" data-hook="type"></span>
-        <span class="col-xs-4" data-hook="emitter_id"></span>
+        <span class="col-xs-4" data-hook="emitter_value"></span>
         <span class="col-xs-4" data-hook="event_name"></span>
       </div>
     </div>
   `,
-  initialize () {
-    View.prototype.initialize.apply(this,arguments)
-    this.updateState(this.model)
-    //this.on('change:valid change:value', this.reportToParent, this)
-  },
-  updateState (state) {
-    this.type = state.type
-    this.emitter_id = state.emitter_id
-    this.event_name = state.event_name
-  },
+  //initialize () {
+  //  View.prototype.initialize.apply(this,arguments)
+  //  this.updateState(this.model)
+  //},
+  //updateState (state) {
+  //  this.type = state.type
+  //  this.emitter_value = state.emitter_value
+  //  this.emitter_prop = state.emitter_prop
+  //  this.event_name = state.event_name
+  //},
   props: {
     type: 'string',
-    emitter_id: 'string',
+    emitter_value: 'string',
+    emitter_prop: 'string',
     event_name: 'string',
     name: ['string', false, 'env_var'] // my input name
   },
   derived: {
     value: {
-      deps: ['type', 'emitter_id', 'event_name'],
+      deps: ['type', 'emitter_value', 'emitter_prop', 'event_name'],
       fn () {
-        const { type, emitter_id, event_name } = this
-        return { type, emitter_id, event_name }
+        const { type, emitter_value, emitter_prop, event_name } = this
+        return { type, emitter_value, emitter_prop, event_name }
       }
     },
     valid: {
-      deps: ['type', 'emitter_id', 'event_name'],
+      deps: ['type', 'emitter_value', 'emitter_prop', 'event_name'],
       fn () {
-        const { type, emitter_id, event_name } = this
+        const { type, emitter_value, event_name, emitter_prop } = this
         // cannot be empty
-        return (type && emitter_id && event_name)
+        return (type && emitter_value && event_name && emitter_prop)
       }
     }
   },
-  events: {
-    'click [data-hook=remove-option]': 'onClickRemoveButton',
-    'click [data-hook=add-option]': 'onClickAddButton'
-  },
-  onClickRemoveButton (event) {
-    event.preventDefault()
-    event.stopPropagation()
-    // mmmmm...
-    this.model.collection.remove(this.model)
-  },
-  async onClickAddButton (event) {
-    event.preventDefault()
-    event.stopPropagation()
-    //this.model.collection.remove(this.model)
-    const { type, emitter_id, event_name } = this
-    const emitter = await App.actions
-      .events.create({ type, emitter_id, event_name })
-  },
+  //events: {
+  //  'click [data-hook=remove-option]': 'onClickRemoveButton',
+  //  'click [data-hook=add-option]': 'onClickAddButton'
+  //},
+  //onClickRemoveButton (event) {
+  //  event.preventDefault()
+  //  event.stopPropagation()
+  //  // mmmmm...
+  //  this.model.collection.remove(this.model)
+  //},
+  //async onClickAddButton (event) {
+  //  event.preventDefault()
+  //  event.stopPropagation()
+  //  //this.model.collection.remove(this.model)
+  //  const {
+  //    type,
+  //    emitter_value,
+  //    emitter_prop,
+  //    event_name
+  //  } = this
+  //  const emitter = await App.actions
+  //    .events.create({
+  //      type,
+  //      emitter_value,
+  //      emitter_prop,
+  //      event_name
+  //    })
+  //},
   render () {
     this.renderWithTemplate(this)
 
     const typeView = this.renderTypesView()
-    const emitterView = this.renderEmittersView()
+    const emitterSelect = this.renderEmittersSelect()
     const eventNameView = this.renderEvenNameView()
 
     this.on('change:type', async (eve) => {
       const emitters = await App.actions.events.fetchEmitters(this.type)
-      emitterView.options = emitters[this.type]
+      const opts = emitters[this.type]
+      emitterSelect.resetOpts(this.type, opts)
       eventNameView.options = []
     })
-    this.on('change:emitter_id', async (eve) => {
-      const events = await App.actions.events.getEmitterEvents(this.type, this.emitter_id)
+
+    this.on('change:emitter_value', async (eve) => {
+      const events = await App.actions.events
+        .getEmitterEvents(this.type, this.emitter_value)
       eventNameView.options = events
     })
   },
@@ -207,21 +216,25 @@ const EmitterView = View.extend({
     })
     return view 
   },
-  renderEmittersView () {
-    const emitter_id = this.model.emitter_id
-    const view = this.emitterView = new EmitterSelect({
-      name: 'emitter_id',
-      value: emitter_id,
+  renderEmittersSelect () {
+    const emitter_value = this.model.emitter_value
+    const view = this.emitterSelect = new EmitterSelect({
+      name: 'emitter_value',
+      value: emitter_value,
       placeholder: 'Event Emitter',
       invalidClass: 'text-danger',
       validityClassSelector: 'p[data-hook=message-text]',
       required: true
     })
-    this.renderSubview(view, this.queryByHook('emitter_id'))
+    this.renderSubview(view, this.queryByHook('emitter_value'))
     this.listenTo(view, 'change:valid', this.validityCheck)
     // use internal state
-    this.listenTo(view, 'change:value', () => {
-      this.emitter_id = view.value
+    this.listenTo(view, 'change:selection', () => {
+      const { prop, value } = view.selection
+      if (prop && value) {
+        this.emitter_prop = prop
+        this.emitter_value = value
+      }
     })
     return view
   },
@@ -243,21 +256,15 @@ const EmitterView = View.extend({
     })
     return view
   },
-  //update () {
-  //  this.reportToParent()
-  //},
-  //reportToParent () {
-  //  if (this.parent) { this.parent.update(this) }
-  //},
   beforeSubmit () {
     this.typeView.beforeSubmit()
-    this.emitterView.beforeSubmit()
+    this.emitterSelect.beforeSubmit()
     this.eventNameView.beforeSubmit()
     this.validityCheck()
   },
   validityCheck () {
     const type = this.typeView
-    const emitter = this.emitterView
+    const emitter = this.emitterSelect
     const eventName = this.eventNameView
 
     if (!type.valid || !emitter.valid || !eventName.valid) {
@@ -272,7 +279,8 @@ const EventProps = State.extend({
   props: {
     id: 'number',
     type: 'string',
-    emitter_id: 'string',
+    emitter_prop: 'string',
+    emitter_value: 'string',
     event_name: 'string',
     value: 'any'
   }
@@ -294,6 +302,7 @@ const CustomSelectView = SelectView.extend({
 
 const EmitterTypeSelect = CustomSelectView.extend({
   initialize (options = {}) {
+    // name must be a valid key in App.Models
     this.options = [
       { id: 'indicator', name: 'Indicator' },
       { id: 'monitor', name: 'Monitor' },
@@ -314,12 +323,138 @@ const EmitterTypeSelect = CustomSelectView.extend({
   }
 })
 
-const EmitterSelect = CustomSelectView.extend({
+const ToggleSelectView = SelectView.extend({
+  template: `
+    <div data-component="select2-view">
+      <label data-hook="label" style="display:none; visibility:hidden;"></label>
+      <div class="input-group">
+        <select class="form-control select" style="width:100%"></select>
+        <label class="input-group-addon">
+          <input data-hook="global"
+            disabled="disabled"
+            type="checkbox" 
+            name="global" 
+            value="global" 
+            title="toggle match by emitter property">
+        </label>
+      </div>
+        <div data-hook="message-container" class="message message-below message-error">
+          <p data-hook="message-text"></p>
+        </div>
+      <div data-hook="prop-value-container"
+        style="display: none; visibility: hidden; padding-top: 10px; width: 100%;">
+      </div>
+    </div>
+  `,
+  props: {
+    type: 'string',
+    emitter_selected: 'boolean',
+    emitter_prop: ['string', false, 'id'], // default
+    emitter_value: 'string'
+  },
+  derived: {
+    selection: {
+      deps: ['emitter_value','emitter_prop'],
+      fn () {
+        if (!this.emitter_value || !this.emitter_prop) {
+          return {}
+        }
+        return { prop: this.emitter_prop, value: this.emitter_value }
+      }
+    }
+  },
+  render () {
+    SelectView.prototype.render.apply(this, arguments)
+
+    //const propValue = this.queryByHook('prop-value')
+    const propValueContainer = this.queryByHook('prop-value-container')
+
+    this.propValueInput = new ClickeableInputView({ name: "value" })
+    this.renderSubview(this.propValueInput, propValueContainer)
+
+    this.check = this.queryByHook('global')
+    this.check.addEventListener("change", (e) => {
+      // reset values
+      this.propValueInput.setValue("")
+      this.reset(null) // empty select
+
+      if (this.check.checked === true) {
+        this.emitter_prop = null
+        this.tempOptions = this.options
+        this.unselectedText = 'Select the emitter property name'
+        this.options = [
+          { id: 'tags', name: 'tags' },
+          { id: 'name', name: 'name' },
+          { id: 'title', name: 'title' },
+          { id: 'type', name: 'type' },
+          { id: '_type', name: '_type' },
+        ]
+
+        propValueContainer.style.display = 'table'
+        propValueContainer.style.visibility = 'visible'
+      } else {
+        this.emitter_prop = 'id'
+        if (this.tempOptions) {
+          this.unselectedText = 'Select the event emitter'
+          this.options = this.tempOptions
+        }
+        // hide data 
+        propValueContainer.style.display = 'none'
+        propValueContainer.style.visibility = 'hidden'
+      }
+    })
+
+    this.on('change:type', () => {
+      if (this.type === 'indicator') {
+        this.check.disabled = false
+      } else {
+        this.check.disabled = true
+      }
+    })
+
+    // hidden input value 
+    this.propValueInput.el.addEventListener("focusout", (e) => {
+      if (this.check.checked === true) {
+        this.emitter_value = this.propValueInput.value
+      }
+    })
+
+    this.on('change:value', () => {
+      if (this.check.checked === true) {
+        this.emitter_value = ""
+        this.emitter_prop = this.value
+        const selval = this.value === '0' ? 'Tell me' : `Tell a ${this.value}`
+        this.queryByHook('selected-prop').innerHTML = selval
+      } else {
+        this.emitter_value = this.value
+        this.emitter_prop = 'id'
+      }
+    })
+  },
+  resetOpts (type, opts) {
+    this.reset(null)
+    this.type = type
+    // changing check property manually doesn't trigger js events
+    this.check.checked = false
+    // force change event
+    this.check.dispatchEvent(new Event('change'))
+
+    this.unselectedText = 'Select the event emitter'
+    this.options = opts
+
+    const propValueContainer = this.queryByHook('prop-value-container')
+    // hide data 
+    propValueContainer.style.display = 'none'
+    propValueContainer.style.visibility = 'hidden'
+  }
+})
+
+const EmitterSelect = ToggleSelectView.extend({
   initialize (options = {}) {
     this.options = [ ]
 
     this.visible = true
-    this.name = options.name || 'emitter_id'
+    this.name = options.name || 'emitter_value'
     this.styles = 'form-group'
     this.unselectedText = 'Select the event emitter'
     this.idAttribute = 'id'
@@ -330,7 +465,7 @@ const EmitterSelect = CustomSelectView.extend({
       return `${type} ${label} ${tags}`
     }
 
-    CustomSelectView.prototype.initialize.apply(this,arguments)
+    ToggleSelectView.prototype.initialize.apply(this,arguments)
   }
 })
 
@@ -347,4 +482,24 @@ const EventNameSelect = CustomSelectView.extend({
 
     CustomSelectView.prototype.initialize.apply(this,arguments)
   }
+})
+
+const ClickeableInputView = InputView.extend({
+  initialize (options = {}) {
+    this.name = 'value'
+    this.styles = 'input-group'
+    InputView.prototype.initialize.apply(this,arguments)
+  },
+  template: `
+    <div class="input-group">
+      <label class="input-group-addon" for="value">
+        <span data-hook="selected-prop"></span>
+      </label>
+      <input class="form-input form-control" 
+        style="width:100%;"
+        data-hook="emitter-prop-value" 
+        type="text"
+        name="value">
+    </div>
+  `
 })
