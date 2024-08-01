@@ -28,11 +28,12 @@ export default {
         break;
       case 'indicator': 
         return [
-          //{ name: 'created', label: 'Created' },
+          { name: 'created', label: 'Created' },
           { name: 'changed', label: 'Updated or Replaced' },
           { name: 'deleted', label: 'Deleted' },
           { name: 'set_state', label: 'State set' },
           { name: 'set_value', label: 'Value set' },
+          { name: 'ALL', label: 'ALL' },
         ]
         break;
       case 'monitor':

@@ -28,14 +28,21 @@ export default {
   },
   create (data) {
     let indicator = new App.Models.Indicator.Factory(data)
-    indicator.save()
+    indicator.save({}, {
+      success () {
+        App.state.alerts.success('Indicator', 'Created')
+      },
+      error (model, res) {
+        App.state.alerts.danger('Indicator', res.body?.message)
+      }
+    })
   },
   patch (id, data) {
     let indicator = App.state.indicators.get(id)
     if (!indicator) { return }
     indicator.set(data)
     indicator.save({}, { success () {
-      App.state.alerts.success('Great!', 'Indicator Updated')
+      App.state.alerts.success('Indicator', 'Updated')
     }})
   },
   remove (id) {
@@ -43,7 +50,7 @@ export default {
     if (!indicator) { return }
     indicator.destroy({
       success () {
-        App.state.alerts.success('Good Bye', 'Indicator Removed.')
+        App.state.alerts.success('Indicator', 'Removed.')
       }
     })
   }

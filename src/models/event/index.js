@@ -32,7 +32,7 @@ const Model = AppModel.extend({
       deps: ['emitter', 'emitter_prop', 'emitter_value'],
       fn () {
         if (this.emitter_prop && this.emitter_value) {
-          return `${this._type} ${this.name} if "${this.emitter_prop}" is "${this.emitter_value}"`
+          return `${this.name} ${this._type} if "${this.emitter_prop}" is "${this.emitter_value}"`
         } else if (this.emitter) {
           const emitter = this.emitter
           const eventName = this.name
