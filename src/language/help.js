@@ -30,7 +30,7 @@ export default {
   host: 'Where will the file be hosted?',
   tags: tags,
   acls: acl,
-  triggers: triggers,
+  triggers,
   severity: 'You can set a severity to this monitor, which can be LOW, HIGH or CRITICAL.',
   integrations: {
     logger: {
@@ -130,7 +130,7 @@ export default {
       acl: acl,
       dirname: 'The directory to store the file',
       basename: 'The name of the file, usually with the extension.',
-      triggers: triggers,
+      triggers,
       grace_time: grace_time,
       task_arguments: 'Task arguments',
       copy_task: 'Select the task you want to copy from',
