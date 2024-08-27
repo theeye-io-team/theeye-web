@@ -17,7 +17,7 @@ export default FormView.extend({
   initialize (options) {
 
     const regexInput = new RegexInputView({
-      label: 'Auto provision hosts with names matching this pattern',
+      label: 'Auto provision agents with names matching this pattern',
       name: 'hostname_regex',
       required: false,
       invalidClass: 'text-danger',
@@ -36,7 +36,7 @@ export default FormView.extend({
     })
 
     const selectedHosts = new HostSelectionView({
-      label: 'Destination host',
+      label: 'Destination agents',
       multiple: true,
       tags: true,
       value: this.model.hosts,
@@ -68,6 +68,14 @@ export default FormView.extend({
         validityClassSelector: '.control-label',
         value: this.model.description
       }),
+      new CheckboxView({
+        label: 'Auto-remove stopped agents',
+        name: 'autoremove_stopped',
+        required: false,
+        invalidClass: 'text-danger',
+        validityClassSelector: '.control-label',
+        value: this.model.autoremove_stopped
+      })
     ]
 
     if (this.model.isNew()) {
