@@ -86,28 +86,31 @@ const CustomerButtons = BaseView.extend({
   },
   edit () {
     event.stopPropagation()
+    this.model.fetch({
+      success: () => {
 
-    this.model.fetch()
+        const form = new CustomerForm({ model: this.model })
 
-    const form = new CustomerForm({ model: this.model })
+        const modal = new Modalizer({
+          confirmButton: 'Save',
+          buttons: true,
+          title: 'Edit customer',
+          bodyView: form
+        })
 
-    const modal = new Modalizer({
-      confirmButton: 'Save',
-      buttons: true,
-      title: 'Edit customer',
-      bodyView: form
+        this.listenTo(modal,'hidden',function(){
+          form.remove()
+          modal.remove()
+        })
+        this.listenTo(modal,'confirm',function(){
+          form.beforeSubmit()
+          if (!form.valid) return
+          CustomerActions.update(this.model.id, form.data, modal)
+        })
+        modal.show()
+
+      }
     })
-
-    this.listenTo(modal,'hidden',function(){
-      form.remove()
-      modal.remove()
-    })
-    this.listenTo(modal,'confirm',function(){
-      form.beforeSubmit()
-      if (!form.valid) return
-      CustomerActions.update(this.model.id, form.data, modal)
-    })
-    modal.show()
   }
 })
 
