@@ -19,6 +19,7 @@ export const Model = AppModel.extend({
     logo: 'string',
     http_origins: ['array',false, () => { return [] }],
     display_name: 'string',
+    disabled: ['boolean',false, false],
     description: 'string',
     config: ['object', false, () => { return {} }],
     //config: 'state',
