@@ -65,6 +65,12 @@ const DefaultIntegrations = {
       required: false,
       type: FieldsConstants.TYPE_BOOLEAN
     },
+    tasks_component: {
+      label: 'Tasks Component',
+      value: false,
+      required: false,
+      type: FieldsConstants.TYPE_BOOLEAN
+    },
     enabled: false
   }
 }
