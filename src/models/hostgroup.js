@@ -27,6 +27,7 @@ export const Model = AppModel.extend({
     creation_date: 'date',
     last_update: 'date',
     hostname_regex: 'string',
+    autoremove_stopped: ['boolean', false, false],
     _type: 'string'
   },
   collections: {
